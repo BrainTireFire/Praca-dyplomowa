@@ -4,10 +4,15 @@ using pracadyplomowa;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 builder.Services.AddDbContext<AppIdentityDbContext>(opt =>
 {
-    opt.UseNpgsql(builder.Configuration.GetConnectionString("IdentityConnection"));
+    opt.UseSqlite(builder.Configuration.GetConnectionString("IdentityConnectionSQlite"));
 });
+// builder.Services.AddDbContext<AppIdentityDbContext>(opt =>
+// {
+//     opt.UseNpgsql(builder.Configuration.GetConnectionString("IdentityConnection"));
+// });
 builder.Services.AddIdentityServices(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddScoped<ITokenService, TokenService>();

@@ -33,11 +33,10 @@ public static class IdentityServiceExtensions
                 };
             });
 
-        services.AddAuthorization(opt =>
-        {
-            opt.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
-        });
+        services.AddAuthorizationBuilder()
+            .AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
 
         return services;
     }
 }
+

@@ -64,4 +64,61 @@ public class AdminController : BaseApiController
         return Ok(await _userManager.GetRolesAsync(user));
     }
 
+    [Authorize(Policy = "RequireAdminRole")]
+    [HttpDelete("delete-user/{username}")]
+    public async Task<ActionResult> DeleteUserByUsername(string username)
+    {
+        var user = await _userManager.FindByNameAsync(username);
+        if (user == null)
+        {
+            return NotFound("User not found...");
+        }
+
+        var result = await _userManager.DeleteAsync(user);
+
+        if (!result.Succeeded)
+        {
+            return BadRequest("Failed while deleting the user...");
+        }
+
+        return Ok();
+    }
+
+
+    [Authorize(Policy = "RequireAdminRole")]
+    [HttpPost("create-user")]
+    public async Task<ActionResult> CreateNewUser(CreateNewUserDto createNewUserDto)
+    {
+        var user = new User
+        {
+            UserName = createNewUserDto.Username.ToLower(),
+            Email = createNewUserDto.Email
+        };
+
+        if (await _userManager.Users.AnyAsync(u => u.UserName == user.UserName))
+        {
+            return BadRequest("Username already exists...");
+        }
+
+        var result = await _userManager.CreateAsync(user, createNewUserDto.Password);
+
+        if (!result.Succeeded)
+        {
+            return BadRequest("Failed while creating the user...");
+        }
+
+        if (!string.IsNullOrEmpty(createNewUserDto.Role))
+        {
+            result = await _userManager.AddToRoleAsync(user, createNewUserDto.Role);
+
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+        }
+
+        return Ok();
+    }
+
+
 }

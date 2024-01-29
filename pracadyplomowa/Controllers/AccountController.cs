@@ -38,6 +38,13 @@ public class AccountController : BaseApiController
             return BadRequest(result.Errors);
         }
 
+        var roleResult = await _userManager.AddToRoleAsync(user, "User");
+
+        if (!roleResult.Succeeded)
+        {
+            return BadRequest(result.Errors);
+        }
+
         return new UserDto
         {
             Username = user.UserName,

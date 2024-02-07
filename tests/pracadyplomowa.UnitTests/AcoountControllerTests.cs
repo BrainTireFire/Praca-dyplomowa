@@ -13,8 +13,7 @@ namespace pracadyplomowa.UnitTests;
 public class AcoountControllerTests
 {
     private readonly Mock<ITokenService> _tokenService;
-    private readonly Mock<UserManager<User>> _userManager;
-    private readonly Mock<SignInManager<User>> _signInManager;
+    private readonly Mock<IAccountRepository> _accountRepository;
     private readonly AccountController _controller;
     private readonly IMapper _mapper;
     private readonly Fixture _fixture;
@@ -27,42 +26,15 @@ public class AcoountControllerTests
         {
             mc.AddMaps(typeof(MappingProfiles).Assembly);
         }).CreateMapper().ConfigurationProvider;
+
         _mapper = new Mapper(mockMapper);
 
-        _userManager = new Mock<UserManager<User>>(
-            Mock.Of<IUserStore<User>>(),
-            null,  // Mock.Of<IUserValidator<User>>(),
-            null,  // Mock.Of<IPasswordValidator<User>>(),
-            null,  // Mock.Of<ILookupNormalizer>(),
-            null,  // Mock.Of<IdentityErrorDescriber>(),
-            null,  // Mock.Of<IServiceProvider>(),
-            null,  // Mock.Of<IOptions<IdentityOptions>>(),
-            null   // Mock.Of<ILogger<UserManager<User>>>(),
-        );
-
-        _signInManager = new Mock<SignInManager<User>>(
-            _userManager.Object,  // UserManager
-            Mock.Of<IHttpContextAccessor>(),  // IHttpContextAccessor
-            Mock.Of<IUserClaimsPrincipalFactory<User>>()  // IUserClaimsPrincipalFactory<User>
-        );
-
-        // _signInManager = new Mock<SignInManager<User>>(
-        //     _userManager.Object,  // UserManager
-        //     Mock.Of<IHttpContextAccessor>(),  // IHttpContextAccessor
-        //     Mock.Of<IUserClaimsPrincipalFactory<User>>(),  // IUserClaimsPrincipalFactory<User>
-        //     Mock.Of<IOptions<IdentityOptions>>(),
-        //     Mock.Of<ILogger>(),
-        //     Mock.Of<IAuthenticationSchemeProvider>(),
-        //     Mock.Of<IUserConfirmation<User>>()
-        // );
-
         _tokenService = new Mock<ITokenService>();
+        _accountRepository = new Mock<IAccountRepository>();
 
         _controller = new AccountController(
-            _userManager.Object,
-            _signInManager.Object,
             _tokenService.Object,
-            _mapper
+            _accountRepository.Object
         );
     }
 
@@ -74,10 +46,12 @@ public class AcoountControllerTests
         var user = new User { UserName = registerDto.Username.ToLower() };
         var userDto = new UserDto { Username = user.UserName, Token = "testToken" };
 
-        _userManager.Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
+        _accountRepository.Setup(x => x.GetUserByUsername(It.IsAny<string>()))
+            .ReturnsAsync((User)null);
+        _accountRepository.Setup(x => x.RegisterUserAsync(It.IsAny<RegisterDto>(), It.IsAny<string>()))
+            .ReturnsAsync((IdentityResult.Success, user));
+        _accountRepository.Setup(x => x.AddUserToRoleAsync(It.IsAny<User>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Success);
-        _userManager.Setup(x => x.FindByNameAsync(It.IsAny<string>()))
-            .ReturnsAsync(user);
         _tokenService.Setup(x => x.CreateToken(It.IsAny<User>()))
             .ReturnsAsync(userDto.Token);
 
@@ -90,5 +64,6 @@ public class AcoountControllerTests
         Assert.Equal(userDto.Username, returnedUserDto.Username);
         Assert.Equal(userDto.Token, returnedUserDto.Token);
     }
+
 
 }

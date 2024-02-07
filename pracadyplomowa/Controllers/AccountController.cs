@@ -8,65 +8,65 @@ namespace pracadyplomowa;
 public class AccountController : BaseApiController
 {
     private readonly ITokenService _tokenService;
-    private readonly IMapper _mapper;
-    private readonly UserManager<User> _userManager;
-    private readonly SignInManager<User> _signInManager;
-    public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, ITokenService tokenService, IMapper mapper)
+    private readonly IAccountRepository _accountRepository;
+
+    public AccountController(ITokenService tokenService, IAccountRepository accountRepository)
     {
-        _userManager = userManager;
-        _signInManager = signInManager;
         _tokenService = tokenService;
-        _mapper = mapper;
+        _accountRepository = accountRepository;
     }
 
     [HttpPost("register")]
     public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
     {
-        if (await UserExists(registerDto.Username))
+        var userExists = await _accountRepository.GetUserByUsername(registerDto.Username);
+
+        if (userExists != null)
         {
             return BadRequest("Username already exists on this username: " + registerDto.Username);
         }
 
-        var user = _mapper.Map<User>(registerDto);
-
-        user.UserName = registerDto.Username.ToLower();
-
-        var result = await _userManager.CreateAsync(user, registerDto.Password);
+        var (result, user) = await _accountRepository.RegisterUserAsync(registerDto, registerDto.Password);
 
         if (!result.Succeeded)
         {
             return BadRequest(result.Errors);
         }
 
-        var roleResult = await _userManager.AddToRoleAsync(user, "User");
+        if (user == null)
+        {
+            return BadRequest("Something went wrong with creating an account. Please try again later.");
+        }
+
+        var roleResult = await _accountRepository.AddUserToRoleAsync(user, "User");
 
         if (!roleResult.Succeeded)
         {
-            return BadRequest(result.Errors);
+            return BadRequest(roleResult.Errors);
         }
 
-        return new UserDto
+        return Ok(new UserDto
         {
             Username = user.UserName,
             Token = await _tokenService.CreateToken(user)
-        };
+        });
     }
 
     [HttpPost("login")]
     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
     {
-        var user = await _userManager.Users.SingleOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower());
+        var user = await _accountRepository.GetUserByUsername(loginDto.Username);
 
         if (user == null)
         {
-            return Unauthorized("Username or password is incorrect.");
+            return Unauthorized();
         }
 
-        var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+        var result = await _accountRepository.LoginUserAsync(loginDto.Username, loginDto.Password);
 
-        if (!result.Succeeded)
+        if (result.ErrorMessage != null)
         {
-            return Unauthorized();
+            return Unauthorized("Invalid username or password");
         }
 
         return new UserDto
@@ -74,10 +74,5 @@ public class AccountController : BaseApiController
             Username = user.UserName,
             Token = await _tokenService.CreateToken(user)
         };
-    }
-
-    private async Task<bool> UserExists(string username)
-    {
-        return await _userManager.Users.AnyAsync(user => user.UserName == username.ToLower());
     }
 }

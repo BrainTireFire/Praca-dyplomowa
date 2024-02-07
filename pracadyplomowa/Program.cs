@@ -16,6 +16,7 @@ builder.Services.AddDbContext<AppIdentityDbContext>(opt =>
 builder.Services.AddIdentityServices(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
 // // Add services to the container.
 // // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

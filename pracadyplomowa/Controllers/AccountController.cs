@@ -69,10 +69,10 @@ public class AccountController : BaseApiController
             return Unauthorized("Invalid username or password");
         }
 
-        return new UserDto
+        return Ok(new UserDto
         {
             Username = user.UserName,
             Token = await _tokenService.CreateToken(user)
-        };
+        });
     }
 }

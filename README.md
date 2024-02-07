@@ -34,5 +34,8 @@ Todo
 - **Endpoint:** http://localhost:5000/api/admin/delete-user/{username}
 - **Description:** Deletes a user. Requires admin permission.
 
+## Tests
+- **Postman Collection:** [Postman Collection](https://github.com/BrainTireFire/Praca-dyplomowa/tree/main/Resource)
+
 ## Note
 None

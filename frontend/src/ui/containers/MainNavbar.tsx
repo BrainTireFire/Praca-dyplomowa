@@ -1,9 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
+import DropdownNav from "../links/DropdownNav";
+import { RxAvatar } from "react-icons/rx";
+import { IoSettingsOutline, IoLogOutOutline } from "react-icons/io5";
 
 const NavList = styled.ul`
   display: flex;
+  flex-direction: row;
+  gap: 0.8rem;
+
+  /* @media (max-width: 768px) {
+    flex-direction: column;
+    display: ${(props) => (props.open ? "block" : "none")};
+  } */
+`;
+
+// const Hamburger = styled.div`
+//   display: none;
+
+//   @media (max-width: 768px) {
+//     display: block;
+//   }
+// `;
+
+const LinkWithIconContainer = styled.span`
+  display: flex;
+  align-items: center;
   flex-direction: row;
   gap: 0.8rem;
 `;
@@ -47,8 +70,16 @@ const StyledNavLink = styled(NavLink)`
 `;
 
 export default function MainNavbar() {
+  // const [isOpen, setIsOpen] = useState(false);
+
+  // const handleHamburgerClick = () => {
+  //   setIsOpen(!isOpen);
+  // };
+
   return (
     <nav>
+      {/* <Hamburger onClick={handleHamburgerClick}>☰</Hamburger>
+      <NavList open={isOpen}> */}
       <NavList>
         <li>
           <StyledNavLink to="/campaigns">
@@ -70,6 +101,26 @@ export default function MainNavbar() {
             <span>Concact</span>
           </StyledNavLink>
         </li>
+        <DropdownNav>
+          <StyledNavLink to="">
+            <LinkWithIconContainer>
+              <RxAvatar />
+              Nickname
+            </LinkWithIconContainer>
+          </StyledNavLink>
+          <DropdownNav.Menu>
+            <DropdownNav.Link to="/profile">
+              <LinkWithIconContainer>
+                <IoSettingsOutline /> Profile
+              </LinkWithIconContainer>
+            </DropdownNav.Link>
+            <DropdownNav.Link to="">
+              <LinkWithIconContainer>
+                <IoLogOutOutline /> Sign out
+              </LinkWithIconContainer>
+            </DropdownNav.Link>
+          </DropdownNav.Menu>
+        </DropdownNav>
       </NavList>
     </nav>
   );

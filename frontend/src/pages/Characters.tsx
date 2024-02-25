@@ -1,17 +1,6 @@
-import React from "react";
-import AttributeBox from "../ui/characters/AttributeBox";
+import styled from "styled-components";
+import CharactersSheet from "../features/characters/CharactersSheet";
 
 export default function Characters() {
-  return (
-    <div>
-      Characters
-      <AttributeBox>
-        <AttributeBox.Header>Strength</AttributeBox.Header>
-        <AttributeBox.Box>
-          20
-          <AttributeBox.Circle>+5</AttributeBox.Circle>
-        </AttributeBox.Box>
-      </AttributeBox>
-    </div>
-  );
+  return <CharactersSheet></CharactersSheet>;
 }

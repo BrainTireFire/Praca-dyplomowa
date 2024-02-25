@@ -19,7 +19,7 @@ const Box = styled.div`
 
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-sm);
-  width: 5%;
+  width: 120px;
   height: 120px;
 `;
 
@@ -40,6 +40,13 @@ const Circle = styled.div`
   border-radius: 100%;
 `;
 
+const Input = styled.input`
+  border: 1px solid var(--color-border);
+  background-color: transparent;
+  width: 40px;
+  height: 40px;
+`;
+
 function AttributeBox({ children }: { children: React.ReactNode }) {
   return <StyledDropdown>{children}</StyledDropdown>;
 }
@@ -47,5 +54,6 @@ function AttributeBox({ children }: { children: React.ReactNode }) {
 AttributeBox.Header = Header;
 AttributeBox.Box = Box;
 AttributeBox.Circle = Circle;
+AttributeBox.Input = Input;
 
 export default AttributeBox;

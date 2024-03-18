@@ -8,7 +8,11 @@ const GlobalStyles = createGlobalStyle`
   --color-secondary-background-rgb: 220, 225, 222; //#DCE1DE
   --color-border: #49A078;
 
-  --color-button-secondary: #D14836;
+  --color-button-primary: #D14836;
+  --color-button-secondary: #49C5B6;
+
+  --color-button-hover-primary:  #831b0d;
+  --color-button-hover-secondary: #096359;
 
   --color-secondary-text: #DCE1DE;
   --color-header-text: #9CC5A1;
@@ -18,6 +22,8 @@ const GlobalStyles = createGlobalStyle`
   --color-black-100: #200d0d;
 
   --color-navbar: #1D1D1D;
+
+  --color-button-green: #49A078;
   
 
 

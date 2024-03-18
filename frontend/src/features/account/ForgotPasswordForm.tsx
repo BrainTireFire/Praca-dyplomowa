@@ -24,7 +24,7 @@ export default function ForgotPasswordForm() {
         />
       </FormRowVertical>
       <FormRowVertical>
-        <Button size="large" variation="secondary">
+        <Button size="large" variation="primary">
           Send password recovery link
         </Button>
       </FormRowVertical>

@@ -2,6 +2,7 @@ import React from "react";
 import Menus from "../../ui/containers/Menus";
 import Table from "../../ui/containers/Table";
 import EquipmentRow from "./EquipmentRow";
+import styled from "styled-components";
 
 const equipments = [
   {
@@ -34,7 +35,6 @@ export default function EquipmentTable() {
           <div>Equipped</div>
           <div></div>
         </Table.Header>
-
         <Table.Body
           data={equipments}
           render={(equipment) => (

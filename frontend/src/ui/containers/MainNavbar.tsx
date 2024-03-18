@@ -69,6 +69,13 @@ const StyledNavLink = styled(NavLink)`
   }
 `;
 
+const MainNavbarStyled = styled.nav`
+  height: 7rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
 export default function MainNavbar() {
   // const [isOpen, setIsOpen] = useState(false);
 
@@ -77,10 +84,15 @@ export default function MainNavbar() {
   // };
 
   return (
-    <nav>
+    <MainNavbarStyled>
       {/* <Hamburger onClick={handleHamburgerClick}>☰</Hamburger>
       <NavList open={isOpen}> */}
       <NavList>
+        <li>
+          <StyledNavLink to="/main">
+            <img src="https://via.placeholder.com/25" alt="logo" />
+          </StyledNavLink>
+        </li>
         <li>
           <StyledNavLink to="/campaigns">
             <span>My campaigns</span>
@@ -122,6 +134,6 @@ export default function MainNavbar() {
           </DropdownNav.Menu>
         </DropdownNav>
       </NavList>
-    </nav>
+    </MainNavbarStyled>
   );
 }

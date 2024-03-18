@@ -3,7 +3,7 @@ import { createContext } from "react";
 import styled from "styled-components";
 
 const StyledTable = styled.div`
-  border: 1px solid var(--color-button-secondary);
+  border: 1px solid var(--color-button-primary);
 
   font-size: 1.4rem;
   background-color: var(--color-grey-0);
@@ -14,6 +14,7 @@ const StyledTable = styled.div`
 const CommonRow = styled.div`
   display: grid;
   grid-template-columns: ${(props) => props.columns};
+
   column-gap: 2.4rem;
   align-items: center;
   transition: none;
@@ -23,7 +24,7 @@ const StyledHeader = styled(CommonRow)`
   padding: 1.6rem 2.4rem;
 
   background-color: var(--color-grey-50);
-  border-bottom: 1px solid var(--color-button-secondary);
+  border-bottom: 1px solid var(--color-button-primary);
   text-transform: uppercase;
   letter-spacing: 0.4px;
   font-weight: 600;
@@ -34,7 +35,7 @@ const StyledRow = styled(CommonRow)`
   padding: 1.2rem 2.4rem;
 
   &:not(:last-child) {
-    border-bottom: 1px solid var(--color-button-secondary);
+    border-bottom: 1px solid var(--color-button-primary);
   }
 `;
 
@@ -43,7 +44,7 @@ const StyledBody = styled.section`
 `;
 
 const Footer = styled.footer`
-  background-color: var(--color-button-secondary);
+  background-color: var(--color-button-primary);
   display: flex;
   justify-content: center;
   padding: 1.2rem;
@@ -62,16 +63,22 @@ const Empty = styled.p`
 `;
 
 const TableHeader = styled.div`
-  border-bottom: 1px solid var(--color-button-secondary);
+  border-bottom: 1px solid var(--color-button-primary);
   padding: 1rem;
   font-size: 1.6rem;
   font-weight: bold;
   text-align: left;
 `;
 
-const TableContext = createContext();
+const TableContext = createContext({ columns: "" });
 
-function Table({ header, columns, children }) {
+type TableProps = {
+  header?: string;
+  columns: string;
+  children: React.ReactNode;
+};
+
+function Table({ header, columns, children }: TableProps) {
   return (
     <TableContext.Provider value={{ columns }}>
       <StyledTable role="table">
@@ -82,7 +89,7 @@ function Table({ header, columns, children }) {
   );
 }
 
-function Header({ children }) {
+function Header({ children }: { children: React.ReactNode }) {
   const { columns } = useContext(TableContext);
 
   return (
@@ -92,7 +99,7 @@ function Header({ children }) {
   );
 }
 
-function Row({ children }) {
+function Row({ children }: { children: React.ReactNode }) {
   const { columns } = useContext(TableContext);
 
   return (
@@ -102,7 +109,13 @@ function Row({ children }) {
   );
 }
 
-function Body({ data, render }) {
+function Body({
+  data,
+  render,
+}: {
+  data: any[];
+  render: (item: any) => React.ReactNode;
+}) {
   if (!data.length) {
     return <Empty>No data to show at the moment</Empty>;
   }

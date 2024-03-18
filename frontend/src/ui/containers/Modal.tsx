@@ -10,7 +10,7 @@ const StyledModal = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: var(--color-button-secondary);
+  background-color: var(--color-button-primary);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-lg);
   padding: 3.2rem 4rem;
@@ -23,7 +23,7 @@ const Overlay = styled.div`
   left: 0;
   width: 100%;
   height: 100vh;
-  background-color: var(--color-button-secondary);
+  background-color: var(--color-button-primary);
   backdrop-filter: blur(4px);
   z-index: 1000;
   transition: all 0.5s;
@@ -41,7 +41,7 @@ const Button = styled.button`
   right: 1.9rem;
 
   &:hover {
-    background-color: var(--color-button-secondary);
+    background-color: var(--color-button-primary);
   }
 
   & svg {
@@ -50,13 +50,13 @@ const Button = styled.button`
     /* Sometimes we need both */
     /* fill: var(--color-grey-500);
     stroke: var(--color-grey-500); */
-    color: var(--color-button-secondary);
+    color: var(--color-button-primary);
   }
 `;
 
 const ModalContext = createContext();
 
-function Modal({ children }) {
+function Modal({ children }: { children: React.ReactNode }) {
   const [openName, setOpenName] = useState("");
 
   const close = () => setOpenName("");
@@ -75,7 +75,13 @@ function Open({ children, opens: opensWindowName }) {
   return cloneElement(children, { onClick: () => open(opensWindowName) });
 }
 
-function Window({ name, children }) {
+function Window({
+  name,
+  children,
+}: {
+  name: string;
+  children: React.ReactNode;
+}) {
   const { openName, close } = useContext(ModalContext);
   const ref = useOutsideClick(close);
 

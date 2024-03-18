@@ -55,7 +55,7 @@ export default function RegisterForm() {
         />
       </FormRowVertical>
       <FormRowVertical>
-        <Button size="large" variation="secondary">
+        <Button size="large" variation="primary">
           Sign up
         </Button>
       </FormRowVertical>

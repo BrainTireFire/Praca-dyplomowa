@@ -40,7 +40,7 @@ export default function LoginForm() {
         <Link to="/forgotPassword">Forgot Password?</Link>
       </LinkContainer>
       <FormRowVertical>
-        <Button size="large" variation="secondary">
+        <Button size="large" variation="primary">
           Login
         </Button>
       </FormRowVertical>

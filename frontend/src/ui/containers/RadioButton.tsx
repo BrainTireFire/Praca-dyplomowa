@@ -14,13 +14,13 @@ const RadioInput = styled.input`
   width: 16px;
   height: 16px;
   appearance: none;
-  border: 2px solid var(--color-button-secondary);
+  border: 2px solid var(--color-button-primary);
   border-radius: 4px;
   outline: none;
 
   &:checked {
-    background-color: var(--color-button-secondary);
-    border-color: var(--color-button-secondary);
+    background-color: var(--color-button-primary);
+    border-color: var(--color-button-primary);
   }
 `;
 

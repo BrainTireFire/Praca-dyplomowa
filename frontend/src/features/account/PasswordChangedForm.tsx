@@ -33,7 +33,7 @@ export default function PasswordChangedForm() {
         />
       </FormRowVertical>
       <FormRowVertical>
-        <Button size="large" variation="secondary">
+        <Button size="large" variation="primary">
           Reset password
         </Button>
       </FormRowVertical>

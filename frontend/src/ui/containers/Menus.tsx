@@ -34,7 +34,7 @@ const StyledToggle = styled.button`
 const StyledList = styled.ul`
   position: fixed;
 
-  background-color: var(--color-button-secondary);
+  background-color: var(--color-button-primary);
   box-shadow: var(--shadow-md);
   border-radius: var(--border-radius-md);
 
@@ -56,7 +56,7 @@ const StyledButton = styled.button`
   gap: 1.6rem;
 
   &:hover {
-    background-color: var(--color-button-secondary);
+    background-color: var(--color-button-primary);
   }
 
   & svg {

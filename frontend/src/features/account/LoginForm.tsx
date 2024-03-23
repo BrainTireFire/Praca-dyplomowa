@@ -3,7 +3,7 @@ import Form from "../../ui/forms/Form";
 import FormRowVertical from "../../ui/forms/FormRowVertical";
 import Input from "../../ui/forms/Input";
 import Heading from "../../ui/text/Heading";
-import Button from "../../ui/Button";
+import Button from "../../ui/interactive/Button";
 import LinkContainer from "../../ui/containers/LinkContainer";
 import Link from "../../ui/links/Link";
 

@@ -3,7 +3,7 @@ import UserChangeEmailForm from "./UserChangeEmailForm";
 import UserChangesPasswordForm from "./UserChangesPasswordForm";
 import UserChangeUsernameForm from "./UserChangeUsernameForm";
 import Heading from "../../../ui/text/Heading";
-import Button from "../../../ui/Button";
+import Button from "../../../ui/interactive/Button";
 
 const StyledChangeUserData = styled.div`
   display: grid;

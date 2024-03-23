@@ -3,7 +3,7 @@ import Form from "../../ui/forms/Form";
 import Heading from "../../ui/text/Heading";
 import FormRowVertical from "../../ui/forms/FormRowVertical";
 import Input from "../../ui/forms/Input";
-import Button from "../../ui/Button";
+import Button from "../../ui/interactive/Button";
 
 export default function PasswordChangedForm() {
   const [password, setPassword] = useState("");

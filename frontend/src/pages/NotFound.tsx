@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 import { useMoveBack } from "../hooks/useMoveBack";
-import Button from "../ui/Button";
+import Button from "../ui/interactive/Button";
 import Heading from "../ui/text/Heading";
 import { FaArrowLeftLong } from "react-icons/fa6";
 

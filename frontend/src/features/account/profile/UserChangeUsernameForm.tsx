@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import Input from "../../../ui/forms/Input";
-import Button from "../../../ui/Button";
+import Button from "../../../ui/interactive/Button";
 import Form from "../../../ui/forms/Form";
 import styled from "styled-components";
 

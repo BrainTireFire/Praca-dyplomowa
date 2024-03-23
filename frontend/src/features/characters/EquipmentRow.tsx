@@ -51,6 +51,8 @@ export default function EquipmentRow({ equipment }) {
         />
       </Stacked>
 
+      <Stacked>{equipment.gwiazda}</Stacked>
+
       <Modal>
         <Menus.Menu>
           <Menus.Toggle id={equipment.id} />

@@ -11,6 +11,12 @@ const StyledTable = styled.div`
   overflow: hidden;
 `;
 
+const StyledHeaderWithButton = styled.div`
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--color-button-primary);
+`;
+
 const CommonRow = styled.div`
   display: grid;
   grid-template-columns: ${(props) => props.columns};
@@ -63,26 +69,41 @@ const Empty = styled.p`
 `;
 
 const TableHeader = styled.div`
-  border-bottom: 1px solid var(--color-button-primary);
   padding: 1rem;
   font-size: 1.6rem;
   font-weight: bold;
   text-align: left;
 `;
 
+const TableButton = styled.button`
+  background-color: var(--color-button-primary);
+  color: var(--color-grey-0);
+  font-size: 1.6rem;
+  font-weight: bold;
+  padding: 1rem;
+  cursor: pointer;
+  width: 25%;
+`;
+
 const TableContext = createContext({ columns: "" });
 
 type TableProps = {
   header?: string;
+  button?: string;
   columns: string;
   children: React.ReactNode;
 };
 
-function Table({ header, columns, children }: TableProps) {
+function Table({ header, columns, children, button }: TableProps) {
   return (
     <TableContext.Provider value={{ columns }}>
       <StyledTable role="table">
-        {header && <TableHeader>{header}</TableHeader>}
+        {header && (
+          <StyledHeaderWithButton>
+            <TableHeader>{header}</TableHeader>
+            {button && <TableButton>{button}</TableButton>}
+          </StyledHeaderWithButton>
+        )}
         {children}
       </StyledTable>
     </TableContext.Provider>

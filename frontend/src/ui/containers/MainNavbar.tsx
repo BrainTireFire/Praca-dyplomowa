@@ -114,7 +114,7 @@ export default function MainNavbar() {
           </StyledNavLink>
         </li>
         <DropdownNav>
-          <StyledNavLink to="">
+          <StyledNavLink to="/profile">
             <LinkWithIconContainer>
               <RxAvatar />
               Nickname

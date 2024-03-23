@@ -1,4 +1,3 @@
-import { NavLink } from "react-router-dom";
 import styled from "styled-components";
 
 const StyledDropdown = styled.div`
@@ -40,9 +39,18 @@ const Circle = styled.div`
   border-radius: 100%;
 `;
 
+const Text = styled.p`
+  /* border: 1px solid var(--color-border); */
+  /* background-color: transparent; */
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+`;
+
 const Input = styled.input`
-  border: 1px solid var(--color-border);
-  background-color: transparent;
+  /* border: 1px solid var(--color-border); */
+  /* background-color: transparent; */
   width: 40px;
   height: 40px;
 `;
@@ -55,5 +63,6 @@ AttributeBox.Header = Header;
 AttributeBox.Box = Box;
 AttributeBox.Circle = Circle;
 AttributeBox.Input = Input;
+AttributeBox.Text = Text;
 
 export default AttributeBox;

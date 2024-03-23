@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Heading from "../../ui/text/Heading";
-import Button from "../../ui/Button";
+import Button from "../../ui/interactive/Button";
 
 const StyledElementBox = styled.div`
   display: grid;

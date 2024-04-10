@@ -13,6 +13,7 @@ type TypesBox = {
     | "rectangleMedium"
     | "rectangleLarge"
     | "rectangleInputTiny";
+  customStyles?: ReturnType<typeof css>;
 };
 
 const borderRadius = {
@@ -93,6 +94,9 @@ const Box = styled.div<TypesBox>`
   /* Border radius */
   ${(props) => borderRadius[props.radius || "medium"]}
   ${(props) => variations[props.variation || "none"]}
+
+  /* Custom styles */
+  ${(props) => props.customStyles}
 `;
 
 Box.defaultProps = {

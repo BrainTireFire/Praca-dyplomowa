@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using pracadyplomowa;
 
@@ -10,9 +11,11 @@ using pracadyplomowa;
 namespace pracadyplomowa.Data.Identity.Migrations
 {
     [DbContext(typeof(AppIdentityDbContext))]
-    partial class AppIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240415085748_inheritanceItem")]
+    partial class inheritanceItem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
@@ -101,7 +104,7 @@ namespace pracadyplomowa.Data.Identity.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("pracadyplomowa.Models.ObjectWithOwner", b =>
+            modelBuilder.Entity("pracadyplomowa.Models.Item", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -114,9 +117,7 @@ namespace pracadyplomowa.Data.Identity.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("Objects");
-
-                    b.UseTptMappingStrategy();
+                    b.ToTable("Items");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Role", b =>
@@ -226,16 +227,6 @@ namespace pracadyplomowa.Data.Identity.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("pracadyplomowa.Models.Item", b =>
-                {
-                    b.HasBaseType("pracadyplomowa.Models.ObjectWithOwner");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.ToTable("Items");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("pracadyplomowa.Role", null)
@@ -272,10 +263,10 @@ namespace pracadyplomowa.Data.Identity.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("pracadyplomowa.Models.ObjectWithOwner", b =>
+            modelBuilder.Entity("pracadyplomowa.Models.Item", b =>
                 {
                     b.HasOne("pracadyplomowa.User", "Owner")
-                        .WithMany("Objects")
+                        .WithMany("Items")
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -302,15 +293,6 @@ namespace pracadyplomowa.Data.Identity.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("pracadyplomowa.Models.Item", b =>
-                {
-                    b.HasOne("pracadyplomowa.Models.ObjectWithOwner", null)
-                        .WithOne()
-                        .HasForeignKey("pracadyplomowa.Models.Item", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("pracadyplomowa.Role", b =>
                 {
                     b.Navigation("UserRoles");
@@ -318,7 +300,7 @@ namespace pracadyplomowa.Data.Identity.Migrations
 
             modelBuilder.Entity("pracadyplomowa.User", b =>
                 {
-                    b.Navigation("Objects");
+                    b.Navigation("Items");
 
                     b.Navigation("UserRoles");
                 });

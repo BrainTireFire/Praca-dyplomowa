@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using pracadyplomowa.Authorization.AuthorizationAttributes;
+using pracadyplomowa.Models.DTOs;
 
 namespace pracadyplomowa;
 
@@ -30,6 +32,15 @@ public class AdminController : BaseApiController
             .ToListAsync();
 
         return Ok(users);
+    }
+
+    [Authorize(Policy = "RequireAdminRole")]
+    [Ownership("Id")]
+    [HttpPost("users-with-roles")]
+    public ActionResult TestPost([FromBody] ObjectDTO test) //this method was prepared to test custom policy provider
+    {
+        Console.WriteLine($"Test Post {test.Id}");
+        return Ok();
     }
 
     [Authorize(Policy = "RequireAdminRole")]

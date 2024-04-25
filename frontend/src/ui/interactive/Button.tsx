@@ -1,7 +1,7 @@
 import styled, { css } from "styled-components";
 
 type ButtonProps = {
-  size?: "small" | "medium" | "large";
+  size?: "small" | "medium" | "large" | "verylarge";
   variation?: "primary" | "secondary" | "danger";
 };
 
@@ -21,6 +21,11 @@ const sizes = {
   large: css`
     font-size: 1.6rem;
     padding: 1.2rem 2.4rem;
+    font-weight: 500;
+  `,
+  verylarge: css`
+    font-size: 3rem;
+    padding: 2.3rem 8rem;
     font-weight: 500;
   `,
 };

@@ -1,7 +1,7 @@
 import styled, { css } from "styled-components";
 
 type LinkContainerProps = {
-  variation?: "center" | "right";
+  variation?: "center" | "right" | "left";
 };
 
 const variations = {
@@ -10,6 +10,9 @@ const variations = {
   `,
   right: css`
     text-align: right;
+  `,
+  left: css`
+    text-align: left;
   `,
 };
 

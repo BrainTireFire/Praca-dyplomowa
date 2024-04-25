@@ -6,13 +6,14 @@ import Home from "./pages/Home";
 import AppLayout from "./ui/containers/AppLayout";
 import MainDashboard from "./pages/MainDashboard";
 import Concact from "./pages/Concact";
-import Homebrew from "./pages/Homebrew";
+import Homebrew from "./pages/homebrew/Homebrew";
 import Characters from "./pages/Characters";
 import Campagins from "./pages/Campagins";
 import Profile from "./pages/account/Profile";
 import NotFound from "./pages/NotFound";
 import ForgotPassword from "./pages/account/ForgotPassword";
 import PasswordChanged from "./pages/account/PasswordChanged";
+import HomebrewCreatePower from "./pages/homebrew/HomebrewCreatePower";
 
 export default function Router() {
   return (
@@ -24,8 +25,11 @@ export default function Router() {
           <Route path="campaigns" element={<Campagins />} />
           <Route path="characters" element={<Characters />} />
           <Route path="homebrew" element={<Homebrew />} />
+          <Route
+            path="homebrew/createPower"
+            element={<HomebrewCreatePower />}
+          />
           <Route path="contact" element={<Concact />} />
-
           <Route path="profile" element={<Profile />} />
         </Route>
         <Route path="login" element={<Login />} />

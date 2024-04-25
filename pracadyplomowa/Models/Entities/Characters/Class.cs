@@ -7,6 +7,7 @@ namespace pracadyplomowa.Models.Entities.Characters
 {
     public class Class : ObjectWithId
     {
-        
+        public string Name { get; set; }
+        public string MaximumPreparedSpellsFormula { get; set; }
     }
 }

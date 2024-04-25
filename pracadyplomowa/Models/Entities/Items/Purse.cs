@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace pracadyplomowa.Models.Entities.Items
 {
-    public class Weapon : Item
+    public class Purse
     {
-        public bool Finesse { get; set; }
-        public bool Heavy { get; set; }
-        public bool Light { get; set; }
+        public int GoldPieces { get; set; }
+        public int SilverPieces { get; set; }
+        public int CopperPieces { get; set; }
     }
 }

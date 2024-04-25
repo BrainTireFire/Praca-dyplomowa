@@ -8,7 +8,7 @@ namespace pracadyplomowa.Models.Entities.Characters
 {
     public class EquipmentSlot : ObjectWithId
     {
-        public bool IsEquipped { get; set; }
+        public string Name { get; set; }
         public SlotType Type { get; set; }
     }
 }

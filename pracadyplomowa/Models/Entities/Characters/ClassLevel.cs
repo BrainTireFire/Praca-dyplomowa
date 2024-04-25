@@ -7,6 +7,7 @@ namespace pracadyplomowa.Models.Entities.Characters
 {
     public class ClassLevel : ObjectWithId
     {
-        
+        public int Level { get; set; }
+        public DiceSet HitDie { get; set; }
     }
 }

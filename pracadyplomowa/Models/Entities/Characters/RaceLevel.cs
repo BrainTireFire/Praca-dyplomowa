@@ -7,6 +7,6 @@ namespace pracadyplomowa.Models.Entities.Characters
 {
     public class RaceLevel : ObjectWithId
     {
-        
+        public int Level { get; set; }
     }
 }

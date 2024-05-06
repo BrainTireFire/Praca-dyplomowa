@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace pracadyplomowa.Models
+namespace pracadyplomowa.Models.Entities.Campaign
 {
-    public class Item : ObjectWithOwner
+    public class ActionLog : ObjectWithId
     {
-        public string Name { get; set; }
+        
     }
 }

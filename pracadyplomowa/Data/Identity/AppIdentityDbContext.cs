@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using pracadyplomowa.Models;
+using pracadyplomowa.Models.Entities;
 
 namespace pracadyplomowa;
 

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using pracadyplomowa.Models;
+using pracadyplomowa.Models.Entities;
 
 namespace pracadyplomowa;
 

@@ -8,5 +8,6 @@ namespace pracadyplomowa.Models.Entities.Characters
     public class Race : ObjectWithId
     {
         public string Name { get; set; }
+        public virtual ICollection<Character> Characters { get; set; } = [];
     }
 }

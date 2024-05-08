@@ -9,5 +9,7 @@ namespace pracadyplomowa.Models.Entities.Characters
     {
         public int Level { get; set; }
         public DiceSet HitDie { get; set; }
+
+        public virtual ICollection<Character> Characters { get; set; } = [];
     }
 }

@@ -10,5 +10,6 @@ namespace pracadyplomowa.Models.Entities.Characters
     {
         public bool IsEquipped { get; set; }
         public SlotType Type { get; set; }
+        public virtual Character Character { get; set; }
     }
 }

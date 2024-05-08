@@ -10,5 +10,7 @@ namespace pracadyplomowa.Models.Entities.Characters
     {
         public string Name { get; set; }
         public SlotType Type { get; set; }
+
+        public virtual ICollection<Race> Races { get; set; } = [];
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using pracadyplomowa.Models.Entities.Characters;
+using pracadyplomowa.Models.Entities.Items;
 using pracadyplomowa.Models.Enums;
 
 namespace pracadyplomowa.Models.Entities.Powers
@@ -30,6 +31,8 @@ namespace pracadyplomowa.Models.Entities.Powers
         public SavingThrowRoll SavingThrowRoll { get; set; }
         public bool VerbalComponent { get; set; }
         public bool SomaticComponent { get; set; }
+
+        public virtual Item Item { get; set; }
 
         public virtual ICollection<Character> CharacterPreparedPowers { get; set; } = [];
         public virtual ICollection<Character> CharacterKnownsPowers { get; set; } = [];

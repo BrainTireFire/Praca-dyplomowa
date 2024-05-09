@@ -10,6 +10,7 @@ namespace pracadyplomowa.Models.Entities.Items
         public int ArmorClass { get; set; }
         public bool StealthDisadvantage { get; set; }
         public int StrengthRequirement { get; set; }
-        
+
+        public virtual Item Item { get; set; }
     }
 }

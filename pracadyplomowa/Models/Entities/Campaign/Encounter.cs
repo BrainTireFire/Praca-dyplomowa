@@ -8,5 +8,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
     public class Encounter
     {
         public string Name { get; set; }
+
+        public virtual Campaign Campaign { get; set; }
     }
 }

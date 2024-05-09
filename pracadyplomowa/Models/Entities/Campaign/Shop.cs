@@ -7,6 +7,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
 {
     public class Shop : ObjectWithId
     {
-        
+
+        public virtual Campaign Campaign { get; set; }
     }
 }

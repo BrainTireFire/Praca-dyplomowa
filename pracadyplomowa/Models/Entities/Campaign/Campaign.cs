@@ -8,6 +8,8 @@ namespace pracadyplomowa.Models.Entities.Campaign
 {
     public class Campaign : ObjectWithOwner
     {
+        public string Name { get; set; }
+
         public virtual User UserOwner { get; set; }
 
         public virtual ICollection<Character> Characters { get; set; } = [];

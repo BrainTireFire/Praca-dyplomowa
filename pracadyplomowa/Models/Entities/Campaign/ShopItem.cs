@@ -8,6 +8,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
 {
     public class ShopItem
     {
+        public int Quantity { get; set; }
 
         public virtual Item Item { get; set; }
     }

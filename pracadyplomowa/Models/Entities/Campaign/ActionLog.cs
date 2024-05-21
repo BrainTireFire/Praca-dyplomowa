@@ -7,6 +7,6 @@ namespace pracadyplomowa.Models.Entities.Campaign
 {
     public class ActionLog : ObjectWithId
     {
-        
+        public string Content;
     }
 }

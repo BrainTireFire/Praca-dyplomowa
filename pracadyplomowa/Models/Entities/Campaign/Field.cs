@@ -7,6 +7,10 @@ namespace pracadyplomowa.Models.Entities.Campaign
 {
     public class Field : ObjectWithId
     {
-        
+        public int PositionX { get; set; }
+        public int PositionY { get; set; }
+        public int PositionZ { get; set; }
+        public string Color { get; set; }
+        public string Description { get; set; }
     }
 }

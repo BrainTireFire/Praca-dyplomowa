@@ -7,6 +7,6 @@ namespace pracadyplomowa.Models.Entities.Campaign
 {
     public class Board : ObjectWithOwner
     {
-        
+        public string Name { get; set; }
     }
 }

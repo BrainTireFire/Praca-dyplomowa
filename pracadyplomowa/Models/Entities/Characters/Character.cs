@@ -19,7 +19,7 @@ namespace pracadyplomowa.Models.Entities.Characters
         public virtual EffectGroup EffectGroup { get; set; }
         public virtual ParticipanceData ParticipanceData { get; set; }
         public virtual ICollection<EquipData> EquipDatas { get; set; } = [];
-        // public virtual ICollection<Campaign> Campaigns { get; set; } = []; WHAT IS GOING ON HERE????
+        public virtual ICollection<Campaign.Campaign> Campaigns { get; set; } = []; //WHAT IS GOING ON HERE????
         public virtual ICollection<ClassLevel> ClassLevels { get; set; } = [];
         public virtual ICollection<Aura> Auras { get; set; } = [];
         public virtual ICollection<EffectInstance> EffectInstances { get; set; } = [];

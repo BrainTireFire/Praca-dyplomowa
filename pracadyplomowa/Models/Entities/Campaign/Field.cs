@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using pracadyplomowa.Models.Entities.Powers;
 
 namespace pracadyplomowa.Models.Entities.Campaign
 {
@@ -12,5 +13,9 @@ namespace pracadyplomowa.Models.Entities.Campaign
         public int PositionZ { get; set; }
         public string Color { get; set; }
         public string Description { get; set; }
+
+
+        //Relationships
+        public virtual ICollection<Power> R_CasterPowers { get; set; } = [];
     }
 }

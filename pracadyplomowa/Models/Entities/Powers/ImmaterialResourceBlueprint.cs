@@ -10,6 +10,11 @@ namespace pracadyplomowa.Models.Entities.Powers
     {
         public string Name { get; set; }
         public RefreshType RefreshesOn { get; set; }
+
+        //Relationships
+        public ICollection<Power> R_PowersRequiringThis { get; set; } = [];
+
+        public ICollection<ImmaterialResourceBlueprint> R_Instances {get; set; } = [];
         
     }
 }

@@ -51,7 +51,7 @@ namespace pracadyplomowa.Models.Entities.Powers
 
         //proficiency effect
         public ProficiencyEffect ProficiencyEffect { get; set; }
-        public ItemFamily ItemFamily { get; set; } //relationship
+        // public ItemFamily ItemFamily { get; set; } //relationship
 
         //size effect
         public SizeEffect SizeEffect { get; set; }
@@ -91,6 +91,11 @@ namespace pracadyplomowa.Models.Entities.Powers
         public int MovementCost_Multiplier { get; set; }
 
         //Relationship
-        public virtual ICollection<Character> R_EffectAffectedOnCharacters { get; set; } = [];
+        public virtual Character? R_AffectedCharacter { get; set; } //this probably should be moved to EffectGroup
+        public virtual EffectGroup R_OwnedByGroup { get; set; } = null!;
+        public virtual int OwnedByGroupId { get; set; }
+        public virtual ItemFamily? R_GrantsProficiencyInItemFamily { get; set; }
+        public virtual int? GrantsProficiencyInItemFamilyId { get; set; }
+
     }
 }

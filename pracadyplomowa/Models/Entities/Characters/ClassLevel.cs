@@ -12,5 +12,6 @@ namespace pracadyplomowa.Models.Entities.Characters
 
         // Relationships
         public virtual ICollection<Character> R_ClassLevelInCharacters { get; set; } = [];
+        public virtual ICollection<ChoiceGroup> R_ChoiceGroups { get; set;} = [];
     }
 }

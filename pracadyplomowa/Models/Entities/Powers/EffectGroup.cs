@@ -25,5 +25,13 @@ namespace pracadyplomowa.Models.Entities.Powers
         public virtual Character R_EffectCharacterConcentrate { get; set; }
         public virtual Item R_ItemAffecteBy { get; set; }
         public virtual Item R_ItemGiveEffect { get; set; }
+
+        public virtual ICollection<EffectInstance> R_OwnedEffects { get; set; } = [];
+
+        public virtual Aura? R_OriginatesFromAura { get; set; }
+        public virtual int? R_OriginatesFromAuraId { get; set; }
+
+        public virtual Aura? R_GeneratesAura { get; set; }
+        public virtual int? GeneratesAuraId { get; set; }
     }
 }

@@ -8,6 +8,9 @@ namespace pracadyplomowa.Models.Entities.Powers
 {
     public class Aura : ObjectWithId
     {
+        //Ids and keys
+        public int CharacterAuraId { get; set; }
+        
         public int Size { get; set; }
         
         // Relationships

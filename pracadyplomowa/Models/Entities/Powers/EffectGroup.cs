@@ -10,6 +10,11 @@ namespace pracadyplomowa.Models.Entities.Powers
 {
     public class EffectGroup : ObjectWithId
     {
+        //Ids and keys
+        public int EffectCharacterConcentrateId { get; set; }
+        public int ItemAffecteById { get; set; }
+        public int ItemGiveEffectId { get; set; }
+        
         public bool IsConstant { get; set; }
         public int DurationLeft { get; set; }
         public int DifficultyClassToBreak { get; set; }

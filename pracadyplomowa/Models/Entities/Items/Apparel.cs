@@ -7,6 +7,9 @@ namespace pracadyplomowa.Models.Entities.Items
 {
     public class Apparel : Item
     {
+        //Ids and keys
+        public int ApperelIsItemId { get; set; }
+        
         public int ArmorClass { get; set; }
         public bool StealthDisadvantage { get; set; }
         public int StrengthRequirement { get; set; }

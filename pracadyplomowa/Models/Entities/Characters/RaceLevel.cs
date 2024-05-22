@@ -7,6 +7,9 @@ namespace pracadyplomowa.Models.Entities.Characters
 {
     public class RaceLevel : ObjectWithId
     {
+        //Ids and keys
+        public int LevelsForRaceId { get; set; }
+        
         public int Level { get; set; }
 
         // Relationships

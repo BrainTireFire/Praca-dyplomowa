@@ -10,6 +10,9 @@ namespace pracadyplomowa.Models.Entities.Powers
 {
     public class EffectBlueprint : ObjectWithId
     {
+        //Ids and keys
+        public int CreatedEffectOnItemId { get; set; }
+        
         public string Name { get; set; }
         public string Description { get; set; }
         public int ResourceLevel { get; set; }

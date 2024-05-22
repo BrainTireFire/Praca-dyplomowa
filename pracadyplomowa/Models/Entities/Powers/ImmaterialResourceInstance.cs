@@ -8,6 +8,9 @@ namespace pracadyplomowa.Models.Entities.Powers
 {
     public class ImmaterialResourceInstance : ObjectWithId
     {
+        //Ids and keys
+        public int ResourceGrantedToItemId { get; set; }
+        
         public bool NeedsRefresh { get; set; }
         public int Level { get; set; }
         

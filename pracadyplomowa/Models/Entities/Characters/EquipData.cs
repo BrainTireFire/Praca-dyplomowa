@@ -9,11 +9,14 @@ namespace pracadyplomowa.Models.Entities.Characters
 {
     public class EquipData : ObjectWithId
     {
+        //Ids and keys
+        public int DataOfEquppiedItemsOfCharacterId { get; set; }
+        
         public bool IsEquipped { get; set; }
         public SlotType Type { get; set; }
 
         //Relationship
-        public virtual Character R_BackupOfCharacter { get; set; }
+        public virtual Character R_DataOfEquppiedItemsOfCharacter { get; set; }
 
         public virtual ICollection<Item> R_EquippedItems { get; set; } = [];
     }

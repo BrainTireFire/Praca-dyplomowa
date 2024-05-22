@@ -3,12 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using pracadyplomowa.Models.Entities.Campaign;
+using pracadyplomowa.Models.Entities.Items;
 using pracadyplomowa.Models.Entities.Powers;
 
 namespace pracadyplomowa.Models.Entities.Characters
 {
     public class Character : ObjectWithOwner
     {
+        //Ids and keys
+        public int CharacterBelongsToUserId { get; set; }
+        public int CharacterBelongsToRaceId { get; set; }
+        public int ConcentratesOnId { get; set; }
+        public int CharactesParticipateInEncounterId { get; set; }
+        public int CharacterHasBackpackId { get; set; }
+        
+        //Properties
         public string Name { get; set; }
         public string Description { get; set; }
         public DiceSet UsedHitDice { get; set; } = new DiceSet();
@@ -18,8 +27,9 @@ namespace pracadyplomowa.Models.Entities.Characters
         public virtual Race R_CharacterBelongsToRace { get; set; } = null!;
         public virtual EffectGroup R_ConcentratesOn { get; set; }
         public virtual ParticipanceData R_CharactesParticipateInEncounter { get; set; }
+        public virtual Backpack R_CharacterHasBackpack { get; set; }
         
-        public virtual ICollection<EquipData> R_Backup { get; set; } = [];
+        public virtual ICollection<EquipData> R_CharacterEquppiedItemsDatas { get; set; } = [];
         public virtual ICollection<Campaign.Campaign> R_CharactersInCampaign { get; set; } = [];
         public virtual ICollection<ClassLevel> R_CharacterHasLevelsInClass { get; set; } = [];
         public virtual ICollection<Aura> R_AuraCenteredAtCharacter { get; set; } = [];

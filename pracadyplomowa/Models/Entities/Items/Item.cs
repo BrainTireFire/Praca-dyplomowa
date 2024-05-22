@@ -10,6 +10,15 @@ namespace pracadyplomowa.Models.Entities.Items
 {
     public class Item : ObjectWithOwner
     {
+        //Ids and keys
+        public int ItemIsEquippableInSlotId { get; set; }
+        public int ItemHasToolId { get; set; }
+        public int ItemAsApparelId { get; set; }
+        public int ItemAsWeaponId { get; set; }
+        public int ItemInItemsFamilyId { get; set; }
+        public int BackpackHasItemId { get; set; }
+        public int ItemToEquippedId { get; set; }
+        
         public string Name { get; set; }
         // public Purse Value { get; set; } = new Purse();
         public int Weight { get; set; }

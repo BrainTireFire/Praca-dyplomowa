@@ -12,7 +12,8 @@ namespace pracadyplomowa.Models.Entities.Characters
         public string Name { get; set; }
         public SlotType Type { get; set; }
 
-        public virtual ICollection<Race> Races { get; set; } = [];
-        public virtual ICollection<Item> Items { get; set; } = [];
+        //Relationship
+        public virtual ICollection<Race> R_SlotForRaces { get; set; } = [];
+        public virtual ICollection<Item> R_SlotCanEquipItem { get; set; } = [];
     }
 }

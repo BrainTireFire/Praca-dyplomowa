@@ -90,7 +90,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         //movement cost effect 
         public int MovementCost_Multiplier { get; set; }
 
-
-        public virtual ICollection<Character> Characters { get; set; } = [];
+        //Relationship
+        public virtual ICollection<Character> R_EffectAffectedOnCharacters { get; set; } = [];
     }
 }

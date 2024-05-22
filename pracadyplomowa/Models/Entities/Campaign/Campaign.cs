@@ -10,11 +10,12 @@ namespace pracadyplomowa.Models.Entities.Campaign
     {
         public string Name { get; set; }
 
-        public virtual User UserOwner { get; set; }
+        //Relationship
+        public virtual User R_UserOwnsCampaign { get; set; }
 
-        public virtual ICollection<Character> Characters { get; set; } = [];
-        public virtual ICollection<Encounter> Encounters { get; set; } = [];
-        public virtual ICollection<Shop> Shops { get; set; } = [];
-        public virtual ICollection<User> UsersAttenders { get; set; } = [];
+        public virtual ICollection<Character> R_CampaigHasCharacters { get; set; } = [];
+        public virtual ICollection<Encounter> R_CampainHasEncounters { get; set; } = [];
+        public virtual ICollection<Shop> R_CampaingHasShops { get; set; } = [];
+        public virtual ICollection<User> R_UsersAttendsToCampaings { get; set; } = [];
     }
 }

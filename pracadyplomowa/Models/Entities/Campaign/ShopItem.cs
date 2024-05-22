@@ -10,6 +10,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
     {
         public int Quantity { get; set; }
 
-        public virtual Item Item { get; set; }
+        //Relationship
+        public virtual Item R_ShopHasItem { get; set; }
     }
 }

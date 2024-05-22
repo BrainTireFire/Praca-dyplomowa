@@ -15,7 +15,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
         public int NumberOfAttacksTaken { get; set; }
         public int DistanceTraveled { get; set; }
         
-
-        public virtual ICollection<Character> Characters { get; set; } = [];
+        //Relationships
+        public virtual ICollection<Character> R_CharactersParticipateInEncounter { get; set; } = [];
     }
 }

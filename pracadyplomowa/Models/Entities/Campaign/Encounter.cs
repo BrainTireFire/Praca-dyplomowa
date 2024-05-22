@@ -9,6 +9,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
     {
         public string Name { get; set; }
 
-        public virtual Campaign Campaign { get; set; }
+        //Relationship
+        public virtual Campaign R_EncounterInTheCampaign { get; set; }
     }
 }

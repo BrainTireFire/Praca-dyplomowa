@@ -9,8 +9,9 @@ namespace pracadyplomowa.Models.Entities.Characters
     {
         public string Name { get; set; }
 
-        public virtual ICollection<Character> Characters { get; set; } = [];
-        public virtual ICollection<RaceLevel> RaceLevels { get; set; } = [];
-        public virtual ICollection<EquipmentSlot> EquipmentSlots { get; set; } = [];
+        //Relationship
+        public virtual ICollection<Character> R_RaceBelongsToCharacter { get; set; } = [];
+        public virtual ICollection<RaceLevel> R_RaceConsisstsOfLevels { get; set; } = [];
+        public virtual ICollection<EquipmentSlot> R_RaceHasEquipmentSlots { get; set; } = [];
     }
 }

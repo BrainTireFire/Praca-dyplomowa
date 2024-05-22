@@ -11,6 +11,7 @@ namespace pracadyplomowa.Models.Entities.Items
         public bool StealthDisadvantage { get; set; }
         public int StrengthRequirement { get; set; }
 
-        public virtual Item Item { get; set; }
+        //Relationship
+        public virtual Item R_ApperelIsItem { get; set; }
     }
 }

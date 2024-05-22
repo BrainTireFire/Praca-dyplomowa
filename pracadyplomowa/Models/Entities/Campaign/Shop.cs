@@ -13,6 +13,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
         public string Location { get; set; }
         public string Description { get; set; }
         
-        public virtual Campaign Campaign { get; set; }
+        //Relationship
+        public virtual Campaign R_ShopInCampaign { get; set; }
     }
 }

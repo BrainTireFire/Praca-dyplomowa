@@ -11,6 +11,7 @@ namespace pracadyplomowa.Models.Entities.Items
         public bool Heavy { get; set; }
         public bool Light { get; set; }
 
-        public virtual Item Item { get; set; }
+        //Relationship
+        public virtual Item R_ItemIsWeapon { get; set; }
     }
 }

@@ -9,6 +9,7 @@ namespace pracadyplomowa.Models.Entities.Characters
     {
         public int Level { get; set; }
 
-        public virtual Race Race { get; set; }
+        // Relationships
+        public virtual Race R_LevelsForRace { get; set; }
     }
 }

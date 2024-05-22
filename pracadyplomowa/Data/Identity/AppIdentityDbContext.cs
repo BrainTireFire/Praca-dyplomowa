@@ -15,6 +15,9 @@ public class AppIdentityDbContext : IdentityDbContext<User, Role, int,
         {
 
         }
+        
+        public DbSet<Item> Items { get; set; }
+        public DbSet<ObjectWithOwner> Objects { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -46,8 +49,4 @@ public class AppIdentityDbContext : IdentityDbContext<User, Role, int,
                 builder.Entity<Item>();
 
         }
-
-        public DbSet<Item> Items { get; set; }
-        public DbSet<ObjectWithOwner> Objects { get; set; }
-
 }

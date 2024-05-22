@@ -16,18 +16,20 @@ namespace pracadyplomowa.Models.Entities.Items
         public string Description { get; set; }
         public bool IsSpellFocus { get; set; }
 
-        public virtual EquipmentSlot EquipmentSlot { get; set; }
-        public virtual Tool Tool { get; set; }
-        public virtual Apparel Apparel { get; set; }
-        public virtual Weapon Weapon { get; set; }
-        public virtual ItemFamily ItemFamily { get; set; }
-
-        public virtual ICollection<EquipData> EquipDatas { get; set; } = [];
-        public virtual ICollection<ImmaterialResourceInstance> ImmaterialResourceInstances { get; set; } = [];
-        public virtual ICollection<EffectGroup> EffectGroupAffectedBy { get; set; } = [];
-        public virtual ICollection<EffectGroup> EffectGroupFromItem { get; set; } = [];
-        public virtual ICollection<ShopItem> ShopItems { get; set; } = [];
-        public virtual ICollection<EffectBlueprint> EffectBlueprints { get; set; } = [];
-        public virtual ICollection<Power> Powers { get; set; } = [];
+        //Relationship
+        public virtual EquipmentSlot R_ItemIsEquippableInSlot { get; set; }
+        public virtual Tool R_ItemHasTool { get; set; }
+        public virtual Apparel R_ItemAsApparel { get; set; }
+        public virtual Weapon R_ItemAsWeapon { get; set; }
+        public virtual ItemFamily R_ItemInItemsFamily { get; set; }
+        public virtual Backpack R_BackpackHasItem { get; set; }
+        public virtual EquipData R_ItemToEquipped { get; set; }
+        
+        public virtual ICollection<ImmaterialResourceInstance> R_ItemGrantsResources { get; set; } = [];
+        public virtual ICollection<EffectGroup> R_EffectGroupAffectedBy { get; set; } = [];
+        public virtual ICollection<EffectGroup> R_EffectGroupFromItem { get; set; } = [];
+        public virtual ICollection<ShopItem> R_ItemInShops { get; set; } = [];
+        public virtual ICollection<EffectBlueprint> R_ItemCreateEffectsOnEquip { get; set; } = [];
+        public virtual ICollection<Power> R_EquipItemGrantsAccessToPower { get; set; } = [];
     }
 }

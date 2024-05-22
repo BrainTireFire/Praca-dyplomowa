@@ -14,16 +14,17 @@ namespace pracadyplomowa.Models.Entities.Characters
         public DiceSet UsedHitDice { get; set; } = new DiceSet();
 
         //Relationship
-        public virtual User User { get; set; } = null!;
-        public virtual Race Race { get; set; } = null!;
-        public virtual EffectGroup EffectGroup { get; set; }
-        public virtual ParticipanceData ParticipanceData { get; set; }
-        public virtual ICollection<EquipData> EquipDatas { get; set; } = [];
-        public virtual ICollection<Campaign.Campaign> Campaigns { get; set; } = []; //WHAT IS GOING ON HERE????
-        public virtual ICollection<ClassLevel> ClassLevels { get; set; } = [];
-        public virtual ICollection<Aura> Auras { get; set; } = [];
-        public virtual ICollection<EffectInstance> EffectInstances { get; set; } = [];
-        public virtual ICollection<Power> PowerPrepared { get; set; } = [];
-        public virtual ICollection<Power> PowerKnowns { get; set; } = [];
+        public virtual User R_CharacterBelongsToUser { get; set; } = null!;
+        public virtual Race R_CharacterBelongsToRace { get; set; } = null!;
+        public virtual EffectGroup R_ConcentratesOn { get; set; }
+        public virtual ParticipanceData R_CharactesParticipateInEncounter { get; set; }
+        
+        public virtual ICollection<EquipData> R_Backup { get; set; } = [];
+        public virtual ICollection<Campaign.Campaign> R_CharactersInCampaign { get; set; } = [];
+        public virtual ICollection<ClassLevel> R_CharacterHasLevelsInClass { get; set; } = [];
+        public virtual ICollection<Aura> R_AuraCenteredAtCharacter { get; set; } = [];
+        public virtual ICollection<EffectInstance> R_AffectedBy { get; set; } = [];
+        public virtual ICollection<Power> R_PowerPrepared { get; set; } = [];
+        public virtual ICollection<Power> R_PowerKnowns { get; set; } = [];
     }
 }

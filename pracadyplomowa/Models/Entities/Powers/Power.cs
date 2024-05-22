@@ -32,8 +32,9 @@ namespace pracadyplomowa.Models.Entities.Powers
         public bool VerbalComponent { get; set; }
         public bool SomaticComponent { get; set; }
 
-        public virtual ICollection<Character> CharacterPreparedPowers { get; set; } = [];
-        public virtual ICollection<Character> CharacterKnownsPowers { get; set; } = [];
-        public virtual ICollection<Item> Items { get; set; } = [];
+        // Relationships
+        public virtual ICollection<Character> R_CharacterPreparedPowers { get; set; } = [];
+        public virtual ICollection<Character> R_CharacterKnownsPowers { get; set; } = [];
+        public virtual ICollection<Item> R_PowersGrantedToItems { get; set; } = [];
     }
 }

@@ -9,6 +9,8 @@ namespace pracadyplomowa.Models.Entities.Powers
     public class Aura : ObjectWithId
     {
         public int Size { get; set; }
-        public virtual Character Character { get; set; }
+        
+        // Relationships
+        public virtual Character R_CharacterAura { get; set; }
     }
 }

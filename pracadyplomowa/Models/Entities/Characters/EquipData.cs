@@ -12,7 +12,9 @@ namespace pracadyplomowa.Models.Entities.Characters
         public bool IsEquipped { get; set; }
         public SlotType Type { get; set; }
 
-        public virtual Character Character { get; set; }
-        public virtual Item Item { get; set; }
+        //Relationship
+        public virtual Character R_BackupOfCharacter { get; set; }
+
+        public virtual ICollection<Item> R_EquippedItems { get; set; } = [];
     }
 }

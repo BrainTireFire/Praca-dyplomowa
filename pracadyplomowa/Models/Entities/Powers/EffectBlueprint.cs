@@ -15,6 +15,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         public int ResourceLevel { get; set; }
         public bool Saved { get; set; }
         public EffectType EffectType{ get; set; }
+        
         //movement effect
         public MovementEffect MovementEffect { get; set; }
         public string MovementEffect_Value { get; set; }
@@ -88,7 +89,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         //movement cost effect 
         public int MovementCost_Multiplier { get; set; }
 
-        //RELATIONSHIPS
-        public virtual Item Item { get; set; }
+        //Relationship
+        public virtual Item R_CreatedEffectOnItem { get; set; }
     }
 }

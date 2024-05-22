@@ -11,7 +11,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         public bool NeedsRefresh { get; set; }
         public int Level { get; set; }
         
-
-        public virtual Item Item { get; set; }
+        // Relationships
+        public virtual Item R_ResourceGrantedToItem { get; set; }
     }
 }

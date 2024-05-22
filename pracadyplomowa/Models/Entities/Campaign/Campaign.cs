@@ -12,7 +12,6 @@ namespace pracadyplomowa.Models.Entities.Campaign
 
         //Relationship
         public virtual User R_UserOwnsCampaign { get; set; }
-
         public virtual ICollection<Character> R_CampaigHasCharacters { get; set; } = [];
         public virtual ICollection<Encounter> R_CampainHasEncounters { get; set; } = [];
         public virtual ICollection<Shop> R_CampaingHasShops { get; set; } = [];

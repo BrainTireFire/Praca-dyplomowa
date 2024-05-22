@@ -26,7 +26,7 @@ namespace pracadyplomowa.Models.Entities.Characters
         public virtual User R_CharacterBelongsToUser { get; set; } = null!;
         public virtual Race R_CharacterBelongsToRace { get; set; } = null!;
         public virtual EffectGroup R_ConcentratesOn { get; set; }
-        public virtual ParticipanceData R_CharactesParticipateInEncounter { get; set; }
+        public virtual ParticipanceData R_CharactersParticipateInEncounter { get; set; }
         public virtual Backpack R_CharacterHasBackpack { get; set; }
         
         public virtual ICollection<EquipData> R_CharacterEquppiedItemsDatas { get; set; } = [];

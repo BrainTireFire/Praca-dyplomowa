@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Models.Entities.Items;
 using pracadyplomowa.Models.Enums;
+using pracadyplomowa.Models.Entities.Campaign;
 
 namespace pracadyplomowa.Models.Entities.Powers
 {
@@ -25,5 +26,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         public virtual Character R_EffectCharacterConcentrate { get; set; }
         public virtual Item R_ItemAffecteBy { get; set; }
         public virtual Item R_ItemGiveEffect { get; set; }
+        public virtual ICollection<Field> R_EffectOnField { get; set; }
+
     }
-}
+}   

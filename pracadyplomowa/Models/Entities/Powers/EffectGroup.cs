@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Models.Entities.Items;
 using pracadyplomowa.Models.Enums;
+using pracadyplomowa.Models.Entities.Campaign;
 
 namespace pracadyplomowa.Models.Entities.Powers
 {
@@ -33,5 +34,6 @@ namespace pracadyplomowa.Models.Entities.Powers
 
         public virtual Aura? R_GeneratesAura { get; set; }
         public virtual int? GeneratesAuraId { get; set; }
+        public virtual ICollection<Field> R_EffectOnField { get; set; }
     }
-}
+}   

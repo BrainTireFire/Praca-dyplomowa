@@ -9,6 +9,7 @@ namespace pracadyplomowa.Models.Entities.Characters
 {
     public class Class : ObjectWithId
     {
+        //Properties
         public string Name { get; set; }
         public string MaximumPreparedSpellsFormula { get; set; }
         public Ability? SpellcastingAbility { get; set; }

@@ -7,6 +7,8 @@ namespace pracadyplomowa.Models.Entities.Items
 {
     public class Tool : Item
     {
-        
+
+        //Relationship
+        public virtual ICollection<Item> R_ToolForItems { get; set; } = [];
     }
 }

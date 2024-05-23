@@ -8,5 +8,8 @@ namespace pracadyplomowa.Models.Entities.Items
     public class ItemFamily : ObjectWithId
     {
         public string Name { get; set; }
+
+        //Relationship
+        public virtual ICollection<Item> R_ItemFamilyInItems { get; set; } = [];
     }
 }

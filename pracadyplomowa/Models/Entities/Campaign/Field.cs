@@ -17,7 +17,9 @@ namespace pracadyplomowa.Models.Entities.Campaign
         public string Color { get; set; }
         public string Description { get; set; }
 
-        //Relationship
+
+        //Relationships
+        public virtual ICollection<Power> R_CasterPowers { get; set; } = [];
         public virtual Board R_Board { get; set; }
         public virtual ParticipanceData R_ParticipatesOnField { get; set;}
         public virtual ICollection<EffectGroup> R_EffectOnField { get; set; }

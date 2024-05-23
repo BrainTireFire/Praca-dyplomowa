@@ -13,6 +13,8 @@ namespace pracadyplomowa.Models.Entities.Characters
         public int Level { get; set; }
 
         // Relationships
-        public virtual Race R_LevelsForRace { get; set; }
+        public virtual Race R_LevelsForRace { get; set; } = null!;
+
+        public virtual ICollection<ChoiceGroup> R_ChoiceGroups { get; set;} = [];
     }
 }

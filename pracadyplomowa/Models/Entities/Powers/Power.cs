@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Npgsql.Internal.Postgres;
 using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Models.Entities.Items;
 using pracadyplomowa.Models.Enums;
@@ -35,6 +36,18 @@ namespace pracadyplomowa.Models.Entities.Powers
         // Relationships
         public virtual ICollection<Character> R_CharacterPreparedPowers { get; set; } = [];
         public virtual ICollection<Character> R_CharacterKnownsPowers { get; set; } = [];
-        public virtual ICollection<Item> R_PowersGrantedToItems { get; set; } = [];
+        public virtual ICollection<Item> R_ItemsGrantingPower { get; set; } = [];
+        public virtual ICollection<Weapon> R_WeaponsCastingOnHit { get; set; } = [];
+
+        public virtual ICollection<Class> R_ClassesWithAccess { get; set; } = [];
+        public virtual ImmaterialResourceBlueprint R_UsedImmaterialResource {get; set;}
+        public int UsedImmaterialResourceId { get; set;}
+        public virtual ICollection<ChoiceGroup> R_ChoiceGroups { get; set;} = [];
+
+        public virtual ICollection<Field> R_FieldsCasting { get; set; } = [];
+
+        public virtual ICollection<ItemCostRequirement> R_ItemsCostRequirement { get; set;} = [];
+
+        public virtual ICollection<EffectBlueprint> R_EffectBlueprints { get; set;} = [];
     }
 }

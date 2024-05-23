@@ -16,5 +16,8 @@ namespace pracadyplomowa.Models.Entities.Powers
         
         // Relationships
         public virtual Item R_ResourceGrantedToItem { get; set; }
+
+        public virtual ImmaterialResourceBlueprint R_Blueprint { get; set; } = null!;
+        public virtual int BlueprintId { get; set; }
     }
 }

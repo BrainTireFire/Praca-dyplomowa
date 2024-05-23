@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using pracadyplomowa.Models.Entities.Powers;
 
 namespace pracadyplomowa.Models.Entities.Items
 {
@@ -16,5 +17,9 @@ namespace pracadyplomowa.Models.Entities.Items
 
         //Relationship
         public virtual Item R_ItemIsWeapon { get; set; }
+
+        public virtual Power R_PowerCastedOnHit { get; set; }
+
+        
     }
 }

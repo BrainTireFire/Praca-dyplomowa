@@ -2,19 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using pracadyplomowa.Models.Entities.Powers;
 
 namespace pracadyplomowa.Models.Entities.Characters
 {
     public class RaceLevel : ObjectWithId
     {
-        //Ids and keys
-        public int LevelsForRaceId { get; set; }
         
         public int Level { get; set; }
 
         // Relationships
-        public virtual Race R_LevelsForRace { get; set; } = null!;
+        public virtual Race R_Race { get; set; } = null!;
+        public int RaceId { get; set; }
 
         public virtual ICollection<ChoiceGroup> R_ChoiceGroups { get; set;} = [];
+        public virtual ICollection<ImmaterialResourceInstance> R_ImmaterialResources { get; set;} = [];
     }
 }

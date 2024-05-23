@@ -35,5 +35,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         public virtual Aura? R_GeneratesAura { get; set; }
         public virtual int? GeneratesAuraId { get; set; }
         public virtual ICollection<Field> R_EffectOnField { get; set; }
+
+        public virtual ICollection<Character> R_TargetedCharacters { get; set; } = [];
     }
 }   

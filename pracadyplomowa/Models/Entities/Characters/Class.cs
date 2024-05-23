@@ -10,11 +10,12 @@ namespace pracadyplomowa.Models.Entities.Characters
     public class Class : ObjectWithId
     {
         //Properties
-        public string Name { get; set; }
-        public string MaximumPreparedSpellsFormula { get; set; }
+        public string Name { get; set; } = null!;
+        public string? MaximumPreparedSpellsFormula { get; set; }
         public Ability? SpellcastingAbility { get; set; }
 
         //Relationships
-        public ICollection<Power> R_AccessiblePowers { get; set; }
+        public ICollection<Power> R_AccessiblePowers { get; set; } = [];
+        public ICollection<ClassLevel> R_ClassLevels { get; set; } = [];
     }
 }

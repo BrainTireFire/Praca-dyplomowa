@@ -9,11 +9,11 @@ namespace pracadyplomowa.Models.Entities.Characters
 {
     public class EquipmentSlot : ObjectWithId
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
         public SlotType Type { get; set; }
 
         //Relationship
-        public virtual ICollection<Race> R_SlotForRaces { get; set; } = [];
-        public virtual ICollection<Item> R_SlotCanEquipItem { get; set; } = [];
+        public virtual ICollection<Race> R_Races { get; set; } = [];
+        public virtual ICollection<Item> R_Items { get; set; } = [];
     }
 }

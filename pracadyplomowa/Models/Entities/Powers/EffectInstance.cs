@@ -91,7 +91,6 @@ namespace pracadyplomowa.Models.Entities.Powers
         public int MovementCost_Multiplier { get; set; }
 
         //Relationship
-        public virtual Character? R_AffectedCharacter { get; set; } //this probably should be moved to EffectGroup
         public virtual EffectGroup R_OwnedByGroup { get; set; } = null!;
         public virtual int OwnedByGroupId { get; set; }
         public virtual ItemFamily? R_GrantsProficiencyInItemFamily { get; set; }

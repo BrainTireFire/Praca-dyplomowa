@@ -19,8 +19,9 @@ namespace pracadyplomowa.Models.Entities.Campaign
         public int DistanceTraveled { get; set; }
         
         //Relationship
-        public virtual Encounter R_Encounter{ get; set; }
-        public virtual Field R_CharacterOccupiesField { get; set; }
-        public virtual ICollection<Character> R_CharactersParticipateInEncounter { get; set; } = [];
+        public virtual Encounter R_Encounter{ get; set; } = null!;
+        public virtual ICollection<Field> R_OccupiedFields { get; set; } = [];
+        public virtual Character R_Character { get; set; } = null!;
+        public int CharacterId { get; set; }
     }
 }

@@ -8,13 +8,13 @@ namespace pracadyplomowa.Models.Entities.Campaign
 {
     public class Campaign : ObjectWithOwner
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         //Relationship
-        public virtual User R_UserOwnsCampaign { get; set; }
-        public virtual ICollection<Character> R_CampaigHasCharacters { get; set; } = [];
-        public virtual ICollection<Encounter> R_CampainHasEncounters { get; set; } = [];
-        public virtual ICollection<Shop> R_CampaingHasShops { get; set; } = [];
-        public virtual ICollection<User> R_UsersAttendsToCampaings { get; set; } = [];
+        public virtual ICollection<Character> R_CampaignHasCharacters { get; set; } = [];
+        public virtual ICollection<Encounter> R_CampaignHasEncounters { get; set; } = [];
+        public virtual ICollection<Shop> R_CampaignHasShops { get; set; } = [];
+        public virtual ICollection<User> R_UsersAttendsCampaigns { get; set; } = [];
+        public virtual ICollection<ActionLog> R_Log { get; set; } = [];
     }
 }

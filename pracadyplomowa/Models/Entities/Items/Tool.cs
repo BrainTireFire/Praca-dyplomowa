@@ -7,6 +7,6 @@ namespace pracadyplomowa.Models.Entities.Items
 {
     public class Tool : Item
     {
-        
+
     }
 }

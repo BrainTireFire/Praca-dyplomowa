@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using pracadyplomowa.Models;
 using pracadyplomowa.Models.Entities;
+using pracadyplomowa.Models.Entities.Items;
 
 namespace pracadyplomowa;
 
@@ -14,6 +15,9 @@ public class AppIdentityDbContext : IdentityDbContext<User, Role, int,
         {
 
         }
+        
+        public DbSet<Item> Items { get; set; }
+        public DbSet<ObjectWithOwner> Objects { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -31,22 +35,18 @@ public class AppIdentityDbContext : IdentityDbContext<User, Role, int,
                         .HasForeignKey(ur => ur.RoleId)
                         .IsRequired();
 
-                        
+
                 builder.Entity<ObjectWithOwner>().UseTptMappingStrategy();
                 builder.Entity<ObjectWithOwner>()
                         .HasKey(i => i.Id);
                 builder.Entity<ObjectWithOwner>()
                         .HasOne(i => i.Owner)
-                        .WithMany(o => o.Objects)
+                        .WithMany(o => o.R_Objects)
                         .HasForeignKey(i => i.OwnerId)
                         .IsRequired();
-                
-                        
+
+
                 builder.Entity<Item>();
 
         }
-
-        public DbSet<Item> Items {get; set;}
-        public DbSet<ObjectWithOwner> Objects {get; set;}
-
 }

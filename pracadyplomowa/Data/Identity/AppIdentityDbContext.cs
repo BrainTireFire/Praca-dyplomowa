@@ -41,7 +41,7 @@ public class AppIdentityDbContext : IdentityDbContext<User, Role, int,
                         .HasKey(i => i.Id);
                 builder.Entity<ObjectWithOwner>()
                         .HasOne(i => i.Owner)
-                        .WithMany(o => o.Objects)
+                        .WithMany(o => o.R_Objects)
                         .HasForeignKey(i => i.OwnerId)
                         .IsRequired();
 

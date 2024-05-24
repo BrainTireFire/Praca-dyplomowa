@@ -35,5 +35,8 @@ namespace pracadyplomowa.Models.Entities.Characters
         public virtual ICollection<EffectGroup> R_AffectedBy { get; set; } = [];
         public virtual ICollection<Power> R_PowersPrepared { get; set; } = [];
         public virtual ICollection<Power> R_PowersKnown { get; set; } = [];
+        public virtual Power? R_SpawnedByPower { get; set; }
+        public int? SpawnedByPowerId { get; set; }
+        public virtual ICollection<ImmaterialResourceInstance> R_ImmaterialResourceInstances { get; set;} = [];
     }
 }

@@ -11,8 +11,8 @@ namespace pracadyplomowa.Models.Entities.Items
         public int Value { get; set; }
 
         //Relationships
-        public int PowerId { get; set; }
         public Power R_Power { get; set; } = null!;
+        public int PowerId { get; set; }
 
         public ItemFamily R_ItemFamily { get; set; } = null!;
         public int ItemFamilyId {get; set;}

@@ -11,10 +11,6 @@ namespace pracadyplomowa.Models.Entities.Powers
 {
     public class EffectGroup : ObjectWithId
     {
-        //Ids and keys
-        public int EffectCharacterConcentrateId { get; set; }
-        public int ItemAffecteById { get; set; }
-        public int ItemGiveEffectId { get; set; }
         
         public bool IsConstant { get; set; }
         public int DurationLeft { get; set; }
@@ -23,9 +19,12 @@ namespace pracadyplomowa.Models.Entities.Powers
         public bool SavingThrowRetakenEveryTurn { get; set; }
 
         //Relationships
-        public virtual Character R_EffectCharacterConcentrate { get; set; }
-        public virtual Item R_ItemAffecteBy { get; set; }
-        public virtual Item R_ItemGiveEffect { get; set; }
+        public virtual Character? R_ConcentratedOnByCharacter { get; set; }
+        public int? ConcentratedOnByCharacterId { get; set; }
+        public virtual Item? R_ItemAffectedBy { get; set; }
+        public int? ItemAffectedById { get; set; }
+        public virtual Item? R_ItemGiveEffect { get; set; }
+        public int? ItemGiveEffectId { get; set; }
 
         public virtual ICollection<EffectInstance> R_OwnedEffects { get; set; } = [];
 
@@ -34,7 +33,7 @@ namespace pracadyplomowa.Models.Entities.Powers
 
         public virtual Aura? R_GeneratesAura { get; set; }
         public virtual int? GeneratesAuraId { get; set; }
-        public virtual ICollection<Field> R_EffectOnField { get; set; }
+        public virtual ICollection<Field> R_EffectOnField { get; set; } = [];
 
         public virtual ICollection<Character> R_TargetedCharacters { get; set; } = [];
     }

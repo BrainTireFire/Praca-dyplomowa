@@ -11,28 +11,21 @@ namespace pracadyplomowa.Models.Entities.Items
     public class Item : ObjectWithOwner
     {
         //Ids and keys
-        public int ItemIsEquippableInSlotId { get; set; }
-        public int ItemHasToolId { get; set; }
-        public int ItemAsApparelId { get; set; }
-        public int ItemAsWeaponId { get; set; }
-        public int ItemInItemsFamilyId { get; set; }
-        public int BackpackHasItemId { get; set; }
-        public int ItemToEquippedId { get; set; }
         
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
         // public Purse Value { get; set; } = new Purse();
         public int Weight { get; set; }
-        public string Description { get; set; }
+        public string Description { get; set; } = null!;
         public bool IsSpellFocus { get; set; }
 
         //Relationship
-        public virtual EquipmentSlot R_ItemIsEquippableInSlot { get; set; }
-        public virtual Tool R_ItemHasTool { get; set; }
-        public virtual Apparel R_ItemAsApparel { get; set; }
-        public virtual Weapon R_ItemAsWeapon { get; set; }
-        public virtual ItemFamily R_ItemInItemsFamily { get; set; }
-        public virtual Backpack R_BackpackHasItem { get; set; }
-        public virtual EquipData R_ItemToEquipped { get; set; }
+        public virtual ICollection<EquipmentSlot> R_ItemIsEquippableInSlots { get; set; } = [];
+        public virtual ItemFamily R_ItemInItemsFamily { get; set; } = null!;
+        public int ItemInItemsFamilyId { get; set; }
+        public virtual Backpack? R_BackpackHasItem { get; set; }
+        public int? BackpackHasItemId { get; set; }
+        public virtual EquipData? R_EquipData { get; set; }
+        public int? EquipDataId { get; set; }
         
         public virtual ICollection<ImmaterialResourceInstance> R_ItemGrantsResources { get; set; } = [];
         public virtual ICollection<EffectGroup> R_EffectGroupAffectedBy { get; set; } = [];

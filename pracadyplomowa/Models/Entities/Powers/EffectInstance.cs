@@ -13,9 +13,9 @@ namespace pracadyplomowa.Models.Entities.Powers
     {
 
         
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public string SourceName { get; set; }
+        public string Name { get; set; } = null!;
+        public string Description { get; set; } = null!;
+        public string SourceName { get; set; } = null!;
         public EffectType EffectType{ get; set; }
         //movement effect
         public MovementEffect MovementEffect { get; set; }
@@ -44,7 +44,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         public AttackRollEffect_Range AttackRollEffect_Range { get; set; }
         public AttackRollEffect_Source AttackRollEffect_Source { get; set; }
         public AttackRollEffect_Type AttackRollEffect_Type { get; set; }
-        public string AttackRollEffect_Value { get; set;}
+        public string? AttackRollEffect_Value { get; set;}
 
         //armor class effect
         public int ArmorClassEffect_Value { get; set; }
@@ -63,7 +63,7 @@ namespace pracadyplomowa.Models.Entities.Powers
 
         //damage effect
         public DamageEffect DamageEffect { get; set; }
-        public string DamageEffect_Value { get; set; }
+        public string? DamageEffect_Value { get; set; }
         public DamageType DamageEffect_DamageType { get; set; }
 
         //hitpoint effect

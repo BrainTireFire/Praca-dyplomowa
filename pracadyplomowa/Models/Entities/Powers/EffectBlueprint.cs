@@ -11,8 +11,6 @@ namespace pracadyplomowa.Models.Entities.Powers
 {
     public class EffectBlueprint : ObjectWithId
     {
-        //Ids and keys
-        public int CreatedEffectOnItemId { get; set; }
         
         public string Name { get; set; } = null!;
         public string Description { get; set; } = null!;
@@ -97,6 +95,8 @@ namespace pracadyplomowa.Models.Entities.Powers
 
         //Relationship
         public virtual Item? R_CreatedByEquipping { get; set; }
+        public int CreatedByEquippingId { get; set; }
+        
         public virtual Power? Power {get; set;}
         public int? PowerId { get; set;}
 

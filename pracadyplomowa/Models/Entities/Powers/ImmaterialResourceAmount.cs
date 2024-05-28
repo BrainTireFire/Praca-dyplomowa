@@ -13,8 +13,8 @@ namespace pracadyplomowa.Models.Entities.Powers
 
         //Relationships
         public virtual ImmaterialResourceBlueprint R_Blueprint { get; set; } = null!;
-        public int BlueprintId { get; set; }
+        public int R_BlueprintId { get; set; }
         public virtual ICollection<RaceLevel> R_RaceLevels { get; set; } = [];
-        public virtual ICollection<ClassLevel> R_ClassLevels { get; set;} = [];
+        public virtual ICollection<ClassLevel> R_ClassLevels { get; set; } = [];
     }
 }

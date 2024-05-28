@@ -10,7 +10,7 @@ using pracadyplomowa;
 
 namespace pracadyplomowa.Data.Identity.Migrations
 {
-    [DbContext(typeof(AppIdentityDbContext))]
+    [DbContext(typeof(AppDbContext))]
     [Migration("20240414181957_addedItems")]
     partial class addedItems
     {
@@ -110,12 +110,12 @@ namespace pracadyplomowa.Data.Identity.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("OwnerId")
+                    b.Property<int>("R_OwnerId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OwnerId");
+                    b.HasIndex("R_OwnerId");
 
                     b.ToTable("Items");
                 });
@@ -265,13 +265,13 @@ namespace pracadyplomowa.Data.Identity.Migrations
 
             modelBuilder.Entity("pracadyplomowa.Models.Item", b =>
                 {
-                    b.HasOne("pracadyplomowa.User", "Owner")
+                    b.HasOne("pracadyplomowa.User", "R_Owner")
                         .WithMany("Items")
-                        .HasForeignKey("OwnerId")
+                        .HasForeignKey("R_OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Owner");
+                    b.Navigation("R_Owner");
                 });
 
             modelBuilder.Entity("pracadyplomowa.UserRole", b =>

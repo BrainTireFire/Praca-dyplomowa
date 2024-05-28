@@ -8,11 +8,11 @@ using pracadyplomowa.Authorization.AuthorizationPolicyProviders;
 var builder = WebApplication.CreateBuilder(args);
 
 
-builder.Services.AddDbContext<AppIdentityDbContext>(opt =>
+builder.Services.AddDbContext<AppDbContext>(opt =>
 {
     opt.UseSqlite(builder.Configuration.GetConnectionString("IdentityConnectionSQlite"));
 });
-// builder.Services.AddDbContext<AppIdentityDbContext>(opt =>
+// builder.Services.AddDbContext<AppDbContext>(opt =>
 // {
 //     opt.UseNpgsql(builder.Configuration.GetConnectionString("IdentityConnection"));
 // });
@@ -53,7 +53,7 @@ using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 try
 {
-    var context = services.GetRequiredService<AppIdentityDbContext>();
+    var context = services.GetRequiredService<AppDbContext>();
     var userManager = services.GetRequiredService<UserManager<User>>();
     var roleManger = services.GetRequiredService<RoleManager<Role>>();
     await context.Database.MigrateAsync();

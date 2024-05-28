@@ -8,7 +8,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
     public class ActionLog : ObjectWithId
     {
         //Properties
-        public int EncounterId { get; set; }
+        public int R_EncounterId { get; set; }
         public string? Content;
 
         //Relationship

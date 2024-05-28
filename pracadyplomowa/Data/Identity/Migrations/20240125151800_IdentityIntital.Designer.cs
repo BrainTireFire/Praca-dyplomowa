@@ -11,7 +11,7 @@ using pracadyplomowa;
 
 namespace pracadyplomowa.Data.Identity.Migrations
 {
-    [DbContext(typeof(AppIdentityDbContext))]
+    [DbContext(typeof(AppDbContext))]
     [Migration("20240125151800_IdentityIntital")]
     partial class IdentityIntital
     {

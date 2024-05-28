@@ -16,23 +16,23 @@ namespace pracadyplomowa.Data.Identity.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    OwnerId = table.Column<int>(type: "INTEGER", nullable: false)
+                    R_OwnerId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Items", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Items_AspNetUsers_OwnerId",
-                        column: x => x.OwnerId,
+                        name: "FK_Items_AspNetUsers_R_OwnerId",
+                        column: x => x.R_OwnerId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Items_OwnerId",
+                name: "IX_Items_R_OwnerId",
                 table: "Items",
-                column: "OwnerId");
+                column: "R_OwnerId");
         }
 
         /// <inheritdoc />

@@ -13,7 +13,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
         //Relationship
         //Skoro ma ownera dziedziczonego to chyba relacja z Userem jest niepotrzebna?
         public virtual Encounter? R_Encounter { get; set; }
-        public int? EncounterId { get; set; }
+        public int? R_EncounterId { get; set; }
         public virtual ICollection<Field> R_ConsistsOfFields { get; set; } = [];
     }
 }

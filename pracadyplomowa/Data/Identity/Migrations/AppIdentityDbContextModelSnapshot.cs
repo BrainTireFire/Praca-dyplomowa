@@ -9,8 +9,8 @@ using pracadyplomowa;
 
 namespace pracadyplomowa.Data.Identity.Migrations
 {
-    [DbContext(typeof(AppIdentityDbContext))]
-    partial class AppIdentityDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(AppDbContext))]
+    partial class AppDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -107,12 +107,12 @@ namespace pracadyplomowa.Data.Identity.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("OwnerId")
+                    b.Property<int>("R_OwnerId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OwnerId");
+                    b.HasIndex("R_OwnerId");
 
                     b.ToTable("Objects");
 
@@ -274,13 +274,13 @@ namespace pracadyplomowa.Data.Identity.Migrations
 
             modelBuilder.Entity("pracadyplomowa.Models.ObjectWithOwner", b =>
                 {
-                    b.HasOne("pracadyplomowa.User", "Owner")
+                    b.HasOne("pracadyplomowa.User", "R_Owner")
                         .WithMany("Objects")
-                        .HasForeignKey("OwnerId")
+                        .HasForeignKey("R_OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Owner");
+                    b.Navigation("R_Owner");
                 });
 
             modelBuilder.Entity("pracadyplomowa.UserRole", b =>

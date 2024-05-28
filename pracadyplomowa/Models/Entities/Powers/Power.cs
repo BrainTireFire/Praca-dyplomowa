@@ -40,16 +40,16 @@ namespace pracadyplomowa.Models.Entities.Powers
         public virtual ICollection<Weapon> R_WeaponsCastingOnHit { get; set; } = [];
 
         public virtual ICollection<Class> R_ClassesWithAccess { get; set; } = [];
-        public virtual ImmaterialResourceBlueprint? R_UsesImmaterialResource {get; set;}
-        public int? UsesImmaterialResourceId { get; set;}
-        public virtual ICollection<ChoiceGroup> R_ChoiceGroups { get; set;} = [];
+        public virtual ImmaterialResourceBlueprint? R_UsesImmaterialResource { get; set; }
+        public int? R_UsesImmaterialResourceId { get; set; }
+        public virtual ICollection<ChoiceGroup> R_ChoiceGroups { get; set; } = [];
 
         public virtual ICollection<Field> R_FieldsCasting { get; set; } = [];
 
-        public virtual ICollection<ItemCostRequirement> R_ItemsCostRequirement { get; set;} = [];
+        public virtual ICollection<ItemCostRequirement> R_ItemsCostRequirement { get; set; } = [];
 
-        public virtual ICollection<EffectBlueprint> R_EffectBlueprints { get; set;} = [];
+        public virtual ICollection<EffectBlueprint> R_EffectBlueprints { get; set; } = [];
 
-        public virtual ICollection<Character> R_SpawnedCharacters { get; set;} = [];
+        public virtual ICollection<Character> R_SpawnedCharacters { get; set; } = [];
     }
 }

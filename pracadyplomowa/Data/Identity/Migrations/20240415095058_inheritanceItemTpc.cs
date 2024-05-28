@@ -11,15 +11,15 @@ namespace pracadyplomowa.Data.Identity.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Items_AspNetUsers_OwnerId",
+                name: "FK_Items_AspNetUsers_R_OwnerId",
                 table: "Items");
 
             migrationBuilder.DropIndex(
-                name: "IX_Items_OwnerId",
+                name: "IX_Items_R_OwnerId",
                 table: "Items");
 
             migrationBuilder.DropColumn(
-                name: "OwnerId",
+                name: "R_OwnerId",
                 table: "Items");
 
             migrationBuilder.AddColumn<string>(
@@ -34,23 +34,23 @@ namespace pracadyplomowa.Data.Identity.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    OwnerId = table.Column<int>(type: "INTEGER", nullable: false)
+                    R_OwnerId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Objects", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Objects_AspNetUsers_OwnerId",
-                        column: x => x.OwnerId,
+                        name: "FK_Objects_AspNetUsers_R_OwnerId",
+                        column: x => x.R_OwnerId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Objects_OwnerId",
+                name: "IX_Objects_R_OwnerId",
                 table: "Objects",
-                column: "OwnerId");
+                column: "R_OwnerId");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Items_Objects_Id",
@@ -76,21 +76,21 @@ namespace pracadyplomowa.Data.Identity.Migrations
                 table: "Items");
 
             migrationBuilder.AddColumn<int>(
-                name: "OwnerId",
+                name: "R_OwnerId",
                 table: "Items",
                 type: "INTEGER",
                 nullable: false,
                 defaultValue: 0);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Items_OwnerId",
+                name: "IX_Items_R_OwnerId",
                 table: "Items",
-                column: "OwnerId");
+                column: "R_OwnerId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Items_AspNetUsers_OwnerId",
+                name: "FK_Items_AspNetUsers_R_OwnerId",
                 table: "Items",
-                column: "OwnerId",
+                column: "R_OwnerId",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);

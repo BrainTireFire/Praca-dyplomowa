@@ -11,13 +11,13 @@ namespace pracadyplomowa.Models.Entities.Powers
 {
     public class EffectBlueprint : ObjectWithId
     {
-        
+
         public string Name { get; set; } = null!;
         public string Description { get; set; } = null!;
         public int ResourceLevel { get; set; }
         public bool Saved { get; set; }
-        public EffectType EffectType{ get; set; }
-        
+        public EffectType EffectType { get; set; }
+
         //movement effect
         public MovementEffect MovementEffect { get; set; }
         public string? MovementEffect_Value { get; set; }
@@ -30,22 +30,22 @@ namespace pracadyplomowa.Models.Entities.Powers
         //ability effect
         public AbilityEffect AbilityEffect { get; set; }
         public string? AbilityEffect_Value { get; set; }
-        public Ability AbilityEffect_Ability {get; set; }
+        public Ability AbilityEffect_Ability { get; set; }
 
         //skill effect
-        public SkillEffect SkillEffect {get; set; }
+        public SkillEffect SkillEffect { get; set; }
         public string? SkillEffect_Value { get; set; }
-        public Skill SkillEffect_Skill {get; set; }
+        public Skill SkillEffect_Skill { get; set; }
 
         //resistance effect
         public ResistanceEffect ResistanceEffect { get; set; }
-        public DamageType ResistanceEffect_DamageType {get; set; }
+        public DamageType ResistanceEffect_DamageType { get; set; }
 
         //attack roll effect
         public AttackRollEffect_Range AttackRollEffect_Range { get; set; }
         public AttackRollEffect_Source AttackRollEffect_Source { get; set; }
         public AttackRollEffect_Type AttackRollEffect_Type { get; set; }
-        public string? AttackRollEffect_Value { get; set;}
+        public string? AttackRollEffect_Value { get; set; }
 
         //armor class effect
         public string? ArmorClassEffect_Value { get; set; }
@@ -86,7 +86,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         public int MagicItemEffect_Value { get; set; }
 
         //status effect
-        public Condition StatusEffect {get; set;}
+        public Condition StatusEffect { get; set; }
 
         //movement cost effect 
         public int MovementCost_Multiplier { get; set; }
@@ -95,10 +95,10 @@ namespace pracadyplomowa.Models.Entities.Powers
 
         //Relationship
         public virtual Item? R_CreatedByEquipping { get; set; }
-        public int CreatedByEquippingId { get; set; }
-        
-        public virtual Power? Power {get; set;}
-        public int? PowerId { get; set;}
+        public int R_CreatedByEquippingId { get; set; }
+
+        public virtual Power? R_Power { get; set; }
+        public int? R_PowerId { get; set; }
 
         public virtual Aura? R_CastedOnCharactersByAura { get; set; } = null;
         public virtual int? CastedOnCharactersByAuraId { get; set; }

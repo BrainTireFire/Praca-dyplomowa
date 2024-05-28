@@ -17,8 +17,6 @@ namespace pracadyplomowa.Models.Entities.Characters
         public DiceSet UsedHitDice { get; set; } = new DiceSet();
 
         //Relationship
-        // public virtual User R_CharacterBelongsToUser { get; set; } = null!;
-        // public int R_CharacterBelongsToUserId { get; set; }
         public virtual Race R_CharacterBelongsToRace { get; set; } = null!;
         public int R_CharacterBelongsToRaceId { get; set; }
         public virtual EffectGroup? R_ConcentratesOn { get; set; }

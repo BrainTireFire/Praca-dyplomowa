@@ -9,6 +9,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
     public class ShopItem : ObjectWithId
     {
         //Properties
+        public CoinSack Price { get; set; } = new();
         public int Quantity { get; set; }
 
         //Relationship

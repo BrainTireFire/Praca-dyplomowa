@@ -155,14 +155,5 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
 
 
                 builder.Entity<Item>().UseTptMappingStrategy();
-
-                builder.Ignore<DiceSet>();
-                builder.Ignore<Purse>();
-                // builder.Entity<Apparel>().Ignore(a => a.R_EffectGroupAffectedBy);
-                // builder.Entity<Item>().Ignore(a => a.R_EffectGroupAffectedBy);
-                // builder.Entity<Weapon>().Ignore(a => a.R_EffectGroupAffectedBy);
-                // builder.Entity<Apparel>().Ignore(a => a.R_EffectGroupFromItem);
-                // builder.Entity<Weapon>().Ignore(a => a.R_EffectGroupFromItem);
-                // builder.Entity<Item>().Ignore(a => a.R_EffectGroupFromItem);
         }
 }

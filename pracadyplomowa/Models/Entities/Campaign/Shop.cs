@@ -12,10 +12,10 @@ namespace pracadyplomowa.Models.Entities.Campaign
         public string Type { get; set; } = null!;
         public string Location { get; set; } = null!;
         public string Description { get; set; } = null!;
-        
+
         //Relationship
         public virtual Campaign R_Campaign { get; set; } = null!;
-        public int CampaignId { get; set; }
+        public int R_CampaignId { get; set; }
         public virtual ICollection<ShopItem> R_Items { get; set; } = null!;
     }
 }

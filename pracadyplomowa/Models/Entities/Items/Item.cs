@@ -10,10 +10,7 @@ namespace pracadyplomowa.Models.Entities.Items
 {
     public class Item : ObjectWithOwner
     {
-        //Ids and keys
-        
         public string Name { get; set; } = null!;
-        // public Purse Value { get; set; } = new Purse();
         public int Weight { get; set; }
         public string Description { get; set; } = null!;
         public bool IsSpellFocus { get; set; }
@@ -21,12 +18,11 @@ namespace pracadyplomowa.Models.Entities.Items
         //Relationship
         public virtual ICollection<EquipmentSlot> R_ItemIsEquippableInSlots { get; set; } = [];
         public virtual ItemFamily R_ItemInItemsFamily { get; set; } = null!;
-        public int ItemInItemsFamilyId { get; set; }
+        public int R_ItemInItemsFamilyId { get; set; }
         public virtual Backpack? R_BackpackHasItem { get; set; }
-        public int? BackpackHasItemId { get; set; }
+        public int? R_BackpackHasItemId { get; set; }
         public virtual EquipData? R_EquipData { get; set; }
-        public int? EquipDataId { get; set; }
-        
+
         public virtual ICollection<ImmaterialResourceInstance> R_ItemGrantsResources { get; set; } = [];
         public virtual ICollection<EffectGroup> R_EffectGroupAffectedBy { get; set; } = [];
         public virtual ICollection<EffectGroup> R_EffectGroupFromItem { get; set; } = [];

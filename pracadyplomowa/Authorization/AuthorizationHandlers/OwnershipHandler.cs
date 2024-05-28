@@ -7,9 +7,10 @@ namespace pracadyplomowa.Authorization.AuthorizationHandlers
 {
     public class OwnershipHandler : IAuthorizationHandler
     {
-        private readonly AppIdentityDbContext _databaseContext;
+        private readonly AppDbContext _databaseContext;
 
-        public OwnershipHandler(AppIdentityDbContext databaseContext){
+        public OwnershipHandler(AppDbContext databaseContext)
+        {
             _databaseContext = databaseContext;
         }
 
@@ -19,17 +20,21 @@ namespace pracadyplomowa.Authorization.AuthorizationHandlers
             int userId;
             foreach (Claim claim in context.User.Claims)
             {
-                if("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier".Equals(claim.Type)){
+                if ("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier".Equals(claim.Type))
+                {
                     userId = Int32.Parse(claim.Value);
 
-                    
-                    foreach(var requirement in pendingRequirements){
-                        if(requirement is OwnershipRequirement){
+
+                    foreach (var requirement in pendingRequirements)
+                    {
+                        if (requirement is OwnershipRequirement)
+                        {
                             int itemId = await readJsonInt((HttpContext)context.Resource, ((OwnershipRequirement)requirement).propertyName);
-                            if(_databaseContext
+                            if (_databaseContext
                             .Objects
                             .FirstOrDefault(i => i.Id == itemId)?
-                            .OwnerId == userId){
+                            .R_OwnerId == userId)
+                            {
                                 context.Succeed(requirement);
                                 Console.WriteLine("Succeded Maciej requirement");
                             }
@@ -42,7 +47,8 @@ namespace pracadyplomowa.Authorization.AuthorizationHandlers
             return;
         }
 
-        private async Task<int> readJsonInt(HttpContext httpContext, string key){
+        private async Task<int> readJsonInt(HttpContext httpContext, string key)
+        {
             HttpRequestRewindExtensions.EnableBuffering(httpContext.Request);
             var bodyStream = new StreamReader(httpContext.Request.Body, leaveOpen: true);
             var bodyText = await bodyStream.ReadToEndAsync();

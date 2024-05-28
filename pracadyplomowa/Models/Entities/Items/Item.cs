@@ -23,7 +23,6 @@ namespace pracadyplomowa.Models.Entities.Items
         public virtual Backpack? R_BackpackHasItem { get; set; }
         public int? R_BackpackHasItemId { get; set; }
         public virtual EquipData? R_EquipData { get; set; }
-        public int? R_EquipDataId { get; set; }
 
         public virtual ICollection<ImmaterialResourceInstance> R_ItemGrantsResources { get; set; } = [];
         public virtual ICollection<EffectGroup> R_EffectGroupAffectedBy { get; set; } = [];

@@ -6,7 +6,7 @@ using pracadyplomowa.Models.Entities.Characters;
 
 namespace pracadyplomowa.Models.Entities.Campaign
 {
-    public class ParticipanceData
+    public class ParticipanceData : ObjectWithId
     {
         //Properties
         public int R_EncounterId { get; set; }

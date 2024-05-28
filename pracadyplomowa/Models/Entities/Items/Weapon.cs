@@ -8,15 +8,12 @@ namespace pracadyplomowa.Models.Entities.Items
 {
     public class Weapon : Item
     {
-        
+
         public bool Finesse { get; set; }
         public bool Heavy { get; set; }
         public bool Light { get; set; }
 
         //Relationship
-
         public virtual ICollection<Power> R_PowersCastedOnHit { get; set; } = [];
-
-        
     }
 }

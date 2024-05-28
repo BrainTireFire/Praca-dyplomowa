@@ -29,10 +29,10 @@ namespace pracadyplomowa.Models.Entities.Powers
         public virtual ICollection<EffectInstance> R_OwnedEffects { get; set; } = [];
 
         public virtual Aura? R_OriginatesFromAura { get; set; }
-        public virtual int? R_OriginatesFromAuraId { get; set; }
+        public int? R_OriginatesFromAuraId { get; set; }
 
         public virtual Aura? R_GeneratesAura { get; set; }
-        public virtual int? GeneratesAuraId { get; set; }
+        public int? R_GeneratesAuraId { get; set; }
         public virtual ICollection<Field> R_EffectOnField { get; set; } = [];
 
         public virtual ICollection<Character> R_TargetedCharacters { get; set; } = [];

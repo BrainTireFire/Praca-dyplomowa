@@ -101,12 +101,12 @@ namespace pracadyplomowa.Models.Entities.Powers
         public int? R_PowerId { get; set; }
 
         public virtual Aura? R_CastedOnCharactersByAura { get; set; } = null;
-        public virtual int? CastedOnCharactersByAuraId { get; set; }
+        public int? R_CastedOnCharactersByAuraId { get; set; }
         public virtual Aura? R_CastedOnTilesByAura { get; set; } = null;
-        public virtual int? CastedOnTilesByAuraId { get; set; }
+        public int? R_CastedOnTilesByAuraId { get; set; }
 
         public virtual ItemFamily? R_GrantsProficiencyInItemFamily { get; set; }
-        public virtual int? GrantsProficiencyInItemFamilyId { get; set; }
+        public int? GrantsProficiencyInItemFamilyId { get; set; }
 
         public virtual ICollection<ChoiceGroup> R_ChoiceGroups { get; set; } = [];
     }

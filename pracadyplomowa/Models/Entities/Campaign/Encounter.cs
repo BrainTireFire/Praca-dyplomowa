@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace pracadyplomowa.Models.Entities.Campaign
 {
-    public class Encounter
+    public class Encounter : ObjectWithOwner
     {
         //Properties
         public int R_EncounterInTheCampaignId { get; set; }

@@ -6,7 +6,7 @@ using pracadyplomowa.Models.Entities.Powers;
 
 namespace pracadyplomowa.Models.Entities.Items
 {
-    public class ItemCostRequirement
+    public class ItemCostRequirement : ObjectWithId
     {
         public int Value { get; set; }
 

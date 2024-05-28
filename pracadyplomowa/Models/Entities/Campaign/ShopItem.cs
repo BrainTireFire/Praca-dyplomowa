@@ -6,7 +6,7 @@ using pracadyplomowa.Models.Entities.Items;
 
 namespace pracadyplomowa.Models.Entities.Campaign
 {
-    public class ShopItem
+    public class ShopItem : ObjectWithId
     {
         //Properties
         public int Quantity { get; set; }

@@ -49,7 +49,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         public DbSet<Backpack> Backpacks { get; set; }
         public DbSet<ItemCostRequirement> ItemCostRequirements { get; set; }
         public DbSet<ItemFamily> ItemFamilies { get; set; }
-        public DbSet<Purse> Purses { get; set; }
+        // public DbSet<Purse> Purses { get; set; }
         public DbSet<Tool> Tools { get; set; }
         public DbSet<Weapon> Weapons { get; set; }
 
@@ -89,10 +89,6 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .HasForeignKey(i => i.R_OwnerId)
                         .IsRequired();
 
-
-                builder.Entity<Item>();
-
-
                 builder.Entity<Character>()
                         .HasOne(c => c.R_ConcentratesOn)
                         .WithOne(c => c.R_ConcentratedOnByCharacter)
@@ -117,6 +113,56 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .HasForeignKey(c => c.R_SpawnedByPowerId)
                         .IsRequired(false);
 
+                builder.Entity<Weapon>()
+                        .HasMany(c => c.R_PowersCastedOnHit)
+                        .WithMany(c => c.R_WeaponsCastingOnHit);
+
+                builder.Entity<EffectBlueprint>()
+                        .HasOne(c => c.R_CastedOnCharactersByAura)
+                        .WithMany(c => c.R_EffectsOnCharactersInRange)
+                        .HasForeignKey(c => c.R_CastedOnCharactersByAuraId)
+                        .IsRequired(false);
+
+                builder.Entity<EffectBlueprint>()
+                        .HasOne(c => c.R_CastedOnTilesByAura)
+                        .WithMany(c => c.R_EffectsOnTilesInRange)
+                        .HasForeignKey(c => c.R_CastedOnTilesByAuraId)
+                        .IsRequired(false);
+
+                builder.Entity<EffectGroup>()
+                        .HasOne(c => c.R_GeneratesAura)
+                        .WithOne(c => c.R_GeneratedBy)
+                        .HasForeignKey<EffectGroup>(c => c.R_GeneratesAuraId)
+                        .IsRequired(false);
+
+                builder.Entity<EffectGroup>()
+                        .HasOne(c => c.R_OriginatesFromAura)
+                        .WithMany(c => c.R_OwnedEffectGroups)
+                        .HasForeignKey(c => c.R_OriginatesFromAuraId)
+                        .IsRequired(false);
+
+                builder.Entity<EffectGroup>()
+                        .HasOne(c => c.R_ItemAffectedBy)
+                        .WithMany(c => c.R_EffectGroupAffectedBy)
+                        .HasForeignKey(c => c.R_ItemAffectedById)
+                        .IsRequired(false);
+
+                builder.Entity<EffectGroup>()
+                        .HasOne(c => c.R_ItemGiveEffect)
+                        .WithMany(c => c.R_EffectGroupFromItem)
+                        .HasForeignKey(c => c.R_ItemGiveEffectId)
+                        .IsRequired(false);
+
+
                 builder.Entity<Item>().UseTptMappingStrategy();
+
+                builder.Ignore<DiceSet>();
+                builder.Ignore<Purse>();
+                // builder.Entity<Apparel>().Ignore(a => a.R_EffectGroupAffectedBy);
+                // builder.Entity<Item>().Ignore(a => a.R_EffectGroupAffectedBy);
+                // builder.Entity<Weapon>().Ignore(a => a.R_EffectGroupAffectedBy);
+                // builder.Entity<Apparel>().Ignore(a => a.R_EffectGroupFromItem);
+                // builder.Entity<Weapon>().Ignore(a => a.R_EffectGroupFromItem);
+                // builder.Entity<Item>().Ignore(a => a.R_EffectGroupFromItem);
         }
 }

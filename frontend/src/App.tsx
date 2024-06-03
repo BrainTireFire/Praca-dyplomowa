@@ -1,17 +1,17 @@
-import { Route } from "react-router-dom";
+import { I18nextProvider } from "react-i18next";
+
 import "./App.css";
-import LoginForm from "./features/account/LoginForm";
-import Login from "./pages/account/Login";
-import Register from "./pages/account/Register";
 import GlobalStyles from "./styles/GlobalStyles";
-import Input from "./ui/forms/Input";
 import Router from "./Router";
+import i18n from "./i18n/i18n";
 
 function App() {
   return (
     <>
-      <GlobalStyles />
-      <Router />
+      <I18nextProvider i18n={i18n}>
+        <GlobalStyles />
+        <Router />
+      </I18nextProvider>
     </>
   );
 }

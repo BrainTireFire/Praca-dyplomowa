@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
-import DropdownNav from "../links/DropdownNav";
 import { RxAvatar } from "react-icons/rx";
 import { IoSettingsOutline, IoLogOutOutline } from "react-icons/io5";
+import DropdownNav from "../../links/DropdownNav";
 
 const NavList = styled.ul`
   display: flex;

@@ -137,7 +137,6 @@ export default function Home() {
             <Heading as="h5" align="center" color="textColor">
               Maciej Kawęcki
             </Heading>
-            w
             <Box
               customStyles={css`
                 display: flex;

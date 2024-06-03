@@ -11,11 +11,11 @@ const data = [
   },
   {
     title: "Effect table",
-    description: "Questions about the effect table",
+    description: "asfasf asd ",
   },
   {
-    title: "Do you ship to countries outside the EU?",
-    description: "Yes, we ship worldwide.",
+    title: "asdasdsa  saffsa",
+    description: "asdsads asfsafas.",
   },
 ];
 

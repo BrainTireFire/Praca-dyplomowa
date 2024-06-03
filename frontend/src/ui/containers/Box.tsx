@@ -102,6 +102,7 @@ const Box = styled.div<TypesBox>`
 Box.defaultProps = {
   radius: "medium",
   variation: "none",
+  customStyles: css``,
 };
 
 export default Box;

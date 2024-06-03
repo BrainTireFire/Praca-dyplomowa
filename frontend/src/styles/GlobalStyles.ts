@@ -18,6 +18,7 @@ const GlobalStyles = createGlobalStyle`
   --color-header-text: #9CC5A1;
 
   --color-link: #FA9021;
+  --color-link-hover: #8f4a00;
 
   --color-black-100: #200d0d;
 

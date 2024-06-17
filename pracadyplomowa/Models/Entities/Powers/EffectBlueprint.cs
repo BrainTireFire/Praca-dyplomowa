@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using pracadyplomowa.Models.ComplexTypes.Effects;
 using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Models.Entities.Items;
 using pracadyplomowa.Models.Enums;
@@ -19,77 +20,59 @@ namespace pracadyplomowa.Models.Entities.Powers
         public EffectType EffectType { get; set; }
 
         //movement effect
-        public MovementEffect MovementEffect { get; set; }
-        public string? MovementEffect_Value { get; set; }
+        public MovementEffectType MovementEffectType{ get; set; }
 
         //saving throw effect
-        public SavingThrowEffect SavingThrowEffect { get; set; }
-        public string? SavingThrowEffect_Value { get; set; }
-        public Ability SavingThrowEffect_Ability { get; set; }
+        public SavingThrowEffectType SavingThrowEffectType{ get; set; }
 
         //ability effect
-        public AbilityEffect AbilityEffect { get; set; }
-        public string? AbilityEffect_Value { get; set; }
-        public Ability AbilityEffect_Ability { get; set; }
+        public AbilityEffectType AbilityEffectType{ get; set; }
 
         //skill effect
-        public SkillEffect SkillEffect { get; set; }
-        public string? SkillEffect_Value { get; set; }
-        public Skill SkillEffect_Skill { get; set; }
+        public SkillEffectType SkillEffectType{ get; set; }
 
         //resistance effect
-        public ResistanceEffect ResistanceEffect { get; set; }
-        public DamageType ResistanceEffect_DamageType { get; set; }
+        public ResistanceEffectType ResistanceEffectType{ get; set;}
 
         //attack roll effect
-        public AttackRollEffect_Range AttackRollEffect_Range { get; set; }
-        public AttackRollEffect_Source AttackRollEffect_Source { get; set; }
-        public AttackRollEffect_Type AttackRollEffect_Type { get; set; }
-        public string? AttackRollEffect_Value { get; set; }
+        public AttackRollEffectType AttackRollEffectType{ get; set; }
 
         //armor class effect
-        public string? ArmorClassEffect_Value { get; set; }
+        public ArmorClassEffectType ArmorClassEffectType{ get; set; }
 
         //proficiency effect
-        public ProficiencyEffect ProficiencyEffect { get; set; }
+        public ProficiencyEffectType ProficiencyEffectType{ get; set;}
         // public ItemFamily ItemFamily { get; set; } //relationship
 
         //size effect
-        public SizeEffect SizeEffect { get; set; }
-        public int SizeEffect_Value { get; set; }
-        public Size SizeEffect_SizeToSet { get; set; }
+        public SizeEffectType SizeEffectType{ get; set; }
 
         //initiative effect
-        public string? InitiativeEffect_Value { get; set; }
+        public InitiativeEffectType InitiativeEffectType{ get; set;}
 
         //damage effect
-        public DamageEffect DamageEffect { get; set; }
-        public string? DamageEffect_Value { get; set; }
-        public DamageType DamageEffect_DamageType { get; set; }
+        public DamageEffectType DamageEffectType{ get; set;}
 
         //hitpoint effect
-        public HitpointEffect HitpointEffect { get; set; }
-        public string? HitpointEffect_Value { get; set; }
+        public HitpointEffectType HitpointEffectType{ get; set; }
 
         //healing effect
-        public string? HealingEffec_Value { get; set; }
+        public HealingEffectType HealingEffectType{ get; set;}
 
         //action effect
-        public ActionEffect ActionEffect { get; set; }
-        public int ActionEffect_Value { get; set; }
+        public ActionEffectType ActionEffectType{ get; set; }
 
         //attacks per attack action effect
-        public AttackPerActionEffect AttackPerActionEffect { get; set; }
-        public int AttackPerActionEffect_Value { get; set; }
+        public AttackPerAttackActionEffectType AttackPerAttackActionEffectType{get; set; }
 
         //magic item effect
-        public int MagicItemEffect_Value { get; set; }
+        public MagicItemEffectType MagicItemEffectType{ get; set; }
 
         //status effect
-        public Condition StatusEffect { get; set; }
+        public StatusEffectType StatusEffectType{ get; set; }
 
         //movement cost effect 
-        public int MovementCost_Multiplier { get; set; }
+        public MovementCostEffectType MovementCostEffectType{ get; set; }
 
 
 

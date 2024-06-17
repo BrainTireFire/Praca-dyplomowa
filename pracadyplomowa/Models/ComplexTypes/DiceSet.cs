@@ -16,5 +16,6 @@ namespace pracadyplomowa.Models.Entities.Characters
         public int d6 { get; set; }
         public int d4 { get; set; }
         public int d100 { get; set; }
+        public int flat {get; set;}
     }
 }

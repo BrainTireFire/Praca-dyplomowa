@@ -2,73 +2,27 @@
 
 #nullable disable
 
-namespace pracadyplomowa.Data.Identity.Migrations
+namespace pracadyplomowa.Migrations
 {
     /// <inheritdoc />
-    public partial class diceSetInEffectTypes : Migration
+    public partial class inheritanceInEffectBlueprint2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "AbilityEffectType_AbilityEffect_Value",
-                table: "EffectBlueprints");
-
-            migrationBuilder.DropColumn(
-                name: "ArmorClassEffectType_ArmorClassEffect_Value",
-                table: "EffectBlueprints");
-
-            migrationBuilder.DropColumn(
-                name: "AttackRollEffectType_AttackRollEffect_Value",
-                table: "EffectBlueprints");
-
-            migrationBuilder.DropColumn(
-                name: "DamageEffectType_DamageEffect_Value",
-                table: "EffectBlueprints");
-
-            migrationBuilder.DropColumn(
-                name: "HealingEffectType_HealingEffect_Value",
-                table: "EffectBlueprints");
-
-            migrationBuilder.DropColumn(
-                name: "HitpointEffectType_HitpointEffect_Value",
-                table: "EffectBlueprints");
-
-            migrationBuilder.DropColumn(
-                name: "InitiativeEffectType_InitiativeEffect_Value",
-                table: "EffectBlueprints");
-
-            migrationBuilder.DropColumn(
-                name: "MovementEffectType_MovementEffect_Value",
-                table: "EffectBlueprints");
-
-            migrationBuilder.DropColumn(
-                name: "SavingThrowEffectType_SavingThrowEffect_Value",
-                table: "EffectBlueprints");
-
-            migrationBuilder.DropColumn(
-                name: "SkillEffectType_SkillEffect_Value",
-                table: "EffectBlueprints");
-
-            migrationBuilder.RenameColumn(
-                name: "SizeEffectType_SizeEffect_Value",
+            migrationBuilder.AddColumn<int>(
+                name: "AbilityEffectType_AbilityEffect",
                 table: "EffectBlueprints",
-                newName: "SkillEffectType_SkillEffect_Value_flat");
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
 
-            migrationBuilder.RenameColumn(
-                name: "MagicItemEffectType_MagicItemEffect_Value",
+            migrationBuilder.AddColumn<int>(
+                name: "AbilityEffectType_AbilityEffect_Ability",
                 table: "EffectBlueprints",
-                newName: "SkillEffectType_SkillEffect_Value_d8");
-
-            migrationBuilder.RenameColumn(
-                name: "AttackPerAttackActionEffectType_AttackPerActionEffect_Value",
-                table: "EffectBlueprints",
-                newName: "SkillEffectType_SkillEffect_Value_d6");
-
-            migrationBuilder.RenameColumn(
-                name: "ActionEffectType_ActionEffect_Value",
-                table: "EffectBlueprints",
-                newName: "SkillEffectType_SkillEffect_Value_d4");
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
 
             migrationBuilder.AddColumn<int>(
                 name: "AbilityEffectType_AbilityEffect_Value_d10",
@@ -121,6 +75,13 @@ namespace pracadyplomowa.Data.Identity.Migrations
 
             migrationBuilder.AddColumn<int>(
                 name: "AbilityEffectType_AbilityEffect_Value_flat",
+                table: "EffectBlueprints",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "ActionEffectType_ActionEffect",
                 table: "EffectBlueprints",
                 type: "INTEGER",
                 nullable: false,
@@ -239,6 +200,13 @@ namespace pracadyplomowa.Data.Identity.Migrations
                 defaultValue: 0);
 
             migrationBuilder.AddColumn<int>(
+                name: "AttackPerAttackActionEffectType_AttackPerActionEffect",
+                table: "EffectBlueprints",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
                 name: "AttackPerAttackActionEffectType_AttackPerActionEffect_Value_d10",
                 table: "EffectBlueprints",
                 type: "INTEGER",
@@ -289,6 +257,27 @@ namespace pracadyplomowa.Data.Identity.Migrations
 
             migrationBuilder.AddColumn<int>(
                 name: "AttackPerAttackActionEffectType_AttackPerActionEffect_Value_flat",
+                table: "EffectBlueprints",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "AttackRollEffectType_AttackRollEffect_Range",
+                table: "EffectBlueprints",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "AttackRollEffectType_AttackRollEffect_Source",
+                table: "EffectBlueprints",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "AttackRollEffectType_AttackRollEffect_Type",
                 table: "EffectBlueprints",
                 type: "INTEGER",
                 nullable: false,
@@ -351,6 +340,20 @@ namespace pracadyplomowa.Data.Identity.Migrations
                 defaultValue: 0);
 
             migrationBuilder.AddColumn<int>(
+                name: "DamageEffectType_DamageEffect",
+                table: "EffectBlueprints",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "DamageEffectType_DamageEffect_DamageType",
+                table: "EffectBlueprints",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
                 name: "DamageEffectType_DamageEffect_Value_d10",
                 table: "EffectBlueprints",
                 type: "INTEGER",
@@ -406,6 +409,14 @@ namespace pracadyplomowa.Data.Identity.Migrations
                 nullable: false,
                 defaultValue: 0);
 
+            migrationBuilder.AddColumn<string>(
+                name: "Discriminator",
+                table: "EffectBlueprints",
+                type: "TEXT",
+                maxLength: 55,
+                nullable: false,
+                defaultValue: "");
+
             migrationBuilder.AddColumn<int>(
                 name: "HealingEffectType_HealingEffect_Value_d10",
                 table: "EffectBlueprints",
@@ -457,6 +468,13 @@ namespace pracadyplomowa.Data.Identity.Migrations
 
             migrationBuilder.AddColumn<int>(
                 name: "HealingEffectType_HealingEffect_Value_flat",
+                table: "EffectBlueprints",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "HitpointEffectType_HitpointEffect",
                 table: "EffectBlueprints",
                 type: "INTEGER",
                 nullable: false,
@@ -631,6 +649,20 @@ namespace pracadyplomowa.Data.Identity.Migrations
                 defaultValue: 0);
 
             migrationBuilder.AddColumn<int>(
+                name: "MovementCostEffectType_MovementCost_Multiplier",
+                table: "EffectBlueprints",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "MovementEffectType_MovementEffect",
+                table: "EffectBlueprints",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
                 name: "MovementEffectType_MovementEffect_Value_d10",
                 table: "EffectBlueprints",
                 type: "INTEGER",
@@ -681,6 +713,41 @@ namespace pracadyplomowa.Data.Identity.Migrations
 
             migrationBuilder.AddColumn<int>(
                 name: "MovementEffectType_MovementEffect_Value_flat",
+                table: "EffectBlueprints",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "ProficiencyEffectType_ProficiencyEffect",
+                table: "EffectBlueprints",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "ResistanceEffectType_ResistanceEffect",
+                table: "EffectBlueprints",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "ResistanceEffectType_ResistanceEffect_DamageType",
+                table: "EffectBlueprints",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "SavingThrowEffectType_SavingThrowEffect",
+                table: "EffectBlueprints",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "SavingThrowEffectType_SavingThrowEffect_Ability",
                 table: "EffectBlueprints",
                 type: "INTEGER",
                 nullable: false,
@@ -743,6 +810,20 @@ namespace pracadyplomowa.Data.Identity.Migrations
                 defaultValue: 0);
 
             migrationBuilder.AddColumn<int>(
+                name: "SizeEffectType_SizeEffect",
+                table: "EffectBlueprints",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "SizeEffectType_SizeEffect_SizeToSet",
+                table: "EffectBlueprints",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
                 name: "SizeEffectType_SizeEffect_Value_d10",
                 table: "EffectBlueprints",
                 type: "INTEGER",
@@ -799,6 +880,20 @@ namespace pracadyplomowa.Data.Identity.Migrations
                 defaultValue: 0);
 
             migrationBuilder.AddColumn<int>(
+                name: "SkillEffectType_SkillEffect",
+                table: "EffectBlueprints",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "SkillEffectType_SkillEffect_Skill",
+                table: "EffectBlueprints",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
                 name: "SkillEffectType_SkillEffect_Value_d10",
                 table: "EffectBlueprints",
                 type: "INTEGER",
@@ -821,6 +916,41 @@ namespace pracadyplomowa.Data.Identity.Migrations
 
             migrationBuilder.AddColumn<int>(
                 name: "SkillEffectType_SkillEffect_Value_d20",
+                table: "EffectBlueprints",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "SkillEffectType_SkillEffect_Value_d4",
+                table: "EffectBlueprints",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "SkillEffectType_SkillEffect_Value_d6",
+                table: "EffectBlueprints",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "SkillEffectType_SkillEffect_Value_d8",
+                table: "EffectBlueprints",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "SkillEffectType_SkillEffect_Value_flat",
+                table: "EffectBlueprints",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "StatusEffectType_StatusEffect",
                 table: "EffectBlueprints",
                 type: "INTEGER",
                 nullable: false,
@@ -831,6 +961,14 @@ namespace pracadyplomowa.Data.Identity.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
+                name: "AbilityEffectType_AbilityEffect",
+                table: "EffectBlueprints");
+
+            migrationBuilder.DropColumn(
+                name: "AbilityEffectType_AbilityEffect_Ability",
+                table: "EffectBlueprints");
+
+            migrationBuilder.DropColumn(
                 name: "AbilityEffectType_AbilityEffect_Value_d10",
                 table: "EffectBlueprints");
 
@@ -860,6 +998,10 @@ namespace pracadyplomowa.Data.Identity.Migrations
 
             migrationBuilder.DropColumn(
                 name: "AbilityEffectType_AbilityEffect_Value_flat",
+                table: "EffectBlueprints");
+
+            migrationBuilder.DropColumn(
+                name: "ActionEffectType_ActionEffect",
                 table: "EffectBlueprints");
 
             migrationBuilder.DropColumn(
@@ -927,6 +1069,10 @@ namespace pracadyplomowa.Data.Identity.Migrations
                 table: "EffectBlueprints");
 
             migrationBuilder.DropColumn(
+                name: "AttackPerAttackActionEffectType_AttackPerActionEffect",
+                table: "EffectBlueprints");
+
+            migrationBuilder.DropColumn(
                 name: "AttackPerAttackActionEffectType_AttackPerActionEffect_Value_d10",
                 table: "EffectBlueprints");
 
@@ -956,6 +1102,18 @@ namespace pracadyplomowa.Data.Identity.Migrations
 
             migrationBuilder.DropColumn(
                 name: "AttackPerAttackActionEffectType_AttackPerActionEffect_Value_flat",
+                table: "EffectBlueprints");
+
+            migrationBuilder.DropColumn(
+                name: "AttackRollEffectType_AttackRollEffect_Range",
+                table: "EffectBlueprints");
+
+            migrationBuilder.DropColumn(
+                name: "AttackRollEffectType_AttackRollEffect_Source",
+                table: "EffectBlueprints");
+
+            migrationBuilder.DropColumn(
+                name: "AttackRollEffectType_AttackRollEffect_Type",
                 table: "EffectBlueprints");
 
             migrationBuilder.DropColumn(
@@ -991,6 +1149,14 @@ namespace pracadyplomowa.Data.Identity.Migrations
                 table: "EffectBlueprints");
 
             migrationBuilder.DropColumn(
+                name: "DamageEffectType_DamageEffect",
+                table: "EffectBlueprints");
+
+            migrationBuilder.DropColumn(
+                name: "DamageEffectType_DamageEffect_DamageType",
+                table: "EffectBlueprints");
+
+            migrationBuilder.DropColumn(
                 name: "DamageEffectType_DamageEffect_Value_d10",
                 table: "EffectBlueprints");
 
@@ -1023,6 +1189,10 @@ namespace pracadyplomowa.Data.Identity.Migrations
                 table: "EffectBlueprints");
 
             migrationBuilder.DropColumn(
+                name: "Discriminator",
+                table: "EffectBlueprints");
+
+            migrationBuilder.DropColumn(
                 name: "HealingEffectType_HealingEffect_Value_d10",
                 table: "EffectBlueprints");
 
@@ -1052,6 +1222,10 @@ namespace pracadyplomowa.Data.Identity.Migrations
 
             migrationBuilder.DropColumn(
                 name: "HealingEffectType_HealingEffect_Value_flat",
+                table: "EffectBlueprints");
+
+            migrationBuilder.DropColumn(
+                name: "HitpointEffectType_HitpointEffect",
                 table: "EffectBlueprints");
 
             migrationBuilder.DropColumn(
@@ -1151,6 +1325,14 @@ namespace pracadyplomowa.Data.Identity.Migrations
                 table: "EffectBlueprints");
 
             migrationBuilder.DropColumn(
+                name: "MovementCostEffectType_MovementCost_Multiplier",
+                table: "EffectBlueprints");
+
+            migrationBuilder.DropColumn(
+                name: "MovementEffectType_MovementEffect",
+                table: "EffectBlueprints");
+
+            migrationBuilder.DropColumn(
                 name: "MovementEffectType_MovementEffect_Value_d10",
                 table: "EffectBlueprints");
 
@@ -1180,6 +1362,26 @@ namespace pracadyplomowa.Data.Identity.Migrations
 
             migrationBuilder.DropColumn(
                 name: "MovementEffectType_MovementEffect_Value_flat",
+                table: "EffectBlueprints");
+
+            migrationBuilder.DropColumn(
+                name: "ProficiencyEffectType_ProficiencyEffect",
+                table: "EffectBlueprints");
+
+            migrationBuilder.DropColumn(
+                name: "ResistanceEffectType_ResistanceEffect",
+                table: "EffectBlueprints");
+
+            migrationBuilder.DropColumn(
+                name: "ResistanceEffectType_ResistanceEffect_DamageType",
+                table: "EffectBlueprints");
+
+            migrationBuilder.DropColumn(
+                name: "SavingThrowEffectType_SavingThrowEffect",
+                table: "EffectBlueprints");
+
+            migrationBuilder.DropColumn(
+                name: "SavingThrowEffectType_SavingThrowEffect_Ability",
                 table: "EffectBlueprints");
 
             migrationBuilder.DropColumn(
@@ -1215,6 +1417,14 @@ namespace pracadyplomowa.Data.Identity.Migrations
                 table: "EffectBlueprints");
 
             migrationBuilder.DropColumn(
+                name: "SizeEffectType_SizeEffect",
+                table: "EffectBlueprints");
+
+            migrationBuilder.DropColumn(
+                name: "SizeEffectType_SizeEffect_SizeToSet",
+                table: "EffectBlueprints");
+
+            migrationBuilder.DropColumn(
                 name: "SizeEffectType_SizeEffect_Value_d10",
                 table: "EffectBlueprints");
 
@@ -1247,6 +1457,14 @@ namespace pracadyplomowa.Data.Identity.Migrations
                 table: "EffectBlueprints");
 
             migrationBuilder.DropColumn(
+                name: "SkillEffectType_SkillEffect",
+                table: "EffectBlueprints");
+
+            migrationBuilder.DropColumn(
+                name: "SkillEffectType_SkillEffect_Skill",
+                table: "EffectBlueprints");
+
+            migrationBuilder.DropColumn(
                 name: "SkillEffectType_SkillEffect_Value_d10",
                 table: "EffectBlueprints");
 
@@ -1262,85 +1480,25 @@ namespace pracadyplomowa.Data.Identity.Migrations
                 name: "SkillEffectType_SkillEffect_Value_d20",
                 table: "EffectBlueprints");
 
-            migrationBuilder.RenameColumn(
-                name: "SkillEffectType_SkillEffect_Value_flat",
-                table: "EffectBlueprints",
-                newName: "SizeEffectType_SizeEffect_Value");
-
-            migrationBuilder.RenameColumn(
-                name: "SkillEffectType_SkillEffect_Value_d8",
-                table: "EffectBlueprints",
-                newName: "MagicItemEffectType_MagicItemEffect_Value");
-
-            migrationBuilder.RenameColumn(
-                name: "SkillEffectType_SkillEffect_Value_d6",
-                table: "EffectBlueprints",
-                newName: "AttackPerAttackActionEffectType_AttackPerActionEffect_Value");
-
-            migrationBuilder.RenameColumn(
+            migrationBuilder.DropColumn(
                 name: "SkillEffectType_SkillEffect_Value_d4",
-                table: "EffectBlueprints",
-                newName: "ActionEffectType_ActionEffect_Value");
+                table: "EffectBlueprints");
 
-            migrationBuilder.AddColumn<string>(
-                name: "AbilityEffectType_AbilityEffect_Value",
-                table: "EffectBlueprints",
-                type: "TEXT",
-                nullable: true);
+            migrationBuilder.DropColumn(
+                name: "SkillEffectType_SkillEffect_Value_d6",
+                table: "EffectBlueprints");
 
-            migrationBuilder.AddColumn<string>(
-                name: "ArmorClassEffectType_ArmorClassEffect_Value",
-                table: "EffectBlueprints",
-                type: "TEXT",
-                nullable: true);
+            migrationBuilder.DropColumn(
+                name: "SkillEffectType_SkillEffect_Value_d8",
+                table: "EffectBlueprints");
 
-            migrationBuilder.AddColumn<string>(
-                name: "AttackRollEffectType_AttackRollEffect_Value",
-                table: "EffectBlueprints",
-                type: "TEXT",
-                nullable: true);
+            migrationBuilder.DropColumn(
+                name: "SkillEffectType_SkillEffect_Value_flat",
+                table: "EffectBlueprints");
 
-            migrationBuilder.AddColumn<string>(
-                name: "DamageEffectType_DamageEffect_Value",
-                table: "EffectBlueprints",
-                type: "TEXT",
-                nullable: true);
-
-            migrationBuilder.AddColumn<string>(
-                name: "HealingEffectType_HealingEffect_Value",
-                table: "EffectBlueprints",
-                type: "TEXT",
-                nullable: true);
-
-            migrationBuilder.AddColumn<string>(
-                name: "HitpointEffectType_HitpointEffect_Value",
-                table: "EffectBlueprints",
-                type: "TEXT",
-                nullable: true);
-
-            migrationBuilder.AddColumn<string>(
-                name: "InitiativeEffectType_InitiativeEffect_Value",
-                table: "EffectBlueprints",
-                type: "TEXT",
-                nullable: true);
-
-            migrationBuilder.AddColumn<string>(
-                name: "MovementEffectType_MovementEffect_Value",
-                table: "EffectBlueprints",
-                type: "TEXT",
-                nullable: true);
-
-            migrationBuilder.AddColumn<string>(
-                name: "SavingThrowEffectType_SavingThrowEffect_Value",
-                table: "EffectBlueprints",
-                type: "TEXT",
-                nullable: true);
-
-            migrationBuilder.AddColumn<string>(
-                name: "SkillEffectType_SkillEffect_Value",
-                table: "EffectBlueprints",
-                type: "TEXT",
-                nullable: true);
+            migrationBuilder.DropColumn(
+                name: "StatusEffectType_StatusEffect",
+                table: "EffectBlueprints");
         }
     }
 }

@@ -1,0 +1,10 @@
+{
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "name": "praca",
+      "database": "${workspaceFolder:Praca-dyplomowa-1}/pracadyplomowa/identity.db"
+    }
+  ]
+}

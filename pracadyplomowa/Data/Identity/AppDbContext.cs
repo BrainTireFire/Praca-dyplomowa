@@ -7,6 +7,7 @@ using pracadyplomowa.Models.Entities.Campaign;
 using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Models.Entities.Items;
 using pracadyplomowa.Models.Entities.Powers;
+using pracadyplomowa.Models.Entities.Powers.EffectBlueprints;
 
 namespace pracadyplomowa;
 
@@ -62,6 +63,28 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         public DbSet<ImmaterialResourceBlueprint> ImmaterialResourceBlueprints { get; set; }
         public DbSet<ImmaterialResourceInstance> ImmaterialResourceInstances { get; set; }
         public DbSet<Power> Powers { get; set; }
+
+        
+        public DbSet<AbilityEffectBlueprint> AbilityEffectBlueprints { get; set; }
+        public DbSet<ActionEffectBlueprint> ActionEffectBlueprints { get; set; }
+        public DbSet<ArmorClassEffectBlueprint> ArmorClassEffectBlueprints { get; set; }
+        public DbSet<AttackPerAttackActionEffectBlueprint> AttackPerAttackActionEffectBlueprints { get; set; }
+        public DbSet<AttackRollEffectBlueprint> AttackRollEffectBlueprints { get; set; }
+        public DbSet<DamageEffectBlueprint> DamageEffectBlueprints { get; set; }
+        public DbSet<HealingEffectBlueprint> HealingEffectBlueprints { get; set; }
+        public DbSet<HitpointEffectBlueprint> HitpointEffectBlueprints { get; set; }
+        public DbSet<IniativeEffectBlueprint> IniativeEffectBlueprints { get; set; }
+        public DbSet<MagicEffectBlueprint> MagicEffectBlueprints { get; set; }
+        public DbSet<MovementCostEffectBlueprint> MovementCostEffectBlueprints { get; set; }
+        public DbSet<MovementEffectBlueprint> MovementEffectBlueprints { get; set; }
+        public DbSet<ProficiencyEffectBlueprint> ProficiencyEffectBlueprints { get; set; }
+        public DbSet<ResistanceEffectBlueprint> ResistanceEffectBlueprints { get; set; }
+        public DbSet<SavingThrowEffectBlueprint> SavingThrowEffectBlueprints { get; set; }
+        public DbSet<SizeEffectBlueprint> SizeEffectBlueprints { get; set; }
+        public DbSet<SkillEffectBlueprint> SkillEffectBlueprints { get; set; }
+        public DbSet<StatusEffectBlueprint> StatusEffectBlueprints { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -155,5 +178,6 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
 
 
                 builder.Entity<Item>().UseTptMappingStrategy();
+                builder.Entity<EffectBlueprint>().UseTphMappingStrategy();
         }
 }

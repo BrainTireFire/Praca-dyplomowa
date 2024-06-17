@@ -9,11 +9,11 @@ using pracadyplomowa;
 
 #nullable disable
 
-namespace pracadyplomowa.Data.Identity.Migrations
+namespace pracadyplomowa.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240528182309_addComplexTypesDataUpdate")]
-    partial class addComplexTypesDataUpdate
+    [Migration("20240617181642_inheritanceInEffectBlueprint")]
+    partial class inheritanceInEffectBlueprint
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -603,6 +603,9 @@ namespace pracadyplomowa.Data.Identity.Migrations
 
                             b1.Property<int>("d8")
                                 .HasColumnType("INTEGER");
+
+                            b1.Property<int>("flat")
+                                .HasColumnType("INTEGER");
                         });
 
                     b.HasKey("Id");
@@ -790,51 +793,6 @@ namespace pracadyplomowa.Data.Identity.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("AbilityEffect")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AbilityEffect_Ability")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("AbilityEffect_Value")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ActionEffect")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ActionEffect_Value")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("ArmorClassEffect_Value")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("AttackPerActionEffect")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AttackPerActionEffect_Value")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AttackRollEffect_Range")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AttackRollEffect_Source")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AttackRollEffect_Type")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("AttackRollEffect_Value")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("DamageEffect")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("DamageEffect_DamageType")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("DamageEffect_Value")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -845,36 +803,9 @@ namespace pracadyplomowa.Data.Identity.Migrations
                     b.Property<int?>("GrantsProficiencyInItemFamilyId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("HealingEffec_Value")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("HitpointEffect")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("HitpointEffect_Value")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("InitiativeEffect_Value")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("MagicItemEffect_Value")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("MovementCost_Multiplier")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("MovementEffect")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("MovementEffect_Value")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("ProficiencyEffect")
-                        .HasColumnType("INTEGER");
 
                     b.Property<int?>("R_CastedOnCharactersByAuraId")
                         .HasColumnType("INTEGER");
@@ -891,46 +822,10 @@ namespace pracadyplomowa.Data.Identity.Migrations
                     b.Property<int?>("R_PowerId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ResistanceEffect")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ResistanceEffect_DamageType")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("ResourceLevel")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("Saved")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SavingThrowEffect")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SavingThrowEffect_Ability")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("SavingThrowEffect_Value")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("SizeEffect")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SizeEffect_SizeToSet")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SizeEffect_Value")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SkillEffect")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SkillEffect_Skill")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("SkillEffect_Value")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("StatusEffect")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -946,6 +841,8 @@ namespace pracadyplomowa.Data.Identity.Migrations
                     b.HasIndex("R_PowerId");
 
                     b.ToTable("EffectBlueprints");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectGroup", b =>
@@ -1004,51 +901,6 @@ namespace pracadyplomowa.Data.Identity.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("AbilityEffect")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AbilityEffect_Ability")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AbilityEffect_Value")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ActionEffect")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ActionEffect_Value")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ArmorClassEffect_Value")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AttackPerActionEffect")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AttackPerActionEffect_Value")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AttackRollEffect_Range")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AttackRollEffect_Source")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AttackRollEffect_Type")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("AttackRollEffect_Value")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("DamageEffect")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("DamageEffect_DamageType")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("DamageEffect_Value")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -1059,38 +911,11 @@ namespace pracadyplomowa.Data.Identity.Migrations
                     b.Property<int?>("GrantsProficiencyInItemFamilyId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("HealingEffec_Value")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("HitpointEffect")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("HitpointEffect_Value")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("InitiativeEffect_Value")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("MagicItemEffect_Value")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("MovementCost_Multiplier")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("MovementEffect")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("MovementEffect_Value")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("OwnedByGroupId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ProficiencyEffect")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("R_GrantsProficiencyInItemFamilyId")
@@ -1099,45 +924,571 @@ namespace pracadyplomowa.Data.Identity.Migrations
                     b.Property<int>("R_OwnedByGroupId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ResistanceEffect")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ResistanceEffect_DamageType")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SavingThrowEffect")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SavingThrowEffect_Ability")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SavingThrowEffect_Value")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SizeEffect")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SizeEffect_SizeToSet")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SizeEffect_Value")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SkillEffect")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SkillEffect_Skill")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SkillEffect_Value")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("SourceName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("StatusEffect")
-                        .HasColumnType("INTEGER");
+                    b.ComplexProperty<Dictionary<string, object>>("AbilityEffectType", "pracadyplomowa.Models.Entities.Powers.EffectInstance.AbilityEffectType#AbilityEffectType", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<int>("AbilityEffect")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("AbilityEffect_Ability")
+                                .HasColumnType("INTEGER");
+
+                            b1.ComplexProperty<Dictionary<string, object>>("AbilityEffect_Value", "pracadyplomowa.Models.Entities.Powers.EffectInstance.AbilityEffectType#AbilityEffectType.AbilityEffect_Value#DiceSet", b2 =>
+                                {
+                                    b2.IsRequired();
+
+                                    b2.Property<int>("d10")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d100")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d12")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d20")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d4")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d6")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d8")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("flat")
+                                        .HasColumnType("INTEGER");
+                                });
+                        });
+
+                    b.ComplexProperty<Dictionary<string, object>>("ActionEffectType", "pracadyplomowa.Models.Entities.Powers.EffectInstance.ActionEffectType#ActionEffectType", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<int>("ActionEffect")
+                                .HasColumnType("INTEGER");
+
+                            b1.ComplexProperty<Dictionary<string, object>>("ActionEffect_Value", "pracadyplomowa.Models.Entities.Powers.EffectInstance.ActionEffectType#ActionEffectType.ActionEffect_Value#DiceSet", b2 =>
+                                {
+                                    b2.IsRequired();
+
+                                    b2.Property<int>("d10")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d100")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d12")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d20")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d4")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d6")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d8")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("flat")
+                                        .HasColumnType("INTEGER");
+                                });
+                        });
+
+                    b.ComplexProperty<Dictionary<string, object>>("ArmorClassEffectType", "pracadyplomowa.Models.Entities.Powers.EffectInstance.ArmorClassEffectType#ArmorClassEffectType", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.ComplexProperty<Dictionary<string, object>>("ArmorClassEffect_Value", "pracadyplomowa.Models.Entities.Powers.EffectInstance.ArmorClassEffectType#ArmorClassEffectType.ArmorClassEffect_Value#DiceSet", b2 =>
+                                {
+                                    b2.IsRequired();
+
+                                    b2.Property<int>("d10")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d100")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d12")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d20")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d4")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d6")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d8")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("flat")
+                                        .HasColumnType("INTEGER");
+                                });
+                        });
+
+                    b.ComplexProperty<Dictionary<string, object>>("AttackPerAttackActionEffectType", "pracadyplomowa.Models.Entities.Powers.EffectInstance.AttackPerAttackActionEffectType#AttackPerAttackActionEffectType", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<int>("AttackPerActionEffect")
+                                .HasColumnType("INTEGER");
+
+                            b1.ComplexProperty<Dictionary<string, object>>("AttackPerActionEffect_Value", "pracadyplomowa.Models.Entities.Powers.EffectInstance.AttackPerAttackActionEffectType#AttackPerAttackActionEffectType.AttackPerActionEffect_Value#DiceSet", b2 =>
+                                {
+                                    b2.IsRequired();
+
+                                    b2.Property<int>("d10")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d100")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d12")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d20")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d4")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d6")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d8")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("flat")
+                                        .HasColumnType("INTEGER");
+                                });
+                        });
+
+                    b.ComplexProperty<Dictionary<string, object>>("AttackRollEffectType", "pracadyplomowa.Models.Entities.Powers.EffectInstance.AttackRollEffectType#AttackRollEffectType", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<int>("AttackRollEffect_Range")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("AttackRollEffect_Source")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("AttackRollEffect_Type")
+                                .HasColumnType("INTEGER");
+
+                            b1.ComplexProperty<Dictionary<string, object>>("AttackRollEffect_Value", "pracadyplomowa.Models.Entities.Powers.EffectInstance.AttackRollEffectType#AttackRollEffectType.AttackRollEffect_Value#DiceSet", b2 =>
+                                {
+                                    b2.IsRequired();
+
+                                    b2.Property<int>("d10")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d100")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d12")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d20")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d4")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d6")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d8")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("flat")
+                                        .HasColumnType("INTEGER");
+                                });
+                        });
+
+                    b.ComplexProperty<Dictionary<string, object>>("DamageEffectType", "pracadyplomowa.Models.Entities.Powers.EffectInstance.DamageEffectType#DamageEffectType", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<int>("DamageEffect")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("DamageEffect_DamageType")
+                                .HasColumnType("INTEGER");
+
+                            b1.ComplexProperty<Dictionary<string, object>>("DamageEffect_Value", "pracadyplomowa.Models.Entities.Powers.EffectInstance.DamageEffectType#DamageEffectType.DamageEffect_Value#DiceSet", b2 =>
+                                {
+                                    b2.IsRequired();
+
+                                    b2.Property<int>("d10")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d100")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d12")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d20")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d4")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d6")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d8")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("flat")
+                                        .HasColumnType("INTEGER");
+                                });
+                        });
+
+                    b.ComplexProperty<Dictionary<string, object>>("HealingEffectType", "pracadyplomowa.Models.Entities.Powers.EffectInstance.HealingEffectType#HealingEffectType", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.ComplexProperty<Dictionary<string, object>>("HealingEffect_Value", "pracadyplomowa.Models.Entities.Powers.EffectInstance.HealingEffectType#HealingEffectType.HealingEffect_Value#DiceSet", b2 =>
+                                {
+                                    b2.IsRequired();
+
+                                    b2.Property<int>("d10")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d100")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d12")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d20")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d4")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d6")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d8")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("flat")
+                                        .HasColumnType("INTEGER");
+                                });
+                        });
+
+                    b.ComplexProperty<Dictionary<string, object>>("HitpointEffectType", "pracadyplomowa.Models.Entities.Powers.EffectInstance.HitpointEffectType#HitpointEffectType", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<int>("HitpointEffect")
+                                .HasColumnType("INTEGER");
+
+                            b1.ComplexProperty<Dictionary<string, object>>("HitpointEffect_Value", "pracadyplomowa.Models.Entities.Powers.EffectInstance.HitpointEffectType#HitpointEffectType.HitpointEffect_Value#DiceSet", b2 =>
+                                {
+                                    b2.IsRequired();
+
+                                    b2.Property<int>("d10")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d100")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d12")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d20")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d4")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d6")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d8")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("flat")
+                                        .HasColumnType("INTEGER");
+                                });
+                        });
+
+                    b.ComplexProperty<Dictionary<string, object>>("InitiativeEffectType", "pracadyplomowa.Models.Entities.Powers.EffectInstance.InitiativeEffectType#InitiativeEffectType", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.ComplexProperty<Dictionary<string, object>>("InitiativeEffect_Value", "pracadyplomowa.Models.Entities.Powers.EffectInstance.InitiativeEffectType#InitiativeEffectType.InitiativeEffect_Value#DiceSet", b2 =>
+                                {
+                                    b2.IsRequired();
+
+                                    b2.Property<int>("d10")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d100")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d12")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d20")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d4")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d6")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d8")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("flat")
+                                        .HasColumnType("INTEGER");
+                                });
+                        });
+
+                    b.ComplexProperty<Dictionary<string, object>>("MagicItemEffectType", "pracadyplomowa.Models.Entities.Powers.EffectInstance.MagicItemEffectType#MagicItemEffectType", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.ComplexProperty<Dictionary<string, object>>("MagicItemEffect_Value", "pracadyplomowa.Models.Entities.Powers.EffectInstance.MagicItemEffectType#MagicItemEffectType.MagicItemEffect_Value#DiceSet", b2 =>
+                                {
+                                    b2.IsRequired();
+
+                                    b2.Property<int>("d10")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d100")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d12")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d20")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d4")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d6")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d8")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("flat")
+                                        .HasColumnType("INTEGER");
+                                });
+                        });
+
+                    b.ComplexProperty<Dictionary<string, object>>("MovementCostEffectType", "pracadyplomowa.Models.Entities.Powers.EffectInstance.MovementCostEffectType#MovementCostEffectType", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<int>("MovementCost_Multiplier")
+                                .HasColumnType("INTEGER");
+                        });
+
+                    b.ComplexProperty<Dictionary<string, object>>("MovementEffectType", "pracadyplomowa.Models.Entities.Powers.EffectInstance.MovementEffectType#MovementEffectType", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<int>("MovementEffect")
+                                .HasColumnType("INTEGER");
+
+                            b1.ComplexProperty<Dictionary<string, object>>("MovementEffect_Value", "pracadyplomowa.Models.Entities.Powers.EffectInstance.MovementEffectType#MovementEffectType.MovementEffect_Value#DiceSet", b2 =>
+                                {
+                                    b2.IsRequired();
+
+                                    b2.Property<int>("d10")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d100")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d12")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d20")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d4")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d6")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d8")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("flat")
+                                        .HasColumnType("INTEGER");
+                                });
+                        });
+
+                    b.ComplexProperty<Dictionary<string, object>>("ProficiencyEffectType", "pracadyplomowa.Models.Entities.Powers.EffectInstance.ProficiencyEffectType#ProficiencyEffectType", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<int>("ProficiencyEffect")
+                                .HasColumnType("INTEGER");
+                        });
+
+                    b.ComplexProperty<Dictionary<string, object>>("ResistanceEffectType", "pracadyplomowa.Models.Entities.Powers.EffectInstance.ResistanceEffectType#ResistanceEffectType", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<int>("ResistanceEffect")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("ResistanceEffect_DamageType")
+                                .HasColumnType("INTEGER");
+                        });
+
+                    b.ComplexProperty<Dictionary<string, object>>("SavingThrowEffectType", "pracadyplomowa.Models.Entities.Powers.EffectInstance.SavingThrowEffectType#SavingThrowEffectType", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<int>("SavingThrowEffect")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("SavingThrowEffect_Ability")
+                                .HasColumnType("INTEGER");
+
+                            b1.ComplexProperty<Dictionary<string, object>>("SavingThrowEffect_Value", "pracadyplomowa.Models.Entities.Powers.EffectInstance.SavingThrowEffectType#SavingThrowEffectType.SavingThrowEffect_Value#DiceSet", b2 =>
+                                {
+                                    b2.IsRequired();
+
+                                    b2.Property<int>("d10")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d100")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d12")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d20")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d4")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d6")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d8")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("flat")
+                                        .HasColumnType("INTEGER");
+                                });
+                        });
+
+                    b.ComplexProperty<Dictionary<string, object>>("SizeEffectType", "pracadyplomowa.Models.Entities.Powers.EffectInstance.SizeEffectType#SizeEffectType", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<int>("SizeEffect")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("SizeEffect_SizeToSet")
+                                .HasColumnType("INTEGER");
+
+                            b1.ComplexProperty<Dictionary<string, object>>("SizeEffect_Value", "pracadyplomowa.Models.Entities.Powers.EffectInstance.SizeEffectType#SizeEffectType.SizeEffect_Value#DiceSet", b2 =>
+                                {
+                                    b2.IsRequired();
+
+                                    b2.Property<int>("d10")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d100")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d12")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d20")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d4")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d6")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d8")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("flat")
+                                        .HasColumnType("INTEGER");
+                                });
+                        });
+
+                    b.ComplexProperty<Dictionary<string, object>>("SkillEffectType", "pracadyplomowa.Models.Entities.Powers.EffectInstance.SkillEffectType#SkillEffectType", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<int>("SkillEffect")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("SkillEffect_Skill")
+                                .HasColumnType("INTEGER");
+
+                            b1.ComplexProperty<Dictionary<string, object>>("SkillEffect_Value", "pracadyplomowa.Models.Entities.Powers.EffectInstance.SkillEffectType#SkillEffectType.SkillEffect_Value#DiceSet", b2 =>
+                                {
+                                    b2.IsRequired();
+
+                                    b2.Property<int>("d10")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d100")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d12")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d20")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d4")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d6")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("d8")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("flat")
+                                        .HasColumnType("INTEGER");
+                                });
+                        });
+
+                    b.ComplexProperty<Dictionary<string, object>>("StatusEffectType", "pracadyplomowa.Models.Entities.Powers.EffectInstance.StatusEffectType#StatusEffectType", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<int>("StatusEffect")
+                                .HasColumnType("INTEGER");
+                        });
 
                     b.HasKey("Id");
 
@@ -1430,6 +1781,9 @@ namespace pracadyplomowa.Data.Identity.Migrations
                                 .HasColumnType("INTEGER");
 
                             b1.Property<int>("d8")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("flat")
                                 .HasColumnType("INTEGER");
                         });
 

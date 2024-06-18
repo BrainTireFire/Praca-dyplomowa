@@ -12,6 +12,5 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     public class MovementEffectType
     {
         public MovementEffect MovementEffect { get; set; }
-        public DiceSet MovementEffect_Value { get; set; }
     }
 }

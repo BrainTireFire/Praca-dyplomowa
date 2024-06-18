@@ -14,6 +14,5 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
         public AttackRollEffect_Range AttackRollEffect_Range { get; set; }
         public AttackRollEffect_Source AttackRollEffect_Source { get; set; }
         public AttackRollEffect_Type AttackRollEffect_Type { get; set; }
-        public DiceSet AttackRollEffect_Value { get; set; }
     }
 }

@@ -13,7 +13,6 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     public class AbilityEffectType
     {
         public AbilityEffect AbilityEffect { get; set; }
-        public DiceSet AbilityEffect_Value { get; set; }
         public Ability AbilityEffect_Ability { get; set; }
     }
 }

@@ -6,8 +6,8 @@ using pracadyplomowa.Models.ComplexTypes.Effects;
 
 namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
-    public class DamageEffectBlueprint : EffectBlueprint
+    public class DamageEffectBlueprint : ValueEffectBlueprint
     {
-        public DamageEffectType DamageEffectType{ get; set;}
+        public DamageEffectType DamageEffectType{ get; set;} = null!;
     }
 }

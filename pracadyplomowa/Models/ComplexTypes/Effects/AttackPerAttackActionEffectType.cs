@@ -12,6 +12,5 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     public class AttackPerAttackActionEffectType
     {
         public AttackPerActionEffect AttackPerActionEffect { get; set; }
-        public DiceSet AttackPerActionEffect_Value { get; set; }
     }
 }

@@ -6,8 +6,8 @@ using pracadyplomowa.Models.ComplexTypes.Effects;
 
 namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
-    public class MovementEffectBlueprint : EffectBlueprint
+    public class MovementEffectBlueprint : ValueEffectBlueprint
     {
-        public MovementEffectType MovementEffectType{ get; set; }
+        public MovementEffectType MovementEffectType{ get; set; } = null!;
     }
 }

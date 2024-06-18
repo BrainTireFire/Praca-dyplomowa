@@ -83,6 +83,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         public DbSet<SizeEffectBlueprint> SizeEffectBlueprints { get; set; }
         public DbSet<SkillEffectBlueprint> SkillEffectBlueprints { get; set; }
         public DbSet<StatusEffectBlueprint> StatusEffectBlueprints { get; set; }
+        // public DbSet<ValueEffectBlueprint> ValueEffectBlueprints { get; set; }
 
 
 

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using pracadyplomowa;
 
@@ -11,9 +12,11 @@ using pracadyplomowa;
 namespace pracadyplomowa.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240617184308_inheritanceInEffectBlueprint6")]
+    partial class inheritanceInEffectBlueprint6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
@@ -802,6 +805,9 @@ namespace pracadyplomowa.Migrations
                     b.Property<int>("EffectType")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("ItemFamilyId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -825,6 +831,8 @@ namespace pracadyplomowa.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ItemFamilyId");
 
                     b.HasIndex("R_CastedOnCharactersByAuraId");
 
@@ -2727,6 +2735,10 @@ namespace pracadyplomowa.Migrations
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectBlueprint", b =>
                 {
+                    b.HasOne("pracadyplomowa.Models.Entities.Items.ItemFamily", null)
+                        .WithMany("R_ProficiencyGrantedByEffectBlueprint")
+                        .HasForeignKey("ItemFamilyId");
+
                     b.HasOne("pracadyplomowa.Models.Entities.Powers.Aura", "R_CastedOnCharactersByAura")
                         .WithMany("R_EffectsOnCharactersInRange")
                         .HasForeignKey("R_CastedOnCharactersByAuraId");
@@ -2982,7 +2994,7 @@ namespace pracadyplomowa.Migrations
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectBlueprints.ProficiencyEffectBlueprint", b =>
                 {
                     b.HasOne("pracadyplomowa.Models.Entities.Items.ItemFamily", "R_GrantsProficiencyInItemFamily")
-                        .WithMany("R_ProficiencyGrantedByEffectBlueprint")
+                        .WithMany()
                         .HasForeignKey("R_GrantsProficiencyInItemFamilyId");
 
                     b.Navigation("R_GrantsProficiencyInItemFamily");

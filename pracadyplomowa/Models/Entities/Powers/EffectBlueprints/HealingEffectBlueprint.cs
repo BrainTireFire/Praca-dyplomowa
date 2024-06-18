@@ -6,8 +6,7 @@ using pracadyplomowa.Models.ComplexTypes.Effects;
 
 namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
-    public class HealingEffectBlueprint : EffectBlueprint
+    public class HealingEffectBlueprint : ValueEffectBlueprint
     {
-        public HealingEffectType HealingEffectType{ get; set;}
     }
 }

@@ -12,6 +12,5 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     public class ActionEffectType
     {
         public ActionEffect ActionEffect { get; set; }
-        public DiceSet ActionEffect_Value { get; set; }
     }
 }

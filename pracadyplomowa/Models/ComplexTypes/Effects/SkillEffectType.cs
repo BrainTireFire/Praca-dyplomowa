@@ -13,7 +13,6 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     public class SkillEffectType
     {
         public SkillEffect SkillEffect { get; set; }
-        public DiceSet SkillEffect_Value { get; set; }
         public Skill SkillEffect_Skill { get; set; }
     }
 }

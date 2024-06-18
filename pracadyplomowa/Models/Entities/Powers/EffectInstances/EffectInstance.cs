@@ -38,7 +38,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         public AttackRollEffectType AttackRollEffectType{ get; set; }
 
         //armor class effect
-        public ArmorClassEffectType ArmorClassEffectType{ get; set; }
+        // public ArmorClassEffectType ArmorClassEffectType{ get; set; }
 
         //proficiency effect
         public ProficiencyEffectType ProficiencyEffectType{ get; set;}
@@ -48,7 +48,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         public SizeEffectType SizeEffectType{ get; set; }
 
         //initiative effect
-        public InitiativeEffectType InitiativeEffectType{ get; set;}
+        // public InitiativeEffectType InitiativeEffectType{ get; set;}
 
         //damage effect
         public DamageEffectType DamageEffectType{ get; set;}
@@ -57,7 +57,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         public HitpointEffectType HitpointEffectType{ get; set; }
 
         //healing effect
-        public HealingEffectType HealingEffectType{ get; set;}
+        // public HealingEffectType HealingEffectType{ get; set;}
 
         //action effect
         public ActionEffectType ActionEffectType{ get; set; }
@@ -66,7 +66,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         public AttackPerAttackActionEffectType AttackPerAttackActionEffectType{get; set; }
 
         //magic item effect
-        public MagicItemEffectType MagicItemEffectType{ get; set; }
+        // public MagicItemEffectType MagicItemEffectType{ get; set; }
 
         //status effect
         public StatusEffectType StatusEffectType{ get; set; }

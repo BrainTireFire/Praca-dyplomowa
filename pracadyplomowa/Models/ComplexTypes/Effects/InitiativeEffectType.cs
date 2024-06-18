@@ -10,6 +10,5 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     [ComplexType]
     public class InitiativeEffectType
     {
-        public DiceSet InitiativeEffect_Value { get; set; }
     }
 }

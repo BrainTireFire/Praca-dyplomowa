@@ -10,6 +10,5 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     [ComplexType]
     public class MagicItemEffectType
     {
-        public DiceSet MagicItemEffect_Value { get; set; }
     }
 }

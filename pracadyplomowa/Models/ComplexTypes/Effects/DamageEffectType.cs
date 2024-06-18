@@ -13,7 +13,6 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     public class DamageEffectType
     {
         public DamageEffect DamageEffect { get; set; }
-        public DiceSet DamageEffect_Value { get; set; }
         public DamageType DamageEffect_DamageType { get; set; }
     }
 }

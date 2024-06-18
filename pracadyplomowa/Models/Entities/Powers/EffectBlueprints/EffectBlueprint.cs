@@ -32,8 +32,6 @@ namespace pracadyplomowa.Models.Entities.Powers
         public virtual Aura? R_CastedOnTilesByAura { get; set; } = null;
         public int? R_CastedOnTilesByAuraId { get; set; }
 
-        public virtual ItemFamily? R_GrantsProficiencyInItemFamily { get; set; }
-        public int? GrantsProficiencyInItemFamilyId { get; set; }
 
         public virtual ICollection<ChoiceGroup> R_ChoiceGroups { get; set; } = [];
     }

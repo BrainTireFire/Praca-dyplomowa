@@ -8,6 +8,6 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class MovementCostEffectBlueprint : EffectBlueprint
     {
-        public MovementCostEffectType MovementCostEffectType{ get; set; }
+        public MovementCostEffectType MovementCostEffectType{ get; set; } = null!;
     }
 }

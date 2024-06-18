@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using pracadyplomowa;
 
@@ -11,9 +12,11 @@ using pracadyplomowa;
 namespace pracadyplomowa.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240617183531_inheritanceInEffectBlueprint3")]
+    partial class inheritanceInEffectBlueprint3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
@@ -802,6 +805,9 @@ namespace pracadyplomowa.Migrations
                     b.Property<int>("EffectType")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("GrantsProficiencyInItemFamilyId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -813,6 +819,9 @@ namespace pracadyplomowa.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("R_CreatedByEquippingId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("R_GrantsProficiencyInItemFamilyId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("R_PowerId")
@@ -831,6 +840,8 @@ namespace pracadyplomowa.Migrations
                     b.HasIndex("R_CastedOnTilesByAuraId");
 
                     b.HasIndex("R_CreatedByEquippingId");
+
+                    b.HasIndex("R_GrantsProficiencyInItemFamilyId");
 
                     b.HasIndex("R_PowerId");
 
@@ -1494,43 +1505,6 @@ namespace pracadyplomowa.Migrations
                                 .HasColumnType("INTEGER");
                         });
 
-                    b.ComplexProperty<Dictionary<string, object>>("diceSet", "pracadyplomowa.Models.Entities.Powers.EffectBlueprints.AbilityEffectBlueprint.diceSet#DiceSet", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<int>("d10")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d100")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d12")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d20")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d4")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d6")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d8")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("flat")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-                        });
-
                     b.HasDiscriminator().HasValue("AbilityEffectBlueprint");
                 });
 
@@ -1546,86 +1520,12 @@ namespace pracadyplomowa.Migrations
                                 .HasColumnType("INTEGER");
                         });
 
-                    b.ComplexProperty<Dictionary<string, object>>("diceSet", "pracadyplomowa.Models.Entities.Powers.EffectBlueprints.ActionEffectBlueprint.diceSet#DiceSet", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<int>("d10")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d100")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d12")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d20")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d4")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d6")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d8")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("flat")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-                        });
-
                     b.HasDiscriminator().HasValue("ActionEffectBlueprint");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectBlueprints.ArmorClassEffectBlueprint", b =>
                 {
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.EffectBlueprint");
-
-                    b.ComplexProperty<Dictionary<string, object>>("diceSet", "pracadyplomowa.Models.Entities.Powers.EffectBlueprints.ArmorClassEffectBlueprint.diceSet#DiceSet", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<int>("d10")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d100")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d12")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d20")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d4")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d6")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d8")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("flat")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-                        });
 
                     b.HasDiscriminator().HasValue("ArmorClassEffectBlueprint");
                 });
@@ -1639,43 +1539,6 @@ namespace pracadyplomowa.Migrations
                             b1.IsRequired();
 
                             b1.Property<int>("AttackPerActionEffect")
-                                .HasColumnType("INTEGER");
-                        });
-
-                    b.ComplexProperty<Dictionary<string, object>>("diceSet", "pracadyplomowa.Models.Entities.Powers.EffectBlueprints.AttackPerAttackActionEffectBlueprint.diceSet#DiceSet", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<int>("d10")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d100")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d12")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d20")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d4")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d6")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d8")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("flat")
-                                .ValueGeneratedOnUpdateSometimes()
                                 .HasColumnType("INTEGER");
                         });
 
@@ -1700,43 +1563,6 @@ namespace pracadyplomowa.Migrations
                                 .HasColumnType("INTEGER");
                         });
 
-                    b.ComplexProperty<Dictionary<string, object>>("diceSet", "pracadyplomowa.Models.Entities.Powers.EffectBlueprints.AttackRollEffectBlueprint.diceSet#DiceSet", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<int>("d10")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d100")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d12")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d20")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d4")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d6")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d8")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("flat")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-                        });
-
                     b.HasDiscriminator().HasValue("AttackRollEffectBlueprint");
                 });
 
@@ -1755,86 +1581,12 @@ namespace pracadyplomowa.Migrations
                                 .HasColumnType("INTEGER");
                         });
 
-                    b.ComplexProperty<Dictionary<string, object>>("diceSet", "pracadyplomowa.Models.Entities.Powers.EffectBlueprints.DamageEffectBlueprint.diceSet#DiceSet", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<int>("d10")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d100")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d12")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d20")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d4")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d6")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d8")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("flat")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-                        });
-
                     b.HasDiscriminator().HasValue("DamageEffectBlueprint");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectBlueprints.HealingEffectBlueprint", b =>
                 {
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.EffectBlueprint");
-
-                    b.ComplexProperty<Dictionary<string, object>>("diceSet", "pracadyplomowa.Models.Entities.Powers.EffectBlueprints.HealingEffectBlueprint.diceSet#DiceSet", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<int>("d10")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d100")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d12")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d20")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d4")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d6")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d8")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("flat")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-                        });
 
                     b.HasDiscriminator().HasValue("HealingEffectBlueprint");
                 });
@@ -1851,43 +1603,6 @@ namespace pracadyplomowa.Migrations
                                 .HasColumnType("INTEGER");
                         });
 
-                    b.ComplexProperty<Dictionary<string, object>>("diceSet", "pracadyplomowa.Models.Entities.Powers.EffectBlueprints.HitpointEffectBlueprint.diceSet#DiceSet", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<int>("d10")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d100")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d12")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d20")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d4")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d6")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d8")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("flat")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-                        });
-
                     b.HasDiscriminator().HasValue("HitpointEffectBlueprint");
                 });
 
@@ -1895,86 +1610,12 @@ namespace pracadyplomowa.Migrations
                 {
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.EffectBlueprint");
 
-                    b.ComplexProperty<Dictionary<string, object>>("diceSet", "pracadyplomowa.Models.Entities.Powers.EffectBlueprints.IniativeEffectBlueprint.diceSet#DiceSet", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<int>("d10")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d100")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d12")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d20")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d4")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d6")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d8")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("flat")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-                        });
-
                     b.HasDiscriminator().HasValue("IniativeEffectBlueprint");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectBlueprints.MagicEffectBlueprint", b =>
                 {
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.EffectBlueprint");
-
-                    b.ComplexProperty<Dictionary<string, object>>("diceSet", "pracadyplomowa.Models.Entities.Powers.EffectBlueprints.MagicEffectBlueprint.diceSet#DiceSet", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<int>("d10")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d100")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d12")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d20")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d4")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d6")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d8")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("flat")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-                        });
 
                     b.HasDiscriminator().HasValue("MagicEffectBlueprint");
                 });
@@ -2006,55 +1647,12 @@ namespace pracadyplomowa.Migrations
                                 .HasColumnType("INTEGER");
                         });
 
-                    b.ComplexProperty<Dictionary<string, object>>("diceSet", "pracadyplomowa.Models.Entities.Powers.EffectBlueprints.MovementEffectBlueprint.diceSet#DiceSet", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<int>("d10")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d100")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d12")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d20")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d4")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d6")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d8")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("flat")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-                        });
-
                     b.HasDiscriminator().HasValue("MovementEffectBlueprint");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectBlueprints.ProficiencyEffectBlueprint", b =>
                 {
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.EffectBlueprint");
-
-                    b.Property<int?>("GrantsProficiencyInItemFamilyId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("R_GrantsProficiencyInItemFamilyId")
-                        .HasColumnType("INTEGER");
 
                     b.ComplexProperty<Dictionary<string, object>>("ProficiencyEffectType", "pracadyplomowa.Models.Entities.Powers.EffectBlueprints.ProficiencyEffectBlueprint.ProficiencyEffectType#ProficiencyEffectType", b1 =>
                         {
@@ -2063,8 +1661,6 @@ namespace pracadyplomowa.Migrations
                             b1.Property<int>("ProficiencyEffect")
                                 .HasColumnType("INTEGER");
                         });
-
-                    b.HasIndex("R_GrantsProficiencyInItemFamilyId");
 
                     b.HasDiscriminator().HasValue("ProficiencyEffectBlueprint");
                 });
@@ -2102,43 +1698,6 @@ namespace pracadyplomowa.Migrations
                                 .HasColumnType("INTEGER");
                         });
 
-                    b.ComplexProperty<Dictionary<string, object>>("diceSet", "pracadyplomowa.Models.Entities.Powers.EffectBlueprints.SavingThrowEffectBlueprint.diceSet#DiceSet", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<int>("d10")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d100")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d12")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d20")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d4")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d6")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d8")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("flat")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-                        });
-
                     b.HasDiscriminator().HasValue("SavingThrowEffectBlueprint");
                 });
 
@@ -2172,43 +1731,6 @@ namespace pracadyplomowa.Migrations
                                 .HasColumnType("INTEGER");
 
                             b1.Property<int>("SkillEffect_Skill")
-                                .HasColumnType("INTEGER");
-                        });
-
-                    b.ComplexProperty<Dictionary<string, object>>("diceSet", "pracadyplomowa.Models.Entities.Powers.EffectBlueprints.SkillEffectBlueprint.diceSet#DiceSet", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<int>("d10")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d100")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d12")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d20")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d4")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d6")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("d8")
-                                .ValueGeneratedOnUpdateSometimes()
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("flat")
-                                .ValueGeneratedOnUpdateSometimes()
                                 .HasColumnType("INTEGER");
                         });
 
@@ -2741,6 +2263,10 @@ namespace pracadyplomowa.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("pracadyplomowa.Models.Entities.Items.ItemFamily", "R_GrantsProficiencyInItemFamily")
+                        .WithMany("R_ProficiencyGrantedByEffectBlueprint")
+                        .HasForeignKey("R_GrantsProficiencyInItemFamilyId");
+
                     b.HasOne("pracadyplomowa.Models.Entities.Powers.Power", "R_Power")
                         .WithMany("R_EffectBlueprints")
                         .HasForeignKey("R_PowerId");
@@ -2750,6 +2276,8 @@ namespace pracadyplomowa.Migrations
                     b.Navigation("R_CastedOnTilesByAura");
 
                     b.Navigation("R_CreatedByEquipping");
+
+                    b.Navigation("R_GrantsProficiencyInItemFamily");
 
                     b.Navigation("R_Power");
                 });
@@ -2977,15 +2505,6 @@ namespace pracadyplomowa.Migrations
                         .HasForeignKey("R_UsesImmaterialResourceId");
 
                     b.Navigation("R_UsesImmaterialResource");
-                });
-
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectBlueprints.ProficiencyEffectBlueprint", b =>
-                {
-                    b.HasOne("pracadyplomowa.Models.Entities.Items.ItemFamily", "R_GrantsProficiencyInItemFamily")
-                        .WithMany("R_ProficiencyGrantedByEffectBlueprint")
-                        .HasForeignKey("R_GrantsProficiencyInItemFamilyId");
-
-                    b.Navigation("R_GrantsProficiencyInItemFamily");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.Apparel", b =>

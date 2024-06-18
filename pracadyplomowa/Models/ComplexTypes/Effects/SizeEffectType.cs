@@ -13,7 +13,6 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     public class SizeEffectType
     {
         public SizeEffect SizeEffect { get; set; }
-        public DiceSet SizeEffect_Value { get; set; }
         public Size SizeEffect_SizeToSet { get; set; }
     }
 }

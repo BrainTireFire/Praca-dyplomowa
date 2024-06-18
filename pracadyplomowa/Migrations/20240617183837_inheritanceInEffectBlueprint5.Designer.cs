@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using pracadyplomowa;
 
@@ -11,9 +12,11 @@ using pracadyplomowa;
 namespace pracadyplomowa.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240617183837_inheritanceInEffectBlueprint5")]
+    partial class inheritanceInEffectBlueprint5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
@@ -802,6 +805,9 @@ namespace pracadyplomowa.Migrations
                     b.Property<int>("EffectType")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("GrantsProficiencyInItemFamilyId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -813,6 +819,9 @@ namespace pracadyplomowa.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("R_CreatedByEquippingId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("R_GrantsProficiencyInItemFamilyId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("R_PowerId")
@@ -831,6 +840,8 @@ namespace pracadyplomowa.Migrations
                     b.HasIndex("R_CastedOnTilesByAuraId");
 
                     b.HasIndex("R_CreatedByEquippingId");
+
+                    b.HasIndex("R_GrantsProficiencyInItemFamilyId");
 
                     b.HasIndex("R_PowerId");
 
@@ -2050,12 +2061,6 @@ namespace pracadyplomowa.Migrations
                 {
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.EffectBlueprint");
 
-                    b.Property<int?>("GrantsProficiencyInItemFamilyId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("R_GrantsProficiencyInItemFamilyId")
-                        .HasColumnType("INTEGER");
-
                     b.ComplexProperty<Dictionary<string, object>>("ProficiencyEffectType", "pracadyplomowa.Models.Entities.Powers.EffectBlueprints.ProficiencyEffectBlueprint.ProficiencyEffectType#ProficiencyEffectType", b1 =>
                         {
                             b1.IsRequired();
@@ -2063,8 +2068,6 @@ namespace pracadyplomowa.Migrations
                             b1.Property<int>("ProficiencyEffect")
                                 .HasColumnType("INTEGER");
                         });
-
-                    b.HasIndex("R_GrantsProficiencyInItemFamilyId");
 
                     b.HasDiscriminator().HasValue("ProficiencyEffectBlueprint");
                 });
@@ -2741,6 +2744,10 @@ namespace pracadyplomowa.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("pracadyplomowa.Models.Entities.Items.ItemFamily", "R_GrantsProficiencyInItemFamily")
+                        .WithMany("R_ProficiencyGrantedByEffectBlueprint")
+                        .HasForeignKey("R_GrantsProficiencyInItemFamilyId");
+
                     b.HasOne("pracadyplomowa.Models.Entities.Powers.Power", "R_Power")
                         .WithMany("R_EffectBlueprints")
                         .HasForeignKey("R_PowerId");
@@ -2750,6 +2757,8 @@ namespace pracadyplomowa.Migrations
                     b.Navigation("R_CastedOnTilesByAura");
 
                     b.Navigation("R_CreatedByEquipping");
+
+                    b.Navigation("R_GrantsProficiencyInItemFamily");
 
                     b.Navigation("R_Power");
                 });
@@ -2977,15 +2986,6 @@ namespace pracadyplomowa.Migrations
                         .HasForeignKey("R_UsesImmaterialResourceId");
 
                     b.Navigation("R_UsesImmaterialResource");
-                });
-
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectBlueprints.ProficiencyEffectBlueprint", b =>
-                {
-                    b.HasOne("pracadyplomowa.Models.Entities.Items.ItemFamily", "R_GrantsProficiencyInItemFamily")
-                        .WithMany("R_ProficiencyGrantedByEffectBlueprint")
-                        .HasForeignKey("R_GrantsProficiencyInItemFamilyId");
-
-                    b.Navigation("R_GrantsProficiencyInItemFamily");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.Apparel", b =>

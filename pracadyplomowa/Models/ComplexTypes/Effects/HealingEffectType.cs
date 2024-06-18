@@ -10,6 +10,5 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     [ComplexType]
     public class HealingEffectType
     {
-        public DiceSet HealingEffect_Value { get; set; }
     }
 }

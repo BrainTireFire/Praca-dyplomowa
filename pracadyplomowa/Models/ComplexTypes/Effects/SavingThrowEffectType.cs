@@ -13,7 +13,6 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     public class SavingThrowEffectType
     {
         public SavingThrowEffect SavingThrowEffect { get; set; }
-        public DiceSet SavingThrowEffect_Value { get; set; }
         public Ability SavingThrowEffect_Ability { get; set; }
     }
 }

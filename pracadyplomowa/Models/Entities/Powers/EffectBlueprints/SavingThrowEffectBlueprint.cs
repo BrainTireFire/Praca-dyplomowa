@@ -6,8 +6,8 @@ using pracadyplomowa.Models.ComplexTypes.Effects;
 
 namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
-    public class SavingThrowEffectBlueprint : EffectBlueprint
+    public class SavingThrowEffectBlueprint : ValueEffectBlueprint
     {
-        public SavingThrowEffectType SavingThrowEffectType{ get; set; }
+        public SavingThrowEffectType SavingThrowEffectType{ get; set; } = null!;
     }
 }

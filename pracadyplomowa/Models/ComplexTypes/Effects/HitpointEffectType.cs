@@ -12,6 +12,5 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     public class HitpointEffectType
     {
         public HitpointEffect HitpointEffect { get; set; }
-        public DiceSet HitpointEffect_Value { get; set; }
     }
 }

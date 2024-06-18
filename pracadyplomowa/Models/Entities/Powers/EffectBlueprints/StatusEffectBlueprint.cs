@@ -8,6 +8,6 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class StatusEffectBlueprint : EffectBlueprint
     {
-        public StatusEffectType StatusEffectType{ get; set; }
+        public StatusEffectType StatusEffectType{ get; set; } = null!;
     }
 }

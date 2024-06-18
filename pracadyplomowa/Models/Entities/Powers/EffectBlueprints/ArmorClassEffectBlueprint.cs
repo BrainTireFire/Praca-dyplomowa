@@ -6,8 +6,7 @@ using pracadyplomowa.Models.ComplexTypes.Effects;
 
 namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
-    public class ArmorClassEffectBlueprint : EffectBlueprint
+    public class ArmorClassEffectBlueprint : ValueEffectBlueprint
     {
-        public ArmorClassEffectType ArmorClassEffectType{ get; set; }
     }
 }

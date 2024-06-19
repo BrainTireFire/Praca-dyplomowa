@@ -30,7 +30,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_UsersAttendsCampaignsId");
 
-                    b.ToTable("CampaignUser");
+                    b.ToTable("CampaignUser", (string)null);
                 });
 
             modelBuilder.Entity("CharacterClassLevel", b =>
@@ -45,7 +45,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_CharactersId");
 
-                    b.ToTable("CharacterClassLevel");
+                    b.ToTable("CharacterClassLevel", (string)null);
                 });
 
             modelBuilder.Entity("CharacterEffectGroup", b =>
@@ -60,7 +60,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_TargetedCharactersId");
 
-                    b.ToTable("CharacterEffectGroup");
+                    b.ToTable("CharacterEffectGroup", (string)null);
                 });
 
             modelBuilder.Entity("CharacterPower", b =>
@@ -75,7 +75,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_PowersKnownId");
 
-                    b.ToTable("CharacterPower");
+                    b.ToTable("CharacterPower", (string)null);
                 });
 
             modelBuilder.Entity("CharacterPower1", b =>
@@ -90,7 +90,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_PowersPreparedId");
 
-                    b.ToTable("CharacterPower1");
+                    b.ToTable("CharacterPower1", (string)null);
                 });
 
             modelBuilder.Entity("ChoiceGroupEffectBlueprint", b =>
@@ -105,7 +105,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_EffectsId");
 
-                    b.ToTable("ChoiceGroupEffectBlueprint");
+                    b.ToTable("ChoiceGroupEffectBlueprint", (string)null);
                 });
 
             modelBuilder.Entity("ChoiceGroupPower", b =>
@@ -120,7 +120,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_PowersId");
 
-                    b.ToTable("ChoiceGroupPower");
+                    b.ToTable("ChoiceGroupPower", (string)null);
                 });
 
             modelBuilder.Entity("ClassLevelImmaterialResourceAmount", b =>
@@ -135,7 +135,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_ImmaterialResourceAmountsId");
 
-                    b.ToTable("ClassLevelImmaterialResourceAmount");
+                    b.ToTable("ClassLevelImmaterialResourceAmount", (string)null);
                 });
 
             modelBuilder.Entity("ClassPower", b =>
@@ -150,7 +150,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_ClassesWithAccessId");
 
-                    b.ToTable("ClassPower");
+                    b.ToTable("ClassPower", (string)null);
                 });
 
             modelBuilder.Entity("EffectGroupField", b =>
@@ -165,7 +165,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_EffectOnFieldId1");
 
-                    b.ToTable("EffectGroupField");
+                    b.ToTable("EffectGroupField", (string)null);
                 });
 
             modelBuilder.Entity("EquipmentSlotItem", b =>
@@ -180,7 +180,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_ItemsId");
 
-                    b.ToTable("EquipmentSlotItem");
+                    b.ToTable("EquipmentSlotItem", (string)null);
                 });
 
             modelBuilder.Entity("EquipmentSlotRace", b =>
@@ -195,7 +195,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_RacesId");
 
-                    b.ToTable("EquipmentSlotRace");
+                    b.ToTable("EquipmentSlotRace", (string)null);
                 });
 
             modelBuilder.Entity("FieldPower", b =>
@@ -210,7 +210,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_FieldsCastingId");
 
-                    b.ToTable("FieldPower");
+                    b.ToTable("FieldPower", (string)null);
                 });
 
             modelBuilder.Entity("ImmaterialResourceAmountRaceLevel", b =>
@@ -225,7 +225,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_RaceLevelsId");
 
-                    b.ToTable("ImmaterialResourceAmountRaceLevel");
+                    b.ToTable("ImmaterialResourceAmountRaceLevel", (string)null);
                 });
 
             modelBuilder.Entity("ItemPower", b =>
@@ -240,7 +240,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_ItemsGrantingPowerId");
 
-                    b.ToTable("ItemPower");
+                    b.ToTable("ItemPower", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -339,7 +339,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_WeaponsCastingOnHitId");
 
-                    b.ToTable("PowerWeapon");
+                    b.ToTable("PowerWeapon", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Campaign.ActionLog", b =>
@@ -358,7 +358,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("CampaignId");
 
-                    b.ToTable("ActionLogs");
+                    b.ToTable("ActionLogs", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Campaign.Field", b =>
@@ -395,7 +395,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_OccupiedById");
 
-                    b.ToTable("Fields");
+                    b.ToTable("Fields", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Campaign.ParticipanceData", b =>
@@ -437,7 +437,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_EncounterId");
 
-                    b.ToTable("ParticipanceDatas");
+                    b.ToTable("ParticipanceDatas", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Campaign.Shop", b =>
@@ -469,7 +469,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_CampaignId");
 
-                    b.ToTable("Shops");
+                    b.ToTable("Shops", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Campaign.ShopItem", b =>
@@ -507,7 +507,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_ShopHasItemId");
 
-                    b.ToTable("ShopItems");
+                    b.ToTable("ShopItems", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.ChoiceGroup", b =>
@@ -537,7 +537,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_GrantedByRaceLevelId");
 
-                    b.ToTable("ChoiceGroups");
+                    b.ToTable("ChoiceGroups", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.Class", b =>
@@ -558,7 +558,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Classes");
+                    b.ToTable("Classes", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.ClassLevel", b =>
@@ -611,7 +611,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_ClassId");
 
-                    b.ToTable("ClassLevels");
+                    b.ToTable("ClassLevels", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.EquipData", b =>
@@ -639,7 +639,7 @@ namespace pracadyplomowa.Migrations
                     b.HasIndex("R_ItemId")
                         .IsUnique();
 
-                    b.ToTable("EquipDatas");
+                    b.ToTable("EquipDatas", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.EquipmentSlot", b =>
@@ -657,7 +657,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EquipmentSlots");
+                    b.ToTable("EquipmentSlots", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.Race", b =>
@@ -672,7 +672,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Races");
+                    b.ToTable("Races", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.RaceLevel", b =>
@@ -691,7 +691,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_RaceId");
 
-                    b.ToTable("RaceLevels");
+                    b.ToTable("RaceLevels", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.Backpack", b =>
@@ -702,7 +702,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Backpacks");
+                    b.ToTable("Backpacks", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.ItemCostRequirement", b =>
@@ -726,7 +726,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_ItemFamilyId");
 
-                    b.ToTable("ItemCostRequirements");
+                    b.ToTable("ItemCostRequirements", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.ItemFamily", b =>
@@ -741,7 +741,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ItemFamilies");
+                    b.ToTable("ItemFamilies", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.ObjectWithOwner", b =>
@@ -757,7 +757,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_OwnerId");
 
-                    b.ToTable("Objects");
+                    b.ToTable("Objects", (string)null);
 
                     b.UseTptMappingStrategy();
                 });
@@ -781,7 +781,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_CenteredAtCharacterId");
 
-                    b.ToTable("Auras");
+                    b.ToTable("Auras", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectBlueprint", b =>
@@ -834,7 +834,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_PowerId");
 
-                    b.ToTable("EffectBlueprints");
+                    b.ToTable("EffectBlueprints", (string)null);
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("EffectBlueprint");
 
@@ -888,7 +888,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_OriginatesFromAuraId");
 
-                    b.ToTable("EffectGroups");
+                    b.ToTable("EffectGroups", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectInstance", b =>
@@ -1066,7 +1066,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_OwnedByGroupId");
 
-                    b.ToTable("EffectInstances");
+                    b.ToTable("EffectInstances", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.ImmaterialResourceAmount", b =>
@@ -1088,7 +1088,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_BlueprintId");
 
-                    b.ToTable("ImmaterialResourceAmounts");
+                    b.ToTable("ImmaterialResourceAmounts", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.ImmaterialResourceBlueprint", b =>
@@ -1106,7 +1106,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ImmaterialResourceBlueprints");
+                    b.ToTable("ImmaterialResourceBlueprints", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.ImmaterialResourceInstance", b =>
@@ -1141,7 +1141,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_ResourceGrantedToItemId");
 
-                    b.ToTable("ImmaterialResourceInstances");
+                    b.ToTable("ImmaterialResourceInstances", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Role", b =>
@@ -1259,7 +1259,7 @@ namespace pracadyplomowa.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.ToTable("Boards");
+                    b.ToTable("Boards", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Campaign.Campaign", b =>
@@ -1270,7 +1270,7 @@ namespace pracadyplomowa.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.ToTable("Campaigns");
+                    b.ToTable("Campaigns", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Campaign.Encounter", b =>
@@ -1295,7 +1295,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_CampaignId");
 
-                    b.ToTable("Encounters");
+                    b.ToTable("Encounters", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.Character", b =>
@@ -1371,7 +1371,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Characters");
+                    b.ToTable("Characters", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.Item", b =>
@@ -1402,7 +1402,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_ItemInItemsFamilyId");
 
-                    b.ToTable("Items");
+                    b.ToTable("Items", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.Power", b =>
@@ -1476,7 +1476,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_UsesImmaterialResourceId");
 
-                    b.ToTable("Powers");
+                    b.ToTable("Powers", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectBlueprints.AbilityEffectBlueprint", b =>
@@ -2243,14 +2243,14 @@ namespace pracadyplomowa.Migrations
                     b.Property<int>("StrengthRequirement")
                         .HasColumnType("INTEGER");
 
-                    b.ToTable("Apparels");
+                    b.ToTable("Apparels", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.Tool", b =>
                 {
                     b.HasBaseType("pracadyplomowa.Models.Entities.Items.Item");
 
-                    b.ToTable("Tools");
+                    b.ToTable("Tools", (string)null);
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.Weapon", b =>
@@ -2266,7 +2266,7 @@ namespace pracadyplomowa.Migrations
                     b.Property<bool>("Light")
                         .HasColumnType("INTEGER");
 
-                    b.ToTable("Weapons");
+                    b.ToTable("Weapons", (string)null);
                 });
 
             modelBuilder.Entity("CampaignUser", b =>

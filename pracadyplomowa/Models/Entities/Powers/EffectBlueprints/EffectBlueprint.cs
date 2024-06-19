@@ -12,7 +12,6 @@ namespace pracadyplomowa.Models.Entities.Powers
 {
     public class EffectBlueprint : ObjectWithId
     {
-
         public string Name { get; set; } = null!;
         public string Description { get; set; } = null!;
         public int ResourceLevel { get; set; }

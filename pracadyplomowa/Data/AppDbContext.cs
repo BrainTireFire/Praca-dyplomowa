@@ -85,6 +85,21 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         public DbSet<StatusEffectBlueprint> StatusEffectBlueprints { get; set; }
         // public DbSet<ValueEffectBlueprint> ValueEffectBlueprints { get; set; }
         
+        public DbSet<AbilityEffectInstance> AbilityEffectInstances { get; set; }
+        public DbSet<ActionEffectInstance> ActionEffectInstances { get; set; }
+        public DbSet<AttackPerAttackActionEffectInstance> AttackPerAttackActionEffectInstances { get; set; }
+        public DbSet<AttackRollEffectInstance> AttackRollEffectInstances { get; set; }
+        public DbSet<DamageEffectInstance> DamageEffectInstances { get; set; }
+        public DbSet<HitpointEffectInstance> HitpointEffectInstances { get; set; }
+        public DbSet<MovementCostEffectInstance> MovementCostEffectInstances { get; set; }
+        public DbSet<MovementEffectInstance> MovementEffectInstances { get; set; }
+        public DbSet<ProficiencyEffectInstance> ProficiencyEffectInstances { get; set; }
+        public DbSet<ResistanceEffectInstance> ResistanceEffectInstances { get; set; }
+        public DbSet<SavingThrowEffectInstance> SavingThrowEffectInstances { get; set; }
+        public DbSet<SizeEffectInstance> SizeEffectInstances { get; set; }
+        public DbSet<SkillEffectInstance> SkillEffectInstances { get; set; }
+        public DbSet<StatusEffectInstance> StatusEffectInstances { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder builder)
         {
                 base.OnModelCreating(builder);

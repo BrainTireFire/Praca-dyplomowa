@@ -8,6 +8,6 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class ValueEffectBlueprint : EffectBlueprint
     {
-        public DiceSet diceSet {get; set;} = null!;
+        public DiceSet DiceSet {get; set;} = null!;
     }
 }

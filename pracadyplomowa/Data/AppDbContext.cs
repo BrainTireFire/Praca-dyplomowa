@@ -84,9 +84,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         public DbSet<SkillEffectBlueprint> SkillEffectBlueprints { get; set; }
         public DbSet<StatusEffectBlueprint> StatusEffectBlueprints { get; set; }
         // public DbSet<ValueEffectBlueprint> ValueEffectBlueprints { get; set; }
-
-
-
+        
         protected override void OnModelCreating(ModelBuilder builder)
         {
                 base.OnModelCreating(builder);

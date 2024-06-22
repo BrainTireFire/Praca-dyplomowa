@@ -13,6 +13,6 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 
         
         public virtual ItemFamily? R_GrantsProficiencyInItemFamily { get; set; }
-        public int? GrantsProficiencyInItemFamilyId { get; set; }
+        public int? R_GrantsProficiencyInItemFamilyId { get; set; }
     }
 }

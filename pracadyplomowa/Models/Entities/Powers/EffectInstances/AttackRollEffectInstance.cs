@@ -4,5 +4,5 @@ namespace pracadyplomowa.Models.Entities.Powers;
 
 public class AttackRollEffectInstance : ValueEffectInstance
 {
-    public AttackRollEffectType AttackRollEffectType{ get; set; } = null!;
+    public AttackRollEffectType AttackRollEffectType { get; set; } = null!;
 }

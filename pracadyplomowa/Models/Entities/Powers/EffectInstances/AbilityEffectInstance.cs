@@ -4,5 +4,5 @@ namespace pracadyplomowa.Models.Entities.Powers;
 
 public class AbilityEffectInstance : ValueEffectInstance
 {
-    public AbilityEffectType AbilityEffectType{ get; set; } = null!;
+    public AbilityEffectType AbilityEffectType { get; set; } = null!;
 }

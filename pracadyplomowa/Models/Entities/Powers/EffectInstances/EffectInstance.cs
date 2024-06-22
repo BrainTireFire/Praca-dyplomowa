@@ -15,13 +15,13 @@ namespace pracadyplomowa.Models.Entities.Powers
         public string Name { get; set; } = null!;
         public string Description { get; set; } = null!;
         public string SourceName { get; set; } = null!;
-        public EffectType EffectType{ get; set; }
+        public EffectType EffectType { get; set; }
         
         //Relationship
         public virtual EffectGroup R_OwnedByGroup { get; set; } = null!;
         public virtual int OwnedByGroupId { get; set; }
         public virtual ItemFamily? R_GrantsProficiencyInItemFamily { get; set; }
-        public virtual int? GrantsProficiencyInItemFamilyId { get; set; }
+        public virtual int? R_GrantsProficiencyInItemFamilyId { get; set; }
         
     }
 }

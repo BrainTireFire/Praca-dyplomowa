@@ -4,5 +4,5 @@ namespace pracadyplomowa.Models.Entities.Powers;
 
 public class StatusEffectInstance : EffectInstance
 {
-    public StatusEffectType StatusEffectType{ get; set; } = null!;
+    public StatusEffectType StatusEffectType { get; set; } = null!;
 }

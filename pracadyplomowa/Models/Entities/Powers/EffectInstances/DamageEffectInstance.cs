@@ -4,5 +4,5 @@ namespace pracadyplomowa.Models.Entities.Powers;
 
 public class DamageEffectInstance : ValueEffectInstance
 {
-    public DamageEffectType DamageEffectType{ get; set;} = null!;
+    public DamageEffectType DamageEffectType { get; set; } = null!;
 }

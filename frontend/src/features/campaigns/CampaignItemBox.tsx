@@ -14,7 +14,7 @@ const StyledElementBox = styled.div`
   text-align: center;
 `;
 
-export default function CampaignItem({ campaign }) {
+export default function CampaignItemBox({ campaign }) {
   return (
     <Box radius="tiny" customStyles={BoxCustomStyles}>
       <Heading as="h4">{campaign.name}</Heading>
@@ -23,13 +23,13 @@ export default function CampaignItem({ campaign }) {
       <div>
         <ButtonGroup justify="center">
           <Button variation="primary" size="large">
-            tesst
+            View
           </Button>
           <Button variation="primary" size="large">
-            test
+            Edit
           </Button>
           <Button variation="primary" size="large">
-            test
+            Remove
           </Button>
         </ButtonGroup>
       </div>

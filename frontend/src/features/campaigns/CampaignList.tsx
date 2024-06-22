@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import CampaignItem from "./CampaignItem";
+import CampaignItem from "./CampaignItemBox";
 
 const CampaignListLayout = styled.div`
   display: grid;

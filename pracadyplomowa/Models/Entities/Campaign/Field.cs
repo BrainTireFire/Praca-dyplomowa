@@ -22,6 +22,6 @@ namespace pracadyplomowa.Models.Entities.Campaign
         public virtual Board R_Board { get; set; } = null!;
         public virtual ParticipanceData R_OccupiedBy { get; set; } = null!;
         public int R_OccupiedById { get; set; }
-        public virtual ICollection<EffectGroup> R_EffectOnField { get; set; } = [];
+        public virtual ICollection<EffectGroup> R_EffectGroupOnField { get; set; } = [];
     }
 }

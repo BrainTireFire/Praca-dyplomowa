@@ -68,7 +68,7 @@ export default function Home() {
         </Button>
       </ButtonContainer>
       <Heading as="h12" align="left" color="textColor">
-        D&D beyond but better
+        {t("main.title.text")}
       </Heading>
       <HeaderParagraph>PJATK students present</HeaderParagraph>
       <BodyParagraph>

@@ -8,15 +8,16 @@ const GlobalStyles = createGlobalStyle`
   --color-secondary-background-rgb: 220, 225, 222; //#DCE1DE
   --color-border: #49A078;
 
+  /* Buttons */
   --color-button-primary: #D14836;
   --color-button-secondary: #49C5B6;
-
   --color-button-hover-primary:  #831b0d;
   --color-button-hover-secondary: #096359;
 
   --color-secondary-text: #DCE1DE;
   --color-header-text: #9CC5A1;
 
+  /* Links */
   --color-link: #FA9021;
   --color-link-hover: #8f4a00;
 
@@ -26,6 +27,8 @@ const GlobalStyles = createGlobalStyle`
 
   --color-button-green: #49A078;
   
+
+ 
 
 
   --backdrop-color: rgba(255, 255, 255, 0.1);

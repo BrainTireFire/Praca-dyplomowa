@@ -40,6 +40,7 @@ const Heading = styled.h1<HeadingProps>`
     css`
       font-size: 2rem;
       font-weight: 600;
+      margin-bottom: 7px;
     `}
 
   ${(props) =>

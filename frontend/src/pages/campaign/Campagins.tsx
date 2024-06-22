@@ -28,6 +28,14 @@ const HeaderLeft = styled.div`
   margin-bottom: 1rem;
 `;
 
+const HeaderButtons = styled.div`
+  display: flex;
+  align-items: end;
+  /* justify-content: space-between; */
+  gap: 1rem;
+  margin-bottom: 1rem;
+`;
+
 export default function Campagins() {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -36,18 +44,20 @@ export default function Campagins() {
     <>
       <div>
         <Heading as="h4">My campaigns</Heading>
-        <Line size="small" />
+        <Line size="percantage" bold="large" />
       </div>
       <div>
         <HeaderLeft>
           <Heading as="h2" align="left">
             Campaigns
           </Heading>
-          <Button size="large" onClick={() => navigate(`/login`)}>
-            {t("campaigns.create.text")}
-          </Button>
+          <HeaderButtons>
+            <Button size="large" onClick={() => navigate(`/login`)}>
+              {t("campaigns.create.text")}
+            </Button>
+          </HeaderButtons>
         </HeaderLeft>
-        <Line size="verySmall" />
+        <Line size="percantage" />
       </div>
       <CampaignList />
     </>

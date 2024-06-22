@@ -14,6 +14,7 @@ namespace pracadyplomowa.Models.Entities.Characters
         //Properties
         public string Name { get; set; } = null!;
         public string Description { get; set; } = null!;
+        public int Hitpoints { get; set; }
         public DiceSet UsedHitDice { get; set; } = new DiceSet();
 
         //Relationship

@@ -8,7 +8,6 @@ namespace pracadyplomowa.Models.Entities.Campaign
     public class Encounter : ObjectWithOwner
     {
         //Properties
-        public int R_EncounterInTheCampaignId { get; set; }
         public string Name { get; set; } = null!;
 
         //Relationship

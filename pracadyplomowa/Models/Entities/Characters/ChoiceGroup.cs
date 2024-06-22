@@ -10,8 +10,8 @@ namespace pracadyplomowa.Models.Entities.Characters
     {
         public int NumberToChoose { get; set; }
         
+        //Relationship
         public virtual ICollection<Power> R_Powers { get; set; } = [];
-
         public virtual ICollection<EffectBlueprint> R_Effects { get; set; } = [];
 
         public virtual RaceLevel? R_GrantedByRaceLevel { get; set; }

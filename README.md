@@ -50,3 +50,7 @@ FIGMA LINK: https://www.figma.com/file/3K8swnK4xG7Mmle2jC6Mcn/In%C5%BCynierka-pr
 ## Notes
 
 None
+
+## Dev
+dotnet ef migrations add inheritanceInEffectInstance2 --output-dir Data/Migrations --context AppDbContext
+dotnet ef database update --context AppDbContext

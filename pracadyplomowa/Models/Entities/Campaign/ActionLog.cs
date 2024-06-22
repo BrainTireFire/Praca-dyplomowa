@@ -8,11 +8,10 @@ namespace pracadyplomowa.Models.Entities.Campaign
     public class ActionLog : ObjectWithId
     {
         //Properties
-        public int R_EncounterId { get; set; }
         public string? Content;
 
         //Relationship
         public virtual Campaign R_Campaign { get; set; } = null!;
-        public virtual int CampaignId { get; set; }
+        public virtual int R_CampaignId { get; set; }
     }
 }

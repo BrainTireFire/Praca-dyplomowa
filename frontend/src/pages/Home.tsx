@@ -1,4 +1,4 @@
-import React from "react";
+import { useTranslation } from "react-i18next";
 import styled, { css } from "styled-components";
 import Button from "../ui/interactive/Button";
 import { Link } from "react-router-dom";
@@ -55,19 +55,20 @@ const PersonContainer = styled.div`
 
 export default function Home() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <StyledHome>
       <ButtonContainer>
         <Button size="large" onClick={() => navigate(`/login`)}>
-          Login
+          {t("login.text")}
         </Button>
         <Button size="large" onClick={() => navigate(`/register`)}>
-          Sign up
+          {t("signup.text")}
         </Button>
       </ButtonContainer>
       <Heading as="h12" align="left" color="textColor">
-        D&D beyond but better
+        {t("main.title.text")}
       </Heading>
       <HeaderParagraph>PJATK students present</HeaderParagraph>
       <BodyParagraph>
@@ -136,7 +137,6 @@ export default function Home() {
             <Heading as="h5" align="center" color="textColor">
               Maciej Kawęcki
             </Heading>
-            w
             <Box
               customStyles={css`
                 display: flex;

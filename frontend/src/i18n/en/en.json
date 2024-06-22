@@ -1,0 +1,14 @@
+{
+  "signup.text": "Sign up",
+  "login.text": "Login",
+  "main.title.text": "D&D beyond but better",
+
+  "campaigns.create.text": "Create campaign",
+  "campaignInstance.giveXP": "Give XP",
+  "campaignInstance.shortRest": "Short rest",
+  "campaignInstance.longRest": "Long rest",
+  "campaignInstance.session": "Start/open virtual session",
+  "campaignInstance.shops": "Shops",
+  "campaignInstance.createEncounter": "Create encounter",
+  "campaignInstance.remove": "Remove campaign"
+}

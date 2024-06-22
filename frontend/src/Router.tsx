@@ -8,7 +8,8 @@ import MainDashboard from "./pages/MainDashboard";
 import Concact from "./pages/Concact";
 import Homebrew from "./pages/homebrew/Homebrew";
 import Characters from "./pages/Characters";
-import Campagins from "./pages/Campagins";
+import Campagins from "./pages/campaign/Campagins";
+import CampaginInstance from "./pages/campaign/CampaignInstance";
 import Profile from "./pages/account/Profile";
 import NotFound from "./pages/NotFound";
 import ForgotPassword from "./pages/account/ForgotPassword";
@@ -23,6 +24,7 @@ export default function Router() {
           <Route index element={<Navigate replace to="main" />} />
           <Route path="main" element={<MainDashboard />} />
           <Route path="campaigns" element={<Campagins />} />
+          <Route path="campaigns/:campaignId" element={<CampaginInstance />} />
           <Route path="characters" element={<Characters />} />
           <Route path="homebrew" element={<Homebrew />} />
           <Route

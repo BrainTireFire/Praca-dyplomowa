@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Table from "../../ui/containers/Table";
 import Modal from "../../ui/containers/Modal";
 import Menus from "../../ui/containers/Menus";
@@ -9,7 +9,9 @@ import {
   HiTrash,
 } from "react-icons/hi2";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 import RadioButton from "../../ui/containers/RadioButton";
+import ConfirmDelete from "../../ui/containers/ConfirmDelete";
 
 const Name = styled.div`
   font-size: 1.6rem;
@@ -34,6 +36,9 @@ const Stacked = styled.div`
 `;
 
 export default function EquipmentRow({ equipment }) {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const navigate = useNavigate();
+
   return (
     <Table.Row>
       <Name>{equipment.name}</Name>
@@ -76,18 +81,25 @@ export default function EquipmentRow({ equipment }) {
             </Menus.Button>
 
             <Modal.Open opens="delete">
-              <Menus.Button icon={<HiTrash />}>Test 4</Menus.Button>
+              <Menus.Button icon={<HiTrash />} onClick={() => alert("Test4")}>
+                Test 4
+              </Menus.Button>
             </Modal.Open>
           </Menus.List>
         </Menus.Menu>
         <Modal.Window name="delete">
-          {/* <ConfirmDelete
+          <ConfirmDelete
             resourceName="equipment"
             disabled={isDeleting}
             onConfirm={() => {
-              deleteBooking(bookingId);
+              setIsDeleting(true);
+              console.log("Test");
             }}
-          /> */}
+            onCloseModal={() => {
+              setIsDeleting(false);
+              navigate(-1);
+            }}
+          />
         </Modal.Window>
       </Modal>
     </Table.Row>

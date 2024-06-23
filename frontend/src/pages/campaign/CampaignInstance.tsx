@@ -4,6 +4,7 @@ import Heading from "../../ui/text/Heading";
 import Button from "../../ui/interactive/Button";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import InputCopyToClipboard from "../../ui/forms/InputCopyToClipboard";
 
 const HeaderLeft = styled.div`
   display: flex;
@@ -81,6 +82,7 @@ export default function CampaignInstance() {
         <div></div>
         <Line size="percantage" />
       </div>
+      <InputCopyToClipboard valueDefault="Test test test test test test" />
     </>
   );
 }

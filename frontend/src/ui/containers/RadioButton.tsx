@@ -34,7 +34,17 @@ const RadioLabel = styled.span`
   font-size: 16px;
 `;
 
-const RadioButton = ({ label, checked, onChange, circle }) => {
+const RadioButton = ({
+  label,
+  checked,
+  onChange,
+  circle,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: Function;
+  circle: boolean;
+}) => {
   return (
     <RadioButtonWrapper>
       <RadioInput

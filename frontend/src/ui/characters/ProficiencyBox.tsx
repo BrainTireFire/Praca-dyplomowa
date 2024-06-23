@@ -7,9 +7,9 @@ import Heading from "../text/Heading";
 const StyledProficiencyBox = styled.div`
   background-color: rgba(var(--color-secondary-background-rgb), 0.05);
   border: 1px solid var(--color-border);
-  padding: 2rem 3rem;
+  padding: 1rem 1rem;
   width: auto;
-  height: 85%;
+  height: 100%;
   border-radius: var(--border-radius-lg);
 `;
 
@@ -20,26 +20,40 @@ const InputBox = styled.div`
   padding: 1rem;
   margin-bottom: 1rem;
   align-items: center;
-  width: 100%;
-  height: 100%;
-  width: 250px;
-  height: 35px;
+  width: auto;
+  height: 2rem;
   background-color: rgba(var(--color-secondary-background-rgb), 0.05);
   border: 1px solid var(--color-border);
-
+  white-space: nowrap;
   /* overflow: hidden; */
   font-size: 1.4rem;
   border-radius: var(--border-radius-lg);
 `;
 
+const Radio = styled.input`
+  width: 16px;
+  height: 16px;
+  appearance: none;
+  border: 2px solid var(--color-button-primary);
+  border-radius: 4px;
+  outline: none;
+
+  &:checked {
+    background-color: var(--color-button-primary);
+    border-color: var(--color-button-primary);
+  }
+`;
+
 export default function ProficiencyBox({ data, header }) {
   return (
     <StyledProficiencyBox>
+      <Heading as="h3">{header}</Heading>
       {data.map((item) => (
         <InputBox>
-          <RadioButton
+          <Radio
             //   label="Option 1"
-            value="option1"
+            type="radio"
+            checked={item.proficient}
             //   checked={selectedOption === "option1"}
             //   onChange={handleRadioChange}
           />
@@ -48,7 +62,6 @@ export default function ProficiencyBox({ data, header }) {
           <div>{item.name}</div>
         </InputBox>
       ))}
-      <Heading size="h3">{header}</Heading>
     </StyledProficiencyBox>
   );
 }

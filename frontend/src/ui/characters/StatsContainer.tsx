@@ -4,8 +4,8 @@ import AttributeBox from "./AttributeBox";
 
 const StyledStatsContainer = styled.div`
   /* border: 1px solid var(--color-border); */
-  gap: 3rem;
-  width: 200px;
+  gap: 1rem;
+  width: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -55,19 +55,7 @@ function StatsContainer() {
   return (
     <StyledStatsContainer>
       {dataForTest.map((attribute) => (
-        <AttributeBox key={attribute.id}>
-          <AttributeBox.Header>{attribute.header}</AttributeBox.Header>
-          <AttributeBox.Box>
-            {/* <AttributeBox.Input
-              type="text"
-              id={attribute.id}
-              value={attribute.value}
-              // onChange={(e) => setStrength(e.target.value)}
-            /> */}
-            <AttributeBox.Text>{attribute.value}</AttributeBox.Text>
-            <AttributeBox.Circle>{attribute.modifier}</AttributeBox.Circle>
-          </AttributeBox.Box>
-        </AttributeBox>
+        <AttributeBox key={attribute.id} attribute={attribute}></AttributeBox>
       ))}
     </StyledStatsContainer>
   );

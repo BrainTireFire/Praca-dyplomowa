@@ -4,7 +4,7 @@ const StyledDropdown = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 0.2rem;
 `;
 
 const Box = styled.div`
@@ -18,12 +18,12 @@ const Box = styled.div`
 
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-sm);
-  width: 120px;
-  height: 120px;
+  width: 7rem;
+  height: 7rem;
 `;
 
 const Header = styled.div`
-  font-size: 1.6rem;
+  font-size: 1.2rem;
   font-weight: 500;
 `;
 
@@ -33,10 +33,11 @@ const Circle = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 50px;
-  height: 50px;
+  width: 4rem;
+  height: 4rem;
   border: 1px solid var(--color-border);
   border-radius: 100%;
+  font-size: 2rem;
 `;
 
 const Text = styled.p`
@@ -44,25 +45,25 @@ const Text = styled.p`
   /* background-color: transparent; */
   justify-content: center;
   align-items: center;
-  width: 40px;
-  height: 40px;
+  font-size: 2rem;
 `;
 
-const Input = styled.input`
-  /* border: 1px solid var(--color-border); */
-  /* background-color: transparent; */
-  width: 40px;
-  height: 40px;
-`;
-
-function AttributeBox({ children }: { children: React.ReactNode }) {
-  return <StyledDropdown>{children}</StyledDropdown>;
+function AttributeBox({ attribute }: { attribute: any }) {
+  return (
+    <StyledDropdown>
+      <Header>{attribute.header}</Header>
+      <Box>
+        <Text>{attribute.value}</Text>
+        <Circle>{attribute.modifier}</Circle>
+      </Box>
+    </StyledDropdown>
+  );
 }
 
-AttributeBox.Header = Header;
-AttributeBox.Box = Box;
-AttributeBox.Circle = Circle;
-AttributeBox.Input = Input;
-AttributeBox.Text = Text;
+// AttributeBox.Header = Header;
+// AttributeBox.Box = Box;
+// AttributeBox.Circle = Circle;
+// AttributeBox.Input = Input;
+// AttributeBox.Text = Text;
 
 export default AttributeBox;

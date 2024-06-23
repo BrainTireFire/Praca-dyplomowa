@@ -38,7 +38,7 @@ const StyledHeader = styled(CommonRow)`
 `;
 
 const StyledRow = styled(CommonRow)`
-  padding: 1.2rem 2.4rem;
+  padding: 0.2rem 0.9rem;
 
   &:not(:last-child) {
     border-bottom: 1px solid var(--color-button-primary);
@@ -69,7 +69,7 @@ const Empty = styled.p`
 `;
 
 const TableHeader = styled.div`
-  padding: 1rem;
+  padding: 0.5rem;
   font-size: 1.6rem;
   font-weight: bold;
   text-align: left;
@@ -80,9 +80,9 @@ const TableButton = styled.button`
   color: var(--color-grey-0);
   font-size: 1.6rem;
   font-weight: bold;
-  padding: 1rem;
+  padding: 0.5rem;
   cursor: pointer;
-  width: 25%;
+  width: auto;
 `;
 
 const TableContext = createContext({ columns: "" });

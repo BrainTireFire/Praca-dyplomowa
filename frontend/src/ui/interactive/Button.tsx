@@ -3,6 +3,7 @@ import styled, { css } from "styled-components";
 type ButtonProps = {
   size?: "small" | "medium" | "large" | "verylarge";
   variation?: "primary" | "secondary" | "danger";
+  customStyles?: ReturnType<typeof css>;
 };
 
 const sizes = {
@@ -16,6 +17,11 @@ const sizes = {
   medium: css`
     font-size: 1.4rem;
     padding: 1.2rem 1.6rem;
+    font-weight: 500;
+  `,
+  likeInput: css`
+    font-size: 1.4rem;
+    padding: 0.8rem 1.2rem;
     font-weight: 500;
   `,
   large: css`
@@ -65,11 +71,15 @@ export const Button = styled.button<ButtonProps>`
 
   ${(props) => sizes[props.size || "medium"]}
   ${(props) => variations[props.variation || "primary"]}
+  /* Custom styles */
+
+  ${(props) => props.customStyles}
 `;
 
 Button.defaultProps = {
   variation: "primary",
   size: "medium",
+  customStyles: css``,
 };
 
 export default Button;

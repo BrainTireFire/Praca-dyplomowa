@@ -5,7 +5,7 @@ import Button from "../../ui/interactive/Button";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import MemberBox from "../../features/campaigns/MemberBox";
-import Input from "../../ui/forms/Input";
+import InputCopyToClipboard from "../../ui/forms/InputCopyToClipboard";
 
 const HeaderLeft = styled.div`
   display: flex;
@@ -119,10 +119,7 @@ export default function CampaignInstance() {
         <Heading as="h2" align="left">
           Link for invite to the campaign
         </Heading>
-        <Input type="text" value="https://ddjoin.com/1234" readOnly />
-        <Button variation="primary" size="large">
-          Copy
-        </Button>
+        <InputCopyToClipboard valueDefault="http://ddbutbetter.com/1234" />
       </div>
     </>
   );

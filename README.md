@@ -1,8 +1,15 @@
 # Praca dyplomowa system d&d
 
 ## Description
+System fo assist players in managing the flow of gameplay in D&D.
 
-Todo
+## Goal
+The aim of the project is to assist players in managing the flow of gameplay in D&D 5e by developing an IT system consisting of a web application and a database. The system is intended to support players of TTRPG games and is designed with the fifth edition of Dungeons & Dragons in mind.
+
+### Technologies
+- **Frontend**: React, Typescript
+- **Backend**: C# Asp .net 
+- **Database**: Microsoft SQL or PostgreSQL (using Entity framework)
 
 FIGMA LINK: https://www.figma.com/file/3K8swnK4xG7Mmle2jC6Mcn/In%C5%BCynierka-prototyp?type=design&node-id=214%3A4786&mode=design&t=DhvcnQP63MMple4K-1
 

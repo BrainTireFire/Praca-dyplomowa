@@ -14,7 +14,14 @@ const StyledElementBox = styled.div`
   text-align: center;
 `;
 
-export default function MemberBox({ img }) {
+export default function MemberBox({
+  member,
+  character,
+  level,
+  race,
+  classs,
+  img,
+}) {
   return (
     <Box radius="tiny" customStyles={BoxCustomStyles} style={{ gap: "20px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -24,11 +31,11 @@ export default function MemberBox({ img }) {
           style={{ width: "150px", height: "150px" }}
         ></img>
         <div>
-          <Heading as="h6">Member name</Heading>
-          <Heading as="h3">Character name</Heading>
-          <StyledElementBox>Level: 9</StyledElementBox>
-          <StyledElementBox>Race: Human</StyledElementBox>
-          <StyledElementBox>Class: Mage</StyledElementBox>
+          <Heading as="h6">{member}</Heading>
+          <Heading as="h3">{character}</Heading>
+          <StyledElementBox>Level: {level}</StyledElementBox>
+          <StyledElementBox>Race: {race}</StyledElementBox>
+          <StyledElementBox>Class: {classs}</StyledElementBox>
         </div>
       </div>
       <div>
@@ -40,7 +47,7 @@ export default function MemberBox({ img }) {
             Edit
           </Button>
           <Button variation="primary" size="large">
-            Leave
+            Kick
           </Button>
         </ButtonGroup>
       </div>

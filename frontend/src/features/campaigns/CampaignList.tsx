@@ -7,52 +7,52 @@ const CampaignListLayout = styled.div`
   gap: 1rem;
 `;
 
-export default function CampaignList() {
-  const campaigns = [
-    {
-      id: 1,
-      name: "Campaign 1",
-      description: "This is the first campaign.",
-      player: "John Doe",
-    },
-    {
-      id: 2,
-      name: "Campaign 2",
-      description: "This is the second campaign.",
-      player: "John Doe",
-    },
-    {
-      id: 3,
-      name: "Campaign 3",
-      description: "This is the third campaign.",
-      player: "John Doe",
-    },
-    {
-      id: 3,
-      name: "Campaign 3",
-      description: "This is the third campaign.",
-      player: "John Doe",
-    },
-    {
-      id: 3,
-      name: "Campaign 3",
-      description: "This is the third campaign.",
-      player: "John Doe",
-    },
-    {
-      id: 3,
-      name: "Campaign 3",
-      description: "This is the third campaign.",
-      player: "John Doe",
-    },
-    {
-      id: 3,
-      name: "Campaign 3",
-      description: "This is the third campaign.",
-      player: "John Doe",
-    },
-  ];
+const campaigns = [
+  {
+    id: 1,
+    name: "Campaign 1",
+    description: "This is the first campaign.",
+    player: "John Doe",
+  },
+  {
+    id: 2,
+    name: "Campaign 2",
+    description: "This is the second campaign.",
+    player: "John Doe",
+  },
+  {
+    id: 3,
+    name: "Campaign 3",
+    description: "This is the third campaign.",
+    player: "John Doe",
+  },
+  {
+    id: 3,
+    name: "Campaign 3",
+    description: "This is the third campaign.",
+    player: "John Doe",
+  },
+  {
+    id: 3,
+    name: "Campaign 3",
+    description: "This is the third campaign.",
+    player: "John Doe",
+  },
+  {
+    id: 3,
+    name: "Campaign 3",
+    description: "This is the third campaign.",
+    player: "John Doe",
+  },
+  {
+    id: 3,
+    name: "Campaign 3",
+    description: "This is the third campaign.",
+    player: "John Doe",
+  },
+];
 
+export default function CampaignList() {
   return (
     <CampaignListLayout>
       {campaigns.map((campaign) => (

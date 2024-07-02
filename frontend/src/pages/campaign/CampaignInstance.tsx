@@ -35,6 +35,33 @@ const Avatar = styled.div`
   padding: 10px;
 `;
 
+const members = [
+  {
+    member: "Agent007",
+    character: "Michael",
+    level: 1,
+    race: "Wolf",
+    classs: "Fighter",
+    img: "../avatar.jpg",
+  },
+  {
+    member: "xXDestroyerXx",
+    character: "John",
+    level: 11,
+    race: "Human",
+    classs: "Mage",
+    img: "../avatar.jpg",
+  },
+  {
+    member: "murderOnStick",
+    character: "Fred",
+    level: 6,
+    race: "Wyvern",
+    classs: "Monk",
+    img: "../avatar.jpg",
+  },
+];
+
 export default function CampaignInstance() {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -109,9 +136,16 @@ export default function CampaignInstance() {
             paddingBottom: "20px",
           }}
         >
-          <MemberBox img="../avatar.jpg"></MemberBox>
-          <MemberBox img="../avatar.jpg"></MemberBox>
-          <MemberBox img="../avatar.jpg"></MemberBox>
+          {members.map((e) => (
+            <MemberBox
+              member={e.member}
+              character={e.character}
+              level={e.level}
+              race={e.race}
+              classs={e.classs}
+              img={e.img}
+            />
+          ))}
         </div>
         <Line size="percantage" />
       </div>

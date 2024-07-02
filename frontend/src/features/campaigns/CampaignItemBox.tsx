@@ -4,6 +4,7 @@ import Heading from "../../ui/text/Heading";
 import ButtonGroup from "../../ui/interactive/ButtonGroup";
 import Button from "../../ui/interactive/Button";
 import styled, { css } from "styled-components";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const BoxCustomStyles = css`
   display: grid;
@@ -15,6 +16,8 @@ const StyledElementBox = styled.div`
 `;
 
 export default function CampaignItemBox({ campaign }) {
+  const navigate = useNavigate();
+
   return (
     <Box radius="tiny" customStyles={BoxCustomStyles}>
       <Heading as="h4">{campaign.name}</Heading>
@@ -22,7 +25,11 @@ export default function CampaignItemBox({ campaign }) {
       <StyledElementBox>{campaign.description}</StyledElementBox>
       <div>
         <ButtonGroup justify="center">
-          <Button variation="primary" size="large">
+          <Button
+            variation="primary"
+            size="large"
+            onClick={() => navigate(`/campaigns/${campaign.id}`)}
+          >
             View
           </Button>
           <Button variation="primary" size="large">

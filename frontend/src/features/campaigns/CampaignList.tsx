@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import CampaignItem from "./CampaignItemBox";
+import CampaignItemBox from "./CampaignItemBox";
 
 const CampaignListLayout = styled.div`
   display: grid;
@@ -56,7 +56,7 @@ export default function CampaignList() {
   return (
     <CampaignListLayout>
       {campaigns.map((campaign) => (
-        <CampaignItem key={campaign.id} campaign={campaign} />
+        <CampaignItemBox key={campaign.id} campaign={campaign} />
       ))}
     </CampaignListLayout>
   );

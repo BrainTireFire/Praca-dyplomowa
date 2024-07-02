@@ -4,6 +4,8 @@ import Heading from "../../ui/text/Heading";
 import Button from "../../ui/interactive/Button";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import MemberBox from "../../features/campaigns/MemberBox";
+import InputCopyToClipboard from "../../ui/forms/InputCopyToClipboard";
 
 const HeaderLeft = styled.div`
   display: flex;
@@ -24,6 +26,13 @@ const HeaderButtons = styled.div`
 const DescriptionStyled = styled.div`
   margin-bottom: 1rem;
   width: 50%;
+`;
+
+const Avatar = styled.div`
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  padding: 10px;
 `;
 
 export default function CampaignInstance() {
@@ -78,8 +87,39 @@ export default function CampaignInstance() {
         <Heading as="h2" align="left">
           Game master
         </Heading>
-        <div></div>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <Avatar>
+            <img src="../avatar.jpg" alt="avatar"></img>
+          </Avatar>
+          <span>Game master - disaster</span>
+        </div>
         <Line size="percantage" />
+      </div>
+      <div>
+        <Heading as="h2" align="left">
+          Members
+        </Heading>
+        <div
+          style={{
+            height: "275px",
+            width: "2000px",
+            display: "flex",
+            gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
+            gap: "20px",
+            paddingBottom: "20px",
+          }}
+        >
+          <MemberBox img="../avatar.jpg"></MemberBox>
+          <MemberBox img="../avatar.jpg"></MemberBox>
+          <MemberBox img="../avatar.jpg"></MemberBox>
+        </div>
+        <Line size="percantage" />
+      </div>
+      <div style={{ display: "flex", gap: "30px" }}>
+        <Heading as="h2" align="left">
+          Link for invite to the campaign
+        </Heading>
+        <InputCopyToClipboard valueDefault="http://ddbutbetter.com/1234" />
       </div>
     </>
   );

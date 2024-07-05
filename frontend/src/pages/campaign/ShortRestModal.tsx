@@ -2,6 +2,7 @@ import styled from "styled-components";
 import Box from "../../ui/containers/Box";
 import Heading from "../../ui/text/Heading";
 import Button from "../../ui/interactive/Button";
+import { PlayerSelect } from "../../ui/interactive/PlayerSelect";
 
 const Container = styled.div`
   display: grid;
@@ -44,7 +45,7 @@ export default function ShortRest() {
           Select players:
         </p>
         {players.map((e) => (
-          <Option player={e} key={e.id}></Option>
+          <PlayerSelect playersList={e} key={e.id}></PlayerSelect>
         ))}
       </Box>
       <div
@@ -63,23 +64,5 @@ export default function ShortRest() {
         Accept
       </Button>
     </Container>
-  );
-}
-
-function Option({ player }) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-      }}
-    >
-      <input
-        style={{ marginRight: "8px" }}
-        type="checkbox"
-        id={player.id}
-      ></input>
-      <label htmlFor={player.id}>{player.name}</label>
-    </div>
   );
 }

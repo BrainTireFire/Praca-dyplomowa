@@ -8,6 +8,7 @@ import MemberBox from "../../features/campaigns/MemberBox";
 import InputCopyToClipboard from "../../ui/forms/InputCopyToClipboard";
 import Modal from "../../ui/containers/Modal";
 import ShortRest from "./ShortRestModal";
+import DiceRollModal from "./DiceRollModal";
 
 const HeaderLeft = styled.div`
   display: flex;
@@ -80,12 +81,22 @@ export default function CampaignInstance() {
             Details
           </Heading>
           <HeaderButtons>
+            <Modal>
+              <Modal.Open opens="DiceRollModal">
+                <Button size="large" style={{ marginRight: "100px" }}>
+                  RollMODAL
+                </Button>
+              </Modal.Open>
+              <Modal.Window name="DiceRollModal">
+                <DiceRollModal />
+              </Modal.Window>
+            </Modal>
             <Button size="large">{t("campaignInstance.giveXP")}</Button>
             <Modal>
-              <Modal.Open opens="shortRest">
+              <Modal.Open opens="ShortRestModal">
                 <Button size="large">{t("campaignInstance.shortRest")}</Button>
               </Modal.Open>
-              <Modal.Window name="shortRest">
+              <Modal.Window name="ShortRestModal">
                 <ShortRest />
               </Modal.Window>
             </Modal>

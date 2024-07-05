@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import MemberBox from "../../features/campaigns/MemberBox";
 import InputCopyToClipboard from "../../ui/forms/InputCopyToClipboard";
+import Modal from "../../ui/containers/Modal";
+import ShortRest from "./ShortRestModal";
 
 const HeaderLeft = styled.div`
   display: flex;
@@ -79,7 +81,14 @@ export default function CampaignInstance() {
           </Heading>
           <HeaderButtons>
             <Button size="large">{t("campaignInstance.giveXP")}</Button>
-            <Button size="large">{t("campaignInstance.shortRest")}</Button>
+            <Modal>
+              <Modal.Open opens="shortRest">
+                <Button size="large">{t("campaignInstance.shortRest")}</Button>
+              </Modal.Open>
+              <Modal.Window name="shortRest">
+                <ShortRest />
+              </Modal.Window>
+            </Modal>
             <Button size="large">{t("campaignInstance.longRest")}</Button>
             <Button size="large" onClick={() => navigate(`/session`)}>
               {t("campaignInstance.session")}

@@ -10,6 +10,7 @@ import Homebrew from "./pages/homebrew/Homebrew";
 import Characters from "./pages/Characters";
 import Campagins from "./pages/campaign/Campagins";
 import CampaginInstance from "./pages/campaign/CampaignInstance";
+import ShortRest from "./pages/campaign/ShortRestModal";
 import Profile from "./pages/account/Profile";
 import NotFound from "./pages/NotFound";
 import ForgotPassword from "./pages/account/ForgotPassword";

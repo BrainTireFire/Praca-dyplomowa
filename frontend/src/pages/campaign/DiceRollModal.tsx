@@ -69,7 +69,7 @@ function DiceRollModal() {
         <Box style={{ textAlign: "center", width: "270px", height: "63px" }}>
           {result !== 0 && (
             <span>
-              The result of rolling 1{dice.name} is: {result}
+              The result of rolling {dice.name} is: {result}
             </span>
           )}
         </Box>

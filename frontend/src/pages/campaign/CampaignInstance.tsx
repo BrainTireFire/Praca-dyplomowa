@@ -9,6 +9,7 @@ import InputCopyToClipboard from "../../ui/forms/InputCopyToClipboard";
 import Modal from "../../ui/containers/Modal";
 import ShortRest from "./ShortRestModal";
 import DiceRollModal from "./DiceRollModal";
+import BatchRollModal from "./BatchRollModal";
 
 const HeaderLeft = styled.div`
   display: flex;
@@ -81,6 +82,14 @@ export default function CampaignInstance() {
             Details
           </Heading>
           <HeaderButtons>
+            <Modal>
+              <Modal.Open opens="BatchRollModal">
+                <Button size="large">BatchRollMODAL</Button>
+              </Modal.Open>
+              <Modal.Window name="BatchRollModal">
+                <BatchRollModal />
+              </Modal.Window>
+            </Modal>
             <Modal>
               <Modal.Open opens="DiceRollModal">
                 <Button size="large" style={{ marginRight: "100px" }}>

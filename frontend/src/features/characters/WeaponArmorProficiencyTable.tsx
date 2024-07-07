@@ -8,15 +8,15 @@ import ProficiencyRow from "./ProficiencyRow";
 const tools = [
   {
     id: 1,
-    Name: "Disguise kit",
+    Name: "Longsword",
   },
   {
     id: 2,
-    Name: "Smithing kit",
+    Name: "Shields",
   },
   {
     id: 3,
-    Name: "Sewing kit",
+    Name: "Heavy Armor",
   },
 ];
 
@@ -24,7 +24,7 @@ export default function ToolProficiencyTable() {
   return (
     <Menus>
       <Table
-        header="Tool proficiency"
+        header="Weapon proficiency"
         button="Choices available"
         columns="1fr 3.2rem"
       >

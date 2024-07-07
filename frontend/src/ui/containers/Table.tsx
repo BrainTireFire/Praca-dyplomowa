@@ -1,11 +1,12 @@
 import { useContext } from "react";
 import { createContext } from "react";
 import styled from "styled-components";
+import Button from "../interactive/Button";
 
 const StyledTable = styled.div`
-  border: 1px solid var(--color-button-primary);
+  border: 1px solid var(--color-border);
 
-  font-size: 1.4rem;
+  font-size: 1rem;
   background-color: var(--color-grey-0);
   border-radius: 7px;
   overflow: hidden;
@@ -14,7 +15,7 @@ const StyledTable = styled.div`
 const StyledHeaderWithButton = styled.div`
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid var(--color-button-primary);
+  border-bottom: 1px solid var(--color-border);
 `;
 
 const CommonRow = styled.div`
@@ -22,15 +23,16 @@ const CommonRow = styled.div`
   grid-template-columns: ${(props) => props.columns};
 
   column-gap: 2.4rem;
+  font-size: 1rem;
   align-items: center;
   transition: none;
 `;
 
 const StyledHeader = styled(CommonRow)`
-  padding: 1.6rem 2.4rem;
+  padding: 0.2rem 2.4rem;
 
   background-color: var(--color-grey-50);
-  border-bottom: 1px solid var(--color-button-primary);
+  border-bottom: 1px solid var(--color-border);
   text-transform: uppercase;
   letter-spacing: 0.4px;
   font-weight: 600;
@@ -38,15 +40,16 @@ const StyledHeader = styled(CommonRow)`
 `;
 
 const StyledRow = styled(CommonRow)`
-  padding: 0.2rem 0.9rem;
+  padding: 0rem 0.9rem;
+  font-size: 1rem;
 
   &:not(:last-child) {
-    border-bottom: 1px solid var(--color-button-primary);
+    border-bottom: 1px solid var(--color-border);
   }
 `;
 
 const StyledBody = styled.section`
-  margin: 0.4rem 0;
+  margin: 0rem 0;
 `;
 
 const Footer = styled.footer`
@@ -70,19 +73,33 @@ const Empty = styled.p`
 
 const TableHeader = styled.div`
   padding: 0.5rem;
-  font-size: 1.6rem;
+  font-size: 1.2rem;
   font-weight: bold;
   text-align: left;
 `;
 
-const TableButton = styled.button`
+// const TableButton = styled.button`
+//   background-color: var(--color-button-primary);
+//   color: var(--color-grey-0);
+//   font-size: 1rem;
+//   font-weight: bold;
+//   padding: 0rem 0.5rem;
+//   margin: 0.2rem 0.2rem;
+//   cursor: pointer;
+//   width: auto;
+//   border-radius: 0.7rem;
+// `;
+
+const TableButton = styled(Button)`
   background-color: var(--color-button-primary);
   color: var(--color-grey-0);
-  font-size: 1.6rem;
+  font-size: 1rem;
   font-weight: bold;
-  padding: 0.5rem;
+  padding: 0rem 0.5rem;
+  margin: 0.2rem 0.2rem;
   cursor: pointer;
   width: auto;
+  border-radius: 0.7rem;
 `;
 
 const TableContext = createContext({ columns: "" });

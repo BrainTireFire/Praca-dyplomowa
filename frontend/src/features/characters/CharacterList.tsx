@@ -15,31 +15,7 @@ const CharacterListLayout = styled.div`
   padding: 0;
 `;
 
-export default function CharacterList() {
-  const characters = [
-    {
-      id: 1,
-      name: "Legolas",
-      description: "Damn, he is so awesome",
-      class: "Ranger",
-      race: "Elf",
-    },
-    {
-      id: 2,
-      name: "Aragorn",
-      description: "Damn, he is so awesome",
-      class: "Ranger",
-      race: "Human",
-    },
-    {
-      id: 3,
-      name: "Gimli",
-      description: "Damn, he is so awesome",
-      class: "Warrior",
-      race: "Dwarf",
-    },
-  ];
-
+export default function CharacterList({ characters }) {
   return (
     <Box radius="tiny">
       Character list

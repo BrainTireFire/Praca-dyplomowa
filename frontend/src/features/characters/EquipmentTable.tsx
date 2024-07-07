@@ -32,7 +32,7 @@ export default function EquipmentTable() {
   return (
     <Menus>
       <Table
-        header="My Table Header"
+        header="Equipment"
         button="Add new"
         columns="1fr 1fr 1fr 1fr 3.2rem"
       >
@@ -40,7 +40,7 @@ export default function EquipmentTable() {
           <div>Name</div>
           <div>Slot</div>
           <div>Equipped</div>
-          <div>Gwizdka</div>
+          <div>Favourite</div>
           <div></div>
         </Table.Header>
         <Table.Body

@@ -19,14 +19,38 @@ const Column2 = styled.div`
   box-sizing: border-box; /* Include padding and border in the element's total width and height */
 `;
 
+const characters = [
+  {
+    id: 1,
+    name: "Legolas",
+    description: "Damn, he is so awesome",
+    class: "Ranger",
+    race: "Elf",
+  },
+  {
+    id: 2,
+    name: "Aragorn",
+    description: "Damn, he is so awesome",
+    class: "Ranger",
+    race: "Human",
+  },
+  {
+    id: 3,
+    name: "Gimli",
+    description: "Damn, he is so awesome",
+    class: "Warrior",
+    race: "Dwarf",
+  },
+];
+
 export default function Characters() {
   return (
     <Container>
       <Column1>
-        <CharacterList></CharacterList>
+        <CharacterList characters={characters}></CharacterList>
       </Column1>
       <Column2>
-        <CharactersSheet></CharactersSheet>
+        <CharactersSheet characterId={characterId}></CharactersSheet>
       </Column2>
     </Container>
   );

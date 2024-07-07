@@ -16,9 +16,9 @@ const StyledProficiencyBox = styled.div`
 const InputBox = styled.div`
   display: flex;
   justify-content: flex-start;
-  gap: 1rem;
-  padding: 1rem;
-  margin-bottom: 1rem;
+  gap: 0.7rem;
+  padding: 0.5rem;
+  margin-bottom: 0.2rem;
   align-items: center;
   width: auto;
   height: 2rem;
@@ -26,13 +26,13 @@ const InputBox = styled.div`
   border: 1px solid var(--color-border);
   white-space: nowrap;
   /* overflow: hidden; */
-  font-size: 1.4rem;
+  font-size: 1rem;
   border-radius: var(--border-radius-lg);
 `;
 
 const Radio = styled.input`
-  width: 16px;
-  height: 16px;
+  width: 10px;
+  height: 10px;
   appearance: none;
   border: 2px solid var(--color-button-primary);
   border-radius: 4px;

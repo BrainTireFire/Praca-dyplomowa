@@ -1,15 +1,60 @@
 import React from "react";
-import Table from "../../ui/containers/Table";
-import Modal from "../../ui/containers/Modal";
 import Menus from "../../ui/containers/Menus";
+import Table from "../../ui/containers/Table";
+import EquipmentRow from "./EquipmentRow";
+import styled from "styled-components";
+import Modal from "../../ui/containers/Modal";
 import {
   HiArrowDownOnSquare,
   HiArrowUpOnSquare,
   HiEye,
   HiTrash,
 } from "react-icons/hi2";
-import styled from "styled-components";
 import RadioButton from "../../ui/containers/RadioButton";
+
+const powers = [
+  {
+    id: 1,
+    name: "Power 1",
+    source: "Race",
+    favourite: true,
+  },
+  {
+    id: 2,
+    name: "Power 2",
+    source: "Class",
+    favourite: false,
+  },
+  {
+    id: 3,
+    name: "Power 3",
+    source: "Magic sock",
+    favourite: true,
+  },
+];
+
+export default function ReadyPowerTable() {
+  return (
+    <Menus>
+      <Table
+        header="Ready powers"
+        button="Add new"
+        columns="1fr 1fr 1fr 3.2rem"
+      >
+        <Table.Header>
+          <div>Name</div>
+          <div>Source</div>
+          <div>Favourite</div>
+        </Table.Header>
+        <Table.Body
+          data={powers}
+          render={(power) => <ReadyPowersRow key={power.id} power={power} />}
+        />
+        <Table.Footer>{/* <Pagination count={count} /> */}</Table.Footer>
+      </Table>
+    </Menus>
+  );
+}
 
 const Cell = styled.div`
   font-size: 1.2rem;
@@ -17,45 +62,24 @@ const Cell = styled.div`
   color: var(--color-grey-600);
 `;
 
-const Stacked = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-
-  & span:first-child {
-    font-weight: 500;
-  }
-
-  & span:last-child {
-    color: var(--color-grey-500);
-    font-size: 1.2rem;
-  }
-`;
-
-export default function EquipmentRow({ equipment }) {
+function ReadyPowersRow({ power }) {
   return (
     <Table.Row>
-      <Cell>{equipment.name}</Cell>
+      <Cell>{power.name}</Cell>
 
-      <Cell>Head</Cell>
+      <Cell>{power.source}</Cell>
 
       <RadioButton
         //   label="Option 1"
-        value="option1"
-        //   checked={selectedOption === "option1"}
-        //   onChange={handleRadioChange}
-      />
-      <RadioButton
-        //   label="Option 1"
-        value="option1"
+        checked={power.favourite}
         //   checked={selectedOption === "option1"}
         //   onChange={handleRadioChange}
       />
 
       <Modal>
         <Menus.Menu>
-          <Menus.Toggle id={equipment.id} />
-          <Menus.List id={equipment.id}>
+          <Menus.Toggle id={power.id} />
+          <Menus.List id={power.id}>
             <Menus.Button icon={<HiEye />} onClick={() => alert("Test")}>
               Test 1
             </Menus.Button>

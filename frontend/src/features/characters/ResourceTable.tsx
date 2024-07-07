@@ -1,15 +1,66 @@
 import React from "react";
-import Table from "../../ui/containers/Table";
-import Modal from "../../ui/containers/Modal";
 import Menus from "../../ui/containers/Menus";
+import Table from "../../ui/containers/Table";
+import EquipmentRow from "./EquipmentRow";
+import styled from "styled-components";
+import Modal from "../../ui/containers/Modal";
 import {
   HiArrowDownOnSquare,
   HiArrowUpOnSquare,
   HiEye,
   HiTrash,
 } from "react-icons/hi2";
-import styled from "styled-components";
 import RadioButton from "../../ui/containers/RadioButton";
+
+const resources = [
+  {
+    id: 1,
+    name: "Resource 1",
+    count: "1/2",
+    source: "Class",
+    refresh: "Short rest",
+  },
+  {
+    id: 2,
+    name: "Resource 2",
+    count: "3/4",
+    source: "Race",
+    refresh: "Long rest",
+  },
+  {
+    id: 3,
+    name: "Resource 3",
+    count: "4/4",
+    source: "Item",
+    refresh: "Long rest",
+  },
+];
+
+export default function ResourceTable() {
+  return (
+    <Menus>
+      <Table
+        header="Constant effects"
+        button="Add new"
+        columns="1fr 1fr 1fr 1fr 3.2rem"
+      >
+        <Table.Header>
+          <div>Name</div>
+          <div>Count</div>
+          <div>Source</div>
+          <div>Refresh</div>
+        </Table.Header>
+        <Table.Body
+          data={resources}
+          render={(resource) => (
+            <ResourceRow key={resource.id} resource={resource} />
+          )}
+        />
+        <Table.Footer>{/* <Pagination count={count} /> */}</Table.Footer>
+      </Table>
+    </Menus>
+  );
+}
 
 const Cell = styled.div`
   font-size: 1.2rem;
@@ -17,45 +68,20 @@ const Cell = styled.div`
   color: var(--color-grey-600);
 `;
 
-const Stacked = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-
-  & span:first-child {
-    font-weight: 500;
-  }
-
-  & span:last-child {
-    color: var(--color-grey-500);
-    font-size: 1.2rem;
-  }
-`;
-
-export default function EquipmentRow({ equipment }) {
+function ResourceRow({ resource }) {
   return (
     <Table.Row>
-      <Cell>{equipment.name}</Cell>
+      <Cell>{resource.name}</Cell>
 
-      <Cell>Head</Cell>
+      <Cell>{resource.count}</Cell>
 
-      <RadioButton
-        //   label="Option 1"
-        value="option1"
-        //   checked={selectedOption === "option1"}
-        //   onChange={handleRadioChange}
-      />
-      <RadioButton
-        //   label="Option 1"
-        value="option1"
-        //   checked={selectedOption === "option1"}
-        //   onChange={handleRadioChange}
-      />
+      <Cell>{resource.source}</Cell>
+      <Cell>{resource.refresh}</Cell>
 
       <Modal>
         <Menus.Menu>
-          <Menus.Toggle id={equipment.id} />
-          <Menus.List id={equipment.id}>
+          <Menus.Toggle id={resource.id} />
+          <Menus.List id={resource.id}>
             <Menus.Button icon={<HiEye />} onClick={() => alert("Test")}>
               Test 1
             </Menus.Button>

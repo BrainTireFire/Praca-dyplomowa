@@ -12,10 +12,9 @@ import styled from "styled-components";
 import RadioButton from "../../ui/containers/RadioButton";
 
 const Name = styled.div`
-  font-size: 1.6rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--color-grey-600);
-  font-family: "Sono";
 `;
 
 const Stacked = styled.div`
@@ -33,14 +32,14 @@ const Stacked = styled.div`
   }
 `;
 
-export default function ToolProficiencyRow({ tool }) {
+export default function ProficiencyRow({ item }) {
   return (
     <Table.Row>
-      <Name>{tool.Name}</Name>
+      <Name>{item.Name}</Name>
 
-      <Modal>
+      {/* <Modal>
         <Menus.Menu>
-          <Menus.Toggle id={tool.id} />
+          <Menus.Toggle id={item.id} />
           <Menus.List id={tool.id}>
             <Modal.Open opens="delete">
               <Menus.Button icon={<HiTrash />}>Test 4</Menus.Button>
@@ -48,15 +47,15 @@ export default function ToolProficiencyRow({ tool }) {
           </Menus.List>
         </Menus.Menu>
         <Modal.Window name="delete">
-          {/* <ConfirmDelete
+          <ConfirmDelete
             resourceName="equipment"
             disabled={isDeleting}
             onConfirm={() => {
               deleteBooking(bookingId);
             }}
-          /> */}
+          />
         </Modal.Window>
-      </Modal>
+      </Modal> */}
     </Table.Row>
   );
 }

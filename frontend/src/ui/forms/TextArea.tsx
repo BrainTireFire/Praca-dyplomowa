@@ -1,8 +1,7 @@
 import styled, { css } from "styled-components";
 
-type InputProps = {
+type TextAreaProps = {
   size?: "small" | "medium";
-  height?: "normal" | "tall";
   customStyles?: ReturnType<typeof css>;
 };
 
@@ -19,31 +18,26 @@ const sizes = {
   `,
 };
 
-const heights = {
-  normal: css``,
-  tall: css`
-    height: 100%;
-  `,
-};
-
-const Input = styled.input<InputProps>`
+const TextArea = styled.textarea<TextAreaProps>`
   border: 1px solid var(--color-grey-300);
   background-color: font-variant(--color-grey-0);
   border-radius: var(--border-radius-sm);
   box-shadow: var(--shadow-sm);
   padding: 0.8rem 1.2rem;
+  resize: none;
+  width: 100%; // Take full width of the parent
+  height: 100%; // Take full height of the parent if required
+  flex-grow: 1; // Allow it to grow within flex containers
 
   ${(props) => sizes[props.size || "medium"]}
-  ${(props) => heights[props.height || "normal"]}
   /* Custom styles */
 
   ${(props) => props.customStyles}
 `;
 
-Input.defaultProps = {
+TextArea.defaultProps = {
   size: "medium",
   customStyles: css``,
-  height: "normal",
 };
 
-export default Input;
+export default TextArea;

@@ -64,7 +64,7 @@ const variations = {
   `,
 };
 
-export const Button = styled.button<ButtonProps>`
+const Button = styled.button<ButtonProps>`
   border: none;
   border-radius: var(--border-radius-sm);
   box-shadow: var(--shadow-sm);

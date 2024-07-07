@@ -14,12 +14,12 @@ const Box = styled.div`
   justify-content: center;
   flex-direction: column;
   font-size: 3rem;
-  padding-bottom: 40px;
+  padding-bottom: 0rem;
 
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-sm);
-  width: 7rem;
-  height: 7rem;
+  width: 5rem;
+  height: 5rem;
 `;
 
 const Header = styled.div`
@@ -33,18 +33,22 @@ const Circle = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 4rem;
-  height: 4rem;
+  width: 2.5rem;
+  height: 2.5rem;
   border: 1px solid var(--color-border);
   border-radius: 100%;
-  font-size: 2rem;
+  font-size: 1.5rem;
 `;
 
 const Text = styled.p`
   /* border: 1px solid var(--color-border); */
   /* background-color: transparent; */
+  position: absolute;
+  top: 0;
   justify-content: center;
   align-items: center;
+  line-height: 1.2;
+
   font-size: 2rem;
 `;
 

@@ -1,12 +1,21 @@
 import React, { ReactNode } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
-const StyledFormRow = styled.div`
+const StyledFormRow = styled.div<StyledFormRowProps>`
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
   padding: 1.2rem 0;
+  ${(props) => (props.fillHeight ? heights["expanding"] : heights["normal"])}
 `;
+
+const heights = {
+  normal: css``,
+  expanding: css`
+    flex-grow: 1;
+    height: 100%;
+  `,
+};
 
 const Label = styled.label`
   font-weight: 500;
@@ -37,6 +46,10 @@ type FormRowVerticalProps = {
   padassistiveText?: boolean;
   error?: string;
   children: ReactNode;
+  fillHeight?: boolean;
+};
+type StyledFormRowProps = {
+  fillHeight?: boolean;
 };
 
 function FormRowVertical({
@@ -46,9 +59,10 @@ function FormRowVertical({
   padassistiveText,
   error,
   children,
+  fillHeight,
 }: FormRowVerticalProps) {
   return (
-    <StyledFormRow>
+    <StyledFormRow fillHeight={fillHeight}>
       {label && React.isValidElement(children) && (
         <Label htmlFor={children.props.id}>{label}</Label>
       )}

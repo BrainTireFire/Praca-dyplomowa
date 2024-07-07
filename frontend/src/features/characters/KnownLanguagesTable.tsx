@@ -3,7 +3,7 @@ import Menus from "../../ui/containers/Menus";
 import Table from "../../ui/containers/Table";
 import EquipmentRow from "./EquipmentRow";
 import styled from "styled-components";
-import LanguageRow from "./LanguageRow";
+import ProficiencyRow from "./ProficiencyRow";
 
 const languages = [
   {
@@ -31,7 +31,7 @@ export default function KnownLanguagesTable() {
         <Table.Body
           data={languages}
           render={(language) => (
-            <LanguageRow key={language.id} language={language} />
+            <ProficiencyRow key={language.id} item={language} />
           )}
         />
         <Table.Footer>{/* <Pagination count={count} /> */}</Table.Footer>

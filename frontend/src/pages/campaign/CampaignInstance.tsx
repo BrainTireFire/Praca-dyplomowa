@@ -10,6 +10,7 @@ import Modal from "../../ui/containers/Modal";
 import ShortRest from "./ShortRestModal";
 import DiceRollModal from "./DiceRollModal";
 import BatchRollModal from "./BatchRollModal";
+import GiveXP from "./GiveXP";
 
 const HeaderLeft = styled.div`
   display: flex;
@@ -100,7 +101,14 @@ export default function CampaignInstance() {
                 <DiceRollModal />
               </Modal.Window>
             </Modal>
-            <Button size="large">{t("campaignInstance.giveXP")}</Button>
+            <Modal>
+              <Modal.Open opens="GiveXP">
+                <Button size="large">{t("campaignInstance.giveXP")}</Button>
+              </Modal.Open>
+              <Modal.Window name="GiveXP">
+                <GiveXP />
+              </Modal.Window>
+            </Modal>
             <Modal>
               <Modal.Open opens="ShortRestModal">
                 <Button size="large">{t("campaignInstance.shortRest")}</Button>

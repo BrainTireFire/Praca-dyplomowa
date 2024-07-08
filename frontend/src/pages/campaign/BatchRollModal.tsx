@@ -97,7 +97,8 @@ function BatchRollModal() {
       <Box>
         {results.map((e, index) => (
           <div key={index}>
-            Result of rolling {e.dice} is: {e.rolls.join(", ")}
+            Result of rolling {e.dice} is: [{e.rolls.join(", ")}] and the sum is{" "}
+            {e.rolls.reduce((acc, value) => acc + value, 0)}
           </div>
         ))}
       </Box>

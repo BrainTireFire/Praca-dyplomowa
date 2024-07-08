@@ -11,26 +11,31 @@ const Container = styled.div`
   justify-content: center;
 `;
 
-const players = [
+const playersList = [
   {
     name: "First",
     id: 1,
+    xp: 20,
   },
   {
     name: "Second",
     id: 2,
+    xp: 15,
   },
   {
     name: "Third",
     id: 3,
+    xp: 24,
   },
   {
     name: "Fourth",
     id: 4,
+    xp: 56,
   },
   {
     name: "Fifth",
     id: 5,
+    xp: 74,
   },
 ];
 
@@ -44,8 +49,8 @@ export default function ShortRest() {
         <p style={{ gridColumn: "1/2", marginBottom: "10px" }}>
           Select players:
         </p>
-        {players.map((e) => (
-          <PlayerSelect playersList={e} key={e.id}></PlayerSelect>
+        {playersList.map((e) => (
+          <PlayerSelect player={e} key={e.id}></PlayerSelect>
         ))}
       </Box>
       <div

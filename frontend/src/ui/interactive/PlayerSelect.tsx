@@ -1,4 +1,4 @@
-export function PlayerSelect({ playersList }) {
+export function PlayerSelect({ player }) {
   return (
     <div
       style={{
@@ -9,9 +9,11 @@ export function PlayerSelect({ playersList }) {
       <input
         style={{ marginRight: "8px" }}
         type="checkbox"
-        id={playersList.id}
+        id={player.id}
       ></input>
-      <label htmlFor={playersList.id}>{playersList.name}</label>
+      <label htmlFor={player.id}>
+        {player.name} - XP: {player.xp}
+      </label>
     </div>
   );
 }

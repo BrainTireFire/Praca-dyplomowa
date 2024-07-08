@@ -49,7 +49,7 @@ export default function ProficiencyBox({ data, header }) {
     <StyledProficiencyBox>
       <Heading as="h3">{header}</Heading>
       {data.map((item) => (
-        <InputBox>
+        <InputBox key={item.Id}>
           <Radio
             //   label="Option 1"
             type="radio"

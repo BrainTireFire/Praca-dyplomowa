@@ -15,7 +15,7 @@ const CharacterListLayout = styled.div`
   padding: 0;
 `;
 
-export default function CharacterList({ characters }) {
+export default function CharacterList({ characters, onCharacterIdChosen }) {
   return (
     <Box radius="tiny">
       Character list
@@ -35,7 +35,11 @@ export default function CharacterList({ characters }) {
       <Box radius="tiny">
         <CharacterListLayout>
           {characters.map((character) => (
-            <CharacterItemBox key={character.id} character={character} />
+            <CharacterItemBox
+              key={character.id}
+              character={character}
+              onClick={onCharacterIdChosen}
+            />
           ))}
         </CharacterListLayout>
       </Box>

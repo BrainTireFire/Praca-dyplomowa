@@ -9,9 +9,9 @@ const StyledElementBox = styled.div`
   text-align: center;
 `;
 
-export default function CharacterItemBox({ character }) {
+export default function CharacterItemBox({ character, onClick }) {
   return (
-    <Box radius="tiny">
+    <Box radius="tiny" onClick={() => onClick(character.Id)}>
       <Heading as="h3">{character.name}</Heading>
       <StyledElementBox>
         {character.class} & {character.race}

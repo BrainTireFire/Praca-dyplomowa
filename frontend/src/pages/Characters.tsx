@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import CharactersSheet from "../features/characters/CharactersSheet";
 import CharacterList from "../features/characters/CharacterList";
+import { useState } from "react";
 
 const Container = styled.div`
   display: flex; /* Enable flexbox layout */
@@ -44,13 +45,21 @@ const characters = [
 ];
 
 export default function Characters() {
+  const [chosenCharacterId, setChosenCharacterId] = useState(1);
+
+  const handleChangeCharacter = (chosenCharacterId) => {
+    setChosenCharacterId(chosenCharacterId);
+  };
   return (
     <Container>
       <Column1>
-        <CharacterList characters={characters}></CharacterList>
+        <CharacterList
+          characters={characters}
+          onCharacterIdChosen={handleChangeCharacter}
+        ></CharacterList>
       </Column1>
       <Column2>
-        <CharactersSheet characterId={characterId}></CharactersSheet>
+        <CharactersSheet characterId={chosenCharacterId}></CharactersSheet>
       </Column2>
     </Container>
   );

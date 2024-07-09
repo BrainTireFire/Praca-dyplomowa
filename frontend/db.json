@@ -1,0 +1,46 @@
+{
+  "campaigns": [
+    {
+      "id": 1,
+      "name": "Campaign 1",
+      "description": "This is the first campaign.",
+      "player": "John Doe"
+    },
+    {
+      "id": 2,
+      "name": "Campaign 2",
+      "description": "This is the second campaign.",
+      "player": "John Doe"
+    },
+    {
+      "id": 4,
+      "name": "Campaign 4",
+      "description": "This is the third campaign.",
+      "player": "John Doe"
+    },
+    {
+      "id": 5,
+      "name": "Campaign 5",
+      "description": "This is the third campaign.",
+      "player": "John Doe"
+    },
+    {
+      "id": 6,
+      "name": "Campaign 6",
+      "description": "This is the third campaign.",
+      "player": "John Doe"
+    },
+    {
+      "id": 7,
+      "name": "Campaign 7",
+      "description": "This is the third campaign.",
+      "player": "John Doe"
+    },
+    {
+      "id": 8,
+      "name": "Campaign 8",
+      "description": "This is the third campaign.",
+      "player": "John Doe"
+    }
+  ]
+}

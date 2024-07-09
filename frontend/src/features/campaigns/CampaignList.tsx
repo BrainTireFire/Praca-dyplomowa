@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import CampaignItemBox from "./CampaignItemBox";
+import { useCampaigns } from "./useCampaigns";
+import Spinner from "../../ui/interactive/Spinner";
 
 const CampaignListLayout = styled.div`
   display: grid;
@@ -7,52 +9,17 @@ const CampaignListLayout = styled.div`
   gap: 1rem;
 `;
 
-const campaigns = [
-  {
-    id: 1,
-    name: "Campaign 1",
-    description: "This is the first campaign.",
-    player: "John Doe",
-  },
-  {
-    id: 2,
-    name: "Campaign 2",
-    description: "This is the second campaign.",
-    player: "John Doe",
-  },
-  {
-    id: 3,
-    name: "Campaign 3",
-    description: "This is the third campaign.",
-    player: "John Doe",
-  },
-  {
-    id: 3,
-    name: "Campaign 3",
-    description: "This is the third campaign.",
-    player: "John Doe",
-  },
-  {
-    id: 3,
-    name: "Campaign 3",
-    description: "This is the third campaign.",
-    player: "John Doe",
-  },
-  {
-    id: 3,
-    name: "Campaign 3",
-    description: "This is the third campaign.",
-    player: "John Doe",
-  },
-  {
-    id: 3,
-    name: "Campaign 3",
-    description: "This is the third campaign.",
-    player: "John Doe",
-  },
-];
-
 export default function CampaignList() {
+  const { isLoading, campaigns } = useCampaigns();
+
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  if (!campaigns || campaigns.length === 0) {
+    return <div>No campaigns available.</div>;
+  }
+
   return (
     <CampaignListLayout>
       {campaigns.map((campaign) => (

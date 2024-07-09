@@ -49,6 +49,9 @@ FIGMA LINK: https://www.figma.com/file/3K8swnK4xG7Mmle2jC6Mcn/In%C5%BCynierka-pr
 
 ## Notes
 
+## ONLY DEV
+json server: npx json-server db.json
+
 None
 
 ## Dev

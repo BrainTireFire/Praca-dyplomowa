@@ -3,15 +3,23 @@ import Box from "../../ui/containers/Box";
 import Heading from "../../ui/text/Heading";
 import ButtonGroup from "../../ui/interactive/ButtonGroup";
 import Button from "../../ui/interactive/Button";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
+import { CharacterItem } from "../../models/character";
 
 const StyledElementBox = styled.div`
   text-align: center;
 `;
 
-export default function CharacterItemBox({ character, onClick }) {
+export default function CharacterItemBox({
+  character,
+  onClick,
+}: {
+  character: CharacterItem;
+  onClick: any;
+}) {
+  console.log(character);
   return (
-    <Box radius="tiny" onClick={() => onClick(character.Id)}>
+    <Box radius="tiny" onClick={() => onClick(character.id)}>
       <Heading as="h3">{character.name}</Heading>
       <StyledElementBox>
         {character.class} & {character.race}

@@ -1,12 +1,12 @@
 import styled from "styled-components";
-import CampaignItem from "./CampaignItemBox";
 import CharacterItemBox from "./CharacterItemBox";
 import Box from "../../ui/containers/Box";
 import Input from "../../ui/forms/Input";
 import FormRowVertical from "../../ui/forms/FormRowVertical";
-import FormRow from "../../ui/forms/FormRow";
 import Button from "../../ui/interactive/Button";
 import HorizontalDiv from "../../ui/containers/HorizontalDiv";
+import { useCharacters } from "./useCharacters";
+import Spinner from "../../ui/interactive/Spinner";
 
 const CharacterListLayout = styled.div`
   display: flex;
@@ -15,7 +15,15 @@ const CharacterListLayout = styled.div`
   padding: 0;
 `;
 
-export default function CharacterList({ characters, onCharacterIdChosen }) {
+export default function CharacterList({
+  onCharacterIdChosen,
+}: {
+  onCharacterIdChosen: any;
+}) {
+  const { isLoading, characters } = useCharacters();
+  if (isLoading) {
+    return <Spinner />;
+  }
   return (
     <Box radius="tiny">
       Character list
@@ -27,14 +35,12 @@ export default function CharacterList({ characters, onCharacterIdChosen }) {
           <Input placeholder="Type here"></Input>
         </FormRowVertical>
         <FormRowVertical padlabel={true} padassistiveText={true}>
-          <Button size="likeInput" variation="primary">
-            Create character
-          </Button>
+          <Button variation="primary">Create character</Button>
         </FormRowVertical>
       </HorizontalDiv>
       <Box radius="tiny">
         <CharacterListLayout>
-          {characters.map((character) => (
+          {characters?.map((character) => (
             <CharacterItemBox
               key={character.id}
               character={character}

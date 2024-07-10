@@ -20,41 +20,17 @@ const Column2 = styled.div`
   box-sizing: border-box; /* Include padding and border in the element's total width and height */
 `;
 
-const characters = [
-  {
-    id: 1,
-    name: "Legolas",
-    description: "Damn, he is so awesome",
-    class: "Ranger",
-    race: "Elf",
-  },
-  {
-    id: 2,
-    name: "Aragorn",
-    description: "Damn, he is so awesome",
-    class: "Ranger",
-    race: "Human",
-  },
-  {
-    id: 3,
-    name: "Gimli",
-    description: "Damn, he is so awesome",
-    class: "Warrior",
-    race: "Dwarf",
-  },
-];
-
 export default function Characters() {
-  const [chosenCharacterId, setChosenCharacterId] = useState(1);
+  const [chosenCharacterId, setChosenCharacterId] = useState<number>(1);
 
-  const handleChangeCharacter = (chosenCharacterId) => {
+  const handleChangeCharacter = (chosenCharacterId: number) => {
+    console.log(chosenCharacterId);
     setChosenCharacterId(chosenCharacterId);
   };
   return (
     <Container>
       <Column1>
         <CharacterList
-          characters={characters}
           onCharacterIdChosen={handleChangeCharacter}
         ></CharacterList>
       </Column1>

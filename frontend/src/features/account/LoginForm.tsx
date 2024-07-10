@@ -6,24 +6,43 @@ import Heading from "../../ui/text/Heading";
 import Button from "../../ui/interactive/Button";
 import LinkContainer from "../../ui/containers/LinkContainer";
 import Link from "../../ui/links/Link";
+import { useLogin } from "./useLogin";
+import SpinnerMini from "../../ui/interactive/SpinnerMini";
 
 export default function LoginForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("Bob");
+  const [password, setPassword] = useState("Drewno1234");
+  const { login, isLoading } = useLogin();
 
-  function handleSubmit() {}
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    if (!username || !password) {
+      return;
+    }
+
+    login(
+      { username, password },
+      {
+        onSettled: () => {
+          setUsername("");
+          setPassword("");
+        },
+      }
+    );
+  }
 
   return (
     <Form onSubmit={handleSubmit}>
       <Heading as="h3">Sign in</Heading>
       <FormRowVertical label="Email address">
         <Input
-          type="email"
-          id="email"
+          type="text"
+          id="username"
           placeholder="Enter your username or email address"
           autoComplete="username"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
         />
       </FormRowVertical>
       <FormRowVertical label="Password">
@@ -40,8 +59,8 @@ export default function LoginForm() {
         <Link to="/forgotPassword">Forgot Password?</Link>
       </LinkContainer>
       <FormRowVertical>
-        <Button size="large" variation="primary">
-          Login
+        <Button size="large" variation="primary" disabled={isLoading}>
+          {!isLoading ? "Login" : <SpinnerMini />}
         </Button>
       </FormRowVertical>
     </Form>

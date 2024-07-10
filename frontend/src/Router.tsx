@@ -15,12 +15,19 @@ import NotFound from "./pages/NotFound";
 import ForgotPassword from "./pages/account/ForgotPassword";
 import PasswordChanged from "./pages/account/PasswordChanged";
 import HomebrewCreatePower from "./pages/homebrew/HomebrewCreatePower";
+import ProtectedRoute from "./features/account/ProtectedRoute";
 
 export default function Router() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<AppLayout />}>
+        <Route
+          element={
+            <ProtectedRoute>
+              <AppLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<Navigate replace to="main" />} />
           <Route path="main" element={<MainDashboard />} />
           <Route path="campaigns" element={<Campagins />} />

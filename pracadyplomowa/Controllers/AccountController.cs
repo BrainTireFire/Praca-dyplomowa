@@ -136,14 +136,14 @@ public class AccountController : BaseApiController
                 return Unauthorized("Invalid token: Missing user ID claim");
             }          
             
-            var usernameClaim = principal.Claims.FirstOrDefault(c => c.Type == "id");
+            var usernameClaim = principal.Claims.FirstOrDefault(c => c.Type == "username");
             if (usernameClaim == null || string.IsNullOrEmpty(usernameClaim.Value))
             {
                 return Unauthorized("Invalid token: Missing username claim");
             }
             
             var user = await _accountRepository.GetUserById(int.Parse(userIdClaim.Value));
-            if (user == null && user.UserName.Equals(usernameClaim.Value))
+            if (user == null || !user.UserName.Equals(usernameClaim.Value))
             {
                 return Unauthorized("User not found or inactive");
             }

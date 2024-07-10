@@ -44,6 +44,8 @@ var app = builder.Build();
 
 //app.UseHttpsRedirection();
 
+app.UseCors(x => x.AllowCredentials().AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:5173"));
+
 app.UseAuthentication();
 app.UseAuthorization();
 

@@ -20,7 +20,7 @@ public static class IdentityServiceExtensions
             .AddRoleValidator<RoleValidator<Role>>()
             .AddEntityFrameworkStores<AppDbContext>();
 
-
+        // Configure JWT Bearer
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
@@ -32,7 +32,16 @@ public static class IdentityServiceExtensions
                     ValidateAudience = false,
                 };
             });
-        //.AddCookie();
+        
+        // Configure Cookie Authentication
+        services.ConfigureApplicationCookie(options =>
+        {
+            options.Cookie.HttpOnly = true;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.None; // Use CookieSecurePolicy.Always in production
+            options.Cookie.SameSite = SameSiteMode.Lax; // Use SameSiteMode.Strict in production
+            options.Cookie.Name = "JwtCookie";
+            options.ExpireTimeSpan = TimeSpan.FromDays(1);
+        });
 
         services.AddAuthorizationBuilder()
             .AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));

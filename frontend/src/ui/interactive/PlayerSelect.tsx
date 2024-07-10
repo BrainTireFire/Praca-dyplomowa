@@ -1,16 +1,15 @@
+import Input from "../forms/Input";
+
 export function PlayerSelect({ player }) {
   return (
     <div
       style={{
+        gap: "8px",
         display: "flex",
         alignItems: "center",
       }}
     >
-      <input
-        style={{ marginRight: "8px" }}
-        type="checkbox"
-        id={player.id}
-      ></input>
+      <Input type="checkbox" id={player.id}></Input>
       <label htmlFor={player.id}>
         {player.name} - XP: {player.xp}
       </label>

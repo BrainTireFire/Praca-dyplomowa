@@ -84,24 +84,6 @@ export default function CampaignInstance() {
           </Heading>
           <HeaderButtons>
             <Modal>
-              <Modal.Open opens="BatchRollModal">
-                <Button size="large">BatchRollMODAL</Button>
-              </Modal.Open>
-              <Modal.Window name="BatchRollModal">
-                <BatchRollModal />
-              </Modal.Window>
-            </Modal>
-            <Modal>
-              <Modal.Open opens="DiceRollModal">
-                <Button size="large" style={{ marginRight: "100px" }}>
-                  RollMODAL
-                </Button>
-              </Modal.Open>
-              <Modal.Window name="DiceRollModal">
-                <DiceRollModal />
-              </Modal.Window>
-            </Modal>
-            <Modal>
               <Modal.Open opens="GiveXP">
                 <Button size="large">{t("campaignInstance.giveXP")}</Button>
               </Modal.Open>

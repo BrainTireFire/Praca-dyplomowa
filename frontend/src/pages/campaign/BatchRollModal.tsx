@@ -3,7 +3,7 @@ import Input from "../../ui/forms/Input";
 import Heading from "../../ui/text/Heading";
 import Button from "../../ui/interactive/Button";
 import Box from "../../ui/containers/Box";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 const diceData = [
   {
@@ -48,6 +48,7 @@ interface DiceResult {
 function BatchRollModal() {
   const [diceCounts, setDiceCounts] = useState(diceData.map(() => 0));
   const [results, setResults] = useState<DiceResult[]>([]);
+  const showBox = useRef(false);
 
   const handleChange = (index, value) => {
     const newCounts = [...diceCounts];
@@ -57,17 +58,7 @@ function BatchRollModal() {
 
   const handleRoll = () => {
     if (diceCounts.reduce((acc, value) => acc + value, 0) === 0) return;
-
-    let isTooBig = false;
-    diceCounts.forEach((e, index) => {
-      if (e > 10) {
-        isTooBig = true;
-        diceCounts[index] = 0;
-      }
-    });
-    if (isTooBig) {
-      alert("Number provided cannot be higher than 10");
-    }
+    showBox.current = true;
 
     const newResults = diceData.map((dice, index) => {
       const rolls = [];
@@ -79,6 +70,7 @@ function BatchRollModal() {
 
     const filteredResults = newResults.filter((e) => e.rolls.length !== 0);
     setResults(filteredResults);
+    showBox = true;
   };
 
   return (
@@ -94,14 +86,17 @@ function BatchRollModal() {
         </div>
       ))}
       <Button onClick={handleRoll}>Roll the dice</Button>
-      <Box>
-        {results.map((e, index) => (
-          <div key={index}>
-            Result of rolling {e.dice} is: [{e.rolls.join(", ")}] and the sum is{" "}
-            {e.rolls.reduce((acc, value) => acc + value, 0)}
-          </div>
-        ))}
-      </Box>
+
+      {showBox.current && (
+        <Box>
+          {results.map((e, index) => (
+            <div key={index}>
+              Result of rolling {e.dice} is: [{e.rolls.join(", ")}] and the sum
+              is {e.rolls.reduce((acc, value) => acc + value, 0)}
+            </div>
+          ))}
+        </Box>
+      )}
     </Container>
   );
 }

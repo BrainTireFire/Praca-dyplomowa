@@ -4,6 +4,9 @@ import { PiSwordDuotone, PiClock } from "react-icons/pi";
 import { AiOutlineThunderbolt } from "react-icons/ai";
 import { FaDice, FaRegAddressBook } from "react-icons/fa";
 import { MdBackpack } from "react-icons/md";
+import Modal from "../Modal";
+import Button from "../../interactive/Button";
+import BatchRollModal from "../../../pages/campaign/BatchRollModal";
 
 const NavList = styled.ul`
   display: flex;
@@ -11,7 +14,7 @@ const NavList = styled.ul`
   gap: 2rem;
 `;
 
-const StyledNavLink = styled(NavLink)`
+const IconContainer = styled.div`
   & svg {
     width: 5rem;
     height: 5rem;
@@ -26,40 +29,46 @@ const StyledNavLink = styled(NavLink)`
     color: var(--color-link-hover);
   }
 `;
-
 function MainSidebar() {
   return (
     <nav>
       <NavList>
         <li>
-          <StyledNavLink to="/">
+          <IconContainer>
             <FaRegAddressBook />
-          </StyledNavLink>
+          </IconContainer>
         </li>
         <li>
-          <StyledNavLink to="/">
+          <IconContainer>
             <PiSwordDuotone />
-          </StyledNavLink>
+          </IconContainer>
         </li>
         <li>
-          <StyledNavLink to="/">
+          <IconContainer>
             <PiClock />
-          </StyledNavLink>
+          </IconContainer>
         </li>
         <li>
-          <StyledNavLink to="/">
+          <IconContainer>
             <AiOutlineThunderbolt />
-          </StyledNavLink>
+          </IconContainer>
         </li>
         <li>
-          <StyledNavLink to="/">
+          <IconContainer>
             <MdBackpack />
-          </StyledNavLink>
+          </IconContainer>
         </li>
         <li>
-          <StyledNavLink to="/">
-            <FaDice />
-          </StyledNavLink>
+          <Modal>
+            <Modal.Open opens="BatchRollModal">
+              <IconContainer>
+                <FaDice />
+              </IconContainer>
+            </Modal.Open>
+            <Modal.Window name="BatchRollModal">
+              <BatchRollModal />
+            </Modal.Window>
+          </Modal>
         </li>
       </NavList>
     </nav>

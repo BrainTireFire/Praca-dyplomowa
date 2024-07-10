@@ -22,7 +22,7 @@ export default function CampaignList() {
 
   return (
     <CampaignListLayout>
-      {campaigns.map((campaign) => (
+      {campaigns.map((campaign: Campaigns) => (
         <CampaignItemBox key={campaign.id} campaign={campaign} />
       ))}
     </CampaignListLayout>

@@ -1,6 +1,14 @@
 import Input from "../forms/Input";
 
-export function PlayerSelect({ player, handlePlayerSelect, type }) {
+export function PlayerSelect({ player, setSelectedPlayers, type }) {
+  const handlePlayerSelect = (id: number) => {
+    setSelectedPlayers((previousSelection) =>
+      previousSelection.includes(id)
+        ? previousSelection.filter((playerId) => id !== playerId)
+        : [...previousSelection, id]
+    );
+  };
+
   return (
     <div
       style={{

@@ -24,14 +24,6 @@ export default function ShortRest() {
   const [players, setPlayers] = useState(playersList);
   const [selectedPlayers, setSelectedPlayers] = useState<number[]>([]);
 
-  const handlePlayerSelect = (id: number) => {
-    setSelectedPlayers((previousSelection) =>
-      previousSelection.includes(id)
-        ? previousSelection.filter((playerId) => id !== playerId)
-        : [...previousSelection, id]
-    );
-  };
-
   const handleClick = () => {
     setPlayers((previous) =>
       previous.map((player) =>
@@ -53,7 +45,7 @@ export default function ShortRest() {
         </p>
         {players.map((e) => (
           <PlayerSelect
-            handlePlayerSelect={handlePlayerSelect}
+            setSelectedPlayers={setSelectedPlayers}
             player={e}
             key={e.id}
             type="rest"

@@ -38,14 +38,6 @@ function GiveXP() {
     );
   };
 
-  const handlePlayerSelect = (id: number) => {
-    setSelectedPlayers((previousSelection) =>
-      previousSelection.includes(id)
-        ? previousSelection.filter((playerId) => id !== playerId)
-        : [...previousSelection, id]
-    );
-  };
-
   return (
     <Container>
       <Heading as="h4">Give experience points</Heading>
@@ -53,7 +45,7 @@ function GiveXP() {
         <p>Select players:</p>
         {players.map((e) => (
           <PlayerSelect
-            handlePlayerSelect={handlePlayerSelect}
+            setSelectedPlayers={setSelectedPlayers}
             player={e}
             key={e.id}
             type="xp"

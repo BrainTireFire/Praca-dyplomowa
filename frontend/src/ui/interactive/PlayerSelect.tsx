@@ -1,6 +1,6 @@
 import Input from "../forms/Input";
 
-export function PlayerSelect({ player }) {
+export function PlayerSelect({ player, handlePlayerSelect, type }) {
   return (
     <div
       style={{
@@ -9,9 +9,15 @@ export function PlayerSelect({ player }) {
         alignItems: "center",
       }}
     >
-      <Input type="checkbox" id={player.id}></Input>
+      <Input
+        onChange={() => handlePlayerSelect(player.id)}
+        type="checkbox"
+        id={player.id}
+      ></Input>
       <label htmlFor={player.id}>
-        {player.name} - XP: {player.xp}
+        {player.name}
+        {type === "xp" ? ` - XP: ${player.xp}` : ""}
+        {type === "rest" ? ` - Stamina: ${player.stamina}` : ""}
       </label>
     </div>
   );

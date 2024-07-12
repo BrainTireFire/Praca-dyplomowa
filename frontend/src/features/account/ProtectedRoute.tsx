@@ -3,6 +3,7 @@ import Spinner from "../../ui/interactive/Spinner";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useValidate } from "./useValidate";
+import { useQueryClient } from "@tanstack/react-query";
 
 const FullPage = styled.div`
   height: 100vh;
@@ -14,26 +15,35 @@ const FullPage = styled.div`
 
 function ProtectedRoute({ children }) {
   const navigate = useNavigate();
-  const [isValid, setIsValid] = useState(false);
+  const queryClient = useQueryClient();
+  const user = queryClient.getQueryData(["user"]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const { validate, isLoading } = useValidate();
 
   useEffect(() => {
     async function check() {
       try {
-        const result = await validate();
-        setIsValid(result.isValid);
-        if (!result.isValid) {
-          navigate("/login");
+        if (user && user.isAuthenticated) {
+          setIsAuthenticated(true);
+        } else {
+          const result = await validate();
+          setIsAuthenticated(result.isAuthenticated);
+
+          if (!result.isAuthenticated) {
+            console.log("Test ");
+            navigate("/login");
+          }
         }
       } catch (error) {
+        console.log("error " + JSON.stringify(error));
         navigate("/login");
       }
     }
 
     check();
-  }, [validate, navigate]);
+  }, [validate, navigate, user]);
 
-  if (isLoading || isValid === null) {
+  if (isLoading || isAuthenticated === null) {
     return (
       <FullPage>
         <Spinner />
@@ -41,7 +51,7 @@ function ProtectedRoute({ children }) {
     );
   }
 
-  if (isValid) {
+  if (isAuthenticated) {
     return children;
   }
 

@@ -9,6 +9,7 @@ namespace pracadyplomowa;
 
 public class TokenService : ITokenService
 {
+    private const string SECURITY_ALGORITHM = "HS512";
     private readonly SymmetricSecurityKey _key;
     private readonly UserManager<User> _userManager;
 
@@ -29,7 +30,6 @@ public class TokenService : ITokenService
         };
 
         var roles = await _userManager.GetRolesAsync(user);
-
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
@@ -47,53 +47,28 @@ public class TokenService : ITokenService
 
         return tokenHandler.WriteToken(token);
     }
-
-    public bool ValidateToken(string token)
-    {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var validationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = _key,
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ClockSkew = TimeSpan.Zero
-        };
-
-        try
-        {
-            tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
     
     public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var validationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = _key,
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ClockSkew = TimeSpan.Zero
-        };
+    
+        // Configure token validation parameters
+        var validationParameters = GetTokenValidationParameters();
 
         SecurityToken securityToken;
         try
         {
+            // Validate token
             var principal = tokenHandler.ValidateToken(token, validationParameters, out securityToken);
-            var jwtSecurityToken = securityToken as JwtSecurityToken;
-            if (jwtSecurityToken == null)
+        
+            // Ensure the token is a JWT security token
+            if (!(securityToken is JwtSecurityToken jwtSecurityToken))
             {
                 throw new SecurityTokenException("Invalid token");
             }
-            
-            if (!jwtSecurityToken.Header.Alg.Equals("HS512", StringComparison.InvariantCultureIgnoreCase))
+
+            // Validate token algorithm
+            if (!jwtSecurityToken.Header.Alg.Equals(SECURITY_ALGORITHM, StringComparison.InvariantCultureIgnoreCase))
             {
                 throw new SecurityTokenException("Invalid token algorithm");
             }
@@ -102,8 +77,19 @@ public class TokenService : ITokenService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Token validation failed: {ex.Message}");
             throw new SecurityTokenException("Invalid token", ex);
         }
+    }
+    
+    private TokenValidationParameters GetTokenValidationParameters()
+    {
+        return new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = _key,
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ClockSkew = TimeSpan.Zero
+        };
     }
 }

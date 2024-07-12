@@ -5,11 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using pracadyplomowa.Models.DTOs;
+using pracadyplomowa.Models.DTOs.Account;
 
 namespace pracadyplomowa;
 
 public class AccountController : BaseApiController
 {
+    private const string COOKIE_NAME = "JwtCookie";
     private readonly ITokenService _tokenService;
     private readonly IAccountRepository _accountRepository;
 
@@ -48,10 +50,13 @@ public class AccountController : BaseApiController
             return BadRequest(roleResult.Errors);
         }
 
+        var token = await _tokenService.CreateToken(user);
+        
+        SetTokenCookie(token);
+
         return Ok(new UserDto
         {
-            Username = user.UserName,
-            Token = await _tokenService.CreateToken(user)
+            Username = user.UserName
         });
     }
 
@@ -74,44 +79,25 @@ public class AccountController : BaseApiController
         
         var token = await _tokenService.CreateToken(user);
 
-        var cookieOptions = new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = false, // Set to true in production
-            SameSite = SameSiteMode.Lax, // Set to SameSiteMode.Strict in production
-            Expires = DateTime.UtcNow.AddDays(1)
-        };
-
-        Response.Cookies.Append("JwtCookie", token, cookieOptions);
+        SetTokenCookie(token);
 
         return Ok(new UserDto
         {
-            Username = user.UserName,
-            Token = token
+            Username = user.UserName
         });
     }
     
-    [HttpPost("validate-token")]
-    public ActionResult ValidateToken()
-    {
-        var token = Request.Cookies["JwtCookie"];
-        if (string.IsNullOrEmpty(token))
-        {
-            return BadRequest("Token is required");
-        }
-    
-        var isValid = _tokenService.ValidateToken(token);
-    
-        if (!isValid)
-        {
-            return Unauthorized();
-        }
-    
-        return Ok(new { isValid = true });
+    [HttpPost("logout")]
+    public ActionResult Logout()
+    { 
+        Response.Cookies.Delete(COOKIE_NAME);
+
+        return NoContent(); 
     }
 
-    [HttpPost("validate-token2")]
-    public async Task<ActionResult> ValidateToken2()
+    
+    [HttpPost("validate-token")]
+    public async Task<ActionResult<ValidateAuthDto>> ValidateUserAuthentication()
     {
         var token = Request.Cookies["JwtCookie"];
         if (string.IsNullOrEmpty(token))
@@ -121,46 +107,72 @@ public class AccountController : BaseApiController
 
         try
         {
+            // Validate and extract principal from the JWT token
             var principal = _tokenService.GetPrincipalFromExpiredToken(token);
             if (principal == null)
             {
-                return Unauthorized("Invalid token 1");
+                return Unauthorized("Invalid token");
             }
             
             // Console.WriteLine($"principal.Claims: {string.Join(", ", 
             //     principal.Claims.Select(c => $"{c.Type}: {c.Value}"))}");
             
-            var userIdClaim = principal.Claims.FirstOrDefault(c => c.Type == "id");
-            if (userIdClaim == null || string.IsNullOrEmpty(userIdClaim.Value))
+            // Extract claims from principal
+            var userIdClaim = principal.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+            var usernameClaim = principal.Claims.FirstOrDefault(c => c.Type == "username")?.Value;
+            
+            // Check if essential claims are missing or empty
+            if (string.IsNullOrEmpty(userIdClaim))
             {
                 return Unauthorized("Invalid token: Missing user ID claim");
-            }          
-            
-            var usernameClaim = principal.Claims.FirstOrDefault(c => c.Type == "username");
-            if (usernameClaim == null || string.IsNullOrEmpty(usernameClaim.Value))
+            }
+            if (string.IsNullOrEmpty(usernameClaim))
             {
                 return Unauthorized("Invalid token: Missing username claim");
             }
             
-            var user = await _accountRepository.GetUserById(int.Parse(userIdClaim.Value));
-            if (user == null || !user.UserName.Equals(usernameClaim.Value))
+            var user = await _accountRepository.GetUserById(int.Parse(userIdClaim));
+            if (user == null || !user.UserName.Equals(usernameClaim))
             {
                 return Unauthorized("User not found or inactive");
             }
-            
-            return Ok(new { isValid = true });
+
+            // Retrieve user roles from repository
+            var roles = await _accountRepository.GetUserRoles(user);
+
+            // Return successful response with authentication result
+            return Ok(new ValidateAuthDto
+            {
+                IsAuthenticated = true,
+                Roles = roles,
+                Username = user.UserName,
+                Email = user.Email
+            });
         }
         catch (SecurityTokenException ex)
         {
-            // Log detailed error information
-            Console.WriteLine($"Token validation error: {ex.Message}");
-            return Unauthorized("Invalid token 4");
+            // Log and return unauthorized for token-related exceptions
+            // Console.WriteLine($"Token validation error: {ex.Message}");
+            return Unauthorized("Invalid token");
         }
         catch (Exception ex)
         {
-            // Log other exceptions
-            Console.WriteLine($"An error occurred: {ex.Message}");
+            // Log and return internal server error for other exceptions
+            // Console.WriteLine($"An error occurred: {ex.Message}");
             return StatusCode(500, "Internal server error");
         }
+    }
+
+    private void SetTokenCookie(string token)
+    {
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = false, // Set to true in production
+            SameSite = SameSiteMode.Lax, // Set to SameSiteMode.Strict in production
+            Expires = DateTime.UtcNow.AddDays(1)
+        };
+
+        Response.Cookies.Append(COOKIE_NAME, token, cookieOptions);
     }
 }

@@ -4,12 +4,12 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using pracadyplomowa.Const;
 
 namespace pracadyplomowa;
 
 public class TokenService : ITokenService
 {
-    private const string SECURITY_ALGORITHM = "HS512";
     private readonly SymmetricSecurityKey _key;
     private readonly UserManager<User> _userManager;
 
@@ -68,7 +68,7 @@ public class TokenService : ITokenService
             }
 
             // Validate token algorithm
-            if (!jwtSecurityToken.Header.Alg.Equals(SECURITY_ALGORITHM, StringComparison.InvariantCultureIgnoreCase))
+            if (!jwtSecurityToken.Header.Alg.Equals(ConstVariables.SECURITY_ALGORITHM, StringComparison.InvariantCultureIgnoreCase))
             {
                 throw new SecurityTokenException("Invalid token algorithm");
             }

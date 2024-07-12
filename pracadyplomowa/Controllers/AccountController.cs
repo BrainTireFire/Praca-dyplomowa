@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using pracadyplomowa.Const;
 using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.DTOs.Account;
 
@@ -11,7 +12,6 @@ namespace pracadyplomowa;
 
 public class AccountController : BaseApiController
 {
-    private const string COOKIE_NAME = "JwtCookie";
     private readonly ITokenService _tokenService;
     private readonly IAccountRepository _accountRepository;
 
@@ -90,7 +90,7 @@ public class AccountController : BaseApiController
     [HttpPost("logout")]
     public ActionResult Logout()
     { 
-        Response.Cookies.Delete(COOKIE_NAME);
+        Response.Cookies.Delete(ConstVariables.COOKIE_NAME);
 
         return NoContent(); 
     }
@@ -173,6 +173,6 @@ public class AccountController : BaseApiController
             Expires = DateTime.UtcNow.AddDays(1)
         };
 
-        Response.Cookies.Append(COOKIE_NAME, token, cookieOptions);
+        Response.Cookies.Append(ConstVariables.COOKIE_NAME, token, cookieOptions);
     }
 }

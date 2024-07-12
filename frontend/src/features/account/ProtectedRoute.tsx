@@ -41,7 +41,23 @@ function ProtectedRoute({ children }) {
     }
 
     check();
-  }, [validate, navigate, user]);
+
+    // // Event listener to handle changes in cookies
+    // const handleCookieChange = () => {
+    //   const cookie = document.cookie.includes("JwtCookie");
+    //   if (!cookie) {
+    //     setIsAuthenticated(false);
+    //     queryClient.removeQueries();
+    //     navigate("/login");
+    //   }
+    // };
+
+    // window.addEventListener("focus", handleCookieChange);
+
+    // return () => {
+    //   window.removeEventListener("focus", handleCookieChange);
+    // };
+  }, [validate, navigate, user, queryClient]);
 
   if (isLoading || isAuthenticated === null) {
     return (

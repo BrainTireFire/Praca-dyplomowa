@@ -1,6 +1,6 @@
-type Campaigns = {
+type GameMaster = {
   id: number;
   name: string;
   description: string;
-  player: string;
+  img: string;
 };

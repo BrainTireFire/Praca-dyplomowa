@@ -8,9 +8,16 @@ import MemberBox from "../../features/campaigns/MemberBox";
 import InputCopyToClipboard from "../../ui/forms/InputCopyToClipboard";
 import Modal from "../../ui/containers/Modal";
 import ShortRest from "./ShortRestModal";
-import DiceRollModal from "./DiceRollModal";
-import BatchRollModal from "./BatchRollModal";
 import GiveXP from "./GiveXP";
+import { useCampaign } from "../../features/campaigns/useCampaign";
+import Spinner from "../../ui/interactive/Spinner";
+
+const MemberContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 2fr);
+  gap: 20px;
+  margin: 20px;
+`;
 
 const HeaderLeft = styled.div`
   display: flex;
@@ -40,41 +47,25 @@ const Avatar = styled.div`
   padding: 10px;
 `;
 
-const members = [
-  {
-    member: "Agent007",
-    character: "Michael",
-    level: 1,
-    race: "Wolf",
-    classs: "Fighter",
-    img: "../avatar.jpg",
-  },
-  {
-    member: "xXDestroyerXx",
-    character: "John",
-    level: 11,
-    race: "Human",
-    classs: "Mage",
-    img: "../avatar.jpg",
-  },
-  {
-    member: "murderOnStick",
-    character: "Fred",
-    level: 6,
-    race: "Wyvern",
-    classs: "Monk",
-    img: "../avatar.jpg",
-  },
-];
-
 export default function CampaignInstance() {
+  const { isLoading, campaign } = useCampaign();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  if (isLoading) {
+    return <Spinner />;
+  }
 
+  if (!campaign) {
+    return <div>Campaign not found</div>;
+  }
+
+  const { id, name, description, gameMaster, members }: Campaign = campaign;
   return (
     <>
       <div>
-        <Heading as="h4">Campaign #1</Heading>
+        <Heading as="h4">
+          Campaign #{id} - {name}
+        </Heading>
         <Line size="percantage" bold="large" />
       </div>
       <div>
@@ -88,7 +79,7 @@ export default function CampaignInstance() {
                 <Button size="large">{t("campaignInstance.giveXP")}</Button>
               </Modal.Open>
               <Modal.Window name="GiveXP">
-                <GiveXP />
+                <GiveXP membersList={members} />
               </Modal.Window>
             </Modal>
             <Modal>
@@ -96,7 +87,7 @@ export default function CampaignInstance() {
                 <Button size="large">{t("campaignInstance.shortRest")}</Button>
               </Modal.Open>
               <Modal.Window name="ShortRestModal">
-                <ShortRest />
+                <ShortRest membersList={members} />
               </Modal.Window>
             </Modal>
             <Button size="large">{t("campaignInstance.longRest")}</Button>
@@ -119,6 +110,9 @@ export default function CampaignInstance() {
           Description
         </Heading>
         <DescriptionStyled>
+          {description}
+          <br />
+          <br />
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
           minim veniam, quis nostrud exercitation ullamco laboris nisi ut
@@ -131,13 +125,15 @@ export default function CampaignInstance() {
       </div>
       <div>
         <Heading as="h2" align="left">
-          Game master
+          Game Master
         </Heading>
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <Avatar>
-            <img src="../avatar.jpg" alt="avatar"></img>
+            <img src={gameMaster.img} alt="avatar"></img>
           </Avatar>
-          <span>Game master - disaster</span>
+          <span>
+            {gameMaster.name} - {gameMaster.description}
+          </span>
         </div>
         <Line size="percantage" />
       </div>
@@ -145,27 +141,11 @@ export default function CampaignInstance() {
         <Heading as="h2" align="left">
           Members
         </Heading>
-        <div
-          style={{
-            height: "275px",
-            width: "2000px",
-            display: "flex",
-            gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
-            gap: "20px",
-            paddingBottom: "20px",
-          }}
-        >
+        <MemberContainer>
           {members.map((e) => (
-            <MemberBox
-              member={e.member}
-              character={e.character}
-              level={e.level}
-              race={e.race}
-              classs={e.classs}
-              img={e.img}
-            />
+            <MemberBox>{e}</MemberBox>
           ))}
-        </div>
+        </MemberContainer>
         <Line size="percantage" />
       </div>
       <div style={{ display: "flex", gap: "30px" }}>

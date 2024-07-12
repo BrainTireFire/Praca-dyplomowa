@@ -2,7 +2,7 @@ import styled from "styled-components";
 import Box from "../../ui/containers/Box";
 import Heading from "../../ui/text/Heading";
 import Button from "../../ui/interactive/Button";
-import { PlayerSelect } from "../../ui/interactive/PlayerSelect";
+import { MemberSelect } from "../../ui/interactive/MemberSelect";
 import { useState } from "react";
 
 const Container = styled.div`
@@ -12,24 +12,14 @@ const Container = styled.div`
   justify-content: center;
 `;
 
-const playersList = [
-  { name: "First", id: 1, xp: 20, stamina: 50 },
-  { name: "Second", id: 2, xp: 15, stamina: 50 },
-  { name: "Third", id: 3, xp: 24, stamina: 50 },
-  { name: "Fourth", id: 4, xp: 56, stamina: 45 },
-  { name: "Fifth", id: 5, xp: 74, stamina: 50 },
-];
-
-export default function ShortRest() {
-  const [players, setPlayers] = useState(playersList);
-  const [selectedPlayers, setSelectedPlayers] = useState<number[]>([]);
+export default function ShortRest({ membersList }) {
+  const [members, setMembers] = useState(membersList);
+  const [selectedMembers, setSelectedMembers] = useState<number[]>([]);
 
   const handleClick = () => {
-    setPlayers((previous) =>
-      previous.map((player) =>
-        selectedPlayers.includes(player.id)
-          ? { ...player, stamina: 100 }
-          : player
+    setMembers((previous) =>
+      previous.map((member) =>
+        selectedMembers.includes(member.id) ? { ...member, rest: true } : member
       )
     );
   };
@@ -41,15 +31,15 @@ export default function ShortRest() {
       </Heading>
       <Box style={{ gridColumn: "1/2", gridRow: "2/5" }}>
         <p style={{ gridColumn: "1/2", marginBottom: "10px" }}>
-          Select players:
+          Select Members:
         </p>
-        {players.map((e) => (
-          <PlayerSelect
-            setSelectedPlayers={setSelectedPlayers}
-            player={e}
+        {members.map((e) => (
+          <MemberSelect
+            setSelectedMembers={setSelectedMembers}
+            member={e}
             key={e.id}
             type="rest"
-          ></PlayerSelect>
+          ></MemberSelect>
         ))}
       </Box>
       <div

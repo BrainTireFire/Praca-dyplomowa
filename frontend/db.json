@@ -2,45 +2,381 @@
   "campaigns": [
     {
       "id": 1,
-      "name": "Campaign 1",
-      "description": "This is the first campaign.",
-      "player": "John Doe"
+      "name": "Dragon's Lair",
+      "description": "A quest to defeat the dragon.",
+      "gameMaster": {
+        "id": 101,
+        "name": "MasterOfGame",
+        "description": "Responsible for all the disaster",
+        "img": "../avatar.jpg"
+      },
+      "members": [
+        {
+          "id": 2,
+          "character": "Michael",
+          "level": 1,
+          "xp": 20,
+          "race": "Wolf",
+          "className": "Fighter",
+          "rest": true,
+          "img": "../avatar.jpg"
+        },
+        {
+          "id": 3,
+          "character": "John",
+          "level": 9,
+          "xp": 300,
+          "race": "Human",
+          "className": "Mage",
+          "rest": false,
+          "img": "../avatar.jpg"
+        },
+        {
+          "id": 4,
+          "character": "Fred",
+          "level": 6,
+          "xp": 110,
+          "race": "Wyvern",
+          "className": "Monk",
+          "rest": false,
+          "img": "../avatar.jpg"
+        },
+        {
+          "id": 5,
+          "character": "George",
+          "level": 3,
+          "xp": 40,
+          "race": "Elemental",
+          "className": "Mage",
+          "rest": true,
+          "img": "../avatar.jpg"
+        },
+        {
+          "id": 6,
+          "character": "Trevor",
+          "level": 8,
+          "xp": 250,
+          "race": "Elf",
+          "className": "Archer",
+          "rest": false,
+          "img": "../avatar.jpg"
+        }
+      ]
     },
     {
       "id": 2,
-      "name": "Campaign 2",
-      "description": "This is the second campaign.",
-      "player": "John Doe"
+      "name": "Zombie Apocalypse",
+      "description": "Survive the zombie outbreak.",
+      "gameMaster": {
+        "id": 102,
+        "name": "UndeadOverlord",
+        "description": "Master of the undead",
+        "img": "../avatar.jpg"
+      },
+      "members": [
+        {
+          "id": 7,
+          "character": "Alice",
+          "level": 2,
+          "xp": 50,
+          "race": "Human",
+          "className": "Survivor",
+          "rest": true,
+          "img": "../avatar.jpg"
+        },
+        {
+          "id": 8,
+          "character": "Bob",
+          "level": 5,
+          "xp": 150,
+          "race": "Human",
+          "className": "Medic",
+          "rest": false,
+          "img": "../avatar.jpg"
+        },
+        {
+          "id": 9,
+          "character": "Charlie",
+          "level": 4,
+          "xp": 100,
+          "race": "Cyborg",
+          "className": "Sniper",
+          "rest": false,
+          "img": "../avatar.jpg"
+        },
+        {
+          "id": 10,
+          "character": "Dana",
+          "level": 6,
+          "xp": 200,
+          "race": "Mutant",
+          "className": "Scout",
+          "rest": true,
+          "img": "../avatar.jpg"
+        },
+        {
+          "id": 11,
+          "character": "Eve",
+          "level": 3,
+          "xp": 75,
+          "race": "Human",
+          "className": "Engineer",
+          "rest": false,
+          "img": "../avatar.jpg"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Mystic Realms",
+      "description": "Discover the hidden realms of magic.",
+      "gameMaster": {
+        "id": 103,
+        "name": "SorcererSupreme",
+        "description": "Master of magic and mysticism",
+        "img": "../avatar.jpg"
+      },
+      "members": [
+        {
+          "id": 12,
+          "character": "Luna",
+          "level": 7,
+          "xp": 180,
+          "race": "Elf",
+          "className": "Enchanter",
+          "rest": true,
+          "img": "../avatar.jpg"
+        },
+        {
+          "id": 13,
+          "character": "Nova",
+          "level": 8,
+          "xp": 220,
+          "race": "Fairy",
+          "className": "Illusionist",
+          "rest": false,
+          "img": "../avatar.jpg"
+        },
+        {
+          "id": 14,
+          "character": "Orion",
+          "level": 5,
+          "xp": 130,
+          "race": "Human",
+          "className": "Conjurer",
+          "rest": false,
+          "img": "../avatar.jpg"
+        },
+        {
+          "id": 15,
+          "character": "Phoenix",
+          "level": 9,
+          "xp": 300,
+          "race": "Phoenix",
+          "className": "Warlock",
+          "rest": true,
+          "img": "../avatar.jpg"
+        },
+        {
+          "id": 16,
+          "character": "Stella",
+          "level": 6,
+          "xp": 170,
+          "race": "Human",
+          "className": "Witch",
+          "rest": false,
+          "img": "../avatar.jpg"
+        }
+      ]
     },
     {
       "id": 4,
-      "name": "Campaign 4",
-      "description": "This is the third campaign.",
-      "player": "John Doe"
+      "name": "Galactic Conquest",
+      "description": "Dominate the galaxy.",
+      "gameMaster": {
+        "id": 104,
+        "name": "StarCommander",
+        "description": "Strategist of the stars",
+        "img": "../avatar.jpg"
+      },
+      "members": [
+        {
+          "id": 17,
+          "character": "Atlas",
+          "level": 10,
+          "xp": 350,
+          "race": "Alien",
+          "className": "Captain",
+          "rest": true,
+          "img": "../avatar.jpg"
+        },
+        {
+          "id": 18,
+          "character": "Blaze",
+          "level": 7,
+          "xp": 200,
+          "race": "Human",
+          "className": "Navigator",
+          "rest": false,
+          "img": "../avatar.jpg"
+        },
+        {
+          "id": 19,
+          "character": "Cosmo",
+          "level": 6,
+          "xp": 150,
+          "race": "Cyborg",
+          "className": "Engineer",
+          "rest": false,
+          "img": "../avatar.jpg"
+        },
+        {
+          "id": 20,
+          "character": "Duke",
+          "level": 8,
+          "xp": 250,
+          "race": "Human",
+          "className": "Pilot",
+          "rest": true,
+          "img": "../avatar.jpg"
+        },
+        {
+          "id": 21,
+          "character": "Echo",
+          "level": 9,
+          "xp": 300,
+          "race": "Alien",
+          "className": "Gunner",
+          "rest": false,
+          "img": "../avatar.jpg"
+        }
+      ]
     },
     {
       "id": 5,
-      "name": "Campaign 5",
-      "description": "This is the third campaign.",
-      "player": "John Doe"
+      "name": "Ancient Ruins",
+      "description": "Uncover the secrets of ancient civilizations.",
+      "gameMaster": {
+        "id": 105,
+        "name": "Archaeologist",
+        "description": "Explorer of the past",
+        "img": "../avatar.jpg"
+      },
+      "members": [
+        {
+          "id": 22,
+          "character": "Ivy",
+          "level": 3,
+          "xp": 60,
+          "race": "Human",
+          "className": "Explorer",
+          "rest": true,
+          "img": "../avatar.jpg"
+        },
+        {
+          "id": 23,
+          "character": "Jasper",
+          "level": 4,
+          "xp": 90,
+          "race": "Elf",
+          "className": "Archaeologist",
+          "rest": false,
+          "img": "../avatar.jpg"
+        },
+        {
+          "id": 24,
+          "character": "Kane",
+          "level": 5,
+          "xp": 120,
+          "race": "Dwarf",
+          "className": "Scout",
+          "rest": false,
+          "img": "../avatar.jpg"
+        },
+        {
+          "id": 25,
+          "character": "Lara",
+          "level": 2,
+          "xp": 40,
+          "race": "Human",
+          "className": "Historian",
+          "rest": true,
+          "img": "../avatar.jpg"
+        },
+        {
+          "id": 26,
+          "character": "Milo",
+          "level": 6,
+          "xp": 150,
+          "race": "Human",
+          "className": "Cartographer",
+          "rest": false,
+          "img": "../avatar.jpg"
+        }
+      ]
     },
     {
       "id": 6,
-      "name": "Campaign 6",
-      "description": "This is the third campaign.",
-      "player": "John Doe"
-    },
-    {
-      "id": 7,
-      "name": "Campaign 7",
-      "description": "This is the third campaign.",
-      "player": "John Doe"
-    },
-    {
-      "id": 8,
-      "name": "Campaign 8",
-      "description": "This is the third campaign.",
-      "player": "John Doe"
+      "name": "Cyberpunk City",
+      "description": "Navigate the neon-lit streets of the future.",
+      "gameMaster": {
+        "id": 106,
+        "name": "TechWizard",
+        "description": "Hacker and futurist",
+        "img": "../avatar.jpg"
+      },
+      "members": [
+        {
+          "id": 27,
+          "character": "Nina",
+          "level": 5,
+          "xp": 130,
+          "race": "Human",
+          "className": "Hacker",
+          "rest": true,
+          "img": "../avatar.jpg"
+        },
+        {
+          "id": 28,
+          "character": "Oscar",
+          "level": 7,
+          "xp": 200,
+          "race": "Cyborg",
+          "className": "Street Samurai",
+          "rest": false,
+          "img": "../avatar.jpg"
+        },
+        {
+          "id": 29,
+          "character": "Piper",
+          "level": 6,
+          "xp": 170,
+          "race": "Android",
+          "className": "NetRunner",
+          "rest": false,
+          "img": "../avatar.jpg"
+        },
+        {
+          "id": 30,
+          "character": "Quinn",
+          "level": 4,
+          "xp": 100,
+          "race": "Human",
+          "className": "Fixer",
+          "rest": true,
+          "img": "../avatar.jpg"
+        },
+        {
+          "id": 31,
+          "character": "Riley",
+          "level": 8,
+          "xp": 250,
+          "race": "Human",
+          "className": "Nomad",
+          "rest": false,
+          "img": "../avatar.jpg"
+        }
+      ]
     }
   ]
 }

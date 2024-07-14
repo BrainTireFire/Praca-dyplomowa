@@ -3,34 +3,9 @@ import Input from "../../ui/forms/Input";
 import Heading from "../../ui/text/Heading";
 import Button from "../../ui/interactive/Button";
 import Box from "../../ui/containers/Box";
-import { useRef, useState } from "react";
-
-const diceData = [
-  {
-    sides: 4,
-    name: "d4",
-  },
-  {
-    sides: 6,
-    name: "d6",
-  },
-  {
-    sides: 8,
-    name: "d8",
-  },
-  {
-    sides: 10,
-    name: "d10",
-  },
-  {
-    sides: 12,
-    name: "d12",
-  },
-  {
-    sides: 20,
-    name: "d20",
-  },
-];
+import { useEffect, useRef, useState } from "react";
+import { useAllDice } from "../../features/mainDashboard/useDice";
+import Spinner from "../../ui/interactive/Spinner";
 
 const Container = styled.div`
   display: flex;
@@ -46,11 +21,27 @@ interface DiceResult {
 }
 
 function BatchRollModal() {
-  const [diceCounts, setDiceCounts] = useState(diceData.map(() => 0));
+  const { isLoading, dice } = useAllDice();
+  const [diceCounts, setDiceCounts] = useState<number[]>([]);
   const [results, setResults] = useState<DiceResult[]>([]);
   const showBox = useRef(false);
 
-  const handleChange = (index, value) => {
+  useEffect(() => {
+    if (dice) {
+      setDiceCounts(dice.map(() => 0));
+    }
+  }, [dice]);
+
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  if (!dice) {
+    return <div>Error loading dice data</div>;
+  }
+
+  const handleChange = (index: number, e) => {
+    const value = Number(e.target.value);
     const newCounts = [...diceCounts];
     newCounts[index] = isNaN(value) ? 0 : value < 1 ? 0 : value;
     setDiceCounts(newCounts);
@@ -58,9 +49,8 @@ function BatchRollModal() {
 
   const handleRoll = () => {
     if (diceCounts.reduce((acc, value) => acc + value, 0) === 0) return;
-    showBox.current = true;
 
-    const newResults = diceData.map((dice, index) => {
+    const newResults = dice.map((dice, index) => {
       const rolls = [];
       for (let i = 0; i < diceCounts[index]; i++) {
         rolls.push(Math.floor(Math.random() * dice.sides + 1));
@@ -70,18 +60,18 @@ function BatchRollModal() {
 
     const filteredResults = newResults.filter((e) => e.rolls.length !== 0);
     setResults(filteredResults);
-    showBox = true;
+    showBox.current = true;
   };
 
   return (
     <Container>
-      {diceData.map((e, index) => (
+      {dice.map((e, index) => (
         <div style={{ gap: "1px" }}>
           <Heading as="h1">Dice {e.name}</Heading>
           <Input
             placeholder="Select number of dice"
             style={{ width: "200px" }}
-            onChange={(e) => handleChange(index, Number(e.target.value))}
+            onChange={(e) => handleChange(index, e)}
           ></Input>
         </div>
       ))}

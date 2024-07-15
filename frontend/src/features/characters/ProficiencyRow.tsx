@@ -10,6 +10,8 @@ import {
 } from "react-icons/hi2";
 import styled from "styled-components";
 import RadioButton from "../../ui/containers/RadioButton";
+import { ItemFamily } from "../../models/itemfamily";
+import { Language } from "../../models/language";
 
 const Name = styled.div`
   font-size: 1rem;
@@ -32,10 +34,14 @@ const Stacked = styled.div`
   }
 `;
 
-export default function ProficiencyRow({ item }) {
+export default function ProficiencyRow({
+  item,
+}: {
+  item: ItemFamily | Language;
+}) {
   return (
     <Table.Row>
-      <Name>{item.Name}</Name>
+      <Name>{item.name}</Name>
 
       {/* <Modal>
         <Menus.Menu>

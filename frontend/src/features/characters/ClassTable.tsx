@@ -4,6 +4,7 @@ import Table from "../../ui/containers/Table";
 import EquipmentRow from "./EquipmentRow";
 import styled from "styled-components";
 import ClassRow from "./ClassRow";
+import { CharacterClass } from "../../models/characterclass";
 
 const characterClasses = [
   {
@@ -18,7 +19,11 @@ const characterClasses = [
   },
 ];
 
-export default function EquipmentTable() {
+export default function ClassTable({
+  characterClasses,
+}: {
+  characterClasses: CharacterClass[];
+}) {
   return (
     <Menus>
       <Table header="Class" button="Level up" columns="1fr 1fr">

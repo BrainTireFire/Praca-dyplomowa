@@ -4,23 +4,13 @@ import Table from "../../ui/containers/Table";
 import EquipmentRow from "./EquipmentRow";
 import styled from "styled-components";
 import ProficiencyRow from "./ProficiencyRow";
+import { Language } from "../../models/language";
 
-const languages = [
-  {
-    id: 1,
-    Name: "Dwarvish",
-  },
-  {
-    id: 2,
-    Name: "Elvish",
-  },
-  {
-    id: 3,
-    Name: "Common",
-  },
-];
-
-export default function KnownLanguagesTable() {
+export default function KnownLanguagesTable({
+  languages,
+}: {
+  languages: Language[];
+}) {
   return (
     <Menus>
       <Table

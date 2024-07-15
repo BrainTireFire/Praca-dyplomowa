@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getCharacter } from "../../services/apiCharacters";
 // import { useParams } from "react-router-dom";
 
-export function useCharacter(characterId: number) {
+export function useCharacter(characterId: number | null) {
   // const { characterId } = useParams<{ characterId: string }>();
 
   const {

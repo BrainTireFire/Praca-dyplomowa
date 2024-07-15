@@ -8,6 +8,10 @@ import { CharacterClass } from "./characterclass";
 import { DiceSet } from "./diceset";
 import { WeaponAttack } from "./weaponattack";
 import { Item } from "./item";
+import { Size } from "./size";
+import { Power } from "./power";
+import { Effect } from "./effect";
+import { Resource } from "./resource";
 
 export type CharacterItem = {
   id: number;
@@ -28,8 +32,9 @@ export type Character = {
   toolProficiencies: ItemFamily[];
   weaponAndArmorProficiencies: ItemFamily[];
   race: Race;
-  class: CharacterClass;
-  hitpoints: {
+  size: Size;
+  classes: CharacterClass[];
+  hitPoints: {
     current: number;
     maximum: number;
     temporary: number;
@@ -46,5 +51,10 @@ export type Character = {
     left: DiceSet;
   };
   weaponAttacks: WeaponAttack[];
-  equipent: Item[];
+  equipment: Item[];
+  preparedPowers: Power[];
+  knownPowers: Power[];
+  constantEffects: Effect[];
+  effects: Effect[];
+  resources: Resource[];
 };

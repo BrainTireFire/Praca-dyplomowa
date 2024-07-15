@@ -1,6 +1,7 @@
 import styled, { css } from "styled-components";
 import React, { useState } from "react";
 import AttributeBox from "./AttributeBox";
+import { Attribute } from "../../models/attribute";
 
 const StyledStatsContainer = styled.div`
   /* border: 1px solid var(--color-border); */
@@ -51,11 +52,11 @@ const dataForTest = [
   },
 ];
 
-function StatsContainer() {
+function StatsContainer({ stats }: { stats: Attribute[] }) {
   return (
     <StyledStatsContainer>
-      {dataForTest.map((attribute) => (
-        <AttributeBox key={attribute.id} attribute={attribute}></AttributeBox>
+      {stats?.map((attribute) => (
+        <AttributeBox key={attribute.name} attribute={attribute}></AttributeBox>
       ))}
     </StyledStatsContainer>
   );

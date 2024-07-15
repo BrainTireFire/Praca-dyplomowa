@@ -11,40 +11,14 @@ import {
   HiTrash,
 } from "react-icons/hi2";
 import RadioButton from "../../ui/containers/RadioButton";
+import { Power } from "../../models/power";
 
-const powers = [
-  {
-    id: 1,
-    name: "Power 1",
-    source: "Race",
-    favourite: true,
-  },
-  {
-    id: 2,
-    name: "Power 2",
-    source: "Class",
-    favourite: false,
-  },
-  {
-    id: 3,
-    name: "Power 3",
-    source: "Magic sock",
-    favourite: true,
-  },
-];
-
-export default function ReadyPowerTable() {
+export default function ReadyPowerTable({ powers }: { powers: Power[] }) {
   return (
     <Menus>
-      <Table
-        header="Ready powers"
-        button="Add new"
-        columns="1fr 1fr 1fr 3.2rem"
-      >
+      <Table header="Ready powers" button="Add new" columns="1fr 3.2rem">
         <Table.Header>
           <div>Name</div>
-          <div>Source</div>
-          <div>Favourite</div>
         </Table.Header>
         <Table.Body
           data={powers}
@@ -62,19 +36,10 @@ const Cell = styled.div`
   color: var(--color-grey-600);
 `;
 
-function ReadyPowersRow({ power }) {
+function ReadyPowersRow({ power }: { power: Power }) {
   return (
     <Table.Row>
       <Cell>{power.name}</Cell>
-
-      <Cell>{power.source}</Cell>
-
-      <RadioButton
-        //   label="Option 1"
-        checked={power.favourite}
-        //   checked={selectedOption === "option1"}
-        //   onChange={handleRadioChange}
-      />
 
       <Modal>
         <Menus.Menu>

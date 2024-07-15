@@ -11,36 +11,13 @@ import {
   HiTrash,
 } from "react-icons/hi2";
 import RadioButton from "../../ui/containers/RadioButton";
+import { Effect } from "../../models/effect";
 
-const effects = [
-  {
-    id: 1,
-    name: "Effect 1",
-    timeleft: "2 turns",
-    source: "Enemy spell",
-    target: "Body",
-  },
-  {
-    id: 2,
-    name: "Effect 2",
-    timeleft: "2 turns",
-    source: "Enemy spell",
-    target: "Sword",
-  },
-  {
-    id: 3,
-    name: "Effect 3",
-    timeleft: "2 turns",
-    source: "Enemy spell",
-    target: "Armor",
-  },
-];
-
-export default function EffectTable() {
+export default function EffectTable({ effects }: { effects: Effect[] }) {
   return (
     <Menus>
       <Table
-        header="Constant effects"
+        header="Temporary effects"
         button="Add new"
         columns="1fr 1fr 1fr 1fr 3.2rem"
       >
@@ -66,12 +43,12 @@ const Cell = styled.div`
   color: var(--color-grey-600);
 `;
 
-function EffectRow({ effect }) {
+function EffectRow({ effect }: { effect: Effect }) {
   return (
     <Table.Row>
       <Cell>{effect.name}</Cell>
 
-      <Cell>{effect.timeleft}</Cell>
+      <Cell>{effect.turnsLeft}</Cell>
 
       <Cell>{effect.source}</Cell>
       <Cell>{effect.target}</Cell>

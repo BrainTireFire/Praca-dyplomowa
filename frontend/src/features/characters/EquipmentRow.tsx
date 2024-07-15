@@ -10,6 +10,7 @@ import {
 } from "react-icons/hi2";
 import styled from "styled-components";
 import RadioButton from "../../ui/containers/RadioButton";
+import { Item } from "../../models/item";
 
 const Cell = styled.div`
   font-size: 1.2rem;
@@ -32,25 +33,24 @@ const Stacked = styled.div`
   }
 `;
 
-export default function EquipmentRow({ equipment }) {
+export default function EquipmentRow({ equipment }: { equipment: Item }) {
   return (
     <Table.Row>
       <Cell>{equipment.name}</Cell>
 
-      <Cell>Head</Cell>
+      <Cell>
+        {equipment.slots.reduce((accumulator, currentValue) => {
+          return (accumulator += currentValue.name + ", ");
+        }, "")}
+      </Cell>
 
       <RadioButton
         //   label="Option 1"
-        value="option1"
+        checked={equipment.equipped}
         //   checked={selectedOption === "option1"}
         //   onChange={handleRadioChange}
       />
-      <RadioButton
-        //   label="Option 1"
-        value="option1"
-        //   checked={selectedOption === "option1"}
-        //   onChange={handleRadioChange}
-      />
+      <Cell>{equipment.itemFamily.name}</Cell>
 
       <Modal>
         <Menus.Menu>

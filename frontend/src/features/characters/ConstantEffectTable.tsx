@@ -11,26 +11,13 @@ import {
   HiTrash,
 } from "react-icons/hi2";
 import RadioButton from "../../ui/containers/RadioButton";
+import { Effect } from "../../models/effect";
 
-const effects = [
-  {
-    id: 1,
-    name: "Effect 1",
-    source: "Race",
-  },
-  {
-    id: 2,
-    name: "Effect 2",
-    source: "Class",
-  },
-  {
-    id: 3,
-    name: "Effect 3",
-    source: "Magic sock",
-  },
-];
-
-export default function ConstantEffectTable() {
+export default function ConstantEffectTable({
+  effects,
+}: {
+  effects: Effect[];
+}) {
   return (
     <Menus>
       <Table

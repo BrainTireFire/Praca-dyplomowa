@@ -4,23 +4,13 @@ import Table from "../../ui/containers/Table";
 import EquipmentRow from "./EquipmentRow";
 import styled from "styled-components";
 import ProficiencyRow from "./ProficiencyRow";
+import { ItemFamily } from "../../models/itemfamily";
 
-const tools = [
-  {
-    id: 1,
-    Name: "Longsword",
-  },
-  {
-    id: 2,
-    Name: "Shields",
-  },
-  {
-    id: 3,
-    Name: "Heavy Armor",
-  },
-];
-
-export default function ToolProficiencyTable() {
+export default function WeaponAndArmorProficiencyTable({
+  weaponAndArmorProficiencies,
+}: {
+  weaponAndArmorProficiencies: ItemFamily[];
+}) {
   return (
     <Menus>
       <Table
@@ -29,8 +19,8 @@ export default function ToolProficiencyTable() {
         columns="1fr 3.2rem"
       >
         <Table.Body
-          data={tools}
-          render={(tool) => <ProficiencyRow key={tool.id} item={tool} />}
+          data={weaponAndArmorProficiencies}
+          render={(item) => <ProficiencyRow key={item.id} item={item} />}
         />
         <Table.Footer>{/* <Pagination count={count} /> */}</Table.Footer>
       </Table>

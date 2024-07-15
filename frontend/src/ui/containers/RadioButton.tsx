@@ -40,10 +40,10 @@ const RadioButton = ({
   onChange,
   circle,
 }: {
-  label: string;
+  label?: string;
   checked: boolean;
-  onChange: Function;
-  circle: boolean;
+  onChange?: Function;
+  circle?: boolean;
 }) => {
   return (
     <RadioButtonWrapper>

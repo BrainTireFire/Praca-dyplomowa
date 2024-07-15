@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Attribute } from "../../models/attribute";
 
 const StyledDropdown = styled.div`
   display: flex;
@@ -52,13 +53,14 @@ const Text = styled.p`
   font-size: 2rem;
 `;
 
-function AttributeBox({ attribute }: { attribute: any }) {
+function AttributeBox({ attribute }: { attribute: Attribute }) {
+  const modifier = Math.floor((attribute.value - 10) / 2);
   return (
     <StyledDropdown>
-      <Header>{attribute.header}</Header>
+      <Header>{attribute.name}</Header>
       <Box>
         <Text>{attribute.value}</Text>
-        <Circle>{attribute.modifier}</Circle>
+        <Circle>{modifier >= 0 ? `+${modifier}` : `-${modifier}`}</Circle>
       </Box>
     </StyledDropdown>
   );

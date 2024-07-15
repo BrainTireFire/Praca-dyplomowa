@@ -11,36 +11,17 @@ import {
   HiTrash,
 } from "react-icons/hi2";
 import RadioButton from "../../ui/containers/RadioButton";
+import { Resource } from "../../models/resource";
 
-const resources = [
-  {
-    id: 1,
-    name: "Resource 1",
-    count: "1/2",
-    source: "Class",
-    refresh: "Short rest",
-  },
-  {
-    id: 2,
-    name: "Resource 2",
-    count: "3/4",
-    source: "Race",
-    refresh: "Long rest",
-  },
-  {
-    id: 3,
-    name: "Resource 3",
-    count: "4/4",
-    source: "Item",
-    refresh: "Long rest",
-  },
-];
-
-export default function ResourceTable() {
+export default function ResourceTable({
+  resources,
+}: {
+  resources: Resource[];
+}) {
   return (
     <Menus>
       <Table
-        header="Constant effects"
+        header="Resources"
         button="Add new"
         columns="1fr 1fr 1fr 1fr 3.2rem"
       >
@@ -68,12 +49,12 @@ const Cell = styled.div`
   color: var(--color-grey-600);
 `;
 
-function ResourceRow({ resource }) {
+function ResourceRow({ resource }: { resource: Resource }) {
   return (
     <Table.Row>
       <Cell>{resource.name}</Cell>
 
-      <Cell>{resource.count}</Cell>
+      <Cell>{`${resource.left}/${resource.total}`}</Cell>
 
       <Cell>{resource.source}</Cell>
       <Cell>{resource.refresh}</Cell>

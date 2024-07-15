@@ -7,6 +7,8 @@ import Button from "../../ui/interactive/Button";
 import HorizontalDiv from "../../ui/containers/HorizontalDiv";
 import { useCharacters } from "./useCharacters";
 import Spinner from "../../ui/interactive/Spinner";
+import Modal from "../../ui/containers/Modal";
+import NewCharacter from "./NewCharacter";
 
 const CharacterListLayout = styled.div`
   display: flex;
@@ -34,9 +36,14 @@ export default function CharacterList({
         >
           <Input placeholder="Type here"></Input>
         </FormRowVertical>
-        <FormRowVertical padlabel={true} padassistiveText={true}>
-          <Button variation="primary">Create character</Button>
-        </FormRowVertical>
+        <Modal>
+          <Modal.Open opens="BatchRollModal">
+            <Button variation="primary">Create character</Button>
+          </Modal.Open>
+          <Modal.Window name="BatchRollModal">
+            <NewCharacter></NewCharacter>
+          </Modal.Window>
+        </Modal>
       </HorizontalDiv>
       <Box radius="tiny">
         <CharacterListLayout>

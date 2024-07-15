@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import styled, { css } from "styled-components";
 import StatsContainer from "../../ui/characters/StatsContainer";
 import EquipmentTable from "./EquipmentTable";
@@ -60,7 +59,7 @@ const DisplayBoxContent = styled.div`
 export default function CharactersSheet({
   characterId,
 }: {
-  characterId: number;
+  characterId: number | null;
 }) {
   const { isLoading, isError, error, character } = useCharacter(characterId);
 
@@ -75,160 +74,174 @@ export default function CharactersSheet({
 
   return (
     <Box radius="tiny">
-      <MainGrid>
-        <MainGridColumn1>
-          <div style={{ gridColumnStart: 1, gridColumnEnd: 3 }}>
-            <FormRowVertical label="Name">
-              <Input
-                size="small"
-                customStyles={css`
-                  text-transform: uppercase;
-                `}
-                value={character?.name}
-              ></Input>
-            </FormRowVertical>
-          </div>
-          <div
-            style={{
-              gridColumnStart: 1,
-              gridColumnEnd: 3,
-              gridRowStart: 2,
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <FormRowVertical label="Description" fillHeight={true}>
-              <TextArea value={character?.description}></TextArea>
-            </FormRowVertical>
-          </div>
-          <div style={{ gridColumnStart: 3, gridRowStart: 1, gridRowEnd: 4 }}>
-            <ProficiencyBox
-              data={character?.skills}
-              header="Skills"
-            ></ProficiencyBox>
-          </div>
-          <div style={{ gridColumnStart: 2, gridRowStart: 3, gridRowEnd: 4 }}>
-            <ProficiencyBox
-              data={character?.savingThrows}
-              header="Saving throws"
-            ></ProficiencyBox>
-          </div>
-          <div style={{ gridColumnStart: 1, gridRowStart: 3, gridRowEnd: -1 }}>
-            <StatsContainer></StatsContainer>
-          </div>
-          <div
-            style={{
-              gridColumnStart: 2,
-              gridColumnEnd: -1,
-              gridRowStart: 4,
-              gridRowEnd: 5,
-            }}
-          >
-            <KnownLanguagesTable></KnownLanguagesTable>
-          </div>
-          <div
-            style={{
-              gridColumnStart: 2,
-              gridColumnEnd: -1,
-              gridRowStart: 5,
-              gridRowEnd: 6,
-            }}
-          >
-            <ToolProficiencyTable></ToolProficiencyTable>
-          </div>
-          <div
-            style={{
-              gridColumnStart: 2,
-              gridColumnEnd: -1,
-              gridRowStart: 6,
-              gridRowEnd: 7,
-            }}
-          >
-            <WeaponArmorProficiencyTable></WeaponArmorProficiencyTable>
-          </div>
-        </MainGridColumn1>
-        <MainGridColumn2>
-          <div
-            style={{
-              gridColumnStart: 1,
-              gridColumnEnd: 3,
-              gridRowStart: 1,
-              gridRowEnd: 3,
-            }}
-          >
-            <ClassTable></ClassTable>
-          </div>
-          <div style={{ gridColumnStart: 3, gridColumnEnd: 5 }}>
-            <FormRowVertical label="Race">
-              <Input></Input>
-            </FormRowVertical>
-          </div>
-          <div
-            style={{ gridColumnStart: 3, gridColumnEnd: 5, gridRowStart: 2 }}
-          >
-            <DisplayBox label="Size">
-              <DisplayBoxContent>Humungous</DisplayBoxContent>
-            </DisplayBox>
-          </div>
-          <div
-            style={{ gridColumnStart: 1, gridColumnEnd: 2, gridRowStart: 3 }}
-          >
-            <DisplayBox label="Hit points">
-              <DisplayBoxContent>75/75 (+5)</DisplayBoxContent>
-            </DisplayBox>
-          </div>
-          <div
-            style={{ gridColumnStart: 2, gridColumnEnd: 3, gridRowStart: 3 }}
-          >
-            <DisplayBox label="Initiative">
-              <DisplayBoxContent>+5</DisplayBoxContent>
-            </DisplayBox>
-          </div>
-          <div
-            style={{ gridColumnStart: 3, gridColumnEnd: 4, gridRowStart: 3 }}
-          >
-            <DisplayBox label="Speed">
-              <DisplayBoxContent>30</DisplayBoxContent>
-            </DisplayBox>
-          </div>
-          <div
-            style={{ gridColumnStart: 4, gridColumnEnd: 5, gridRowStart: 3 }}
-          >
-            <DisplayBox label="Armor Class">
-              <DisplayBoxContent>20</DisplayBoxContent>
-            </DisplayBox>
-          </div>
-          <div
-            style={{ gridColumnStart: 1, gridColumnEnd: 5, gridRowStart: 4 }}
-          >
-            <WeaponAttackTable />
-          </div>
-          <div
-            style={{ gridColumnStart: 1, gridColumnEnd: 5, gridRowStart: 5 }}
-          >
-            <EquipmentTable />
-          </div>
-          <div
-            style={{ gridColumnStart: 1, gridColumnEnd: 5, gridRowStart: 6 }}
-          >
-            <ReadyPowerTable />
-          </div>
-        </MainGridColumn2>
-        <MainGridColumn3>
-          <div style={{ gridColumnStart: 1, gridRowStart: 1 }}>
-            <ConstantEffectTable />
-          </div>
-          <div style={{ gridColumnStart: 1, gridRowStart: 2 }}>
-            <EffectTable />
-          </div>
-          <div style={{ gridColumnStart: 1, gridRowStart: 3 }}>
-            <ResourceTable />
-          </div>
-          <div style={{ gridColumnStart: 1, gridRowStart: 4 }}>
-            <PowersTable />
-          </div>
-        </MainGridColumn3>
-      </MainGrid>
+      {character && (
+        <MainGrid>
+          <MainGridColumn1>
+            <div style={{ gridColumnStart: 1, gridColumnEnd: 3 }}>
+              <FormRowVertical label="Name">
+                <Input
+                  size="small"
+                  customStyles={css`
+                    text-transform: uppercase;
+                  `}
+                  value={character.name}
+                ></Input>
+              </FormRowVertical>
+            </div>
+            <div
+              style={{
+                gridColumnStart: 1,
+                gridColumnEnd: 3,
+                gridRowStart: 2,
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <FormRowVertical label="Description" fillHeight={true}>
+                <TextArea value={character?.description}></TextArea>
+              </FormRowVertical>
+            </div>
+            <div style={{ gridColumnStart: 3, gridRowStart: 1, gridRowEnd: 4 }}>
+              <ProficiencyBox
+                data={character.skills}
+                header="Skills"
+              ></ProficiencyBox>
+            </div>
+            <div style={{ gridColumnStart: 2, gridRowStart: 3, gridRowEnd: 4 }}>
+              <ProficiencyBox
+                data={character.savingThrows}
+                header="Saving throws"
+              ></ProficiencyBox>
+            </div>
+            <div
+              style={{ gridColumnStart: 1, gridRowStart: 3, gridRowEnd: -1 }}
+            >
+              <StatsContainer stats={character.attributes}></StatsContainer>
+            </div>
+            <div
+              style={{
+                gridColumnStart: 2,
+                gridColumnEnd: -1,
+                gridRowStart: 4,
+                gridRowEnd: 5,
+              }}
+            >
+              <KnownLanguagesTable
+                languages={character.languages}
+              ></KnownLanguagesTable>
+            </div>
+            <div
+              style={{
+                gridColumnStart: 2,
+                gridColumnEnd: -1,
+                gridRowStart: 5,
+                gridRowEnd: 6,
+              }}
+            >
+              <ToolProficiencyTable
+                toolFamilies={character.toolProficiencies}
+              ></ToolProficiencyTable>
+            </div>
+            <div
+              style={{
+                gridColumnStart: 2,
+                gridColumnEnd: -1,
+                gridRowStart: 6,
+                gridRowEnd: 7,
+              }}
+            >
+              <WeaponArmorProficiencyTable
+                weaponAndArmorProficiencies={
+                  character.weaponAndArmorProficiencies
+                }
+              ></WeaponArmorProficiencyTable>
+            </div>
+          </MainGridColumn1>
+          <MainGridColumn2>
+            <div
+              style={{
+                gridColumnStart: 1,
+                gridColumnEnd: 3,
+                gridRowStart: 1,
+                gridRowEnd: 3,
+              }}
+            >
+              <ClassTable characterClasses={character.classes}></ClassTable>
+            </div>
+            <div style={{ gridColumnStart: 3, gridColumnEnd: 5 }}>
+              <DisplayBox label="Race">
+                <DisplayBoxContent>{character.race.name}</DisplayBoxContent>
+              </DisplayBox>
+            </div>
+            <div
+              style={{ gridColumnStart: 3, gridColumnEnd: 5, gridRowStart: 2 }}
+            >
+              <DisplayBox label="Size">
+                <DisplayBoxContent>{character.size.label}</DisplayBoxContent>
+              </DisplayBox>
+            </div>
+            <div
+              style={{ gridColumnStart: 1, gridColumnEnd: 2, gridRowStart: 3 }}
+            >
+              <DisplayBox label="Hit points">
+                <DisplayBoxContent>
+                  {`${character.hitPoints.current}/${character.hitPoints.maximum} (+${character.hitPoints.temporary})`}
+                </DisplayBoxContent>
+              </DisplayBox>
+            </div>
+            <div
+              style={{ gridColumnStart: 2, gridColumnEnd: 3, gridRowStart: 3 }}
+            >
+              <DisplayBox label="Initiative">
+                <DisplayBoxContent>{character.initiative}</DisplayBoxContent>
+              </DisplayBox>
+            </div>
+            <div
+              style={{ gridColumnStart: 3, gridColumnEnd: 4, gridRowStart: 3 }}
+            >
+              <DisplayBox label="Speed">
+                <DisplayBoxContent>{character.speed}</DisplayBoxContent>
+              </DisplayBox>
+            </div>
+            <div
+              style={{ gridColumnStart: 4, gridColumnEnd: 5, gridRowStart: 3 }}
+            >
+              <DisplayBox label="Armor Class">
+                <DisplayBoxContent>{character.armorClass}</DisplayBoxContent>
+              </DisplayBox>
+            </div>
+            <div
+              style={{ gridColumnStart: 1, gridColumnEnd: 5, gridRowStart: 4 }}
+            >
+              <WeaponAttackTable weaponAttacks={character.weaponAttacks} />
+            </div>
+            <div
+              style={{ gridColumnStart: 1, gridColumnEnd: 5, gridRowStart: 5 }}
+            >
+              <EquipmentTable equipments={character.equipment} />
+            </div>
+            <div
+              style={{ gridColumnStart: 1, gridColumnEnd: 5, gridRowStart: 6 }}
+            >
+              <ReadyPowerTable powers={character.preparedPowers} />
+            </div>
+          </MainGridColumn2>
+          <MainGridColumn3>
+            <div style={{ gridColumnStart: 1, gridRowStart: 1 }}>
+              <ConstantEffectTable effects={character.constantEffects} />
+            </div>
+            <div style={{ gridColumnStart: 1, gridRowStart: 2 }}>
+              <EffectTable effects={character.effects} />
+            </div>
+            <div style={{ gridColumnStart: 1, gridRowStart: 3 }}>
+              <ResourceTable resources={character.resources} />
+            </div>
+            <div style={{ gridColumnStart: 1, gridRowStart: 4 }}>
+              <PowersTable powers={character.knownPowers} />
+            </div>
+          </MainGridColumn3>
+        </MainGrid>
+      )}
     </Box>
   );
 }

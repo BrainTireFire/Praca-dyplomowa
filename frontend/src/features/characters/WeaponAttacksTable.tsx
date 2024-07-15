@@ -11,25 +11,13 @@ import {
   HiTrash,
 } from "react-icons/hi2";
 import RadioButton from "../../ui/containers/RadioButton";
+import { WeaponAttack } from "../../models/weaponattack";
 
-const weaponAttacks = [
-  {
-    id: 1,
-    main: true,
-    damage: "2d4+2",
-    damageType: "Bludgeoning",
-    range: 5,
-  },
-  {
-    id: 2,
-    main: false,
-    damage: "1d4+2",
-    damageType: "Piercing",
-    range: 5,
-  },
-];
-
-export default function WeaponAttackTable() {
+export default function WeaponAttackTable({
+  weaponAttacks,
+}: {
+  weaponAttacks: WeaponAttack[];
+}) {
   return (
     <Menus>
       <Table header="Weapon attack" columns="1fr 1fr 1fr 1fr">
@@ -59,7 +47,7 @@ const Cell = styled.div`
   color: var(--color-grey-600);
 `;
 
-function WeaponAttackRow({ weaponAttack }) {
+function WeaponAttackRow({ weaponAttack }: { weaponAttack: WeaponAttack }) {
   return (
     <Table.Row>
       <RadioButton
@@ -69,7 +57,26 @@ function WeaponAttackRow({ weaponAttack }) {
         //   onChange={handleRadioChange}
       />
 
-      <Cell>{weaponAttack.damage}</Cell>
+      <Cell>
+        {Object.entries(weaponAttack.damage).reduce(
+          (accumulator, currentValue) => {
+            if (accumulator === "") {
+              return (
+                accumulator +
+                (currentValue[1] > 0 ? currentValue[1] + currentValue[0] : "")
+              );
+            } else {
+              return (
+                accumulator +
+                (currentValue[1] > 0
+                  ? "+" + currentValue[1] + currentValue[0]
+                  : "")
+              );
+            }
+          },
+          ""
+        )}
+      </Cell>
       <Cell>{weaponAttack.damageType}</Cell>
       <Cell>{weaponAttack.range}</Cell>
     </Table.Row>

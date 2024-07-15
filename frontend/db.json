@@ -253,7 +253,7 @@
           "name": "Dwarven"
         }
       ],
-      "toolproficiencies": [
+      "toolProficiencies": [
         {
           "id": 1,
           "name": "Smithing tools"
@@ -263,7 +263,7 @@
           "name": "Carpentry tools"
         }
       ],
-      "weaponandarmorproficiencies": [
+      "weaponAndArmorProficiencies": [
         {
           "id": 3,
           "name": "Longswords"
@@ -273,7 +273,7 @@
           "name": "Heavy armor"
         }
       ],
-      "class": [
+      "classes": [
         {
           "id": 1,
           "name": "Fighter",
@@ -289,7 +289,7 @@
         "id": 1,
         "name": "Human"
       },
-      "hitpoints": {
+      "hitPoints": {
         "current": 50,
         "maximum": 70,
         "temporary": 40
@@ -326,9 +326,9 @@
             "d20": 0,
             "d12": 0,
             "d10": 0,
-            "d8": 0,
+            "d8": 1,
             "d6": 0,
-            "d4": 0
+            "d4": 2
           },
           "damageType": "Slashing",
           "range": 0
@@ -338,7 +338,7 @@
           "damage": {
             "d20": 0,
             "d12": 0,
-            "d10": 0,
+            "d10": 3,
             "d8": 0,
             "d6": 0,
             "d4": 0
@@ -351,13 +351,113 @@
         {
           "id": 1,
           "name": "Stabby McStabface",
-          "itemFamily": "Longsword",
+          "itemFamily": {
+            "id": 1,
+            "name": "Longsword"
+          },
           "slots": [
             {
               "id": 1,
               "name": "Main hand"
             }
-          ]
+          ],
+          "equipped": true
+        }
+      ],
+      "size": {
+        "numeric": 3,
+        "label": "Medium"
+      },
+      "preparedPowers": [
+        {
+          "id": 1,
+          "name": "Power 1",
+          "source": "Race"
+        },
+        {
+          "id": 2,
+          "name": "Power 2",
+          "source": "Class"
+        },
+        {
+          "id": 3,
+          "name": "Power 3",
+          "source": "Magic sock"
+        }
+      ],
+      "knownPowers": [
+        {
+          "id": 1,
+          "name": "Power 4",
+          "source": "Race"
+        },
+        {
+          "id": 2,
+          "name": "Power 5",
+          "source": "Class"
+        },
+        {
+          "id": 3,
+          "name": "Power 6",
+          "source": "Magic sock"
+        }
+      ],
+      "constantEffects": [
+        {
+          "id": 1,
+          "name": "Effect 1",
+          "source": "Race"
+        },
+        {
+          "id": 2,
+          "name": "Effect 2",
+          "source": "Class"
+        },
+        {
+          "id": 3,
+          "name": "Effect 3",
+          "source": "Magic sock2"
+        }
+      ],
+      "effects": [
+        {
+          "id": 1,
+          "name": "Effect 4",
+          "source": "Spell A",
+          "turnsLeft": 1,
+          "target": "Body"
+        },
+        {
+          "id": 2,
+          "name": "Effect 5",
+          "source": "Spell B",
+          "turnsLeft": 2,
+          "target": "Armor"
+        },
+        {
+          "id": 3,
+          "name": "Effect 6",
+          "source": "Spell C",
+          "turnsLeft": 3,
+          "target": "Sword"
+        }
+      ],
+      "resources": [
+        {
+          "id": 1,
+          "name": "1st level spell slot",
+          "left": 3,
+          "total": 4,
+          "source": "Class",
+          "refresh": "Long rest"
+        },
+        {
+          "id": 2,
+          "name": "2st level spell slot",
+          "left": 2,
+          "total": 4,
+          "source": "Class",
+          "refresh": "Long rest"
         }
       ]
     },
@@ -547,7 +647,7 @@
           "name": "Dwarven"
         }
       ],
-      "toolproficiencies": [
+      "toolProficiencies": [
         {
           "id": 1,
           "name": "Smithing tools"
@@ -557,7 +657,7 @@
           "name": "Carpentry tools"
         }
       ],
-      "weaponandarmorproficiencies": [
+      "weaponAndArmorProficiencies": [
         {
           "id": 3,
           "name": "Longswords"
@@ -567,10 +667,10 @@
           "name": "Heavy armor"
         }
       ],
-      "class": [
+      "classes": [
         {
           "id": 1,
-          "name": "Fighter",
+          "name": "Ranger",
           "level": 10
         },
         {
@@ -583,7 +683,7 @@
         "id": 1,
         "name": "Human"
       },
-      "hitpoints": {
+      "hitPoints": {
         "current": 50,
         "maximum": 70,
         "temporary": 40
@@ -653,7 +753,11 @@
             }
           ]
         }
-      ]
+      ],
+      "size": {
+        "numeric": 3,
+        "label": "Medium"
+      }
     }
   ]
 }

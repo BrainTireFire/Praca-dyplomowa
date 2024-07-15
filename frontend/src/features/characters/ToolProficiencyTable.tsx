@@ -4,23 +4,13 @@ import Table from "../../ui/containers/Table";
 import EquipmentRow from "./EquipmentRow";
 import styled from "styled-components";
 import ProficiencyRow from "./ProficiencyRow";
+import { ItemFamily } from "../../models/itemfamily";
 
-const tools = [
-  {
-    id: 1,
-    Name: "Disguise kit",
-  },
-  {
-    id: 2,
-    Name: "Smithing kit",
-  },
-  {
-    id: 3,
-    Name: "Sewing kit",
-  },
-];
-
-export default function ToolProficiencyTable() {
+export default function ToolProficiencyTable({
+  toolFamilies,
+}: {
+  toolFamilies: ItemFamily[];
+}) {
   return (
     <Menus>
       <Table
@@ -29,7 +19,7 @@ export default function ToolProficiencyTable() {
         columns="1fr 3.2rem"
       >
         <Table.Body
-          data={tools}
+          data={toolFamilies}
           render={(tool) => <ProficiencyRow key={tool.id} item={tool} />}
         />
         <Table.Footer>{/* <Pagination count={count} /> */}</Table.Footer>

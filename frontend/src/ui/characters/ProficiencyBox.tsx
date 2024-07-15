@@ -3,6 +3,8 @@ import Box from "../containers/Box";
 import RadioButton from "../containers/RadioButton";
 import styled from "styled-components";
 import Heading from "../text/Heading";
+import { SavingThrow } from "../../models/savingthrow";
+import { Skill } from "../../models/skill";
 
 const StyledProficiencyBox = styled.div`
   background-color: rgba(var(--color-secondary-background-rgb), 0.05);
@@ -44,12 +46,18 @@ const Radio = styled.input`
   }
 `;
 
-export default function ProficiencyBox({ data, header }) {
+export default function ProficiencyBox({
+  data,
+  header,
+}: {
+  data: Skill[] | SavingThrow[];
+  header: string;
+}) {
   return (
     <StyledProficiencyBox>
       <Heading as="h3">{header}</Heading>
-      {data.map((item) => (
-        <InputBox key={item.Id}>
+      {data?.map((item) => (
+        <InputBox key={item.name}>
           <Radio
             //   label="Option 1"
             type="radio"
@@ -58,7 +66,7 @@ export default function ProficiencyBox({ data, header }) {
             //   onChange={handleRadioChange}
           />
           <div>{item.value}</div>
-          <div>{item.ability}</div>
+          {"ability" in item && <div>{item.ability}</div>}
           <div>{item.name}</div>
         </InputBox>
       ))}

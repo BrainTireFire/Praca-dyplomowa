@@ -47,7 +47,7 @@ const Cell = styled.div`
   color: var(--color-grey-600);
 `;
 
-function ConstantEffectRow({ effect }) {
+function ConstantEffectRow({ effect }: { effect: Effect }) {
   return (
     <Table.Row>
       <Cell>{effect.name}</Cell>

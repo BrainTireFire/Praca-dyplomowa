@@ -1,8 +1,5 @@
-import React from "react";
 import Menus from "../../ui/containers/Menus";
 import Table from "../../ui/containers/Table";
-import EquipmentRow from "./EquipmentRow";
-import styled from "styled-components";
 import ClassRow from "./ClassRow";
 import { CharacterClass } from "../../models/characterclass";
 

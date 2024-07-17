@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using pracadyplomowa.Const;
+using pracadyplomowa.Errors;
 using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.DTOs.Account;
 
@@ -28,26 +29,29 @@ public class AccountController : BaseApiController
 
         if (userExists != null)
         {
-            return BadRequest("Username already exists on this username: " + registerDto.Username);
+            return new BadRequestObjectResult(new ApiValidationErrorResponse
+            {
+                Errors = new []{"User with this username already exists."}
+            });
         }
 
         var (result, user) = await _accountRepository.RegisterUserAsync(registerDto, registerDto.Password);
 
         if (!result.Succeeded)
         {
-            return BadRequest(result.Errors);
+            return BadRequest(new ApiResponse(400));
         }
 
         if (user == null)
         {
-            return BadRequest("Something went wrong with creating an account. Please try again later.");
+            return BadRequest(new ApiResponse(400));
         }
 
         var roleResult = await _accountRepository.AddUserToRoleAsync(user, "User");
 
         if (!roleResult.Succeeded)
         {
-            return BadRequest(roleResult.Errors);
+            return BadRequest(new ApiResponse(400));
         }
 
         var token = await _tokenService.CreateToken(user);
@@ -67,14 +71,14 @@ public class AccountController : BaseApiController
 
         if (user == null)
         {
-            return Unauthorized();
+            return Unauthorized(new ApiResponse(401));
         }
 
         var result = await _accountRepository.LoginUserAsync(loginDto.Username, loginDto.Password);
 
         if (result.ErrorMessage != null)
         {
-            return Unauthorized("Invalid username or password");
+            return Unauthorized(new ApiResponse(401));
         }
         
         var token = await _tokenService.CreateToken(user);

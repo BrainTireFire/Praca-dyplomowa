@@ -53,6 +53,18 @@ builder.Services.Configure<ApiBehaviorOptions>(opt =>
     };
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", builder =>
+    {
+        builder.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials()
+            .WithOrigins("http://localhost:5173");
+    });
+});
+
 var app = builder.Build();
 
 // // Configure the HTTP request pipeline.
@@ -70,7 +82,7 @@ app.UseStatusCodePagesWithReExecute("/errors/{0}");
 
 app.UseRouting();
 
-app.UseCors(x => x.AllowCredentials().AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:5173"));
+app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();

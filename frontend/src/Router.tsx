@@ -1,4 +1,3 @@
-import React from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Login from "./pages/account/Login";
 import Register from "./pages/account/Register";
@@ -9,8 +8,8 @@ import Concact from "./pages/Concact";
 import Homebrew from "./pages/homebrew/Homebrew";
 import Characters from "./pages/Characters";
 import Campagins from "./pages/campaign/Campagins";
-import CampaginInstance from "./pages/campaign/CampaignInstance";
-import ShortRest from "./pages/campaign/ShortRestModal";
+import CampaignInstance from "./pages/campaign/CampaignInstance";
+import Shops from "./pages/campaign/shop/Shops";
 import Profile from "./pages/account/Profile";
 import NotFound from "./pages/NotFound";
 import ForgotPassword from "./pages/account/ForgotPassword";
@@ -25,7 +24,8 @@ export default function Router() {
           <Route index element={<Navigate replace to="main" />} />
           <Route path="main" element={<MainDashboard />} />
           <Route path="campaigns" element={<Campagins />} />
-          <Route path="campaigns/:campaignId" element={<CampaginInstance />} />
+          <Route path="campaigns/:campaignId" element={<CampaignInstance />} />
+          <Route path="campaigns/:campaignId/shops" element={<Shops />} />
           <Route path="characters" element={<Characters />} />
           <Route path="homebrew" element={<Homebrew />} />
           <Route

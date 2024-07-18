@@ -54,7 +54,6 @@ const Heading = styled.h1<HeadingProps>`
     css`
       font-size: 3rem;
       font-weight: 600;
-      margin-bottom: 15px;
     `}
     ${(props) =>
     props.as === "h5" &&

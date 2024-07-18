@@ -1,5 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +23,7 @@ public class AccountController : BaseApiController
         _tokenService = tokenService;
         _accountRepository = accountRepository;
     }
-
+    
     [HttpPost("register")]
     public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
     {
@@ -99,14 +101,14 @@ public class AccountController : BaseApiController
         return NoContent(); 
     }
 
-    
-    [HttpPost("validate-token")]
-    public async Task<ActionResult<ValidateAuthDto>> ValidateUserAuthentication()
+    [Authorize]
+    [HttpGet("current-user")]
+    public async Task<ActionResult<ValidateAuthDto>> GetCurrentUserAsync()
     {
-        var token = Request.Cookies["JwtCookie"];
+        var token = Request.Cookies[ConstVariables.COOKIE_NAME];
         if (string.IsNullOrEmpty(token))
         {
-            return BadRequest("Token is required");
+            return Unauthorized(new ApiResponse(401, "No token found"));
         }
 
         try
@@ -115,30 +117,26 @@ public class AccountController : BaseApiController
             var principal = _tokenService.GetPrincipalFromExpiredToken(token);
             if (principal == null)
             {
-                return Unauthorized("Invalid token");
+                return Unauthorized(new ApiResponse(401, "Invalid token"));
             }
             
             // Console.WriteLine($"principal.Claims: {string.Join(", ", 
             //     principal.Claims.Select(c => $"{c.Type}: {c.Value}"))}");
             
             // Extract claims from principal
-            var userIdClaim = principal.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
-            var usernameClaim = principal.Claims.FirstOrDefault(c => c.Type == "username")?.Value;
+            var userIdClaim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            var usernameClaim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)?.Value;
             
             // Check if essential claims are missing or empty
-            if (string.IsNullOrEmpty(userIdClaim))
+            if (string.IsNullOrEmpty(userIdClaim) || string.IsNullOrEmpty(usernameClaim))
             {
-                return Unauthorized("Invalid token: Missing user ID claim");
-            }
-            if (string.IsNullOrEmpty(usernameClaim))
-            {
-                return Unauthorized("Invalid token: Missing username claim");
+                return Unauthorized(new ApiResponse(401, "Invalid token claims"));
             }
             
             var user = await _accountRepository.GetUserById(int.Parse(userIdClaim));
             if (user == null || !user.UserName.Equals(usernameClaim))
             {
-                return Unauthorized("User not found or inactive");
+                return Unauthorized(new ApiResponse(401, "User not found or inactive"));
             }
 
             // Retrieve user roles from repository
@@ -155,15 +153,11 @@ public class AccountController : BaseApiController
         }
         catch (SecurityTokenException ex)
         {
-            // Log and return unauthorized for token-related exceptions
-            // Console.WriteLine($"Token validation error: {ex.Message}");
-            return Unauthorized("Invalid token");
+            return Unauthorized(new ApiResponse(401, "Invalid token"));
         }
         catch (Exception ex)
         {
-            // Log and return internal server error for other exceptions
-            // Console.WriteLine($"An error occurred: {ex.Message}");
-            return StatusCode(500, "Internal server error");
+            return StatusCode(500, new ApiResponse(500, "Internal server error"));
         }
     }
 

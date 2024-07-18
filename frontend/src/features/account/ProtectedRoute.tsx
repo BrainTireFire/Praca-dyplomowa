@@ -2,7 +2,7 @@ import styled from "styled-components";
 import Spinner from "../../ui/interactive/Spinner";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useValidate } from "./useValidate";
+import { useUser, useValidate } from "./useUser";
 import { useQueryClient } from "@tanstack/react-query";
 
 const FullPage = styled.div`
@@ -15,51 +15,18 @@ const FullPage = styled.div`
 
 function ProtectedRoute({ children }) {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const user = queryClient.getQueryData(["user"]);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const { validate, isLoading } = useValidate();
+  const { user, isLoading, error } = useUser();
 
-  useEffect(() => {
-    async function check() {
-      try {
-        if (user && user.isAuthenticated) {
-          setIsAuthenticated(true);
-        } else {
-          const result = await validate();
-          setIsAuthenticated(result.isAuthenticated);
-
-          if (!result.isAuthenticated) {
-            console.log("Test ");
-            navigate("/login");
-          }
-        }
-      } catch (error) {
-        console.log("error " + JSON.stringify(error));
+  useEffect(
+    function name() {
+      if (user?.isAuthenticated === false && !isLoading) {
         navigate("/login");
       }
-    }
+    },
+    [user, isLoading, navigate]
+  );
 
-    check();
-
-    // // Event listener to handle changes in cookies
-    // const handleCookieChange = () => {
-    //   const cookie = document.cookie.includes("JwtCookie");
-    //   if (!cookie) {
-    //     setIsAuthenticated(false);
-    //     queryClient.removeQueries();
-    //     navigate("/login");
-    //   }
-    // };
-
-    // window.addEventListener("focus", handleCookieChange);
-
-    // return () => {
-    //   window.removeEventListener("focus", handleCookieChange);
-    // };
-  }, [validate, navigate, user, queryClient]);
-
-  if (isLoading || isAuthenticated === null) {
+  if (isLoading || user?.isAuthenticated === null) {
     return (
       <FullPage>
         <Spinner />
@@ -67,7 +34,7 @@ function ProtectedRoute({ children }) {
     );
   }
 
-  if (isAuthenticated) {
+  if (user?.isAuthenticated) {
     return children;
   }
 

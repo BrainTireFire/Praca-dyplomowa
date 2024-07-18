@@ -17,7 +17,7 @@ type UserDto = {
 };
 
 type ValidateAuthDto = {
-  IsAuthenticated: boolean;
+  isAuthenticated: boolean;
   roles: string[];
   username: string;
   email: string;
@@ -76,9 +76,9 @@ export async function logout() {
   }
 }
 
-export async function validateToken(): Promise<ValidateAuthDto> {
-  const response = await fetch(`${BASE_URL}/api/account/validate-token`, {
-    method: "POST",
+export async function getCurrentUser(): Promise<ValidateAuthDto> {
+  const response = await fetch(`${BASE_URL}/api/account/current-user`, {
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
@@ -86,7 +86,8 @@ export async function validateToken(): Promise<ValidateAuthDto> {
   });
 
   if (!response.ok) {
-    throw new Error("Invalid token");
+    const errorText = await response.text();
+    throw new Error(errorText || "Invalid token");
   }
 
   return response.json();

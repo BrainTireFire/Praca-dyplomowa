@@ -85,6 +85,10 @@ export async function getCurrentUser(): Promise<ValidateAuthDto> {
     credentials: "include",
   });
 
+  if (response.status === 401) {
+    throw new Error("Unauthorized");
+  }
+
   if (!response.ok) {
     const errorText = await response.text();
     throw new Error(errorText || "Invalid token");

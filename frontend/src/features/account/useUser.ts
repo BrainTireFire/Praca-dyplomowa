@@ -16,7 +16,7 @@ export function useUser() {
       try {
         return await getCurrentUser();
       } catch (error: any) {
-        console.log("CYCKI " + error);
+        console.log("error " + error);
         if (error.message === "Unauthorized") {
           navigate("/login");
         } else {

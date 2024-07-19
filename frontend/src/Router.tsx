@@ -17,6 +17,7 @@ import PasswordChanged from "./pages/account/PasswordChanged";
 import HomebrewCreatePower from "./pages/homebrew/HomebrewCreatePower";
 import ProtectedRoute from "./features/account/ProtectedRoute";
 import Forbidden from "./pages/errors/Forbidden";
+import ServiceDown from "./pages/errors/ServiceDown";
 
 export default function Router() {
   return (
@@ -48,6 +49,7 @@ export default function Router() {
         <Route path="changedPassword" element={<PasswordChanged />} />
         <Route path="home" element={<Home />} />
         <Route path="forbidden" element={<Forbidden />} />
+        <Route path="serviceDown" element={<ServiceDown />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

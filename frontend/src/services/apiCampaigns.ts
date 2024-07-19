@@ -1,13 +1,15 @@
 import { BASE_URL, BASE_URL_JSON_SERVER } from "./constAPI";
+import { customFetchJSON } from "./customFetchJSON";
 
 export async function getCampaigns(): Promise<Campaign[]> {
-  const response = await fetch(`${BASE_URL_JSON_SERVER}campaigns`);
+  const options: RequestInit = {
+    method: "GET",
+  };
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! Status: ${response.status}`);
-  }
-
-  const data: Campaign[] = await response.json();
+  const data = await customFetchJSON(
+    `${BASE_URL_JSON_SERVER}/campaigns`,
+    options
+  );
 
   return data;
 }

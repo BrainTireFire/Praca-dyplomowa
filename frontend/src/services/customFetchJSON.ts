@@ -1,11 +1,10 @@
-export async function customFetch(
+export async function customFetchJSON(
   url: string,
   options: RequestInit = {}
 ): Promise<any> {
   try {
     const response = await fetch(url, {
       ...options,
-      credentials: "include", // Ensure cookies are included
     });
 
     switch (response.status) {

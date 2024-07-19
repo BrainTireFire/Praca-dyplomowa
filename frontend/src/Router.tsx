@@ -11,16 +11,25 @@ import Characters from "./pages/Characters";
 import Campagins from "./pages/campaign/Campagins";
 import CampaginInstance from "./pages/campaign/CampaignInstance";
 import Profile from "./pages/account/Profile";
-import NotFound from "./pages/NotFound";
+import NotFound from "./pages/errors/NotFound";
 import ForgotPassword from "./pages/account/ForgotPassword";
 import PasswordChanged from "./pages/account/PasswordChanged";
 import HomebrewCreatePower from "./pages/homebrew/HomebrewCreatePower";
+import ProtectedRoute from "./features/account/ProtectedRoute";
+import Forbidden from "./pages/errors/Forbidden";
+import ServiceDown from "./pages/errors/ServiceDown";
 
 export default function Router() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<AppLayout />}>
+        <Route
+          element={
+            <ProtectedRoute>
+              <AppLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<Navigate replace to="main" />} />
           <Route path="main" element={<MainDashboard />} />
           <Route path="campaigns" element={<Campagins />} />
@@ -39,6 +48,8 @@ export default function Router() {
         <Route path="forgotPassword" element={<ForgotPassword />} />
         <Route path="changedPassword" element={<PasswordChanged />} />
         <Route path="home" element={<Home />} />
+        <Route path="forbidden" element={<Forbidden />} />
+        <Route path="serviceDown" element={<ServiceDown />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

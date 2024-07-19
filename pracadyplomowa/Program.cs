@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using pracadyplomowa;
 using pracadyplomowa.Authorization.AuthorizationHandlers;
 using pracadyplomowa.Authorization.AuthorizationPolicyProviders;
+using pracadyplomowa.Errors;
+using pracadyplomowa.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +35,35 @@ builder.Services.AddSingleton<IAuthorizationPolicyProvider, OwnershipPolicyProvi
 // builder.Services.AddSwaggerGen();
 
 builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+builder.Services.Configure<ApiBehaviorOptions>(opt =>
+{
+    opt.InvalidModelStateResponseFactory = actionContext =>
+    {
+        var errors  = actionContext.ModelState
+            .Where(e => e.Value != null && e.Value.Errors.Count > 0)
+            .SelectMany(x => x.Value?.Errors)
+            .Select(x => x.ErrorMessage).ToArray();
+
+        var errorResponse = new ApiValidationErrorResponse()
+        {
+            Errors = errors
+        };
+        
+        return new BadRequestObjectResult(errorResponse);
+    };
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", builder =>
+    {
+        builder.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials()
+            .WithOrigins("http://localhost:5173");
+    });
+});
 
 var app = builder.Build();
 
@@ -42,7 +74,15 @@ var app = builder.Build();
 //     app.UseSwaggerUI();
 // }
 
+app.UseMiddleware<ExceptionMiddleware>();
+app.UseStatusCodePagesWithReExecute("/errors/{0}");
+
+
 //app.UseHttpsRedirection();
+
+app.UseRouting();
+
+app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();

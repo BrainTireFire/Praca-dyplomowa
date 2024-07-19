@@ -20,7 +20,7 @@ export default function ChangeUserData() {
       <UserChangesPasswordForm />
       <UserChangeEmailForm />
       <Heading>Permanently remove the account and all data</Heading>
-      <Button size="medium" variation="primary">
+      <Button size="medium" variation="danger">
         Remove account
       </Button>
     </StyledChangeUserData>

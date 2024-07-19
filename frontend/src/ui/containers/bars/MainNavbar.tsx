@@ -4,6 +4,8 @@ import styled from "styled-components";
 import { RxAvatar } from "react-icons/rx";
 import { IoSettingsOutline, IoLogOutOutline } from "react-icons/io5";
 import DropdownNav from "../../links/DropdownNav";
+import { useQueryClient } from "@tanstack/react-query";
+import { useLogout } from "../../../features/account/useLogout";
 
 const NavList = styled.ul`
   display: flex;
@@ -38,7 +40,7 @@ const StyledNavLink = styled(NavLink)`
     align-items: center;
     gap: 1.2rem;
 
-    color: var(--color-grey-600);
+    color: var(--color-secondary-text);
     font-size: 1.6rem;
     font-weight: 500;
     padding: 1.2rem 2.4rem;
@@ -57,7 +59,7 @@ const StyledNavLink = styled(NavLink)`
   & svg {
     width: 2.4rem;
     height: 2.4rem;
-    color: var(--color-grey-400);
+    color: var(--color-secondary-text);
     transition: all 0.3s;
   }
 
@@ -65,7 +67,7 @@ const StyledNavLink = styled(NavLink)`
   &:active svg,
   &.active:link svg,
   &.active:visited svg {
-    color: var(--color-brand-600);
+    color: var(--color-secondary-hover-text);
   }
 `;
 
@@ -77,6 +79,9 @@ const MainNavbarStyled = styled.nav`
 `;
 
 export default function MainNavbar() {
+  const queryClient = useQueryClient();
+  const user = queryClient.getQueryData(["user"]);
+  const { logout, isLoading } = useLogout();
   // const [isOpen, setIsOpen] = useState(false);
 
   // const handleHamburgerClick = () => {
@@ -117,7 +122,7 @@ export default function MainNavbar() {
           <StyledNavLink to="/profile">
             <LinkWithIconContainer>
               <RxAvatar />
-              Nickname
+              {user?.username || "Nickname"}
             </LinkWithIconContainer>
           </StyledNavLink>
           <DropdownNav.Menu>
@@ -126,11 +131,11 @@ export default function MainNavbar() {
                 <IoSettingsOutline /> Profile
               </LinkWithIconContainer>
             </DropdownNav.Link>
-            <DropdownNav.Link to="">
+            <DropdownNav.Button onClick={logout} disabled={isLoading}>
               <LinkWithIconContainer>
                 <IoLogOutOutline /> Sign out
               </LinkWithIconContainer>
-            </DropdownNav.Link>
+            </DropdownNav.Button>
           </DropdownNav.Menu>
         </DropdownNav>
       </NavList>

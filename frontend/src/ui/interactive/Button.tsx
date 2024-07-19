@@ -49,11 +49,11 @@ const variations = {
     }
   `,
   danger: css`
-    color: var(--color-red-100);
-    background-color: var(--color-red-700);
+    color: var(--color-secondary-text);
+    background-color: var(--color-button-danger);
 
     &:hover {
-      background-color: var(--color-red-800);
+      background-color: var(--color-button-hover-danger);
     }
   `,
 };

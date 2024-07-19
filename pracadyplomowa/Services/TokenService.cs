@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using pracadyplomowa.Const;
 
 namespace pracadyplomowa;
 
@@ -22,12 +23,11 @@ public class TokenService : ITokenService
     {
         var claims = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
-            new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName)
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.GivenName, user.UserName)
         };
 
         var roles = await _userManager.GetRolesAsync(user);
-
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
@@ -44,5 +44,50 @@ public class TokenService : ITokenService
         var token = tokenHandler.CreateToken(tokenDescriptor);
 
         return tokenHandler.WriteToken(token);
+    }
+    
+    public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+    
+        // Configure token validation parameters
+        var validationParameters = GetTokenValidationParameters();
+
+        SecurityToken securityToken;
+        try
+        {
+            // Validate token
+            var principal = tokenHandler.ValidateToken(token, validationParameters, out securityToken);
+        
+            // Ensure the token is a JWT security token
+            if (!(securityToken is JwtSecurityToken jwtSecurityToken))
+            {
+                throw new SecurityTokenException("Invalid token");
+            }
+
+            // Validate token algorithm
+            if (!jwtSecurityToken.Header.Alg.Equals(ConstVariables.SECURITY_ALGORITHM, StringComparison.InvariantCultureIgnoreCase))
+            {
+                throw new SecurityTokenException("Invalid token algorithm");
+            }
+
+            return principal;
+        }
+        catch (Exception ex)
+        {
+            throw new SecurityTokenException("Invalid token", ex);
+        }
+    }
+    
+    private TokenValidationParameters GetTokenValidationParameters()
+    {
+        return new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = _key,
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ClockSkew = TimeSpan.Zero
+        };
     }
 }

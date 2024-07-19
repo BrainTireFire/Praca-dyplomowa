@@ -1,0 +1,11 @@
+﻿namespace pracadyplomowa.Errors;
+
+public class ApiException : ApiResponse
+{
+    public string Details { get; private set; }
+    
+    public ApiException(int statusCode, string message = null, string details = null) : base(statusCode, message)
+    {
+        Details = details;
+    }
+}

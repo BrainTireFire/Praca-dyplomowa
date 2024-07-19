@@ -14,7 +14,7 @@ import RadioButton from "../../ui/containers/RadioButton";
 const Name = styled.div`
   font-size: 1.6rem;
   font-weight: 600;
-  color: var(--color-grey-600);
+  color: var(--color-secondary-text);
   font-family: "Sono";
 `;
 
@@ -28,7 +28,7 @@ const Stacked = styled.div`
   }
 
   & span:last-child {
-    color: var(--color-grey-500);
+    color: var(--color-secondary-text);
     font-size: 1.2rem;
   }
 `;

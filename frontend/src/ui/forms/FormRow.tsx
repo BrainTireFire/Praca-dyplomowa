@@ -34,7 +34,7 @@ const Label = styled.label`
 
 const Error = styled.span`
   font-size: 1.4rem;
-  color: var(--color-button-danger);
+  color: var(--color-form-error);
 `;
 
 type FormRowProps = {

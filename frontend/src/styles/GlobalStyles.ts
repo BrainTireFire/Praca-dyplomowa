@@ -12,9 +12,12 @@ const GlobalStyles = createGlobalStyle`
   --color-button-primary: #D14836;
   --color-button-secondary: #49C5B6;
   --color-button-danger: #ab0101;
+
   --color-button-hover-primary:  #831b0d;
   --color-button-hover-secondary: #096359;
   --color-button-hover-danger: #730202;
+
+  --color-form-error: #ce1313;
 
   --color-secondary-text: #DCE1DE;
   --color-header-text: #9CC5A1;

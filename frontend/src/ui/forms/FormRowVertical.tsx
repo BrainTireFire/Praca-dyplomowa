@@ -14,7 +14,8 @@ const Label = styled.label`
 
 const Error = styled.span`
   font-size: 1.4rem;
-  color: var(--color-button-danger);
+  color: var(--color-form-error);
+  margin-top: 0.2rem;
 `;
 
 type FormRowVerticalProps = {

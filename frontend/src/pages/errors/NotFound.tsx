@@ -22,6 +22,13 @@ const Box = styled.div`
   flex: 0 1 96rem;
   text-align: center;
 
+  & p {
+    font-family: "Poppins", sans-serif;
+    margin-bottom: 3.2rem;
+    color: var(--color-secondary-text);
+    font-size: 2rem;
+  }
+
   & h1 {
     margin-bottom: 3.2rem;
   }
@@ -41,9 +48,8 @@ function NotFound() {
   return (
     <StyledPageNotFound>
       <Box>
-        <Heading as="h1">
-          The page you are looking for could not be found 😢
-        </Heading>
+        <Heading as="h4">Not found</Heading>
+        <p>The page you are looking for could not be found 😢</p>
         <Button onClick={moveBack} size="large" variation="primary">
           <CenteredContainer>
             <FaArrowLeftLong /> Go back

@@ -28,6 +28,13 @@ const Box = styled.div`
     flex: 0 1 100%;
   }
 
+  & p {
+    font-family: "Poppins", sans-serif;
+    margin-bottom: 3.2rem;
+    color: var(--color-secondary-text);
+    font-size: 2rem;
+  }
+
   & h1 {
     margin-bottom: 3.2rem;
     font-size: 2.4rem;
@@ -48,9 +55,10 @@ function Forbidden() {
   return (
     <StyledForbidden>
       <Box>
-        <Heading as="h1">
+        <Heading as="h4">Forbidden</Heading>
+        <p>
           You don't have permission to access this page <FaLock />
-        </Heading>
+        </p>
         <Button onClick={() => navigate("/")} size="large" variation="primary">
           <CenteredContainer>
             <FaArrowLeftLong /> Go back

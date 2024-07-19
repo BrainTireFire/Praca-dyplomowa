@@ -1,98 +1,60 @@
 import { BASE_URL } from "./constAPI";
-
-type LoginDto = {
-  username: string;
-  password: string;
-};
-
-type RegisterDto = {
-  username: string;
-  email: string;
-  password: string;
-};
-
-type UserDto = {
-  username: string;
-  token: string;
-};
-
-type ValidateAuthDto = {
-  isAuthenticated: boolean;
-  roles: string[];
-  username: string;
-  email: string;
-};
+import { customFetch } from "./customFetch";
 
 export async function login(loginDto: LoginDto): Promise<UserDto> {
-  const response = await fetch(`${BASE_URL}/api/account/login`, {
+  const options: RequestInit = {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(loginDto),
-    credentials: "include",
-  });
+  };
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText || "Unauthorized");
-  }
-
-  const data: UserDto = await response.json();
+  const data: UserDto = await customFetch(
+    `${BASE_URL}/api/account/login`,
+    options
+  );
   return data;
 }
 
 export async function signup(registerDto: RegisterDto): Promise<UserDto> {
-  const response = await fetch(`${BASE_URL}/api/account/register`, {
+  const options: RequestInit = {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(registerDto),
-    credentials: "include",
-  });
+  };
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText || "Unauthorized");
-  }
-
-  const data: UserDto = await response.json();
+  const data: UserDto = await customFetch(
+    `${BASE_URL}/api/account/register`,
+    options
+  );
   return data;
 }
 
-export async function logout() {
-  const response = await fetch(`${BASE_URL}/api/account/logout`, {
+export async function logout(): Promise<void> {
+  const options: RequestInit = {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
+    // headers: {
+    //   "Content-Type": "application/json",
+    // },
+  };
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText || "Unauthorized");
-  }
+  await customFetch(`${BASE_URL}/api/account/logout`, options);
 }
 
 export async function getCurrentUser(): Promise<ValidateAuthDto> {
-  const response = await fetch(`${BASE_URL}/api/account/current-user`, {
+  const options: RequestInit = {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
-    credentials: "include",
-  });
+  };
 
-  if (response.status === 401) {
-    throw new Error("Unauthorized");
-  }
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText || "Invalid token");
-  }
-
-  return response.json();
+  const data: ValidateAuthDto = await customFetch(
+    `${BASE_URL}/api/account/current-user`,
+    options
+  );
+  return data;
 }

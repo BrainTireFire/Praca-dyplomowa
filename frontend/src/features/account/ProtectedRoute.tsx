@@ -7,7 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 const FullPage = styled.div`
   height: 100vh;
-  background-color: var(--color-grey-50);
+  background-color: var(--color-main-background);
   display: flex;
   align-items: center;
   justify-content: center;

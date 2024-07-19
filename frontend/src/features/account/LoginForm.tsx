@@ -43,6 +43,7 @@ export default function LoginForm() {
           autoComplete="username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          disabled={isLoading}
         />
       </FormRowVertical>
       <FormRowVertical label="Password">
@@ -53,6 +54,7 @@ export default function LoginForm() {
           autoComplete="current-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          disabled={isLoading}
         />
       </FormRowVertical>
       <LinkContainer>

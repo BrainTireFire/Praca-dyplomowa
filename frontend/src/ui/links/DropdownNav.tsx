@@ -11,7 +11,7 @@ const Menu = styled.div`
 `;
 
 const DropdownLink = styled(NavLink)`
-  color: var(--color-grey-600);
+  color: var(--color-secondary-text);
   padding: 12px 16px;
   text-decoration: none;
   display: block;
@@ -34,7 +34,7 @@ const DropdownLink = styled(NavLink)`
 const DropdownButton = styled.button`
   background: none;
   border: none;
-  color: var(--color-grey-600);
+  color: var(--color-secondary-text);
   cursor: pointer;
   padding: 12px 16px;
   text-decoration: none;

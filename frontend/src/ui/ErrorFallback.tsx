@@ -33,7 +33,7 @@ const Box = styled.div`
   }
 
   & p {
-    font-family: "Sono", sans-serif;
+    font-family: "Poppins", sans-serif;
     margin-bottom: 3.2rem;
     color: var(--color-secondary-text);
     font-size: 1.6rem;

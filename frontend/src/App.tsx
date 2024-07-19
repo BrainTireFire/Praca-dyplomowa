@@ -7,14 +7,7 @@ import "./App.css";
 import GlobalStyles from "./styles/GlobalStyles";
 import Router from "./Router";
 import i18n from "./i18n/i18n";
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 0,
-    },
-  },
-});
+import queryClient from "./queryClient";
 
 function App() {
   return (

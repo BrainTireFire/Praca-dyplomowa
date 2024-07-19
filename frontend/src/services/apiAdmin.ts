@@ -19,6 +19,10 @@ export async function getUsersWithRoles(): Promise<UserWithRoleDto> {
     throw new Error("Unauthorized");
   }
 
+  if (response.status === 403) {
+    throw new Error("Forbidden");
+  }
+
   if (!response.ok) {
     throw new Error(`Error: ${response.status}`);
   }

@@ -1,13 +1,13 @@
 import styled from "styled-components";
 
-import { useMoveBack } from "../hooks/useMoveBack";
-import Button from "../ui/interactive/Button";
-import Heading from "../ui/text/Heading";
+import { useMoveBack } from "../../hooks/useMoveBack";
+import Button from "../../ui/interactive/Button";
+import Heading from "../../ui/text/Heading";
 import { FaArrowLeftLong } from "react-icons/fa6";
 
 const StyledPageNotFound = styled.main`
   height: 100vh;
-  background-color: var(--color-grey-50);
+  background-color: var(--color-main-background);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -15,9 +15,8 @@ const StyledPageNotFound = styled.main`
 `;
 
 const Box = styled.div`
-  /* box */
-  background-color: var(--color-grey-0);
-  border: 1px solid var(--color-grey-100);
+  background-color: var(--color-navbar);
+  border: 1px solid var(--color-border);
   border-radius: var(--border-radius-md);
 
   padding: 4.8rem;

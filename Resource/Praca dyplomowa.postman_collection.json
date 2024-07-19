@@ -1,0 +1,669 @@
+{
+	"info": {
+		"_postman_id": "76ed73b6-50ed-4439-a67e-d3002021d600",
+		"name": "Praca dyplomowa",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32603898"
+	},
+	"item": [
+		{
+			"name": "Account",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();\r",
+									"\r",
+									"pm.collectionVariables.set(\"UserToken\", response.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"bob\",\r\n    \"password\": \"Drewno1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseApi}}/api/account/login",
+							"host": [
+								"{{baseApi}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();\r",
+									"\r",
+									"pm.collectionVariables.set(\"UserToken\", response.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"bob\",\r\n    \"password\": \"Drewno1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseApi}}/api/account/login",
+							"host": [
+								"{{baseApi}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Token validate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();\r",
+									"\r",
+									"pm.collectionVariables.set(\"UserToken\", response.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"token\": \"eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIzIiwidW5pcXVlX25hbWUiOiJib2IiLCJpZCI6IjMiLCJ1c2VybmFtZSI6ImJvYiIsInJvbGUiOiJVc2VyIiwibmJmIjoxNzIwNjExMTMwLCJleHAiOjE3MjA2OTc1MzAsImlhdCI6MTcyMDYxMTEzMH0.9qnKMMnBW79hDbqx4jrdkKRr5dMBRFw9dp7cYgfL1bsAOmTzIDPDv-L8bRwaQjPPdY4wZObBLxshksS2voI-Yw\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseApi}}/api/account/validate-token",
+							"host": [
+								"{{baseApi}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"validate-token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"Snikers332\",\r\n    \"password\" : \"Example1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseApi}}/api/account/register",
+							"host": [
+								"{{baseApi}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCurrentUser",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();\r",
+									"\r",
+									"pm.collectionVariables.set(\"UserToken\", response.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"token\": \"eyJhbGciOiJIUzUxMiI222sInR5cCafsasfI6IkpXVCJ9.eyJuYW1laWQiOiIzIiwiZ2l2ZW5fbmFtZSI6ImJvYiIsInJvbGUiOiJVc2VyIiwibmJmIjoxNzIxMzM1NDI2LCJleHAiOjE3MjE0MjE4MjYsImlhdCI6MTcyMTMzNTQyNn0.Aa8ol3iwqXHphNX9YZ5GFPLaUn8RpfnPmR0HrZ7an1GtfSxePZvp4I8DP3YtrEWUMMppnEDhKx1wsnzohKBNQw\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseApi}}/api/account/current-user",
+							"host": [
+								"{{baseApi}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"current-user"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Login as Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();\r",
+									"\r",
+									"pm.collectionVariables.set(\"AdminToken\", response.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"Admin\",\r\n    \"password\": \"Drewno1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseApi}}/api/account/login",
+							"host": [
+								"{{baseApi}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get users with roles",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{AdminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseApi}}/api/admin/users-with-roles",
+							"host": [
+								"{{baseApi}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users-with-roles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit role by username",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{AdminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{baseApi}}/api/admin/edit-roles/Rob?roles=User,Admin",
+							"host": [
+								"{{baseApi}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"edit-roles",
+								"Rob"
+							],
+							"query": [
+								{
+									"key": "roles",
+									"value": "User,Admin"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create new user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{AdminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"AdminMaciej\",\r\n    \"password\": \"Drewno1234\",\r\n    \"role\": \"Admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseApi}}/api/admin/create-user",
+							"host": [
+								"{{baseApi}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"create-user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{AdminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseApi}}/api/admin/delete-user/AdminMaciej",
+							"host": [
+								"{{baseApi}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"delete-user",
+								"AdminMaciej"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Errors",
+			"item": [
+				{
+					"name": "Not found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();\r",
+									"\r",
+									"pm.collectionVariables.set(\"UserToken\", response.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"bob\",\r\n    \"password\": \"Drewno1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseApi}}/api/buggy/notfound",
+							"host": [
+								"{{baseApi}}"
+							],
+							"path": [
+								"api",
+								"buggy",
+								"notfound"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Authorizate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();\r",
+									"\r",
+									"pm.collectionVariables.set(\"UserToken\", response.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"bob\",\r\n    \"password\": \"Drewno1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseApi}}/api/buggy/testauth",
+							"host": [
+								"{{baseApi}}"
+							],
+							"path": [
+								"api",
+								"buggy",
+								"testauth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Server error",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();\r",
+									"\r",
+									"pm.collectionVariables.set(\"UserToken\", response.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"bob\",\r\n    \"password\": \"Drewno1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseApi}}/api/buggy/servererror",
+							"host": [
+								"{{baseApi}}"
+							],
+							"path": [
+								"api",
+								"buggy",
+								"servererror"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Bad request",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();\r",
+									"\r",
+									"pm.collectionVariables.set(\"UserToken\", response.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"bob\",\r\n    \"password\": \"Drewno1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseApi}}/api/buggy/badrequest",
+							"host": [
+								"{{baseApi}}"
+							],
+							"path": [
+								"api",
+								"buggy",
+								"badrequest"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NotFoundRequest",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();\r",
+									"\r",
+									"pm.collectionVariables.set(\"UserToken\", response.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"bob\",\r\n    \"password\": \"Drewno1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseApi}}/api/buggy/badrequest/5",
+							"host": [
+								"{{baseApi}}"
+							],
+							"path": [
+								"api",
+								"buggy",
+								"badrequest",
+								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseApi",
+			"value": "http://localhost:5000",
+			"type": "string"
+		},
+		{
+			"key": "UserToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "AdminToken",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

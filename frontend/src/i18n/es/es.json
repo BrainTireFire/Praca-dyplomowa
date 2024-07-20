@@ -1,0 +1,81 @@
+{
+  "signup.text": "Registrarse",
+  "login.text": "Iniciar sesión",
+  "main.title.text": "D&D más allá pero mejor",
+
+  "main.sidebar.settings.text": "Configuración",
+  "main.sidebar.settings.theme.mode": "Modo de tema",
+
+  "main.navbar.link.theme.mode": "Estilo de aplicación",
+  "main.navbar.link.my.campaigns": "Mis campañas",
+  "main.navbar.link.my.characters": "Mis personajes",
+  "main.navbar.link.homebrew": "Casero",
+  "main.navbar.link.language": "Idioma",
+  "main.navbar.link.concact": "Contacto",
+  "main.navbar.link.profile": "Perfil",
+  "main.navbar.link.signout": "Cerrar sesión",
+  "main.navbar.link.english": "English",
+  "main.navbar.link.german": "Deutsch",
+  "main.navbar.link.spanish": "Español",
+  "main.navbar.link.france": "Français",
+  "main.navbar.link.japan": "日本語",
+
+  "campaigns.create.text": "Crear campaña",
+  "campaignInstance.giveXP": "Dar XP",
+  "campaignInstance.shortRest": "Descanso corto",
+  "campaignInstance.longRest": "Descanso largo",
+  "campaignInstance.session": "Iniciar/abrir sesión virtual",
+  "campaignInstance.shops": "Tiendas",
+  "campaignInstance.createEncounter": "Crear encuentro",
+  "campaignInstance.remove": "Eliminar campaña",
+
+  "homepage.play.now.button": "¡Jugar ahora!",
+  "homepage.developers": "Los Desarrolladores",
+
+  "account.profile.change.user.data": "Eliminar permanentemente la cuenta y todos los datos",
+  "account.profile.change.user.email": "Cambiar correo electrónico",
+  "account.profile.change.user.password": "Cambiar contraseña",
+  "account.profile.change.user.username": "Cambiar nombre de usuario",
+  "account.profile.remove.account": "Eliminar cuenta",
+
+  "account.profile.statistics.header": "Estadísticas",
+  "account.profile.myprofile.header": "Mi perfil",
+  "account.profile.statistics.games.played": "Juegos jugados",
+  "account.profile.statistics.games.won": "Juegos ganados",
+  "account.profile.statistics.account.created": "Cuenta creada",
+
+  "account.forms.login.header": "Iniciar sesión",
+  "account.forms.login.button": "Iniciar sesión",
+  "account.forms.login.forgot.password": "¿Olvidaste tu contraseña?",
+  "account.login.new.around.here": "¿Nuevo por aquí?",
+
+  "account.forms.login.username.input.label": "Nombre de usuario",
+  "account.forms.login.username.input.placeholder": "Ingrese su nombre de usuario",
+  "account.forms.login.password.input.label": "Contraseña",
+  "account.forms.login.password.input.placeholder": "Ingrese su contraseña",
+  "account.forms.login.confirm.password.input.label": "Confirmar contraseña",
+  "account.forms.login.confirm.password.input.placeholder": "Ingrese su contraseña nuevamente",
+  "account.forms.login.email.input.label": "Correo electrónico",
+  "account.forms.login.email.input.placeholder": "Ingrese su correo electrónico",
+  "account.forms.login.confirm.email.input.placeholder": "Ingrese su correo electrónico nuevamente",
+
+  "account.forgot.password.link.did.you.recall": "¿Lo recordaste?",
+  "account.forgot.password.link.back.to.login.page": "Volver a Iniciar sesión",
+
+  "account.form.validation.error.required": "Este campo es obligatorio",
+  "account.form.validation.error.password.characters.long": "La contraseña debe tener al menos 8 caracteres",
+  "account.form.validation.error.password.match": "Las contraseñas deben coincidir",
+  "account.form.validation.error.email.valid": "Por favor, proporcione una dirección de correo electrónico válida",
+
+  "account.forms.register.header": "Registrarse",
+  "account.forms.register.button": "Registrarse",
+  "account.forms.register.forgot.password": "¿Olvidaste tu contraseña?",
+  "account.forms.register.already.have.an.account": "¿Ya tienes una cuenta?",
+  "account.forms.register.login.button": "Iniciar sesión",
+
+  "account.forms.forgot.password.header": "Recuperación de contraseña",
+  "account.forms.forgot.password.button": "Enviar enlace de recuperación de contraseña",
+
+  "account.forms.password.change.header": "Recuperación de contraseña",
+  "account.forms.password.change.button": "Restablecer contraseña"
+}

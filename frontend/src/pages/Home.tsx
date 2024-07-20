@@ -80,11 +80,11 @@ export default function Home() {
       </p>
       <ButtonContainerPlayNow>
         <Button size="verylarge">
-          <Link to="/main">Play now!</Link>
+          <Link to="/main">{t("homepage.play.now.button")}</Link>
         </Button>
       </ButtonContainerPlayNow>
       <Heading as="h8" align="center" color="textColor">
-        The Developers
+        {t("homepage.developers")}
       </Heading>
 
       <DevelopersContainer>

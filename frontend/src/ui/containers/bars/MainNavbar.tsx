@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
 import { RxAvatar } from "react-icons/rx";
@@ -6,6 +5,7 @@ import { IoSettingsOutline, IoLogOutOutline } from "react-icons/io5";
 import DropdownNav from "../../links/DropdownNav";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLogout } from "../../../features/account/useLogout";
+import { useTranslation } from "react-i18next";
 
 const NavList = styled.ul`
   display: flex;
@@ -71,6 +71,49 @@ const StyledNavLink = styled(NavLink)`
   }
 `;
 
+const StyledRowLi = styled.li`
+  display: flex;
+  flex-direction: row;
+  margin-top: 12px;
+  gap: 0.8rem;
+
+  &:link,
+  &:visited {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+
+    color: var(--color-secondary-text);
+    font-size: 1.6rem;
+    font-weight: 500;
+    padding: 1.2rem 2.4rem;
+    transition: all 0.3s;
+  }
+
+  /* &:hover,
+  &:active,
+  &.active:link,
+  &.active:visited {
+    color: var(--color-header-text);
+    //background-color: var(--color-header-text);
+    border-radius: var(--border-radius-sm);
+  } */
+
+  & svg {
+    width: 2.4rem;
+    height: 2.4rem;
+    color: var(--color-secondary-text);
+    transition: all 0.3s;
+  }
+
+  /* &:hover svg,
+  &:active svg,
+  &.active:link svg,
+  &.active:visited svg {
+    color: var(--color-secondary-hover-text);
+  } */
+`;
+
 const MainNavbarStyled = styled.nav`
   height: 7rem;
   display: flex;
@@ -79,9 +122,11 @@ const MainNavbarStyled = styled.nav`
 `;
 
 export default function MainNavbar() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const user = queryClient.getQueryData(["user"]);
   const { logout, isLoading } = useLogout();
+
   // const [isOpen, setIsOpen] = useState(false);
 
   // const handleHamburgerClick = () => {
@@ -100,24 +145,25 @@ export default function MainNavbar() {
         </li>
         <li>
           <StyledNavLink to="/campaigns">
-            <span>My campaigns</span>
+            <span>{t("main.navbar.link.my.campaigns")}</span>
           </StyledNavLink>
         </li>
         <li>
           <StyledNavLink to="/characters">
-            <span>My Characters</span>
+            <span>{t("main.navbar.link.my.characters")}</span>
           </StyledNavLink>
         </li>
         <li>
           <StyledNavLink to="/homebrew">
-            <span>Homebrew</span>
+            <span>{t("main.navbar.link.homebrew")}</span>
           </StyledNavLink>
         </li>
         <li>
           <StyledNavLink to="/contact">
-            <span>Concact</span>
+            <span>{t("main.navbar.link.concact")}</span>
           </StyledNavLink>
         </li>
+
         <DropdownNav>
           <StyledNavLink to="/profile">
             <LinkWithIconContainer>
@@ -128,12 +174,12 @@ export default function MainNavbar() {
           <DropdownNav.Menu>
             <DropdownNav.Link to="/profile">
               <LinkWithIconContainer>
-                <IoSettingsOutline /> Profile
+                <IoSettingsOutline /> {t("main.navbar.link.profile")}
               </LinkWithIconContainer>
             </DropdownNav.Link>
             <DropdownNav.Button onClick={logout} disabled={isLoading}>
               <LinkWithIconContainer>
-                <IoLogOutOutline /> Sign out
+                <IoLogOutOutline /> {t("main.navbar.link.signout")}
               </LinkWithIconContainer>
             </DropdownNav.Button>
           </DropdownNav.Menu>

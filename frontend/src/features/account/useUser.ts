@@ -17,13 +17,7 @@ export function useUser() {
         return await getCurrentUser();
       } catch (error: any) {
         console.log("error " + error);
-        if (error.message === "Unauthorized") {
-          navigate("/login");
-        } else if (error.message === "FailedToFetch") {
-          navigate("/serviceDown");
-        } else {
-          toast.error(error.message || "An error occurred");
-        }
+        toast.error(error.message || "An error occurred");
         throw error;
       }
     },

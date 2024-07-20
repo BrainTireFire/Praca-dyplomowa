@@ -3,12 +3,13 @@ import { createGlobalStyle } from "styled-components";
 const GlobalStyles = createGlobalStyle`
     :root {
 
+  //Dark mode
+  &.dark-mode {
   --color-main-background: #1F2421;
   --color-secondary-background: #DCE1DE;
   --color-secondary-background-rgb: 220, 225, 222; //#DCE1DE
   --color-border: #49A078;
 
-  /* Buttons */
   --color-button-primary: #D14836;
   --color-button-secondary: #49C5B6;
   --color-button-danger: #ab0101;
@@ -24,7 +25,6 @@ const GlobalStyles = createGlobalStyle`
 
   --color-secondary-hover-text: #9a9b9a;
 
-  /* Links */
   --color-link: #FA9021;
   --color-link-hover: #8f4a00;
 
@@ -42,6 +42,47 @@ const GlobalStyles = createGlobalStyle`
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-md: 0px 0.6rem 2.4rem rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 2.4rem 3.2rem rgba(0, 0, 0, 0.12);
+  }
+
+  &, &.light-mode {
+  --color-main-background: #D1BB9E; /* Pure white background */
+  --color-secondary-background: #F8F8F8; /* Very light gray background */
+  --color-secondary-background-rgb: 248, 248, 248; //#F8F8F8
+  --color-border: #a77c43; /* Light gray for borders */
+
+  /* Buttons */
+  --color-button-primary: #e7ad62; /* Light gray for primary buttons */
+  --color-button-secondary: #e6c79e; /* Medium gray for secondary buttons */
+  --color-button-danger: #e74545; /* Light red for danger buttons */
+
+  --color-button-hover-primary: #df983b; /* Slightly darker gray for hover */
+  --color-button-hover-secondary: #d8b17d; /* Slightly darker medium gray for hover */
+  --color-button-hover-danger: #f02a2a; /* Slightly darker red for hover */
+
+  --color-form-error: #f02a2a; /* Same as button hover danger for error text */
+
+  --color-secondary-text: #222121; /* Dark gray for text */
+  --color-header-text: #000000; /* Black for header text */
+
+  --color-secondary-hover-text: #555555; /* Mid gray for hover text */
+
+  --color-link: #421a1a;
+  --color-link-hover: #4a2a2a; /* Dark gray for hover links */
+
+  --color-input-text: #000000; /* Black for input text */
+  --color-input-focus: #808080; /* Gray for focused inputs */
+  --color-input-disable-background: #E0E0E0; /* Light gray for disabled background */
+
+  --color-navbar: #817464; /* Very light gray for navbar */
+
+  --color-button-green: #422704; /* Light green for a specific button */
+
+  --backdrop-color: rgba(0, 0, 0, 0.05); /* Very light black for backdrop */
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04); /* Small shadow */
+  --shadow-md: 0px 0.6rem 2.4rem rgba(0, 0, 0, 0.06); /* Medium shadow */
+  --shadow-lg: 0 2.4rem 3.2rem rgba(0, 0, 0, 0.12); /* Large shadow */
+}
 
   --border-radius-tiny: 3px;
   --border-radius-sm: 5px;
@@ -141,9 +182,6 @@ img {
   /* For dark mode */
   filter: grayscale(var(--image-grayscale)) opacity(var(--image-opacity));
 }
-
-
-//FOR DARK MODE
 
 `;
 

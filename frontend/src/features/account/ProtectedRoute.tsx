@@ -1,9 +1,8 @@
 import styled from "styled-components";
 import Spinner from "../../ui/interactive/Spinner";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { useUser, useValidate } from "./useUser";
-import { useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { useUser } from "./useUser";
 
 const FullPage = styled.div`
   height: 100vh;
@@ -13,7 +12,7 @@ const FullPage = styled.div`
   justify-content: center;
 `;
 
-function ProtectedRoute({ children }) {
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const { user, isLoading, error } = useUser();
 

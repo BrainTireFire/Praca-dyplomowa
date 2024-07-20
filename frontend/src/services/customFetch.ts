@@ -10,12 +10,16 @@ export async function customFetch(
 
     switch (response.status) {
       case 401:
+        window.location.replace("/login");
         throw new Error("Unauthorized");
       case 403:
+        window.location.replace("/forbidden");
         throw new Error("Forbidden");
       case 404:
+        window.location.replace("/notFound");
         throw new Error("NotFound");
       case 500:
+        window.location.replace("/serviceDown");
         throw new Error("ServerError");
       default:
         break;

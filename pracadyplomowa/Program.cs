@@ -6,6 +6,7 @@ using pracadyplomowa;
 using pracadyplomowa.Authorization.AuthorizationHandlers;
 using pracadyplomowa.Authorization.AuthorizationPolicyProviders;
 using pracadyplomowa.Errors;
+using pracadyplomowa.Hubs;
 using pracadyplomowa.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,7 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 // });
 builder.Services.AddIdentityServices(builder.Configuration);
 builder.Services.AddControllers();
+builder.Services.AddSignalR();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
@@ -87,6 +89,7 @@ app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapHub<BoardHub>("/board");
 app.MapControllers();
 
 using var scope = app.Services.CreateScope();

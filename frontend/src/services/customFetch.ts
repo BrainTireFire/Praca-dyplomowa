@@ -37,6 +37,7 @@ export async function customFetch(
   } catch (error) {
     if (error instanceof TypeError && error.message === "Failed to fetch") {
       console.error("Fetch error: Network error, server may be down");
+      window.location.replace("/serviceDown");
       throw new Error("FailedToFetch");
     } else {
       console.error("Fetch error:", error);

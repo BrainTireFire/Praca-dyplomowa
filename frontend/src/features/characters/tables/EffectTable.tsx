@@ -1,28 +1,33 @@
 import React from "react";
-import Menus from "../../ui/containers/Menus";
-import Table from "../../ui/containers/Table";
-import EquipmentRow from "./EquipmentRow";
+import Menus from "../../../ui/containers/Menus";
+import Table from "../../../ui/containers/Table";
 import styled from "styled-components";
-import Modal from "../../ui/containers/Modal";
+import Modal from "../../../ui/containers/Modal";
 import {
   HiArrowDownOnSquare,
   HiArrowUpOnSquare,
   HiEye,
   HiTrash,
 } from "react-icons/hi2";
-import RadioButton from "../../ui/containers/RadioButton";
-import { Power } from "../../models/power";
+import { Effect } from "../../../models/effect";
 
-export default function ReadyPowerTable({ powers }: { powers: Power[] }) {
+export default function EffectTable({ effects }: { effects: Effect[] }) {
   return (
     <Menus>
-      <Table header="Ready powers" button="Add new" columns="1fr 3.2rem">
+      <Table
+        header="Temporary effects"
+        button="Add new"
+        columns="1fr 1fr 1fr 1fr 3.2rem"
+      >
         <Table.Header>
           <div>Name</div>
+          <div>Time left</div>
+          <div>Source</div>
+          <div>Target</div>
         </Table.Header>
         <Table.Body
-          data={powers}
-          render={(power) => <ReadyPowersRow key={power.id} power={power} />}
+          data={effects}
+          render={(effect) => <EffectRow key={effect.id} effect={effect} />}
         />
         <Table.Footer>{/* <Pagination count={count} /> */}</Table.Footer>
       </Table>
@@ -36,15 +41,20 @@ const Cell = styled.div`
   color: var(--color-grey-600);
 `;
 
-function ReadyPowersRow({ power }: { power: Power }) {
+function EffectRow({ effect }: { effect: Effect }) {
   return (
     <Table.Row>
-      <Cell>{power.name}</Cell>
+      <Cell>{effect.name}</Cell>
+
+      <Cell>{effect.turnsLeft}</Cell>
+
+      <Cell>{effect.source}</Cell>
+      <Cell>{effect.target}</Cell>
 
       <Modal>
         <Menus.Menu>
-          <Menus.Toggle id={power.id} />
-          <Menus.List id={power.id}>
+          <Menus.Toggle id={effect.id} />
+          <Menus.List id={effect.id}>
             <Menus.Button icon={<HiEye />} onClick={() => alert("Test")}>
               Test 1
             </Menus.Button>

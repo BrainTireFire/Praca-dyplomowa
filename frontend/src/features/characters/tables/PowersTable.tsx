@@ -1,35 +1,48 @@
 import React from "react";
-import Menus from "../../ui/containers/Menus";
-import Table from "../../ui/containers/Table";
-import EquipmentRow from "./EquipmentRow";
+import Menus from "../../../ui/containers/Menus";
+import Table from "../../../ui/containers/Table";
 import styled from "styled-components";
-import Modal from "../../ui/containers/Modal";
+import Modal from "../../../ui/containers/Modal";
 import {
   HiArrowDownOnSquare,
   HiArrowUpOnSquare,
   HiEye,
   HiTrash,
 } from "react-icons/hi2";
-import RadioButton from "../../ui/containers/RadioButton";
-import { Effect } from "../../models/effect";
+import { Power } from "../../../models/power";
 
-export default function EffectTable({ effects }: { effects: Effect[] }) {
+const powers = [
+  {
+    id: 1,
+    name: "Power 1",
+    source: "Race",
+    favourite: true,
+  },
+  {
+    id: 2,
+    name: "Power 2",
+    source: "Class",
+    favourite: false,
+  },
+  {
+    id: 3,
+    name: "Power 3",
+    source: "Magic sock",
+    favourite: true,
+  },
+];
+
+export default function PowersTable({ powers }: { powers: Power[] }) {
   return (
     <Menus>
-      <Table
-        header="Temporary effects"
-        button="Add new"
-        columns="1fr 1fr 1fr 1fr 3.2rem"
-      >
+      <Table header="Powers" button="Add new" columns="1fr 1fr 3.2rem">
         <Table.Header>
           <div>Name</div>
-          <div>Time left</div>
           <div>Source</div>
-          <div>Target</div>
         </Table.Header>
         <Table.Body
-          data={effects}
-          render={(effect) => <EffectRow key={effect.id} effect={effect} />}
+          data={powers}
+          render={(power) => <PowersRow key={power.id} power={power} />}
         />
         <Table.Footer>{/* <Pagination count={count} /> */}</Table.Footer>
       </Table>
@@ -43,20 +56,17 @@ const Cell = styled.div`
   color: var(--color-grey-600);
 `;
 
-function EffectRow({ effect }: { effect: Effect }) {
+function PowersRow({ power }: { power: Power }) {
   return (
     <Table.Row>
-      <Cell>{effect.name}</Cell>
+      <Cell>{power.name}</Cell>
 
-      <Cell>{effect.turnsLeft}</Cell>
-
-      <Cell>{effect.source}</Cell>
-      <Cell>{effect.target}</Cell>
+      <Cell>{power.source}</Cell>
 
       <Modal>
         <Menus.Menu>
-          <Menus.Toggle id={effect.id} />
-          <Menus.List id={effect.id}>
+          <Menus.Toggle id={power.id} />
+          <Menus.List id={power.id}>
             <Menus.Button icon={<HiEye />} onClick={() => alert("Test")}>
               Test 1
             </Menus.Button>

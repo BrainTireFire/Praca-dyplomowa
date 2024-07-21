@@ -5,7 +5,7 @@ import Input from "../../ui/forms/Input";
 import FormRowVertical from "../../ui/forms/FormRowVertical";
 import Button from "../../ui/interactive/Button";
 import HorizontalDiv from "../../ui/containers/HorizontalDiv";
-import { useCharacters } from "./useCharacters";
+import { useCharacters } from "./hooks/useCharacters";
 import Spinner from "../../ui/interactive/Spinner";
 import Modal from "../../ui/containers/Modal";
 import NewCharacter from "./NewCharacter";

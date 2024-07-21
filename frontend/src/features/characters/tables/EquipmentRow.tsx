@@ -1,7 +1,7 @@
 import React from "react";
-import Table from "../../ui/containers/Table";
-import Modal from "../../ui/containers/Modal";
-import Menus from "../../ui/containers/Menus";
+import Table from "../../../ui/containers/Table";
+import Modal from "../../../ui/containers/Modal";
+import Menus from "../../../ui/containers/Menus";
 import {
   HiArrowDownOnSquare,
   HiArrowUpOnSquare,
@@ -9,8 +9,8 @@ import {
   HiTrash,
 } from "react-icons/hi2";
 import styled from "styled-components";
-import RadioButton from "../../ui/containers/RadioButton";
-import { Item } from "../../models/item";
+import RadioButton from "../../../ui/containers/RadioButton";
+import { Item } from "../../../models/item";
 
 const Cell = styled.div`
   font-size: 1.2rem;

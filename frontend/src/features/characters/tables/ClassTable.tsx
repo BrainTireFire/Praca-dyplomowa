@@ -1,7 +1,7 @@
-import Menus from "../../ui/containers/Menus";
-import Table from "../../ui/containers/Table";
+import Menus from "../../../ui/containers/Menus";
+import Table from "../../../ui/containers/Table";
+import { CharacterClass } from "../../../models/characterclass";
 import ClassRow from "./ClassRow";
-import { CharacterClass } from "../../models/characterclass";
 
 const characterClasses = [
   {

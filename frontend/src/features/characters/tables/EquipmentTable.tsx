@@ -1,9 +1,9 @@
 import React from "react";
-import Menus from "../../ui/containers/Menus";
-import Table from "../../ui/containers/Table";
+import Menus from "../../../ui/containers/Menus";
+import Table from "../../../ui/containers/Table";
 import EquipmentRow from "./EquipmentRow";
 import styled from "styled-components";
-import { Item } from "../../models/item";
+import { Item } from "../../../models/item";
 
 // const equipments = [
 //   {

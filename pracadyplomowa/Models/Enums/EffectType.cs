@@ -4,7 +4,7 @@ namespace pracadyplomowa.Models.Enums
     {
         MovementEffect = 0,
         SavingThrow = 1,
-        AbilityCheck = 2,
+        Ability = 2,
         SkillCheck = 3,
         Resistance = 4,
         AttackBonus = 5,

@@ -5,7 +5,7 @@ import Form from "../../../ui/forms/Form";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import FormRow from "../../../ui/forms/FormRow";
 import RadioButton from "../../../ui/containers/RadioButton";
-import EquipmentTable from "../../characters/EquipmentTable";
+import EquipmentTable from "../../characters/tables/EquipmentTable";
 
 const StyledP = styled.p`
   font-size: 24px;

@@ -1,17 +1,10 @@
 import React from "react";
-import Menus from "../../ui/containers/Menus";
-import Table from "../../ui/containers/Table";
+import Menus from "../../../ui/containers/Menus";
+import Table from "../../../ui/containers/Table";
 import styled from "styled-components";
 
-import Modal from "../../ui/containers/Modal";
-import {
-  HiArrowDownOnSquare,
-  HiArrowUpOnSquare,
-  HiEye,
-  HiTrash,
-} from "react-icons/hi2";
-import RadioButton from "../../ui/containers/RadioButton";
-import { WeaponAttack } from "../../models/weaponattack";
+import RadioButton from "../../../ui/containers/RadioButton";
+import { WeaponAttack } from "../../../models/weaponattack";
 
 export default function WeaponAttackTable({
   weaponAttacks,

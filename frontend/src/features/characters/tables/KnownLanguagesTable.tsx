@@ -1,10 +1,8 @@
 import React from "react";
-import Menus from "../../ui/containers/Menus";
-import Table from "../../ui/containers/Table";
-import EquipmentRow from "./EquipmentRow";
-import styled from "styled-components";
+import Menus from "../../../ui/containers/Menus";
+import Table from "../../../ui/containers/Table";
 import ProficiencyRow from "./ProficiencyRow";
-import { Language } from "../../models/language";
+import { Language } from "../../../models/language";
 
 export default function KnownLanguagesTable({
   languages,

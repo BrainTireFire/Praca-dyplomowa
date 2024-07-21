@@ -3,6 +3,10 @@ import Box from "../../ui/containers/Box";
 import FormRow from "../../ui/forms/FormRow";
 import Input from "../../ui/forms/Input";
 import Button from "../../ui/interactive/Button";
+import Dropdown from "../../ui/forms/Dropdown";
+import { useRaces } from "./hooks/useRaces";
+import { useClasses } from "./hooks/useClass";
+import Spinner from "../../ui/interactive/Spinner";
 
 const initialState = {
   name: "",
@@ -40,33 +44,79 @@ const characterReducer = (
   state: typeof initialState,
   action: Actions
 ): typeof initialState => {
+  let newState;
   switch (action.type) {
     case "setName":
-      return { ...state, name: action.value };
+      newState = { ...state, name: action.value };
+      break;
     case "setClass":
-      return { ...state, class: action.value };
+      newState = { ...state, class: action.value };
+      break;
     case "setRace":
-      return { ...state, race: action.value };
+      newState = { ...state, race: action.value };
+      break;
     case "setStr":
-      return { ...state, strength: action.value };
+      newState = { ...state, strength: action.value };
+      break;
     case "setDex":
-      return { ...state, dexterity: action.value };
+      newState = { ...state, dexterity: action.value };
+      break;
     case "setCon":
-      return { ...state, constitution: action.value };
+      newState = { ...state, constitution: action.value };
+      break;
     case "setInt":
-      return { ...state, intelligence: action.value };
+      newState = { ...state, intelligence: action.value };
+      break;
     case "setWis":
-      return { ...state, wisdom: action.value };
+      newState = { ...state, wisdom: action.value };
+      break;
     case "setCha":
-      return { ...state, charisma: action.value };
+      newState = { ...state, charisma: action.value };
+      break;
     default:
-      return state;
+      newState = state;
+      break;
   }
+  console.log(newState);
+  return newState;
 };
 
 function NewCharacter() {
   const [state, dispatch] = useReducer(characterReducer, initialState);
-
+  const { isLoading: isLoadingRaces, races, error: errorRaces } = useRaces();
+  const {
+    isLoading: isLoadingClasses,
+    classes,
+    error: errorClasses,
+  } = useClasses();
+  const raceList = races
+    ? races.map((race) => ({
+        value: race.id,
+        label: race.name,
+      }))
+    : [];
+  const classList = classes
+    ? classes.map((characterClass) => ({
+        value: characterClass.id,
+        label: characterClass.name,
+      }))
+    : [];
+  // const raceList = [
+  //   { value: "1", label: "Human" },
+  //   { value: "2", label: "Elf" },
+  //   { value: "3", label: "Dwarf" },
+  // ];
+  // const classList = [
+  //   { value: "1", label: "Fighter" },
+  //   { value: "2", label: "Wizard" },
+  //   { value: "3", label: "Rogue" },
+  // ];
+  if (errorRaces || errorClasses) {
+    return "Error";
+  }
+  if (isLoadingRaces || isLoadingClasses) {
+    return <Spinner />;
+  }
   return (
     <>
       <Box>
@@ -79,22 +129,22 @@ function NewCharacter() {
           ></Input>
         </FormRow>
         <FormRow label="Starting class">
-          <Input
-            type="number"
-            value={state.class}
-            onChange={(e) =>
-              dispatch({ type: "setClass", value: Number(e.target.value) })
+          <Dropdown
+            chosenValue={state.class.toString()}
+            setChosenValue={(e) =>
+              dispatch({ type: "setClass", value: Number(e) })
             }
-          ></Input>
+            valuesList={classList}
+          ></Dropdown>
         </FormRow>
         <FormRow label="Race">
-          <Input
-            type="number"
-            value={state.race}
-            onChange={(e) =>
-              dispatch({ type: "setRace", value: Number(e.target.value) })
+          <Dropdown
+            chosenValue={state.race.toString()}
+            setChosenValue={(e) =>
+              dispatch({ type: "setRace", value: Number(e) })
             }
-          ></Input>
+            valuesList={raceList}
+          ></Dropdown>
         </FormRow>
         <FormRow label="Strength">
           <Input

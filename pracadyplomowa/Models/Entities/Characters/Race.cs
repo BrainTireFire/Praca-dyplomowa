@@ -7,6 +7,11 @@ namespace pracadyplomowa.Models.Entities.Characters
 {
     public class Race : ObjectWithId
     {
+        public Race(string name)
+        {
+            Name = name;
+        }
+
         public string Name { get; set; } = null!;
 
         //Relationship

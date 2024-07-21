@@ -1,10 +1,8 @@
 import React from "react";
-import Menus from "../../ui/containers/Menus";
-import Table from "../../ui/containers/Table";
-import EquipmentRow from "./EquipmentRow";
-import styled from "styled-components";
+import Menus from "../../../ui/containers/Menus";
+import Table from "../../../ui/containers/Table";
 import ProficiencyRow from "./ProficiencyRow";
-import { ItemFamily } from "../../models/itemfamily";
+import { ItemFamily } from "../../../models/itemfamily";
 
 export default function ToolProficiencyTable({
   toolFamilies,

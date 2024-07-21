@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getCharacters } from "../../services/apiCharacters";
+import { getCharacters } from "../../../services/apiCharacters";
 
 export function useCharacters() {
   const {

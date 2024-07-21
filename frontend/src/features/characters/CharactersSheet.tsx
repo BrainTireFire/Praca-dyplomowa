@@ -1,23 +1,23 @@
 import styled, { css } from "styled-components";
 import StatsContainer from "../../ui/characters/StatsContainer";
-import EquipmentTable from "./EquipmentTable";
+import EquipmentTable from "./tables/EquipmentTable";
 import ProficiencyBox from "../../ui/characters/ProficiencyBox";
 import Box from "../../ui/containers/Box";
 import FormRowVertical from "../../ui/forms/FormRowVertical";
 import Input from "../../ui/forms/Input";
-import KnownLanguagesTable from "./KnownLanguagesTable";
-import ToolProficiencyTable from "./ToolProficiencyTable";
+import KnownLanguagesTable from "./tables/KnownLanguagesTable";
+import ToolProficiencyTable from "./tables/ToolProficiencyTable";
 import DisplayBox from "./DisplayBox";
 import TextArea from "../../ui/forms/TextArea";
-import WeaponArmorProficiencyTable from "./WeaponArmorProficiencyTable";
-import ClassTable from "./ClassTable";
-import WeaponAttackTable from "./WeaponAttacksTable";
-import ReadyPowerTable from "./ReadyPowersTable";
-import ConstantEffectTable from "./ConstantEffectTable";
-import EffectTable from "./EffectTable";
-import ResourceTable from "./ResourceTable";
-import PowersTable from "./PowersTable";
-import { useCharacter } from "./useCharacter";
+import WeaponArmorProficiencyTable from "./tables/WeaponArmorProficiencyTable";
+import ClassTable from "./tables/ClassTable";
+import WeaponAttackTable from "./tables/WeaponAttacksTable";
+import ReadyPowerTable from "./tables/ReadyPowersTable";
+import ConstantEffectTable from "./tables/ConstantEffectTable";
+import EffectTable from "./tables/EffectTable";
+import ResourceTable from "./tables/ResourceTable";
+import PowersTable from "./tables/PowersTable";
+import { useCharacter } from "./hooks/useCharacter";
 import Spinner from "../../ui/interactive/Spinner";
 
 const MainGrid = styled.div`

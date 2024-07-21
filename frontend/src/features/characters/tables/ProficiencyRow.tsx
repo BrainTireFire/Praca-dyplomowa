@@ -1,17 +1,8 @@
 import React from "react";
-import Table from "../../ui/containers/Table";
-import Modal from "../../ui/containers/Modal";
-import Menus from "../../ui/containers/Menus";
-import {
-  HiArrowDownOnSquare,
-  HiArrowUpOnSquare,
-  HiEye,
-  HiTrash,
-} from "react-icons/hi2";
+import Table from "../../../ui/containers/Table";
 import styled from "styled-components";
-import RadioButton from "../../ui/containers/RadioButton";
-import { ItemFamily } from "../../models/itemfamily";
-import { Language } from "../../models/language";
+import { ItemFamily } from "../../../models/itemfamily";
+import { Language } from "../../../models/language";
 
 const Name = styled.div`
   font-size: 1rem;

@@ -1,17 +1,16 @@
 import React from "react";
-import Menus from "../../ui/containers/Menus";
-import Table from "../../ui/containers/Table";
-import EquipmentRow from "./EquipmentRow";
+import Menus from "../../../ui/containers/Menus";
+import Table from "../../../ui/containers/Table";
 import styled from "styled-components";
-import Modal from "../../ui/containers/Modal";
+import Modal from "../../../ui/containers/Modal";
 import {
   HiArrowDownOnSquare,
   HiArrowUpOnSquare,
   HiEye,
   HiTrash,
 } from "react-icons/hi2";
-import RadioButton from "../../ui/containers/RadioButton";
-import { Resource } from "../../models/resource";
+import RadioButton from "../../../ui/containers/RadioButton";
+import { Resource } from "../../../models/resource";
 
 export default function ResourceTable({
   resources,

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import styled from "styled-components";
 import { HubConnection } from "@microsoft/signalr";
+import { debounce, throttle } from "lodash";
 
 const CanvasContainer = styled.div`
   display: flex;
@@ -13,8 +14,6 @@ const CanvasContainer = styled.div`
 `;
 
 const GRID_SIZE = 70;
-const MIN_SCALE = 0.5;
-const MAX_SCALE = 3;
 const INITIAL_WIDTH = 1260;
 const INITIAL_HEIGHT = 700;
 
@@ -66,10 +65,14 @@ const highlightBox = (
 };
 
 type VirtualBoardProps = {
-  connection: HubConnection;
+  connection: HubConnection | null;
+  currentRoom: string | null;
 };
 
-const VirtualBoard: React.FC<VirtualBoardProps> = ({ connection }) => {
+const VirtualBoard: React.FC<VirtualBoardProps> = ({
+  connection,
+  currentRoom,
+}) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [selectedBox, setSelectedBox] = useState<Coordinate | null>(null);
   const [scale, setScale] = useState<number>(1);
@@ -108,23 +111,41 @@ const VirtualBoard: React.FC<VirtualBoardProps> = ({ connection }) => {
   }, [connection]);
 
   useEffect(() => {
-    if (connection && selectedBox) {
-      connection.send("UpdateSelectedBox", selectedBox).catch(console.error);
-    }
-  }, [connection, selectedBox]);
+    const throttledUpdate = throttle(() => {
+      if (
+        connection &&
+        connection.state === "Connected" &&
+        selectedBox &&
+        currentRoom
+      ) {
+        connection
+          .send("UpdateSelectedBox", currentRoom, selectedBox)
+          .catch(console.error);
+      }
+    }, 100);
 
-  const handleCanvasClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = (event.clientX - rect.left) / scale - translatePos.x;
-    const y = (event.clientY - rect.top) / scale - translatePos.y;
+    throttledUpdate();
 
-    const gridX = Math.floor(x / GRID_SIZE);
-    const gridY = Math.floor(y / GRID_SIZE);
+    return () => {
+      throttledUpdate.cancel();
+    };
+  }, [connection, selectedBox, currentRoom]);
 
-    setSelectedBox({ x: gridX, y: gridY });
-  };
+  const handleCanvasClick = debounce(
+    (event: React.MouseEvent<HTMLCanvasElement>) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / scale - translatePos.x;
+      const y = (event.clientY - rect.top) / scale - translatePos.y;
+
+      const gridX = Math.floor(x / GRID_SIZE);
+      const gridY = Math.floor(y / GRID_SIZE);
+
+      setSelectedBox({ x: gridX, y: gridY });
+    },
+    100
+  );
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {

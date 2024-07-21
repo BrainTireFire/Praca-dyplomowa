@@ -11,24 +11,30 @@ const GlobalStyles = createGlobalStyle`
   /* Buttons */
   --color-button-primary: #D14836;
   --color-button-secondary: #49C5B6;
+  --color-button-danger: #ab0101;
+
   --color-button-hover-primary:  #831b0d;
   --color-button-hover-secondary: #096359;
+  --color-button-hover-danger: #730202;
+
+  --color-form-error: #ce1313;
 
   --color-secondary-text: #DCE1DE;
   --color-header-text: #9CC5A1;
+
+  --color-secondary-hover-text: #9a9b9a;
 
   /* Links */
   --color-link: #FA9021;
   --color-link-hover: #8f4a00;
 
-  --color-black-100: #200d0d;
+  --color-input-text: #000000;
+  --color-input-focus: #001fe7;
+  --color-input-disable-background: #b2b6b4;
 
   --color-navbar: #1D1D1D;
 
   --color-button-green: #49A078;
-  
-
- 
 
 
   --backdrop-color: rgba(255, 255, 255, 0.1);
@@ -78,7 +84,7 @@ button,
 textarea,
 select {
   font: inherit;
-  color: var(--color-black-100);
+  color: var(--color-input-text);
 }
 
 button {
@@ -91,15 +97,16 @@ button {
 
 select:disabled,
 input:disabled {
-  background-color: var(--color-grey-200);
-  color: var(--color-grey-500);
+  background-color: var(--color-input-disable-background);
+  border: 1px solid var(--color-input-disable-background);
+  color: var(--color-input-text);
 }
 
 input:focus,
 button:focus,
 textarea:focus,
 select:focus {
-  outline: 2px solid var(--color-brand-600);
+  outline: 2px solid var(--color-input-focus);
   outline-offset: -1px;
 }
 

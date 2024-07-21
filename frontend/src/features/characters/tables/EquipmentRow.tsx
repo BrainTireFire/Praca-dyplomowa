@@ -28,7 +28,7 @@ const Stacked = styled.div`
   }
 
   & span:last-child {
-    color: var(--color-grey-500);
+    color: var(--color-secondary-text);
     font-size: 1.2rem;
   }
 `;

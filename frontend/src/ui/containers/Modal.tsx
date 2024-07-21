@@ -48,8 +48,8 @@ const Button = styled.button`
     width: 2.4rem;
     height: 2.4rem;
     /* Sometimes we need both */
-    /* fill: var(--color-grey-500);
-    stroke: var(--color-grey-500); */
+    /* fill: var(--color-main-background);
+    stroke: var(--color-main-background); */
     color: var(--color-button-primary);
   }
 

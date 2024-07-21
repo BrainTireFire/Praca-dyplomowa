@@ -35,15 +35,6 @@ public class AdminController : BaseApiController
     }
 
     [Authorize(Policy = "RequireAdminRole")]
-    [Ownership("Id")]
-    [HttpPost("users-with-roles")]
-    public ActionResult TestPost([FromBody] ObjectDTO test) //this method was prepared to test custom policy provider
-    {
-        Console.WriteLine($"Test Post {test.Id}");
-        return Ok();
-    }
-
-    [Authorize(Policy = "RequireAdminRole")]
     [HttpPut("edit-roles/{username}")]
     public async Task<ActionResult> EditRoles(string username, [FromQuery] string roles)
     {

@@ -36,7 +36,8 @@ const PadAssistiveText = styled.div`
 
 const Error = styled.span`
   font-size: 1.4rem;
-  color: var(--color-red-700);
+  color: var(--color-form-error);
+  margin-top: 0.2rem;
 `;
 
 type FormRowVerticalProps = {

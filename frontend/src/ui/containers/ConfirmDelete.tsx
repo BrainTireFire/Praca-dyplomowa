@@ -9,7 +9,7 @@ const StyledConfirmDelete = styled.div`
   gap: 1.2rem;
 
   & p {
-    color: var(--color-grey-500);
+    color: var(--color-secondary-text);
     margin-bottom: 1.2rem;
   }
 

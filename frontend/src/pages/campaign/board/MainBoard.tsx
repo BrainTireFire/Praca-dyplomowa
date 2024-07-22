@@ -6,6 +6,9 @@ import {
   HubConnectionBuilder,
   LogLevel,
 } from "@microsoft/signalr";
+import Input from "../../../ui/forms/Input";
+import Button from "../../../ui/interactive/Button";
+import Heading from "../../../ui/text/Heading";
 
 const Container = styled.div`
   display: grid;
@@ -33,7 +36,7 @@ const RightPanel = styled.div`
   justify-content: space-between;
   background-color: var(--color-navbar);
   border: 1px solid var(--color-border);
-  height: 96%;
+  height: 80%;
 `;
 
 const BottomPanel = styled.div`
@@ -42,7 +45,7 @@ const BottomPanel = styled.div`
   display: flex;
   background-color: var(--color-navbar);
   border: 1px solid var(--color-border);
-  height: 82%;
+  height: 48%;
 `;
 
 const RoomSelector = styled.div`
@@ -73,14 +76,49 @@ const UsersList = styled.div`
   border-radius: 5px;
 `;
 
+const ChatContentMessage = styled.div`
+  flex-grow: 1;
+  overflow-y: auto;
+`;
+
+const ChatMessageBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border-bottom: 1px solid var(--color-border);
+`;
+
+const ChatForm = styled.form`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--color-border);
+  padding: 10px;
+  margin-top: auto; /* Ensure the form is pushed to the bottom */
+
+  & > input[type="text"] {
+    flex: 0 0 75%;
+    margin-right: 10px;
+  }
+
+  & > button {
+    flex: 0 0 15%;
+    margin-right: 10px;
+  }
+`;
+
 export default function MainBoard() {
+  const [messages, setMessages] = useState<
+    { message: string; username: string }[]
+  >([]);
+  const [messageInput, setMessageInput] = useState<string>("");
   const [connection, setConnection] = useState<HubConnection | null>(null);
   const [currentRoom, setCurrentRoom] = useState<string | null>(null);
   const [usersInGroup, setUsersInGroup] = useState<string[]>([]);
 
   useEffect(() => {
     const hubConnection = new HubConnectionBuilder()
-      .withUrl("http://localhost:5000/board")
+      .withUrl("http://localhost:5000/chat") // Ensure this is the correct URL
       .configureLogging(LogLevel.Information)
       .build();
 
@@ -92,9 +130,12 @@ export default function MainBoard() {
       })
       .catch((error) => console.error("SignalR Connection Error: ", error));
 
-    hubConnection.on("ReceiveUsersInGroup", (users) => {
-      setUsersInGroup(users);
-    });
+    hubConnection.on(
+      "ReceiveMessage",
+      (messageDto: { username: string; message: string }) => {
+        setMessages((prevMessages) => [...prevMessages, messageDto]);
+      }
+    );
 
     return () => {
       hubConnection.stop().catch(console.error);
@@ -111,12 +152,55 @@ export default function MainBoard() {
     }
   };
 
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (connection && currentRoom && messageInput.trim()) {
+      try {
+        await connection.invoke(
+          "SendMessageToGroup",
+          currentRoom,
+          messageInput
+        );
+        console.log("Message sent:", messageInput); // Debugging line
+        setMessageInput(""); // Clear the input after sending the message
+      } catch (error) {
+        console.error("Error sending message:", error);
+      }
+    }
+  };
+
   return (
     <Container>
       <GridContainer>
         <VirtualBoard connection={connection} currentRoom={currentRoom} />
       </GridContainer>
       <RightPanel>
+        <ChatContentMessage>
+          {messages.map((message, index) => (
+            <ChatMessageBox key={index}>
+              <Heading as="h3" align="left">
+                {message.username}
+              </Heading>
+              <p>{message.message}</p>
+            </ChatMessageBox>
+          ))}
+        </ChatContentMessage>
+        <ChatForm onSubmit={handleSendMessage}>
+          <Input
+            type="text"
+            id="message"
+            placeholder="Enter your message"
+            autoComplete="message"
+            value={messageInput}
+            onChange={(e) => setMessageInput(e.target.value)}
+          />
+          <Button size="large" variation="primary" type="submit">
+            Send
+            {/* {!isLoading ? "Send" : <SpinnerMini />} */}
+          </Button>
+        </ChatForm>
+      </RightPanel>
+      <BottomPanel>
         <RoomSelector>
           <RoomButton onClick={() => joinRoom("Room1")}>Join Room 1</RoomButton>
           <RoomButton onClick={() => joinRoom("Room2")}>Join Room 2</RoomButton>
@@ -130,8 +214,7 @@ export default function MainBoard() {
             ))}
           </ul>
         </UsersList>
-      </RightPanel>
-      <BottomPanel>BottomPanel</BottomPanel>
+      </BottomPanel>
     </Container>
   );
 }

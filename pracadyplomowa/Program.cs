@@ -90,6 +90,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapHub<BoardHub>("/board");
+app.MapHub<ChatHub>("/chat");
 app.MapControllers();
 
 using var scope = app.Services.CreateScope();

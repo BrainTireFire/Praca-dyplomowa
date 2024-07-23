@@ -61,8 +61,6 @@ const shopsData = [
     description:
       "A store offering a variety of goods crafted by skilled elves.",
   },
-  {},
-  {},
 ];
 
 export default function Shops() {
@@ -73,11 +71,19 @@ export default function Shops() {
   });
 
   const handleInputChange = (e) => {
-    const [name, value] = e.target;
+    const { name, value } = e.target;
+    if (value.length < 3) {
+      setSearchInputs((previous) => ({ ...previous, [name]: "" }));
+      return;
+    }
     setSearchInputs((previous) => ({ ...previous, [name]: value }));
   };
 
-  //searchfunction
+  const filterShopsData = shopsData.filter((e) => {
+    return Object.keys(searchInputs).every((key) =>
+      e[key].toLowerCase().includes(searchInputs[key].toLowerCase())
+    );
+  });
 
   return (
     <Container>
@@ -88,7 +94,7 @@ export default function Shops() {
           <SearchForm onInputChange={handleInputChange} />
         </SearchFormContainer>
       </Box>
-      <ShopsTable shopsData={shopsData}></ShopsTable>
+      <ShopsTable shopsData={filterShopsData}></ShopsTable>
       <Button style={{ width: "200px" }}>Create new Shop</Button>
     </Container>
   );
@@ -129,10 +135,10 @@ function ShopsTable({ shopsData }) {
   return (
     <Table>
       <thead>
-        <Th>Name</Th>
-        <Th>Type</Th>
-        <Th>Location</Th>
-        <Th>Description</Th>
+        <Th>Name:</Th>
+        <Th>Type:</Th>
+        <Th>Location:</Th>
+        <Th>Description:</Th>
         <Th></Th>
       </thead>
       <tbody>

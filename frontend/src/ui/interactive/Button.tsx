@@ -32,7 +32,7 @@ const sizes = {
 
 const variations = {
   primary: css`
-    color: var(--color-secondary-text);
+    color: var(--color-button-text);
     background-color: var(--color-button-primary);
 
     &:hover {
@@ -40,7 +40,7 @@ const variations = {
     }
   `,
   secondary: css`
-    color: var(--color-secondary-text);
+    color: var(--color-button-text);
     background: var(--color-button-secondary);
     border: 1px solid var(--color-button-secondary);
 
@@ -49,7 +49,7 @@ const variations = {
     }
   `,
   danger: css`
-    color: var(--color-secondary-text);
+    color: var(--color-button-text);
     background-color: var(--color-button-danger);
 
     &:hover {

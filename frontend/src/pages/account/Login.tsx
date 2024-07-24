@@ -5,6 +5,7 @@ import Heading from "../../ui/text/Heading";
 import FormContainer from "../../ui/forms/FormContainer";
 import LinkContainer from "../../ui/containers/LinkContainer";
 import Link from "../../ui/links/Link";
+import { useTranslation } from "react-i18next";
 
 const LoginLayout = styled.main`
   min-height: 100vh;
@@ -17,17 +18,20 @@ const LoginLayout = styled.main`
 `;
 
 export default function Login() {
+  const { t } = useTranslation();
+
   return (
     <LoginLayout>
       {/* <Logo /> */}
       <Link to="/home">
-        <Heading as="h4">Better then beyond</Heading>
+        <Heading as="h4">{t("main.title.text")}</Heading>
       </Link>
 
       <FormContainer>
         <LoginForm />
         <LinkContainer variation="center">
-          New around here? <Link to="/register">Sign up</Link>
+          {t("account.login.new.around.here")}{" "}
+          <Link to="/register">{t("account.forms.register.header")}</Link>
         </LinkContainer>
       </FormContainer>
     </LoginLayout>

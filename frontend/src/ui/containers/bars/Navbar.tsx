@@ -8,6 +8,7 @@ const StyledNavbar = styled.aside`
   justify-content: center;
   align-items: center;
   gap: 0.8rem;
+  border-bottom: 1px solid var(--color-navbar-border);
 `;
 
 export default function Navbar() {

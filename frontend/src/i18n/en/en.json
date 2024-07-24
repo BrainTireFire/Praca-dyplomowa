@@ -3,6 +3,23 @@
   "login.text": "Login",
   "main.title.text": "D&D beyond but better",
 
+  "main.sidebar.settings.text": "Settings",
+  "main.sidebar.settings.theme.mode": "Theme mode",
+
+  "main.navbar.link.theme.mode": "App style",
+  "main.navbar.link.my.campaigns": "My campaigns",
+  "main.navbar.link.my.characters": "My Characters",
+  "main.navbar.link.homebrew": "Homebrew",
+  "main.navbar.link.language": "Language",
+  "main.navbar.link.concact": "Concact",
+  "main.navbar.link.profile": "Profile",
+  "main.navbar.link.signout": "Sign out",
+  "main.navbar.link.english": "English",
+  "main.navbar.link.german": "Deutsch",
+  "main.navbar.link.spanish": "Español",
+  "main.navbar.link.france": "Français",
+  "main.navbar.link.japan": "日本語",
+
   "campaigns.create.text": "Create campaign",
   "campaignInstance.giveXP": "Give XP",
   "campaignInstance.shortRest": "Short rest",
@@ -10,5 +27,55 @@
   "campaignInstance.session": "Start/open virtual session",
   "campaignInstance.shops": "Shops",
   "campaignInstance.createEncounter": "Create encounter",
-  "campaignInstance.remove": "Remove campaign"
+  "campaignInstance.remove": "Remove campaign",
+
+  "homepage.play.now.button": "Play now!",
+  "homepage.developers": "The Developers",
+
+  "account.profile.change.user.data": "Permanently remove the account and all data",
+  "account.profile.change.user.email": "Change E-mail",
+  "account.profile.change.user.password": "Change Password",
+  "account.profile.change.user.username": "Change Username",
+  "account.profile.remove.account": "Remove account",
+
+  "account.profile.statistics.header": "Statistics",
+  "account.profile.myprofile.header": "My profile",
+  "account.profile.statistics.games.played": "Games played",
+  "account.profile.statistics.games.won": "Games won",
+  "account.profile.statistics.account.created": "Account created",
+
+  "account.forms.login.header": "Sign in",
+  "account.forms.login.button": "Login",
+  "account.forms.login.forgot.password": "Forgot Password?",
+  "account.login.new.around.here": "New around here?",
+
+  "account.forms.login.username.input.label": "Username",
+  "account.forms.login.username.input.placeholder": "Enter your username",
+  "account.forms.login.password.input.label": "Password",
+  "account.forms.login.password.input.placeholder": "Enter your password",
+  "account.forms.login.confirm.password.input.label": "Confirm Password",
+  "account.forms.login.confirm.password.input.placeholder": "Enter your confirm password",
+  "account.forms.login.email.input.label": "Email address",
+  "account.forms.login.email.input.placeholder": "Enter your email address",
+  "account.forms.login.confirm.email.input.placeholder": "Enter your confirm email",
+
+  "account.forgot.password.link.did.you.recall": "Did you recall?",
+  "account.forgot.password.link.back.to.login.page": "Back to Log in",
+
+  "account.form.validation.error.required": "This field is required",
+  "account.form.validation.error.password.characters.long": "Password must be at least 8 characters long",
+  "account.form.validation.error.password.match": "Password need to match",
+  "account.form.validation.error.email.valid": "Please provide a valid email address",
+
+  "account.forms.register.header": "Sign up",
+  "account.forms.register.button": "Register",
+  "account.forms.register.forgot.password": "Forgot Password?",
+  "account.forms.register.already.have.an.account": "Already have an account?",
+  "account.forms.register.login.button": "Log in",
+
+  "account.forms.forgot.password.header": "Password recovery",
+  "account.forms.forgot.password.button": "Send password recovery link",
+
+  "account.forms.password.change.header": "Password recovery",
+  "account.forms.password.change.button": "Reset password"
 }

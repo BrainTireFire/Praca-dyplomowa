@@ -1,6 +1,7 @@
 import React from "react";
 import Heading from "../../../ui/text/Heading";
 import styled from "styled-components";
+import { useTranslation } from "react-i18next";
 
 const StyledStatistics = styled.div`
   display: grid;
@@ -21,27 +22,29 @@ const StyledStatisticsRow = styled.div`
 `;
 
 export default function Statistics() {
+  const { t } = useTranslation();
+
   return (
     <>
-      <Heading as="h4">Statistics</Heading>
+      <Heading as="h4">{t("account.profile.statistics.header")}</Heading>
       <StyledStatistics>
         <StyledStatisticsRow>
           <Heading as="h3" align="left">
-            Games played:
+            {t("account.profile.statistics.games.played")}
           </Heading>
           3000
         </StyledStatisticsRow>
 
         <StyledStatisticsRow>
           <Heading as="h3" align="left">
-            Games won:
+            {t("account.profile.statistics.games.won")}
           </Heading>
           200
         </StyledStatisticsRow>
 
         <StyledStatisticsRow>
           <Heading as="h3" align="left">
-            Account created:
+            {t("account.profile.statistics.account.created")}
           </Heading>
           1000
         </StyledStatisticsRow>

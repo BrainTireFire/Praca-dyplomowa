@@ -87,6 +87,29 @@
           "rest": false,
           "img": "../avatar.jpg"
         }
+      ],
+      "shops": [
+        {
+          "id": 1,
+          "name": "The Dragon's Hoard",
+          "type": "Weapon Shop",
+          "location": "Golden Keep",
+          "description": "A shop filled with the finest weapons, known to be favored by dragon slayers."
+        },
+        {
+          "id": 2,
+          "name": "Mystic Emporium",
+          "type": "Magic Shop",
+          "location": "Enchanted Forest",
+          "description": "A magical store offering enchanted items and potions."
+        },
+        {
+          "id": 3,
+          "name": "Elven Goods",
+          "type": "General Store",
+          "location": "Elven Village",
+          "description": "A store offering a variety of goods crafted by skilled elves."
+        }
       ]
     },
     {

@@ -7,6 +7,7 @@ import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import { HiXMark } from "react-icons/hi2";
 import Button from "../../../ui/interactive/Button";
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -40,35 +41,15 @@ const Td = styled.td`
   text-align: center;
 `;
 
-const shopsData = [
-  {
-    name: "The Dragon's Hoard",
-    type: "Weapon Shop",
-    location: "Golden Keep",
-    description:
-      "A shop filled with the finest weapons, known to be favored by dragon slayers.",
-  },
-  {
-    name: "Mystic Emporium",
-    type: "Magic Shop",
-    location: "Enchanted Forest",
-    description: "A magical store offering enchanted items and potions.",
-  },
-  {
-    name: "Elven Goods",
-    type: "General Store",
-    location: "Elven Village",
-    description:
-      "A store offering a variety of goods crafted by skilled elves.",
-  },
-];
-
 export default function Shops() {
+  const location = useLocation();
+  const { shops } = location.state;
   const [searchInputs, setSearchInputs] = useState({
     name: "",
     type: "",
     location: "",
   });
+  console.log(shops);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -79,7 +60,7 @@ export default function Shops() {
     setSearchInputs((previous) => ({ ...previous, [name]: value }));
   };
 
-  const filterShopsData = shopsData.filter((shop) => {
+  const filterShopsData = shops.filter((shop) => {
     return Object.keys(searchInputs).every((key) =>
       shop[key].toLowerCase().includes(searchInputs[key].toLowerCase())
     );
@@ -94,7 +75,7 @@ export default function Shops() {
           <SearchForm onInputChange={handleInputChange} />
         </SearchFormContainer>
       </Box>
-      <ShopsTable shopsData={filterShopsData}></ShopsTable>
+      <ShopsTable shops={filterShopsData}></ShopsTable>
       <Button style={{ width: "200px" }}>Create new Shop</Button>
     </Container>
   );
@@ -131,7 +112,7 @@ function SearchForm({ onInputChange }) {
   );
 }
 
-function ShopsTable({ shopsData }) {
+function ShopsTable({ shops }) {
   return (
     <Table>
       <thead>
@@ -142,7 +123,7 @@ function ShopsTable({ shopsData }) {
         <Th></Th>
       </thead>
       <tbody>
-        {shopsData.map((shop, index: number) => (
+        {shops.map((shop, index: number) => (
           <tr key={index}>
             <Td>{shop.name}</Td>
             <Td>{shop.type}</Td>

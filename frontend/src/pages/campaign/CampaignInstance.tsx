@@ -38,7 +38,6 @@ const HeaderLeft = styled.div`
 const HeaderButtons = styled.div`
   display: flex;
   align-items: end;
-  /* justify-content: space-between; */
   gap: 1rem;
   margin-bottom: 1rem;
 `;
@@ -67,7 +66,9 @@ export default function CampaignInstance() {
     return <div>Campaign not found</div>;
   }
 
-  const { id, name, description, gameMaster, members }: Campaign = campaign;
+  const { id, name, description, gameMaster, members, shops }: Campaign =
+    campaign;
+
   return (
     <>
       <Container>
@@ -102,7 +103,10 @@ export default function CampaignInstance() {
             <Button size="large" onClick={() => navigate(`/session`)}>
               {t("campaignInstance.session")}
             </Button>
-            <Button size="large" onClick={() => navigate(`shops`)}>
+            <Button
+              size="large"
+              onClick={() => navigate("shops", { state: { shops } })}
+            >
               {t("campaignInstance.shops")}
             </Button>
             <Button size="large" onClick={() => navigate(`/encounter`)}>

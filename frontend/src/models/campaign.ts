@@ -4,4 +4,5 @@ type Campaign = {
   description: string;
   gameMaster: GameMaster;
   members: Member[];
+  shops: Shop[];
 };

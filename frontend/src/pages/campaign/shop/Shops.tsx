@@ -7,7 +7,9 @@ import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import { HiXMark } from "react-icons/hi2";
 import Button from "../../../ui/interactive/Button";
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import Modal from "../../../ui/containers/Modal";
+import CreateShop from "./CreateShop";
 
 const Container = styled.div`
   display: flex;
@@ -33,6 +35,13 @@ const Table = styled.table`
 
 const Th = styled.th`
   padding: 10px;
+`;
+
+const Tr = styled.tr`
+  transition: background-color 100ms ease;
+  &:hover {
+    background-color: rgba(116, 177, 116, 0.5);
+  }
 `;
 
 const Td = styled.td`
@@ -76,7 +85,14 @@ export default function Shops() {
         </SearchFormContainer>
       </Box>
       <ShopsTable shops={filterShopsData}></ShopsTable>
-      <Button style={{ width: "200px" }}>Create new Shop</Button>
+      <Modal>
+        <Modal.Open opens="CreateShop">
+          <Button style={{ width: "200px" }}>Create new Shop</Button>
+        </Modal.Open>
+        <Modal.Window name="CreateShop">
+          <CreateShop />
+        </Modal.Window>
+      </Modal>
     </Container>
   );
 }
@@ -113,6 +129,7 @@ function SearchForm({ onInputChange }) {
 }
 
 function ShopsTable({ shops }) {
+  const navigate = useNavigate();
   return (
     <Table>
       <thead>
@@ -124,7 +141,7 @@ function ShopsTable({ shops }) {
       </thead>
       <tbody>
         {shops.map((shop, index: number) => (
-          <tr key={index}>
+          <Tr onClick={() => navigate(`${shop.id}`)} key={index}>
             <Td>{shop.name}</Td>
             <Td>{shop.type}</Td>
             <Td>{shop.location}</Td>
@@ -134,7 +151,7 @@ function ShopsTable({ shops }) {
                 <HiXMark />
               </Button>
             </Td>
-          </tr>
+          </Tr>
         ))}
       </tbody>
     </Table>

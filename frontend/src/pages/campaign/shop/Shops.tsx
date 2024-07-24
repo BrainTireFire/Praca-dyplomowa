@@ -79,16 +79,16 @@ export default function Shops() {
     setSearchInputs((previous) => ({ ...previous, [name]: value }));
   };
 
-  const filterShopsData = shopsData.filter((e) => {
+  const filterShopsData = shopsData.filter((shop) => {
     return Object.keys(searchInputs).every((key) =>
-      e[key].toLowerCase().includes(searchInputs[key].toLowerCase())
+      shop[key].toLowerCase().includes(searchInputs[key].toLowerCase())
     );
   });
 
   return (
     <Container>
       <Heading as="h4">Shops</Heading>
-      <Line size="percantage" bold="medium" />
+      <Line size="percantage" bold="large" />
       <Box style={{ width: "70%" }}>
         <SearchFormContainer>
           <SearchForm onInputChange={handleInputChange} />

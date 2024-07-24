@@ -12,6 +12,14 @@ import GiveXP from "./GiveXP";
 import { useCampaign } from "../../features/campaigns/useCampaign";
 import Spinner from "../../ui/interactive/Spinner";
 
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  align-items: center;
+`;
+
 const MemberContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 2fr);
@@ -62,12 +70,12 @@ export default function CampaignInstance() {
   const { id, name, description, gameMaster, members }: Campaign = campaign;
   return (
     <>
-      <div>
+      <Container>
         <Heading as="h4">
           Campaign #{id} - {name}
         </Heading>
         <Line size="percantage" bold="large" />
-      </div>
+      </Container>
       <div>
         <HeaderLeft>
           <Heading as="h2" align="left">

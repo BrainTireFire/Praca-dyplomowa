@@ -54,7 +54,7 @@ const Button = styled.button`
   }
 
   &:hover svg {
-    color: var(--color-black);
+    color: var(--color-image-hover);
   }
 `;
 

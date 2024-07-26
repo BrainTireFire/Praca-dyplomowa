@@ -1,4 +1,4 @@
-type ValidateAuthDto = {
+export type ValidateAuthDto = {
   isAuthenticated: boolean;
   roles: string[];
   username: string;

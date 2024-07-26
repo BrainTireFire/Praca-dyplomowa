@@ -10,6 +10,7 @@ export async function customFetch(
 
     switch (response.status) {
       case 401:
+        //todo expire session
         window.location.replace("/login");
         throw new Error("Unauthorized");
       case 403:

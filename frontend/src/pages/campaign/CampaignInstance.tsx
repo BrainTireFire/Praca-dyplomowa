@@ -54,7 +54,10 @@ export default function CampaignInstance() {
             <Button size="large">{t("campaignInstance.giveXP")}</Button>
             <Button size="large">{t("campaignInstance.shortRest")}</Button>
             <Button size="large">{t("campaignInstance.longRest")}</Button>
-            <Button size="large" onClick={() => navigate(`/session`)}>
+            <Button
+              size="large"
+              onClick={() => navigate(`/campaigns/session/1`)}
+            >
               {t("campaignInstance.session")}
             </Button>
             <Button size="large" onClick={() => navigate(`/shops`)}>

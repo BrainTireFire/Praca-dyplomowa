@@ -89,8 +89,7 @@ app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapHub<BoardHub>("/board");
-app.MapHub<ChatHub>("/chat");
+app.MapHub<SessionHub>("/session");
 app.MapControllers();
 
 using var scope = app.Services.CreateScope();

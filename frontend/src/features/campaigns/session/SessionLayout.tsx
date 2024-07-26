@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import VirtualBoard from "../../../features/campaigns/virtualBoard/VirtualBoard";
+import VirtualBoard from "./VirtualBoard";
 import {
   HubConnection,
   HubConnectionBuilder,
@@ -9,14 +9,7 @@ import {
 import Input from "../../../ui/forms/Input";
 import Button from "../../../ui/interactive/Button";
 import Heading from "../../../ui/text/Heading";
-
-const Container = styled.div`
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  grid-template-rows: auto 1fr;
-  gap: 10px;
-  height: 100vh;
-`;
+import { useParams } from "react-router-dom";
 
 const GridContainer = styled.div`
   grid-row: 1 / 2;
@@ -46,26 +39,6 @@ const BottomPanel = styled.div`
   background-color: var(--color-navbar);
   border: 1px solid var(--color-border);
   height: 48%;
-`;
-
-const RoomSelector = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin: 10px;
-`;
-
-const RoomButton = styled.button`
-  margin: 5px 0;
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #0056b3;
-  }
 `;
 
 const UsersList = styled.div`
@@ -107,62 +80,77 @@ const ChatForm = styled.form`
   }
 `;
 
-export default function MainBoard() {
+export default function SessionLayout() {
+  const { groupName } = useParams();
+
+  //TODO REACT QUERY OR STATE MANAGEMENT
+  const [connection, setConnection] = useState<HubConnection | null>(null);
+  const [usersConnected, setUsersConnected] = useState<string[]>([]);
   const [messages, setMessages] = useState<
     { message: string; username: string }[]
   >([]);
+
   const [messageInput, setMessageInput] = useState<string>("");
-  const [connection, setConnection] = useState<HubConnection | null>(null);
-  const [currentRoom, setCurrentRoom] = useState<string | null>(null);
-  const [usersInGroup, setUsersInGroup] = useState<string[]>([]);
 
   useEffect(() => {
-    const hubConnection = new HubConnectionBuilder()
-      .withUrl("http://localhost:5000/chat") // Ensure this is the correct URL
-      .configureLogging(LogLevel.Information)
-      .build();
+    if (groupName) {
+      const hubConnection = new HubConnectionBuilder()
+        .withUrl(`http://localhost:5000/session?groupName=${groupName}`)
+        .configureLogging(LogLevel.Information)
+        .withAutomaticReconnect()
+        .build();
 
-    hubConnection
-      .start()
-      .then(() => {
-        console.log("SignalR Connected.");
-        setConnection(hubConnection);
-      })
-      .catch((error) => console.error("SignalR Connection Error: ", error));
+      hubConnection
+        .start()
+        .then(() => {
+          console.log("SignalR Connected.");
 
-    hubConnection.on(
-      "ReceiveMessage",
-      (messageDto: { username: string; message: string }) => {
-        setMessages((prevMessages) => [...prevMessages, messageDto]);
-      }
-    );
+          hubConnection
+            .invoke("GetUsersInGroup", groupName)
+            .then((userList: string[]) => {
+              setUsersConnected(userList);
+            })
+            .catch((err) => console.error("Error fetching user list:", err));
 
-    return () => {
-      hubConnection.stop().catch(console.error);
-    };
-  }, []);
+          hubConnection.on("UserJoined", (userName: string) => {
+            setUsersConnected((prevUsers) => [...prevUsers, userName]);
+          });
 
-  const joinRoom = (roomName: string) => {
-    if (connection) {
-      if (currentRoom) {
-        connection.invoke("LeaveGroup", currentRoom).catch(console.error);
-      }
-      connection.invoke("JoinGroup", roomName).catch(console.error);
-      setCurrentRoom(roomName);
+          hubConnection.on("UserLeft", (userName: string) => {
+            setUsersConnected((prevUsers) =>
+              prevUsers.filter((user) => user !== userName)
+            );
+          });
+
+          hubConnection.on(
+            "ReceiveMessage",
+            (messageDto: { username: string; message: string }) => {
+              setMessages((prevMessages) => [...prevMessages, messageDto]);
+            }
+          );
+
+          setConnection(hubConnection);
+        })
+        .catch((error) => console.error("SignalR Connection Error: ", error));
+
+      return () => {
+        if (hubConnection) {
+          hubConnection.stop().then(() => console.log("Connection stopped"));
+        }
+      };
+    } else {
+      console.error("Group name is not defined.");
     }
-  };
+  }, [groupName]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (connection && currentRoom && messageInput.trim()) {
+    if (connection && groupName && messageInput.trim()) {
       try {
-        await connection.invoke(
-          "SendMessageToGroup",
-          currentRoom,
-          messageInput
-        );
-        console.log("Message sent:", messageInput); // Debugging line
-        setMessageInput(""); // Clear the input after sending the message
+        await connection
+          .invoke("SendMessageToGroup", groupName, messageInput)
+          .catch((err) => console.error("Error while sending message", err));
+        setMessageInput("");
       } catch (error) {
         console.error("Error sending message:", error);
       }
@@ -170,9 +158,9 @@ export default function MainBoard() {
   };
 
   return (
-    <Container>
+    <>
       <GridContainer>
-        <VirtualBoard connection={connection} currentRoom={currentRoom} />
+        <VirtualBoard connection={connection} groupName={groupName} />
       </GridContainer>
       <RightPanel>
         <ChatContentMessage>
@@ -201,20 +189,15 @@ export default function MainBoard() {
         </ChatForm>
       </RightPanel>
       <BottomPanel>
-        <RoomSelector>
-          <RoomButton onClick={() => joinRoom("Room1")}>Join Room 1</RoomButton>
-          <RoomButton onClick={() => joinRoom("Room2")}>Join Room 2</RoomButton>
-          <RoomButton onClick={() => joinRoom("Room3")}>Join Room 3</RoomButton>
-        </RoomSelector>
         <UsersList>
-          <h3>Users in Group:</h3>
+          <h3>Group: {groupName}</h3>
           <ul>
-            {usersInGroup.map((user, index) => (
-              <li key={index}>{user}</li>
+            {usersConnected.map((username, index) => (
+              <li key={index}>{username}</li>
             ))}
           </ul>
         </UsersList>
       </BottomPanel>
-    </Container>
+    </>
   );
 }

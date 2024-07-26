@@ -23,5 +23,36 @@ namespace pracadyplomowa.Repository
             .Select(c => new CharacterSummaryDto(c.Id, c.Name, c.Description, c.R_CharacterBelongsToRace.Name, c.R_CharacterHasLevelsInClass.First().R_Class.Name)).ToListAsync();
             return characters;
         }
+
+        public Task<Character> GetByIdWithAll(int Id){
+            var character = _context.Characters
+            .Where(c => c.Id == Id)
+
+            .Include(c => c.R_CharacterBelongsToRace)
+
+            .Include(c => c.R_CharacterHasLevelsInClass)
+                .ThenInclude(cl => cl.R_Class)
+
+            .Include(c => c.R_PowersKnown)
+                .ThenInclude(p => p.R_EffectBlueprints)
+            .Include(c => c.R_PowersKnown)
+                .ThenInclude(p => p.R_UsesImmaterialResource)
+
+            .Include(c => c.R_PowersPrepared)
+                .ThenInclude(p => p.R_EffectBlueprints)
+            .Include(c => c.R_PowersPrepared)
+                .ThenInclude(p => p.R_UsesImmaterialResource)
+
+            .Include(c => c.R_AffectedBy)
+                .ThenInclude(eg => eg.R_OwnedEffects)
+
+            .Include(c => c.R_CharacterHasBackpack)
+                .ThenInclude(b => b.R_BackpackHasItems)
+
+            .Include(c => c.R_EquippedItems)
+            
+            .FirstAsync();
+            return character;
+        }
     }
 }

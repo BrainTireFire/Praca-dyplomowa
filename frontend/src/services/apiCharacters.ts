@@ -1,26 +1,39 @@
-import { CharacterItem, Character } from "../models/character";
+import {
+  CharacterItem,
+  Character,
+  CharacterInsertDto,
+} from "../models/character";
+import { BASE_URL } from "./constAPI";
+import { customFetch } from "./customFetch";
+import { customFetchJSON } from "./customFetchJSON";
 
 export async function getCharacters(): Promise<CharacterItem[]> {
-  const response = await fetch("http://localhost:3000/characterList");
+  const response = await customFetch(`${BASE_URL}/api/character/mycharacters`);
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! Status: ${response.status}`);
-  }
+  console.log(response);
 
-  const data: CharacterItem[] = await response.json();
-
-  return data;
+  return response;
 }
 
 export async function getCharacter(characterId: number): Promise<Character> {
-  const response = await fetch(
-    `http://localhost:3000/characters/${characterId}`
+  const response = await customFetch(
+    `${BASE_URL}/api/character/${characterId}`
   );
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! Status: ${response.status}`);
-  }
+  console.log(response);
+  return response;
+}
 
-  const campaign: Character = await response.json();
-  return campaign;
+export async function postCharacter(
+  characterDto: CharacterInsertDto
+): Promise<void> {
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(characterDto),
+  };
+  await customFetch(`${BASE_URL}/api/character`, options);
+  return;
 }

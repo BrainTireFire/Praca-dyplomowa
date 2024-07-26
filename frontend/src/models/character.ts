@@ -58,3 +58,15 @@ export type Character = {
   effects: Effect[];
   resources: Resource[];
 };
+
+export type CharacterInsertDto = {
+  name: string;
+  raceId: number;
+  startingClassId: number;
+  strength: number;
+  dexterity: number;
+  constitution: number;
+  intelligence: number;
+  wisdom: number;
+  charisma: number;
+};

@@ -8,6 +8,6 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class SavingThrowEffectBlueprint : ValueEffectBlueprint
     {
-        public SavingThrowEffectType SavingThrowEffectType{ get; set; } = null!;
+        public SavingThrowEffectType SavingThrowEffectType{ get; set; } = new SavingThrowEffectType();
     }
 }

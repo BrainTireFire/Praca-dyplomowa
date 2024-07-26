@@ -7,11 +7,14 @@ import Dropdown from "../../ui/forms/Dropdown";
 import { useRaces } from "./hooks/useRaces";
 import { useClasses } from "./hooks/useClass";
 import Spinner from "../../ui/interactive/Spinner";
+import { CharacterInsertDto } from "../../models/character";
+import { useCreateCharacter } from "./hooks/useCreateCharacter";
+import toast from "react-hot-toast";
 
 const initialState = {
   name: "",
-  class: 0,
-  race: 0,
+  startingClassId: 0,
+  raceId: 0,
   strength: 0,
   dexterity: 0,
   constitution: 0,
@@ -43,17 +46,17 @@ type Actions = NumericActions | StringActions;
 const characterReducer = (
   state: typeof initialState,
   action: Actions
-): typeof initialState => {
+): CharacterInsertDto => {
   let newState;
   switch (action.type) {
     case "setName":
       newState = { ...state, name: action.value };
       break;
     case "setClass":
-      newState = { ...state, class: action.value };
+      newState = { ...state, startingClassId: action.value };
       break;
     case "setRace":
-      newState = { ...state, race: action.value };
+      newState = { ...state, raceId: action.value };
       break;
     case "setStr":
       newState = { ...state, strength: action.value };
@@ -81,14 +84,25 @@ const characterReducer = (
   return newState;
 };
 
-function NewCharacter() {
+function NewCharacter({ onCloseModal }) {
   const [state, dispatch] = useReducer(characterReducer, initialState);
+
+  //query
   const { isLoading: isLoadingRaces, races, error: errorRaces } = useRaces();
   const {
     isLoading: isLoadingClasses,
     classes,
     error: errorClasses,
   } = useClasses();
+
+  //mutation
+  const { createCharacter, isPending } = useCreateCharacter(() => {
+    toast.success("Character created");
+    onCloseModal();
+    return;
+  });
+
+  //derived state
   const raceList = races
     ? races.map((race) => ({
         value: race.id,
@@ -101,20 +115,11 @@ function NewCharacter() {
         label: characterClass.name,
       }))
     : [];
-  // const raceList = [
-  //   { value: "1", label: "Human" },
-  //   { value: "2", label: "Elf" },
-  //   { value: "3", label: "Dwarf" },
-  // ];
-  // const classList = [
-  //   { value: "1", label: "Fighter" },
-  //   { value: "2", label: "Wizard" },
-  //   { value: "3", label: "Rogue" },
-  // ];
+
   if (errorRaces || errorClasses) {
     return "Error";
   }
-  if (isLoadingRaces || isLoadingClasses) {
+  if (isLoadingRaces || isLoadingClasses || isPending) {
     return <Spinner />;
   }
   return (
@@ -130,7 +135,7 @@ function NewCharacter() {
         </FormRow>
         <FormRow label="Starting class">
           <Dropdown
-            chosenValue={state.class.toString()}
+            chosenValue={state.startingClassId.toString()}
             setChosenValue={(e) =>
               dispatch({ type: "setClass", value: Number(e) })
             }
@@ -139,7 +144,7 @@ function NewCharacter() {
         </FormRow>
         <FormRow label="Race">
           <Dropdown
-            chosenValue={state.race.toString()}
+            chosenValue={state.raceId.toString()}
             setChosenValue={(e) =>
               dispatch({ type: "setRace", value: Number(e) })
             }
@@ -200,7 +205,7 @@ function NewCharacter() {
             }
           ></Input>
         </FormRow>
-        <Button>Create character</Button>
+        <Button onClick={() => createCharacter(state)}>Create character</Button>
       </Box>
     </>
   );

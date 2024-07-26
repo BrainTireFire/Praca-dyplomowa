@@ -4,6 +4,7 @@ namespace pracadyplomowa.Models.Enums.EffectOptions
     {
         Bonus,
         Advantage,
-        RerollLowerThan
+        RerollLowerThan,
+        Proficiency
     }
 }

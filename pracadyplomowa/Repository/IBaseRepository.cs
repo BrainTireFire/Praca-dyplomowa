@@ -7,7 +7,9 @@ namespace pracadyplomowa.Repository
 {
     public interface IBaseRepository<T>
     {
-        public Task Add(T entity);
+        public void Add(T entity);
+
+        public void AddAll(ICollection<T> entities);
 
         public void Delete(int id);
 
@@ -16,5 +18,7 @@ namespace pracadyplomowa.Repository
         public List<T> GetAll();
 
         public T? GetById(int id);
+
+        public Task<int> SaveChanges();
     }
 }

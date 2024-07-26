@@ -9,7 +9,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class ProficiencyEffectBlueprint : EffectBlueprint
     {
-        public ProficiencyEffectType ProficiencyEffectType{ get; set;} = null!;
+        public ProficiencyEffectType ProficiencyEffectType{ get; set;} = new ProficiencyEffectType();
 
         
         public virtual ItemFamily? R_GrantsProficiencyInItemFamily { get; set; }

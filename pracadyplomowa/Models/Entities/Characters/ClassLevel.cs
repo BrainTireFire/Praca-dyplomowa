@@ -6,10 +6,10 @@ using pracadyplomowa.Models.Entities.Powers;
 
 namespace pracadyplomowa.Models.Entities.Characters
 {
-    public class ClassLevel : ObjectWithId
+    public class ClassLevel(int Level) : ObjectWithId
     {
-        public int Level { get; set; }
-        public DiceSet HitDie { get; set; } = null!;
+        public int Level { get; set; } = Level;
+        public DiceSet HitDie { get; set; } = new DiceSet();
 
         // Relationships
         public virtual ICollection<Character> R_Characters { get; set; } = [];

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using pracadyplomowa.Models.Enums;
 
 namespace pracadyplomowa.Models.Entities.Characters
 {
@@ -13,6 +14,10 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
 
         public string Name { get; set; } = null!;
+
+        public Size Size { get; set; }
+
+        public int Speed { get; set; }
 
         //Relationship
         public virtual ICollection<Character> R_Characters { get; set; } = [];

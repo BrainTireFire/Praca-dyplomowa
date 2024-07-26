@@ -24,5 +24,6 @@ namespace pracadyplomowa.Repository.Class
             ClassLevel? classes = await _context.ClassLevels.FirstOrDefaultAsync(cl => cl.Level == level && cl.R_ClassId == classId);
             return classes;
         }
+        
     }
 }

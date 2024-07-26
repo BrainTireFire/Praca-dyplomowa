@@ -36,9 +36,13 @@ namespace pracadyplomowa.Controllers
         [HttpPost]
         public async Task<ActionResult<ClassDTO>> PostClass([FromBody] string name){
             Class characterClass = new Class(name);
-            await _classRepository.Add(characterClass);
+            for(int i = 0; i < 20; i++){
+                characterClass.R_ClassLevels.Add(new ClassLevel(i));
+            }
+            _classRepository.Add(characterClass);
+            await _classRepository.SaveChanges();
 
-            return Ok(characterClass);
+            return Ok(new ClassDTO{Id = characterClass.Id, Name = name});
         }
     }
 }

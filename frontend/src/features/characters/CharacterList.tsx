@@ -22,9 +22,12 @@ export default function CharacterList({
 }: {
   onCharacterIdChosen: any;
 }) {
-  const { isLoading, characters } = useCharacters();
+  const { isLoading, characters, error } = useCharacters();
   if (isLoading) {
     return <Spinner />;
+  }
+  if (error) {
+    return <>{`${error}`}</>;
   }
   return (
     <Box radius="tiny">

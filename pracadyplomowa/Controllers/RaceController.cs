@@ -36,7 +36,8 @@ namespace pracadyplomowa.Controllers
         [HttpPost]
         public async Task<ActionResult<RaceDTO>> PostRace([FromBody] string name){
             Race characterRace = new Race(name);
-            await _raceRepository.Add(characterRace);
+            _raceRepository.Add(characterRace);
+            await _raceRepository.SaveChanges();
 
             return Ok(characterRace);
         }

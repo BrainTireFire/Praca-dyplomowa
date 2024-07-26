@@ -14,22 +14,23 @@ namespace pracadyplomowa.Repository
             _context = context;
         }
 
-        public async Task Add(T entity){
+        public void Add(T entity){
             _context.Set<T>().Add(entity);
-            await _context.SaveChangesAsync();
         }
 
-        public async void Delete(int id)
+        public void AddAll(ICollection<T> entities){
+            _context.Set<T>().AddRange(entities);
+        }
+
+        public void Delete(int id)
         {
             var q = GetById(id);
             _context.Set<T>().Remove(q);
-            await _context.SaveChangesAsync();
         }
 
-        public async void Update(T entity)
+        public void Update(T entity)
         {
             _context.Entry(entity).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
         }
 
         public List<T> GetAll()
@@ -42,9 +43,9 @@ namespace pracadyplomowa.Repository
             return _context.Set<T>().Find(id);
         }
 
-        // public int Savechange()
-        // {
-        //     return db.SaveChanges();
-        // }
+        public Task<int> SaveChanges()
+        {
+            return  _context.SaveChangesAsync();
+        }
     }
 }

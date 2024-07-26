@@ -14,5 +14,6 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     {
         public AbilityEffect AbilityEffect { get; set; }
         public Ability AbilityEffect_Ability { get; set; }
+
     }
 }

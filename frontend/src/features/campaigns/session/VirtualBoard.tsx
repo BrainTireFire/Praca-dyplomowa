@@ -12,6 +12,9 @@ import {
 } from "./CanvasUtils";
 import { VirtualBoardProps } from "./../../../models/session/VirtualBoardProps";
 import { Coordinate } from "../../../models/session/Coordinate";
+import Menus from "../../../ui/containers/Menus";
+import Modal from "../../../ui/containers/Modal";
+import VirtualBoardMenu from "../../../ui/containers/VirtualBoardMenu";
 
 const CanvasContainer = styled.div`
   display: flex;
@@ -39,13 +42,20 @@ export default function VirtualBoard({
   groupName,
 }: VirtualBoardProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [selectedBox, setSelectedBox] = useState<Coordinate | null>(null);
   const [selectedBoxes, setSelectedBoxes] = useState<{
     [connectionId: string]: Coordinate;
   }>({});
   const [userCursors, setUserCursors] = useState<{
     [connectionId: string]: CursorInfo;
   }>({});
+
+  const [contextMenu, setContextMenu] = useState({
+    x: 0,
+    y: 0,
+    isVisible: false,
+    id: "",
+  });
+  const [selectedBox, setSelectedBox] = useState<Coordinate | null>(null);
 
   const [translatePos, setTranslatePos] = useState<Coordinate>({ x: 0, y: 0 });
 
@@ -106,6 +116,42 @@ export default function VirtualBoard({
     },
     200
   );
+
+  const handleCanvasRightClick = (
+    event: React.MouseEvent<HTMLCanvasElement>
+  ) => {
+    event.preventDefault();
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left - translatePos.x;
+    const y = event.clientY - rect.top - translatePos.y;
+
+    const gridX = Math.floor(x / GRID_SIZE);
+    const gridY = Math.floor(y / GRID_SIZE);
+
+    // Adjust the offset here
+    const offsetX = -120; // Offset to the right
+    const offsetY = -100; // Offset downwards
+
+    setSelectedBox({ x: gridX, y: gridY });
+    setContextMenu({
+      x: event.clientX + offsetX,
+      y: event.clientY + offsetY,
+      isVisible: true,
+      id: `${gridX}+${gridY}`,
+    });
+  };
+
+  // const handleColorChange = (color: string) => {
+  //   if (!selectedBox || !connection || !groupName) return;
+  //   const connectionId = connection.connectionId as string;
+  //   setSelectedBoxes((prev) => ({
+  //     ...prev,
+  //     [connectionId]: { ...selectedBox, color },
+  //   }));
+  //   setContextMenu({ ...contextMenu, isVisible: false, id: "" });
+  // };
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
@@ -208,9 +254,16 @@ export default function VirtualBoard({
         width={INITIAL_WIDTH}
         height={INITIAL_HEIGHT}
         onClick={handleCanvasClick}
+        onContextMenu={handleCanvasRightClick}
       >
         Canvas
       </Canvas>
+      {contextMenu.isVisible && (
+        <VirtualBoardMenu
+          position={{ x: contextMenu.x, y: contextMenu.y }}
+          // onColorSelect={handleColorChange}
+        />
+      )}
     </CanvasContainer>
   );
 }

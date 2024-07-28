@@ -10,6 +10,7 @@ import Input from "../../../ui/forms/Input";
 import Button from "../../../ui/interactive/Button";
 import Heading from "../../../ui/text/Heading";
 import { useParams } from "react-router-dom";
+import { BASE_URL } from "../../../services/constAPI";
 
 const GridContainer = styled.div`
   grid-row: 1 / 2;
@@ -95,7 +96,7 @@ export default function SessionLayout() {
   useEffect(() => {
     if (groupName) {
       const hubConnection = new HubConnectionBuilder()
-        .withUrl(`http://localhost:5000/session?groupName=${groupName}`)
+        .withUrl(`${BASE_URL}/session?groupName=${groupName}`)
         .configureLogging(LogLevel.Information)
         .withAutomaticReconnect()
         .build();

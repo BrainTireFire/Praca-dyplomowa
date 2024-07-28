@@ -12,7 +12,7 @@ namespace pracadyplomowa;
 
 public class TokenService : ITokenService
 {
-    private const int ACCESS_TOKEN_EXPIRY_TIME = 1;
+    private const int ACCESS_TOKEN_EXPIRY_TIME = 30;
     private const int REFRESH_TOKEN_EXPIRY_TIME = 7;
     
     private readonly SymmetricSecurityKey _key;
@@ -150,16 +150,16 @@ public class TokenService : ITokenService
         return Convert.ToBase64String(randomNumber);
     }
     
-    private TokenValidationParameters GetTokenValidationParameters()
-    {
-        return new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = _key,
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ValidateLifetime = false,
-            ClockSkew = TimeSpan.Zero
-        };
-    }
+    // private TokenValidationParameters GetTokenValidationParameters()
+    // {
+    //     return new TokenValidationParameters
+    //     {
+    //         ValidateIssuerSigningKey = true,
+    //         IssuerSigningKey = _key,
+    //         ValidateIssuer = false,
+    //         ValidateAudience = false,
+    //         ValidateLifetime = false,
+    //         ClockSkew = TimeSpan.Zero
+    //     };
+    // }
 }

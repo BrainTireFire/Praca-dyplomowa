@@ -36,10 +36,8 @@ namespace pracadyplomowa.Controllers
         [HttpGet("mycharacters")]
         public async Task<ActionResult<CharacterSummaryDto>> GetCharacters()
         {
-            var token = Request.Cookies[ConstVariables.COOKIE_NAME];
-            var principal = _tokenService.GetPrincipalFromExpiredToken(token!);
-            var userIdClaim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
-            var characters = await _characterRepository.GetCharacterSummaries(int.Parse(userIdClaim));
+            var userId = User.GetUserId();
+            var characters = await _characterRepository.GetCharacterSummaries(userId);
 
             return Ok(characters);
         }
@@ -116,11 +114,9 @@ namespace pracadyplomowa.Controllers
             // Console.WriteLine("test");
 
             // loading current user id
-            var token = Request.Cookies[ConstVariables.COOKIE_NAME];
-            var principal = _tokenService.GetPrincipalFromExpiredToken(token!);
-            var userIdClaim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
-            Console.WriteLine(userIdClaim);
-            character.R_OwnerId = int.Parse(userIdClaim);
+            var userId = User.GetUserId();
+            Console.WriteLine(userId);
+            character.R_OwnerId = userId;
 
             _characterRepository.Add(character);
             await _characterRepository.SaveChanges();

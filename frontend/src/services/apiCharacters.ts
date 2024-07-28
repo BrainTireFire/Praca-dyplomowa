@@ -20,7 +20,6 @@ export async function getCharacter(characterId: number): Promise<Character> {
     `${BASE_URL}/api/character/${characterId}`
   );
 
-  console.log(response);
   return response;
 }
 

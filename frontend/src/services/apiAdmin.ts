@@ -1,3 +1,4 @@
+import { UserWithRoleDto } from "../models/account/userWithRoleDto";
 import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
 

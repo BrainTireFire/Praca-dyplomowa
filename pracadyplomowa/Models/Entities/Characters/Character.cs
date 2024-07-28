@@ -8,7 +8,6 @@ using pracadyplomowa.Models.Entities.Powers.EffectBlueprints;
 using pracadyplomowa.Models.Entities.Powers.EffectInstances;
 using pracadyplomowa.Models.Enums;
 using pracadyplomowa.Models.Enums.EffectOptions;
-using pracadyplomowa.Models.ValueTypes;
 
 namespace pracadyplomowa.Models.Entities.Characters
 {

@@ -22,6 +22,7 @@ using pracadyplomowa.Repository.Race;
 
 namespace pracadyplomowa.Controllers
 {
+    [Authorize]
     public class CharacterController(ICharacterRepository characterRepository, IClassRepository classRepository, IRaceRepository raceRepository, IMapper mapper, ITokenService tokenService) : BaseApiController
     {
         
@@ -33,7 +34,6 @@ namespace pracadyplomowa.Controllers
         private readonly ITokenService _tokenService = tokenService;
 
         [HttpGet("mycharacters")]
-        [Authorize]
         public async Task<ActionResult<CharacterSummaryDto>> GetCharacters()
         {
             var token = Request.Cookies[ConstVariables.COOKIE_NAME];
@@ -43,16 +43,16 @@ namespace pracadyplomowa.Controllers
 
             return Ok(characters);
         }
-
-        [Authorize]
+        
+        [HttpPost]
         public async Task<ActionResult> CreateNewCharacter(CharacterInsertDto characterDto){
             var race = _raceRepository.GetById(characterDto.RaceId);
             if(race == null){
-                return BadRequest("Race with Id " + characterDto.RaceId + " does not exist");
+                return BadRequest(new ApiResponse(400, "Race with Id " + characterDto.RaceId + " does not exist"));
             }
             ClassLevel? classLevel = await _classRepository.GetClassLevel(characterDto.StartingClassId, 1);
             if(classLevel == null){
-                return BadRequest("First level of Class with Id " + characterDto.StartingClassId + " does not exist");
+                return BadRequest(new ApiResponse(400, "First level of Class with Id " + characterDto.StartingClassId + " does not exist"));
             }
             Console.WriteLine("test1");
             var character = new Character
@@ -85,7 +85,7 @@ namespace pracadyplomowa.Controllers
             AbilityEffectInstance intelligence = new();
             strength.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             strength.AbilityEffectType.AbilityEffect_Ability = Ability.INTELLIGENCE;
-            strength.DiceSet.flat = characterDto.Constitution;
+            strength.DiceSet.flat = characterDto.Intelligence;
             
             AbilityEffectInstance wisdom = new();
             strength.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
@@ -126,15 +126,14 @@ namespace pracadyplomowa.Controllers
             await _characterRepository.SaveChanges();
 
             Console.WriteLine("testX");
-            return Ok();
+            return Created();
         }
-
-        [Authorize]
+        
         [HttpGet("{characterId}")]
         public async Task<ActionResult> getCharacter(int characterId){
             var character = _characterRepository.GetById(characterId);
             if(character == null){
-                return BadRequest("Character with Id " + characterId + " does not exist");
+                return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not exist"));
             }
             character = await _characterRepository.GetByIdWithAll(characterId);
 

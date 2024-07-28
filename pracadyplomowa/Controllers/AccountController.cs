@@ -57,8 +57,10 @@ public class AccountController : BaseApiController
         }
 
         var token = await _tokenService.CreateToken(user);
-        
-        SetTokenCookie(token);
+        var refreshToken = await _tokenService.CreateRefreshToken(user, true);
+
+        _tokenService.SetTokenCookie(token, HttpContext);
+        _tokenService.SetRefreshTokenCookie(refreshToken, HttpContext);
 
         return Ok(new UserDto
         {
@@ -84,8 +86,10 @@ public class AccountController : BaseApiController
         }
         
         var token = await _tokenService.CreateToken(user);
+        var refreshToken = await _tokenService.CreateRefreshToken(user, true);
 
-        SetTokenCookie(token);
+        _tokenService.SetTokenCookie(token, HttpContext);
+        _tokenService.SetRefreshTokenCookie(refreshToken, HttpContext);
 
         return Ok(new UserDto
         {
@@ -93,12 +97,33 @@ public class AccountController : BaseApiController
         });
     }
     
+    [Authorize]
     [HttpPost("logout")]
-    public ActionResult Logout()
-    { 
-        Response.Cookies.Delete(ConstVariables.COOKIE_NAME);
+    public async Task<ActionResult> Logout()
+    {
+        var refreshToken = Request.Cookies[ConstVariables.REFRESH_COOKIE_NAME];
 
-        return NoContent(); 
+        if (string.IsNullOrEmpty(refreshToken))
+        {
+            return Unauthorized(new ApiResponse(401, "No refresh token provided"));
+        }
+
+        try
+        {
+            // Revoke the refresh token
+            await _tokenService.RevokeToken(refreshToken);
+
+            // Clear cookies
+            Response.Cookies.Delete(ConstVariables.COOKIE_NAME);
+            Response.Cookies.Delete(ConstVariables.REFRESH_COOKIE_NAME);
+
+            return NoContent();
+        }
+        catch (SecurityTokenException ex)
+        {
+            // Log exception details
+            return Unauthorized(new ApiResponse(401, "Invalid or expired refresh token"));
+        }
     }
 
     [Authorize]
@@ -111,66 +136,23 @@ public class AccountController : BaseApiController
             return Unauthorized(new ApiResponse(401, "No token found"));
         }
 
-        try
+        var username = User.GetUsername();
+        var userId = User.GetUserId();
+        
+        var user = await _accountRepository.GetUserById(userId);
+        if (user == null || !user.UserName.Equals(username))
         {
-            // Validate and extract principal from the JWT token
-            var principal = _tokenService.GetPrincipalFromExpiredToken(token);
-            if (principal == null)
-            {
-                return Unauthorized(new ApiResponse(401, "Invalid token"));
-            }
-            
-            // Console.WriteLine($"principal.Claims: {string.Join(", ", 
-            //     principal.Claims.Select(c => $"{c.Type}: {c.Value}"))}");
-            
-            // Extract claims from principal
-            var userIdClaim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            var usernameClaim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)?.Value;
-            
-            // Check if essential claims are missing or empty
-            if (string.IsNullOrEmpty(userIdClaim) || string.IsNullOrEmpty(usernameClaim))
-            {
-                return Unauthorized(new ApiResponse(401, "Invalid token claims"));
-            }
-            
-            var user = await _accountRepository.GetUserById(int.Parse(userIdClaim));
-            if (user == null || !user.UserName.Equals(usernameClaim))
-            {
-                return Unauthorized(new ApiResponse(401, "User not found or inactive"));
-            }
-
-            // Retrieve user roles from repository
-            var roles = await _accountRepository.GetUserRoles(user);
-
-            // Return successful response with authentication result
-            return Ok(new ValidateAuthDto
-            {
-                IsAuthenticated = true,
-                Roles = roles,
-                Username = user.UserName,
-                Email = user.Email
-            });
+            return Unauthorized(new ApiResponse(401, "User not found or inactive"));
         }
-        catch (SecurityTokenException ex)
+        
+        var roles = await _accountRepository.GetUserRoles(user);
+        
+        return Ok(new ValidateAuthDto
         {
-            return Unauthorized(new ApiResponse(401, "Invalid token"));
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, new ApiResponse(500, "Internal server error"));
-        }
-    }
-
-    private void SetTokenCookie(string token)
-    {
-        var cookieOptions = new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = false, // Set to true in production
-            SameSite = SameSiteMode.Lax, // Set to SameSiteMode.Strict in production
-            Expires = DateTime.UtcNow.AddDays(1)
-        };
-
-        Response.Cookies.Append(ConstVariables.COOKIE_NAME, token, cookieOptions);
+            IsAuthenticated = true,
+            Roles = roles,
+            Username = user.UserName,
+            Email = user.Email
+        });
     }
 }

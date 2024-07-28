@@ -3,12 +3,13 @@ import { createGlobalStyle } from "styled-components";
 const GlobalStyles = createGlobalStyle`
     :root {
 
+  //Dark mode
+  &.dark-mode {
   --color-main-background: #1F2421;
   --color-secondary-background: #DCE1DE;
   --color-secondary-background-rgb: 220, 225, 222; //#DCE1DE
   --color-border: #49A078;
 
-  /* Buttons */
   --color-button-primary: #D14836;
   --color-button-secondary: #49C5B6;
   --color-button-danger: #ab0101;
@@ -19,12 +20,13 @@ const GlobalStyles = createGlobalStyle`
 
   --color-form-error: #ce1313;
 
+  --color-button-text: #DCE1DE;
   --color-secondary-text: #DCE1DE;
   --color-header-text: #9CC5A1;
 
   --color-secondary-hover-text: #9a9b9a;
+  --color-image-hover: #000000;
 
-  /* Links */
   --color-link: #FA9021;
   --color-link-hover: #8f4a00;
 
@@ -33,6 +35,7 @@ const GlobalStyles = createGlobalStyle`
   --color-input-disable-background: #b2b6b4;
 
   --color-navbar: #1D1D1D;
+  --color-navbar-border: #1D1D1D;
 
   --color-button-green: #49A078;
 
@@ -42,6 +45,50 @@ const GlobalStyles = createGlobalStyle`
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-md: 0px 0.6rem 2.4rem rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 2.4rem 3.2rem rgba(0, 0, 0, 0.12);
+  }
+
+  &, &.light-mode {
+  --color-main-background: #fff; /* Pure white background */
+  --color-secondary-background: #969393; /* Very light gray background */
+  --color-secondary-background-rgb: 108, 107, 107; //rgb(108, 107, 107)
+  --color-border: #eaeaea; /* Light gray for borders */
+
+  /* Buttons */
+  --color-button-primary: #171717; /* Light gray for primary buttons */
+  --color-button-secondary: #bcbbbb; /* Medium gray for secondary buttons */
+  --color-button-danger: #ec6868; /* Light red for danger buttons */
+
+  --color-button-hover-primary: #2a2a2a; /* Slightly darker gray for hover */
+  --color-button-hover-secondary: #cbc9c9; /* Slightly darker medium gray for hover */
+  --color-button-hover-danger: #f34c4c; /* Slightly darker red for hover */
+
+  --color-form-error: #f02a2a; /* Same as button hover danger for error text */
+
+  --color-button-text: #fff; /* Dark gray for text */
+  --color-secondary-text: #555555; /* Dark gray for text */
+  --color-header-text: #171717; /* Black for header text */
+
+  --color-secondary-hover-text: #555555; /* Mid gray for hover text */
+  --color-image-hover: #fff;
+
+  --color-link: #bb6f6f;
+  --color-link-hover: #dd8383; /* Dark gray for hover links */
+
+  --color-input-text: #171717; /* Black for input text */
+  --color-input-focus: #808080; /* Gray for focused inputs */
+  --color-input-disable-background: #E0E0E0; /* Light gray for disabled background */
+
+  --color-navbar: #fff; /* Very light gray for navbar */
+  --color-navbar-border: #eaeaea;
+
+  --color-button-green: #8ccba2; /* Light green for a specific button */
+
+  --backdrop-color: rgba(0, 0, 0, 0.05); /* Very light black for backdrop */
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04); /* Small shadow */
+  --shadow-md: 0px 0.6rem 2.4rem rgba(0, 0, 0, 0.06); /* Medium shadow */
+  --shadow-lg: 0 2.4rem 3.2rem rgba(0, 0, 0, 0.12); /* Large shadow */
+}
 
   --border-radius-tiny: 3px;
   --border-radius-sm: 5px;
@@ -141,9 +188,6 @@ img {
   /* For dark mode */
   filter: grayscale(var(--image-grayscale)) opacity(var(--image-opacity));
 }
-
-
-//FOR DARK MODE
 
 `;
 

@@ -3,5 +3,79 @@
   "login.text": "Anmelden",
   "main.title.text": "D&D darüber hinaus, aber besser",
 
-  "campaigns.create.text": "Kampagne erstellen"
+  "main.sidebar.settings.text": "Einstellungen",
+  "main.sidebar.settings.theme.mode": "Themenmodus",
+
+  "main.navbar.link.theme.mode": "App-Stil",
+  "main.navbar.link.my.campaigns": "Meine Kampagnen",
+  "main.navbar.link.my.characters": "Meine Charaktere",
+  "main.navbar.link.homebrew": "Hausgebraut",
+  "main.navbar.link.language": "Sprache",
+  "main.navbar.link.concact": "Kontakt",
+  "main.navbar.link.profile": "Profil",
+  "main.navbar.link.signout": "Abmelden",
+  "main.navbar.link.english": "English",
+  "main.navbar.link.german": "Deutsch",
+  "main.navbar.link.spanish": "Español",
+  "main.navbar.link.france": "Français",
+  "main.navbar.link.japan": "日本語",
+
+  "campaigns.create.text": "Kampagne erstellen",
+  "campaignInstance.giveXP": "XP geben",
+  "campaignInstance.shortRest": "Kurze Rast",
+  "campaignInstance.longRest": "Lange Rast",
+  "campaignInstance.session": "Virtuelle Sitzung starten/öffnen",
+  "campaignInstance.shops": "Shops",
+  "campaignInstance.createEncounter": "Begegnung erstellen",
+  "campaignInstance.remove": "Kampagne entfernen",
+
+  "homepage.play.now.button": "Jetzt spielen!",
+  "homepage.developers": "Die Entwickler",
+
+  "account.profile.change.user.data": "Konto und alle Daten dauerhaft entfernen",
+  "account.profile.change.user.email": "E-Mail ändern",
+  "account.profile.change.user.password": "Passwort ändern",
+  "account.profile.change.user.username": "Benutzernamen ändern",
+  "account.profile.remove.account": "Konto entfernen",
+
+  "account.profile.statistics.header": "Statistiken",
+  "account.profile.myprofile.header": "Mein Profil",
+  "account.profile.statistics.games.played": "Gespielte Spiele",
+  "account.profile.statistics.games.won": "Gewonnene Spiele",
+  "account.profile.statistics.account.created": "Konto erstellt",
+
+  "account.forms.login.header": "Anmelden",
+  "account.forms.login.button": "Anmelden",
+  "account.forms.login.forgot.password": "Passwort vergessen?",
+  "account.login.new.around.here": "Neu hier?",
+
+  "account.forms.login.username.input.label": "Benutzername",
+  "account.forms.login.username.input.placeholder": "Geben Sie Ihren Benutzernamen ein",
+  "account.forms.login.password.input.label": "Passwort",
+  "account.forms.login.password.input.placeholder": "Geben Sie Ihr Passwort ein",
+  "account.forms.login.confirm.password.input.label": "Passwort bestätigen",
+  "account.forms.login.confirm.password.input.placeholder": "Geben Sie Ihr Passwort erneut ein",
+  "account.forms.login.email.input.label": "E-Mail-Adresse",
+  "account.forms.login.email.input.placeholder": "Geben Sie Ihre E-Mail-Adresse ein",
+  "account.forms.login.confirm.email.input.placeholder": "Geben Sie Ihre E-Mail-Adresse erneut ein",
+
+  "account.forgot.password.link.did.you.recall": "Haben Sie sich erinnert?",
+  "account.forgot.password.link.back.to.login.page": "Zurück zur Anmeldung",
+
+  "account.form.validation.error.required": "Dieses Feld ist erforderlich",
+  "account.form.validation.error.password.characters.long": "Passwort muss mindestens 8 Zeichen lang sein",
+  "account.form.validation.error.password.match": "Passwörter müssen übereinstimmen",
+  "account.form.validation.error.email.valid": "Bitte geben Sie eine gültige E-Mail-Adresse an",
+
+  "account.forms.register.header": "Registrieren",
+  "account.forms.register.button": "Registrieren",
+  "account.forms.register.forgot.password": "Passwort vergessen?",
+  "account.forms.register.already.have.an.account": "Bereits ein Konto?",
+  "account.forms.register.login.button": "Anmelden",
+
+  "account.forms.forgot.password.header": "Passwort-Wiederherstellung",
+  "account.forms.forgot.password.button": "Link zur Passwort-Wiederherstellung senden",
+
+  "account.forms.password.change.header": "Passwort-Wiederherstellung",
+  "account.forms.password.change.button": "Passwort zurücksetzen"
 }

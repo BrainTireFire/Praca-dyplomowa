@@ -5,6 +5,7 @@ import FormContainer from "../../ui/forms/FormContainer";
 import LinkContainer from "../../ui/containers/LinkContainer";
 import ForgotPasswordForm from "../../features/account/ForgotPasswordForm";
 import Link from "../../ui/links/Link";
+import { useTranslation } from "react-i18next";
 
 const ForgotPasswordLayout = styled.main`
   min-height: 100vh;
@@ -17,15 +18,20 @@ const ForgotPasswordLayout = styled.main`
 `;
 
 export default function ForgotPassword() {
+  const { t } = useTranslation();
+
   return (
     <ForgotPasswordLayout>
       <Link to="/home">
-        <Heading as="h4">Better then beyond</Heading>
+        <Heading as="h4">{t("main.title.text")}</Heading>
       </Link>
       <FormContainer>
         <ForgotPasswordForm />
         <LinkContainer variation="center">
-          Did you recall? <Link to="/login">Back to Log in</Link>
+          {t("account.forgot.password.link.did.you.recall")}{" "}
+          <Link to="/login">
+            {t("account.forgot.password.link.back.to.login.page")}
+          </Link>
         </LinkContainer>
       </FormContainer>
     </ForgotPasswordLayout>

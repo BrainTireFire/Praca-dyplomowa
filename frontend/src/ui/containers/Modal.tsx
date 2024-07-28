@@ -48,13 +48,13 @@ const Button = styled.button`
     width: 2.4rem;
     height: 2.4rem;
     /* Sometimes we need both */
-    /* fill: var(--color-main-background);
-    stroke: var(--color-main-background); */
+    /* fill: var(--color-grey-500);
+    stroke: var(--color-grey-500); */
     color: var(--color-button-primary);
   }
 
   &:hover svg {
-    color: var(--color-black);
+    color: var(--color-image-hover);
   }
 `;
 

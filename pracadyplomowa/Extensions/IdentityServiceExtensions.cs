@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using pracadyplomowa.Const;
 
 namespace pracadyplomowa;
 
@@ -41,7 +42,12 @@ public static class IdentityServiceExtensions
                 {
                     OnMessageReceived = context =>
                     {
-                        context.Token = context.Request.Cookies["JwtCookie"];
+                        var token = context.Request.Cookies[ConstVariables.COOKIE_NAME];
+                        if (!string.IsNullOrEmpty(token))
+                        {
+                            context.Token = token;
+                        }
+
                         return Task.CompletedTask;
                     },
                     OnAuthenticationFailed = context =>
@@ -51,19 +57,6 @@ public static class IdentityServiceExtensions
                         logger.LogError(context.Exception, "Authentication failed.");
                         return Task.CompletedTask;
                     }
-                };
-            })
-            .AddCookie(options =>
-            {
-                options.Cookie.HttpOnly = true;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.None; // Use CookieSecurePolicy.Always in production
-                options.Cookie.SameSite = SameSiteMode.Lax; // Use SameSiteMode.Strict in production
-                options.Cookie.Name = "JwtCookie";
-                options.ExpireTimeSpan = TimeSpan.FromDays(1);
-                options.Events.OnRedirectToLogin = context =>
-                {
-                    context.Response.StatusCode = 401;
-                    return Task.CompletedTask;
                 };
             });
 

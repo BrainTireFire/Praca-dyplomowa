@@ -4,6 +4,7 @@ import Input from "../../../ui/forms/Input";
 import Button from "../../../ui/interactive/Button";
 import Form from "../../../ui/forms/Form";
 import styled from "styled-components";
+import { useTranslation } from "react-i18next";
 
 const StyledFormRow = styled.div`
   display: grid;
@@ -13,6 +14,7 @@ const StyledFormRow = styled.div`
 `;
 
 export default function UserChangeEmailForm() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [confirmEmail, setConfirmEmail] = useState("");
 
@@ -21,11 +23,11 @@ export default function UserChangeEmailForm() {
   return (
     <Form onSubmit={handleSubmit}>
       <StyledFormRow>
-        <FormRowVertical label="Change Email">
+        <FormRowVertical label={t("account.profile.change.user.email")}>
           <Input
             type="email"
             id="email"
-            placeholder="Enter your email"
+            placeholder={t("account.forms.login.email.input.placeholder")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -36,13 +38,15 @@ export default function UserChangeEmailForm() {
           <Input
             type="email"
             id="confirmPassword"
-            placeholder="Enter your confirm email"
+            placeholder={t(
+              "account.forms.login.confirm.email.input.placeholder"
+            )}
             value={confirmEmail}
             onChange={(e) => setConfirmEmail(e.target.value)}
           />
         </FormRowVertical>
         <Button size="medium" variation="primary">
-          Change E-mail
+          {t("account.profile.change.user.email")}
         </Button>
       </StyledFormRow>
     </Form>

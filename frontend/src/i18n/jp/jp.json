@@ -1,0 +1,81 @@
+{
+  "signup.text": "サインアップ",
+  "login.text": "ログイン",
+  "main.title.text": "D&Dビヨンド、さらに良く",
+
+  "main.sidebar.settings.text": "設定",
+  "main.sidebar.settings.theme.mode": "テーマモード",
+
+  "main.navbar.link.theme.mode": "アプリスタイル",
+  "main.navbar.link.my.campaigns": "私のキャンペーン",
+  "main.navbar.link.my.characters": "私のキャラクター",
+  "main.navbar.link.homebrew": "ホームブルー",
+  "main.navbar.link.language": "言語",
+  "main.navbar.link.concact": "連絡",
+  "main.navbar.link.profile": "プロフィール",
+  "main.navbar.link.signout": "サインアウト",
+  "main.navbar.link.english": "English",
+  "main.navbar.link.german": "Deutsch",
+  "main.navbar.link.spanish": "Español",
+  "main.navbar.link.france": "Français",
+  "main.navbar.link.japan": "日本語",
+
+  "campaigns.create.text": "キャンペーンを作成",
+  "campaignInstance.giveXP": "XPを与える",
+  "campaignInstance.shortRest": "短い休憩",
+  "campaignInstance.longRest": "長い休憩",
+  "campaignInstance.session": "仮想セッションを開始/開く",
+  "campaignInstance.shops": "ショップ",
+  "campaignInstance.createEncounter": "遭遇を作成",
+  "campaignInstance.remove": "キャンペーンを削除",
+
+  "homepage.play.now.button": "今すぐプレイ！",
+  "homepage.developers": "開発者",
+
+  "account.profile.change.user.data": "アカウントとすべてのデータを永久に削除",
+  "account.profile.change.user.email": "メールアドレスを変更",
+  "account.profile.change.user.password": "パスワードを変更",
+  "account.profile.change.user.username": "ユーザー名を変更",
+  "account.profile.remove.account": "アカウントを削除",
+
+  "account.profile.statistics.header": "統計",
+  "account.profile.myprofile.header": "マイプロフィール",
+  "account.profile.statistics.games.played": "プレイしたゲーム",
+  "account.profile.statistics.games.won": "勝ったゲーム",
+  "account.profile.statistics.account.created": "アカウント作成日",
+
+  "account.forms.login.header": "サインイン",
+  "account.forms.login.button": "ログイン",
+  "account.forms.login.forgot.password": "パスワードを忘れましたか？",
+  "account.login.new.around.here": "はじめてですか？",
+
+  "account.forms.login.username.input.label": "ユーザー名",
+  "account.forms.login.username.input.placeholder": "ユーザー名を入力してください",
+  "account.forms.login.password.input.label": "パスワード",
+  "account.forms.login.password.input.placeholder": "パスワードを入力してください",
+  "account.forms.login.confirm.password.input.label": "パスワードの確認",
+  "account.forms.login.confirm.password.input.placeholder": "パスワードをもう一度入力してください",
+  "account.forms.login.email.input.label": "メールアドレス",
+  "account.forms.login.email.input.placeholder": "メールアドレスを入力してください",
+  "account.forms.login.confirm.email.input.placeholder": "メールアドレスをもう一度入力してください",
+
+  "account.forgot.password.link.did.you.recall": "思い出しましたか？",
+  "account.forgot.password.link.back.to.login.page": "ログインに戻る",
+
+  "account.form.validation.error.required": "このフィールドは必須です",
+  "account.form.validation.error.password.characters.long": "パスワードは8文字以上でなければなりません",
+  "account.form.validation.error.password.match": "パスワードが一致する必要があります",
+  "account.form.validation.error.email.valid": "有効なメールアドレスを入力してください",
+
+  "account.forms.register.header": "サインアップ",
+  "account.forms.register.button": "登録",
+  "account.forms.register.forgot.password": "パスワードを忘れましたか？",
+  "account.forms.register.already.have.an.account": "すでにアカウントをお持ちですか？",
+  "account.forms.register.login.button": "ログイン",
+
+  "account.forms.forgot.password.header": "パスワードの回復",
+  "account.forms.forgot.password.button": "パスワード回復リンクを送信",
+
+  "account.forms.password.change.header": "パスワードの回復",
+  "account.forms.password.change.button": "パスワードをリセット"
+}

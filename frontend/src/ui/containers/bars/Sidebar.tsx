@@ -11,6 +11,7 @@ const StyledSidebar = styled.aside`
   display: flex;
   flex-direction: column;
   gap: 3.2rem;
+  border-right: 1px solid var(--color-navbar-border);
 `;
 
 function Sidebar() {

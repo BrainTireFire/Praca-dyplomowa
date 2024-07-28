@@ -4,6 +4,7 @@ import Input from "../../../ui/forms/Input";
 import Button from "../../../ui/interactive/Button";
 import Form from "../../../ui/forms/Form";
 import styled from "styled-components";
+import { useTranslation } from "react-i18next";
 
 const StyledFormRow = styled.div`
   display: grid;
@@ -13,6 +14,7 @@ const StyledFormRow = styled.div`
 `;
 
 export default function UserChangesPasswordForm() {
+  const { t } = useTranslation();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -21,11 +23,11 @@ export default function UserChangesPasswordForm() {
   return (
     <Form onSubmit={handleSubmit}>
       <StyledFormRow>
-        <FormRowVertical label="Change Password">
+        <FormRowVertical label={t("account.profile.change.user.password")}>
           <Input
             type="password"
             id="password"
-            placeholder="Enter your password"
+            placeholder={t("account.forms.login.password.input.placeholder")}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -36,13 +38,15 @@ export default function UserChangesPasswordForm() {
           <Input
             type="password"
             id="confirmPassword"
-            placeholder="Enter your confirm password"
+            placeholder={t(
+              "account.forms.login.confirm.password.input.placeholder"
+            )}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
         </FormRowVertical>
         <Button size="medium" variation="primary">
-          Change Password
+          {t("account.profile.change.user.password")}
         </Button>
       </StyledFormRow>
     </Form>

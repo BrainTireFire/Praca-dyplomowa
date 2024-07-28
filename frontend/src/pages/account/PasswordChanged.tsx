@@ -6,6 +6,7 @@ import LinkContainer from "../../ui/containers/LinkContainer";
 import ForgotPasswordForm from "../../features/account/ForgotPasswordForm";
 import Link from "../../ui/links/Link";
 import PasswordChangedForm from "../../features/account/PasswordChangedForm";
+import { useTranslation } from "react-i18next";
 
 const PasswordChangedLayout = styled.main`
   min-height: 100vh;
@@ -18,10 +19,12 @@ const PasswordChangedLayout = styled.main`
 `;
 
 export default function PasswordChanged() {
+  const { t } = useTranslation();
+
   return (
     <PasswordChangedLayout>
       <Link to="/home">
-        <Heading as="h4">Better then beyond</Heading>
+        <Heading as="h4">{t("main.title.text")}</Heading>
       </Link>
       <FormContainer>
         <PasswordChangedForm />

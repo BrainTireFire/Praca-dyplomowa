@@ -39,6 +39,7 @@ const Th = styled.th`
 
 const Tr = styled.tr`
   transition: background-color 100ms ease;
+  cursor: pointer;
   &:hover {
     background-color: rgba(116, 177, 116, 0.5);
   }
@@ -58,7 +59,6 @@ export default function Shops() {
     type: "",
     location: "",
   });
-  console.log(shops);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -140,14 +140,19 @@ function ShopsTable({ shops }) {
         <Th></Th>
       </thead>
       <tbody>
-        {shops.map((shop, index: number) => (
+        {shops.map((shop: Shop, index: number) => (
           <Tr onClick={() => navigate(`${shop.id}`)} key={index}>
             <Td>{shop.name}</Td>
             <Td>{shop.type}</Td>
             <Td>{shop.location}</Td>
             <Td>{shop.description}</Td>
             <Td>
-              <Button>
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  console.log(`REQUEST DELETE TO DB Shop #${shop.id}`);
+                }}
+              >
                 <HiXMark />
               </Button>
             </Td>

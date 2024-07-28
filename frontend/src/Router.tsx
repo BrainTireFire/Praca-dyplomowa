@@ -18,6 +18,7 @@ import HomebrewCreatePower from "./pages/homebrew/HomebrewCreatePower";
 import ProtectedRoute from "./features/account/ProtectedRoute";
 import Forbidden from "./pages/errors/Forbidden";
 import ServiceDown from "./pages/errors/ServiceDown";
+import MainBoard from "./pages/campaign/session/MainBoard";
 
 export default function Router() {
   return (
@@ -34,6 +35,7 @@ export default function Router() {
           <Route path="main" element={<MainDashboard />} />
           <Route path="campaigns" element={<Campagins />} />
           <Route path="campaigns/:campaignId" element={<CampaginInstance />} />
+          <Route path="campaigns/session/:groupName" element={<MainBoard />} />
           <Route path="characters" element={<Characters />} />
           <Route path="homebrew" element={<Homebrew />} />
           <Route

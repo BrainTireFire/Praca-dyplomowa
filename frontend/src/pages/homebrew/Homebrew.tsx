@@ -1,7 +1,9 @@
-import React, { Component } from "react";
+import TestAuthComponent from "../../tempOnlyDev/TestAuthComponent";
 
-export default class Homebrew extends Component {
-  render() {
-    return <div>Homebrew</div>;
-  }
+export default function Homebrew() {
+  return (
+    <div>
+      Homebrew <TestAuthComponent />
+    </div>
+  );
 }

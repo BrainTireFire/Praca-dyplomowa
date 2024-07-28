@@ -1,4 +1,4 @@
-type UserWithRoleDto = {
+export type UserWithRoleDto = {
   roles: string[];
   username: string;
   id: number;

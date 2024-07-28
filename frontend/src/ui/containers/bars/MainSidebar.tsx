@@ -6,7 +6,7 @@ import { FaDice, FaRegAddressBook } from "react-icons/fa";
 import { MdBackpack } from "react-icons/md";
 import Modal from "../Modal";
 import Button from "../../interactive/Button";
-import BatchRollModal from "../../../pages/campaign/BatchRollModal";
+import BatchRollModal from "../../../features/mainDashboard/sidebar/BatchRollModal";
 
 const NavList = styled.ul`
   display: flex;

@@ -36,11 +36,11 @@ export default function Campagins() {
   return (
     <>
       <Container>
-        <Heading as="h4">My campaigns</Heading>
+        <Heading as="h4">{t("campaigns.heading")}</Heading>
         <Line size="percantage" bold="large" />
         <CampaignHeader>
           <Heading as="h2" align="left">
-            Campaigns
+            {t("campaigns.header")}
           </Heading>
           <Button size="large" onClick={() => navigate(`/login`)}>
             {t("campaigns.create.text")}

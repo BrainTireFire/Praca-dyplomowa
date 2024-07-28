@@ -9,7 +9,10 @@ import Button from "../../../ui/interactive/Button";
 import { useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import Modal from "../../../ui/containers/Modal";
-import CreateShop from "./CreateShop";
+import CreateShop from "../../../features/campaigns/shop/CreateShop";
+import { useCampaign } from "../../../features/campaigns/useCampaign";
+import Spinner from "../../../ui/interactive/Spinner";
+import { useTranslation } from "react-i18next";
 
 const Container = styled.div`
   display: flex;
@@ -52,13 +55,23 @@ const Td = styled.td`
 `;
 
 export default function Shops() {
-  const location = useLocation();
-  const { shops } = location.state;
+  const { isLoading, campaign } = useCampaign();
+  const { t } = useTranslation();
   const [searchInputs, setSearchInputs] = useState({
     name: "",
     type: "",
     location: "",
   });
+
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  if (!campaign) {
+    return <div>{t("campaign.error.notFound")}</div>;
+  }
+
+  const { shops }: Campaign = campaign;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

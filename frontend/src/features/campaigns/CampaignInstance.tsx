@@ -4,12 +4,12 @@ import Heading from "../../ui/text/Heading";
 import Button from "../../ui/interactive/Button";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import MemberBox from "../../features/campaigns/MemberBox";
+import MemberBox from "./MemberBox";
 import InputCopyToClipboard from "../../ui/forms/InputCopyToClipboard";
 import Modal from "../../ui/containers/Modal";
 import ShortRest from "./ShortRestModal";
 import GiveXP from "./GiveXP";
-import { useCampaign } from "../../features/campaigns/useCampaign";
+import { useCampaign } from "./useCampaign";
 import Spinner from "../../ui/interactive/Spinner";
 
 const Container = styled.div`
@@ -63,7 +63,7 @@ export default function CampaignInstance() {
   }
 
   if (!campaign) {
-    return <div>Campaign not found</div>;
+    return <div>{t("campaign.error.notFound")}</div>;
   }
 
   const { id, name, description, gameMaster, members, shops }: Campaign =
@@ -103,10 +103,7 @@ export default function CampaignInstance() {
             <Button size="large" onClick={() => navigate(`/session`)}>
               {t("campaignInstance.session")}
             </Button>
-            <Button
-              size="large"
-              onClick={() => navigate("shops", { state: { shops } })}
-            >
+            <Button size="large" onClick={() => navigate("shops")}>
               {t("campaignInstance.shops")}
             </Button>
             <Button size="large" onClick={() => navigate(`/encounter`)}>

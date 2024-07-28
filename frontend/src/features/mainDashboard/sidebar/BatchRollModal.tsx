@@ -1,11 +1,11 @@
 import styled from "styled-components";
-import Input from "../../ui/forms/Input";
-import Heading from "../../ui/text/Heading";
-import Button from "../../ui/interactive/Button";
-import Box from "../../ui/containers/Box";
+import Input from "../../../ui/forms/Input";
+import Heading from "../../../ui/text/Heading";
+import Button from "../../../ui/interactive/Button";
+import Box from "../../../ui/containers/Box";
 import { useEffect, useRef, useState } from "react";
-import { useAllDice } from "../../features/mainDashboard/useDice";
-import Spinner from "../../ui/interactive/Spinner";
+import { useAllDice } from "../useDice";
+import Spinner from "../../../ui/interactive/Spinner";
 
 const Container = styled.div`
   display: flex;

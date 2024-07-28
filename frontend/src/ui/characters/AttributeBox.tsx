@@ -1,10 +1,11 @@
 import styled from "styled-components";
+import { Attribute } from "../../models/attribute";
 
 const StyledDropdown = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 0.2rem;
 `;
 
 const Box = styled.div`
@@ -14,16 +15,16 @@ const Box = styled.div`
   justify-content: center;
   flex-direction: column;
   font-size: 3rem;
-  padding-bottom: 40px;
+  padding-bottom: 0rem;
 
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-sm);
-  width: 120px;
-  height: 120px;
+  width: 5rem;
+  height: 5rem;
 `;
 
 const Header = styled.div`
-  font-size: 1.6rem;
+  font-size: 1.2rem;
   font-weight: 500;
 `;
 
@@ -33,36 +34,42 @@ const Circle = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 50px;
-  height: 50px;
+  width: 2.5rem;
+  height: 2.5rem;
   border: 1px solid var(--color-border);
   border-radius: 100%;
+  font-size: 1.5rem;
 `;
 
 const Text = styled.p`
   /* border: 1px solid var(--color-border); */
   /* background-color: transparent; */
+  position: absolute;
+  top: 0;
   justify-content: center;
   align-items: center;
-  width: 40px;
-  height: 40px;
+  line-height: 1.2;
+
+  font-size: 2rem;
 `;
 
-const Input = styled.input`
-  /* border: 1px solid var(--color-border); */
-  /* background-color: transparent; */
-  width: 40px;
-  height: 40px;
-`;
-
-function AttributeBox({ children }: { children: React.ReactNode }) {
-  return <StyledDropdown>{children}</StyledDropdown>;
+function AttributeBox({ attribute }: { attribute: Attribute }) {
+  const modifier = Math.floor((attribute.value - 10) / 2);
+  return (
+    <StyledDropdown>
+      <Header>{attribute.name}</Header>
+      <Box>
+        <Text>{attribute.value}</Text>
+        <Circle>{modifier >= 0 ? `+${modifier}` : `-${modifier}`}</Circle>
+      </Box>
+    </StyledDropdown>
+  );
 }
 
-AttributeBox.Header = Header;
-AttributeBox.Box = Box;
-AttributeBox.Circle = Circle;
-AttributeBox.Input = Input;
-AttributeBox.Text = Text;
+// AttributeBox.Header = Header;
+// AttributeBox.Box = Box;
+// AttributeBox.Circle = Circle;
+// AttributeBox.Input = Input;
+// AttributeBox.Text = Text;
 
 export default AttributeBox;

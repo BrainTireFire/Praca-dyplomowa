@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using pracadyplomowa;
 using pracadyplomowa.Authorization.AuthorizationHandlers;
 using pracadyplomowa.Authorization.AuthorizationPolicyProviders;
+using pracadyplomowa.Repository;
+using pracadyplomowa.Repository.Class;
+using pracadyplomowa.Repository.Race;
 using pracadyplomowa.Errors;
 using pracadyplomowa.Middleware;
 
@@ -23,6 +26,9 @@ builder.Services.AddIdentityServices(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<ICharacterRepository, CharacterRepository>();
+builder.Services.AddScoped<IClassRepository, ClassRepository>();
+builder.Services.AddScoped<IRaceRepository, RaceRepository>();
 
 builder.Services.AddScoped<IAuthorizationHandler, OwnershipHandler>();
 // builder.Services.AddHttpContextAccessor();
@@ -31,8 +37,8 @@ builder.Services.AddSingleton<IAuthorizationPolicyProvider, OwnershipPolicyProvi
 
 // // Add services to the container.
 // // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-// builder.Services.AddEndpointsApiExplorer();
-// builder.Services.AddSwaggerGen();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 builder.Services.Configure<ApiBehaviorOptions>(opt =>
@@ -68,11 +74,11 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // // Configure the HTTP request pipeline.
-// if (app.Environment.IsDevelopment())
-// {
-//     app.UseSwagger();
-//     app.UseSwaggerUI();
-// }
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseStatusCodePagesWithReExecute("/errors/{0}");

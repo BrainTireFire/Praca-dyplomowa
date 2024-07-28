@@ -8,6 +8,6 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class AttackRollEffectBlueprint : ValueEffectBlueprint
     {
-        public AttackRollEffectType AttackRollEffectType{ get; set; } = null!;
+        public AttackRollEffectType AttackRollEffectType{ get; set; } = new AttackRollEffectType();
     }
 }

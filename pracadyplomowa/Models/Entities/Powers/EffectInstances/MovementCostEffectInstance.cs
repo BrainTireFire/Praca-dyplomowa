@@ -4,5 +4,5 @@ namespace pracadyplomowa.Models.Entities.Powers;
 
 public class MovementCostEffectInstance : EffectInstance
 {
-    public MovementCostEffectType MovementCostEffectType { get; set; } = null!;
+    public MovementCostEffectType MovementCostEffectType { get; set; } = new MovementCostEffectType();
 }

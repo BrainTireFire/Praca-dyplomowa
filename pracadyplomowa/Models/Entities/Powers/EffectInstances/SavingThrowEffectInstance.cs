@@ -4,5 +4,5 @@ namespace pracadyplomowa.Models.Entities.Powers;
 
 public class SavingThrowEffectInstance : ValueEffectInstance
 {
-    public SavingThrowEffectType SavingThrowEffectType { get; set; } = null!;
+    public SavingThrowEffectType SavingThrowEffectType { get; set; } = new SavingThrowEffectType();
 }

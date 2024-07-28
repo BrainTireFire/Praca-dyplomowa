@@ -8,6 +8,6 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class ActionEffectBlueprint : ValueEffectBlueprint
     {
-        public ActionEffectType ActionEffectType{ get; set; } = null!;
+        public ActionEffectType ActionEffectType{ get; set; } = new ActionEffectType();
     }
 }

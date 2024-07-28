@@ -6,11 +6,11 @@ import ErrorFallback from "./ui/ErrorFallback.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <ErrorBoundary
+    {/* <ErrorBoundary
       FallbackComponent={ErrorFallback}
       onReset={() => window.location.replace("/")}
-    >
-      <App />
-    </ErrorBoundary>
+    > */}
+    <App />
+    {/* </ErrorBoundary> */}
   </React.StrictMode>
 );

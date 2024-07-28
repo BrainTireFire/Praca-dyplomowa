@@ -8,6 +8,6 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class AttackPerAttackActionEffectBlueprint : ValueEffectBlueprint
     {
-        public AttackPerAttackActionEffectType AttackPerAttackActionEffectType{get; set; } = null!;
+        public AttackPerAttackActionEffectType AttackPerAttackActionEffectType{get; set; } = new AttackPerAttackActionEffectType();
     }
 }

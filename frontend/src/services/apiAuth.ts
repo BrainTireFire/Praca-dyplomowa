@@ -1,3 +1,7 @@
+import { LoginDto } from "../models/account/loginDto";
+import { RegisterDto } from "../models/account/registerDto";
+import { UserDto } from "../models/account/userDto";
+import { ValidateAuthDto } from "../models/account/validateAuthDto";
 import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
 

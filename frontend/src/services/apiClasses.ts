@@ -1,13 +1,16 @@
 import { Race } from "../models/race";
+import { BASE_URL } from "./constAPI";
+import { customFetch } from "./customFetch";
 
 export async function getClasses(): Promise<Race[]> {
-  const response = await fetch("http://localhost:5000/api/class");
+  const options: RequestInit = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! Status: ${response.status}`);
-  }
-
-  const data: Race[] = await response.json();
+  const data: Race[] = await customFetch(`${BASE_URL}/api/class`, options);
 
   return data;
 }

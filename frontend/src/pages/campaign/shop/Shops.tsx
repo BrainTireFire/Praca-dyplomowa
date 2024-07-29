@@ -62,7 +62,7 @@ export default function Shops() {
 
   return (
     <Container>
-      <Heading as="h4">Shops</Heading>
+      <Heading as="h1">Shops</Heading>
       <Line size="percantage" bold="large" />
       <Box style={{ width: "70%" }}>
         <SearchFormContainer>

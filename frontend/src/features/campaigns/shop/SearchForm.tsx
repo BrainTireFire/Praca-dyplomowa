@@ -1,3 +1,4 @@
+import { css } from "styled-components";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import Input from "../../../ui/forms/Input";
 
@@ -6,7 +7,6 @@ export default function SearchForm({ onInputChange }) {
     <>
       <FormRowVertical label="Name">
         <Input
-          style={{ width: "250px" }}
           placeholder="Name of the store"
           name="name"
           onChange={onInputChange}
@@ -14,7 +14,6 @@ export default function SearchForm({ onInputChange }) {
       </FormRowVertical>
       <FormRowVertical label="Type">
         <Input
-          style={{ width: "250px" }}
           placeholder="Type of the store"
           name="type"
           onChange={onInputChange}
@@ -22,7 +21,6 @@ export default function SearchForm({ onInputChange }) {
       </FormRowVertical>
       <FormRowVertical label="Location">
         <Input
-          style={{ width: "250px" }}
           placeholder="Location of the store"
           name="location"
           onChange={onInputChange}

@@ -7,7 +7,7 @@ import { Language } from "../../../models/language";
 const Name = styled.div`
   font-size: 1rem;
   font-weight: 600;
-  color: var(--color-grey-600);
+  color: var(--color-secondary-text);
 `;
 
 const Stacked = styled.div`
@@ -20,7 +20,7 @@ const Stacked = styled.div`
   }
 
   & span:last-child {
-    color: var(--color-grey-500);
+    color: var(--color-secondary-text);
     font-size: 1.2rem;
   }
 `;

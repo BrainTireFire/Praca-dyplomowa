@@ -18,7 +18,7 @@ function CustomizeShop() {
   const { shops } = campaign;
   const shop = shops[shopId - 1];
   return (
-    <Heading as="h6">
+    <Heading as="h1">
       Shop #{shop.id}
       <br />
       {shop.name}

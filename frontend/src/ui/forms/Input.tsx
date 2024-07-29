@@ -27,8 +27,8 @@ const heights = {
 };
 
 const Input = styled.input<InputProps>`
-  border: 1px solid var(--color-grey-300);
-  background-color: font-variant(--color-grey-0);
+  border: 1px solid var(--color-navbar-border);
+  background-color: font-variant(--color-secondary-background);
   border-radius: var(--border-radius-sm);
   box-shadow: var(--shadow-sm);
   padding: 0.8rem 1.2rem;

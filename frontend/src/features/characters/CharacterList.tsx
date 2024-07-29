@@ -17,21 +17,29 @@ const CharacterListLayout = styled.div`
   padding: 0;
 `;
 
+const NoCharactersMessage = styled.div`
+  text-align: center;
+  font-style: italic;
+  margin: 1rem 0;
+`;
+
 export default function CharacterList({
   onCharacterIdChosen,
 }: {
   onCharacterIdChosen: any;
 }) {
   const { isLoading, characters, error } = useCharacters();
+
   if (isLoading) {
     return <Spinner />;
   }
+
   if (error) {
     return <>{`${error}`}</>;
   }
+
   return (
     <Box radius="tiny">
-      Character list
       <HorizontalDiv>
         <FormRowVertical
           label="Search"
@@ -50,13 +58,17 @@ export default function CharacterList({
       </HorizontalDiv>
       <Box radius="tiny">
         <CharacterListLayout>
-          {characters?.map((character) => (
-            <CharacterItemBox
-              key={character.id}
-              character={character}
-              onClick={onCharacterIdChosen}
-            />
-          ))}
+          {characters && characters?.length > 0 ? (
+            characters?.map((character) => (
+              <CharacterItemBox
+                key={character.id}
+                character={character}
+                onClick={onCharacterIdChosen}
+              />
+            ))
+          ) : (
+            <NoCharactersMessage>No characters available.</NoCharactersMessage>
+          )}
         </CharacterListLayout>
       </Box>
     </Box>

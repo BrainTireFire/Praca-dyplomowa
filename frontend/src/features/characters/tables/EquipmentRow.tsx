@@ -15,7 +15,7 @@ import { Item } from "../../../models/item";
 const Cell = styled.div`
   font-size: 1.2rem;
   font-weight: 600;
-  color: var(--color-grey-600);
+  color: var(--color-secondary-text);
 `;
 
 const Stacked = styled.div`

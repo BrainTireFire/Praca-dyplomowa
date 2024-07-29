@@ -7,7 +7,7 @@ const StyledTable = styled.div`
   border: 1px solid var(--color-border);
 
   font-size: 1rem;
-  background-color: var(--color-grey-0);
+  background-color: var(--color-main-background);
   border-radius: 7px;
   overflow: hidden;
 `;
@@ -31,7 +31,7 @@ const CommonRow = styled.div`
 const StyledHeader = styled(CommonRow)`
   padding: 0.2rem 2.4rem;
 
-  background-color: var(--color-grey-50);
+  background-color: var(--color-main-background);
   border-bottom: 1px solid var(--color-border);
   text-transform: uppercase;
   letter-spacing: 0.4px;
@@ -78,21 +78,9 @@ const TableHeader = styled.div`
   text-align: left;
 `;
 
-// const TableButton = styled.button`
-//   background-color: var(--color-button-primary);
-//   color: var(--color-grey-0);
-//   font-size: 1rem;
-//   font-weight: bold;
-//   padding: 0rem 0.5rem;
-//   margin: 0.2rem 0.2rem;
-//   cursor: pointer;
-//   width: auto;
-//   border-radius: 0.7rem;
-// `;
-
 const TableButton = styled(Button)`
   background-color: var(--color-button-primary);
-  color: var(--color-grey-0);
+  color: var(--color-secondary-text);
   font-size: 1rem;
   font-weight: bold;
   padding: 0rem 0.5rem;

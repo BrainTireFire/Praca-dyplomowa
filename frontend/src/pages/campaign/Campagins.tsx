@@ -6,26 +6,19 @@ import Button from "../../ui/interactive/Button";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-const CampaginsLayout = styled.main`
-  min-height: 5vh;
-  display: grid;
-  align-content: center;
-  justify-content: center;
-  gap: 3rem;
-`;
-
-const ButtonContainer = styled.div`
+const Container = styled.div`
   display: flex;
-  justify-content: end;
-  gap: 2rem;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  align-items: center;
 `;
 
-const HeaderLeft = styled.div`
+const CampaignHeader = styled.div`
   display: flex;
   align-items: end;
   justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  width: 100%;
 `;
 
 const HeaderButtons = styled.div`
@@ -42,23 +35,19 @@ export default function Campagins() {
 
   return (
     <>
-      <div>
-        <Heading as="h4">My campaigns</Heading>
+      <Container>
+        <Heading as="h4">{t("campaigns.heading")}</Heading>
         <Line size="percantage" bold="large" />
-      </div>
-      <div>
-        <HeaderLeft>
+        <CampaignHeader>
           <Heading as="h2" align="left">
-            Campaigns
+            {t("campaigns.header")}
           </Heading>
-          <HeaderButtons>
-            <Button size="large" onClick={() => navigate(`/login`)}>
-              {t("campaigns.create.text")}
-            </Button>
-          </HeaderButtons>
-        </HeaderLeft>
+          <Button size="large" onClick={() => navigate(`/login`)}>
+            {t("campaigns.create.text")}
+          </Button>
+        </CampaignHeader>
         <Line size="percantage" />
-      </div>
+      </Container>
       <CampaignList />
     </>
   );

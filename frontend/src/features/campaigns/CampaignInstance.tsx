@@ -4,8 +4,28 @@ import Heading from "../../ui/text/Heading";
 import Button from "../../ui/interactive/Button";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import MemberBox from "../../features/campaigns/MemberBox";
+import MemberBox from "./MemberBox";
 import InputCopyToClipboard from "../../ui/forms/InputCopyToClipboard";
+import Modal from "../../ui/containers/Modal";
+import ShortRest from "./ShortRestModal";
+import GiveXP from "./GiveXP";
+import { useCampaign } from "./useCampaign";
+import Spinner from "../../ui/interactive/Spinner";
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  align-items: center;
+`;
+
+const MemberContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 2fr);
+  gap: 20px;
+  margin: 20px;
+`;
 
 const HeaderLeft = styled.div`
   display: flex;
@@ -18,7 +38,6 @@ const HeaderLeft = styled.div`
 const HeaderButtons = styled.div`
   display: flex;
   align-items: end;
-  /* justify-content: space-between; */
   gap: 1rem;
   margin-bottom: 1rem;
 `;
@@ -36,23 +55,50 @@ const Avatar = styled.div`
 `;
 
 export default function CampaignInstance() {
+  const { isLoading, campaign } = useCampaign();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  if (!campaign) {
+    return <div>{t("campaign.error.notFound")}</div>;
+  }
+
+  const { id, name, description, gameMaster, members, shops }: Campaign =
+    campaign;
 
   return (
     <>
-      <div>
-        <Heading as="h4">Campaign #1</Heading>
+      <Container>
+        <Heading as="h4">
+          Campaign #{id} - {name}
+        </Heading>
         <Line size="percantage" bold="large" />
-      </div>
+      </Container>
       <div>
         <HeaderLeft>
           <Heading as="h2" align="left">
             Details
           </Heading>
           <HeaderButtons>
-            <Button size="large">{t("campaignInstance.giveXP")}</Button>
-            <Button size="large">{t("campaignInstance.shortRest")}</Button>
+            <Modal>
+              <Modal.Open opens="GiveXP">
+                <Button size="large">{t("campaignInstance.giveXP")}</Button>
+              </Modal.Open>
+              <Modal.Window name="GiveXP">
+                <GiveXP membersList={members} />
+              </Modal.Window>
+            </Modal>
+            <Modal>
+              <Modal.Open opens="ShortRestModal">
+                <Button size="large">{t("campaignInstance.shortRest")}</Button>
+              </Modal.Open>
+              <Modal.Window name="ShortRestModal">
+                <ShortRest membersList={members} />
+              </Modal.Window>
+            </Modal>
             <Button size="large">{t("campaignInstance.longRest")}</Button>
             <Button
               size="large"
@@ -60,7 +106,7 @@ export default function CampaignInstance() {
             >
               {t("campaignInstance.session")}
             </Button>
-            <Button size="large" onClick={() => navigate(`/shops`)}>
+            <Button size="large" onClick={() => navigate("shops")}>
               {t("campaignInstance.shops")}
             </Button>
             <Button size="large" onClick={() => navigate(`/encounter`)}>
@@ -76,6 +122,9 @@ export default function CampaignInstance() {
           Description
         </Heading>
         <DescriptionStyled>
+          {description}
+          <br />
+          <br />
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
           minim veniam, quis nostrud exercitation ullamco laboris nisi ut
@@ -88,13 +137,15 @@ export default function CampaignInstance() {
       </div>
       <div>
         <Heading as="h2" align="left">
-          Game master
+          Game Master
         </Heading>
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <Avatar>
-            <img src="../avatar.jpg" alt="avatar"></img>
+            <img src={gameMaster.img} alt="avatar"></img>
           </Avatar>
-          <span>Game master - disaster</span>
+          <span>
+            {gameMaster.name} - {gameMaster.description}
+          </span>
         </div>
         <Line size="percantage" />
       </div>
@@ -102,20 +153,11 @@ export default function CampaignInstance() {
         <Heading as="h2" align="left">
           Members
         </Heading>
-        <div
-          style={{
-            height: "275px",
-            width: "2000px",
-            display: "flex",
-            gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
-            gap: "20px",
-            paddingBottom: "20px",
-          }}
-        >
-          <MemberBox img="../avatar.jpg"></MemberBox>
-          <MemberBox img="../avatar.jpg"></MemberBox>
-          <MemberBox img="../avatar.jpg"></MemberBox>
-        </div>
+        <MemberContainer>
+          {members.map((e) => (
+            <MemberBox>{e}</MemberBox>
+          ))}
+        </MemberContainer>
         <Line size="percantage" />
       </div>
       <div style={{ display: "flex", gap: "30px" }}>

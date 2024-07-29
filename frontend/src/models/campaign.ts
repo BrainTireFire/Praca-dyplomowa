@@ -2,5 +2,7 @@ type Campaign = {
   id: number;
   name: string;
   description: string;
-  player: string;
+  gameMaster: GameMaster;
+  members: Member[];
+  shops: Shop[];
 };

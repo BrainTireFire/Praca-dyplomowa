@@ -3,6 +3,9 @@
   "login.text": "Login",
   "main.title.text": "D&D beyond but better",
 
+  "campaigns.heading": "My campaigns",
+  "campaigns.header": "Campaigns",
+  "campaign.error.notFound": "Campaign not found",
   "main.sidebar.settings.text": "Settings",
   "main.sidebar.settings.theme.mode": "Theme mode",
 

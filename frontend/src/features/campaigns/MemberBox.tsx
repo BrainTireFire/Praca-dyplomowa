@@ -7,31 +7,31 @@ import styled, { css } from "styled-components";
 
 const BoxCustomStyles = css`
   display: grid;
-  grid-template-rows: 0.5fr 0.5fr 1.5fr 0.5fr;
-`;
-
-const StyledElementBox = styled.div`
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 15px;
+  justify-content: center;
   text-align: center;
 `;
 
-export default function MemberBox({ img }) {
+export default function MemberBox({ children }) {
+  const { id, character, level, xp, race, className, rest, img } = children;
   return (
-    <Box radius="tiny" customStyles={BoxCustomStyles} style={{ gap: "20px" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        <img
-          src={img}
-          alt="member"
-          style={{ width: "150px", height: "150px" }}
-        ></img>
-        <div>
-          <Heading as="h6">Member name</Heading>
-          <Heading as="h3">Character name</Heading>
-          <StyledElementBox>Level: 9</StyledElementBox>
-          <StyledElementBox>Race: Human</StyledElementBox>
-          <StyledElementBox>Class: Mage</StyledElementBox>
-        </div>
+    <Box customStyles={BoxCustomStyles}>
+      <img
+        src={img}
+        alt="member"
+        style={{ gridColumn: "1/2", maxWidth: "180px" }}
+      ></img>
+      <div style={{ gridColumn: "2/3" }}>
+        <Heading as="h6">{id}</Heading>
+        <Heading as="h3">{character}</Heading>
+        <p>Level: {level}</p>
+        <p>XP: {xp}</p>
+        <p>Race: {race}</p>
+        <p>Class: {className}</p>
+        <p>Rest: {rest ? "true" : "false"}</p>
       </div>
-      <div>
+      <div style={{ gridColumn: "1/3", gridRow: "2/3" }}>
         <ButtonGroup justify="center">
           <Button variation="primary" size="large">
             View
@@ -40,7 +40,7 @@ export default function MemberBox({ img }) {
             Edit
           </Button>
           <Button variation="primary" size="large">
-            Leave
+            Kick
           </Button>
         </ButtonGroup>
       </div>

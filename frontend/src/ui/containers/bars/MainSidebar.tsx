@@ -6,6 +6,8 @@ import { FaDice, FaRegAddressBook } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
 import { MdBackpack } from "react-icons/md";
 import Modal from "../Modal";
+import Button from "../../interactive/Button";
+import BatchRollModal from "../../../features/mainDashboard/sidebar/BatchRollModal";
 import SettingsSideBarModal from "../../../features/settings/SettingsSideBarModal";
 
 const NavList = styled.ul`
@@ -58,34 +60,41 @@ function MainSidebar() {
       <nav>
         <NavList>
           <li>
-            <StyledNavLink to="/">
+            <IconContainer>
               <FaRegAddressBook />
-            </StyledNavLink>
+            </IconContainer>
           </li>
           <li>
-            <StyledNavLink to="/">
+            <IconContainer>
               <PiSwordDuotone />
-            </StyledNavLink>
+            </IconContainer>
           </li>
           <li>
-            <StyledNavLink to="/">
+            <IconContainer>
               <PiClock />
-            </StyledNavLink>
+            </IconContainer>
           </li>
           <li>
-            <StyledNavLink to="/">
+            <IconContainer>
               <AiOutlineThunderbolt />
-            </StyledNavLink>
+            </IconContainer>
           </li>
           <li>
-            <StyledNavLink to="/">
+            <IconContainer>
               <MdBackpack />
-            </StyledNavLink>
+            </IconContainer>
           </li>
           <li>
-            <StyledNavLink to="/">
-              <FaDice />
-            </StyledNavLink>
+            <Modal>
+              <Modal.Open opens="BatchRollModal">
+                <IconContainer>
+                  <FaDice />
+                </IconContainer>
+              </Modal.Open>
+              <Modal.Window name="BatchRollModal">
+                <BatchRollModal />
+              </Modal.Window>
+            </Modal>
           </li>
         </NavList>
       </nav>

@@ -72,7 +72,7 @@ export default function CampaignInstance() {
   return (
     <>
       <Container>
-        <Heading as="h4">
+        <Heading as="h1">
           Campaign #{id} - {name}
         </Heading>
         <Line size="percantage" bold="large" />

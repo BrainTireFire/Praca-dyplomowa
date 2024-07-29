@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using pracadyplomowa.Authorization.AuthorizationRequirement;
+using pracadyplomowa.Const;
 
 namespace pracadyplomowa.Authorization.AuthorizationPolicyProviders
 {
 
     public class OwnershipPolicyProvider : IAuthorizationPolicyProvider
     {
-        const string POLICY_PREFIX = "Ownership";
         private DefaultAuthorizationPolicyProvider BackupPolicyProvider { get; }
 
         public OwnershipPolicyProvider(IOptions<AuthorizationOptions> options)
@@ -30,9 +30,9 @@ namespace pracadyplomowa.Authorization.AuthorizationPolicyProviders
         public Task<AuthorizationPolicy> GetPolicyAsync(string policyName)
         {
             
-            if (policyName.StartsWith(POLICY_PREFIX, StringComparison.OrdinalIgnoreCase))
+            if (policyName.StartsWith(ConstVariables.POLICY_PREFIX, StringComparison.OrdinalIgnoreCase))
             {
-                string parameterName = policyName.Substring(POLICY_PREFIX.Length);
+                string parameterName = policyName.Substring(ConstVariables.POLICY_PREFIX.Length);
                 var policy = new AuthorizationPolicyBuilder();
                 Console.WriteLine("Parameter name: " + parameterName);
                 policy.AddRequirements(new OwnershipRequirement(parameterName));

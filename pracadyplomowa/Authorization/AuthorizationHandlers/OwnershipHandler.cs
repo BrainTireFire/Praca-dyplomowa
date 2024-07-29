@@ -20,11 +20,10 @@ namespace pracadyplomowa.Authorization.AuthorizationHandlers
             int userId;
             foreach (Claim claim in context.User.Claims)
             {
-                if ("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier".Equals(claim.Type))
+                if (ClaimTypes.NameIdentifier.Equals(claim.Type))
                 {
                     userId = Int32.Parse(claim.Value);
-
-
+                    
                     foreach (var requirement in pendingRequirements)
                     {
                         if (requirement is OwnershipRequirement)

@@ -9,6 +9,12 @@ namespace pracadyplomowa.Models.Entities.Characters
 {
     public class Class : ObjectWithId
     {
+
+        public Class(string name)
+        {
+            Name = name;
+        }
+
         //Properties
         public string Name { get; set; } = null!;
         public string? MaximumPreparedSpellsFormula { get; set; }

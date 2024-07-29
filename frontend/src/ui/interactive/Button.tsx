@@ -3,6 +3,7 @@ import styled, { css } from "styled-components";
 type ButtonProps = {
   size?: "small" | "medium" | "large" | "verylarge";
   variation?: "primary" | "secondary" | "danger";
+  customStyles?: ReturnType<typeof css>;
 };
 
 const sizes = {
@@ -16,6 +17,11 @@ const sizes = {
   medium: css`
     font-size: 1.4rem;
     padding: 1.2rem 1.6rem;
+    font-weight: 500;
+  `,
+  likeInput: css`
+    font-size: 1.4rem;
+    padding: 0.8rem 1.2rem;
     font-weight: 500;
   `,
   large: css`
@@ -32,7 +38,7 @@ const sizes = {
 
 const variations = {
   primary: css`
-    color: var(--color-secondary-text);
+    color: var(--color-button-text);
     background-color: var(--color-button-primary);
 
     &:hover {
@@ -40,7 +46,7 @@ const variations = {
     }
   `,
   secondary: css`
-    color: var(--color-secondary-text);
+    color: var(--color-button-text);
     background: var(--color-button-secondary);
     border: 1px solid var(--color-button-secondary);
 
@@ -49,27 +55,31 @@ const variations = {
     }
   `,
   danger: css`
-    color: var(--color-red-100);
-    background-color: var(--color-red-700);
+    color: var(--color-button-text);
+    background-color: var(--color-button-danger);
 
     &:hover {
-      background-color: var(--color-red-800);
+      background-color: var(--color-button-hover-danger);
     }
   `,
 };
 
-export const Button = styled.button<ButtonProps>`
+const Button = styled.button<ButtonProps>`
   border: none;
   border-radius: var(--border-radius-sm);
   box-shadow: var(--shadow-sm);
 
   ${(props) => sizes[props.size || "medium"]}
   ${(props) => variations[props.variation || "primary"]}
+  /* Custom styles */
+
+  ${(props) => props.customStyles}
 `;
 
 Button.defaultProps = {
   variation: "primary",
   size: "medium",
+  customStyles: css``,
 };
 
 export default Button;

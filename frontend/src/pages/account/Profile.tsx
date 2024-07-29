@@ -5,6 +5,7 @@ import Line from "../../ui/separators/Line";
 import ChangeUserDataForm from "../../features/account/profile/ChangeUserData";
 import FormContainer from "../../ui/forms/FormContainer";
 import ProfileDashboard from "../../features/account/profile/ProfileDashboard";
+import { useTranslation } from "react-i18next";
 
 const ProfileLayout = styled.main`
   display: grid;
@@ -16,10 +17,12 @@ const ProfileLayout = styled.main`
 `;
 
 export default function Profile() {
+  const { t } = useTranslation();
+
   return (
     <ProfileLayout>
       <div>
-        <Heading as="h4">My profile</Heading>
+        <Heading as="h4">{t("account.profile.myprofile.header")}</Heading>
         <Line size="large" />
       </div>
       <ProfileDashboard />

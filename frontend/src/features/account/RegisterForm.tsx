@@ -4,59 +4,115 @@ import Heading from "../../ui/text/Heading";
 import FormRowVertical from "../../ui/forms/FormRowVertical";
 import Input from "../../ui/forms/Input";
 import Button from "../../ui/interactive/Button";
+import { useForm } from "react-hook-form";
+import SpinnerMini from "../../ui/interactive/SpinnerMini";
+import { useSignup } from "./useSignup";
+import { useTranslation } from "react-i18next";
+
+type RegisterFormProps = {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword?: string;
+};
 
 export default function RegisterForm() {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const { t } = useTranslation();
+  const { signup, isLoading } = useSignup();
+  const { register, formState, getValues, handleSubmit, reset } =
+    useForm<RegisterFormProps>();
+  const { errors } = formState;
 
-  function handleSubmit() {}
+  function onSubmit({ username, email, password }: RegisterFormProps) {
+    signup(
+      {
+        username,
+        email,
+        password,
+      },
+      {
+        onSettled: () => reset(),
+      }
+    );
+  }
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <Heading as="h3">Sign in</Heading>
-      <FormRowVertical label="Username">
+    <Form onSubmit={handleSubmit(onSubmit)}>
+      <Heading as="h3">{t("account.forms.register.header")}</Heading>
+      <FormRowVertical
+        label={t("account.forms.login.username.input.label")}
+        error={errors?.username?.message}
+      >
         <Input
           type="text"
           id="username"
-          placeholder="Enter your username"
-          autoComplete="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          placeholder={t("account.forms.login.username.input.placeholder")}
+          {...register("username", {
+            required: t("account.form.validation.error.required"),
+          })}
+          disabled={isLoading}
         />
       </FormRowVertical>
-      <FormRowVertical label="Email address">
+      <FormRowVertical
+        label={t("account.forms.login.email.input.label")}
+        error={errors?.email?.message}
+      >
         <Input
           type="email"
           id="email"
-          placeholder="Enter your username or email address"
-          autoComplete="username"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          disabled={isLoading}
+          placeholder={t("account.forms.login.email.input.placeholder")}
+          {...register("email", {
+            required: t("account.form.validation.error.required"),
+            pattern: {
+              value: /\S+@\S+\.\S+/,
+              message: t("account.form.validation.error.email.valid"),
+            },
+          })}
         />
       </FormRowVertical>
-      <FormRowVertical label="Password">
+      <FormRowVertical
+        label={t("account.forms.login.password.input.label")}
+        error={errors?.password?.message}
+      >
         <Input
           type="password"
           id="password"
-          placeholder="Enter your password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          placeholder={t("account.forms.login.password.input.placeholder")}
+          disabled={isLoading}
+          {...register("password", {
+            required: t("account.form.validation.error.required"),
+            minLength: {
+              value: 8,
+              message: t(
+                "account.form.validation.error.password.characters.long"
+              ),
+            },
+          })}
         />
       </FormRowVertical>
-      <FormRowVertical label="Confirm Password">
+      <FormRowVertical
+        label={t("account.forms.login.confirm.password.input.label")}
+        error={errors?.confirmPassword?.message}
+      >
         <Input
           type="password"
           id="confirmPassword"
-          placeholder="Enter your confirm password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
+          placeholder={t(
+            "account.forms.login.confirm.password.input.placeholder"
+          )}
+          disabled={isLoading}
+          {...register("confirmPassword", {
+            required: t("account.form.validation.error.required"),
+            validate: (value) =>
+              value === getValues().password ||
+              t("account.form.validation.error.password.match"),
+          })}
         />
       </FormRowVertical>
       <FormRowVertical>
         <Button size="large" variation="primary">
-          Sign up
+          {!isLoading ? t("account.forms.register.button") : <SpinnerMini />}
         </Button>
       </FormRowVertical>
     </Form>

@@ -8,6 +8,6 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class DamageEffectBlueprint : ValueEffectBlueprint
     {
-        public DamageEffectType DamageEffectType{ get; set;} = null!;
+        public DamageEffectType DamageEffectType{ get; set;} = new DamageEffectType();
     }
 }

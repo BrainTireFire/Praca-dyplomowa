@@ -18,7 +18,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         public int? R_ResourceGrantedToItemId { get; set; }
 
         public virtual ImmaterialResourceBlueprint R_Blueprint { get; set; } = null!;
-        public virtual int BlueprintId { get; set; }
+        public virtual int R_BlueprintId { get; set; }
 
         public virtual ICollection<ClassLevel> R_GrantedByClassLevels { get; set; } = [];
 

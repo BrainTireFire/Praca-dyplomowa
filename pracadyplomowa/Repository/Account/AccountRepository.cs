@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Collections.ObjectModel;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +25,16 @@ public class AccountRepository : IAccountRepository
     public async Task<User> GetUserByEmail(string emailAddress)
     {
         return await _userManager.Users.SingleOrDefaultAsync(x => x.Email == emailAddress);
+    }
+    
+    public async Task<IList<string>> GetUserRoles(User user)
+    {
+        return await _userManager.GetRolesAsync(user);
+    }
+    
+    public async Task<User> GetUserById(int userId)
+    {
+        return await _userManager.Users.SingleOrDefaultAsync(x => x.Id == userId);
     }
 
     public async Task<User> GetUserByUsername(string username)

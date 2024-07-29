@@ -12,9 +12,20 @@ const StyledAppLayout = styled.div`
 `;
 
 const Main = styled.main`
-  padding-top: 4rem;
+  padding-top: 0rem;
   /* padding: 4rem 4.8rem 6.4rem; */
-  overflow: scroll;
+  overflow: auto;
+
+  /* Hide scrollbar for WebKit browsers (Chrome, Safari) */
+  /* &::-webkit-scrollbar {
+    display: none;
+  } */
+
+  /* Hide scrollbar for Firefox */
+  //scrollbar-width: none; /* Firefox */
+
+  /* Hide scrollbar for Internet Explorer, Edge */
+  //-ms-overflow-style: none; /* Internet Explorer and Edge */
 `;
 
 const Container = styled.div`

@@ -8,6 +8,6 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class AbilityEffectBlueprint : ValueEffectBlueprint
     {
-        public AbilityEffectType AbilityEffectType{ get; set; } = null!;
+        public AbilityEffectType AbilityEffectType{ get; set; } = new AbilityEffectType();
     }
 }

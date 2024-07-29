@@ -1,10 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
+using System.Linq.Expressions;
+using Microsoft.OpenApi.Expressions;
 using pracadyplomowa.Models.Entities.Campaign;
 using pracadyplomowa.Models.Entities.Items;
 using pracadyplomowa.Models.Entities.Powers;
+using pracadyplomowa.Models.Entities.Powers.EffectBlueprints;
+using pracadyplomowa.Models.Entities.Powers.EffectInstances;
+using pracadyplomowa.Models.Enums;
+using pracadyplomowa.Models.Enums.EffectOptions;
 
 namespace pracadyplomowa.Models.Entities.Characters
 {
@@ -13,9 +16,12 @@ namespace pracadyplomowa.Models.Entities.Characters
 
         //Properties
         public string Name { get; set; } = null!;
-        public string Description { get; set; } = null!;
+        public string? Description { get; set; }
         public int Hitpoints { get; set; }
         public DiceSet UsedHitDice { get; set; } = new DiceSet();
+
+        public int SucceededDeathSavingThrows { get; set; }
+        public int FailedDeathSavingThrows { get; set; }
 
         //Relationship
         public virtual Race R_CharacterBelongsToRace { get; set; } = null!;
@@ -23,12 +29,12 @@ namespace pracadyplomowa.Models.Entities.Characters
         public virtual EffectGroup? R_ConcentratesOn { get; set; }
         public int? R_ConcentratesOnId { get; set; }
         public virtual ICollection<ParticipanceData> R_CharactersParticipatesInEncounters { get; set; } = [];
-        public virtual Backpack R_CharacterHasBackpack { get; set; } = null!;
+        public virtual Backpack R_CharacterHasBackpack { get; set; } = new Backpack();
         public int R_CharacterHasBackpackId { get; set; }
 
         public virtual ICollection<EquipData> R_EquippedItems { get; set; } = [];
         public virtual Campaign.Campaign? R_Campaign { get; set; }
-        public int R_CampaignId { get; set; }
+        public int? R_CampaignId { get; set; }
         public virtual ICollection<ClassLevel> R_CharacterHasLevelsInClass { get; set; } = [];
         public virtual ICollection<Aura> R_AuraCenteredAtCharacter { get; set; } = [];
         public virtual ICollection<EffectGroup> R_AffectedBy { get; set; } = [];
@@ -37,5 +43,6 @@ namespace pracadyplomowa.Models.Entities.Characters
         public virtual Power? R_SpawnedByPower { get; set; }
         public int? R_SpawnedByPowerId { get; set; }
         public virtual ICollection<ImmaterialResourceInstance> R_ImmaterialResourceInstances { get; set; } = [];
+
     }
 }

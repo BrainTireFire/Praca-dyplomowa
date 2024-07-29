@@ -11,10 +11,34 @@ const Menu = styled.div`
 `;
 
 const DropdownLink = styled(NavLink)`
-  color: var(--color-grey-600);
+  color: var(--color-secondary-text);
   padding: 12px 16px;
   text-decoration: none;
   display: block;
+
+  &:hover,
+  &:active,
+  &.active:link,
+  &.active:visited {
+    color: var(--color-header-text);
+    //background-color: var(--color-header-text);
+    border-radius: var(--border-radius-sm);
+  }
+
+  & svg {
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+`;
+
+const DropdownButton = styled.button`
+  background: none;
+  border: none;
+  color: var(--color-secondary-text);
+  cursor: pointer;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: inline-block;
 
   &:hover,
   &:active,
@@ -48,5 +72,6 @@ function DropdownNav({ children }: { children: React.ReactNode }) {
 
 DropdownNav.Menu = Menu;
 DropdownNav.Link = DropdownLink;
+DropdownNav.Button = DropdownButton;
 
 export default DropdownNav;

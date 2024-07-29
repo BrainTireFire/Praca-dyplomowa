@@ -8,6 +8,6 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class HitpointEffectBlueprint : ValueEffectBlueprint
     {
-        public HitpointEffectType HitpointEffectType{ get; set; } = null!;
+        public HitpointEffectType HitpointEffectType{ get; set; } = new HitpointEffectType();
     }
 }

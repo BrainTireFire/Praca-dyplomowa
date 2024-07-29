@@ -4,6 +4,7 @@ import UserChangesPasswordForm from "./UserChangesPasswordForm";
 import UserChangeUsernameForm from "./UserChangeUsernameForm";
 import Heading from "../../../ui/text/Heading";
 import Button from "../../../ui/interactive/Button";
+import { useTranslation } from "react-i18next";
 
 const StyledChangeUserData = styled.div`
   display: grid;
@@ -14,14 +15,16 @@ const StyledChangeUserData = styled.div`
 `;
 
 export default function ChangeUserData() {
+  const { t } = useTranslation();
+
   return (
     <StyledChangeUserData>
       <UserChangeUsernameForm />
       <UserChangesPasswordForm />
       <UserChangeEmailForm />
-      <Heading>Permanently remove the account and all data</Heading>
-      <Button size="medium" variation="primary">
-        Remove account
+      <Heading>{t("account.profile.change.user.data")}</Heading>
+      <Button size="medium" variation="danger">
+        {t("account.profile.remove.account")}
       </Button>
     </StyledChangeUserData>
   );

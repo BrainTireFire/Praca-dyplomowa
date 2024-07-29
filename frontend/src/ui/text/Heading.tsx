@@ -1,7 +1,7 @@
 import styled, { css } from "styled-components";
 
 type HeadingProps = {
-  as: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "h8" | "h12";
+  as: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "h7" | "h8";
   align?: "left" | "center" | "right";
   color?: "headerColor" | "textColor";
 };
@@ -40,44 +40,43 @@ const Heading = styled.h1<HeadingProps>`
     css`
       font-size: 2rem;
       font-weight: 600;
-      margin-bottom: 7px;
     `}
 
   ${(props) =>
     props.as === "h3" &&
     css`
-      font-size: 2rem;
+      font-size: 1.5rem;
       font-weight: 500;
     `}
     ${(props) =>
     props.as === "h4" &&
     css`
-      font-size: 3rem;
-      font-weight: 600;
+      font-size: 1.4rem;
+      font-weight: 450;
     `}
     ${(props) =>
     props.as === "h5" &&
     css`
-      font-size: 3rem;
-      font-weight: 700;
+      font-size: 1.3rem;
+      font-weight: 400;
     `}
     ${(props) =>
     props.as === "h6" &&
     css`
-      font-size: 3rem;
-      font-weight: 800;
+      font-size: 1.2rem;
+      font-weight: 300;
+    `}
+    ${(props) =>
+    props.as === "h7" &&
+    css`
+      font-size: 1.1rem;
+      font-weight: 300;
     `}
     ${(props) =>
     props.as === "h8" &&
     css`
-      font-size: 6rem;
-      font-weight: 1800;
-    `}
-    ${(props) =>
-    props.as === "h12" &&
-    css`
-      font-size: 10rem;
-      font-weight: 2000;
+      font-size: 1rem;
+      font-weight: 200;
     `}
 
   ${(props) => aligns[props.align || "center"]}

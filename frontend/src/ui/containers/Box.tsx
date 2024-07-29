@@ -33,27 +33,27 @@ const borderRadius = {
 
 const variations = {
   none: css`
-    padding: 2rem 3rem;
+    padding: 0.5rem 1rem;
     width: auto;
     height: auto;
   `,
   squaredTiny: css`
-    padding: 4rem 6rem;
+    padding: 1rem 2rem;
     width: 200px;
     height: 200px;
   `,
   squaredSmall: css`
-    padding: 4rem 6rem;
+    padding: 1rem 2rem;
     width: 300px;
     height: 300px;
   `,
   squaredMedium: css`
-    padding: 4rem 6rem;
+    padding: 1rem 2rem;
     width: 400px;
     height: 400px;
   `,
   squaredLarge: css`
-    padding: 4rem 6rem;
+    padding: 1rem 2rem;
     width: 590px;
     height: 590px;
   `,
@@ -62,22 +62,22 @@ const variations = {
     height: 35px;
   `,
   rectangleTiny: css`
-    padding: 4rem 6rem;
+    padding: 1rem 2rem;
     width: 200px;
     height: 100px;
   `,
   rectangleSmall: css`
-    padding: 4rem 6rem;
+    padding: 1rem 2rem;
     width: 300px;
     height: 150px;
   `,
   rectangleMedium: css`
-    padding: 4rem 6rem;
+    padding: 1rem 2rem;
     width: 400px;
     height: 200px;
   `,
   rectangleLarge: css`
-    padding: 4rem 6rem;
+    padding: 1rem 2rem;
     width: 590px;
     height: 295px;
   `,

@@ -1,0 +1,81 @@
+{
+  "signup.text": "S'inscrire",
+  "login.text": "Se connecter",
+  "main.title.text": "D&D au-delà mais mieux",
+
+  "main.sidebar.settings.text": "Paramètres",
+  "main.sidebar.settings.theme.mode": "Mode de thème",
+
+  "main.navbar.link.theme.mode": "Style de l'application",
+  "main.navbar.link.my.campaigns": "Mes campagnes",
+  "main.navbar.link.my.characters": "Mes personnages",
+  "main.navbar.link.homebrew": "Fait maison",
+  "main.navbar.link.language": "Langue",
+  "main.navbar.link.concact": "Contact",
+  "main.navbar.link.profile": "Profil",
+  "main.navbar.link.signout": "Se déconnecter",
+  "main.navbar.link.english": "English",
+  "main.navbar.link.german": "Deutsch",
+  "main.navbar.link.spanish": "Español",
+  "main.navbar.link.france": "Français",
+  "main.navbar.link.japan": "日本語",
+
+  "campaigns.create.text": "Créer une campagne",
+  "campaignInstance.giveXP": "Donner XP",
+  "campaignInstance.shortRest": "Repos court",
+  "campaignInstance.longRest": "Repos long",
+  "campaignInstance.session": "Démarrer/ouvrir une session virtuelle",
+  "campaignInstance.shops": "Boutiques",
+  "campaignInstance.createEncounter": "Créer une rencontre",
+  "campaignInstance.remove": "Supprimer la campagne",
+
+  "homepage.play.now.button": "Jouer maintenant!",
+  "homepage.developers": "Les Développeurs",
+
+  "account.profile.change.user.data": "Supprimer définitivement le compte et toutes les données",
+  "account.profile.change.user.email": "Changer l'adresse e-mail",
+  "account.profile.change.user.password": "Changer le mot de passe",
+  "account.profile.change.user.username": "Changer le nom d'utilisateur",
+  "account.profile.remove.account": "Supprimer le compte",
+
+  "account.profile.statistics.header": "Statistiques",
+  "account.profile.myprofile.header": "Mon profil",
+  "account.profile.statistics.games.played": "Parties jouées",
+  "account.profile.statistics.games.won": "Parties gagnées",
+  "account.profile.statistics.account.created": "Compte créé",
+
+  "account.forms.login.header": "Se connecter",
+  "account.forms.login.button": "Se connecter",
+  "account.forms.login.forgot.password": "Mot de passe oublié?",
+  "account.login.new.around.here": "Nouveau ici?",
+
+  "account.forms.login.username.input.label": "Nom d'utilisateur",
+  "account.forms.login.username.input.placeholder": "Entrez votre nom d'utilisateur",
+  "account.forms.login.password.input.label": "Mot de passe",
+  "account.forms.login.password.input.placeholder": "Entrez votre mot de passe",
+  "account.forms.login.confirm.password.input.label": "Confirmer le mot de passe",
+  "account.forms.login.confirm.password.input.placeholder": "Entrez votre mot de passe à nouveau",
+  "account.forms.login.email.input.label": "Adresse e-mail",
+  "account.forms.login.email.input.placeholder": "Entrez votre adresse e-mail",
+  "account.forms.login.confirm.email.input.placeholder": "Entrez à nouveau votre adresse e-mail",
+
+  "account.forgot.password.link.did.you.recall": "Vous vous en souvenez?",
+  "account.forgot.password.link.back.to.login.page": "Retour à la connexion",
+
+  "account.form.validation.error.required": "Ce champ est obligatoire",
+  "account.form.validation.error.password.characters.long": "Le mot de passe doit contenir au moins 8 caractères",
+  "account.form.validation.error.password.match": "Les mots de passe doivent correspondre",
+  "account.form.validation.error.email.valid": "Veuillez fournir une adresse e-mail valide",
+
+  "account.forms.register.header": "S'inscrire",
+  "account.forms.register.button": "S'inscrire",
+  "account.forms.register.forgot.password": "Mot de passe oublié?",
+  "account.forms.register.already.have.an.account": "Vous avez déjà un compte?",
+  "account.forms.register.login.button": "Se connecter",
+
+  "account.forms.forgot.password.header": "Récupération de mot de passe",
+  "account.forms.forgot.password.button": "Envoyer le lien de récupération de mot de passe",
+
+  "account.forms.password.change.header": "Récupération de mot de passe",
+  "account.forms.password.change.button": "Réinitialiser le mot de passe"
+}

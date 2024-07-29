@@ -8,6 +8,6 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class ResistanceEffectBlueprint : EffectBlueprint
     {
-        public ResistanceEffectType ResistanceEffectType{ get; set;} = null!;
+        public ResistanceEffectType ResistanceEffectType{ get; set;} = new ResistanceEffectType();
     }
 }

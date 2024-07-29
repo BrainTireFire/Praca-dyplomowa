@@ -8,6 +8,6 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class SizeEffectBlueprint : EffectBlueprint
     {
-        public SizeEffectType SizeEffectType{ get; set; } = null!;
+        public SizeEffectType SizeEffectType{ get; set; } = new SizeEffectType();
     }
 }

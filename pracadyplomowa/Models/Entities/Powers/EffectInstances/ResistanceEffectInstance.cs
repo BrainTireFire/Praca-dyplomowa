@@ -4,5 +4,5 @@ namespace pracadyplomowa.Models.Entities.Powers;
 
 public class ResistanceEffectInstance : EffectInstance
 {
-    public ResistanceEffectType ResistanceEffectType { get; set; } = null!;
+    public ResistanceEffectType ResistanceEffectType { get; set; } = new ResistanceEffectType();
 }

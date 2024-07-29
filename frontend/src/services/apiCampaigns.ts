@@ -15,14 +15,14 @@ export async function getCampaigns(): Promise<Campaign[]> {
 }
 
 export async function getCampaign(campaignId: string): Promise<Campaign> {
-  const response = await fetch(
-    `${BASE_URL_JSON_SERVER}/campaigns/${campaignId}`
+  const options: RequestInit = {
+    method: "GET",
+  };
+
+  const data = await customFetchJSON(
+    `${BASE_URL_JSON_SERVER}/campaigns/${campaignId}`,
+    options
   );
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! Status: ${response.status}`);
-  }
-
-  const campaign: Campaign = await response.json();
-  return campaign;
+  return data;
 }

@@ -1,17 +1,28 @@
+import { BASE_URL, BASE_URL_JSON_SERVER } from "./constAPI";
+import { customFetchJSON } from "./customFetchJSON";
+
 export async function getDice(): Promise<Dice[]> {
-  const response = await fetch("http://localhost:3000/dice");
+  const options: RequestInit = {
+    method: "GET",
+  };
 
-  if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+  const data: Dice[] = await customFetchJSON(
+    `${BASE_URL_JSON_SERVER}/dice`,
+    options
+  );
 
-  const data: Dice[] = await response.json();
   return data;
 }
 
 export async function getDiceById(diceId: string): Promise<Dice> {
-  const response = await fetch(`http://localhost:3000/dice/${diceId}`);
+  const options: RequestInit = {
+    method: "GET",
+  };
 
-  if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+  const data: Dice = await customFetchJSON(
+    `${BASE_URL_JSON_SERVER}/dice/${diceId}`,
+    options
+  );
 
-  const data: Dice = await response.json();
   return data;
 }

@@ -9,8 +9,9 @@ using pracadyplomowa.Models.Enums.EffectOptions;
 namespace pracadyplomowa.Models.ComplexTypes.Effects
 {
     [ComplexType]
-    public class ActionEffectType
+    public class ActionEffectType(ActionEffect actionEffect)
     {
-        public ActionEffect ActionEffect { get; set; }
+        private readonly ActionEffect? _ActionEffect = actionEffect;
+        public ActionEffect? ActionEffect { get => _ActionEffect != null ? (ActionEffect)_ActionEffect : throw new ArgumentNullException(); }
     }
 }

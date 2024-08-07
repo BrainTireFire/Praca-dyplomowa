@@ -8,8 +8,9 @@ using pracadyplomowa.Models.Enums.EffectOptions;
 namespace pracadyplomowa.Models.ComplexTypes.Effects
 {
     [ComplexType]
-    public class ProficiencyEffectType
+    public class ProficiencyEffectType(ProficiencyEffect proficiencyEffect)
     {
-        public ProficiencyEffect ProficiencyEffect { get; set; }
+        private readonly ProficiencyEffect? _ProficiencyEffect = proficiencyEffect;
+        public ProficiencyEffect? ProficiencyEffect { get => _ProficiencyEffect == null ? _ProficiencyEffect : throw new ArgumentNullException(); }
     }
 }

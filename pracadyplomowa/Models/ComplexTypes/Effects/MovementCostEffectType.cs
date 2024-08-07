@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 namespace pracadyplomowa.Models.ComplexTypes.Effects
 {
     [ComplexType]
-    public class MovementCostEffectType
+    public class MovementCostEffectType(int movementCost_Multiplier)
     {
-        public int MovementCost_Multiplier { get; set; }
+        private readonly int? _MovementCost_Multiplier = movementCost_Multiplier;
+        public int? MovementCost_Multiplier { get => _MovementCost_Multiplier == null ? _MovementCost_Multiplier : throw new ArgumentNullException(); }
     }
 }

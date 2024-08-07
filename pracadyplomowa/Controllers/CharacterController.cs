@@ -60,40 +60,29 @@ namespace pracadyplomowa.Controllers
             };
             character.R_CharacterHasLevelsInClass.Add(classLevel);
 
-            Console.WriteLine("test2");
             AbilityEffectInstance strength = new();
-            Console.WriteLine("test2a");
-            strength.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
-            Console.WriteLine("test2b");
-            strength.AbilityEffectType.AbilityEffect_Ability = Ability.STRENGTH;
-            Console.WriteLine("test2c");
+            strength.AbilityEffectType = new AbilityEffectType(AbilityEffect.Bonus, Ability.STRENGTH);
             strength.DiceSet.flat = characterDto.Strength;
             
-            Console.WriteLine("test3");
             AbilityEffectInstance dexterity = new();
-            strength.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
-            strength.AbilityEffectType.AbilityEffect_Ability = Ability.DEXTERITY;
-            strength.DiceSet.flat = characterDto.Dexterity;
+            dexterity.AbilityEffectType = new AbilityEffectType(AbilityEffect.Bonus, Ability.DEXTERITY);
+            dexterity.DiceSet.flat = characterDto.Dexterity;
             
             AbilityEffectInstance constitution = new();
-            strength.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
-            strength.AbilityEffectType.AbilityEffect_Ability = Ability.CONSTITUTION;
-            strength.DiceSet.flat = characterDto.Constitution;
+            constitution.AbilityEffectType = new AbilityEffectType(AbilityEffect.Bonus, Ability.CONSTITUTION);
+            constitution.DiceSet.flat = characterDto.Constitution;
             
             AbilityEffectInstance intelligence = new();
-            strength.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
-            strength.AbilityEffectType.AbilityEffect_Ability = Ability.INTELLIGENCE;
-            strength.DiceSet.flat = characterDto.Intelligence;
+            intelligence.AbilityEffectType = new AbilityEffectType(AbilityEffect.Bonus, Ability.INTELLIGENCE);
+            intelligence.DiceSet.flat = characterDto.Intelligence;
             
             AbilityEffectInstance wisdom = new();
-            strength.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
-            strength.AbilityEffectType.AbilityEffect_Ability = Ability.WISDOM;
-            strength.DiceSet.flat = characterDto.Wisdom;
+            wisdom.AbilityEffectType = new AbilityEffectType(AbilityEffect.Bonus, Ability.WISDOM);
+            wisdom.DiceSet.flat = characterDto.Wisdom;
             
             AbilityEffectInstance charisma = new();
-            strength.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
-            strength.AbilityEffectType.AbilityEffect_Ability = Ability.CHARISMA;
-            strength.DiceSet.flat = characterDto.Charisma;
+            charisma.AbilityEffectType = new AbilityEffectType(AbilityEffect.Bonus, Ability.CHARISMA);
+            charisma.DiceSet.flat = characterDto.Charisma;
 
             EffectGroup basicStats = new()
             {

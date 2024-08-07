@@ -9,8 +9,9 @@ using pracadyplomowa.Models.Enums.EffectOptions;
 namespace pracadyplomowa.Models.ComplexTypes.Effects
 {
     [ComplexType]
-    public class MovementEffectType
+    public class MovementEffectType(MovementEffect movementEffect)
     {
-        public MovementEffect MovementEffect { get; set; }
+        private readonly MovementEffect? _MovementEffect = movementEffect;
+        public MovementEffect? MovementEffect { get => _MovementEffect == null ? _MovementEffect : throw new ArgumentNullException(); }
     }
 }

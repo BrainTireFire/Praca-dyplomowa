@@ -9,8 +9,9 @@ using pracadyplomowa.Models.Enums.EffectOptions;
 namespace pracadyplomowa.Models.ComplexTypes.Effects
 {
     [ComplexType]
-    public class HitpointEffectType
+    public class HitpointEffectType(HitpointEffect hitpointEffect)
     {
-        public HitpointEffect HitpointEffect { get; set; }
+        private readonly HitpointEffect? _HitpointEffect = hitpointEffect;
+        public HitpointEffect? HitpointEffect { get => _HitpointEffect == null ? _HitpointEffect : throw new ArgumentNullException(); }
     }
 }

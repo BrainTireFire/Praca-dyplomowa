@@ -8,8 +8,10 @@ using pracadyplomowa.Models.Enums;
 namespace pracadyplomowa.Models.ComplexTypes.Effects
 {
     [ComplexType]
-    public class StatusEffectType
+    public class StatusEffectType(Condition statusEffect)
     {
-        public Condition StatusEffect { get; set; }
+        private readonly Condition? _StatusEffect = statusEffect;
+
+        public Condition? StatusEffect { get => _StatusEffect == null ? _StatusEffect : throw new ArgumentNullException(); }
     }
 }

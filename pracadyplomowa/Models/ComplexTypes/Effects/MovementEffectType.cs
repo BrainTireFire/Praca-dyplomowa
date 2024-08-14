@@ -1,3 +1,5 @@
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,6 +14,6 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     public class MovementEffectType(MovementEffect movementEffect)
     {
         private readonly MovementEffect? _MovementEffect = movementEffect;
-        public MovementEffect? MovementEffect { get => _MovementEffect == null ? _MovementEffect : throw new ArgumentNullException(); }
+        public MovementEffect MovementEffect => (MovementEffect)_MovementEffect;
     }
 }

@@ -1,3 +1,5 @@
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,6 +14,8 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     public class ActionEffectType(ActionEffect actionEffect)
     {
         private readonly ActionEffect? _ActionEffect = actionEffect;
-        public ActionEffect? ActionEffect { get => _ActionEffect != null ? (ActionEffect)_ActionEffect : throw new ArgumentNullException(); }
+        // private ActionEffect? ActionEffect_prop {get {return _ActionEffect;}}
+        // [NotMapped]
+        public ActionEffect ActionEffect => (ActionEffect)_ActionEffect;
     }
 }

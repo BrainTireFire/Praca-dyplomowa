@@ -1,3 +1,5 @@
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -14,8 +16,11 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
         private readonly AttackRollEffect_Range? _AttackRollEffect_Range = attackRollEffect_Range;
         private readonly AttackRollEffect_Source? _AttackRollEffect_Source = attackRollEffect_Source;
         private readonly AttackRollEffect_Type? _AttackRollEffect_Type = attackRollEffect_Type;
-        public AttackRollEffect_Range? AttackRollEffect_Range { get => _AttackRollEffect_Range == null ? _AttackRollEffect_Range : throw new ArgumentNullException(); }
-        public AttackRollEffect_Source? AttackRollEffect_Source { get => _AttackRollEffect_Source == null ? _AttackRollEffect_Source : throw new ArgumentNullException(); }
-        public AttackRollEffect_Type? AttackRollEffect_Type { get => _AttackRollEffect_Type == null ? _AttackRollEffect_Type : throw new ArgumentNullException(); }
+        // [NotMapped]
+        public AttackRollEffect_Range AttackRollEffect_Range => (AttackRollEffect_Range)_AttackRollEffect_Range;
+        // [NotMapped]
+        public AttackRollEffect_Source AttackRollEffect_Source => (AttackRollEffect_Source)_AttackRollEffect_Source;
+        // [NotMapped]
+        public AttackRollEffect_Type AttackRollEffect_Type => (AttackRollEffect_Type)_AttackRollEffect_Type; 
     }
 }

@@ -1,3 +1,5 @@
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -11,6 +13,6 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     public class ProficiencyEffectType(ProficiencyEffect proficiencyEffect)
     {
         private readonly ProficiencyEffect? _ProficiencyEffect = proficiencyEffect;
-        public ProficiencyEffect? ProficiencyEffect { get => _ProficiencyEffect == null ? _ProficiencyEffect : throw new ArgumentNullException(); }
+        public ProficiencyEffect ProficiencyEffect => (ProficiencyEffect)_ProficiencyEffect;
     }
 }

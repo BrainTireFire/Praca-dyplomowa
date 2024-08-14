@@ -1,3 +1,5 @@
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -14,7 +16,7 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     {
         private readonly DamageEffect? _DamageEffect = damageEffect;
         private readonly DamageType? _DamageEffect_DamageType = damageEffect_DamageType;
-        public DamageEffect? DamageEffect  { get => _DamageEffect == null ? _DamageEffect : throw new ArgumentNullException(); }
-        public DamageType? DamageEffect_DamageType { get => _DamageEffect_DamageType == null ? _DamageEffect_DamageType : throw new ArgumentNullException(); }
+        public DamageEffect DamageEffect => (DamageEffect)_DamageEffect;
+        public DamageType DamageEffect_DamageType => (DamageType)_DamageEffect_DamageType;
     }
 }

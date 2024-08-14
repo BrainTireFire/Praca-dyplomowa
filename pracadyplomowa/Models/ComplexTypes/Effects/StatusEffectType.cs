@@ -1,3 +1,5 @@
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,6 +14,6 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     {
         private readonly Condition? _StatusEffect = statusEffect;
 
-        public Condition? StatusEffect { get => _StatusEffect == null ? _StatusEffect : throw new ArgumentNullException(); }
+        public Condition? StatusEffect =>  (Condition) _StatusEffect;
     }
 }

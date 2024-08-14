@@ -1,3 +1,5 @@
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,6 +14,8 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     public class AttackPerAttackActionEffectType(AttackPerActionEffect attackPerActionEffect)
     {
         private readonly AttackPerActionEffect? _AttackPerActionEffect = attackPerActionEffect;
-        public AttackPerActionEffect? AttackPerActionEffect { get => _AttackPerActionEffect == null ? _AttackPerActionEffect : throw new ArgumentNullException(); }
+        // private AttackPerActionEffect? AttackPerActionEffect_prop {get {return _AttackPerActionEffect;}}
+        // [NotMapped]
+        public AttackPerActionEffect AttackPerActionEffect => (AttackPerActionEffect)_AttackPerActionEffect;
     }
 }

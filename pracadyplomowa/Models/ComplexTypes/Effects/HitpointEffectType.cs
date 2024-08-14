@@ -1,3 +1,5 @@
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,6 +14,6 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     public class HitpointEffectType(HitpointEffect hitpointEffect)
     {
         private readonly HitpointEffect? _HitpointEffect = hitpointEffect;
-        public HitpointEffect? HitpointEffect { get => _HitpointEffect == null ? _HitpointEffect : throw new ArgumentNullException(); }
+        public HitpointEffect HitpointEffect => (HitpointEffect)_HitpointEffect;
     }
 }

@@ -1,3 +1,5 @@
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -15,8 +17,12 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
         private readonly AbilityEffect? _AbilityEffect = abilityEffect;
         private readonly Ability? _AbilityEffect_Ability = abilityEffect_Ability;
 
-        public AbilityEffect? AbilityEffect { get => _AbilityEffect != null ? (AbilityEffect)_AbilityEffect : throw new ArgumentNullException();}
-        public Ability? AbilityEffect_Ability { get => _AbilityEffect_Ability != null ? (Ability)_AbilityEffect_Ability : throw new ArgumentNullException(); }
+        // private AbilityEffect? AbilityEffect_prop { get {return _AbilityEffect;} }
+        // private Ability? AbilityEffect_Ability_prop { get {return AbilityEffect_Ability;} }
 
+        // [NotMapped]
+        public AbilityEffect AbilityEffect => (AbilityEffect)_AbilityEffect;
+        // [NotMapped]
+        public Ability AbilityEffect_Ability => (Ability)_AbilityEffect_Ability;
     }
 }

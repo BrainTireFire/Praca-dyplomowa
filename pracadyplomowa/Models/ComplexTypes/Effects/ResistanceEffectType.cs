@@ -1,3 +1,5 @@
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -13,7 +15,7 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     {
         private readonly ResistanceEffect? _ResistanceEffect = resistanceEffect;
         private readonly DamageType? _ResistanceEffect_DamageType = resistanceEffect_DamageType;
-        public ResistanceEffect? ResistanceEffect { get => _ResistanceEffect == null ? _ResistanceEffect : throw new ArgumentNullException(); }
-        public DamageType? ResistanceEffect_DamageType { get => _ResistanceEffect_DamageType == null ? _ResistanceEffect_DamageType : throw new ArgumentNullException(); }
+        public ResistanceEffect ResistanceEffect => (ResistanceEffect)_ResistanceEffect;
+        public DamageType ResistanceEffect_DamageType => (DamageType)_ResistanceEffect_DamageType;
     }
 }

@@ -1,3 +1,5 @@
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -15,7 +17,7 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
         private readonly SkillEffect? _SkillEffect = skillEffect;
         private readonly Skill? _SkillEffect_Skill = skillEffect_Skill;
 
-        public SkillEffect? SkillEffect { get => _SkillEffect == null ? _SkillEffect : throw new ArgumentNullException(); }
-        public Skill? SkillEffect_Skill { get => _SkillEffect_Skill == null ? _SkillEffect_Skill : throw new ArgumentNullException(); }
+        public SkillEffect? SkillEffect => (SkillEffect) _SkillEffect;
+        public Skill? SkillEffect_Skill => (Skill) _SkillEffect_Skill;
     }
 }

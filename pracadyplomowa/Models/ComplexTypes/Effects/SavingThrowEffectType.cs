@@ -1,3 +1,5 @@
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -14,7 +16,7 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     {
         private readonly SavingThrowEffect? _SavingThrowEffect = savingThrowEffect;
         private readonly Ability? _SavingThrowEffect_Ability = savingThrowEffect_Ability;
-        public SavingThrowEffect? SavingThrowEffect { get => _SavingThrowEffect == null ? _SavingThrowEffect : throw new ArgumentNullException(); }
-        public Ability? SavingThrowEffect_Ability { get => _SavingThrowEffect_Ability == null ? _SavingThrowEffect_Ability : throw new ArgumentNullException(); }
+        public SavingThrowEffect SavingThrowEffect =>  (SavingThrowEffect)_SavingThrowEffect;
+        public Ability SavingThrowEffect_Ability =>  (Ability)_SavingThrowEffect_Ability;
     }
 }

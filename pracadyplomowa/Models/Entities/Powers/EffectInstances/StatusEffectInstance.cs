@@ -2,7 +2,7 @@
 
 namespace pracadyplomowa.Models.Entities.Powers;
 
-public class StatusEffectInstance : EffectInstance
+public class StatusEffectInstance(Enums.Condition statusEffect) : EffectInstance
 {
-    public StatusEffectType StatusEffectType { get; set; } = new StatusEffectType();
+    public StatusEffectType StatusEffectType { get; set; } = new StatusEffectType(statusEffect);
 }

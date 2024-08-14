@@ -6,8 +6,8 @@ using pracadyplomowa.Models.ComplexTypes.Effects;
 
 namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
-    public class ResistanceEffectBlueprint : EffectBlueprint
+    public class ResistanceEffectBlueprint(Enums.EffectOptions.ResistanceEffect resistanceEffect, Enums.DamageType resistanceEffect_DamageType) : EffectBlueprint
     {
-        public ResistanceEffectType ResistanceEffectType{ get; set;} = new ResistanceEffectType();
+        public ResistanceEffectType ResistanceEffectType{ get; set;} = new ResistanceEffectType(resistanceEffect, resistanceEffect_DamageType);
     }
 }

@@ -60,28 +60,22 @@ namespace pracadyplomowa.Controllers
             };
             character.R_CharacterHasLevelsInClass.Add(classLevel);
 
-            AbilityEffectInstance strength = new();
-            strength.AbilityEffectType = new AbilityEffectType(AbilityEffect.Bonus, Ability.STRENGTH);
+            AbilityEffectInstance strength = new(AbilityEffect.Bonus, Ability.STRENGTH);
             strength.DiceSet.flat = characterDto.Strength;
             
-            AbilityEffectInstance dexterity = new();
-            dexterity.AbilityEffectType = new AbilityEffectType(AbilityEffect.Bonus, Ability.DEXTERITY);
+            AbilityEffectInstance dexterity = new(AbilityEffect.Bonus, Ability.DEXTERITY);
             dexterity.DiceSet.flat = characterDto.Dexterity;
             
-            AbilityEffectInstance constitution = new();
-            constitution.AbilityEffectType = new AbilityEffectType(AbilityEffect.Bonus, Ability.CONSTITUTION);
+            AbilityEffectInstance constitution = new(AbilityEffect.Bonus, Ability.CONSTITUTION);
             constitution.DiceSet.flat = characterDto.Constitution;
             
-            AbilityEffectInstance intelligence = new();
-            intelligence.AbilityEffectType = new AbilityEffectType(AbilityEffect.Bonus, Ability.INTELLIGENCE);
+            AbilityEffectInstance intelligence = new(AbilityEffect.Bonus, Ability.INTELLIGENCE);
             intelligence.DiceSet.flat = characterDto.Intelligence;
             
-            AbilityEffectInstance wisdom = new();
-            wisdom.AbilityEffectType = new AbilityEffectType(AbilityEffect.Bonus, Ability.WISDOM);
+            AbilityEffectInstance wisdom = new(AbilityEffect.Bonus, Ability.WISDOM);
             wisdom.DiceSet.flat = characterDto.Wisdom;
             
-            AbilityEffectInstance charisma = new();
-            charisma.AbilityEffectType = new AbilityEffectType(AbilityEffect.Bonus, Ability.CHARISMA);
+            AbilityEffectInstance charisma = new(AbilityEffect.Bonus, Ability.CHARISMA);
             charisma.DiceSet.flat = characterDto.Charisma;
 
             EffectGroup basicStats = new()

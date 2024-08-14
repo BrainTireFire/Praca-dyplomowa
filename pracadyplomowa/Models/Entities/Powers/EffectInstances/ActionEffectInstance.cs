@@ -2,7 +2,7 @@
 
 namespace pracadyplomowa.Models.Entities.Powers;
 
-public class ActionEffectInstance : ValueEffectInstance
+public class ActionEffectInstance(Enums.EffectOptions.ActionEffect actionEffect) : ValueEffectInstance
 {
-    public ActionEffectType ActionEffectType { get; set; } = new ActionEffectType();
+    public ActionEffectType ActionEffectType { get; set; } = new ActionEffectType(actionEffect);
 }

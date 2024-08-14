@@ -6,8 +6,8 @@ using pracadyplomowa.Models.ComplexTypes.Effects;
 
 namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
-    public class StatusEffectBlueprint : EffectBlueprint
+    public class StatusEffectBlueprint(Enums.Condition statusEffect) : EffectBlueprint
     {
-        public StatusEffectType StatusEffectType{ get; set; } = new StatusEffectType();
+        public StatusEffectType StatusEffectType{ get; set; } = new StatusEffectType(statusEffect);
     }
 }

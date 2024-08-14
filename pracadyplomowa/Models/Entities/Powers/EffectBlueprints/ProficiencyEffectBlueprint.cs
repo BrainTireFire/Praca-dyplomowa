@@ -7,9 +7,9 @@ using pracadyplomowa.Models.Entities.Items;
 
 namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
-    public class ProficiencyEffectBlueprint : EffectBlueprint
+    public class ProficiencyEffectBlueprint(Enums.EffectOptions.ProficiencyEffect proficiencyEffect) : EffectBlueprint
     {
-        public ProficiencyEffectType ProficiencyEffectType{ get; set;} = new ProficiencyEffectType();
+        public ProficiencyEffectType ProficiencyEffectType{ get; set;} = new ProficiencyEffectType(proficiencyEffect);
 
         
         public virtual ItemFamily? R_GrantsProficiencyInItemFamily { get; set; }

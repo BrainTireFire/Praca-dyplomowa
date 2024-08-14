@@ -6,8 +6,8 @@ using pracadyplomowa.Models.ComplexTypes.Effects;
 
 namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
-    public class HitpointEffectBlueprint : ValueEffectBlueprint
+    public class HitpointEffectBlueprint(Enums.EffectOptions.HitpointEffect hitpointEffect) : ValueEffectBlueprint
     {
-        public HitpointEffectType HitpointEffectType{ get; set; } = new HitpointEffectType();
+        public HitpointEffectType HitpointEffectType{ get; set; } = new HitpointEffectType(hitpointEffect);
     }
 }

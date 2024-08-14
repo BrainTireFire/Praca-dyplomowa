@@ -6,7 +6,7 @@ using pracadyplomowa.Models.ComplexTypes.Effects;
 
 namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
-    public class IniativeEffectBlueprint : ValueEffectBlueprint
+    public class InitiativeEffectBlueprint : ValueEffectBlueprint
     {
     }
 }

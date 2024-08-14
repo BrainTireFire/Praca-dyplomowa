@@ -2,7 +2,7 @@
 
 namespace pracadyplomowa.Models.Entities.Powers;
 
-public class SavingThrowEffectInstance : ValueEffectInstance
+public class SavingThrowEffectInstance(Enums.EffectOptions.SavingThrowEffect savingThrowEffect, Enums.Ability savingThrowEffect_Ability) : ValueEffectInstance
 {
-    public SavingThrowEffectType SavingThrowEffectType { get; set; } = new SavingThrowEffectType();
+    public SavingThrowEffectType SavingThrowEffectType { get; set; } = new SavingThrowEffectType(savingThrowEffect, savingThrowEffect_Ability);
 }

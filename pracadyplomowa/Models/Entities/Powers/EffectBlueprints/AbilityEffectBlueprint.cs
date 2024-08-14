@@ -6,8 +6,8 @@ using pracadyplomowa.Models.ComplexTypes.Effects;
 
 namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
-    public class AbilityEffectBlueprint : ValueEffectBlueprint
+    public class AbilityEffectBlueprint(Enums.EffectOptions.AbilityEffect abilityEffect, Enums.Ability abilityEffect_Ability) : ValueEffectBlueprint
     {
-        public AbilityEffectType AbilityEffectType{ get; set; } = new AbilityEffectType();
+        public AbilityEffectType AbilityEffectType{ get; set; } = new AbilityEffectType(abilityEffect, abilityEffect_Ability);
     }
 }

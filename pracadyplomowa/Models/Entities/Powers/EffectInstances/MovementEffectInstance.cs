@@ -2,7 +2,7 @@
 
 namespace pracadyplomowa.Models.Entities.Powers;
 
-public class MovementEffectInstance : ValueEffectInstance
+public class MovementEffectInstance(Enums.EffectOptions.MovementEffect movementEffect) : ValueEffectInstance
 {
-    public MovementEffectType MovementEffectType { get; set; } = new MovementEffectType();
+    public MovementEffectType MovementEffectType { get; set; } = new MovementEffectType(movementEffect);
 }

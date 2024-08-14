@@ -6,8 +6,8 @@ using pracadyplomowa.Models.ComplexTypes.Effects;
 
 namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
-    public class AttackPerAttackActionEffectBlueprint : ValueEffectBlueprint
+    public class AttackPerAttackActionEffectBlueprint(Enums.EffectOptions.AttackPerActionEffect attackPerActionEffect) : ValueEffectBlueprint
     {
-        public AttackPerAttackActionEffectType AttackPerAttackActionEffectType{get; set; } = new AttackPerAttackActionEffectType();
+        public AttackPerAttackActionEffectType AttackPerAttackActionEffectType{get; set; } = new AttackPerAttackActionEffectType(attackPerActionEffect);
     }
 }

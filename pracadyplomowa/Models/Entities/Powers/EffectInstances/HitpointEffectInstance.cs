@@ -2,7 +2,7 @@
 
 namespace pracadyplomowa.Models.Entities.Powers;
 
-public class HitpointEffectInstance : ValueEffectInstance
+public class HitpointEffectInstance(Enums.EffectOptions.HitpointEffect hitpointEffect) : ValueEffectInstance
 {
-    public HitpointEffectType HitpointEffectType { get; set; } = new HitpointEffectType();
+    public HitpointEffectType HitpointEffectType { get; set; } = new HitpointEffectType(hitpointEffect);
 }

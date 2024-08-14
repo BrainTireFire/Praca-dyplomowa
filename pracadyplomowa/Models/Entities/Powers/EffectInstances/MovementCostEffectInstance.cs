@@ -2,7 +2,7 @@
 
 namespace pracadyplomowa.Models.Entities.Powers;
 
-public class MovementCostEffectInstance : EffectInstance
+public class MovementCostEffectInstance(int movementCost_Multiplier) : EffectInstance
 {
-    public MovementCostEffectType MovementCostEffectType { get; set; } = new MovementCostEffectType();
+    public MovementCostEffectType MovementCostEffectType { get; set; } = new MovementCostEffectType(movementCost_Multiplier);
 }

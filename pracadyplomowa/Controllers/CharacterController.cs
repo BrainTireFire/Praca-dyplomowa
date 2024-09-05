@@ -23,15 +23,13 @@ using pracadyplomowa.Repository.Race;
 namespace pracadyplomowa.Controllers
 {
     [Authorize]
-    public class CharacterController(ICharacterRepository characterRepository, IClassRepository classRepository, IRaceRepository raceRepository, IMapper mapper, ITokenService tokenService) : BaseApiController
+    public class CharacterController(ICharacterRepository characterRepository, IClassRepository classRepository, IRaceRepository raceRepository, IMapper mapper) : BaseApiController
     {
         
         private readonly ICharacterRepository _characterRepository = characterRepository;
         private readonly IClassRepository _classRepository = classRepository;
         private readonly IRaceRepository _raceRepository = raceRepository;
         private readonly IMapper _mapper = mapper;
-
-        private readonly ITokenService _tokenService = tokenService;
 
         [HttpGet("mycharacters")]
         public async Task<ActionResult<CharacterSummaryDto>> GetCharacters()
@@ -68,32 +66,50 @@ namespace pracadyplomowa.Controllers
             strength.AbilityEffectType.AbilityEffect_Ability = Ability.STRENGTH;
             Console.WriteLine("test2c");
             strength.DiceSet.flat = characterDto.Strength;
+            strength.Name = "Strength base";
+            strength.Description = "Strength base";
+            strength.SourceName = "Base";
             
             Console.WriteLine("test3");
             AbilityEffectInstance dexterity = new();
-            strength.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
-            strength.AbilityEffectType.AbilityEffect_Ability = Ability.DEXTERITY;
-            strength.DiceSet.flat = characterDto.Dexterity;
+            dexterity.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
+            dexterity.AbilityEffectType.AbilityEffect_Ability = Ability.DEXTERITY;
+            dexterity.DiceSet.flat = characterDto.Dexterity;
+            dexterity.Name = "Dexterity base";
+            dexterity.Description = "Dexterity base";
+            dexterity.SourceName = "Base";
             
             AbilityEffectInstance constitution = new();
-            strength.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
-            strength.AbilityEffectType.AbilityEffect_Ability = Ability.CONSTITUTION;
-            strength.DiceSet.flat = characterDto.Constitution;
+            constitution.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
+            constitution.AbilityEffectType.AbilityEffect_Ability = Ability.CONSTITUTION;
+            constitution.DiceSet.flat = characterDto.Constitution;
+            constitution.Name = "Constitution base";
+            constitution.Description = "Constitution base";
+            constitution.SourceName = "Base";
             
             AbilityEffectInstance intelligence = new();
-            strength.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
-            strength.AbilityEffectType.AbilityEffect_Ability = Ability.INTELLIGENCE;
-            strength.DiceSet.flat = characterDto.Intelligence;
+            intelligence.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
+            intelligence.AbilityEffectType.AbilityEffect_Ability = Ability.INTELLIGENCE;
+            intelligence.DiceSet.flat = characterDto.Intelligence;
+            intelligence.Name = "Intelligence base";
+            intelligence.Description = "Intelligence base";
+            intelligence.SourceName = "Base";
             
             AbilityEffectInstance wisdom = new();
-            strength.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
-            strength.AbilityEffectType.AbilityEffect_Ability = Ability.WISDOM;
-            strength.DiceSet.flat = characterDto.Wisdom;
+            wisdom.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
+            wisdom.AbilityEffectType.AbilityEffect_Ability = Ability.WISDOM;
+            wisdom.DiceSet.flat = characterDto.Wisdom;
+            wisdom.Name = "Wisdom base";
+            wisdom.Description = "Wisdom base";
+            wisdom.SourceName = "Base";
             
             AbilityEffectInstance charisma = new();
-            strength.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
-            strength.AbilityEffectType.AbilityEffect_Ability = Ability.CHARISMA;
-            strength.DiceSet.flat = characterDto.Charisma;
+            charisma.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
+            charisma.AbilityEffectType.AbilityEffect_Ability = Ability.CHARISMA;
+            charisma.DiceSet.flat = characterDto.Charisma;
+            charisma.Name = "Charisma base";
+            charisma.Description = "Charisma base";
+            charisma.SourceName = "Base";
 
             EffectGroup basicStats = new()
             {
@@ -126,7 +142,7 @@ namespace pracadyplomowa.Controllers
         }
         
         [HttpGet("{characterId}")]
-        public async Task<ActionResult> getCharacter(int characterId){
+        public async Task<ActionResult> GetCharacter(int characterId){
             var character = _characterRepository.GetById(characterId);
             if(character == null){
                 return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not exist"));

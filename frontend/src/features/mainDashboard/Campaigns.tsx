@@ -2,6 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import Heading from "../../ui/text/Heading";
 import Button from "../../ui/interactive/Button";
+import Modal from "../../ui/containers/Modal";
+import CreateCampaign from "../campaigns/CreateCampaign";
 
 const StyledElementBox = styled.div`
   display: grid;
@@ -25,9 +27,16 @@ export default function Campaigns() {
         <Button size="large" variation="primary">
           Campaigns I run
         </Button>
-        <Button size="large" variation="secondary">
-          New campaign
-        </Button>
+        <Modal>
+          <Modal.Open opens="CreateCampaign">
+            <Button size="large" variation="primary">
+              New Campaign
+            </Button>
+          </Modal.Open>
+          <Modal.Window name="CreateCampaign">
+            <CreateCampaign />
+          </Modal.Window>
+        </Modal>
       </StyledElementBox>
     </>
   );

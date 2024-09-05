@@ -66,8 +66,7 @@ export default function CampaignInstance() {
     return <div>{t("campaign.error.notFound")}</div>;
   }
 
-  const { id, name, description, gameMaster, members, shops }: Campaign =
-    campaign;
+  const { id, name, description, gameMaster, members }: Campaign = campaign;
 
   return (
     <>

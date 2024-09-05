@@ -5,7 +5,7 @@ import Box from "../../../ui/containers/Box";
 import Button from "../../../ui/interactive/Button";
 import { useState } from "react";
 import Modal from "../../../ui/containers/Modal";
-import CreateShop from "./CreateShop";
+import CreateShop from "../../../features/campaigns/shop/CreateShop";
 import { useCampaign } from "../../../features/campaigns/useCampaign";
 import Spinner from "../../../ui/interactive/Spinner";
 import { useTranslation } from "react-i18next";

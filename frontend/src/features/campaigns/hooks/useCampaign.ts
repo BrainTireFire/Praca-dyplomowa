@@ -13,7 +13,7 @@ export function useCampaign() {
     queryKey: ["campaign", campaignId],
     queryFn: () => {
       if (campaignId) {
-        return getCampaign(campaignId);
+        return getCampaign(Number(campaignId));
       }
       return Promise.reject(new Error("Campaign ID is undefined"));
     },

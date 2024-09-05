@@ -6,3 +6,9 @@ type Campaign = {
   members: Member[];
   shops: Shop[];
 };
+
+type CampaignInsertDto = {
+  name: string;
+  description: string;
+  invitationLink: string;
+};

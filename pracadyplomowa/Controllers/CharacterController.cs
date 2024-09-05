@@ -23,15 +23,13 @@ using pracadyplomowa.Repository.Race;
 namespace pracadyplomowa.Controllers
 {
     [Authorize]
-    public class CharacterController(ICharacterRepository characterRepository, IClassRepository classRepository, IRaceRepository raceRepository, IMapper mapper, ITokenService tokenService) : BaseApiController
+    public class CharacterController(ICharacterRepository characterRepository, IClassRepository classRepository, IRaceRepository raceRepository, IMapper mapper) : BaseApiController
     {
         
         private readonly ICharacterRepository _characterRepository = characterRepository;
         private readonly IClassRepository _classRepository = classRepository;
         private readonly IRaceRepository _raceRepository = raceRepository;
         private readonly IMapper _mapper = mapper;
-
-        private readonly ITokenService _tokenService = tokenService;
 
         [HttpGet("mycharacters")]
         public async Task<ActionResult<CharacterSummaryDto>> GetCharacters()
@@ -144,7 +142,7 @@ namespace pracadyplomowa.Controllers
         }
         
         [HttpGet("{characterId}")]
-        public async Task<ActionResult> getCharacter(int characterId){
+        public async Task<ActionResult> GetCharacter(int characterId){
             var character = _characterRepository.GetById(characterId);
             if(character == null){
                 return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not exist"));

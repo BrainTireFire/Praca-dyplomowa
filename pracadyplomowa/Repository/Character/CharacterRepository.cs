@@ -14,14 +14,17 @@ namespace pracadyplomowa.Repository
         public CharacterRepository(AppDbContext context): base(context){
         }
         
-        public async Task<List<CharacterSummaryDto>> GetCharacterSummaries(int OwnerId){
-            List<CharacterSummaryDto> characters = await _context.Characters
-            .Where(c => c.R_OwnerId == OwnerId)
-            .Include(c=> c.R_CharacterBelongsToRace)
-            .Include(c => c.R_CharacterHasLevelsInClass)
-            .ThenInclude(cl => cl.R_Class)
-            .Select(c => new CharacterSummaryDto(c.Id, c.Name, c.Description, c.R_CharacterBelongsToRace.Name, c.R_CharacterHasLevelsInClass.First().R_Class.Name)).ToListAsync();
-            return characters;
+        public async Task<PagedList<CharacterSummaryDto>> GetCharacterSummaries(int OwnerId, UserParams userParams)
+        {
+            var query =  _context.Characters
+                    .Where(c => c.R_OwnerId == OwnerId)
+                    .Include(c => c.R_CharacterBelongsToRace)
+                    .Include(c => c.R_CharacterHasLevelsInClass)
+                    .ThenInclude(cl => cl.R_Class)
+                    .Select(c => new CharacterSummaryDto(c.Id, c.Name, c.Description, c.R_CharacterBelongsToRace.Name,
+                        c.R_CharacterHasLevelsInClass.First().R_Class.Name));
+            
+            return await PagedList<CharacterSummaryDto>.CreateAsync(query, userParams.PageNumber, userParams.PageSize);
         }
 
         public Task<Character> GetByIdWithAll(int Id){

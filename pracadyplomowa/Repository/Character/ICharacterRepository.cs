@@ -9,7 +9,7 @@ namespace pracadyplomowa.Repository
 {
     public interface ICharacterRepository: IBaseRepository<Character>
     {
-        public Task<List<CharacterSummaryDto>> GetCharacterSummaries(int OwnerId);
+        public Task<PagedList<CharacterSummaryDto>> GetCharacterSummaries(int OwnerId, UserParams userParams);
         public Task<Character> GetByIdWithAll(int Id);
     }
 }

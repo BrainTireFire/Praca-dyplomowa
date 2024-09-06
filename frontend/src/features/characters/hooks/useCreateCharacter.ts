@@ -4,9 +4,13 @@ import { postCharacter } from "../../../services/apiCharacters";
 import { CharacterInsertDto } from "../../../models/character";
 
 export function useCreateCharacter(onSuccess: () => void) {
+  const queryClient = useQueryClient();
   const { mutate: createCharacter, isPending } = useMutation({
     mutationFn: (character: CharacterInsertDto) => postCharacter(character),
-    onSuccess: () => onSuccess(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["characters"] });
+      onSuccess();
+    },
     onError: (error) => {
       console.error(error);
       toast.error("Character creation failed");

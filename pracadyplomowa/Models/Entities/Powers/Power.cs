@@ -42,7 +42,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         public virtual ICollection<Class> R_ClassesWithAccess { get; set; } = [];
         public virtual ImmaterialResourceBlueprint? R_UsesImmaterialResource { get; set; }
         public int? R_UsesImmaterialResourceId { get; set; }
-        public virtual ICollection<ChoiceGroup> R_ChoiceGroups { get; set; } = [];
+        public virtual ICollection<ChoiceGroup> R_ChoiceGroups { get; set; } = []; // means possibility of being granted through a choice group
 
         public virtual ICollection<Field> R_FieldsCasting { get; set; } = [];
 
@@ -51,5 +51,6 @@ namespace pracadyplomowa.Models.Entities.Powers
         public virtual ICollection<EffectBlueprint> R_EffectBlueprints { get; set; } = [];
 
         public virtual ICollection<Character> R_SpawnedCharacters { get; set; } = [];
+        public virtual ICollection<ChoiceGroupUsage> R_GrantedThrough { get; set; } = []; // means actual usage of a choice group
     }
 }

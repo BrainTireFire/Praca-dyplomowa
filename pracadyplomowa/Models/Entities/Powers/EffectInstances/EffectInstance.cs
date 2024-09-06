@@ -23,5 +23,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         // public virtual ItemFamily? R_GrantsProficiencyInItemFamily { get; set; }
         // public virtual int? R_GrantsProficiencyInItemFamilyId { get; set; }
         
+        public virtual ICollection<Character> R_TargetedCharacters { get; set; } = [];
+        
     }
 }

@@ -18,5 +18,6 @@ namespace pracadyplomowa.Models.Entities.Characters
         public virtual int? GrantedByRaceLevelId { get; set; }
         public virtual ClassLevel? R_GrantedByClassLevel { get; set; }
         public virtual int? GrantedByClassLevelId { get; set; }
+        public virtual ICollection<ChoiceGroupUsage> R_UsageInstances { get; set; } = [];
     }
 }

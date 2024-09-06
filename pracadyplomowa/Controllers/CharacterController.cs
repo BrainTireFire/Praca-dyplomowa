@@ -50,78 +50,19 @@ namespace pracadyplomowa.Controllers
             if(classLevel == null){
                 return BadRequest(new ApiResponse(400, "First level of Class with Id " + characterDto.StartingClassId + " does not exist"));
             }
-            var character = new Character
-            {
-                Name = characterDto.Name,
-                R_CharacterBelongsToRace = race
-            };
-            character.R_CharacterHasLevelsInClass.Add(classLevel);
-
-            AbilityEffectInstance strength = new();
-            strength.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
-            strength.AbilityEffectType.AbilityEffect_Ability = Ability.STRENGTH;
-            strength.DiceSet.flat = characterDto.Strength;
-            strength.Name = "Strength base";
-            strength.Description = "Strength base";
-            strength.SourceName = "Base";
-            
-            AbilityEffectInstance dexterity = new();
-            dexterity.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
-            dexterity.AbilityEffectType.AbilityEffect_Ability = Ability.DEXTERITY;
-            dexterity.DiceSet.flat = characterDto.Dexterity;
-            dexterity.Name = "Dexterity base";
-            dexterity.Description = "Dexterity base";
-            dexterity.SourceName = "Base";
-            
-            AbilityEffectInstance constitution = new();
-            constitution.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
-            constitution.AbilityEffectType.AbilityEffect_Ability = Ability.CONSTITUTION;
-            constitution.DiceSet.flat = characterDto.Constitution;
-            constitution.Name = "Constitution base";
-            constitution.Description = "Constitution base";
-            constitution.SourceName = "Base";
-            
-            AbilityEffectInstance intelligence = new();
-            intelligence.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
-            intelligence.AbilityEffectType.AbilityEffect_Ability = Ability.INTELLIGENCE;
-            intelligence.DiceSet.flat = characterDto.Intelligence;
-            intelligence.Name = "Intelligence base";
-            intelligence.Description = "Intelligence base";
-            intelligence.SourceName = "Base";
-            
-            AbilityEffectInstance wisdom = new();
-            wisdom.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
-            wisdom.AbilityEffectType.AbilityEffect_Ability = Ability.WISDOM;
-            wisdom.DiceSet.flat = characterDto.Wisdom;
-            wisdom.Name = "Wisdom base";
-            wisdom.Description = "Wisdom base";
-            wisdom.SourceName = "Base";
-            
-            AbilityEffectInstance charisma = new();
-            charisma.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
-            charisma.AbilityEffectType.AbilityEffect_Ability = Ability.CHARISMA;
-            charisma.DiceSet.flat = characterDto.Charisma;
-            charisma.Name = "Charisma base";
-            charisma.Description = "Charisma base";
-            charisma.SourceName = "Base";
-
-            EffectGroup basicStats = new()
-            {
-                IsConstant = true
-            };
-            basicStats.R_OwnedEffects.Add(strength);
-            basicStats.R_OwnedEffects.Add(dexterity);
-            basicStats.R_OwnedEffects.Add(constitution);
-            basicStats.R_OwnedEffects.Add(intelligence);
-            basicStats.R_OwnedEffects.Add(wisdom);
-            basicStats.R_OwnedEffects.Add(charisma);
-
-            character.R_AffectedBy.Add(basicStats);
-
-
-            // loading current user id
-            var userId = User.GetUserId();
-            character.R_OwnerId = userId;
+            var ownerId = User.GetUserId();
+            var character = new Character(
+                characterDto.Name, 
+                characterDto.Strength, 
+                characterDto.Dexterity, 
+                characterDto.Constitution, 
+                characterDto.Intelligence, 
+                characterDto.Wisdom, 
+                characterDto.Charisma, 
+                classLevel, 
+                race, 
+                ownerId
+            );
 
             _characterRepository.Add(character);
             await _characterRepository.SaveChanges();

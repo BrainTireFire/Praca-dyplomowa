@@ -35,6 +35,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         public int? R_GeneratesAuraId { get; set; }
         public virtual ICollection<Field> R_EffectOnField { get; set; } = [];
 
-        public virtual ICollection<Character> R_TargetedCharacters { get; set; } = [];
+        
+        public virtual ICollection<ChoiceGroupUsage> R_GrantedThrough { get; set; } = []; // means actual usage of a choice group
     }
 }

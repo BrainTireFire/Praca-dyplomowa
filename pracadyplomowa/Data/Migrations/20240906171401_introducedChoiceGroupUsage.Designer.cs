@@ -3,17 +3,20 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using pracadyplomowa;
 
 #nullable disable
 
-namespace pracadyplomowa.Migrations
+namespace pracadyplomowa.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240906171401_introducedChoiceGroupUsage")]
+    partial class introducedChoiceGroupUsage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
@@ -48,7 +51,7 @@ namespace pracadyplomowa.Migrations
                     b.ToTable("CharacterClassLevel");
                 });
 
-            modelBuilder.Entity("CharacterEffectInstance", b =>
+            modelBuilder.Entity("CharacterEffectGroup", b =>
                 {
                     b.Property<int>("R_AffectedById")
                         .HasColumnType("INTEGER");
@@ -60,7 +63,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_TargetedCharactersId");
 
-                    b.ToTable("CharacterEffectInstance");
+                    b.ToTable("CharacterEffectGroup");
                 });
 
             modelBuilder.Entity("CharacterPower", b =>
@@ -856,9 +859,6 @@ namespace pracadyplomowa.Migrations
                     b.Property<int>("EffectType")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("LanguageId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -882,8 +882,6 @@ namespace pracadyplomowa.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("LanguageId");
 
                     b.HasIndex("R_CastedOnCharactersByAuraId");
 
@@ -971,9 +969,6 @@ namespace pracadyplomowa.Migrations
                     b.Property<int?>("ItemFamilyId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("LanguageId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -991,8 +986,6 @@ namespace pracadyplomowa.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ItemFamilyId");
-
-                    b.HasIndex("LanguageId");
 
                     b.HasIndex("R_OwnedByGroupId");
 
@@ -1320,17 +1313,6 @@ namespace pracadyplomowa.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Characters");
-                });
-
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.Language", b =>
-                {
-                    b.HasBaseType("pracadyplomowa.Models.Entities.ObjectWithOwner");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.ToTable("Languages");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.Item", b =>
@@ -2558,9 +2540,9 @@ namespace pracadyplomowa.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("CharacterEffectInstance", b =>
+            modelBuilder.Entity("CharacterEffectGroup", b =>
                 {
-                    b.HasOne("pracadyplomowa.Models.Entities.Powers.EffectInstance", null)
+                    b.HasOne("pracadyplomowa.Models.Entities.Powers.EffectGroup", null)
                         .WithMany()
                         .HasForeignKey("R_AffectedById")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -3035,10 +3017,6 @@ namespace pracadyplomowa.Migrations
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectBlueprint", b =>
                 {
-                    b.HasOne("pracadyplomowa.Models.Entities.Characters.Language", null)
-                        .WithMany("R_EffectBlueprints")
-                        .HasForeignKey("LanguageId");
-
                     b.HasOne("pracadyplomowa.Models.Entities.Powers.Aura", "R_CastedOnCharactersByAura")
                         .WithMany("R_EffectsOnCharactersInRange")
                         .HasForeignKey("R_CastedOnCharactersByAuraId");
@@ -3098,10 +3076,6 @@ namespace pracadyplomowa.Migrations
                     b.HasOne("pracadyplomowa.Models.Entities.Items.ItemFamily", null)
                         .WithMany("R_ProficiencyGrantedByEffectInstance")
                         .HasForeignKey("ItemFamilyId");
-
-                    b.HasOne("pracadyplomowa.Models.Entities.Characters.Language", null)
-                        .WithMany("R_EffectInstances")
-                        .HasForeignKey("LanguageId");
 
                     b.HasOne("pracadyplomowa.Models.Entities.Powers.EffectGroup", "R_OwnedByGroup")
                         .WithMany("R_OwnedEffects")
@@ -3251,15 +3225,6 @@ namespace pracadyplomowa.Migrations
                     b.Navigation("R_ConcentratesOn");
 
                     b.Navigation("R_SpawnedByPower");
-                });
-
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.Language", b =>
-                {
-                    b.HasOne("pracadyplomowa.Models.Entities.ObjectWithOwner", null)
-                        .WithOne()
-                        .HasForeignKey("pracadyplomowa.Models.Entities.Characters.Language", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.Item", b =>
@@ -4148,13 +4113,6 @@ namespace pracadyplomowa.Migrations
                     b.Navigation("R_ImmaterialResourceInstances");
 
                     b.Navigation("R_UsedChoiceGroups");
-                });
-
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.Language", b =>
-                {
-                    b.Navigation("R_EffectBlueprints");
-
-                    b.Navigation("R_EffectInstances");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.Item", b =>

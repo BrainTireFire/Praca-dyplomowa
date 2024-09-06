@@ -37,12 +37,92 @@ namespace pracadyplomowa.Models.Entities.Characters
         public int? R_CampaignId { get; set; }
         public virtual ICollection<ClassLevel> R_CharacterHasLevelsInClass { get; set; } = [];
         public virtual ICollection<Aura> R_AuraCenteredAtCharacter { get; set; } = [];
-        public virtual ICollection<EffectGroup> R_AffectedBy { get; set; } = [];
+        public virtual ICollection<EffectInstance> R_AffectedBy { get; set; } = [];
         public virtual ICollection<Power> R_PowersPrepared { get; set; } = [];
         public virtual ICollection<Power> R_PowersKnown { get; set; } = [];
         public virtual Power? R_SpawnedByPower { get; set; }
         public int? R_SpawnedByPowerId { get; set; }
         public virtual ICollection<ImmaterialResourceInstance> R_ImmaterialResourceInstances { get; set; } = [];
+        public virtual ICollection<ChoiceGroupUsage> R_UsedChoiceGroups { get; set;} = [];
 
+        public Character(){
+
+        }
+        public Character(string name, int strengthValue, int dexterityValue, int constitutionValue, int intelligenceValue, int wisdomValue, int charismaValue, ClassLevel classLevel, Race race, int ownerId){
+
+            this.Name = name;
+
+            this.R_CharacterHasLevelsInClass.Add(classLevel);
+            this.R_CharacterBelongsToRace = race;
+
+            AbilityEffectInstance strength = new();
+            strength.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
+            strength.AbilityEffectType.AbilityEffect_Ability = Ability.STRENGTH;
+            strength.DiceSet.flat = strengthValue;
+            strength.Name = "Strength base";
+            strength.Description = "Strength base";
+            strength.SourceName = "Base";
+            
+            AbilityEffectInstance dexterity = new();
+            dexterity.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
+            dexterity.AbilityEffectType.AbilityEffect_Ability = Ability.DEXTERITY;
+            dexterity.DiceSet.flat = dexterityValue;
+            dexterity.Name = "Dexterity base";
+            dexterity.Description = "Dexterity base";
+            dexterity.SourceName = "Base";
+            
+            AbilityEffectInstance constitution = new();
+            constitution.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
+            constitution.AbilityEffectType.AbilityEffect_Ability = Ability.CONSTITUTION;
+            constitution.DiceSet.flat = constitutionValue;
+            constitution.Name = "Constitution base";
+            constitution.Description = "Constitution base";
+            constitution.SourceName = "Base";
+            
+            AbilityEffectInstance intelligence = new();
+            intelligence.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
+            intelligence.AbilityEffectType.AbilityEffect_Ability = Ability.INTELLIGENCE;
+            intelligence.DiceSet.flat = intelligenceValue;
+            intelligence.Name = "Intelligence base";
+            intelligence.Description = "Intelligence base";
+            intelligence.SourceName = "Base";
+            
+            AbilityEffectInstance wisdom = new();
+            wisdom.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
+            wisdom.AbilityEffectType.AbilityEffect_Ability = Ability.WISDOM;
+            wisdom.DiceSet.flat = wisdomValue;
+            wisdom.Name = "Wisdom base";
+            wisdom.Description = "Wisdom base";
+            wisdom.SourceName = "Base";
+            
+            AbilityEffectInstance charisma = new();
+            charisma.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
+            charisma.AbilityEffectType.AbilityEffect_Ability = Ability.CHARISMA;
+            charisma.DiceSet.flat = charismaValue;
+            charisma.Name = "Charisma base";
+            charisma.Description = "Charisma base";
+            charisma.SourceName = "Base";
+
+            EffectGroup basicStats = new()
+            {
+                IsConstant = true
+            };
+            basicStats.R_OwnedEffects.Add(strength);
+            basicStats.R_OwnedEffects.Add(dexterity);
+            basicStats.R_OwnedEffects.Add(constitution);
+            basicStats.R_OwnedEffects.Add(intelligence);
+            basicStats.R_OwnedEffects.Add(wisdom);
+            basicStats.R_OwnedEffects.Add(charisma);
+            strength.R_OwnedByGroup = basicStats;
+            dexterity.R_OwnedByGroup = basicStats;
+            constitution.R_OwnedByGroup = basicStats;
+            intelligence.R_OwnedByGroup = basicStats;
+            wisdom.R_OwnedByGroup = basicStats;
+            charisma.R_OwnedByGroup = basicStats;
+
+            this.R_AffectedBy = basicStats.R_OwnedEffects;
+
+            this.R_OwnerId = ownerId;
+        }
     }
 }

@@ -29,9 +29,21 @@ namespace pracadyplomowa.Repository
             .Where(c => c.Id == Id)
 
             .Include(c => c.R_CharacterBelongsToRace)
+                .ThenInclude(r => r.R_RaceLevels)
+                    .ThenInclude(rl => rl.R_ChoiceGroups)
 
             .Include(c => c.R_CharacterHasLevelsInClass)
                 .ThenInclude(cl => cl.R_Class)
+            .Include(c => c.R_CharacterHasLevelsInClass)
+                .ThenInclude(cl => cl.R_ChoiceGroups)
+
+            .Include(c => c.R_UsedChoiceGroups)
+                .ThenInclude(cg => cg.R_ChoiceGroup)
+            .Include(c => c.R_UsedChoiceGroups)
+                .ThenInclude(cg => cg.R_EffectGroupsGranted)
+            .Include(c => c.R_UsedChoiceGroups)
+                .ThenInclude(cg => cg.R_PowersGranted)
+            
 
             .Include(c => c.R_PowersKnown)
                 .ThenInclude(p => p.R_EffectBlueprints)
@@ -44,7 +56,7 @@ namespace pracadyplomowa.Repository
                 .ThenInclude(p => p.R_UsesImmaterialResource)
 
             .Include(c => c.R_AffectedBy)
-                .ThenInclude(eg => eg.R_OwnedEffects)
+                .ThenInclude(eg => eg.R_OwnedByGroup)
 
             .Include(c => c.R_CharacterHasBackpack)
                 .ThenInclude(b => b.R_BackpackHasItems)

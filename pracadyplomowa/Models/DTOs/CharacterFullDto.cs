@@ -41,6 +41,7 @@ namespace pracadyplomowa.Models.DTOs
         public List<Effect> ConstantEffects { get; set; } = null!;
         public List<Effect> Effects { get; set; } = null!;
         public List<Resource> Resources { get; set; } = null!;
+        public List<ChoiceGroup> ChoiceGroups {get; set;} = null!;
 
         public CharacterFullDto(Character character){
             Id = character.Id;
@@ -73,6 +74,7 @@ namespace pracadyplomowa.Models.DTOs
             ConstantEffects = GetConstantEffects(character);
             Effects = GetTemporaryEffects(character);
             Resources = GetResources(character);
+            ChoiceGroups = GetChoiceGroups(character);
         }
 
 
@@ -85,7 +87,6 @@ namespace pracadyplomowa.Models.DTOs
         public static List<Attribute> GetAttributes(Character character)
         {
             var attributes =  character.R_AffectedBy
-                    .SelectMany(group => group.R_OwnedEffects)
                     .OfType<AbilityEffectInstance>()
                     .Where(ei => ei.AbilityEffectType.AbilityEffect == AbilityEffect.Bonus)
                     .GroupBy(ei => ei.AbilityEffectType.AbilityEffect_Ability)
@@ -106,7 +107,6 @@ namespace pracadyplomowa.Models.DTOs
         public static List<SavingThrow> GetSavingThrows(Character character)
         {
             var savingThrows =  character.R_AffectedBy
-                                .SelectMany(group => group.R_OwnedEffects)
                                 .OfType<SavingThrowEffectInstance>()
                                 .Where(ei => ei.SavingThrowEffectType.SavingThrowEffect == SavingThrowEffect.Bonus)
                                 .GroupBy(ei => ei.SavingThrowEffectType.SavingThrowEffect_Ability)
@@ -116,7 +116,6 @@ namespace pracadyplomowa.Models.DTOs
                                 })
                                 .ToList();
             var proficiencies = character.R_AffectedBy
-                                .SelectMany(group => group.R_OwnedEffects)
                                 .OfType<SavingThrowEffectInstance>()
                                 .Where(ei => ei.SavingThrowEffectType.SavingThrowEffect == SavingThrowEffect.Proficiency)
                                 .Select(ei => ei.SavingThrowEffectType.SavingThrowEffect_Ability.ToString())
@@ -140,7 +139,6 @@ namespace pracadyplomowa.Models.DTOs
         public static List<Skill> GetSkills(Character character)
         {
             var skills =  character.R_AffectedBy
-                                .SelectMany(group => group.R_OwnedEffects)
                                 .OfType<SkillEffectInstance>()
                                 .Where(ei => ei.SkillEffectType.SkillEffect == SkillEffect.Bonus)
                                 .GroupBy(ei => ei.SkillEffectType.SkillEffect_Skill)
@@ -150,7 +148,6 @@ namespace pracadyplomowa.Models.DTOs
                                 })
                                 .ToList();
             var proficiencies = character.R_AffectedBy
-                                .SelectMany(group => group.R_OwnedEffects)
                                 .OfType<SkillEffectInstance>()
                                 .Where(ei => ei.SkillEffectType.SkillEffect == SkillEffect.Proficiency)
                                 .Select(ei => ei.SkillEffectType.SkillEffect_Skill.ToString())
@@ -170,7 +167,7 @@ namespace pracadyplomowa.Models.DTOs
         }
 
         public List<Language> GetLanguages(Character character){
-            var languages = new List<Language>();
+            var languages = character.R_AffectedBy.OfType<LanguageEffectInstance>().Select(effect => new Language{Id = effect.R_LanguageId, Name = effect.R_Language.Name}).ToList();
             return languages;
         }
 
@@ -180,7 +177,6 @@ namespace pracadyplomowa.Models.DTOs
         }
         public static List<ItemFamily> GetItemProficiencies(Character character, ProficiencyEffect proficiency){
             var itemProficiencies =  character.R_AffectedBy
-                                .SelectMany(group => group.R_OwnedEffects)
                                 .OfType<ProficiencyEffectInstance>()
                                 .Where(ei => ei.ProficiencyEffectType.ProficiencyEffect == proficiency)
                                 .Select(ei => ei.R_GrantsProficiencyInItemFamily)
@@ -207,7 +203,6 @@ namespace pracadyplomowa.Models.DTOs
         public static Size GetSize(Character character){
             var size = character.R_CharacterBelongsToRace.Size;
             var setSizes = character.R_AffectedBy
-                                .SelectMany(group => group.R_OwnedEffects)
                                 .OfType<SizeEffectInstance>()
                                 .Where(ei => ei.SizeEffectType.SizeEffect == SizeEffect.Change)
                                 .Select(ei => ei.SizeEffectType.SizeEffect_SizeToSet)
@@ -216,7 +211,6 @@ namespace pracadyplomowa.Models.DTOs
                 size = setSizes.Max();
             }
             var sizeChanges = character.R_AffectedBy
-                                .SelectMany(group => group.R_OwnedEffects)
                                 .OfType<SizeEffectInstance>()
                                 .Where(ei => ei.SizeEffectType.SizeEffect == SizeEffect.Bonus)
                                 .Select(ei => ei.SizeEffectType.SizeBonus)
@@ -260,12 +254,10 @@ namespace pracadyplomowa.Models.DTOs
         public static Hitpoints GetHitpoints(Character character){
             var current = character.Hitpoints;
             var temporary = character.R_AffectedBy
-                    .SelectMany(g => g.R_OwnedEffects)
                     .OfType<HitpointEffectInstance>()
                     .Where(h => h.HitpointEffectType.HitpointEffect == HitpointEffect.TemporaryHitpoints)
                     .Sum(t => t.DiceSet.flat);
             var maximum = character.R_AffectedBy
-                    .SelectMany(g => g.R_OwnedEffects)
                     .OfType<HitpointEffectInstance>()
                     .Where(h => h.HitpointEffectType.HitpointEffect == HitpointEffect.HitpointMaximumBonus)
                     .Sum(t => t.DiceSet.flat);
@@ -279,7 +271,6 @@ namespace pracadyplomowa.Models.DTOs
 
         public static int GetFlatValue<T>(Character character) where T : ValueEffectInstance {
             int value = character.R_AffectedBy
-                                .SelectMany(g => g.R_OwnedEffects)
                                 .OfType<T>()
                                 .Sum(i => i.DiceSet.flat);
             return value;
@@ -292,12 +283,10 @@ namespace pracadyplomowa.Models.DTOs
         public static int GetSpeed(Character character){
             int speed = character.R_CharacterBelongsToRace.Speed;
             int multiplier =  character.R_AffectedBy
-                            .SelectMany(g => g.R_OwnedEffects)
                             .OfType<MovementEffectInstance>()
                             .Where(m => m.MovementEffectType.MovementEffect == MovementEffect.Multiplier)
                             .Sum(m => m.DiceSet.flat);
             int bonus = character.R_AffectedBy
-                            .SelectMany(g => g.R_OwnedEffects)
                             .OfType<MovementEffectInstance>()
                             .Where(m => m.MovementEffectType.MovementEffect == MovementEffect.Bonus)
                             .Sum(m => m.DiceSet.flat);
@@ -505,8 +494,7 @@ namespace pracadyplomowa.Models.DTOs
         }
         public static List<Effect> GetConstantEffects(Character character){
             List<Effect> effects = character.R_AffectedBy
-            .Where(group => group.IsConstant)
-            .SelectMany(group => group.R_OwnedEffects)
+            .Where(effect => effect.R_OwnedByGroup.IsConstant)
             .Select(effect => new Effect() {
                 Id = effect.Id,
                 Name = effect.Name,
@@ -520,8 +508,7 @@ namespace pracadyplomowa.Models.DTOs
 
         public static List<Effect> GetTemporaryEffects(Character character){
             List<Effect> effects = character.R_AffectedBy
-            .Where(group => !group.IsConstant)
-            .SelectMany(group => group.R_OwnedEffects)
+            .Where(effect => !effect.R_OwnedByGroup.IsConstant)
             .Select(effect => new Effect() {
                 Id = effect.Id,
                 Name = effect.Name,
@@ -555,6 +542,29 @@ namespace pracadyplomowa.Models.DTOs
             .ToList();
 
             return resources;
+        }
+
+        public class ChoiceGroup {
+            public int Id { get; set;}
+            public bool ContainsEffects {get; set;}
+            public bool ContainsPowers {get; set;}
+        }
+        public static List<ChoiceGroup> GetChoiceGroups(Character character){
+            List<ChoiceGroup> choiceGroups = character.R_CharacterBelongsToRace.R_RaceLevels.SelectMany(raceLevel => raceLevel.R_ChoiceGroups)
+            .Union(character.R_CharacterHasLevelsInClass.SelectMany(raceLevel => raceLevel.R_ChoiceGroups))
+            .Where(choiceGroup => !character.R_UsedChoiceGroups
+                .Select(used => used.R_ChoiceGroupId)
+                .Contains(choiceGroup.Id)
+                )
+            .Select(choiceGroup => {
+                return new ChoiceGroup{
+                    Id = choiceGroup.Id, 
+                    ContainsEffects = choiceGroup.R_Effects.Count > 0, 
+                    ContainsPowers = choiceGroup.R_Powers.Count > 0
+                    };
+            }).ToList();
+
+            return choiceGroups;
         }
         
     }

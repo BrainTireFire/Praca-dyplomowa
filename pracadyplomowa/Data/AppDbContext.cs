@@ -99,6 +99,8 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         public DbSet<SizeEffectInstance> SizeEffectInstances { get; set; }
         public DbSet<SkillEffectInstance> SkillEffectInstances { get; set; }
         public DbSet<StatusEffectInstance> StatusEffectInstances { get; set; }
+        public DbSet<ChoiceGroupUsage> ChoiceGroupUsages {get; set;}
+        public DbSet<Language> Languages {get; set;}
         
         protected override void OnModelCreating(ModelBuilder builder)
         {

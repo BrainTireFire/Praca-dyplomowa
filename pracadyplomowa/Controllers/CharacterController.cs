@@ -50,7 +50,6 @@ namespace pracadyplomowa.Controllers
             if(classLevel == null){
                 return BadRequest(new ApiResponse(400, "First level of Class with Id " + characterDto.StartingClassId + " does not exist"));
             }
-            Console.WriteLine("test1");
             var character = new Character
             {
                 Name = characterDto.Name,
@@ -58,19 +57,14 @@ namespace pracadyplomowa.Controllers
             };
             character.R_CharacterHasLevelsInClass.Add(classLevel);
 
-            Console.WriteLine("test2");
             AbilityEffectInstance strength = new();
-            Console.WriteLine("test2a");
             strength.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
-            Console.WriteLine("test2b");
             strength.AbilityEffectType.AbilityEffect_Ability = Ability.STRENGTH;
-            Console.WriteLine("test2c");
             strength.DiceSet.flat = characterDto.Strength;
             strength.Name = "Strength base";
             strength.Description = "Strength base";
             strength.SourceName = "Base";
             
-            Console.WriteLine("test3");
             AbilityEffectInstance dexterity = new();
             dexterity.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             dexterity.AbilityEffectType.AbilityEffect_Ability = Ability.DEXTERITY;
@@ -122,22 +116,16 @@ namespace pracadyplomowa.Controllers
             basicStats.R_OwnedEffects.Add(wisdom);
             basicStats.R_OwnedEffects.Add(charisma);
 
-            // basicStats.R_TargetedCharacters.Add(character);
             character.R_AffectedBy.Add(basicStats);
 
-            // Console.WriteLine("User id: ", HttpContext.User.FindFirst(ClaimTypes.NameIdentifier));
-            // character.R_OwnerId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-            // Console.WriteLine("test");
 
             // loading current user id
             var userId = User.GetUserId();
-            Console.WriteLine(userId);
             character.R_OwnerId = userId;
 
             _characterRepository.Add(character);
             await _characterRepository.SaveChanges();
 
-            Console.WriteLine("testX");
             return Created();
         }
         

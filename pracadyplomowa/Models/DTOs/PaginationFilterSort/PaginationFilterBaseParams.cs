@@ -1,6 +1,6 @@
 ﻿namespace pracadyplomowa;
 
-public class UserParams
+public class PaginationFilterBaseParams
 {
     private const int MaxPageSize = 69;
     public int PageNumber { get; set; } = 1; 
@@ -11,4 +11,6 @@ public class UserParams
         get => _pageSize;
         set => _pageSize = (value > MaxPageSize) ? MaxPageSize : value;
     }
+
+    public String OrderBy { get; set; } = "name";
 }

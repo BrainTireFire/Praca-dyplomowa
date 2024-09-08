@@ -24,11 +24,11 @@ namespace pracadyplomowa.Repository
                     .AsQueryable();
 
             // Filtering
-            if (!string.IsNullOrEmpty(characterParams.ClassName))
-            {
-                query = query.Where(c => 
-                    c.R_CharacterBelongsToRace.Name == characterParams.ClassName);
-            }
+            query = query.ApplyFilter(characterParams.ClassName, c => 
+                c.R_CharacterBelongsToRace.Name);
+            
+            query = query.ApplyFilter(characterParams.Name, c => 
+                c.Name);
             
             // Sorting
             query = characterParams.OrderBy switch

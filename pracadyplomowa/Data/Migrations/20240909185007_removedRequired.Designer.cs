@@ -2,17 +2,20 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using pracadyplomowa;
 
 #nullable disable
 
-namespace pracadyplomowa.Migrations
+namespace pracadyplomowa.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240909185007_removedRequired")]
+    partial class removedRequired
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
@@ -834,7 +837,7 @@ namespace pracadyplomowa.Migrations
                     b.Property<int?>("R_CastedOnTilesByAuraId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("R_CreatedByEquippingId")
+                    b.Property<int>("R_CreatedByEquippingId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("R_PowerId")
@@ -2242,7 +2245,9 @@ namespace pracadyplomowa.Migrations
 
                     b.HasOne("pracadyplomowa.Models.Entities.Items.Item", "R_CreatedByEquipping")
                         .WithMany("R_ItemCreateEffectsOnEquip")
-                        .HasForeignKey("R_CreatedByEquippingId");
+                        .HasForeignKey("R_CreatedByEquippingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("pracadyplomowa.Models.Entities.Powers.Power", "R_Power")
                         .WithMany("R_EffectBlueprints")

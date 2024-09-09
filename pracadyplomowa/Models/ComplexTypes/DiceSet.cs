@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace pracadyplomowa.Models.Entities.Characters
 {
-    [ComplexType]
+    [Owned]
     public class DiceSet
     {
         public int d20 { get; set; }

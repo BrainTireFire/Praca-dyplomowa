@@ -12,10 +12,12 @@ namespace pracadyplomowa.Models.Entities.Powers
 {
     public class EffectInstance : ObjectWithId
     {
-        public string Name { get; set; } = null!;
-        public string Description { get; set; } = null!;
+        public required string Name { get; set; }
+        public string Description { get; set; } = "";
         public string SourceName { get; set; } = null!;
         public EffectType EffectType { get; set; }
+        public bool Conditional { get; set; }
+        public bool IsImplemented { get; set; }
         
         //Relationship
         public virtual EffectGroup R_OwnedByGroup { get; set; } = null!;

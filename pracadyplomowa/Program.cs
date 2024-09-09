@@ -105,8 +105,11 @@ try
     var context = services.GetRequiredService<AppDbContext>();
     var userManager = services.GetRequiredService<UserManager<User>>();
     var roleManger = services.GetRequiredService<RoleManager<Role>>();
+    var dbContext = services.GetRequiredService<AppDbContext>();
     await context.Database.MigrateAsync();
     await Seed.SeedUsers(userManager, roleManger);
+    await Seed.SeedItemFamilies(dbContext);
+    await Seed.SeedRaces(dbContext);
 }
 catch (Exception ex)
 {

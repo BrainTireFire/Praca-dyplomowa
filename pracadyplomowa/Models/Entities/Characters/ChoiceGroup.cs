@@ -8,7 +8,7 @@ namespace pracadyplomowa.Models.Entities.Characters
 {
     public class ChoiceGroup : ObjectWithId
     {
-        public int NumberToChoose { get; set; }
+        public int NumberToChoose { get; set; } = 0; // get all if set to 0
         
         //Relationship
         public virtual ICollection<Power> R_Powers { get; set; } = [];

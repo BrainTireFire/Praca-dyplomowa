@@ -14,6 +14,8 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     public class SavingThrowEffectType
     {
         public SavingThrowEffect SavingThrowEffect { get; set; }
-        public Ability SavingThrowEffect_Ability { get; set; }
+        public Ability? SavingThrowEffect_Ability { get; set; } //only this ability type. null if all
+        public Condition? SavingThrowEffect_Condition { get; set; } //applies against this condition only. null if no restriction
+        public AttackNature? SavingThrowEffect_Nature { get; set; } //applies only against attack of this nature. null if all
     }
 }

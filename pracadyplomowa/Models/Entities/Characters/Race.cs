@@ -8,16 +8,16 @@ namespace pracadyplomowa.Models.Entities.Characters
 {
     public class Race : ObjectWithId
     {
-        public Race(string name)
-        {
-            Name = name;
-        }
+        // public Race(string name)
+        // {
+        //     Name = name;
+        // }
 
-        public string Name { get; set; } = null!;
+        public required string Name { get; set; } = null!;
 
-        public Size Size { get; set; }
+        public required Size Size { get; set; }
 
-        public int Speed { get; set; }
+        public required int Speed { get; set; }
 
         //Relationship
         public virtual ICollection<Character> R_Characters { get; set; } = [];

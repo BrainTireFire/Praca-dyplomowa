@@ -12,11 +12,14 @@ namespace pracadyplomowa.Models.Entities.Powers
 {
     public class EffectBlueprint : ObjectWithId
     {
-        public string Name { get; set; } = null!;
-        public string Description { get; set; } = null!;
+        public required string Name { get; set; }
+        public string  Description { get; set; } = "";
         public int ResourceLevel { get; set; }
         public bool Saved { get; set; }
         public EffectType EffectType { get; set; }
+        public bool Conditional { get; set; } = false;
+        public bool IsImplemented { get; set; } = true;
+        public bool HasNoEffectInCombat { get; set; } = false;
 
 
         //Relationship

@@ -55,52 +55,64 @@ namespace pracadyplomowa.Models.Entities.Characters
             this.R_CharacterHasLevelsInClass.Add(classLevel);
             this.R_CharacterBelongsToRace = race;
 
-            AbilityEffectInstance strength = new();
+            AbilityEffectInstance strength = new()
+            {
+                Name = "Strength base",
+                Description = "Strength base"
+            };
             strength.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             strength.AbilityEffectType.AbilityEffect_Ability = Ability.STRENGTH;
             strength.DiceSet.flat = strengthValue;
-            strength.Name = "Strength base";
-            strength.Description = "Strength base";
             strength.SourceName = "Base";
-            
-            AbilityEffectInstance dexterity = new();
+
+            AbilityEffectInstance dexterity = new()
+            {
+                Name = "Dexterity base",
+                Description = "Dexterity base"
+            };
             dexterity.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             dexterity.AbilityEffectType.AbilityEffect_Ability = Ability.DEXTERITY;
             dexterity.DiceSet.flat = dexterityValue;
-            dexterity.Name = "Dexterity base";
-            dexterity.Description = "Dexterity base";
             dexterity.SourceName = "Base";
-            
-            AbilityEffectInstance constitution = new();
+
+            AbilityEffectInstance constitution = new()
+            {
+                Name = "Constitution base",
+                Description = "Constitution base"
+            };
             constitution.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             constitution.AbilityEffectType.AbilityEffect_Ability = Ability.CONSTITUTION;
             constitution.DiceSet.flat = constitutionValue;
-            constitution.Name = "Constitution base";
-            constitution.Description = "Constitution base";
             constitution.SourceName = "Base";
-            
-            AbilityEffectInstance intelligence = new();
+
+            AbilityEffectInstance intelligence = new()
+            {
+                Name = "Intelligence base",
+                Description = "Intelligence base"
+            };
             intelligence.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             intelligence.AbilityEffectType.AbilityEffect_Ability = Ability.INTELLIGENCE;
             intelligence.DiceSet.flat = intelligenceValue;
-            intelligence.Name = "Intelligence base";
-            intelligence.Description = "Intelligence base";
             intelligence.SourceName = "Base";
-            
-            AbilityEffectInstance wisdom = new();
+
+            AbilityEffectInstance wisdom = new()
+            {
+                Name = "Wisdom base",
+                Description = "Wisdom base"
+            };
             wisdom.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             wisdom.AbilityEffectType.AbilityEffect_Ability = Ability.WISDOM;
             wisdom.DiceSet.flat = wisdomValue;
-            wisdom.Name = "Wisdom base";
-            wisdom.Description = "Wisdom base";
             wisdom.SourceName = "Base";
-            
-            AbilityEffectInstance charisma = new();
+
+            AbilityEffectInstance charisma = new()
+            {
+                Name = "Charisma base",
+                Description = "Charisma base"
+            };
             charisma.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             charisma.AbilityEffectType.AbilityEffect_Ability = Ability.CHARISMA;
             charisma.DiceSet.flat = charismaValue;
-            charisma.Name = "Charisma base";
-            charisma.Description = "Charisma base";
             charisma.SourceName = "Base";
 
             EffectGroup basicStats = new()

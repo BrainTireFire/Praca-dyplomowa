@@ -36,6 +36,7 @@ export default function Router() {
           <Route path="main" element={<MainDashboard />} />
           <Route path="campaigns" element={<Campagins />} />
           <Route path="campaigns/:campaignId" element={<CampaignInstance />} />
+          <Route path="campaigns/attended" element={<CampaignsAttended />} />
           <Route path="campaigns/:campaignId/shops" element={<Shops />} />
           <Route
             path="campaigns/:campaignId/shops/:shopId"

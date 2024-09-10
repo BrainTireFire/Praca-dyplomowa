@@ -4,6 +4,7 @@ import Heading from "../../ui/text/Heading";
 import Button from "../../ui/interactive/Button";
 import Modal from "../../ui/containers/Modal";
 import CreateCampaign from "../campaigns/CreateCampaign";
+import TextArea from "../../ui/forms/TextArea";
 
 const StyledElementBox = styled.div`
   display: grid;
@@ -19,9 +20,16 @@ export default function Campaigns() {
         Campaigns
       </Heading>
       <StyledElementBox>
-        <Button size="large" variation="primary">
-          Campaigns I attend
-        </Button>
+        <Modal>
+          <Modal.Open opens="CampaignsAttended">
+            <Button size="large" variation="primary">
+              Campaigns I attend
+            </Button>
+          </Modal.Open>
+          <Modal.Window name="CampaignsAttended">
+            <CampaignsAttended />
+          </Modal.Window>
+        </Modal>
       </StyledElementBox>
       <StyledElementBox>
         <Button size="large" variation="primary">

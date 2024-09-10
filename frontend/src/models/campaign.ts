@@ -5,6 +5,7 @@ type Campaign = {
   gameMaster: GameMaster;
   members: Member[];
   shops: Shop[];
+  invitationLink: string;
 };
 
 type CampaignInsertDto = {

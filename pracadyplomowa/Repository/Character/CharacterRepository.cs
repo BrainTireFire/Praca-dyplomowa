@@ -8,23 +8,26 @@ using pracadyplomowa.Models.Entities.Characters;
 
 namespace pracadyplomowa.Repository
 {
-    public class CharacterRepository: BaseRepository<Character>, ICharacterRepository
+    public class CharacterRepository : BaseRepository<Character>, ICharacterRepository
     {
 
-        public CharacterRepository(AppDbContext context): base(context){
+        public CharacterRepository(AppDbContext context) : base(context)
+        {
         }
-        
-        public async Task<List<CharacterSummaryDto>> GetCharacterSummaries(int OwnerId){
-            List<CharacterSummaryDto> characters = await _context.Characters
+
+        public async Task<List<CharacterSummaryDto>> GetCharacterSummaries(int OwnerId)
+        {
+            List<CharacterSummarryDto> characters = await _context.Characters
             .Where(c => c.R_OwnerId == OwnerId)
-            .Include(c=> c.R_CharacterBelongsToRace)
+            .Include(c => c.R_CharacterBelongsToRace)
             .Include(c => c.R_CharacterHasLevelsInClass)
             .ThenInclude(cl => cl.R_Class)
             .Select(c => new CharacterSummaryDto(c.Id, c.Name, c.Description, c.R_CharacterBelongsToRace.Name, c.R_CharacterHasLevelsInClass.First().R_Class.Name)).ToListAsync();
             return characters;
         }
 
-        public Task<Character> GetByIdWithAll(int Id){
+        public Task<Character> GetByIdWithAll(int Id)
+        {
             var character = _context.Characters
             .Where(c => c.Id == Id)
 
@@ -50,7 +53,7 @@ namespace pracadyplomowa.Repository
                 .ThenInclude(b => b.R_BackpackHasItems)
 
             .Include(c => c.R_EquippedItems)
-            
+
             .FirstAsync();
             return character;
         }

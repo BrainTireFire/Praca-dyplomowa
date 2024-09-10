@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import CampaignItemBox from "./CampaignItemBox";
-import { useCampaigns } from "./useCampaigns";
+import { useCampaigns } from "./hooks/useCampaigns";
 import Spinner from "../../ui/interactive/Spinner";
 
 const CampaignListLayout = styled.div`

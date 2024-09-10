@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getCampaign } from "../../services/apiCampaigns";
+import { getCampaign } from "../../../services/apiCampaigns";
 import { useParams } from "react-router-dom";
 
 export function useCampaign() {

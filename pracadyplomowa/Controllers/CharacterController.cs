@@ -25,7 +25,7 @@ namespace pracadyplomowa.Controllers
     [Authorize]
     public class CharacterController(ICharacterRepository characterRepository, IClassRepository classRepository, IRaceRepository raceRepository, IMapper mapper) : BaseApiController
     {
-        
+
         private readonly ICharacterRepository _characterRepository = characterRepository;
         private readonly IClassRepository _classRepository = classRepository;
         private readonly IRaceRepository _raceRepository = raceRepository;
@@ -39,15 +39,18 @@ namespace pracadyplomowa.Controllers
 
             return Ok(characters);
         }
-        
+
         [HttpPost]
-        public async Task<ActionResult> CreateNewCharacter(CharacterInsertDto characterDto){
+        public async Task<ActionResult> CreateNewCharacter(CharacterInsertDto characterDto)
+        {
             var race = _raceRepository.GetById(characterDto.RaceId);
-            if(race == null){
+            if (race == null)
+            {
                 return BadRequest(new ApiResponse(400, "Race with Id " + characterDto.RaceId + " does not exist"));
             }
             ClassLevel? classLevel = await _classRepository.GetClassLevel(characterDto.StartingClassId, 1);
-            if(classLevel == null){
+            if (classLevel == null)
+            {
                 return BadRequest(new ApiResponse(400, "First level of Class with Id " + characterDto.StartingClassId + " does not exist"));
             }
             Console.WriteLine("test1");
@@ -69,7 +72,7 @@ namespace pracadyplomowa.Controllers
             strength.Name = "Strength base";
             strength.Description = "Strength base";
             strength.SourceName = "Base";
-            
+
             Console.WriteLine("test3");
             AbilityEffectInstance dexterity = new();
             dexterity.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
@@ -78,7 +81,7 @@ namespace pracadyplomowa.Controllers
             dexterity.Name = "Dexterity base";
             dexterity.Description = "Dexterity base";
             dexterity.SourceName = "Base";
-            
+
             AbilityEffectInstance constitution = new();
             constitution.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             constitution.AbilityEffectType.AbilityEffect_Ability = Ability.CONSTITUTION;
@@ -86,7 +89,7 @@ namespace pracadyplomowa.Controllers
             constitution.Name = "Constitution base";
             constitution.Description = "Constitution base";
             constitution.SourceName = "Base";
-            
+
             AbilityEffectInstance intelligence = new();
             intelligence.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             intelligence.AbilityEffectType.AbilityEffect_Ability = Ability.INTELLIGENCE;
@@ -94,7 +97,7 @@ namespace pracadyplomowa.Controllers
             intelligence.Name = "Intelligence base";
             intelligence.Description = "Intelligence base";
             intelligence.SourceName = "Base";
-            
+
             AbilityEffectInstance wisdom = new();
             wisdom.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             wisdom.AbilityEffectType.AbilityEffect_Ability = Ability.WISDOM;
@@ -102,7 +105,7 @@ namespace pracadyplomowa.Controllers
             wisdom.Name = "Wisdom base";
             wisdom.Description = "Wisdom base";
             wisdom.SourceName = "Base";
-            
+
             AbilityEffectInstance charisma = new();
             charisma.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             charisma.AbilityEffectType.AbilityEffect_Ability = Ability.CHARISMA;
@@ -140,11 +143,13 @@ namespace pracadyplomowa.Controllers
             Console.WriteLine("testX");
             return Created();
         }
-        
+
         [HttpGet("{characterId}")]
-        public async Task<ActionResult> GetCharacter(int characterId){
+        public async Task<ActionResult> GetCharacter(int characterId)
+        {
             var character = _characterRepository.GetById(characterId);
-            if(character == null){
+            if (character == null)
+            {
                 return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not exist"));
             }
             character = await _characterRepository.GetByIdWithAll(characterId);

@@ -9,7 +9,7 @@ import InputCopyToClipboard from "../../ui/forms/InputCopyToClipboard";
 import Modal from "../../ui/containers/Modal";
 import ShortRest from "./ShortRestModal";
 import GiveXP from "./GiveXP";
-import { useCampaign } from "./useCampaign";
+import { useCampaign } from "./hooks/useCampaign";
 import Spinner from "../../ui/interactive/Spinner";
 
 const Container = styled.div`

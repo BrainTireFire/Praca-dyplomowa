@@ -12,5 +12,6 @@
       "name": "newdb",
       "database": "${workspaceFolder:Praca-dyplomowa}/pracadyplomowa/identity.db"
     }
-  ]
+  ],
+  "FSharp.suggestGitignore": false
 }

@@ -5,7 +5,7 @@ namespace pracadyplomowa.Models.Entities.Powers;
 
 public class ProficiencyEffectInstance : EffectInstance
 {
-    public ProficiencyEffectType ProficiencyEffectType { get; set; } = new ProficiencyEffectType();
+    //public ProficiencyEffectType ProficiencyEffectType { get; set; } = new ProficiencyEffectType();
 
         
     public virtual ItemFamily R_GrantsProficiencyInItemFamily { get; set; } = null!;

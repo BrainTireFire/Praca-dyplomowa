@@ -6,8 +6,8 @@ using pracadyplomowa.Models.Entities.Characters;
 
 namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
-    public class ValueEffectBlueprint : EffectBlueprint
+    public class ValueEffectBlueprint(string name, DiceSet value) : EffectBlueprint(name)
     {
-        public DiceSet DiceSet {get; set;} = new DiceSet();
+        public DiceSet DiceSet {get; set;} = value;
     }
 }

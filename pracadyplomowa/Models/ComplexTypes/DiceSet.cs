@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using pracadyplomowa.Models.Enums;
 
 namespace pracadyplomowa.Models.Entities.Characters
 {
-    [Owned]
     public class DiceSet
     {
         public int d20 { get; set; }
@@ -13,5 +13,26 @@ namespace pracadyplomowa.Models.Entities.Characters
         public int d4 { get; set; }
         public int d100 { get; set; }
         public int flat {get; set;}
+        public List<AdditionalValue> additionalValues { get; set; } = [];
+
+        public static implicit operator int(DiceSet d) => d.flat;
+        public static implicit operator DiceSet(int d) => new(){flat = d};
+
+
+        public class AdditionalValue{
+            public enum AdditionalValueType{
+                LevelsInClass = 0,
+                ProficiencyModifier = 1,
+                TotalLevel = 2,
+                AbilityScoreModifier = 3,
+            }
+            public AdditionalValueType additionalValueType;
+            public Class? R_LevelsInClass { get; set; }
+            public int? R_LevelsInClassId { get; set; }
+            public Ability Ability {get; set;}
+            public Skill Skill {get; set;}
+        }
+
     }
+
 }

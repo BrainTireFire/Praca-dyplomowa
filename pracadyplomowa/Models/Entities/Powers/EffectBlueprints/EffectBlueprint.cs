@@ -12,9 +12,14 @@ namespace pracadyplomowa.Models.Entities.Powers
 {
     public class EffectBlueprint : ObjectWithId
     {
-        public required string Name { get; set; }
+        public EffectBlueprint(string name){
+            Name = name;
+        }
+
+        public string Name { get; set; }
         public string  Description { get; set; } = "";
-        public int ResourceLevel { get; set; }
+        public int Level { get; set; } // use this effect if Level value matches value selected by 
+        public int ResourceAmount { get; set;}
         public bool Saved { get; set; }
         public EffectType EffectType { get; set; }
         public bool Conditional { get; set; } = false;

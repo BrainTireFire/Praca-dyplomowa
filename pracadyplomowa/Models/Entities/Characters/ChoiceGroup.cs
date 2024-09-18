@@ -6,8 +6,9 @@ using pracadyplomowa.Models.Entities.Powers;
 
 namespace pracadyplomowa.Models.Entities.Characters
 {
-    public class ChoiceGroup : ObjectWithId
+    public class ChoiceGroup(string name) : ObjectWithId
     {
+        public string Name {get; set;} = name;
         public int NumberToChoose { get; set; } = 0; // get all if set to 0
         
         //Relationship

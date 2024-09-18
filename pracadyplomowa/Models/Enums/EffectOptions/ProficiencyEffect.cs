@@ -1,6 +1,6 @@
 namespace pracadyplomowa.Models.Enums.EffectOptions
 {
-    public enum ProficiencyEffect
+    public enum ProficiencyEffect //obsolete
     {
         Armor,
         Weapon,

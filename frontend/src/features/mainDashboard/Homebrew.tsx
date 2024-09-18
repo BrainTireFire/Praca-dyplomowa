@@ -58,7 +58,11 @@ export default function Homebrew() {
           <Button size="large" variation="primary">
             My custom maps
           </Button>
-          <Button size="large" variation="secondary">
+          <Button
+            size="large"
+            variation="secondary"
+            onClick={() => navigate(`/homebrew/createMap`)}
+          >
             New map
           </Button>
         </StyledElementBox>

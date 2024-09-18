@@ -20,6 +20,8 @@ import ProtectedRoute from "./features/account/ProtectedRoute";
 import Forbidden from "./pages/errors/Forbidden";
 import ServiceDown from "./pages/errors/ServiceDown";
 import MainBoard from "./pages/campaign/session/MainBoard";
+import HomebrewCreateMap from "./pages/homebrew/maps/HomebrewCreateMap";
+import BoardCreateForm from "./features/homebrew/maps/BoardCreateForm";
 
 export default function Router() {
   return (
@@ -48,6 +50,7 @@ export default function Router() {
             path="homebrew/createPower"
             element={<HomebrewCreatePower />}
           />
+          <Route path="homebrew/createMap" element={<BoardCreateForm />} />
           <Route path="contact" element={<Concact />} />
           <Route path="profile" element={<Profile />} />
         </Route>

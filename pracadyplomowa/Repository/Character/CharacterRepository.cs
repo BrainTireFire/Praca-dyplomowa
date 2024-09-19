@@ -14,14 +14,39 @@ namespace pracadyplomowa.Repository
         public CharacterRepository(AppDbContext context): base(context){
         }
         
-        public async Task<List<CharacterSummaryDto>> GetCharacterSummaries(int OwnerId){
-            List<CharacterSummaryDto> characters = await _context.Characters
-            .Where(c => c.R_OwnerId == OwnerId)
-            .Include(c=> c.R_CharacterBelongsToRace)
-            .Include(c => c.R_CharacterHasLevelsInClass)
-            .ThenInclude(cl => cl.R_Class)
-            .Select(c => new CharacterSummaryDto(c.Id, c.Name, c.Description, c.R_CharacterBelongsToRace.Name, c.R_CharacterHasLevelsInClass.First().R_Class.Name)).ToListAsync();
-            return characters;
+        public async Task<PagedList<CharacterSummaryDto>> GetCharacterSummaries(int OwnerId, CharacterParams characterParams)
+        {
+            var query =  _context.Characters
+                    .Where(c => c.R_OwnerId == OwnerId)
+                    .Include(c => c.R_CharacterBelongsToRace)
+                    .Include(c => c.R_CharacterHasLevelsInClass)
+                    .ThenInclude(cl => cl.R_Class)
+                    .AsQueryable();
+
+            // Filtering
+            query = query.ApplyFilter(characterParams.ClassName, c => 
+                c.R_CharacterBelongsToRace.Name);
+            
+            query = query.ApplyFilter(characterParams.Name, c => 
+                c.Name);
+            
+            // Sorting
+            query = characterParams.OrderBy switch
+            {
+                "name" => query.OrderBy(c => c.Name),
+                "nameDesc" => query.OrderByDescending(c => c.Name),
+                _ => query.OrderBy(c => c.Name)
+            };
+            
+            var charactersSumaries = query.Select(c => new CharacterSummaryDto(
+                c.Id, 
+                c.Name, 
+                c.Description,
+                c.R_CharacterBelongsToRace.Name,
+                c.R_CharacterHasLevelsInClass.First().R_Class.Name
+            ));
+            
+            return await PagedList<CharacterSummaryDto>.CreateAsync(charactersSumaries, characterParams.PageNumber, characterParams.PageSize);
         }
 
         public Task<Character> GetByIdWithAll(int Id){

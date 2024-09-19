@@ -32,11 +32,13 @@ namespace pracadyplomowa.Controllers
         private readonly IMapper _mapper = mapper;
 
         [HttpGet("mycharacters")]
-        public async Task<ActionResult<CharacterSummaryDto>> GetCharacters()
+        public async Task<ActionResult<CharacterSummaryDto>> GetCharacters([FromQuery] CharacterParams characterParams)
         {
             var userId = User.GetUserId();
-            var characters = await _characterRepository.GetCharacterSummaries(userId);
-
+            var characters = await _characterRepository.GetCharacterSummaries(userId, characterParams);
+            
+            Response.AddPaginationHeader(characters);
+            
             return Ok(characters);
         }
         

@@ -45,24 +45,18 @@ export default function MapBoard({
     const height = canvas.height;
 
     ctx.clearRect(0, 0, width, height);
-    drawGrid(ctx, width, height, board.fieldX, board.fieldY);
+    drawGrid(ctx, width, height, board.sizeX, board.sizeY);
 
     if (selectedBox) {
-      drawSelectedBox(ctx, selectedBox, board.fieldX, board.fieldY);
+      drawSelectedBox(ctx, selectedBox, board.sizeX, board.sizeY);
     }
 
     if (fields) {
       fields.forEach((field: any) => {
-        fillSelectedBox(
-          ctx,
-          field,
-          board.fieldX,
-          board.fieldY,
-          field.fieldColor
-        );
+        fillSelectedBox(ctx, field, board.sizeX, board.sizeY, field.color);
       });
     }
-  }, [selectedBox, fields, board.fieldX, board.fieldY]);
+  }, [selectedBox, fields, board.sizeX, board.sizeY]);
 
   useEffect(() => {
     drawCanvas();
@@ -98,9 +92,7 @@ export default function MapBoard({
         ref={canvasRef}
         width={INITIAL_WIDTH}
         height={INITIAL_HEIGHT}
-        onClick={(event) =>
-          handleCanvasClick(event, board.fieldX, board.fieldY)
-        }
+        onClick={(event) => handleCanvasClick(event, board.sizeX, board.sizeY)}
       >
         Canvas
       </Canvas>

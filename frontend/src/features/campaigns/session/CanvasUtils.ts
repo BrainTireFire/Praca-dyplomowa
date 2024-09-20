@@ -27,8 +27,8 @@ export const drawGrid = (
   ctx: CanvasRenderingContext2D,
   width: number,
   height: number,
-  columns?: number,
-  rows?: number
+  columns?: number = 16,
+  rows?: number = 9
 ) => {
   ctx.save();
 
@@ -163,7 +163,7 @@ export const drawSelectedBoxes = (
 
 export const fillSelectedBox = (
   ctx: CanvasRenderingContext2D,
-  selectedBox: { x: number; y: number } | null,
+  selectedBox: { positionX: number; positionY: number } | null,
   columns: number,
   rows: number,
   color: string
@@ -174,9 +174,10 @@ export const fillSelectedBox = (
 
   ctx.save();
   ctx.fillStyle = color;
+  ctx.strokeStyle = getCssVariable("--color-border");
   ctx.fillRect(
-    selectedBox.x * squareSize, // X position of the selected square
-    selectedBox.y * squareSize, // Y position of the selected square
+    selectedBox.positionX * squareSize, // X position of the selected square
+    selectedBox.positionY * squareSize, // Y position of the selected square
     squareSize, // Width of the square
     squareSize // Height of the square
   );

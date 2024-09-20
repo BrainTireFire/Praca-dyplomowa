@@ -45,8 +45,8 @@ const ErrorMessage = styled.p`
 
 type MapFormProps = {
   name: string;
-  fieldX: number;
-  fieldY: number;
+  sizeX: number;
+  sizeY: number;
   description: string;
 };
 
@@ -99,30 +99,30 @@ export default function BoardCreateForm() {
               <FieldSet>
                 <Label>Board Size: </Label>
                 <Input
-                  id="fieldX"
+                  id="sizeX"
                   type="text"
                   placeholder="X"
-                  {...register("fieldX", {
+                  {...register("sizeX", {
                     required: "This field is required",
                   })}
                   style={{ width: "70px" }}
                 />
                 <Span> x </Span>
                 <Input
-                  id="fieldY"
+                  id="sizeY"
                   type="text"
                   placeholder="Y"
-                  {...register("fieldY", {
+                  {...register("sizeY", {
                     required: "This field is required",
                   })}
                   style={{ width: "70px" }}
                 />
               </FieldSet>
-              {formState.errors.fieldX && (
-                <ErrorMessage>{formState.errors.fieldX.message}</ErrorMessage>
+              {formState.errors.sizeX && (
+                <ErrorMessage>{formState.errors.sizeX.message}</ErrorMessage>
               )}
-              {formState.errors.fieldY && (
-                <ErrorMessage>{formState.errors.fieldY.message}</ErrorMessage>
+              {formState.errors.sizeY && (
+                <ErrorMessage>{formState.errors.sizeY.message}</ErrorMessage>
               )}
             </FieldContainerStyled>
 

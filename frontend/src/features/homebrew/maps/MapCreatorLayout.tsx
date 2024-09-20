@@ -23,7 +23,7 @@ const LeftPanel = styled.div`
   background-color: var(--color-navbar);
   border: 1px solid var(--color-border);
   padding: 20px;
-  height: 90%;
+  height: 100%;
   width: 300px;
 `;
 
@@ -39,9 +39,9 @@ const initialState = {
   fields: [],
   board: {
     name: "",
-    fieldX: 16,
-    fieldY: 9,
     description: "",
+    sizeX: 16,
+    sizeY: 9,
   },
 };
 
@@ -68,8 +68,8 @@ function reducer(state, action) {
         ...state,
         board: {
           ...action.payload,
-          fieldX: Number(action.payload.fieldX),
-          fieldY: Number(action.payload.fieldY),
+          sizeX: Number(action.payload.sizeX),
+          sizeY: Number(action.payload.sizeY),
         },
       };
     default:
@@ -93,8 +93,8 @@ export default function MapCreatorLayout({ boardData }) {
     const updatedField = {
       id: state.selectedBox.x + "-" + state.selectedBox.y,
       ...data,
-      x: state.selectedBox.x,
-      y: state.selectedBox.y,
+      positionX: state.selectedBox.x,
+      positionY: state.selectedBox.y,
     };
 
     const existingField = state.fields.find(

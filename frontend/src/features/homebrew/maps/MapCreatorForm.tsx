@@ -88,14 +88,6 @@ const ErrorMessage = styled.p`
   font-size: 0.875rem;
 `;
 
-type MapFormProps = {
-  fieldColor: string;
-  fieldHeight: number;
-  fieldEffects: string[];
-  movementCost: string;
-  fieldCover: string;
-};
-
 const InstructionsContainer = styled.div`
   padding: 20px;
   background-color: var(--color-navbar-border);
@@ -115,6 +107,15 @@ const InstructionText = styled.p`
   margin: 5px 0;
 `;
 
+type MapFormProps = {
+  color: string;
+  positionZ: number;
+  fieldEffects: string[];
+  fieldMovementCost: string;
+  fieldCoverLevel: string;
+  description: string;
+};
+
 export default function MapCreatorForm({ selectedBox, onSubmit, fields }: any) {
   const colorPickerPopover = useRef();
   const [isColorPickerVisible, setIsColorPickerVisible] = useState(false);
@@ -131,15 +132,17 @@ export default function MapCreatorForm({ selectedBox, onSubmit, fields }: any) {
 
   const setFormValues = useCallback(() => {
     const field = fields.find(
-      (field: any) => field.x === selectedBox.x && field.y === selectedBox.y
+      (field: any) =>
+        field.positionX === selectedBox.x && field.positionY === selectedBox.y
     );
     if (field) {
-      setValue("fieldColor", field.fieldColor);
-      setValue("fieldHeight", field.fieldHeight);
+      setValue("description", field.description);
+      setValue("color", field.color);
+      setValue("positionZ", field.positionZ);
       setValue("fieldEffects", field.fieldEffects);
-      setValue("movementCost", field.movementCost);
-      setValue("fieldCover", field.fieldCover);
-      setColorValue(field.fieldColor);
+      setValue("fieldMovementCost", field.fieldMovementCost);
+      setValue("fieldCoverLevel", field.fieldCoverLevel);
+      setColorValue(field.color);
     }
   }, [fields, selectedBox, setValue]);
 
@@ -151,7 +154,7 @@ export default function MapCreatorForm({ selectedBox, onSubmit, fields }: any) {
 
   const onColorChange = (color: any) => {
     setColorValue(color.hex);
-    setValue("fieldColor", color.hex);
+    setValue("color", color.hex);
   };
 
   const toggleColorPicker = (e: any) => {
@@ -194,7 +197,7 @@ export default function MapCreatorForm({ selectedBox, onSubmit, fields }: any) {
               {isColorPickerVisible && (
                 <ColorPickerStyled ref={colorPickerPopover}>
                   <Controller
-                    name="fieldColor"
+                    name="color"
                     control={control}
                     defaultValue={colorValue}
                     render={({ field }) => (
@@ -214,24 +217,25 @@ export default function MapCreatorForm({ selectedBox, onSubmit, fields }: any) {
             <FieldSet>
               <Label>Field Height:</Label>
               <Input
-                id="fieldHeight"
+                id=" "
                 type="text"
                 placeholder="Height"
-                {...register("fieldHeight", {
+                {...register("positionZ", {
                   required: "This field is required",
                 })}
                 style={{ width: "130px" }}
               />
             </FieldSet>
-            {formState.errors.fieldHeight && (
-              <ErrorMessage>
-                {formState.errors.fieldHeight.message}
-              </ErrorMessage>
+            {formState.errors.positionZ && (
+              <ErrorMessage>{formState.errors.positionZ.message}</ErrorMessage>
             )}
           </FieldContainerStyled>
 
           {/* Field Effects */}
           <Label>Field Effects:</Label>
+          <Button size="small" variation="primary">
+            New effect
+          </Button>
           <FieldContainerStyled>
             <FieldSet>
               <Table>
@@ -260,7 +264,7 @@ export default function MapCreatorForm({ selectedBox, onSubmit, fields }: any) {
                   <Input
                     type="radio"
                     value="low"
-                    {...register("movementCost", {
+                    {...register("fieldMovementCost", {
                       required: "This field is required",
                     })}
                   />{" "}
@@ -270,7 +274,7 @@ export default function MapCreatorForm({ selectedBox, onSubmit, fields }: any) {
                   <Input
                     type="radio"
                     value="high"
-                    {...register("movementCost", {
+                    {...register("fieldMovementCost", {
                       required: "This field is required",
                     })}
                   />{" "}
@@ -280,7 +284,7 @@ export default function MapCreatorForm({ selectedBox, onSubmit, fields }: any) {
                   <Input
                     type="radio"
                     value="impassable"
-                    {...register("movementCost", {
+                    {...register("fieldMovementCost", {
                       required: "This field is required",
                     })}
                   />{" "}
@@ -288,9 +292,9 @@ export default function MapCreatorForm({ selectedBox, onSubmit, fields }: any) {
                 </label>
               </RadioGroup>
             </FieldSet>
-            {formState.errors.movementCost && (
+            {formState.errors.fieldMovementCost && (
               <ErrorMessage>
-                {formState.errors.movementCost.message}
+                {formState.errors.fieldMovementCost.message}
               </ErrorMessage>
             )}
           </FieldContainerStyled>
@@ -303,8 +307,8 @@ export default function MapCreatorForm({ selectedBox, onSubmit, fields }: any) {
                 <label>
                   <Input
                     type="radio"
-                    value="no"
-                    {...register("fieldCover", {
+                    value="noCover"
+                    {...register("fieldCoverLevel", {
                       required: "This field is required",
                     })}
                   />{" "}
@@ -313,8 +317,8 @@ export default function MapCreatorForm({ selectedBox, onSubmit, fields }: any) {
                 <label>
                   <Input
                     type="radio"
-                    value="half"
-                    {...register("fieldCover", {
+                    value="halfCover"
+                    {...register("fieldCoverLevel", {
                       required: "This field is required",
                     })}
                   />{" "}
@@ -323,8 +327,8 @@ export default function MapCreatorForm({ selectedBox, onSubmit, fields }: any) {
                 <label>
                   <Input
                     type="radio"
-                    value="three"
-                    {...register("fieldCover", {
+                    value="threeQuartersCover"
+                    {...register("fieldCoverLevel", {
                       required: "This field is required",
                     })}
                   />{" "}
@@ -333,8 +337,8 @@ export default function MapCreatorForm({ selectedBox, onSubmit, fields }: any) {
                 <label>
                   <Input
                     type="radio"
-                    value="full"
-                    {...register("fieldCover", {
+                    value="totalCover"
+                    {...register("fieldCoverLevel", {
                       required: "This field is required",
                     })}
                   />{" "}
@@ -342,9 +346,21 @@ export default function MapCreatorForm({ selectedBox, onSubmit, fields }: any) {
                 </label>
               </RadioGroup>
             </FieldSet>
-            {formState.errors.fieldCover && (
-              <ErrorMessage>{formState.errors.fieldCover.message}</ErrorMessage>
+            {formState.errors.fieldCoverLevel && (
+              <ErrorMessage>
+                {formState.errors.fieldCoverLevel.message}
+              </ErrorMessage>
             )}
+          </FieldContainerStyled>
+
+          <Label>Description:</Label>
+          <FieldContainerStyled>
+            <TextArea
+              id="description"
+              placeholder="Description"
+              {...register("description")}
+              style={{ height: "100px", marginBottom: "10px" }}
+            />
           </FieldContainerStyled>
 
           {/* Save Changes Button */}

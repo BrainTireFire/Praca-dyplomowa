@@ -9,10 +9,31 @@ namespace pracadyplomowa.Models.Entities.Campaign
     {
         //Properties
         public string Name { get; set; } = null!;
+        public string? Description { get; set; }
+        public int SizeX { get; set; }  
+        public int SizeY { get; set; }
 
         //Relationship
-        //Skoro ma ownera dziedziczonego to chyba relacja z Userem jest niepotrzebna?
         public virtual Encounter? R_Encounter { get; set; }
-        public virtual ICollection<Field> R_ConsistsOfFields { get; set; } = [];
+        public virtual ICollection<Field> R_ConsistsOfFields { get; set; } = new List<Field>();
+
+        public Board() { }
+        
+        public Board(int ownerId, string name, int sizeX, int sizeY, string? description = null)
+        {
+            Name = name ?? throw new ArgumentNullException(nameof(name));
+            SizeX = sizeX;
+            SizeY = sizeY;
+            Description = description;
+            R_OwnerId = ownerId;
+        }
+        
+        public void AddField(Field field)
+        {
+            ArgumentNullException.ThrowIfNull(field);
+
+            field.AssignToBoard(this);
+            R_ConsistsOfFields.Add(field);
+        }
     }
 }

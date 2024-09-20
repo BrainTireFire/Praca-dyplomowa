@@ -3,17 +3,20 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using pracadyplomowa;
 
 #nullable disable
 
-namespace pracadyplomowa.Migrations
+namespace pracadyplomowa.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240905193031_complexTypeReplaceToOwned")]
+    partial class complexTypeReplaceToOwned
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
@@ -374,9 +377,6 @@ namespace pracadyplomowa.Migrations
                     b.Property<int>("FieldCoverLevel")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("FieldMovementCost")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("PositionX")
                         .HasColumnType("INTEGER");
 
@@ -389,7 +389,7 @@ namespace pracadyplomowa.Migrations
                     b.Property<int>("R_BoardId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("R_OccupiedById")
+                    b.Property<int>("R_OccupiedById")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -1134,18 +1134,9 @@ namespace pracadyplomowa.Migrations
                 {
                     b.HasBaseType("pracadyplomowa.Models.Entities.ObjectWithOwner");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("SizeX")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SizeY")
-                        .HasColumnType("INTEGER");
 
                     b.ToTable("Boards");
                 });
@@ -2765,7 +2756,9 @@ namespace pracadyplomowa.Migrations
 
                     b.HasOne("pracadyplomowa.Models.Entities.Campaign.ParticipanceData", "R_OccupiedBy")
                         .WithMany("R_OccupiedFields")
-                        .HasForeignKey("R_OccupiedById");
+                        .HasForeignKey("R_OccupiedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("R_Board");
 

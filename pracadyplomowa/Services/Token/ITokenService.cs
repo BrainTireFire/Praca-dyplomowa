@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace pracadyplomowa;
+namespace pracadyplomowa.Token.Services;
 
 public interface ITokenService
 {

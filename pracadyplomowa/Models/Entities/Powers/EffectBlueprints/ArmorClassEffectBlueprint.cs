@@ -7,10 +7,8 @@ using pracadyplomowa.Models.Entities.Characters;
 
 namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
-    public class ArmorClassEffectBlueprint : ValueEffectBlueprint
+    public class ArmorClassEffectBlueprint(string name, DiceSet value) : ValueEffectBlueprint(name, value)
     {
-        public ArmorClassEffectBlueprint(string name, DiceSet value) : base(name, value){
-
-        }
+        private ArmorClassEffectBlueprint(): this("EF", 0){}
     }
 }

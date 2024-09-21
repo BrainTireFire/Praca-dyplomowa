@@ -51,12 +51,11 @@ namespace pracadyplomowa.Models.DTOs
             SavingThrows = GetSavingThrows(character);
             Skills = GetSkills(character);
             Languages = GetLanguages(character);
-            ToolProficiencies = GetItemProficiencies(character, ProficiencyEffect.Tool);
+            ToolProficiencies = GetItemProficiencies(character, typeof(Tool));
             WeaponAndArmorProficiencies =
             [
-                .. GetItemProficiencies(character, ProficiencyEffect.Armor),
-                .. GetItemProficiencies(character, ProficiencyEffect.Weapon),
-                .. GetItemProficiencies(character, ProficiencyEffect.Shields),
+                .. GetItemProficiencies(character, typeof(Apparel)),
+                .. GetItemProficiencies(character, typeof(Weapon)),
             ];
             Race = GetRace(character);
             Size = GetSize(character);
@@ -175,11 +174,12 @@ namespace pracadyplomowa.Models.DTOs
             public int Id { get; set; }
             public string Name { get; set; } = null!;
         }
-        public static List<ItemFamily> GetItemProficiencies(Character character, ProficiencyEffect proficiency){
+        public static List<ItemFamily> GetItemProficiencies(Character character, Type itemClass){
             var itemProficiencies =  character.R_AffectedBy
                                 .OfType<ProficiencyEffectInstance>()
-                                .Where(ei => ei.ProficiencyEffectType.ProficiencyEffect == proficiency)
+                                // .Where(ei => ei.ProficiencyEffectType.ProficiencyEffect == proficiency)
                                 .Select(ei => ei.R_GrantsProficiencyInItemFamily)
+                                .Where(it => it.GetType() == itemClass )
                                 .Select(itemFamily => new ItemFamily{
                                     Id = itemFamily.Id,
                                     Name = itemFamily.Name,
@@ -396,7 +396,7 @@ namespace pracadyplomowa.Models.DTOs
                         DamageValue = effect.DiceSet
                     })
                     .ToList(),
-                    Range = attack.Range
+                    Range = (int) attack.Range
                 })
             );
             attacks.AddRange(
@@ -411,7 +411,7 @@ namespace pracadyplomowa.Models.DTOs
                         DamageValue = effect.DiceSet
                     })
                     .ToList(),
-                    Range = attack.Range
+                    Range = (int) attack.Range
                 })
             );
 

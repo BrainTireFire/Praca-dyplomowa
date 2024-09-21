@@ -9,5 +9,6 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class HealingEffectBlueprint(string name, DiceSet value) : ValueEffectBlueprint(name, value)
     {
+        private HealingEffectBlueprint(): this("EF", 0){}
     }
 }

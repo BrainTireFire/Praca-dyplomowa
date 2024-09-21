@@ -119,56 +119,31 @@ public class Seed
 
             ChoiceGroup grantedLanguage = new("Race language");
             Language commonLanguage = existingLanguages.Where(lang => lang.Name == "Common").FirstOrDefault() ?? new Language{Name = "Common"};
-            LanguageEffectBlueprint commonLanguageKnown = new()
+            LanguageEffectBlueprint commonLanguageKnown = new("Common language")
             {
-                R_Language = commonLanguage,
-                Name = "Common language"
+                R_Language = commonLanguage
             };
             grantedLanguage.R_Effects.Add(commonLanguageKnown);
 
-            ChoiceGroup abilityScoreIncrease = new("Ability score increase");
-            AbilityEffectBlueprint strengthBonus = new()
-            {
-                Name = "Ability score increase"
-            };
+            ChoiceGroup abilityScoreIncrease = new("Human abilities");
+            AbilityEffectBlueprint strengthBonus = new("Human strength", 1);
             strengthBonus.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             strengthBonus.AbilityEffectType.AbilityEffect_Ability = Ability.STRENGTH;
-            strengthBonus.DiceSet.flat = 1;
-            AbilityEffectBlueprint dexterityBonus = new()
-            {
-                Name = "Ability score increase"
-            };
+            AbilityEffectBlueprint dexterityBonus = new("Human dexterity", 1);
             dexterityBonus.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             dexterityBonus.AbilityEffectType.AbilityEffect_Ability = Ability.DEXTERITY;
-            dexterityBonus.DiceSet.flat = 1;
-            AbilityEffectBlueprint constitutionBonus = new()
-            {
-                Name = "Ability score increase"
-            };
+            AbilityEffectBlueprint constitutionBonus = new("Human constitution", 1);
             constitutionBonus.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             constitutionBonus.AbilityEffectType.AbilityEffect_Ability = Ability.CONSTITUTION;
-            constitutionBonus.DiceSet.flat = 1;
-            AbilityEffectBlueprint intelligenceBonus = new()
-            {
-                Name = "Ability score increase"
-            };
+            AbilityEffectBlueprint intelligenceBonus = new("Human intelligence", 1);
             intelligenceBonus.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             intelligenceBonus.AbilityEffectType.AbilityEffect_Ability = Ability.INTELLIGENCE;
-            intelligenceBonus.DiceSet.flat = 1;
-            AbilityEffectBlueprint wisdomBonus = new()
-            {
-                Name = "Ability score increase"
-            };
+            AbilityEffectBlueprint wisdomBonus = new("Human wisdom", 1);
             wisdomBonus.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             wisdomBonus.AbilityEffectType.AbilityEffect_Ability = Ability.WISDOM;
-            wisdomBonus.DiceSet.flat = 1;
-            AbilityEffectBlueprint charismaBonus = new()
-            {
-                Name = "Ability score increase"
-            };
+            AbilityEffectBlueprint charismaBonus = new("Human charisma", 1);
             charismaBonus.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             charismaBonus.AbilityEffectType.AbilityEffect_Ability = Ability.CHARISMA;
-            charismaBonus.DiceSet.flat = 1;
             abilityScoreIncrease.R_Effects.Add(strengthBonus);
             abilityScoreIncrease.R_Effects.Add(dexterityBonus);
             abilityScoreIncrease.R_Effects.Add(constitutionBonus);
@@ -178,10 +153,9 @@ public class Seed
 
             ChoiceGroup additionalLanguageOfChoice = new ("Additional chosen language");
             foreach(Language language in existingLanguages){
-                LanguageEffectBlueprint languageEffect = new()
+                LanguageEffectBlueprint languageEffect = new(language.Name)
                 {
-                    R_Language = language,
-                    Name = "Additional chosen language"
+                    R_Language = language
                 };
                 additionalLanguageOfChoice.R_Effects.Add(languageEffect);
             }
@@ -199,25 +173,20 @@ public class Seed
 
             ChoiceGroup languages = new("Race language");
             Language commonLanguage = existingLanguages.Where(lang => lang.Name == "Common").FirstOrDefault() ?? new Language{Name = "Common"};
-            LanguageEffectBlueprint commonLanguageKnown = new()
+            LanguageEffectBlueprint commonLanguageKnown = new("Common language")
             {
-                R_Language = commonLanguage,
-                Name = "Common language"
+                R_Language = commonLanguage
             };
             Language elvishLanguage = existingLanguages.Where(lang => lang.Name == "Elvish").FirstOrDefault() ?? new Language{Name = "Elvish"};
-            LanguageEffectBlueprint elvishLanguageKnown = new()
+            LanguageEffectBlueprint elvishLanguageKnown = new("Elvish language")
             {
-                R_Language = elvishLanguage,
-                Name = "Elvish language"
+                R_Language = elvishLanguage
             };
             languages.R_Effects.Add(commonLanguageKnown);
             languages.R_Effects.Add(elvishLanguageKnown);
 
             ChoiceGroup dexterityBonusGroup = new("Ability score increase");
-            AbilityEffectBlueprint dexterityBonus = new()
-            {
-                Name = "Ability score increase"
-            };
+            AbilityEffectBlueprint dexterityBonus = new("Elven dexterity", 2);
             dexterityBonus.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             dexterityBonus.AbilityEffectType.AbilityEffect_Ability = Ability.DEXTERITY;
             dexterityBonus.DiceSet.flat = 2;
@@ -265,27 +234,21 @@ public class Seed
             Race dwarf = prepareRace("Dwarf", Size.Medium, 25);
 
             ChoiceGroup constitutionBonusGroup = new("Ability score increase");
-            AbilityEffectBlueprint constitutionBonus = new()
-            {
-                Name = "Ability score increase"
-            };
+            AbilityEffectBlueprint constitutionBonus = new("Dwarven constitution", 2);
             constitutionBonus.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             constitutionBonus.AbilityEffectType.AbilityEffect_Ability = Ability.CONSTITUTION;
-            constitutionBonus.DiceSet.flat = 2;
             constitutionBonusGroup.R_Effects.Add(constitutionBonus);
 
             ChoiceGroup languages = new("Race language");
             Language commonLanguage = existingLanguages.Where(lang => lang.Name == "Common").FirstOrDefault() ?? new Language{Name = "Common"};
-            LanguageEffectBlueprint commonLanguageKnown = new()
+            LanguageEffectBlueprint commonLanguageKnown = new("Common language")
             {
-                R_Language = commonLanguage,
-                Name = "Common language"
+                R_Language = commonLanguage
             };
             Language dwarvishLanguage = existingLanguages.Where(lang => lang.Name == "Dwarvish").FirstOrDefault() ?? new Language{Name = "Dwarvish"}; //Tolkien spelling, best spelling
-            LanguageEffectBlueprint dwarvishLanguageKnown = new()
+            LanguageEffectBlueprint dwarvishLanguageKnown = new("Dwarvish language")
             {
-                R_Language = dwarvishLanguage,
-                Name = "Dwarvish language"
+                R_Language = dwarvishLanguage
             };
             languages.R_Effects.Add(commonLanguageKnown);
             languages.R_Effects.Add(dwarvishLanguageKnown);
@@ -436,6 +399,9 @@ public class Seed
             ChoiceGroup fightingStyle = new("Fighting style");
             fightingStyle.R_Effects.Add(new AttackRollEffectBlueprint("Archery", 2, AttackRollEffect_Type.Bonus, AttackRollEffect_Source.Weapon, AttackRollEffect_Range.Ranged){Description = "You gain a +2 bonus to attack rolls you make with ranged weapons."});
             fightingStyle.R_Effects.Add(new ArmorClassEffectBlueprint("Defense", 1){Conditional = true, Description = "While you are wearing armor, you gain a +1 bonus to AC."});
+            fightingStyle.R_Effects.Add(new AttackRollEffectBlueprint("Dueling", 1, AttackRollEffect_Type.Bonus, AttackRollEffect_Source.Weapon, AttackRollEffect_Range.Melee){Conditional = true, Description = @"When you are wielding a melee weapon in one hand and 
+                                                                                                                        no other weapons, you gain a +2 bonus to damage rolls 
+                                                                                                                        with that weapon."});
             fightingStyle.R_Effects.Add(new AttackRollEffectBlueprint("Great Weapon Fighting", 3, AttackRollEffect_Type.RerollLowerThan, AttackRollEffect_Source.Weapon, AttackRollEffect_Range.Melee){
                 Conditional = true,
                 Description = @"When you roll a 1 or 2 on a damage die for an attack you 
@@ -458,7 +424,7 @@ public class Seed
             fightingStyle.R_Effects.Add(new OffHandAttackEffectBlueprint("Two-Weapon Fighting"));
 
 
-            ChoiceGroup features = new("Fighter feature");
+            ChoiceGroup features = new("Fighter features");
 
             ImmaterialResourceBlueprint secondWindResource = new(){
                 Name = "Second wind charge",
@@ -468,11 +434,12 @@ public class Seed
             Power secondWind = new("Second wind", ActionType.BonusAction, CastableBy.Character, PowerType.PassiveEffect, TargetType.Caster){
                 R_UsesImmaterialResource = secondWindResource
             };
-            HealingEffectBlueprint secondWindHealing = new("Second wind", new DiceSet(){additionalValues = [new(){additionalValueType = DiceSet.AdditionalValue.AdditionalValueType.LevelsInClass, R_LevelsInClass = fighterClass}]});// = DiceSet.AdditionalValue.LevelsInClass, R_LevelsInClass = fighterClass
+            HealingEffectBlueprint secondWindHealing = new("Second wind", new DiceSet(){d10 = 1, additionalValues = [new(){additionalValueType = DiceSet.AdditionalValue.AdditionalValueType.LevelsInClass, R_LevelsInClass = fighterClass}]});// = DiceSet.AdditionalValue.LevelsInClass, R_LevelsInClass = fighterClass
             secondWind.R_EffectBlueprints.Add(secondWindHealing);
             
             Power actionSurge = new("Action surge", ActionType.None, CastableBy.Character, PowerType.PassiveEffect, TargetType.Caster){Duration = 1};
             ActionEffectBlueprint actionSurgeEffect = new("Action surge", 1, ActionEffect.Action);
+            actionSurge.R_EffectBlueprints.Add(actionSurgeEffect);
             
             AttackPerAttackActionEffectBlueprint extraAttack = new("Extra attack", 2, AttackPerActionEffect.AttacksTotal);
 

@@ -10,13 +10,10 @@ using pracadyplomowa.Models.Enums.EffectOptions;
 
 namespace pracadyplomowa.Models.Entities.Powers
 {
-    public class EffectBlueprint : ObjectWithId
+    public class EffectBlueprint(string name) : ObjectWithId
     {
-        public EffectBlueprint(string name){
-            Name = name;
-        }
-
-        public string Name { get; set; }
+        private EffectBlueprint() : this("EF"){}
+        public string Name { get; set; } = name;
         public string  Description { get; set; } = "";
         public int Level { get; set; } // use this effect if Level value matches value selected by 
         public int ResourceAmount { get; set;}

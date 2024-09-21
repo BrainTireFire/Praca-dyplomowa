@@ -38,7 +38,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         public bool UpcastByCharacterLevel {get; set;} = false;
         public bool UpcastByClassLevel {get; set;} = false;
         public Class? R_ClassForUpcasting {get; set;}
-        public Class? R_ClassForUpcastingId {get; set;}
+        public int? R_ClassForUpcastingId {get; set;}
 
         // Relationships
         public virtual List<Character> R_CharacterPreparedPowers { get; set; } = [];

@@ -9,6 +9,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class DamageEffectBlueprint(string name, DiceSet value) : ValueEffectBlueprint(name, value)
     {
+        private DamageEffectBlueprint(): this("EF", 0){}
         public DamageEffectType DamageEffectType{ get; set;} = new DamageEffectType();
     }
 }

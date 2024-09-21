@@ -7,8 +7,9 @@ using pracadyplomowa.Models.Entities.Characters;
 
 namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
-    public class LanguageEffectBlueprint : EffectBlueprint
+    public class LanguageEffectBlueprint(string name) : EffectBlueprint(name)
     {
+        private LanguageEffectBlueprint(): this("EF"){}
         public LanguageEffectType LanguageEffectType{ get; set;} = new LanguageEffectType();
 
         

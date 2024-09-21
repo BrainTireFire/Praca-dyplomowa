@@ -11,6 +11,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class SkillEffectBlueprint : ValueEffectBlueprint
     {
+        private SkillEffectBlueprint() : this("EF"){}
         public SkillEffectType SkillEffectType{ get; set; } = new SkillEffectType();
 
         public SkillEffectBlueprint(string name, DiceSet value, SkillEffect skillEffect, Skill skill) : base(name, value){

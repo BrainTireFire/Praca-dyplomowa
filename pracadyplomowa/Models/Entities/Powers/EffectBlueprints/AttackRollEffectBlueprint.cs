@@ -10,6 +10,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class AttackRollEffectBlueprint : ValueEffectBlueprint
     {
+        private AttackRollEffectBlueprint(): this("EF", 0, 0, 0, 0){}
         public AttackRollEffectBlueprint(string name, DiceSet value, AttackRollEffect_Type effectType, AttackRollEffect_Source effectSource, AttackRollEffect_Range effectRange) : base(name, value){
             AttackRollEffectType.AttackRollEffect_Type = effectType;
             AttackRollEffectType.AttackRollEffect_Source = effectSource;

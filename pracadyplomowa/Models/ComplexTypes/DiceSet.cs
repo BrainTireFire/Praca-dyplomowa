@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using pracadyplomowa.Models.Entities.Powers.EffectBlueprints;
 using pracadyplomowa.Models.Enums;
 
 namespace pracadyplomowa.Models.Entities.Characters
 {
-    public class DiceSet
+    public class DiceSet : ObjectWithId
     {
         public int d20 { get; set; }
         public int d12 { get; set; }
@@ -19,12 +20,13 @@ namespace pracadyplomowa.Models.Entities.Characters
         public static implicit operator DiceSet(int d) => new(){flat = d};
 
 
-        public class AdditionalValue{
+        public class AdditionalValue : ObjectWithId{
             public enum AdditionalValueType{
                 LevelsInClass = 0,
                 ProficiencyModifier = 1,
                 TotalLevel = 2,
                 AbilityScoreModifier = 3,
+                SkillBonus = 4
             }
             public AdditionalValueType additionalValueType;
             public Class? R_LevelsInClass { get; set; }

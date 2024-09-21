@@ -191,6 +191,16 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .WithMany(c => c.R_EffectGroupFromItem)
                         .HasForeignKey(c => c.R_ItemGiveEffectId)
                         .IsRequired(false);
+                
+                builder.Entity<Class>()
+                        .HasMany(c => c.R_AccessiblePowers)
+                        .WithMany(p => p.R_ClassesWithAccess);
+                
+                builder.Entity<Class>()
+                        .HasMany(c => c.R_UsedForUpcastingOfPowers)
+                        .WithOne(p => p.R_ClassForUpcasting)
+                        .HasForeignKey(p => p.R_ClassForUpcastingId)
+                        .IsRequired(false);
 
 
                 builder.Entity<Item>().UseTptMappingStrategy();

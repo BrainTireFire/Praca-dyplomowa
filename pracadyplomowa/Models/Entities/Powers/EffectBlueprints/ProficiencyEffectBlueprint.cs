@@ -8,18 +8,13 @@ using pracadyplomowa.Models.Enums.EffectOptions;
 
 namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
-    public class ProficiencyEffectBlueprint : EffectBlueprint
+    public class ProficiencyEffectBlueprint(ItemFamily itemFamily) : EffectBlueprint(itemFamily.Name)
     {
-        public ProficiencyEffectBlueprint(ItemFamily itemFamily) : base(itemFamily.Name){
-            //ProficiencyEffectType.ProficiencyEffect = proficiencyTargetType;
-            R_GrantsProficiencyInItemFamily = itemFamily;
-            R_GrantsProficiencyInItemFamilyId = itemFamily.Id;
-        }
-
+        private ProficiencyEffectBlueprint() : this(new ItemFamily(){Name = "EF"}){}
         //public ProficiencyEffectType ProficiencyEffectType{ get; set;} = new ProficiencyEffectType();
 
-        
-        public virtual ItemFamily? R_GrantsProficiencyInItemFamily { get; set; }
-        public int? R_GrantsProficiencyInItemFamilyId { get; set; }
+
+        public virtual ItemFamily R_GrantsProficiencyInItemFamily { get; set; } = itemFamily;
+        public int R_GrantsProficiencyInItemFamilyId { get; set; } = itemFamily.Id;
     }
 }

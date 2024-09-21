@@ -8,6 +8,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class ValueEffectBlueprint(string name, DiceSet value) : EffectBlueprint(name)
     {
+        private ValueEffectBlueprint(): this("EF", 0){}
         public DiceSet DiceSet {get; set;} = value;
     }
 }

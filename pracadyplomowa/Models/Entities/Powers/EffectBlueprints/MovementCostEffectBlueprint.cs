@@ -6,8 +6,9 @@ using pracadyplomowa.Models.ComplexTypes.Effects;
 
 namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
-    public class MovementCostEffectBlueprint : EffectBlueprint
+    public class MovementCostEffectBlueprint(string name) : EffectBlueprint(name)
     {
+        private MovementCostEffectBlueprint(): this("EF"){}
         public MovementCostEffectType MovementCostEffectType{ get; set; } = new MovementCostEffectType();
     }
 }

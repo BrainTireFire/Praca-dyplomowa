@@ -17,7 +17,9 @@ namespace pracadyplomowa.Models.Entities.Characters
         public Ability? SpellcastingAbility { get; set; }
 
         //Relationships
-        public ICollection<Power> R_AccessiblePowers { get; set; } = [];
-        public ICollection<ClassLevel> R_ClassLevels { get; set; } = [];
+        public List<Power> R_AccessiblePowers { get; set; } = [];
+        public List<ClassLevel> R_ClassLevels { get; set; } = [];
+
+        public List<Power> R_UsedForUpcastingOfPowers {get; set;} = [];
     }
 }

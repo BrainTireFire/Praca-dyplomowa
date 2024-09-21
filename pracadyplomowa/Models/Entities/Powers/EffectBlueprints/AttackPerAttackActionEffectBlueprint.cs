@@ -10,6 +10,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class AttackPerAttackActionEffectBlueprint : ValueEffectBlueprint
     {
+        private AttackPerAttackActionEffectBlueprint(): this("EF", 0, 0){}
         public AttackPerAttackActionEffectBlueprint(string name, DiceSet value, AttackPerActionEffect effectType) : base(name, value){
             AttackPerAttackActionEffectType.AttackPerActionEffect = effectType;
         }

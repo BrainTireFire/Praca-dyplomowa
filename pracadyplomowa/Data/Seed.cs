@@ -648,6 +648,8 @@ public class Seed
             strokeOfLuckAmount.Level = 1;
             strokeOfLuckAmount.Count = 1;
 
+            context.Classes.Add(rogueClass);
+
         }
         await context.SaveChangesAsync();
     }

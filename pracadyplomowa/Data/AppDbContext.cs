@@ -126,7 +126,8 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .HasOne(i => i.R_Owner)
                         .WithMany(o => o.R_Objects)
                         .HasForeignKey(i => i.R_OwnerId)
-                        .IsRequired();
+                        .IsRequired(false)
+                        .OnDelete(DeleteBehavior.Cascade);
 
                 builder.Entity<Character>()
                         .HasOne(c => c.R_ConcentratesOn)

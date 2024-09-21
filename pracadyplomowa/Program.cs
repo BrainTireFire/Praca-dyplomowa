@@ -110,6 +110,7 @@ try
     await Seed.SeedUsers(userManager, roleManger);
     await Seed.SeedItemFamilies(dbContext);
     await Seed.SeedRaces(dbContext);
+    await Seed.SeedClasses(dbContext);
 }
 catch (Exception ex)
 {

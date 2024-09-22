@@ -9,7 +9,7 @@ public class DamageEffectInstance : ValueEffectInstance
     public DamageEffectType DamageEffectType { get; set; } = new DamageEffectType();
     private DamageEffectInstance() : base("EF", 0){}
     public DamageEffectInstance(string name) : base(name, 0){}
-    public DamageEffectInstance(DamageEffectBlueprint damageEffectBlueprint, Character roller) : base(damageEffectBlueprint, roller){
+    public DamageEffectInstance(DamageEffectBlueprint damageEffectBlueprint, Character roller, Character target) : base(damageEffectBlueprint, roller, target){
         DamageEffectType = damageEffectBlueprint.DamageEffectType;
     }
 }

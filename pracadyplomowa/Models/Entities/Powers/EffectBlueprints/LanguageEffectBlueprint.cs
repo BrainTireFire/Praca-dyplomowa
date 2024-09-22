@@ -9,11 +9,16 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class LanguageEffectBlueprint(string name) : EffectBlueprint(name)
     {
-        private LanguageEffectBlueprint(): this("EF"){}
         public LanguageEffectType LanguageEffectType{ get; set;} = new LanguageEffectType();
 
         
         public virtual required Language R_Language { get; set; }
         public int R_LanguageId { get; set; }
+        //constructors
+        private LanguageEffectBlueprint(): this("EF"){}
+        //methods
+        public override EffectInstance Generate(Character roller, Character target){
+            return new LanguageEffectInstance(this, target);
+        }
     }
 }

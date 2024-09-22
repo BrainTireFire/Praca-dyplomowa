@@ -4,12 +4,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using pracadyplomowa.Models.ComplexTypes.Effects;
 using pracadyplomowa.Models.Entities.Characters;
+using pracadyplomowa.Models.Enums;
 
 namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
-    public class DamageEffectBlueprint(string name, DiceSet value) : ValueEffectBlueprint(name, value)
+    public class DamageEffectBlueprint(string name, DiceSet value, RollMoment rollMoment) : ValueEffectBlueprint(name, value, rollMoment)
     {
-        private DamageEffectBlueprint(): this("EF", 0){}
         public DamageEffectType DamageEffectType{ get; set;} = new DamageEffectType();
+        private DamageEffectBlueprint(): this("EF", 0, 0){}
+        //methods
+        public override EffectInstance Generate(Character roller, Character target){
+            return new DamageEffectInstance(this, roller, target);
+        }
     }
 }

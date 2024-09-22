@@ -13,16 +13,18 @@ namespace pracadyplomowa.Models.Entities.Powers
     public class EffectInstance(string name) : ObjectWithId
     {
         private EffectInstance() : this("EF"){}
-        public EffectInstance(EffectBlueprint blueprint) : this(blueprint.Name){
+        public EffectInstance(EffectBlueprint blueprint, Character target) : this(blueprint.Name){
             Description = blueprint.Description;
             IsImplemented = blueprint.IsImplemented;
             Conditional = blueprint.Conditional;
             HasNoEffectInCombat = blueprint.HasNoEffectInCombat;
+            R_TargetedCharacter = target;
+            R_TargetedCharacterId = target.Id;
+            target.R_AffectedBy.Add(this);
         }
 
         public string Name { get; set; } = name;
         public string Description { get; set; } = "";
-        // public EffectType EffectType { get; set; }
         public bool Conditional { get; set; }
         public bool IsImplemented { get; set; }
         public bool HasNoEffectInCombat { get; set; } = false;

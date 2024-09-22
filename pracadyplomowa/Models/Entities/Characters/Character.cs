@@ -57,59 +57,53 @@ namespace pracadyplomowa.Models.Entities.Characters
             this.R_CharacterHasLevelsInClass.Add(classLevel);
             this.R_CharacterBelongsToRace = race;
 
-            AbilityEffectInstance strength = new()
+            AbilityEffectInstance strength = new("Strength base")
             {
-                Name = "Strength base",
                 Description = "Strength base"
             };
             strength.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             strength.AbilityEffectType.AbilityEffect_Ability = Ability.STRENGTH;
-            strength.Value = strengthValue;
+            strength.DiceSet = strengthValue;
 
-            AbilityEffectInstance dexterity = new()
+            AbilityEffectInstance dexterity = new("Dexterity base")
             {
-                Name = "Dexterity base",
                 Description = "Dexterity base"
             };
             dexterity.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             dexterity.AbilityEffectType.AbilityEffect_Ability = Ability.DEXTERITY;
-            dexterity.Value = dexterityValue;
+            dexterity.DiceSet = dexterityValue;
 
-            AbilityEffectInstance constitution = new()
+            AbilityEffectInstance constitution = new("Constitution base")
             {
-                Name = "Constitution base",
                 Description = "Constitution base"
             };
             constitution.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             constitution.AbilityEffectType.AbilityEffect_Ability = Ability.CONSTITUTION;
-            constitution.Value = constitutionValue;
+            constitution.DiceSet = constitutionValue;
 
-            AbilityEffectInstance intelligence = new()
+            AbilityEffectInstance intelligence = new("Intelligence base")
             {
-                Name = "Intelligence base",
                 Description = "Intelligence base"
             };
             intelligence.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             intelligence.AbilityEffectType.AbilityEffect_Ability = Ability.INTELLIGENCE;
-            intelligence.Value = intelligenceValue;
+            intelligence.DiceSet = intelligenceValue;
 
-            AbilityEffectInstance wisdom = new()
+            AbilityEffectInstance wisdom = new("Wisdom base")
             {
-                Name = "Wisdom base",
                 Description = "Wisdom base"
             };
             wisdom.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             wisdom.AbilityEffectType.AbilityEffect_Ability = Ability.WISDOM;
-            wisdom.Value = wisdomValue;
+            wisdom.DiceSet = wisdomValue;
 
-            AbilityEffectInstance charisma = new()
+            AbilityEffectInstance charisma = new("Charisma base")
             {
-                Name = "Charisma base",
                 Description = "Charisma base"
             };
             charisma.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             charisma.AbilityEffectType.AbilityEffect_Ability = Ability.CHARISMA;
-            charisma.Value = charismaValue;
+            charisma.DiceSet = charismaValue;
 
             EffectGroup basicStats = new()
             {
@@ -154,7 +148,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             return this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances).OfType<AbilityEffectInstance>().Where(aei => 
             aei.AbilityEffectType.AbilityEffect == AbilityEffect.Bonus &&
             aei.AbilityEffectType.AbilityEffect_Ability == ability
-            ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.Value);
+            ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet);
         }
 
         [NotMapped]
@@ -215,7 +209,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             int value = this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances).OfType<SkillEffectInstance>().Where(aei => 
             aei.SkillEffectType.SkillEffect == SkillEffect.Bonus &&
             aei.SkillEffectType.SkillEffect_Skill == skill
-            ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.Value);
+            ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet);
 
             value += AbilityModifier(AbilityValue(Utils.SkillToAbility(skill)));
 

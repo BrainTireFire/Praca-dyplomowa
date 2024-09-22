@@ -22,10 +22,16 @@ namespace pracadyplomowa.Models.Entities.Characters
         public virtual ICollection<ChoiceGroupUsage> R_UsageInstances { get; set; } = [];
 
         public ChoiceGroupUsage Generate(Character character, List<EffectBlueprint> effects, List<Power> powers){
-            ChoiceGroupUsage usage = new ChoiceGroupUsage();
+            ChoiceGroupUsage usage = new();
             if(effects.Intersect(this.R_Effects).Count() == effects.Count && (this.NumberToChoose == 0 || this.NumberToChoose == effects.Count)){
-                EffectInstance instance = 
+                foreach(EffectBlueprint blueprint in effects){
+                    usage.R_EffectsGranted.Add(blueprint.Generate(character, character));
+                } 
             }
+            usage.R_ChoiceGroup = this;
+            this.R_UsageInstances.Add(usage);
+            character.R_UsedChoiceGroups.Add(usage);
+            usage.R_Character = character;
             return usage;
         }
     }

@@ -126,22 +126,22 @@ public class Seed
             grantedLanguage.R_Effects.Add(commonLanguageKnown);
 
             ChoiceGroup abilityScoreIncrease = new("Human abilities");
-            AbilityEffectBlueprint strengthBonus = new("Human strength", 1);
+            AbilityEffectBlueprint strengthBonus = new("Human strength", 1, RollMoment.OnCast);
             strengthBonus.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             strengthBonus.AbilityEffectType.AbilityEffect_Ability = Ability.STRENGTH;
-            AbilityEffectBlueprint dexterityBonus = new("Human dexterity", 1);
+            AbilityEffectBlueprint dexterityBonus = new("Human dexterity", 1, RollMoment.OnCast);
             dexterityBonus.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             dexterityBonus.AbilityEffectType.AbilityEffect_Ability = Ability.DEXTERITY;
-            AbilityEffectBlueprint constitutionBonus = new("Human constitution", 1);
+            AbilityEffectBlueprint constitutionBonus = new("Human constitution", 1, RollMoment.OnCast);
             constitutionBonus.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             constitutionBonus.AbilityEffectType.AbilityEffect_Ability = Ability.CONSTITUTION;
-            AbilityEffectBlueprint intelligenceBonus = new("Human intelligence", 1);
+            AbilityEffectBlueprint intelligenceBonus = new("Human intelligence", 1, RollMoment.OnCast);
             intelligenceBonus.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             intelligenceBonus.AbilityEffectType.AbilityEffect_Ability = Ability.INTELLIGENCE;
-            AbilityEffectBlueprint wisdomBonus = new("Human wisdom", 1);
+            AbilityEffectBlueprint wisdomBonus = new("Human wisdom", 1, RollMoment.OnCast);
             wisdomBonus.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             wisdomBonus.AbilityEffectType.AbilityEffect_Ability = Ability.WISDOM;
-            AbilityEffectBlueprint charismaBonus = new("Human charisma", 1);
+            AbilityEffectBlueprint charismaBonus = new("Human charisma", 1, RollMoment.OnCast);
             charismaBonus.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             charismaBonus.AbilityEffectType.AbilityEffect_Ability = Ability.CHARISMA;
             abilityScoreIncrease.R_Effects.Add(strengthBonus);
@@ -186,14 +186,14 @@ public class Seed
             languages.R_Effects.Add(elvishLanguageKnown);
 
             ChoiceGroup dexterityBonusGroup = new("Ability score increase");
-            AbilityEffectBlueprint dexterityBonus = new("Elven dexterity", 2);
+            AbilityEffectBlueprint dexterityBonus = new("Elven dexterity", 2, RollMoment.OnCast);
             dexterityBonus.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             dexterityBonus.AbilityEffectType.AbilityEffect_Ability = Ability.DEXTERITY;
             dexterityBonus.DiceSet.flat = 2;
             dexterityBonusGroup.R_Effects.Add(dexterityBonus);
 
             ChoiceGroup keenSensesGroup = new("Keen senses");
-            SkillEffectBlueprint perceptionProficienyEffect = new("Keen senses", 0, SkillEffect.Proficiency, Skill.Perception);
+            SkillEffectBlueprint perceptionProficienyEffect = new("Keen senses", 0, RollMoment.OnCast, SkillEffect.Proficiency, Skill.Perception);
             keenSensesGroup.R_Effects.Add(perceptionProficienyEffect);
 
             ChoiceGroup darkvisionGroup = new("Darkvision");
@@ -209,11 +209,11 @@ public class Seed
             darkvisionGroup.R_Effects.Add(darkvision);
 
             ChoiceGroup feyAncestry = new("Fey Ancestry");
-            SavingThrowEffectBlueprint feyAncestryA = new("Fey Ancestry A", 0, SavingThrowEffect.Advantage, null, Condition.Charmed, null)
+            SavingThrowEffectBlueprint feyAncestryA = new("Fey Ancestry A", 0, RollMoment.OnCast, SavingThrowEffect.Advantage, null, Condition.Charmed, null)
             {
                 Conditional = true
             };
-            SavingThrowEffectBlueprint feyAncestryB = new("Fey Ancestry B", 0, SavingThrowEffect.AlwaysSucceed, null, Condition.Unconscious, AttackNature.Magical)
+            SavingThrowEffectBlueprint feyAncestryB = new("Fey Ancestry B", 0, RollMoment.OnCast, SavingThrowEffect.AlwaysSucceed, null, Condition.Unconscious, AttackNature.Magical)
             {
                 Conditional = true
             };
@@ -234,7 +234,7 @@ public class Seed
             Race dwarf = prepareRace("Dwarf", Size.Medium, 25);
 
             ChoiceGroup constitutionBonusGroup = new("Ability score increase");
-            AbilityEffectBlueprint constitutionBonus = new("Dwarven constitution", 2);
+            AbilityEffectBlueprint constitutionBonus = new("Dwarven constitution", 2, RollMoment.OnCast);
             constitutionBonus.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             constitutionBonus.AbilityEffectType.AbilityEffect_Ability = Ability.CONSTITUTION;
             constitutionBonusGroup.R_Effects.Add(constitutionBonus);
@@ -266,7 +266,7 @@ public class Seed
             darkvisionGroup.R_Effects.Add(darkvision);
 
             ChoiceGroup dwarvenResilience = new("Dwarven Resilience");
-            SavingThrowEffectBlueprint dwarvenResilienceA = new("Dwarven Resilience A", 0, SavingThrowEffect.Advantage, null, Condition.Poisoned, null);
+            SavingThrowEffectBlueprint dwarvenResilienceA = new("Dwarven Resilience A", 0, RollMoment.OnCast, SavingThrowEffect.Advantage, null, Condition.Poisoned, null);
             ResistanceEffectBlueprint dwarvenResilienceB = new("Dwarven Resilience B", ResistanceEffect.Resistance, DamageType.poison);
             dwarvenResilience.R_Effects.Add(dwarvenResilienceA);
             dwarvenResilience.R_Effects.Add(dwarvenResilienceB);
@@ -290,7 +290,7 @@ public class Seed
             dwarvenCombatTraining.R_Effects.Add(dwarvenCombatTraining_Warhammer);
 
             ChoiceGroup stoneCunning = new("Stonecunning");
-            SkillEffectBlueprint stonecunningA = new("Stonecunning A", 0, SkillEffect.Expertise, Skill.History)
+            SkillEffectBlueprint stonecunningA = new("Stonecunning A", 0, RollMoment.OnCast, SkillEffect.Expertise, Skill.History)
             {
                 Conditional = true,
                 HasNoEffectInCombat = true
@@ -332,8 +332,8 @@ public class Seed
             fighterClass.R_ClassLevels.Where(cl => cl.Level == 1).First().HitPoints = 10;
 
             ChoiceGroup savingThrowProficiency = new("Fighter saving throw proficiency");
-            savingThrowProficiency.R_Effects.Add(new SavingThrowEffectBlueprint("Constitution saving throw proficiency", 0, SavingThrowEffect.Proficiency, Ability.CONSTITUTION, null, null));
-            savingThrowProficiency.R_Effects.Add(new SavingThrowEffectBlueprint("Strength saving throw proficiency", 0, SavingThrowEffect.Proficiency, Ability.STRENGTH, null, null));
+            savingThrowProficiency.R_Effects.Add(new SavingThrowEffectBlueprint("Constitution saving throw proficiency", 0, RollMoment.OnCast, SavingThrowEffect.Proficiency, Ability.CONSTITUTION, null, null));
+            savingThrowProficiency.R_Effects.Add(new SavingThrowEffectBlueprint("Strength saving throw proficiency", 0, RollMoment.OnCast, SavingThrowEffect.Proficiency, Ability.STRENGTH, null, null));
             
 
             ChoiceGroup armorProficiency = new("Fighter armor proficiency");
@@ -386,23 +386,23 @@ public class Seed
             martialWeaponProficiency.R_Effects.Add(CreateProficiencyEffectBlueprint(context, "Net"));
 
             ChoiceGroup fighterSkillProficiency = new("Fighter skill proficiency");
-            fighterSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Acrobatics", 0, SkillEffect.Proficiency, Skill.Acrobatics));
-            fighterSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Animal Handling", 0, SkillEffect.Proficiency, Skill.Animal_Handling));
-            fighterSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Athletics", 0, SkillEffect.Proficiency, Skill.Athletics));
-            fighterSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("History", 0, SkillEffect.Proficiency, Skill.History));
-            fighterSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Insight", 0, SkillEffect.Proficiency, Skill.Insight));
-            fighterSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Intimidation", 0, SkillEffect.Proficiency, Skill.Intimidation));
-            fighterSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Perception", 0, SkillEffect.Proficiency, Skill.Perception));
-            fighterSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Survival", 0, SkillEffect.Proficiency, Skill.Survival));
+            fighterSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Acrobatics", 0, RollMoment.OnCast, SkillEffect.Proficiency, Skill.Acrobatics));
+            fighterSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Animal Handling", 0, RollMoment.OnCast, SkillEffect.Proficiency, Skill.Animal_Handling));
+            fighterSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Athletics", 0, RollMoment.OnCast, SkillEffect.Proficiency, Skill.Athletics));
+            fighterSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("History", 0, RollMoment.OnCast, SkillEffect.Proficiency, Skill.History));
+            fighterSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Insight", 0, RollMoment.OnCast, SkillEffect.Proficiency, Skill.Insight));
+            fighterSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Intimidation", 0, RollMoment.OnCast, SkillEffect.Proficiency, Skill.Intimidation));
+            fighterSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Perception", 0, RollMoment.OnCast, SkillEffect.Proficiency, Skill.Perception));
+            fighterSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Survival", 0, RollMoment.OnCast, SkillEffect.Proficiency, Skill.Survival));
             fighterSkillProficiency.NumberToChoose = 2;
 
             ChoiceGroup fightingStyle = new("Fighting style");
-            fightingStyle.R_Effects.Add(new AttackRollEffectBlueprint("Archery", 2, AttackRollEffect_Type.Bonus, AttackRollEffect_Source.Weapon, AttackRollEffect_Range.Ranged){Description = "You gain a +2 bonus to attack rolls you make with ranged weapons."});
-            fightingStyle.R_Effects.Add(new ArmorClassEffectBlueprint("Defense", 1){Conditional = true, Description = "While you are wearing armor, you gain a +1 bonus to AC."});
-            fightingStyle.R_Effects.Add(new AttackRollEffectBlueprint("Dueling", 1, AttackRollEffect_Type.Bonus, AttackRollEffect_Source.Weapon, AttackRollEffect_Range.Melee){Conditional = true, Description = @"When you are wielding a melee weapon in one hand and 
+            fightingStyle.R_Effects.Add(new AttackRollEffectBlueprint("Archery", 2, RollMoment.OnCast, AttackRollEffect_Type.Bonus, AttackRollEffect_Source.Weapon, AttackRollEffect_Range.Ranged){Description = "You gain a +2 bonus to attack rolls you make with ranged weapons."});
+            fightingStyle.R_Effects.Add(new ArmorClassEffectBlueprint("Defense", 1, RollMoment.OnCast){Conditional = true, Description = "While you are wearing armor, you gain a +1 bonus to AC."});
+            fightingStyle.R_Effects.Add(new AttackRollEffectBlueprint("Dueling", 1, RollMoment.OnCast, AttackRollEffect_Type.Bonus, AttackRollEffect_Source.Weapon, AttackRollEffect_Range.Melee){Conditional = true, Description = @"When you are wielding a melee weapon in one hand and 
                                                                                                                         no other weapons, you gain a +2 bonus to damage rolls 
                                                                                                                         with that weapon."});
-            fightingStyle.R_Effects.Add(new AttackRollEffectBlueprint("Great Weapon Fighting", 3, AttackRollEffect_Type.RerollLowerThan, AttackRollEffect_Source.Weapon, AttackRollEffect_Range.Melee){
+            fightingStyle.R_Effects.Add(new AttackRollEffectBlueprint("Great Weapon Fighting", 3, RollMoment.OnCast, AttackRollEffect_Type.RerollLowerThan, AttackRollEffect_Source.Weapon, AttackRollEffect_Range.Melee){
                 Conditional = true,
                 Description = @"When you roll a 1 or 2 on a damage die for an attack you 
                                 make with a melee weapon that you are wielding with 
@@ -434,14 +434,14 @@ public class Seed
             Power secondWind = new("Second wind", ActionType.BonusAction, CastableBy.Character, PowerType.PassiveEffect, TargetType.Caster){
                 R_UsesImmaterialResource = secondWindResource
             };
-            HealingEffectBlueprint secondWindHealing = new("Second wind", new DiceSet(){d10 = 1, additionalValues = [new(){additionalValueType = DiceSet.AdditionalValue.AdditionalValueType.LevelsInClass, R_LevelsInClass = fighterClass}]});// = DiceSet.AdditionalValue.LevelsInClass, R_LevelsInClass = fighterClass
+            HealingEffectBlueprint secondWindHealing = new("Second wind", new DiceSet(){d10 = 1, additionalValues = [new(){additionalValueType = DiceSet.AdditionalValue.AdditionalValueType.LevelsInClass, R_LevelsInClass = fighterClass}]}, RollMoment.OnCast);// = DiceSet.AdditionalValue.LevelsInClass, R_LevelsInClass = fighterClass
             secondWind.R_EffectBlueprints.Add(secondWindHealing);
             
             Power actionSurge = new("Action surge", ActionType.None, CastableBy.Character, PowerType.PassiveEffect, TargetType.Caster){Duration = 1};
-            ActionEffectBlueprint actionSurgeEffect = new("Action surge", 1, ActionEffect.Action);
+            ActionEffectBlueprint actionSurgeEffect = new("Action surge", 1, RollMoment.OnCast, ActionEffect.Action);
             actionSurge.R_EffectBlueprints.Add(actionSurgeEffect);
             
-            AttackPerAttackActionEffectBlueprint extraAttack = new("Extra attack", 2, AttackPerActionEffect.AttacksTotal);
+            AttackPerAttackActionEffectBlueprint extraAttack = new("Extra attack", 2, RollMoment.OnCast, AttackPerActionEffect.AttacksTotal);
 
             
 
@@ -478,17 +478,17 @@ public class Seed
             wizardClass.SpellcastingAbility = Ability.INTELLIGENCE;
 
             ChoiceGroup wizardSavingThrowProficiency = new("Wizard saving throw proficiency");
-            wizardSavingThrowProficiency.R_Effects.Add(new SavingThrowEffectBlueprint("Intelligence saving throw proficiency", 0, SavingThrowEffect.Proficiency, Ability.INTELLIGENCE, null, null));
-            wizardSavingThrowProficiency.R_Effects.Add(new SavingThrowEffectBlueprint("Wisdom saving throw proficiency", 0, SavingThrowEffect.Proficiency, Ability.WISDOM, null, null));
+            wizardSavingThrowProficiency.R_Effects.Add(new SavingThrowEffectBlueprint("Intelligence saving throw proficiency", 0, RollMoment.OnCast, SavingThrowEffect.Proficiency, Ability.INTELLIGENCE, null, null));
+            wizardSavingThrowProficiency.R_Effects.Add(new SavingThrowEffectBlueprint("Wisdom saving throw proficiency", 0, RollMoment.OnCast, SavingThrowEffect.Proficiency, Ability.WISDOM, null, null));
 
             
             ChoiceGroup wizardSkillProficiency = new("Wizard skill proficiency");
-            wizardSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Arcana", 0, SkillEffect.Proficiency, Skill.Arcana));
-            wizardSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("History", 0, SkillEffect.Proficiency, Skill.History));
-            wizardSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Insight", 0, SkillEffect.Proficiency, Skill.Insight));
-            wizardSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Investigation", 0, SkillEffect.Proficiency, Skill.Investigation));
-            wizardSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Medicine", 0, SkillEffect.Proficiency, Skill.Medicine));
-            wizardSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Religion", 0, SkillEffect.Proficiency, Skill.Religion));
+            wizardSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Arcana", 0, RollMoment.OnCast, SkillEffect.Proficiency, Skill.Arcana));
+            wizardSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("History", 0, RollMoment.OnCast, SkillEffect.Proficiency, Skill.History));
+            wizardSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Insight", 0, RollMoment.OnCast, SkillEffect.Proficiency, Skill.Insight));
+            wizardSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Investigation", 0, RollMoment.OnCast, SkillEffect.Proficiency, Skill.Investigation));
+            wizardSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Medicine", 0, RollMoment.OnCast, SkillEffect.Proficiency, Skill.Medicine));
+            wizardSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Religion", 0, RollMoment.OnCast, SkillEffect.Proficiency, Skill.Religion));
             wizardSkillProficiency.NumberToChoose = 2;
 
             ChoiceGroup wizardWeaponProficiency = new("Wizard weapon proficiency");
@@ -579,19 +579,19 @@ public class Seed
             rogueWeaponProficiency.R_Effects.Add(CreateProficiencyEffectBlueprint(context, "Shortsword"));
 
             ChoiceGroup rogueSavingThrowProficiency = new("Rogue saving throw proficiency");
-            rogueSavingThrowProficiency.R_Effects.Add(new SavingThrowEffectBlueprint("Intelligence saving throw proficiency", 0, SavingThrowEffect.Proficiency, Ability.INTELLIGENCE, null, null));
-            rogueSavingThrowProficiency.R_Effects.Add(new SavingThrowEffectBlueprint("Dexterity saving throw proficiency", 0, SavingThrowEffect.Proficiency, Ability.DEXTERITY, null, null));
+            rogueSavingThrowProficiency.R_Effects.Add(new SavingThrowEffectBlueprint("Intelligence saving throw proficiency", 0, RollMoment.OnCast, SavingThrowEffect.Proficiency, Ability.INTELLIGENCE, null, null));
+            rogueSavingThrowProficiency.R_Effects.Add(new SavingThrowEffectBlueprint("Dexterity saving throw proficiency", 0, RollMoment.OnCast, SavingThrowEffect.Proficiency, Ability.DEXTERITY, null, null));
 
             ChoiceGroup rogueSkillProficiency = new("Rogue skill proficiency");
-            rogueSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Acrobatics", 0, SkillEffect.Proficiency, Skill.Acrobatics));
-            rogueSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Athletics", 0, SkillEffect.Proficiency, Skill.Athletics));
-            rogueSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Deception", 0, SkillEffect.Proficiency, Skill.Deception));
-            rogueSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Insight", 0, SkillEffect.Proficiency, Skill.Insight));
-            rogueSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Intimidation", 0, SkillEffect.Proficiency, Skill.Intimidation));
-            rogueSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Performance", 0, SkillEffect.Proficiency, Skill.Performance));
-            rogueSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Persuasion", 0, SkillEffect.Proficiency, Skill.Persuasion));
-            rogueSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Sleight_of_Hand", 0, SkillEffect.Proficiency, Skill.Sleight_of_Hand));
-            rogueSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Stealth", 0, SkillEffect.Proficiency, Skill.Stealth));
+            rogueSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Acrobatics", 0, RollMoment.OnCast, SkillEffect.Proficiency, Skill.Acrobatics));
+            rogueSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Athletics", 0, RollMoment.OnCast, SkillEffect.Proficiency, Skill.Athletics));
+            rogueSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Deception", 0, RollMoment.OnCast, SkillEffect.Proficiency, Skill.Deception));
+            rogueSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Insight", 0, RollMoment.OnCast, SkillEffect.Proficiency, Skill.Insight));
+            rogueSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Intimidation", 0, RollMoment.OnCast, SkillEffect.Proficiency, Skill.Intimidation));
+            rogueSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Performance", 0, RollMoment.OnCast, SkillEffect.Proficiency, Skill.Performance));
+            rogueSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Persuasion", 0, RollMoment.OnCast, SkillEffect.Proficiency, Skill.Persuasion));
+            rogueSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Sleight_of_Hand", 0, RollMoment.OnCast, SkillEffect.Proficiency, Skill.Sleight_of_Hand));
+            rogueSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Stealth", 0, RollMoment.OnCast, SkillEffect.Proficiency, Skill.Stealth));
             rogueSkillProficiency.NumberToChoose = 4;
 
             ChoiceGroup rogueExpertisePick = new("Rogue skill expertise");
@@ -606,16 +606,16 @@ public class Seed
             };
             Power sneakAttack = new("Sneak attack", ActionType.WeaponAttack, CastableBy.OnWeaponHit, PowerType.PassiveEffect, TargetType.Character){UpcastByClassLevel = true, R_ClassForUpcasting = rogueClass, R_UsesImmaterialResource = sneakAttackCharge}; // since its castable on weapon attack, we dont need additional attack roll so power type is passive effect aka always hits and assigns its effects
             // this shouldnt count as an actual weapon attack. Lets do it so if character "casts" a power of OnWeaponHit type then whether it actually gets cast depends on whether automatically performed attack hits. This means we are going to need to go back to explicitly setting damage values on weapons
-            DamageEffectBlueprint sneakAttackDamage1 = new("Sneak damage 1", new DiceSet(){d6 = 1}){Level = 1};
-            DamageEffectBlueprint sneakAttackDamage2 = new("Sneak damage 2", new DiceSet(){d6 = 2}){Level = 3};
-            DamageEffectBlueprint sneakAttackDamage3 = new("Sneak damage 3", new DiceSet(){d6 = 3}){Level = 5};
-            DamageEffectBlueprint sneakAttackDamage4 = new("Sneak damage 4", new DiceSet(){d6 = 4}){Level = 7};
-            DamageEffectBlueprint sneakAttackDamage5 = new("Sneak damage 5", new DiceSet(){d6 = 5}){Level = 9};
-            DamageEffectBlueprint sneakAttackDamage6 = new("Sneak damage 6", new DiceSet(){d6 = 6}){Level = 11};
-            DamageEffectBlueprint sneakAttackDamage7 = new("Sneak damage 7", new DiceSet(){d6 = 7}){Level = 13};
-            DamageEffectBlueprint sneakAttackDamage8 = new("Sneak damage 8", new DiceSet(){d6 = 8}){Level = 15};
-            DamageEffectBlueprint sneakAttackDamage9 = new("Sneak damage 9", new DiceSet(){d6 = 9}){Level = 17};
-            DamageEffectBlueprint sneakAttackDamage10 = new("Sneak damage 10", new DiceSet(){d6 = 10}){Level = 19};
+            DamageEffectBlueprint sneakAttackDamage1 = new("Sneak damage 1", new DiceSet(){d6 = 1}, RollMoment.OnCast){Level = 1};
+            DamageEffectBlueprint sneakAttackDamage2 = new("Sneak damage 2", new DiceSet(){d6 = 2}, RollMoment.OnCast){Level = 3};
+            DamageEffectBlueprint sneakAttackDamage3 = new("Sneak damage 3", new DiceSet(){d6 = 3}, RollMoment.OnCast){Level = 5};
+            DamageEffectBlueprint sneakAttackDamage4 = new("Sneak damage 4", new DiceSet(){d6 = 4}, RollMoment.OnCast){Level = 7};
+            DamageEffectBlueprint sneakAttackDamage5 = new("Sneak damage 5", new DiceSet(){d6 = 5}, RollMoment.OnCast){Level = 9};
+            DamageEffectBlueprint sneakAttackDamage6 = new("Sneak damage 6", new DiceSet(){d6 = 6}, RollMoment.OnCast){Level = 11};
+            DamageEffectBlueprint sneakAttackDamage7 = new("Sneak damage 7", new DiceSet(){d6 = 7}, RollMoment.OnCast){Level = 13};
+            DamageEffectBlueprint sneakAttackDamage8 = new("Sneak damage 8", new DiceSet(){d6 = 8}, RollMoment.OnCast){Level = 15};
+            DamageEffectBlueprint sneakAttackDamage9 = new("Sneak damage 9", new DiceSet(){d6 = 9}, RollMoment.OnCast){Level = 17};
+            DamageEffectBlueprint sneakAttackDamage10 = new("Sneak damage 10", new DiceSet(){d6 = 10}, RollMoment.OnCast){Level = 19};
             sneakAttack.R_EffectBlueprints.AddRange(
                 new List<DamageEffectBlueprint>{
                     sneakAttackDamage1,
@@ -635,7 +635,7 @@ public class Seed
             EffectBlueprint evasion = new("Evasion"){IsImplemented = false};
             EffectBlueprint reliableTalent = new("Reliable talent"){IsImplemented = false};
             EffectBlueprint blindsense = new("Blindsense"){IsImplemented = false};
-            SavingThrowEffectBlueprint slipperyMind = new("Slippery mind", 0, SavingThrowEffect.Proficiency, Ability.WISDOM, null, null);
+            SavingThrowEffectBlueprint slipperyMind = new("Slippery mind", 0, RollMoment.OnCast, SavingThrowEffect.Proficiency, Ability.WISDOM, null, null);
             EffectBlueprint elusive = new("Slippery mind"){IsImplemented = false};
             EffectBlueprint strokeOfLuck = new("Stroke of luck"){IsImplemented = false};
             ImmaterialResourceBlueprint strokeOfLuckCharge = new()

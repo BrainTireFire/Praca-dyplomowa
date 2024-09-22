@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using pracadyplomowa.Models.Entities.Characters;
+using pracadyplomowa.Models.Entities.Powers.EffectInstances;
 
 namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
@@ -13,6 +15,10 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
         public OffHandAttackEffectBlueprint(string name) : base(name){
             Description = @"When you engage in two-weapon fighting, you can add 
                                 your ability modifier to the damage of the second attack.";
+        }
+        //methods
+        public override EffectInstance Generate(Character roller, Character target){
+            return new OffHandAttackEffectInstance(this, target);
         }
     }
 }

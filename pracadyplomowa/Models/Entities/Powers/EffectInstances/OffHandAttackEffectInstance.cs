@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Models.Entities.Powers.EffectBlueprints;
 
 namespace pracadyplomowa.Models.Entities.Powers.EffectInstances
@@ -10,6 +11,6 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectInstances
     {
         private OffHandAttackEffectInstance() : base("EF"){}
         public OffHandAttackEffectInstance(string name) : base(name){}
-        public OffHandAttackEffectInstance(OffHandAttackEffectBlueprint offHandAttackEffectBlueprint) : base(offHandAttackEffectBlueprint){}
+        public OffHandAttackEffectInstance(OffHandAttackEffectBlueprint offHandAttackEffectBlueprint, Character target) : base(offHandAttackEffectBlueprint, target){}
     }
 }

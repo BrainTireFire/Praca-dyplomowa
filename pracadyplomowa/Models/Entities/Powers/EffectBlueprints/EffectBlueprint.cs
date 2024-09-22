@@ -12,7 +12,6 @@ namespace pracadyplomowa.Models.Entities.Powers
 {
     public class EffectBlueprint(string name) : ObjectWithId
     {
-        private EffectBlueprint() : this("EF"){}
         public string Name { get; set; } = name;
         public string  Description { get; set; } = "";
         public int Level { get; set; } // use this effect if Level value matches value selected by 
@@ -38,10 +37,11 @@ namespace pracadyplomowa.Models.Entities.Powers
 
 
         public virtual ICollection<ChoiceGroup> R_ChoiceGroups { get; set; } = [];
-
+        //constructors
+        private EffectBlueprint() : this("EF"){}
         //methods
-        public virtual EffectInstance Generate(Character roller){ //roller added to parameter list as it will be used by overriding methods
-            return new EffectInstance(this);
+        public virtual EffectInstance Generate(Character roller, Character target){ //roller added to parameter list as it will be used by overriding methods
+            return new EffectInstance(this, target);
         }
     }
 }

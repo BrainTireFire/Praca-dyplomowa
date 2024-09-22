@@ -11,7 +11,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectInstances
     {
         private InitiativeEffectInstance() : base("EF", 0){}
         public InitiativeEffectInstance(string name) : base(name, 0){}
-        public InitiativeEffectInstance(InitiativeEffectBlueprint initiativeEffectBlueprint, Character roller) : base(initiativeEffectBlueprint, roller){
+        public InitiativeEffectInstance(InitiativeEffectBlueprint initiativeEffectBlueprint, Character roller, Character target) : base(initiativeEffectBlueprint, roller, target){
         }
     }
 }

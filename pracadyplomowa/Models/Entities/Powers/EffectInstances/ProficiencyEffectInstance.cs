@@ -1,4 +1,5 @@
 ﻿using pracadyplomowa.Models.ComplexTypes.Effects;
+using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Models.Entities.Items;
 using pracadyplomowa.Models.Entities.Powers.EffectBlueprints;
 
@@ -13,7 +14,7 @@ public class ProficiencyEffectInstance : EffectInstance
     public int R_GrantsProficiencyInItemFamilyId { get; set; }
     private ProficiencyEffectInstance() : base("EF"){}
     public ProficiencyEffectInstance(string name) : base(name){}
-    public ProficiencyEffectInstance(ProficiencyEffectBlueprint proficiencyEffectBlueprint) : base(proficiencyEffectBlueprint){
+    public ProficiencyEffectInstance(ProficiencyEffectBlueprint proficiencyEffectBlueprint, Character target) : base(proficiencyEffectBlueprint, target){
         R_GrantsProficiencyInItemFamily = proficiencyEffectBlueprint.R_GrantsProficiencyInItemFamily;
         R_GrantsProficiencyInItemFamilyId = R_GrantsProficiencyInItemFamily.Id;
     }

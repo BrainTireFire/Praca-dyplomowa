@@ -73,7 +73,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         public DbSet<DamageEffectBlueprint> DamageEffectBlueprints { get; set; }
         public DbSet<HealingEffectBlueprint> HealingEffectBlueprints { get; set; }
         public DbSet<HitpointEffectBlueprint> HitpointEffectBlueprints { get; set; }
-        public DbSet<IniativeEffectBlueprint> IniativeEffectBlueprints { get; set; }
+        public DbSet<InitiativeEffectBlueprint> InitiativeEffectBlueprints { get; set; }
         public DbSet<MagicEffectBlueprint> MagicEffectBlueprints { get; set; }
         public DbSet<MovementCostEffectBlueprint> MovementCostEffectBlueprints { get; set; }
         public DbSet<MovementEffectBlueprint> MovementEffectBlueprints { get; set; }
@@ -137,7 +137,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
 
                 builder.Entity<Character>()
                         .HasMany(c => c.R_AffectedBy)
-                        .WithMany(c => c.R_TargetedCharacters);
+                        .WithOne(c => c.R_TargetedCharacter);
 
                 builder.Entity<Character>()
                         .HasMany(c => c.R_PowersKnown)

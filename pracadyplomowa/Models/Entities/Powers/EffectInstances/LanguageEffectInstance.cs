@@ -16,7 +16,8 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
         public int R_LanguageId { get; set; }
         private LanguageEffectInstance() : base("EF"){}
         public LanguageEffectInstance(string name) : base(name){}
-        public LanguageEffectInstance(LanguageEffectBlueprint languageEffectBlueprint) : base(languageEffectBlueprint){
+        [System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute]
+        public LanguageEffectInstance(LanguageEffectBlueprint languageEffectBlueprint, Character target) : base(languageEffectBlueprint, target){
             LanguageEffectType = languageEffectBlueprint.LanguageEffectType;
             R_Language = languageEffectBlueprint.R_Language;
             R_LanguageId = languageEffectBlueprint.R_LanguageId;

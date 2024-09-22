@@ -9,7 +9,7 @@ public class SavingThrowEffectInstance : ValueEffectInstance
     public SavingThrowEffectType SavingThrowEffectType { get; set; } = new SavingThrowEffectType();
     private SavingThrowEffectInstance() : base("EF", 0){}
     public SavingThrowEffectInstance(string name) : base(name, 0){}
-    public SavingThrowEffectInstance(SavingThrowEffectBlueprint savingThrowEffectBlueprint, Character roller) : base(savingThrowEffectBlueprint, roller){
+    public SavingThrowEffectInstance(SavingThrowEffectBlueprint savingThrowEffectBlueprint, Character roller, Character target) : base(savingThrowEffectBlueprint, roller, target){
         SavingThrowEffectType = savingThrowEffectBlueprint.SavingThrowEffectType;
     }
 }

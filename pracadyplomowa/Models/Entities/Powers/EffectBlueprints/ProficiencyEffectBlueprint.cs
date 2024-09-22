@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using pracadyplomowa.Models.ComplexTypes.Effects;
+using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Models.Entities.Items;
 using pracadyplomowa.Models.Enums.EffectOptions;
 
@@ -16,5 +17,9 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 
         public virtual ItemFamily R_GrantsProficiencyInItemFamily { get; set; } = itemFamily;
         public int R_GrantsProficiencyInItemFamilyId { get; set; } = itemFamily.Id;
+        //methods
+        public override EffectInstance Generate(Character roller, Character target){
+            return new ProficiencyEffectInstance(this, target);
+        }
     }
 }

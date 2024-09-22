@@ -9,7 +9,7 @@ public class AttackRollEffectInstance : ValueEffectInstance
     public AttackRollEffectType AttackRollEffectType { get; set; } = new AttackRollEffectType();
     private AttackRollEffectInstance() : base("EF", 0){}
     public AttackRollEffectInstance(string name) : base(name, 0){}
-    public AttackRollEffectInstance(AttackRollEffectBlueprint attackRollEffectBlueprint, Character roller) : base(attackRollEffectBlueprint, roller){
+    public AttackRollEffectInstance(AttackRollEffectBlueprint attackRollEffectBlueprint, Character roller, Character target) : base(attackRollEffectBlueprint, roller, target){
         AttackRollEffectType = attackRollEffectBlueprint.AttackRollEffectType;
     }
 }

@@ -10,7 +10,7 @@ public class AbilityEffectInstance : ValueEffectInstance
 
     private AbilityEffectInstance() : base("EF", 0){}
     public AbilityEffectInstance(string name) : base(name, 0){}
-    public AbilityEffectInstance(AbilityEffectBlueprint abilityEffectBlueprint, Character roller) : base(abilityEffectBlueprint, roller){
+    public AbilityEffectInstance(AbilityEffectBlueprint abilityEffectBlueprint, Character roller, Character target) : base(abilityEffectBlueprint, roller, target){
         AbilityEffectType = abilityEffectBlueprint.AbilityEffectType;
     }
 }

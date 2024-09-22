@@ -40,21 +40,8 @@ namespace pracadyplomowa.Models.Entities.Powers
         public virtual ICollection<ChoiceGroup> R_ChoiceGroups { get; set; } = [];
 
         //methods
-        public virtual EffectInstance Generate(Character target){
-            EffectInstance instance = GenerateDefinition();
-            instance.R_TargetedCharacter = target;
-            target.R_AffectedBy.Add(instance);
-            return instance;
-        }
-
-        private EffectInstance GenerateDefinition(){
-            return new(this)
-            {
-                Description = this.Description,
-                IsImplemented = this.IsImplemented,
-                Conditional = this.Conditional,
-                HasNoEffectInCombat = this.HasNoEffectInCombat
-            };
+        public virtual EffectInstance Generate(Character roller){ //roller added to parameter list as it will be used by overriding methods
+            return new EffectInstance(this);
         }
     }
 }

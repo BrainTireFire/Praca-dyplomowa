@@ -15,5 +15,9 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
             ActionEffectType.ActionEffect = effectType;
         }
         public ActionEffectType ActionEffectType{ get; set; } = new ActionEffectType();
+
+        public override EffectInstance Generate(Character roller){
+            return new ActionEffectInstance(this, roller);
+        }
     }
 }

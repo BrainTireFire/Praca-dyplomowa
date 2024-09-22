@@ -13,6 +13,6 @@ namespace pracadyplomowa.Models.Entities.Characters
         public int R_ChoiceGroupId {get; set;}
         public ChoiceGroup? R_ChoiceGroup {get; set;}
         public List<Power> R_PowersGranted  {get; set;} = [];
-        public List<EffectGroup> R_EffectGroupsGranted {get; set;} = [];
+        public List<EffectInstance> R_EffectsGranted {get; set;} = [];
     }
 }

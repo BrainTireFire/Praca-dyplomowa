@@ -20,5 +20,13 @@ namespace pracadyplomowa.Models.Entities.Characters
         public virtual ClassLevel? R_GrantedByClassLevel { get; set; }
         public virtual int? GrantedByClassLevelId { get; set; }
         public virtual ICollection<ChoiceGroupUsage> R_UsageInstances { get; set; } = [];
+
+        public ChoiceGroupUsage Generate(Character character, List<EffectBlueprint> effects, List<Power> powers){
+            ChoiceGroupUsage usage = new ChoiceGroupUsage();
+            if(effects.Intersect(this.R_Effects).Count() == effects.Count && (this.NumberToChoose == 0 || this.NumberToChoose == effects.Count)){
+                EffectInstance instance = 
+            }
+            return usage;
+        }
     }
 }

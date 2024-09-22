@@ -11,5 +11,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
     {
         private AbilityEffectBlueprint() : this("EF", 0){}
         public AbilityEffectType AbilityEffectType{ get; set; } = new AbilityEffectType();
+
+
     }
 }

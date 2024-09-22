@@ -36,6 +36,5 @@ namespace pracadyplomowa.Models.Entities.Powers
         public virtual ICollection<Field> R_EffectOnField { get; set; } = [];
 
         
-        public virtual ICollection<ChoiceGroupUsage> R_GrantedThrough { get; set; } = []; // means actual usage of a choice group
     }
 }

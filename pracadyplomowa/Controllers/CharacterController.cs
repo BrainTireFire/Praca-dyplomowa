@@ -46,7 +46,7 @@ namespace pracadyplomowa.Controllers
             if(race == null){
                 return BadRequest(new ApiResponse(400, "Race with Id " + characterDto.RaceId + " does not exist"));
             }
-            ClassLevel? classLevel = await _classRepository.GetClassLevel(characterDto.StartingClassId, 1);
+            ClassLevel? classLevel = await _classRepository.GetClassLevelWithChoiceGroups(characterDto.StartingClassId, 1);
             if(classLevel == null){
                 return BadRequest(new ApiResponse(400, "First level of Class with Id " + characterDto.StartingClassId + " does not exist"));
             }

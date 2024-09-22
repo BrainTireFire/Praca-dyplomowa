@@ -10,5 +10,11 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
     {
         private ValueEffectBlueprint(): this("EF", 0){}
         public DiceSet DiceSet {get; set;} = value;
+
+        public override ValueEffectInstance Generate(Character target){
+            ValueEffectInstance instance = (ValueEffectInstance)base.Generate(target);
+            instance
+            return instance;
+        }
     }
 }

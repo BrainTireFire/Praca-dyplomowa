@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using pracadyplomowa.Models.Entities.Powers.EffectBlueprints;
 using pracadyplomowa.Models.Enums;
@@ -33,6 +34,41 @@ namespace pracadyplomowa.Models.Entities.Characters
             public int? R_LevelsInClassId { get; set; }
             public Ability Ability {get; set;}
             public Skill Skill {get; set;}
+
+            public int ReturnValue(Character roller){
+                if(additionalValueType == AdditionalValueType.LevelsInClass){
+                    return roller.R_CharacterHasLevelsInClass.Where(cl => cl.R_Class == R_LevelsInClass).Count();
+                }
+                else if(additionalValueType == AdditionalValueType.TotalLevel){
+                    return roller.R_CharacterHasLevelsInClass.Count;
+                }
+                else if(additionalValueType == AdditionalValueType.ProficiencyModifier){
+                    return roller.ProficiencyBonus;
+                }
+                else if(additionalValueType == AdditionalValueType.AbilityScoreModifier){
+                    return Character.AbilityModifier(roller.AbilityValue(Ability));
+                }
+                else if(additionalValueType == AdditionalValueType.SkillBonus){
+                    return roller.SkillValue(Skill);
+                }
+                else throw new UnreachableException();
+            }
+        }
+
+        public int Roll(Character roller){
+            Random rnd = new();
+            int result = d20 * rnd.Next(1, 20);
+            result += d12 * rnd.Next(1, 12);
+            result += d10 * rnd.Next(1, 10);
+            result += d8 * rnd.Next(1, 8);
+            result += d6 * rnd.Next(1, 6);
+            result += d4 * rnd.Next(1, 4);
+            result += d100 * rnd.Next(1, 100);
+            result += flat;
+            foreach(AdditionalValue adVal in additionalValues){
+                result += adVal.ReturnValue(roller);
+            }
+            return result;
         }
 
     }

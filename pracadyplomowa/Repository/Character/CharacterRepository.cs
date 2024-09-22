@@ -40,7 +40,7 @@ namespace pracadyplomowa.Repository
             .Include(c => c.R_UsedChoiceGroups)
                 .ThenInclude(cg => cg.R_ChoiceGroup)
             .Include(c => c.R_UsedChoiceGroups)
-                .ThenInclude(cg => cg.R_EffectGroupsGranted)
+                .ThenInclude(cg => cg.R_EffectsGranted)
             .Include(c => c.R_UsedChoiceGroups)
                 .ThenInclude(cg => cg.R_PowersGranted)
             

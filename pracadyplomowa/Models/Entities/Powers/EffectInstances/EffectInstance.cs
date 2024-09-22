@@ -10,22 +10,29 @@ using pracadyplomowa.Models.Enums.EffectOptions;
 
 namespace pracadyplomowa.Models.Entities.Powers
 {
-    public class EffectInstance : ObjectWithId
+    public class EffectInstance(string name) : ObjectWithId
     {
-        public required string Name { get; set; }
+        private EffectInstance() : this("EF"){}
+        public EffectInstance(EffectBlueprint blueprint) : this(blueprint.Name){
+            Description = blueprint.Description;
+            IsImplemented = blueprint.IsImplemented;
+            Conditional = blueprint.Conditional;
+            HasNoEffectInCombat = blueprint.HasNoEffectInCombat;
+        }
+
+        public string Name { get; set; } = name;
         public string Description { get; set; } = "";
-        public string SourceName { get; set; } = null!;
-        public EffectType EffectType { get; set; }
+        // public EffectType EffectType { get; set; }
         public bool Conditional { get; set; }
         public bool IsImplemented { get; set; }
+        public bool HasNoEffectInCombat { get; set; } = false;
         
         //Relationship
         public virtual EffectGroup R_OwnedByGroup { get; set; } = null!;
         public virtual int OwnedByGroupId { get; set; }
-        // public virtual ItemFamily? R_GrantsProficiencyInItemFamily { get; set; }
-        // public virtual int? R_GrantsProficiencyInItemFamilyId { get; set; }
-        
-        public virtual ICollection<Character> R_TargetedCharacters { get; set; } = [];
-        
+        public virtual ChoiceGroupUsage? R_GrantedThrough { get; set; } // means actual usage of a choice group
+        public virtual int? R_GrantedThroughId { get; set;}
+        public virtual Character? R_TargetedCharacter { get; set; }
+        public virtual int? R_TargetedCharacterId { get; set; }
     }
 }

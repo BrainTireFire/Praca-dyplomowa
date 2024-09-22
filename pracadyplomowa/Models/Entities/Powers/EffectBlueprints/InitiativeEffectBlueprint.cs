@@ -7,8 +7,8 @@ using pracadyplomowa.Models.Entities.Characters;
 
 namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
-    public class IniativeEffectBlueprint(string name, DiceSet value) : ValueEffectBlueprint(name, value)
+    public class InitiativeEffectBlueprint(string name, DiceSet value) : ValueEffectBlueprint(name, value)
     {
-        private IniativeEffectBlueprint(): this("EF", 0){}
+        private InitiativeEffectBlueprint(): this("EF", 0){}
     }
 }

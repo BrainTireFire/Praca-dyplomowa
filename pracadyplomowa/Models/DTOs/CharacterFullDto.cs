@@ -490,7 +490,7 @@ namespace pracadyplomowa.Models.DTOs
             public string Name { get; set; } = "";
             public string Source { get; set; } = "";
             public string Target { get; set; } = "";
-            public int TurnsLeft { get; set; }
+            public int? TurnsLeft { get; set; }
         }
         public static List<Effect> GetConstantEffects(Character character){
             List<Effect> effects = character.R_AffectedBy
@@ -500,7 +500,7 @@ namespace pracadyplomowa.Models.DTOs
                 Name = effect.Name,
                 Source = "Placeholder",
                 Target = "Placeholder",
-                TurnsLeft = 1
+                TurnsLeft = null
             }).ToList();
 
             return effects;

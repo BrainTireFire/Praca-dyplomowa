@@ -1,29 +1,29 @@
 namespace pracadyplomowa.Models.Enums
 {
-    public enum Skill
+    public enum Skill // numbering selected for sake of Skill -> Ability mapping
     {
         //Strength
-        Athletics,
+        Athletics = 11,
         //Dexterity
-        Acrobatics,
-        Sleight_of_Hand,
-        Stealth,
+        Acrobatics = 21,
+        Sleight_of_Hand = 22,
+        Stealth = 23,
         //Intelligence
-        Arcana,
-        History,
-        Investigation,
-        Nature,
-        Religion,
+        Arcana = 41,
+        History = 42,
+        Investigation = 43,
+        Nature = 44,
+        Religion = 45,
         //Wisdom
-        Animal_Handling,
-        Insight,
-        Medicine,
-        Perception,
-        Survival,
+        Animal_Handling = 51,
+        Insight = 52,
+        Medicine = 53,
+        Perception = 54,
+        Survival = 55,
         //Charisma
-        Deception,
-        Intimidation,
-        Performance,
-        Persuasion,
+        Deception = 61,
+        Intimidation = 62,
+        Performance = 63,
+        Persuasion = 64,
     }
 }

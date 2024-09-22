@@ -2,11 +2,11 @@ namespace pracadyplomowa.Models.Enums
 {
     public enum Ability
     {
-        STRENGTH = 0,
-        DEXTERITY = 1,
-        CONSTITUTION = 2,
-        INTELLIGENCE = 3,
-        WISDOM = 4,
-        CHARISMA = 5,
+        STRENGTH = 1,
+        DEXTERITY = 2,
+        CONSTITUTION = 3,
+        INTELLIGENCE = 4,
+        WISDOM = 5,
+        CHARISMA = 6,
     }
 }

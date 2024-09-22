@@ -1,4 +1,5 @@
 
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq.Expressions;
 using Microsoft.OpenApi.Expressions;
 using pracadyplomowa.Models.Entities.Campaign;
@@ -8,6 +9,7 @@ using pracadyplomowa.Models.Entities.Powers.EffectBlueprints;
 using pracadyplomowa.Models.Entities.Powers.EffectInstances;
 using pracadyplomowa.Models.Enums;
 using pracadyplomowa.Models.Enums.EffectOptions;
+using pracadyplomowa.Utility;
 
 namespace pracadyplomowa.Models.Entities.Characters
 {
@@ -62,8 +64,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             };
             strength.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             strength.AbilityEffectType.AbilityEffect_Ability = Ability.STRENGTH;
-            strength.DiceSet.flat = strengthValue;
-            strength.SourceName = "Base";
+            strength.Value = strengthValue;
 
             AbilityEffectInstance dexterity = new()
             {
@@ -72,8 +73,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             };
             dexterity.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             dexterity.AbilityEffectType.AbilityEffect_Ability = Ability.DEXTERITY;
-            dexterity.DiceSet.flat = dexterityValue;
-            dexterity.SourceName = "Base";
+            dexterity.Value = dexterityValue;
 
             AbilityEffectInstance constitution = new()
             {
@@ -82,8 +82,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             };
             constitution.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             constitution.AbilityEffectType.AbilityEffect_Ability = Ability.CONSTITUTION;
-            constitution.DiceSet.flat = constitutionValue;
-            constitution.SourceName = "Base";
+            constitution.Value = constitutionValue;
 
             AbilityEffectInstance intelligence = new()
             {
@@ -92,8 +91,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             };
             intelligence.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             intelligence.AbilityEffectType.AbilityEffect_Ability = Ability.INTELLIGENCE;
-            intelligence.DiceSet.flat = intelligenceValue;
-            intelligence.SourceName = "Base";
+            intelligence.Value = intelligenceValue;
 
             AbilityEffectInstance wisdom = new()
             {
@@ -102,8 +100,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             };
             wisdom.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             wisdom.AbilityEffectType.AbilityEffect_Ability = Ability.WISDOM;
-            wisdom.DiceSet.flat = wisdomValue;
-            wisdom.SourceName = "Base";
+            wisdom.Value = wisdomValue;
 
             AbilityEffectInstance charisma = new()
             {
@@ -112,8 +109,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             };
             charisma.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
             charisma.AbilityEffectType.AbilityEffect_Ability = Ability.CHARISMA;
-            charisma.DiceSet.flat = charismaValue;
-            charisma.SourceName = "Base";
+            charisma.Value = charismaValue;
 
             EffectGroup basicStats = new()
             {
@@ -134,7 +130,174 @@ namespace pracadyplomowa.Models.Entities.Characters
 
             this.R_AffectedBy = basicStats.R_OwnedEffects;
 
+            List<ChoiceGroup> fullChoiceGroups = classLevel.R_ChoiceGroups.Where(cg => cg.NumberToChoose == 0).ToList();
+            List<ChoiceGroupUsage> usedChoiceGroups = [];
+            foreach(ChoiceGroup cg in fullChoiceGroups){
+                ChoiceGroupUsage cgu = new ChoiceGroupUsage();
+                foreach(EffectBlueprint eb in cg.R_Effects){
+                    
+                }
+            }
+
             this.R_OwnerId = ownerId;
+        }
+
+        [NotMapped]
+        public int ProficiencyBonus {
+            get => this.R_CharacterHasLevelsInClass.Count / 5 + 2;
+        }
+
+        [NotMapped]
+        public List<EffectInstance> ApprovedConditionalEffectInstances {get; set;} = [];
+
+        public int AbilityValue(Ability ability){
+            return this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances).OfType<AbilityEffectInstance>().Where(aei => 
+            aei.AbilityEffectType.AbilityEffect == AbilityEffect.Bonus &&
+            aei.AbilityEffectType.AbilityEffect_Ability == ability
+            ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.Value);
+        }
+
+        [NotMapped]
+        public int Strength {
+            get => this.AbilityValue(Ability.STRENGTH);
+        }
+        [NotMapped]
+        public int Dexterity {
+            get => this.AbilityValue(Ability.DEXTERITY);
+        }
+        [NotMapped]
+        public int Constitution {
+            get => this.AbilityValue(Ability.CONSTITUTION);
+        }
+        [NotMapped]
+        public int Intelligence {
+            get => this.AbilityValue(Ability.INTELLIGENCE);
+        }
+        [NotMapped]
+        public int Wisdom {
+            get => this.AbilityValue(Ability.WISDOM);
+        }
+        [NotMapped]
+        public int Charisma {
+            get => this.AbilityValue(Ability.CHARISMA);
+        }
+
+        public static int AbilityModifier(int abilityValue){
+            return (abilityValue - 10) / 2;
+        }
+
+        [NotMapped]
+        public int StrengthModifier {
+            get => AbilityModifier(Strength);
+        }
+        [NotMapped]
+        public int DexterityModifier {
+            get => AbilityModifier(Dexterity);
+        }
+        [NotMapped]
+        public int ConstitutionModifier {
+            get => AbilityModifier(Constitution);
+        }
+        [NotMapped]
+        public int IntelligenceModifier {
+            get => AbilityModifier(Intelligence);
+        }
+        [NotMapped]
+        public int WisdomModifier {
+            get => AbilityModifier(Wisdom);
+        }
+        [NotMapped]
+        public int CharismaModifier {
+            get => AbilityModifier(Charisma);
+        }
+
+        public int SkillValue(Skill skill){
+            int value = this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances).OfType<SkillEffectInstance>().Where(aei => 
+            aei.SkillEffectType.SkillEffect == SkillEffect.Bonus &&
+            aei.SkillEffectType.SkillEffect_Skill == skill
+            ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.Value);
+
+            value += AbilityModifier(AbilityValue(Utils.SkillToAbility(skill)));
+
+            value += this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances).OfType<SkillEffectInstance>().Where(aei => 
+            aei.SkillEffectType.SkillEffect == SkillEffect.Proficiency &&
+            aei.SkillEffectType.SkillEffect_Skill == skill
+            ).Any() ? this.ProficiencyBonus : 0;
+
+            return value;
+        }
+
+        [NotMapped]
+        public int Athletics {
+            get => this.SkillValue(Skill.Athletics);
+        }
+        [NotMapped]
+        public int Acrobatics {
+            get => this.SkillValue(Skill.Acrobatics);
+        }
+        [NotMapped]
+        public int Sleight_of_Hand {
+            get => this.SkillValue(Skill.Sleight_of_Hand);
+        }
+        [NotMapped]
+        public int Stealth {
+            get => this.SkillValue(Skill.Stealth);
+        }
+        [NotMapped]
+        public int Arcana {
+            get => this.SkillValue(Skill.Arcana);
+        }
+        [NotMapped]
+        public int History {
+            get => this.SkillValue(Skill.History);
+        }
+        [NotMapped]
+        public int Investigation {
+            get => this.SkillValue(Skill.Investigation);
+        }
+        [NotMapped]
+        public int Nature {
+            get => this.SkillValue(Skill.Nature);
+        }
+        [NotMapped]
+        public int Religion {
+            get => this.SkillValue(Skill.Religion);
+        }
+        [NotMapped]
+        public int Animal_Handling {
+            get => this.SkillValue(Skill.Animal_Handling);
+        }
+        [NotMapped]
+        public int Insight {
+            get => this.SkillValue(Skill.Insight);
+        }
+        [NotMapped]
+        public int Medicine {
+            get => this.SkillValue(Skill.Medicine);
+        }
+        [NotMapped]
+        public int Perception {
+            get => this.SkillValue(Skill.Perception);
+        }
+        [NotMapped]
+        public int Survival {
+            get => this.SkillValue(Skill.Survival);
+        }
+        [NotMapped]
+        public int Deception {
+            get => this.SkillValue(Skill.Deception);
+        }
+        [NotMapped]
+        public int Intimidation {
+            get => this.SkillValue(Skill.Intimidation);
+        }
+        [NotMapped]
+        public int Performance {
+            get => this.SkillValue(Skill.Performance);
+        }
+        [NotMapped]
+        public int Persuasion {
+            get => this.SkillValue(Skill.Persuasion);
         }
     }
 }

@@ -107,7 +107,7 @@ public class BoardService : IBoardService
             return new UnauthorizedObjectResult(new ApiResponse(401, "You are not the owner of this board"));
         }
 
-        var updateResult = await UpdateFieldsAsync(boardId, boardUpdateDto.Fields);
+        var updateResult = await UpdateFieldsAsync(boardId, board, boardUpdateDto.Fields);
         if (updateResult != null)
         {
             return updateResult;
@@ -120,23 +120,44 @@ public class BoardService : IBoardService
         return null;
     }
 
-    private async Task<ActionResult?> UpdateFieldsAsync(int boardId, ICollection<FieldUpdateDto> fieldsToUpdate)
+    private async Task<ActionResult?> UpdateFieldsAsync(int boardId, Models.Entities.Campaign.Board board, ICollection<FieldUpdateDto> fieldsToUpdate)
     {
         foreach (var fieldToUpdate in fieldsToUpdate)
         {
-            var field = _fieldRepository.GetById(fieldToUpdate.Id);
-            if (field == null)
+            if (fieldToUpdate.Id == null || fieldToUpdate.Id == 0)
             {
-                return new NotFoundObjectResult(new ApiResponse(404, $"Field not found with id {fieldToUpdate.Id}"));
+                var newField = new Field(
+                    (int) fieldToUpdate.PositionX,
+                    (int) fieldToUpdate.PositionY,
+                    (int) fieldToUpdate.PositionZ,
+                    fieldToUpdate.Color,
+                    fieldToUpdate.FieldCoverLevel,
+                    fieldToUpdate.FieldMovementCost,
+                    fieldToUpdate.Description);
+                
+                
+                _fieldRepository.Add(newField);
+                board.AddField(newField);
+                _boardRepository.Update(board);
             }
-
-            if (field.R_BoardId != boardId)
+            else
             {
-                return new BadRequestObjectResult(new ApiResponse(400, $"Field with id {fieldToUpdate.Id} does not belong to board with id {boardId}"));
-            }
+                var field = _fieldRepository.GetById(fieldToUpdate.Id);
+                if (field == null)
+                {
+                    return new NotFoundObjectResult(new ApiResponse(404,
+                        $"Field not found with id {fieldToUpdate.Id}"));
+                }
 
-            UpdateFieldProperties(field, fieldToUpdate);
-            _fieldRepository.Update(field);
+                if (field.R_BoardId != boardId)
+                {
+                    return new BadRequestObjectResult(new ApiResponse(400,
+                        $"Field with id {fieldToUpdate.Id} does not belong to board with id {boardId}"));
+                }
+
+                UpdateFieldProperties(field, fieldToUpdate);
+                _fieldRepository.Update(field);
+            }
         }
 
         await _fieldRepository.SaveChanges();
@@ -161,10 +182,7 @@ public class BoardService : IBoardService
             {
                 field.FieldMovementCost = movementCost;
             }
-            else
-            {
-                throw new ArgumentException($"Invalid value for FieldCoverLevel: {fieldToUpdate.FieldCoverLevel}");
-            }
+
         }        
         
         if (!string.IsNullOrEmpty(fieldToUpdate.FieldCoverLevel))
@@ -175,8 +193,7 @@ public class BoardService : IBoardService
             }
             else
             {
-                // Handle the case where the string does not match any enum value
-                throw new ArgumentException($"Invalid value for FieldCoverLevel: {fieldToUpdate.FieldCoverLevel}");
+                
             }
         }
 

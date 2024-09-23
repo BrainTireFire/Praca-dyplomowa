@@ -8,13 +8,10 @@ public class FieldUpdateDto
     [Required (ErrorMessage = "Id is required")]
     public int Id { get; set; }
     
-    [Range(1, 100, ErrorMessage = "PositionX must be between 1 and 100")]
     public int? PositionX { get; set; }
     
-    [Range(1, 100, ErrorMessage = "PositionY must be between 1 and 100")]
     public int? PositionY { get; set; }
     
-    [Range(1, 100, ErrorMessage = "PositionZ must be between 1 and 100")]
     public int? PositionZ { get; set; }
     
     public string? Color { get; set; } = null!;

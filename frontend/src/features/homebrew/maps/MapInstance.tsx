@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import MapBoard from "./MapBoard";
 import { useBoard } from "./useBoard";
 import Spinner from "../../../ui/interactive/Spinner";
@@ -6,14 +6,37 @@ import styled, { css } from "styled-components";
 import Heading from "../../../ui/text/Heading";
 import { useMoveBack } from "../../../hooks/useMoveBack";
 import Button from "../../../ui/interactive/Button";
+import { Coordinate } from "../../../models/session/Coordinate";
+import Box from "../../../ui/containers/Box";
 
 const Container = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
   gap: 20px;
   align-items: center;
   padding-top: 20px;
+`;
+
+const GridContainer = styled.div`
+  grid-row: 1 / 2;
+  grid-column: 2 / 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  overflow: hidden;
+`;
+
+const LeftPanel = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: var(--color-navbar);
+  border: 1px solid var(--color-border);
+  padding: 20px;
+  height: 100%;
+  width: 500px;
 `;
 
 const StyledElementBox = styled.div`
@@ -35,6 +58,7 @@ const Span = styled.span`
 
 export default function MapInstance() {
   const { isLoading, board } = useBoard();
+  const [selectedBox, setSelectedBox] = useState<Coordinate | null>(null);
   const moveBack = useMoveBack();
 
   if (isLoading) {
@@ -51,6 +75,11 @@ export default function MapInstance() {
     sizeX: board.sizeX,
     sizeY: board.sizeY,
   };
+
+  const selectedField = board.fields.find(
+    (field) =>
+      field.positionX === selectedBox?.x && field.positionY === selectedBox?.y
+  );
 
   return (
     <>
@@ -69,7 +98,37 @@ export default function MapInstance() {
         </Heading>
       </StyledElementBox>
       <Container>
-        <MapBoard board={boardData} fields={board.fields} />
+        <MapBoard
+          board={boardData}
+          fields={board.fields}
+          selectedBox={selectedBox}
+          onSelectedBox={setSelectedBox}
+        />
+        {selectedBox && (
+          <LeftPanel>
+            <Heading as="h2">Field Info</Heading>
+            <StyledElementBox>
+              Desctription: {selectedField?.description}
+            </StyledElementBox>
+            <StyledElementBox>
+              Position X: {selectedField?.positionX}
+            </StyledElementBox>
+            <StyledElementBox>
+              Position Y: {selectedField?.positionY}
+            </StyledElementBox>
+            <StyledElementBox>
+              Heigth: {selectedField?.positionZ}
+            </StyledElementBox>
+            <StyledElementBox>Color: {selectedField?.color}</StyledElementBox>
+
+            <StyledElementBox>
+              Field cover level: {selectedField?.fieldCoverLevel}
+            </StyledElementBox>
+            <StyledElementBox>
+              Field movement cost: {selectedField?.fieldMovementCost}
+            </StyledElementBox>
+          </LeftPanel>
+        )}
       </Container>
     </>
   );

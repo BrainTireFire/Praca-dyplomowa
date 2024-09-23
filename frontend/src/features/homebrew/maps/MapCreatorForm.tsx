@@ -5,9 +5,12 @@ import Button from "../../../ui/interactive/Button";
 import ColorPicker from "react-pick-color";
 import TextArea from "../../../ui/forms/TextArea";
 import { useForm, Controller } from "react-hook-form";
-import { useOutsideClick } from "../../../hooks/useOutsideClick";
 import useClickOutside from "../../../hooks/useClickOutside";
 import Heading from "../../../ui/text/Heading";
+import { useCreateBoard } from "./useCreateBoard";
+import { BoardCreateDto } from "../../../models/map/BoardDto";
+import { useUpdateBoard } from "./useUpdateBoard";
+import { BoardUpdateDto } from "../../../models/map/BoardUpdate";
 
 const Label = styled.label`
   font-weight: bold;
@@ -116,7 +119,7 @@ type MapFormProps = {
   description: string;
 };
 
-export default function MapCreatorForm({ selectedBox, onSubmit, fields }: any) {
+export default function MapCreatorForm({ state, onSubmit }: any) {
   const colorPickerPopover = useRef();
   const [isColorPickerVisible, setIsColorPickerVisible] = useState(false);
   const [colorValue, setColorValue] = useState("#fff");
@@ -129,6 +132,9 @@ export default function MapCreatorForm({ selectedBox, onSubmit, fields }: any) {
     control,
     setValue,
   } = useForm<MapFormProps>();
+  const { selectedBox, fields } = state;
+  const { updateBoard, isUpdating } = useUpdateBoard();
+  const { createBoard, isLoading } = useCreateBoard();
 
   const setFormValues = useCallback(() => {
     const field = fields.find(
@@ -171,20 +177,82 @@ export default function MapCreatorForm({ selectedBox, onSubmit, fields }: any) {
     reset();
   }
 
+  function handleCreateBoard() {
+    if (state.isUpdating) {
+      const boardData: BoardUpdateDto = {
+        name: state.board.name,
+        description: state.board.description,
+        sizeX: state.board.sizeX,
+        sizeY: state.board.sizeY,
+        fields: state.fields,
+      };
+
+      // I removing the id from the fields array
+      boardData.fields = boardData.fields.map(({ ...field }) => {
+        return {
+          ...field,
+          positionX: Number(field.positionX),
+          positionY: Number(field.positionY),
+          positionZ: Number(field.positionZ),
+        };
+      });
+
+      updateBoard(boardData);
+    } else {
+      const boardData: BoardCreateDto = {
+        name: state.board.name,
+        description: state.board.description,
+        sizeX: state.board.sizeX,
+        sizeY: state.board.sizeY,
+        fields: state.fields,
+      };
+
+      // I removing the id from the fields array
+      boardData.fields = boardData.fields.map(({ ...field }) => {
+        return {
+          ...field,
+          positionX: Number(field.positionX),
+          positionY: Number(field.positionY),
+          positionZ: Number(field.positionZ),
+        };
+      });
+
+      createBoard(boardData, {
+        onSettled: () => reset(),
+      });
+    }
+  }
+
   return (
     <ChatForm onSubmit={handleSubmit(onFormSubmit)}>
       {selectedBox === null ? (
-        <InstructionsContainer>
-          <Heading as="h1">Instructions:</Heading>
-          <InstructionText>
-            To select a box:
-            <InstructioSpan>Click on the desired box.</InstructioSpan>
-          </InstructionText>
-          <InstructionText>
-            To deselect a box:
-            <InstructioSpan>Click on the selected box.</InstructioSpan>
-          </InstructionText>
-        </InstructionsContainer>
+        <>
+          <InstructionsContainer>
+            <Heading as="h1">Instructions:</Heading>
+            <InstructionText>
+              To select a box:{" "}
+              <InstructioSpan>Click on the desired box.</InstructioSpan>
+            </InstructionText>
+            <InstructionText>
+              To deselect a box:{" "}
+              <InstructioSpan>Click on the selected box.</InstructioSpan>
+            </InstructionText>
+            <InstructionText>
+              To save all changes:{" "}
+              <InstructioSpan>Click on the "Finished" button.</InstructioSpan>
+            </InstructionText>
+          </InstructionsContainer>
+
+          <Button
+            size="medium"
+            variation="primary"
+            type="button"
+            onClick={handleCreateBoard}
+            disabled={isLoading}
+          >
+            Finished
+          </Button>
+        </>
       ) : (
         <>
           {/* Field Color */}
@@ -217,7 +285,7 @@ export default function MapCreatorForm({ selectedBox, onSubmit, fields }: any) {
             <FieldSet>
               <Label>Field Height:</Label>
               <Input
-                id=" "
+                id="positionZ"
                 type="text"
                 placeholder="Height"
                 {...register("positionZ", {
@@ -263,7 +331,7 @@ export default function MapCreatorForm({ selectedBox, onSubmit, fields }: any) {
                 <label>
                   <Input
                     type="radio"
-                    value="low"
+                    value="Low"
                     {...register("fieldMovementCost", {
                       required: "This field is required",
                     })}
@@ -273,7 +341,7 @@ export default function MapCreatorForm({ selectedBox, onSubmit, fields }: any) {
                 <label>
                   <Input
                     type="radio"
-                    value="high"
+                    value="High"
                     {...register("fieldMovementCost", {
                       required: "This field is required",
                     })}
@@ -283,7 +351,7 @@ export default function MapCreatorForm({ selectedBox, onSubmit, fields }: any) {
                 <label>
                   <Input
                     type="radio"
-                    value="impassable"
+                    value="Impassable"
                     {...register("fieldMovementCost", {
                       required: "This field is required",
                     })}
@@ -307,7 +375,7 @@ export default function MapCreatorForm({ selectedBox, onSubmit, fields }: any) {
                 <label>
                   <Input
                     type="radio"
-                    value="noCover"
+                    value="NoCover"
                     {...register("fieldCoverLevel", {
                       required: "This field is required",
                     })}
@@ -317,7 +385,7 @@ export default function MapCreatorForm({ selectedBox, onSubmit, fields }: any) {
                 <label>
                   <Input
                     type="radio"
-                    value="halfCover"
+                    value="HalfCover"
                     {...register("fieldCoverLevel", {
                       required: "This field is required",
                     })}
@@ -327,7 +395,7 @@ export default function MapCreatorForm({ selectedBox, onSubmit, fields }: any) {
                 <label>
                   <Input
                     type="radio"
-                    value="threeQuartersCover"
+                    value="ThreeQuartersCover"
                     {...register("fieldCoverLevel", {
                       required: "This field is required",
                     })}
@@ -337,7 +405,7 @@ export default function MapCreatorForm({ selectedBox, onSubmit, fields }: any) {
                 <label>
                   <Input
                     type="radio"
-                    value="totalCover"
+                    value="TotalCover"
                     {...register("fieldCoverLevel", {
                       required: "This field is required",
                     })}

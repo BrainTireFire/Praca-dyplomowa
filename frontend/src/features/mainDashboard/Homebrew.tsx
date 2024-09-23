@@ -55,7 +55,11 @@ export default function Homebrew() {
       </StyledElementBox>
       <StyledElementBoxWithSpace>
         <StyledElementBox>
-          <Button size="large" variation="primary">
+          <Button
+            size="large"
+            variation="primary"
+            onClick={() => navigate(`/homebrew/map`)}
+          >
             My custom maps
           </Button>
           <Button

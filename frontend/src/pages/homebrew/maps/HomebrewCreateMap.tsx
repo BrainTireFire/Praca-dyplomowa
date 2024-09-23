@@ -10,9 +10,5 @@ const Container = styled.div`
 `;
 
 export default function HomebrewCreateMap() {
-  return (
-    <Container>
-      <MapCreatorLayout />
-    </Container>
-  );
+  return <Container></Container>;
 }

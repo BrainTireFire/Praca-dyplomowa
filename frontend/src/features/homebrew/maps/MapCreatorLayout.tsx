@@ -2,7 +2,6 @@ import React, { useEffect, useReducer, useState } from "react";
 import styled from "styled-components";
 import MapCreatorForm from "./MapCreatorForm";
 import MapBoard from "./MapBoard";
-import { Coordinate } from "../../../models/session/Coordinate";
 
 const GridContainer = styled.div`
   grid-row: 1 / 2;
@@ -43,6 +42,7 @@ const initialState = {
     sizeX: 16,
     sizeY: 9,
   },
+  isUpdating: false,
 };
 
 function reducer(state, action) {
@@ -53,7 +53,8 @@ function reducer(state, action) {
       return {
         ...state,
         fields: state.fields.map((field) =>
-          field.id === action.payload.id
+          field.positionX === action.payload.data.positionX &&
+          field.positionY === action.payload.data.positionY
             ? { ...field, ...action.payload.data }
             : field
         ),
@@ -62,6 +63,11 @@ function reducer(state, action) {
       return {
         ...state,
         fields: [...state.fields, action.payload],
+      };
+    case "ADD_ALL_FIELDS":
+      return {
+        ...state,
+        fields: action.payload,
       };
     case "ADD_BOARD_DATA":
       return {
@@ -72,6 +78,11 @@ function reducer(state, action) {
           sizeY: Number(action.payload.sizeY),
         },
       };
+    case "UPDATE_IS_UPDATING":
+      return {
+        ...state,
+        isUpdating: true,
+      };
     default:
       return state;
   }
@@ -80,10 +91,14 @@ function reducer(state, action) {
 export default function MapCreatorLayout({ boardData }) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  console.log(state);
   useEffect(() => {
     if (boardData) {
       dispatch({ type: "ADD_BOARD_DATA", payload: boardData });
+
+      if (boardData.fields) {
+        dispatch({ type: "ADD_ALL_FIELDS", payload: boardData.fields });
+        dispatch({ type: "UPDATE_IS_UPDATING" });
+      }
     }
   }, [boardData]);
 
@@ -91,20 +106,21 @@ export default function MapCreatorLayout({ boardData }) {
     if (!state.selectedBox) return;
 
     const updatedField = {
-      id: state.selectedBox.x + "-" + state.selectedBox.y,
       ...data,
       positionX: state.selectedBox.x,
       positionY: state.selectedBox.y,
     };
 
     const existingField = state.fields.find(
-      (field) => field.id === updatedField.id
+      (field) =>
+        field.positionX === updatedField.positionX &&
+        field.positionY === updatedField.positionY
     );
 
     if (existingField) {
       dispatch({
         type: "UPDATE_FIELD",
-        payload: { id: updatedField.id, data: updatedField },
+        payload: { data: updatedField },
       });
     } else {
       dispatch({ type: "ADD_FIELD", payload: updatedField });
@@ -126,11 +142,7 @@ export default function MapCreatorLayout({ boardData }) {
         />
       </GridContainer>
       <LeftPanel>
-        <MapCreatorForm
-          selectedBox={state.selectedBox}
-          fields={state.fields}
-          onSubmit={handleFormSubmit}
-        />
+        <MapCreatorForm state={state} onSubmit={handleFormSubmit} />
       </LeftPanel>
     </MainGrid>
   );

@@ -52,61 +52,61 @@ public class Seed
 
     public static async Task SeedItemFamilies(AppDbContext context){
         List<ItemFamily> newFamilies = new();
-        CreateItemFamily(context, newFamilies, "Handaxe");
-        CreateItemFamily(context, newFamilies, "Throwing hammer");
-        CreateItemFamily(context, newFamilies, "Warhammer");
+        CreateItemFamily(context, newFamilies, "Handaxe", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Throwing hammer", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Warhammer", typeof(Weapon));
 
         //armors
-        CreateItemFamily(context, newFamilies, "Heavy armor");
-        CreateItemFamily(context, newFamilies, "Medium armor");
-        CreateItemFamily(context, newFamilies, "Light armor");
+        CreateItemFamily(context, newFamilies, "Heavy armor", typeof(Apparel));
+        CreateItemFamily(context, newFamilies, "Medium armor", typeof(Apparel));
+        CreateItemFamily(context, newFamilies, "Light armor", typeof(Apparel));
         //simple weapons
-        CreateItemFamily(context, newFamilies, "Club");
-        CreateItemFamily(context, newFamilies, "Dagger");
-        CreateItemFamily(context, newFamilies, "Greatclub");
-        CreateItemFamily(context, newFamilies, "Handaxe");
-        CreateItemFamily(context, newFamilies, "Javelin");
-        CreateItemFamily(context, newFamilies, "Light hammer");
-        CreateItemFamily(context, newFamilies, "Mace");
-        CreateItemFamily(context, newFamilies, "Quarterstaff");
-        CreateItemFamily(context, newFamilies, "Sickle");
-        CreateItemFamily(context, newFamilies, "Spear");
-        CreateItemFamily(context, newFamilies, "Light crossbow");
-        CreateItemFamily(context, newFamilies, "Dart");
-        CreateItemFamily(context, newFamilies, "Shortbow");
-        CreateItemFamily(context, newFamilies, "Sling");
+        CreateItemFamily(context, newFamilies, "Club", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Dagger", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Greatclub", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Handaxe", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Javelin", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Light hammer", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Mace", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Quarterstaff", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Sickle", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Spear", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Light crossbow", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Dart", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Shortbow", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Sling", typeof(Weapon));
         //martial weapons
-        CreateItemFamily(context, newFamilies, "Battleaxe");
-        CreateItemFamily(context, newFamilies, "Flail");
-        CreateItemFamily(context, newFamilies, "Glaive");
-        CreateItemFamily(context, newFamilies, "Greataxe");
-        CreateItemFamily(context, newFamilies, "Greatsword");
-        CreateItemFamily(context, newFamilies, "Halberd");
-        CreateItemFamily(context, newFamilies, "Lance");
-        CreateItemFamily(context, newFamilies, "Longsword");
-        CreateItemFamily(context, newFamilies, "Maul");
-        CreateItemFamily(context, newFamilies, "Morningstar");
-        CreateItemFamily(context, newFamilies, "Pike");
-        CreateItemFamily(context, newFamilies, "Rapier");
-        CreateItemFamily(context, newFamilies, "Scimitar");
-        CreateItemFamily(context, newFamilies, "Shortsword");
-        CreateItemFamily(context, newFamilies, "Trident");
-        CreateItemFamily(context, newFamilies, "War pick");
-        CreateItemFamily(context, newFamilies, "Warhammer");
-        CreateItemFamily(context, newFamilies, "Whip");
-        CreateItemFamily(context, newFamilies, "Blowgun");
-        CreateItemFamily(context, newFamilies, "Hand crossbow");
-        CreateItemFamily(context, newFamilies, "Heavy crossbow");
-        CreateItemFamily(context, newFamilies, "Longbow");
-        CreateItemFamily(context, newFamilies, "Net");
+        CreateItemFamily(context, newFamilies, "Battleaxe", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Flail", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Glaive", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Greataxe", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Greatsword", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Halberd", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Lance", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Longsword", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Maul", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Morningstar", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Pike", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Rapier", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Scimitar", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Shortsword", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Trident", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "War pick", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Warhammer", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Whip", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Blowgun", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Hand crossbow", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Heavy crossbow", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Longbow", typeof(Weapon));
+        CreateItemFamily(context, newFamilies, "Net", typeof(Weapon));
 
 
         context.ItemFamilies.AddRange(newFamilies);
         await context.SaveChangesAsync();
     }
-    private static void CreateItemFamily(AppDbContext context, List<ItemFamily> newFamilies, string name){
+    private static void CreateItemFamily(AppDbContext context, List<ItemFamily> newFamilies, string name, Type itemType){
         if(!context.ItemFamilies.Where(itemFam => itemFam.Name == name).Any()){
-            newFamilies.Add(new ItemFamily{Name = name});
+            newFamilies.Add(new ItemFamily{Name = name, ItemType = itemType});
         }
     }
 
@@ -197,7 +197,7 @@ public class Seed
             keenSensesGroup.R_Effects.Add(perceptionProficienyEffect);
 
             ChoiceGroup darkvisionGroup = new("Darkvision");
-            EffectBlueprint darkvision = new("Darkvision")
+            DummyEffectBlueprint darkvision = new("Darkvision")
             {
                 Description = @"Accustomed to twilit forests and the night 
                                                         sky, you have superior vision in dark and dim conditions. 
@@ -254,7 +254,7 @@ public class Seed
             languages.R_Effects.Add(dwarvishLanguageKnown);
 
             ChoiceGroup darkvisionGroup = new("Darkvision");
-            EffectBlueprint darkvision = new("Darkvision")
+            DummyEffectBlueprint darkvision = new("Darkvision")
             {
                 Description = @"Accustomed to twilit forests and the night 
                                                         sky, you have superior vision in dark and dim conditions. 
@@ -630,14 +630,14 @@ public class Seed
                     sneakAttackDamage10,
                 }
             );
-            EffectBlueprint cunningAction = new("Cunning action"){IsImplemented = false};
-            EffectBlueprint uncannyDodge = new("Uncanny dodge"){IsImplemented = false};
-            EffectBlueprint evasion = new("Evasion"){IsImplemented = false};
-            EffectBlueprint reliableTalent = new("Reliable talent"){IsImplemented = false};
-            EffectBlueprint blindsense = new("Blindsense"){IsImplemented = false};
+            DummyEffectBlueprint cunningAction = new("Cunning action"){IsImplemented = false};
+            DummyEffectBlueprint uncannyDodge = new("Uncanny dodge"){IsImplemented = false};
+            DummyEffectBlueprint evasion = new("Evasion"){IsImplemented = false};
+            DummyEffectBlueprint reliableTalent = new("Reliable talent"){IsImplemented = false};
+            DummyEffectBlueprint blindsense = new("Blindsense"){IsImplemented = false};
             SavingThrowEffectBlueprint slipperyMind = new("Slippery mind", 0, RollMoment.OnCast, SavingThrowEffect.Proficiency, Ability.WISDOM, null, null);
-            EffectBlueprint elusive = new("Slippery mind"){IsImplemented = false};
-            EffectBlueprint strokeOfLuck = new("Stroke of luck"){IsImplemented = false};
+            DummyEffectBlueprint elusive = new("Slippery mind"){IsImplemented = false};
+            DummyEffectBlueprint strokeOfLuck = new("Stroke of luck"){IsImplemented = false};
             ImmaterialResourceBlueprint strokeOfLuckCharge = new()
             {
                 Name = "Stroke of luck charge",
@@ -663,7 +663,7 @@ public class Seed
             IsImplemented = false,
             R_UsesImmaterialResource = arcaneRecoveryCharge
         };
-        EffectBlueprint arcaneRecoveryEffect = new("Arcane Recovery " + level)
+        DummyEffectBlueprint arcaneRecoveryEffect = new("Arcane Recovery " + level)
         {
             Level = 0,
             ResourceAmount = level

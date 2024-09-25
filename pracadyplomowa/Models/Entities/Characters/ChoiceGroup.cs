@@ -12,13 +12,13 @@ namespace pracadyplomowa.Models.Entities.Characters
         public int NumberToChoose { get; set; } = 0; // get all if set to 0
         
         //Relationship
-        public virtual ICollection<Power> R_Powers { get; set; } = [];
-        public virtual ICollection<EffectBlueprint> R_Effects { get; set; } = [];
+        public virtual List<Power> R_Powers { get; set; } = [];
+        public virtual List<EffectBlueprint> R_Effects { get; set; } = [];
 
         public virtual RaceLevel? R_GrantedByRaceLevel { get; set; }
-        public virtual int? GrantedByRaceLevelId { get; set; }
+        public virtual int? R_GrantedByRaceLevelId { get; set; }
         public virtual ClassLevel? R_GrantedByClassLevel { get; set; }
-        public virtual int? GrantedByClassLevelId { get; set; }
+        public virtual int? R_GrantedByClassLevelId { get; set; }
         public virtual ICollection<ChoiceGroupUsage> R_UsageInstances { get; set; } = [];
 
         public ChoiceGroupUsage Generate(Character character, List<EffectBlueprint> effects, List<Power> powers){
@@ -33,6 +33,10 @@ namespace pracadyplomowa.Models.Entities.Characters
             character.R_UsedChoiceGroups.Add(usage);
             usage.R_Character = character;
             return usage;
+        }
+
+        public ChoiceGroupUsage Generate(Character character){
+            return Generate(character, this.R_Effects, this.R_Powers);
         }
     }
 }

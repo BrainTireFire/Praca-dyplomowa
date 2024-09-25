@@ -2,17 +2,20 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using pracadyplomowa;
 
 #nullable disable
 
-namespace pracadyplomowa.Migrations
+namespace pracadyplomowa.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240924190123_walkazabstraktem2")]
+    partial class walkazabstraktem2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
@@ -496,6 +499,12 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("GrantedByClassLevelId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("GrantedByRaceLevelId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -1467,13 +1476,6 @@ namespace pracadyplomowa.Migrations
                     b.HasDiscriminator().HasValue("MovementCostEffectBlueprint");
                 });
 
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectBlueprints.OffHandAttackEffectBlueprint", b =>
-                {
-                    b.HasBaseType("pracadyplomowa.Models.Entities.Powers.EffectBlueprint");
-
-                    b.HasDiscriminator().HasValue("OffHandAttackEffectBlueprint");
-                });
-
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectBlueprints.ProficiencyEffectBlueprint", b =>
                 {
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.EffectBlueprint");
@@ -1539,13 +1541,6 @@ namespace pracadyplomowa.Migrations
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.EffectInstance");
 
                     b.HasDiscriminator().HasValue("DummyEffectInstance");
-                });
-
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectInstances.OffHandAttackEffectInstance", b =>
-                {
-                    b.HasBaseType("pracadyplomowa.Models.Entities.Powers.EffectInstance");
-
-                    b.HasDiscriminator().HasValue("OffHandAttackEffectInstance");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.MovementCostEffectInstance", b =>
@@ -1774,20 +1769,6 @@ namespace pracadyplomowa.Migrations
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.ValueEffectInstance");
 
                     b.HasDiscriminator().HasValue("DamageEffectInstance");
-                });
-
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectInstances.ArmorClassEffectInstance", b =>
-                {
-                    b.HasBaseType("pracadyplomowa.Models.Entities.Powers.ValueEffectInstance");
-
-                    b.HasDiscriminator().HasValue("ArmorClassEffectInstance");
-                });
-
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectInstances.HealingEffectInstance", b =>
-                {
-                    b.HasBaseType("pracadyplomowa.Models.Entities.Powers.ValueEffectInstance");
-
-                    b.HasDiscriminator().HasValue("HealingEffectInstance");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.HitpointEffectInstance", b =>

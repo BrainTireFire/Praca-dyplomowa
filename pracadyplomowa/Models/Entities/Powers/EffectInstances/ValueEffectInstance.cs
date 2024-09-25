@@ -4,7 +4,7 @@ using pracadyplomowa.Models.Entities.Powers.EffectBlueprints;
 
 namespace pracadyplomowa.Models.Entities.Powers;
 
-public class ValueEffectInstance : EffectInstance
+public abstract class ValueEffectInstance : EffectInstance
 {
     public DiceSet DiceSet { get; set; }
 

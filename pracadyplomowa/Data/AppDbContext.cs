@@ -8,6 +8,7 @@ using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Models.Entities.Items;
 using pracadyplomowa.Models.Entities.Powers;
 using pracadyplomowa.Models.Entities.Powers.EffectBlueprints;
+using pracadyplomowa.Models.Entities.Powers.EffectInstances;
 
 namespace pracadyplomowa;
 
@@ -83,13 +84,18 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         public DbSet<SizeEffectBlueprint> SizeEffectBlueprints { get; set; }
         public DbSet<SkillEffectBlueprint> SkillEffectBlueprints { get; set; }
         public DbSet<StatusEffectBlueprint> StatusEffectBlueprints { get; set; }
-        // public DbSet<ValueEffectBlueprint> ValueEffectBlueprints { get; set; }
+        public DbSet<ValueEffectBlueprint> ValueEffectBlueprints { get; set; }
+        public DbSet<DummyEffectBlueprint> DummyEffectBlueprints { get; set; }
+        public DbSet<OffHandAttackEffectBlueprint> OffHandEffectBlueprints { get; set; }
+        public DbSet<LanguageEffectBlueprint> LanguageEffectBlueprints { get; set; }
         
         public DbSet<AbilityEffectInstance> AbilityEffectInstances { get; set; }
         public DbSet<ActionEffectInstance> ActionEffectInstances { get; set; }
+        public DbSet<ArmorClassEffectInstance> ArmorClassEffectInstances { get; set; }
         public DbSet<AttackPerAttackActionEffectInstance> AttackPerAttackActionEffectInstances { get; set; }
         public DbSet<AttackRollEffectInstance> AttackRollEffectInstances { get; set; }
         public DbSet<DamageEffectInstance> DamageEffectInstances { get; set; }
+        public DbSet<HealingEffectInstance> HealingEffectInstances { get; set; }
         public DbSet<HitpointEffectInstance> HitpointEffectInstances { get; set; }
         public DbSet<MovementCostEffectInstance> MovementCostEffectInstances { get; set; }
         public DbSet<MovementEffectInstance> MovementEffectInstances { get; set; }
@@ -99,6 +105,10 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         public DbSet<SizeEffectInstance> SizeEffectInstances { get; set; }
         public DbSet<SkillEffectInstance> SkillEffectInstances { get; set; }
         public DbSet<StatusEffectInstance> StatusEffectInstances { get; set; }
+        public DbSet<ValueEffectInstance> ValueEffectInstances { get; set; }
+        public DbSet<DummyEffectInstance> DummyEffectInstances { get; set; }
+        public DbSet<OffHandAttackEffectInstance> OffHandEffectInstances { get; set; }
+        public DbSet<LanguageEffectInstance> LanguageEffectInstances { get; set; }
         public DbSet<ChoiceGroupUsage> ChoiceGroupUsages {get; set;}
         public DbSet<Language> Languages {get; set;}
         
@@ -206,5 +216,19 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
 
                 builder.Entity<Item>().UseTptMappingStrategy();
                 builder.Entity<EffectBlueprint>().UseTphMappingStrategy();
+                builder.Entity<EffectInstance>().UseTphMappingStrategy();
+                builder.Entity<ValueEffectInstance>().Navigation(e=>e.DiceSet).AutoInclude();
+                builder.Entity<LanguageEffectBlueprint>().Navigation(e=>e.R_Language).AutoInclude();
+                builder.Entity<LanguageEffectBlueprint>()
+                        .HasOne(lei => lei.R_Language)
+                        .WithMany(l => l.R_EffectBlueprints)
+                        .HasForeignKey(lei => lei.R_LanguageId);
+                builder.Entity<LanguageEffectInstance>().Navigation(e=>e.R_Language).AutoInclude();
+                builder.Entity<LanguageEffectInstance>()
+                        .HasOne(lei => lei.R_Language)
+                        .WithMany(l => l.R_EffectInstances)
+                        .HasForeignKey(lei => lei.R_LanguageId);
+                builder.Entity<ProficiencyEffectBlueprint>().Navigation(e=>e.R_GrantsProficiencyInItemFamily).AutoInclude();
+                builder.Entity<ProficiencyEffectInstance>().Navigation(e=>e.R_GrantsProficiencyInItemFamily).AutoInclude();
         }
 }

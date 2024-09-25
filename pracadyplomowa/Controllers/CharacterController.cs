@@ -42,7 +42,7 @@ namespace pracadyplomowa.Controllers
         
         [HttpPost]
         public async Task<ActionResult> CreateNewCharacter(CharacterInsertDto characterDto){
-            var race = _raceRepository.GetById(characterDto.RaceId);
+            var race = await _raceRepository.GetRaceByIdWithRaceLevelAndChoiceGroups(characterDto.RaceId, 1);
             if(race == null){
                 return BadRequest(new ApiResponse(400, "Race with Id " + characterDto.RaceId + " does not exist"));
             }

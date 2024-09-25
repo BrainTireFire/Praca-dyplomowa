@@ -179,7 +179,7 @@ namespace pracadyplomowa.Models.DTOs
                                 .OfType<ProficiencyEffectInstance>()
                                 // .Where(ei => ei.ProficiencyEffectType.ProficiencyEffect == proficiency)
                                 .Select(ei => ei.R_GrantsProficiencyInItemFamily)
-                                .Where(it => it.GetType() == itemClass )
+                                .Where(it => it.ItemType == itemClass )
                                 .Select(itemFamily => new ItemFamily{
                                     Id = itemFamily.Id,
                                     Name = itemFamily.Name,

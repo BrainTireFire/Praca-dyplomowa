@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.Entities.Characters;
+using pracadyplomowa.Models.Entities.Powers;
+using pracadyplomowa.Models.Entities.Powers.EffectBlueprints;
 
 namespace pracadyplomowa.Repository
 {
@@ -63,6 +65,7 @@ namespace pracadyplomowa.Repository
 
             .Include(c => c.R_EquippedItems)
             
+            .AsSplitQuery() // IMPORTANT !!!!! https://learn.microsoft.com/en-us/ef/core/querying/single-split-queries
             .FirstAsync();
             return character;
         }

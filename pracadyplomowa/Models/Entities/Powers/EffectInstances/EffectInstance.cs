@@ -10,7 +10,7 @@ using pracadyplomowa.Models.Enums.EffectOptions;
 
 namespace pracadyplomowa.Models.Entities.Powers
 {
-    public class EffectInstance(string name) : ObjectWithId
+    public abstract class EffectInstance(string name) : ObjectWithId
     {
         private EffectInstance() : this("EF"){}
         public EffectInstance(EffectBlueprint blueprint, Character target) : this(blueprint.Name){

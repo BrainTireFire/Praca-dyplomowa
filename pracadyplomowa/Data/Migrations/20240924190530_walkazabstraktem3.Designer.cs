@@ -2,17 +2,20 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using pracadyplomowa;
 
 #nullable disable
 
-namespace pracadyplomowa.Migrations
+namespace pracadyplomowa.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240924190530_walkazabstraktem3")]
+    partial class walkazabstraktem3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
@@ -496,6 +499,12 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("GrantedByClassLevelId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("GrantedByRaceLevelId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -1774,20 +1783,6 @@ namespace pracadyplomowa.Migrations
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.ValueEffectInstance");
 
                     b.HasDiscriminator().HasValue("DamageEffectInstance");
-                });
-
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectInstances.ArmorClassEffectInstance", b =>
-                {
-                    b.HasBaseType("pracadyplomowa.Models.Entities.Powers.ValueEffectInstance");
-
-                    b.HasDiscriminator().HasValue("ArmorClassEffectInstance");
-                });
-
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectInstances.HealingEffectInstance", b =>
-                {
-                    b.HasBaseType("pracadyplomowa.Models.Entities.Powers.ValueEffectInstance");
-
-                    b.HasDiscriminator().HasValue("HealingEffectInstance");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.HitpointEffectInstance", b =>

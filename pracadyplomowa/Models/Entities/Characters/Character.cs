@@ -124,13 +124,12 @@ namespace pracadyplomowa.Models.Entities.Characters
 
             this.R_AffectedBy = basicStats.R_OwnedEffects;
 
-            List<ChoiceGroup> fullChoiceGroups = classLevel.R_ChoiceGroups.Where(cg => cg.NumberToChoose == 0).ToList();
+            List<ChoiceGroup> fullChoiceGroups = classLevel.R_ChoiceGroups.Union(
+                race.R_RaceLevels.SelectMany(rl => rl.R_ChoiceGroups)
+                ).Where(cg => cg.NumberToChoose == 0).ToList();
             List<ChoiceGroupUsage> usedChoiceGroups = [];
             foreach(ChoiceGroup cg in fullChoiceGroups){
-                ChoiceGroupUsage cgu = new ChoiceGroupUsage();
-                foreach(EffectBlueprint eb in cg.R_Effects){
-                    
-                }
+                cg.Generate(this);
             }
 
             this.R_OwnerId = ownerId;

@@ -14,5 +14,10 @@ namespace pracadyplomowa.Models.Entities.Characters
         public ChoiceGroup? R_ChoiceGroup {get; set;}
         public List<Power> R_PowersGranted  {get; set;} = [];
         public List<EffectInstance> R_EffectsGranted {get; set;} = [];
+
+        //methods
+        // public void AssignEffectInstance(EffectInstance instance){
+        //     this.R_EffectsGranted
+        // }
     }
 }

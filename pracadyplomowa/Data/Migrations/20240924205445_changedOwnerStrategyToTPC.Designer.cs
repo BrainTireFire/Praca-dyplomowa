@@ -2,17 +2,20 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using pracadyplomowa;
 
 #nullable disable
 
-namespace pracadyplomowa.Migrations
+namespace pracadyplomowa.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240924205445_changedOwnerStrategyToTPC")]
+    partial class changedOwnerStrategyToTPC
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
@@ -797,7 +800,6 @@ namespace pracadyplomowa.Migrations
             modelBuilder.Entity("pracadyplomowa.Models.Entities.ObjectWithOwner", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("R_OwnerId")
@@ -809,7 +811,7 @@ namespace pracadyplomowa.Migrations
 
                     b.ToTable("Objects");
 
-                    b.UseTptMappingStrategy();
+                    b.UseTpcMappingStrategy();
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.Aura", b =>
@@ -2481,32 +2483,8 @@ namespace pracadyplomowa.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Campaign.Board", b =>
-                {
-                    b.HasOne("pracadyplomowa.Models.Entities.ObjectWithOwner", null)
-                        .WithOne()
-                        .HasForeignKey("pracadyplomowa.Models.Entities.Campaign.Board", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Campaign.Campaign", b =>
-                {
-                    b.HasOne("pracadyplomowa.Models.Entities.ObjectWithOwner", null)
-                        .WithOne()
-                        .HasForeignKey("pracadyplomowa.Models.Entities.Campaign.Campaign", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Campaign.Encounter", b =>
                 {
-                    b.HasOne("pracadyplomowa.Models.Entities.ObjectWithOwner", null)
-                        .WithOne()
-                        .HasForeignKey("pracadyplomowa.Models.Entities.Campaign.Encounter", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("pracadyplomowa.Models.Entities.Campaign.Board", "R_Board")
                         .WithOne("R_Encounter")
                         .HasForeignKey("pracadyplomowa.Models.Entities.Campaign.Encounter", "R_BoardId")
@@ -2524,12 +2502,6 @@ namespace pracadyplomowa.Migrations
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.Character", b =>
                 {
-                    b.HasOne("pracadyplomowa.Models.Entities.ObjectWithOwner", null)
-                        .WithOne()
-                        .HasForeignKey("pracadyplomowa.Models.Entities.Characters.Character", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("pracadyplomowa.Models.Entities.Campaign.Campaign", "R_Campaign")
                         .WithMany("R_CampaignHasCharacters")
                         .HasForeignKey("R_CampaignId");
@@ -2577,23 +2549,8 @@ namespace pracadyplomowa.Migrations
                     b.Navigation("UsedHitDice");
                 });
 
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.Language", b =>
-                {
-                    b.HasOne("pracadyplomowa.Models.Entities.ObjectWithOwner", null)
-                        .WithOne()
-                        .HasForeignKey("pracadyplomowa.Models.Entities.Characters.Language", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.Item", b =>
                 {
-                    b.HasOne("pracadyplomowa.Models.Entities.ObjectWithOwner", null)
-                        .WithOne()
-                        .HasForeignKey("pracadyplomowa.Models.Entities.Items.Item", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("pracadyplomowa.Models.Entities.Items.Backpack", "R_BackpackHasItem")
                         .WithMany("R_BackpackHasItems")
                         .HasForeignKey("R_BackpackHasItemId");
@@ -2611,12 +2568,6 @@ namespace pracadyplomowa.Migrations
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.Power", b =>
                 {
-                    b.HasOne("pracadyplomowa.Models.Entities.ObjectWithOwner", null)
-                        .WithOne()
-                        .HasForeignKey("pracadyplomowa.Models.Entities.Powers.Power", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("pracadyplomowa.Models.Entities.Characters.Class", "R_ClassForUpcasting")
                         .WithMany("R_UsedForUpcastingOfPowers")
                         .HasForeignKey("R_ClassForUpcastingId");
@@ -2922,35 +2873,11 @@ namespace pracadyplomowa.Migrations
                     b.Navigation("DiceSet");
                 });
 
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.Apparel", b =>
-                {
-                    b.HasOne("pracadyplomowa.Models.Entities.Items.Item", null)
-                        .WithOne()
-                        .HasForeignKey("pracadyplomowa.Models.Entities.Items.Apparel", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.Tool", b =>
-                {
-                    b.HasOne("pracadyplomowa.Models.Entities.Items.Item", null)
-                        .WithOne()
-                        .HasForeignKey("pracadyplomowa.Models.Entities.Items.Tool", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.Weapon", b =>
                 {
                     b.HasOne("pracadyplomowa.Models.Entities.Characters.DiceSet", "DamageValue")
                         .WithMany()
                         .HasForeignKey("DamageValueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("pracadyplomowa.Models.Entities.Items.Item", null)
-                        .WithOne()
-                        .HasForeignKey("pracadyplomowa.Models.Entities.Items.Weapon", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

@@ -10,7 +10,7 @@ using pracadyplomowa.Models.Enums.EffectOptions;
 
 namespace pracadyplomowa.Models.Entities.Powers
 {
-    public class EffectBlueprint(string name) : ObjectWithId
+    public abstract class EffectBlueprint(string name) : ObjectWithId
     {
         public string Name { get; set; } = name;
         public string  Description { get; set; } = "";
@@ -40,8 +40,8 @@ namespace pracadyplomowa.Models.Entities.Powers
         //constructors
         private EffectBlueprint() : this("EF"){}
         //methods
-        public virtual EffectInstance Generate(Character roller, Character target){ //roller added to parameter list as it will be used by overriding methods
-            return new EffectInstance(this, target);
-        }
+        public abstract EffectInstance Generate(Character roller, Character target); //roller added to parameter list as it will be used by overriding methods
+        //     return new EffectInstance(this, target);
+        // }
     }
 }

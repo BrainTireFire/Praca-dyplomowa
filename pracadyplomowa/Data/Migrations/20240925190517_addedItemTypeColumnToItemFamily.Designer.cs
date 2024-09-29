@@ -2,17 +2,20 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using pracadyplomowa;
 
 #nullable disable
 
-namespace pracadyplomowa.Migrations
+namespace pracadyplomowa.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240925190517_addedItemTypeColumnToItemFamily")]
+    partial class addedItemTypeColumnToItemFamily
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
@@ -576,6 +579,9 @@ namespace pracadyplomowa.Migrations
                     b.Property<int>("HitPoints")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("ImmaterialResourceInstanceId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("Level")
                         .HasColumnType("INTEGER");
 
@@ -585,6 +591,8 @@ namespace pracadyplomowa.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("HitDieId");
+
+                    b.HasIndex("ImmaterialResourceInstanceId");
 
                     b.HasIndex("R_ClassId");
 
@@ -917,14 +925,16 @@ namespace pracadyplomowa.Migrations
                     b.Property<bool>("IsConstant")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<int?>("R_ConcentratedOnByCharacterId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("R_GeneratesAuraId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("R_ItemAffectedById")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("R_ItemGiveEffectId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("R_OriginatesFromAuraId")
@@ -940,6 +950,10 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_GeneratesAuraId")
                         .IsUnique();
+
+                    b.HasIndex("R_ItemAffectedById");
+
+                    b.HasIndex("R_ItemGiveEffectId");
 
                     b.HasIndex("R_OriginatesFromAuraId");
 
@@ -977,34 +991,27 @@ namespace pracadyplomowa.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("R_GrantedByEquippingItemId")
+                    b.Property<int>("OwnedByGroupId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("R_GrantedThroughId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("R_OwnedByGroupId")
+                    b.Property<int>("R_OwnedByGroupId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("R_TargetedCharacterId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("R_TargetedItemId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ItemFamilyId");
 
-                    b.HasIndex("R_GrantedByEquippingItemId");
-
                     b.HasIndex("R_GrantedThroughId");
 
                     b.HasIndex("R_OwnedByGroupId");
 
                     b.HasIndex("R_TargetedCharacterId");
-
-                    b.HasIndex("R_TargetedItemId");
 
                     b.ToTable("EffectInstances");
 
@@ -1071,7 +1078,7 @@ namespace pracadyplomowa.Migrations
                     b.Property<int?>("R_CharacterId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("R_ItemId")
+                    b.Property<int?>("R_ResourceGrantedToItemId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -1080,7 +1087,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_CharacterId");
 
-                    b.HasIndex("R_ItemId");
+                    b.HasIndex("R_ResourceGrantedToItemId");
 
                     b.ToTable("ImmaterialResourceInstances");
                 });
@@ -2249,6 +2256,10 @@ namespace pracadyplomowa.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("pracadyplomowa.Models.Entities.Powers.ImmaterialResourceInstance", null)
+                        .WithMany("R_GrantedByClassLevels")
+                        .HasForeignKey("ImmaterialResourceInstanceId");
+
                     b.HasOne("pracadyplomowa.Models.Entities.Characters.Class", "R_Class")
                         .WithMany("R_ClassLevels")
                         .HasForeignKey("R_ClassId")
@@ -2376,11 +2387,23 @@ namespace pracadyplomowa.Migrations
                         .WithOne("R_GeneratedBy")
                         .HasForeignKey("pracadyplomowa.Models.Entities.Powers.EffectGroup", "R_GeneratesAuraId");
 
+                    b.HasOne("pracadyplomowa.Models.Entities.Items.Item", "R_ItemAffectedBy")
+                        .WithMany("R_EffectGroupAffectedBy")
+                        .HasForeignKey("R_ItemAffectedById");
+
+                    b.HasOne("pracadyplomowa.Models.Entities.Items.Item", "R_ItemGiveEffect")
+                        .WithMany("R_EffectGroupFromItem")
+                        .HasForeignKey("R_ItemGiveEffectId");
+
                     b.HasOne("pracadyplomowa.Models.Entities.Powers.Aura", "R_OriginatesFromAura")
                         .WithMany("R_OwnedEffectGroups")
                         .HasForeignKey("R_OriginatesFromAuraId");
 
                     b.Navigation("R_GeneratesAura");
+
+                    b.Navigation("R_ItemAffectedBy");
+
+                    b.Navigation("R_ItemGiveEffect");
 
                     b.Navigation("R_OriginatesFromAura");
                 });
@@ -2391,35 +2414,25 @@ namespace pracadyplomowa.Migrations
                         .WithMany("R_ProficiencyGrantedByEffectInstance")
                         .HasForeignKey("ItemFamilyId");
 
-                    b.HasOne("pracadyplomowa.Models.Entities.Items.Item", "R_GrantedByEquippingItem")
-                        .WithMany("R_EffectsOnEquip")
-                        .HasForeignKey("R_GrantedByEquippingItemId");
-
                     b.HasOne("pracadyplomowa.Models.Entities.Characters.ChoiceGroupUsage", "R_GrantedThrough")
                         .WithMany("R_EffectsGranted")
                         .HasForeignKey("R_GrantedThroughId");
 
                     b.HasOne("pracadyplomowa.Models.Entities.Powers.EffectGroup", "R_OwnedByGroup")
                         .WithMany("R_OwnedEffects")
-                        .HasForeignKey("R_OwnedByGroupId");
+                        .HasForeignKey("R_OwnedByGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("pracadyplomowa.Models.Entities.Characters.Character", "R_TargetedCharacter")
                         .WithMany("R_AffectedBy")
                         .HasForeignKey("R_TargetedCharacterId");
-
-                    b.HasOne("pracadyplomowa.Models.Entities.Items.Item", "R_TargetedItem")
-                        .WithMany("R_AffectedBy")
-                        .HasForeignKey("R_TargetedItemId");
-
-                    b.Navigation("R_GrantedByEquippingItem");
 
                     b.Navigation("R_GrantedThrough");
 
                     b.Navigation("R_OwnedByGroup");
 
                     b.Navigation("R_TargetedCharacter");
-
-                    b.Navigation("R_TargetedItem");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.ImmaterialResourceAmount", b =>
@@ -2445,15 +2458,15 @@ namespace pracadyplomowa.Migrations
                         .WithMany("R_ImmaterialResourceInstances")
                         .HasForeignKey("R_CharacterId");
 
-                    b.HasOne("pracadyplomowa.Models.Entities.Items.Item", "R_Item")
+                    b.HasOne("pracadyplomowa.Models.Entities.Items.Item", "R_ResourceGrantedToItem")
                         .WithMany("R_ItemGrantsResources")
-                        .HasForeignKey("R_ItemId");
+                        .HasForeignKey("R_ResourceGrantedToItemId");
 
                     b.Navigation("R_Blueprint");
 
                     b.Navigation("R_Character");
 
-                    b.Navigation("R_Item");
+                    b.Navigation("R_ResourceGrantedToItem");
                 });
 
             modelBuilder.Entity("pracadyplomowa.UserRole", b =>
@@ -3491,6 +3504,11 @@ namespace pracadyplomowa.Migrations
                     b.Navigation("R_PowersRequiringThis");
                 });
 
+            modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.ImmaterialResourceInstance", b =>
+                {
+                    b.Navigation("R_GrantedByClassLevels");
+                });
+
             modelBuilder.Entity("pracadyplomowa.Role", b =>
                 {
                     b.Navigation("UserRoles");
@@ -3552,9 +3570,9 @@ namespace pracadyplomowa.Migrations
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.Item", b =>
                 {
-                    b.Navigation("R_AffectedBy");
+                    b.Navigation("R_EffectGroupAffectedBy");
 
-                    b.Navigation("R_EffectsOnEquip");
+                    b.Navigation("R_EffectGroupFromItem");
 
                     b.Navigation("R_EquipData");
 

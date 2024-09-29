@@ -17,14 +17,15 @@ namespace pracadyplomowa.Models.Entities.Powers
         public int DifficultyClassToBreak { get; set; }
         public Ability SavingThrow { get; set; }
         public bool SavingThrowRetakenEveryTurn { get; set; }
+        public string Name {get; set;} = null!;
 
         //Relationships
         public virtual Character? R_ConcentratedOnByCharacter { get; set; }
         public int? R_ConcentratedOnByCharacterId { get; set; }
-        public virtual Item? R_ItemAffectedBy { get; set; }
-        public int? R_ItemAffectedById { get; set; }
-        public virtual Item? R_ItemGiveEffect { get; set; }
-        public int? R_ItemGiveEffectId { get; set; }
+        // public virtual Item? R_ItemAffectedBy { get; set; }
+        // public int? R_ItemAffectedById { get; set; }
+        // public virtual Item? R_ItemGiveEffect { get; set; }
+        // public int? R_ItemGiveEffectId { get; set; }
 
         public virtual ICollection<EffectInstance> R_OwnedEffects { get; set; } = [];
 

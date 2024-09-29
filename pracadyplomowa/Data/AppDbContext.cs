@@ -191,17 +191,28 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .HasForeignKey(c => c.R_OriginatesFromAuraId)
                         .IsRequired(false);
 
-                builder.Entity<EffectGroup>()
-                        .HasOne(c => c.R_ItemAffectedBy)
-                        .WithMany(c => c.R_EffectGroupAffectedBy)
-                        .HasForeignKey(c => c.R_ItemAffectedById)
+                // builder.Entity<EffectGroup>()
+                //         .HasOne(c => c.R_ItemAffectedBy)
+                //         .WithMany(c => c.R_EffectGroupAffectedBy)
+                //         .HasForeignKey(c => c.R_ItemAffectedById)
+                //         .IsRequired(false);
+
+                // builder.Entity<EffectGroup>()
+                //         .HasOne(c => c.R_ItemGiveEffect)
+                //         .WithMany(c => c.R_EffectGroupFromItem)
+                //         .HasForeignKey(c => c.R_ItemGiveEffectId)
+                //         .IsRequired(false);
+                builder.Entity<Item>()
+                        .HasMany(c => c.R_AffectedBy)
+                        .WithOne(ei => ei.R_TargetedItem)
+                        .HasForeignKey(ei => ei.R_TargetedItemId)
+                        .IsRequired(false);
+                builder.Entity<Item>()
+                        .HasMany(c => c.R_ItemCreateEffectsOnEquip)
+                        .WithOne(ei => ei.R_CreatedByEquipping)
+                        .HasForeignKey(ei => ei.R_CreatedByEquippingId)
                         .IsRequired(false);
 
-                builder.Entity<EffectGroup>()
-                        .HasOne(c => c.R_ItemGiveEffect)
-                        .WithMany(c => c.R_EffectGroupFromItem)
-                        .HasForeignKey(c => c.R_ItemGiveEffectId)
-                        .IsRequired(false);
                 
                 builder.Entity<Class>()
                         .HasMany(c => c.R_AccessiblePowers)
@@ -230,5 +241,13 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .HasForeignKey(lei => lei.R_LanguageId);
                 builder.Entity<ProficiencyEffectBlueprint>().Navigation(e=>e.R_GrantsProficiencyInItemFamily).AutoInclude();
                 builder.Entity<ProficiencyEffectInstance>().Navigation(e=>e.R_GrantsProficiencyInItemFamily).AutoInclude();
+
+                builder.Entity<ItemFamily>()
+                        .Property(x => x.ItemType)
+                        .IsRequired(true)
+                        .HasConversion(
+                                convertToProviderExpression: v => v.AssemblyQualifiedName,
+                                convertFromProviderExpression: b => Type.GetType(b)
+                        );
         }
 }

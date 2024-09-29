@@ -11,7 +11,7 @@ namespace pracadyplomowa.Models.Entities.Characters
         public int R_CharacterId {get; set;}
         public Character? R_Character {get; set;}
         public int R_ChoiceGroupId {get; set;}
-        public ChoiceGroup? R_ChoiceGroup {get; set;}
+        public ChoiceGroup R_ChoiceGroup {get; set;} = null!;
         public List<Power> R_PowersGranted  {get; set;} = [];
         public List<EffectInstance> R_EffectsGranted {get; set;} = [];
 

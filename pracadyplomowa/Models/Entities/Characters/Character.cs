@@ -1,6 +1,7 @@
 
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 using Microsoft.OpenApi.Expressions;
 using pracadyplomowa.Models.Entities.Campaign;
 using pracadyplomowa.Models.Entities.Items;
@@ -39,7 +40,7 @@ namespace pracadyplomowa.Models.Entities.Characters
         public int? R_CampaignId { get; set; }
         public virtual ICollection<ClassLevel> R_CharacterHasLevelsInClass { get; set; } = [];
         public virtual ICollection<Aura> R_AuraCenteredAtCharacter { get; set; } = [];
-        public virtual ICollection<EffectInstance> R_AffectedBy { get; set; } = [];
+        public virtual List<EffectInstance> R_AffectedBy { get; set; } = [];
         public virtual ICollection<Power> R_PowersPrepared { get; set; } = [];
         public virtual ICollection<Power> R_PowersKnown { get; set; } = [];
         public virtual Power? R_SpawnedByPower { get; set; }
@@ -107,7 +108,8 @@ namespace pracadyplomowa.Models.Entities.Characters
 
             EffectGroup basicStats = new()
             {
-                IsConstant = true
+                IsConstant = true,
+                Name = "Base abilities"
             };
             basicStats.R_OwnedEffects.Add(strength);
             basicStats.R_OwnedEffects.Add(dexterity);
@@ -122,17 +124,36 @@ namespace pracadyplomowa.Models.Entities.Characters
             wisdom.R_OwnedByGroup = basicStats;
             charisma.R_OwnedByGroup = basicStats;
 
-            this.R_AffectedBy = basicStats.R_OwnedEffects;
+            this.R_AffectedBy.AddRange(basicStats.R_OwnedEffects);
 
             List<ChoiceGroup> fullChoiceGroups = classLevel.R_ChoiceGroups.Union(
                 race.R_RaceLevels.SelectMany(rl => rl.R_ChoiceGroups)
                 ).Where(cg => cg.NumberToChoose == 0).ToList();
-            List<ChoiceGroupUsage> usedChoiceGroups = [];
             foreach(ChoiceGroup cg in fullChoiceGroups){
                 cg.Generate(this);
             }
 
+            this.Hitpoints = this.MaxHealth;
+
             this.R_OwnerId = ownerId;
+        }
+
+        [NotMapped]
+        public int MaxHealth {
+            get {
+                int healthBase = this.R_CharacterHasLevelsInClass.Sum(cl => cl.HitPoints);
+                int optional = this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances).OfType<HitpointEffectInstance>().Where(hei => 
+                    hei.HitpointEffectType.HitpointEffect == HitpointEffect.HitpointMaximumBonus
+                ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet);
+                return healthBase + optional;
+            }
+        }
+
+        [NotMapped]
+        public int TemporaryHitpoints {
+            get => this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances).OfType<HitpointEffectInstance>().Where(hei => 
+                    hei.HitpointEffectType.HitpointEffect == HitpointEffect.TemporaryHitpoints
+                ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet);
         }
 
         [NotMapped]
@@ -204,6 +225,73 @@ namespace pracadyplomowa.Models.Entities.Characters
             get => AbilityModifier(Charisma);
         }
 
+        public int SavingThrowValue(Ability ability){
+            int returnValue = this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances).OfType<SavingThrowEffectInstance>().Where(aei => 
+            aei.SavingThrowEffectType.SavingThrowEffect == SavingThrowEffect.Bonus &&
+            aei.SavingThrowEffectType.SavingThrowEffect_Ability == ability
+            ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet) 
+            + AbilityModifier(AbilityValue(ability));
+
+            return returnValue + (SavingThrowProficiency(ability) ? ProficiencyBonus : 0);
+        }
+
+        public bool SavingThrowProficiency(Ability ability){
+            return this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances).OfType<SavingThrowEffectInstance>().Where(aei => 
+            aei.SavingThrowEffectType.SavingThrowEffect == SavingThrowEffect.Proficiency &&
+            aei.SavingThrowEffectType.SavingThrowEffect_Ability == ability
+            ).Any();
+        }
+
+        [NotMapped]
+        public int StrengthSavingThrowValue {
+            get => SavingThrowValue(Ability.STRENGTH);
+        }
+        [NotMapped]
+        public int DexteritySavingThrowValue {
+            get => SavingThrowValue(Ability.DEXTERITY);
+        }
+        [NotMapped]
+        public int ConstitutionSavingThrowValue {
+            get => SavingThrowValue(Ability.CONSTITUTION);
+        }
+        [NotMapped]
+        public int IntelligenceSavingThrowValue {
+            get => SavingThrowValue(Ability.INTELLIGENCE);
+        }
+        [NotMapped]
+        public int WisdomSavingThrowValue {
+            get => SavingThrowValue(Ability.WISDOM);
+        }
+        [NotMapped]
+        public int CharismaSavingThrowValue {
+            get => SavingThrowValue(Ability.CHARISMA);
+        }
+
+        [NotMapped]
+        public bool StrengthSavingThrowProficiency {
+            get => SavingThrowProficiency(Ability.STRENGTH);
+        }
+        [NotMapped]
+        public bool DexteritySavingThrowProficiency {
+            get => SavingThrowProficiency(Ability.DEXTERITY);
+        }
+        [NotMapped]
+        public bool ConstitutionSavingThrowProficiency {
+            get => SavingThrowProficiency(Ability.CONSTITUTION);
+        }
+        [NotMapped]
+        public bool IntelligenceSavingThrowProficiency {
+            get => SavingThrowProficiency(Ability.INTELLIGENCE);
+        }
+        [NotMapped]
+        public bool WisdomSavingThrowProficiency {
+            get => SavingThrowProficiency(Ability.WISDOM);
+        }
+        [NotMapped]
+        public bool CharismaSavingThrowProficiency {
+            get => SavingThrowProficiency(Ability.CHARISMA);
+        }
+
         public int SkillValue(Skill skill){
             int value = this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances).OfType<SkillEffectInstance>().Where(aei => 
             aei.SkillEffectType.SkillEffect == SkillEffect.Bonus &&
@@ -212,12 +300,16 @@ namespace pracadyplomowa.Models.Entities.Characters
 
             value += AbilityModifier(AbilityValue(Utils.SkillToAbility(skill)));
 
-            value += this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances).OfType<SkillEffectInstance>().Where(aei => 
-            aei.SkillEffectType.SkillEffect == SkillEffect.Proficiency &&
-            aei.SkillEffectType.SkillEffect_Skill == skill
-            ).Any() ? this.ProficiencyBonus : 0;
+            value += SkillProficiency(skill) ? this.ProficiencyBonus : 0;
 
             return value;
+        }
+
+        public bool SkillProficiency(Skill skill){
+            return this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances).OfType<SkillEffectInstance>().Where(aei => 
+            aei.SkillEffectType.SkillEffect == SkillEffect.Proficiency &&
+            aei.SkillEffectType.SkillEffect_Skill == skill
+            ).Any();
         }
 
         [NotMapped]
@@ -291,6 +383,61 @@ namespace pracadyplomowa.Models.Entities.Characters
         [NotMapped]
         public int Persuasion {
             get => this.SkillValue(Skill.Persuasion);
+        }
+
+        [NotMapped]
+        public int Initiative {
+            get => this.DexterityModifier + this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances).OfType<InitiativeEffectInstance>()
+            .Sum(valueEffectInstance => valueEffectInstance.DiceSet);
+        }
+
+        [NotMapped]
+        public int Speed {
+            get {
+                int speed = this.R_CharacterBelongsToRace.Speed;
+                int multiplier =  this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances)
+                                .OfType<MovementEffectInstance>()
+                                .Where(m => m.MovementEffectType.MovementEffect == MovementEffect.Multiplier)
+                                .Sum(m => m.DiceSet.flat);
+                int bonus = this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances)
+                                .OfType<MovementEffectInstance>()
+                                .Where(m => m.MovementEffectType.MovementEffect == MovementEffect.Bonus)
+                                .Sum(m => m.DiceSet.flat);
+
+                return speed*multiplier+bonus;
+            }
+        }
+
+        [NotMapped]
+        public int ArmorClass {
+            get {
+                int armorClassFromEffects = this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances)
+                                .OfType<ArmorClassEffectInstance>()
+                                .Sum(m => m.DiceSet);
+                int armorClassFromItems = this.R_EquippedItems
+                                .Where(ei => ei.Type == SlotType.Apparel)
+                                .Select(ei => ei.R_Item)
+                                .OfType<Apparel>()
+                                .Distinct()
+                                .Sum(i => i.ArmorClass);
+
+                return armorClassFromItems + armorClassFromEffects;
+            }
+        }
+
+        [NotMapped]
+        public DiceSet HitDiceTotal {
+            get => new()
+            {
+                d20 = this.R_CharacterHasLevelsInClass.Sum(cl => cl.HitDie.d20),
+                d12 = this.R_CharacterHasLevelsInClass.Sum(cl => cl.HitDie.d12),
+                d10 = this.R_CharacterHasLevelsInClass.Sum(cl => cl.HitDie.d10),
+                d8 = this.R_CharacterHasLevelsInClass.Sum(cl => cl.HitDie.d8),
+                d6 = this.R_CharacterHasLevelsInClass.Sum(cl => cl.HitDie.d6),
+                d4 = this.R_CharacterHasLevelsInClass.Sum(cl => cl.HitDie.d4),
+                d100 = this.R_CharacterHasLevelsInClass.Sum(cl => cl.HitDie.d100),
+                flat = 0,
+            };
         }
     }
 }

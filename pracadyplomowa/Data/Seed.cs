@@ -50,6 +50,11 @@ public class Seed
         await userManager.AddToRoleAsync(admin, "Admin");
     }
 
+    public static async Task SeedLanguages(AppDbContext context){
+        context.Languages.AddRange(new List<Language>(){ new() { Name = "Common"},new() { Name = "Elvish"},new() { Name = "Dwarvish"}});
+        await context.SaveChangesAsync();
+    }
+
     public static async Task SeedItemFamilies(AppDbContext context){
         List<ItemFamily> newFamilies = new();
         CreateItemFamily(context, newFamilies, "Handaxe", typeof(Weapon));
@@ -118,7 +123,7 @@ public class Seed
             Race human = prepareRace("Human", Size.Medium, 30);
 
             ChoiceGroup grantedLanguage = new("Race language");
-            Language commonLanguage = existingLanguages.Where(lang => lang.Name == "Common").FirstOrDefault() ?? new Language{Name = "Common"};
+            Language commonLanguage = existingLanguages.Where(lang => lang.Name == "Common").First();
             LanguageEffectBlueprint commonLanguageKnown = new("Common language")
             {
                 R_Language = commonLanguage
@@ -172,12 +177,12 @@ public class Seed
             Race elf = prepareRace("Elf", Size.Medium, 30);
 
             ChoiceGroup languages = new("Race language");
-            Language commonLanguage = existingLanguages.Where(lang => lang.Name == "Common").FirstOrDefault() ?? new Language{Name = "Common"};
+            Language commonLanguage = existingLanguages.Where(lang => lang.Name == "Common").First();
             LanguageEffectBlueprint commonLanguageKnown = new("Common language")
             {
                 R_Language = commonLanguage
             };
-            Language elvishLanguage = existingLanguages.Where(lang => lang.Name == "Elvish").FirstOrDefault() ?? new Language{Name = "Elvish"};
+            Language elvishLanguage = existingLanguages.Where(lang => lang.Name == "Elvish").First();
             LanguageEffectBlueprint elvishLanguageKnown = new("Elvish language")
             {
                 R_Language = elvishLanguage
@@ -240,12 +245,12 @@ public class Seed
             constitutionBonusGroup.R_Effects.Add(constitutionBonus);
 
             ChoiceGroup languages = new("Race language");
-            Language commonLanguage = existingLanguages.Where(lang => lang.Name == "Common").FirstOrDefault() ?? new Language{Name = "Common"};
+            Language commonLanguage = existingLanguages.Where(lang => lang.Name == "Common").First();
             LanguageEffectBlueprint commonLanguageKnown = new("Common language")
             {
                 R_Language = commonLanguage
             };
-            Language dwarvishLanguage = existingLanguages.Where(lang => lang.Name == "Dwarvish").FirstOrDefault() ?? new Language{Name = "Dwarvish"}; //Tolkien spelling, best spelling
+            Language dwarvishLanguage = existingLanguages.Where(lang => lang.Name == "Dwarvish").First(); //Tolkien spelling, best spelling
             LanguageEffectBlueprint dwarvishLanguageKnown = new("Dwarvish language")
             {
                 R_Language = dwarvishLanguage

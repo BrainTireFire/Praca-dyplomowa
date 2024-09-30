@@ -29,7 +29,7 @@ namespace pracadyplomowa.Models.DTOs
         public List<ItemFamily> ToolProficiencies { get; set; } = null!;
         public List<ItemFamily> WeaponAndArmorProficiencies { get; set; } = null!;
         public RaceClass Race { get; set; } = null!;
-        public Size Size { get; set; }
+        public SizeWithName Size { get; set; }
         public List<ClassWithLevel> Classes { get; set; } = null!;
         public Hitpoints HitPoints { get; set; } = null!;
         public int Initiative { get; set; } = 0;
@@ -45,11 +45,12 @@ namespace pracadyplomowa.Models.DTOs
         public List<Effect> Effects { get; set; } = null!;
         public List<Resource> Resources { get; set; } = null!;
         public List<ChoiceGroup> ChoiceGroups {get; set;} = null!;
+        public int ProficiencyBonus { get; set; }
 
         public CharacterFullDto(Character character){
             Id = character.Id;
             Name = character.Name;
-            Description = character.Description;
+            Description = character.Description ?? "";
             Attributes = GetAttributes(character);
             SavingThrows = GetSavingThrows(character);
             Skills = GetSkills(character);
@@ -77,6 +78,7 @@ namespace pracadyplomowa.Models.DTOs
             Effects = GetTemporaryEffects(character);
             Resources = GetResources(character);
             ChoiceGroups = GetChoiceGroups(character);
+            ProficiencyBonus = character.ProficiencyBonus;
         }
 
 
@@ -85,18 +87,20 @@ namespace pracadyplomowa.Models.DTOs
         {
             public string Name { get; set; } = null!;
             public int Value { get; set; }
+            public int Modifier { get; set; }
         }
         public static List<Attribute> GetAttributes(Character character)
         {
-            var attributes =  character.R_AffectedBy
-                    .OfType<AbilityEffectInstance>()
-                    .Where(ei => ei.AbilityEffectType.AbilityEffect == AbilityEffect.Bonus)
-                    .GroupBy(ei => ei.AbilityEffectType.AbilityEffect_Ability)
-                    .Select(g => new Attribute{
-                        Name = g.Key.ToString(),
-                        Value = g.Sum(ei => ei.DiceSet.flat)
-                    })
-                    .ToList();
+            var attributes = new List<Attribute>();
+            foreach(int i in Enum.GetValues(typeof(Enums.Ability))){
+                #pragma warning disable CS8601 // Possible null reference assignment.
+                attributes.Add(new Attribute(){
+                    Name = Enum.GetName(typeof(Enums.Ability), i),
+                    Value = character.AbilityValue((Enums.Ability)i),
+                    Modifier = Character.AbilityModifier(character.AbilityValue((Enums.Ability)i))
+                });
+                #pragma warning restore CS8601 // Possible null reference assignment.
+            }
             return attributes;
         }
 
@@ -184,33 +188,6 @@ namespace pracadyplomowa.Models.DTOs
                 Id = character.R_CharacterBelongsToRace.Id,
                 Name = character.R_CharacterBelongsToRace.Name
             };
-        }
-
-        public static Size GetSize(Character character){
-            var size = character.R_CharacterBelongsToRace.Size;
-            var setSizes = character.R_AffectedBy
-                                .OfType<SizeEffectInstance>()
-                                .Where(ei => ei.SizeEffectType.SizeEffect == SizeEffect.Change)
-                                .Select(ei => ei.SizeEffectType.SizeEffect_SizeToSet)
-                                .ToList();
-            if(setSizes.Count != 0){
-                size = setSizes.Max();
-            }
-            var sizeChanges = character.R_AffectedBy
-                                .OfType<SizeEffectInstance>()
-                                .Where(ei => ei.SizeEffectType.SizeEffect == SizeEffect.Bonus)
-                                .Select(ei => ei.SizeEffectType.SizeBonus)
-                                .Sum();
-            var result = ((int)size) + sizeChanges;
-            if (Enum.IsDefined(typeof(Size), result))
-            {
-                return (Size)result;
-            }
-            else
-            {
-                if(result < 0) return Size.Tiny;
-                else return Size.Gargantuan;
-            }
         }
 
         public class ClassWithLevel
@@ -545,6 +522,7 @@ namespace pracadyplomowa.Models.DTOs
 
         public class ChoiceGroup {
             public int Id { get; set;}
+            public string Name { get; set;} = null!;
             public bool ContainsEffects {get; set;}
             public bool ContainsPowers {get; set;}
         }
@@ -558,12 +536,24 @@ namespace pracadyplomowa.Models.DTOs
             .Select(choiceGroup => {
                 return new ChoiceGroup{
                     Id = choiceGroup.Id, 
+                    Name = choiceGroup.Name, 
                     ContainsEffects = choiceGroup.R_Effects.Count > 0, 
                     ContainsPowers = choiceGroup.R_Powers.Count > 0
                     };
             }).ToList();
 
             return choiceGroups;
+        }
+
+        public class SizeWithName {
+            public int Order { get; set;}
+            public string Name { get; set;} = null!;
+        }
+        public static SizeWithName GetSize(Character character){
+            return new(){
+                Order = (int)character.Size,
+                Name = Enum.GetName(typeof(Size), (int)character.Size)
+            };
         }
         
     }

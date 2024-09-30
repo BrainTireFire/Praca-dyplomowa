@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using Microsoft.OpenApi.Expressions;
+using pracadyplomowa.Data.Migrations;
 using pracadyplomowa.Models.Entities.Campaign;
 using pracadyplomowa.Models.Entities.Items;
 using pracadyplomowa.Models.Entities.Powers;
@@ -395,10 +396,16 @@ namespace pracadyplomowa.Models.Entities.Characters
         public int Speed {
             get {
                 int speed = this.R_CharacterBelongsToRace.Speed;
-                int multiplier =  this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances)
+                IEnumerable<MovementEffectInstance> multiplierData = this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances)
                                 .OfType<MovementEffectInstance>()
-                                .Where(m => m.MovementEffectType.MovementEffect == MovementEffect.Multiplier)
+                                .Where(m => m.MovementEffectType.MovementEffect == MovementEffect.Multiplier);
+                bool hasMultiplier = multiplierData.Any();
+                int multiplier = 1;
+                if(hasMultiplier){
+                    multiplier = multiplierData
                                 .Sum(m => m.DiceSet.flat);
+                }
+
                 int bonus = this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances)
                                 .OfType<MovementEffectInstance>()
                                 .Where(m => m.MovementEffectType.MovementEffect == MovementEffect.Bonus)
@@ -411,6 +418,19 @@ namespace pracadyplomowa.Models.Entities.Characters
         [NotMapped]
         public int ArmorClass {
             get {
+                int baseArmorClass = 10;
+                int dexterityModifier = this.DexterityModifier;
+                IEnumerable<Apparel> apparel = this.R_EquippedItems.Where(ed => ed.Type == SlotType.Apparel).Select(aed => aed.R_Item).OfType<Apparel>();
+                bool wearsHeavyArmor = apparel.Where(a => a.R_ItemInItemsFamily.Name == "Heavy armor").Any();
+                if(wearsHeavyArmor){
+                    dexterityModifier = Math.Min(dexterityModifier, 0);
+                }
+                else{
+                    bool wearsMediumArmor = apparel.Where(a => a.R_ItemInItemsFamily.Name == "Medium armor").Any();
+                    if(wearsMediumArmor){
+                        dexterityModifier = Math.Min(dexterityModifier, 2);
+                    }
+                }
                 int armorClassFromEffects = this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances)
                                 .OfType<ArmorClassEffectInstance>()
                                 .Sum(m => m.DiceSet);
@@ -421,7 +441,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                                 .Distinct()
                                 .Sum(i => i.ArmorClass);
 
-                return armorClassFromItems + armorClassFromEffects;
+                return baseArmorClass + dexterityModifier + armorClassFromItems + armorClassFromEffects;
             }
         }
 
@@ -438,6 +458,36 @@ namespace pracadyplomowa.Models.Entities.Characters
                 d100 = this.R_CharacterHasLevelsInClass.Sum(cl => cl.HitDie.d100),
                 flat = 0,
             };
+        }
+
+        [NotMapped]
+        public Size Size {
+            get {
+                var size = this.R_CharacterBelongsToRace.Size;
+                var setSizes = this.R_AffectedBy
+                                    .OfType<SizeEffectInstance>()
+                                    .Where(ei => ei.SizeEffectType.SizeEffect == SizeEffect.Change)
+                                    .Select(ei => ei.SizeEffectType.SizeEffect_SizeToSet)
+                                    .ToList();
+                if(setSizes.Count != 0){
+                    size = setSizes.Max();
+                }
+                var sizeChanges = this.R_AffectedBy
+                                    .OfType<SizeEffectInstance>()
+                                    .Where(ei => ei.SizeEffectType.SizeEffect == SizeEffect.Bonus)
+                                    .Select(ei => ei.SizeEffectType.SizeBonus)
+                                    .Sum();
+                var result = ((int)size) + sizeChanges;
+                if (Enum.IsDefined(typeof(Size), result))
+                {
+                    return (Size)result;
+                }
+                else
+                {
+                    if(result < 0) return Size.Tiny;
+                    else return Size.Gargantuan;
+                }
+            }
         }
     }
 }

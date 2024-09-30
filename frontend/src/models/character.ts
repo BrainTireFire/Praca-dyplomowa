@@ -12,6 +12,7 @@ import { Size } from "./size";
 import { Power } from "./power";
 import { Effect } from "./effect";
 import { Resource } from "./resource";
+import { ChoiceGroup } from "./choiceGroup";
 
 export type CharacterItem = {
   id: number;
@@ -57,6 +58,8 @@ export type Character = {
   constantEffects: Effect[];
   effects: Effect[];
   resources: Resource[];
+  choiceGroups: ChoiceGroup[];
+  proficiencyBonus: number;
 };
 
 export type CharacterInsertDto = {

@@ -23,14 +23,16 @@ export default function ConstantEffectTable({
       <Table
         header="Constant effects"
         button="Add new"
-        columns="1fr 1fr 3.2rem"
+        columns="1fr 1fr 0.01rem"
       >
         <Table.Header>
-          <div>Name</div>
-          <div>Source</div>
+          <Cell>Name</Cell>
+          <Cell>Source</Cell>
+          <Cell></Cell>
         </Table.Header>
         <Table.Body
           data={effects}
+          columnCount={3}
           render={(effect) => (
             <ConstantEffectRow key={effect.id} effect={effect} />
           )}

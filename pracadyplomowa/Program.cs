@@ -109,6 +109,7 @@ try
     await context.Database.MigrateAsync();
     await Seed.SeedUsers(userManager, roleManger);
     await Seed.SeedItemFamilies(dbContext);
+    await Seed.SeedLanguages(dbContext);
     await Seed.SeedRaces(dbContext);
     await Seed.SeedClasses(dbContext);
 }

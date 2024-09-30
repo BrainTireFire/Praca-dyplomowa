@@ -24,31 +24,43 @@ const MainGrid = styled.div`
   display: grid;
   grid-template-columns: auto auto auto;
   gap: 0.4rem;
+  max-height: 100%;
+  height: 100%;
+  overflow: hidden; /* Prevent the grid from overflowing */
 `;
 
 const MainGridColumn1 = styled.div`
   display: grid;
   grid-template-columns: auto auto auto;
-  grid-template-rows: auto auto auto auto auto auto;
+  grid-template-rows: repeat(6, minmax(0, auto));
   grid-column-start: 1;
   grid-column-end: 2;
   gap: 0.4rem;
+  max-height: 100%;
+  height: 100%;
+  overflow: auto;
 `;
 const MainGridColumn2 = styled.div`
   display: grid;
   grid-template-columns: auto auto auto auto;
-  grid-template-rows: auto auto auto auto auto auto auto;
+  grid-template-rows: repeat(7, minmax(0, auto));
   grid-column-start: 2;
   grid-column-end: 3;
   gap: 0.4rem;
+  max-height: 100%;
+  height: 100%;
+  overflow: auto;
 `;
 const MainGridColumn3 = styled.div`
   display: grid;
   grid-template-columns: auto;
-  grid-template-rows: auto auto auto auto;
+  grid-template-rows: repeat(4, minmax(0, auto));
   grid-column-start: 3;
   grid-column-end: 4;
   gap: 0.4rem;
+  max-height: 100%;
+  height: 100%;
+  overflow: auto;
 `;
 
 const DisplayBoxContent = styled.div`
@@ -73,7 +85,13 @@ export default function CharactersSheet({
   }
 
   return (
-    <Box radius="tiny">
+    <Box
+      radius="tiny"
+      variation="fullScreen"
+      customStyles={css`
+        height: 100%;
+      `}
+    >
       {character && (
         <MainGrid>
           <MainGridColumn1>
@@ -98,7 +116,7 @@ export default function CharactersSheet({
               }}
             >
               <FormRowVertical label="Description" fillHeight={true}>
-                <TextArea value={character?.description}></TextArea>
+                <TextArea value={character.description}></TextArea>
               </FormRowVertical>
             </div>
             <div style={{ gridColumnStart: 3, gridRowStart: 1, gridRowEnd: 4 }}>
@@ -177,7 +195,7 @@ export default function CharactersSheet({
               style={{ gridColumnStart: 3, gridColumnEnd: 5, gridRowStart: 2 }}
             >
               <DisplayBox label="Size">
-                <DisplayBoxContent>{character.size.label}</DisplayBoxContent>
+                <DisplayBoxContent>{character.size.name}</DisplayBoxContent>
               </DisplayBox>
             </div>
             <div

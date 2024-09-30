@@ -30,6 +30,7 @@ const Main = styled.main`
 
 const Container = styled.div`
   max-width: 170rem;
+  height: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;

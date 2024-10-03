@@ -19,6 +19,7 @@ using pracadyplomowa.Models.Enums.EffectOptions;
 using pracadyplomowa.Repository;
 using pracadyplomowa.Repository.Class;
 using pracadyplomowa.Repository.Race;
+using static pracadyplomowa.Models.Entities.Characters.ChoiceGroup;
 
 namespace pracadyplomowa.Controllers
 {
@@ -80,6 +81,60 @@ namespace pracadyplomowa.Controllers
 
             var characterDto = new CharacterFullDto(character);
             return Ok(characterDto);
+        }
+
+        
+        
+        [HttpGet("{characterId}/choiceGroups")]
+        public async Task<ActionResult> GetCharactersChoiceGroups(int characterId){
+            var character = _characterRepository.GetById(characterId);
+            if(character == null){
+                return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not exist"));
+            }
+            character = await _characterRepository.GetByIdWithChoiceGroups(characterId);
+
+            var choiceGroupDto = ChoiceGroupDto.Get(character);
+            return Ok(choiceGroupDto);
+        }
+
+        [HttpPost("{characterId}/choiceGroups/use")]
+        public async Task<ActionResult> GenerateChoiceGroupUsage(int characterId, [FromBody] List<ChoiceGroupUsageDto> ChoiceGroupUsageDtos){
+            var character = _characterRepository.GetById(characterId);
+            if(character == null){
+                return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not exist"));
+            }
+            character = await _characterRepository.GetByIdWithChoiceGroups(characterId);
+            var choiceGroupsEnumerable = character.R_CharacterHasLevelsInClass.SelectMany(cl => cl.R_ChoiceGroups).Union(character.R_CharacterBelongsToRace.R_RaceLevels.SelectMany(cl => cl.R_ChoiceGroups));
+            try{
+                foreach(ChoiceGroupUsageDto choiceGroupUsageDto in ChoiceGroupUsageDtos){
+                    var choiceGroup = choiceGroupsEnumerable.Where(cg => cg.Id == choiceGroupUsageDto.Id).FirstOrDefault();
+                    if(choiceGroup == null){
+                        return NotFound(new ApiResponse(404, "Choice group with Id " + choiceGroupUsageDto.Id + " was not found"));
+                    }
+                    bool allEffectChoicesCorrect = choiceGroupUsageDto.EffectIds.All(item => choiceGroup.R_Effects.Select(e => e.Id).ToList().Contains(item));
+                    if(!allEffectChoicesCorrect){
+                        return BadRequest(new ApiResponse(400, "Choice group with Id " + choiceGroupUsageDto.Id + " does not contain selected effects"));
+                    }
+                    bool allPowerChoicesCorrect = choiceGroupUsageDto.PowerIds.All(item => choiceGroup.R_Powers.Select(e => e.Id).ToList().Contains(item));
+                    if(!allPowerChoicesCorrect){
+                        return BadRequest(new ApiResponse(400, "Choice group with Id " + choiceGroupUsageDto.Id + " does not contain selected powers"));
+                    }
+                    var selectedEffects = choiceGroup.R_Effects.Where(e => choiceGroupUsageDto.EffectIds.Contains(e.Id)).ToList();
+                    var selectedPowers = choiceGroup.R_Powers.Where(p => choiceGroupUsageDto.PowerIds.Contains(p.Id)).ToList();
+                    var totalPicks = selectedEffects.Count + selectedPowers.Count;
+                    if(totalPicks != 0 && totalPicks == choiceGroup.NumberToChoose){
+                        choiceGroup.Generate(character, selectedEffects, selectedPowers);
+                    }
+                    else if(totalPicks != 0 && totalPicks != choiceGroup.NumberToChoose){
+                        return BadRequest(new ApiResponse(400, "Incorrect number of choices"));
+                    }
+                }
+                await _characterRepository.SaveChanges();
+            }
+            catch(InvalidChoiceGroupSelectionException exception){
+                return BadRequest(new ApiResponse(400, exception.Message));
+            }
+            return Ok();
         }
     }
 }

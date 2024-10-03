@@ -23,10 +23,16 @@ namespace pracadyplomowa.Models.Entities.Characters
 
         public ChoiceGroupUsage Generate(Character character, List<EffectBlueprint> effects, List<Power> powers){
             ChoiceGroupUsage usage = new();
-            if(effects.Intersect(this.R_Effects).Count() == effects.Count && (this.NumberToChoose == 0 || this.NumberToChoose == effects.Count)){
+            if(effects.Intersect(this.R_Effects).Count() == effects.Count && (powers.Intersect(this.R_Powers).Count() == powers.Count) && (this.NumberToChoose == 0 || this.NumberToChoose == effects.Count + powers.Count)){
                 foreach(EffectBlueprint blueprint in effects){
                     usage.R_EffectsGranted.Add(blueprint.Generate(character, character));
                 } 
+                foreach(Power power in powers){
+                    usage.R_PowersGranted.Add(power);
+                } 
+            }
+            else{
+                throw new InvalidChoiceGroupSelectionException("Provided selection was invalid");
             }
             usage.R_ChoiceGroup = this;
             this.R_UsageInstances.Add(usage);
@@ -38,5 +44,7 @@ namespace pracadyplomowa.Models.Entities.Characters
         public ChoiceGroupUsage Generate(Character character){
             return Generate(character, this.R_Effects, this.R_Powers);
         }
+
+        public class InvalidChoiceGroupSelectionException(string message) : Exception(message){};
     }
 }

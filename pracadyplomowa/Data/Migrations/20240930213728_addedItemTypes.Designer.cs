@@ -2,17 +2,20 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using pracadyplomowa;
 
 #nullable disable
 
-namespace pracadyplomowa.Migrations
+namespace pracadyplomowa.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240930213728_addedItemTypes")]
+    partial class addedItemTypes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
@@ -1477,7 +1480,7 @@ namespace pracadyplomowa.Migrations
                 {
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.EffectBlueprint");
 
-                    b.Property<int>("ItemType")
+                    b.Property<int?>("ItemType")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("R_GrantsProficiencyInItemFamilyId")
@@ -1561,7 +1564,7 @@ namespace pracadyplomowa.Migrations
                 {
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.EffectInstance");
 
-                    b.Property<int>("ItemType")
+                    b.Property<int?>("ItemType")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("R_GrantsProficiencyInItemFamilyId")

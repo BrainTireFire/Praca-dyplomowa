@@ -421,12 +421,12 @@ namespace pracadyplomowa.Models.Entities.Characters
                 int baseArmorClass = 10;
                 int dexterityModifier = this.DexterityModifier;
                 IEnumerable<Apparel> apparel = this.R_EquippedItems.Where(ed => ed.Type == SlotType.Apparel).Select(aed => aed.R_Item).OfType<Apparel>();
-                bool wearsHeavyArmor = apparel.Where(a => a.R_ItemInItemsFamily.Name == "Heavy armor").Any();
+                bool wearsHeavyArmor = apparel.Where(a => a.R_ItemInItemsFamily.ItemType == ItemType.HeavyArmor).Any();
                 if(wearsHeavyArmor){
                     dexterityModifier = Math.Min(dexterityModifier, 0);
                 }
                 else{
-                    bool wearsMediumArmor = apparel.Where(a => a.R_ItemInItemsFamily.Name == "Medium armor").Any();
+                    bool wearsMediumArmor = apparel.Where(a => a.R_ItemInItemsFamily.ItemType == ItemType.MediumArmor).Any();
                     if(wearsMediumArmor){
                         dexterityModifier = Math.Min(dexterityModifier, 2);
                     }

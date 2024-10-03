@@ -86,5 +86,45 @@ namespace pracadyplomowa.Repository
             .FirstAsync();
             return character;
         }
+
+        public Task<Character> GetByIdWithChoiceGroups(int Id){
+            var characterLevel = _context.Characters
+            .Where(c => c.Id == Id).Include(c => c.R_CharacterHasLevelsInClass).Count();
+
+            var character = _context.Characters
+            .Where(c => c.Id == Id)
+            .Include(c => c.R_CharacterBelongsToRace)
+                .ThenInclude(r => r.R_RaceLevels.Where(rl => rl.Level <= characterLevel))
+                    .ThenInclude(rl => rl.R_ChoiceGroups)
+                        .ThenInclude(cg => cg.R_Effects)
+            .Include(c => c.R_CharacterBelongsToRace)
+                .ThenInclude(r => r.R_RaceLevels)
+                    .ThenInclude(rl => rl.R_ChoiceGroups)
+                        .ThenInclude(cg => cg.R_Powers)
+
+            .Include(c => c.R_CharacterHasLevelsInClass)
+                .ThenInclude(cl => cl.R_Class)
+            .Include(c => c.R_CharacterHasLevelsInClass)
+                .ThenInclude(cl => cl.R_ChoiceGroups)
+                    .ThenInclude(cg => cg.R_Effects)
+            .Include(c => c.R_CharacterHasLevelsInClass)
+                .ThenInclude(cl => cl.R_ChoiceGroups)
+                    .ThenInclude(cg => cg.R_Powers)
+
+            .Include(c => c.R_UsedChoiceGroups)
+                .ThenInclude(cg => cg.R_ChoiceGroup)
+                    .ThenInclude(cg => cg.R_Effects)
+            .Include(c => c.R_UsedChoiceGroups)
+                .ThenInclude(cg => cg.R_ChoiceGroup)
+                    .ThenInclude(cg => cg.R_Powers)
+            .Include(c => c.R_UsedChoiceGroups)
+                .ThenInclude(cg => cg.R_EffectsGranted)
+            .Include(c => c.R_UsedChoiceGroups)
+                .ThenInclude(cg => cg.R_PowersGranted)
+
+            .AsSplitQuery() // IMPORTANT !!!!! https://learn.microsoft.com/en-us/ef/core/querying/single-split-queries
+            .FirstAsync();
+            return character;
+        }
     }
 }

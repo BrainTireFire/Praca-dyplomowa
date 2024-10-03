@@ -241,13 +241,5 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .HasForeignKey(lei => lei.R_LanguageId);
                 builder.Entity<ProficiencyEffectBlueprint>().Navigation(e=>e.R_GrantsProficiencyInItemFamily).AutoInclude();
                 builder.Entity<ProficiencyEffectInstance>().Navigation(e=>e.R_GrantsProficiencyInItemFamily).AutoInclude();
-
-                builder.Entity<ItemFamily>()
-                        .Property(x => x.ItemType)
-                        .IsRequired(true)
-                        .HasConversion(
-                                convertToProviderExpression: v => v.AssemblyQualifiedName,
-                                convertFromProviderExpression: b => Type.GetType(b)
-                        );
         }
 }

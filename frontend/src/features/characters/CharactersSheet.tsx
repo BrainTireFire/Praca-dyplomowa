@@ -19,6 +19,10 @@ import ResourceTable from "./tables/ResourceTable";
 import PowersTable from "./tables/PowersTable";
 import { useCharacter } from "./hooks/useCharacter";
 import Spinner from "../../ui/interactive/Spinner";
+import Modal from "../../ui/containers/Modal";
+import Button from "../../ui/interactive/Button";
+import NewCharacter from "./NewCharacter";
+import SelectFromChoiceGroupScreen from "./SelectFromChoiceGroupScreen";
 
 const MainGrid = styled.div`
   display: grid;
@@ -185,6 +189,25 @@ export default function CharactersSheet({
               }}
             >
               <ClassTable characterClasses={character.classes}></ClassTable>
+            </div>
+            <div
+              style={{
+                gridColumnStart: 1,
+                gridColumnEnd: 3,
+                gridRowStart: 2,
+                gridRowEnd: 3,
+              }}
+            >
+              <Modal>
+                <Modal.Open opens="DevelopCharacter">
+                  <Button variation="primary">Develop character</Button>
+                </Modal.Open>
+                <Modal.Window name="DevelopCharacter">
+                  <SelectFromChoiceGroupScreen
+                    characterId={character.id}
+                  ></SelectFromChoiceGroupScreen>
+                </Modal.Window>
+              </Modal>
             </div>
             <div style={{ gridColumnStart: 3, gridColumnEnd: 5 }}>
               <DisplayBox label="Race">

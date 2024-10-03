@@ -55,11 +55,16 @@ namespace pracadyplomowa.Models.DTOs
             SavingThrows = GetSavingThrows(character);
             Skills = GetSkills(character);
             Languages = GetLanguages(character);
-            ToolProficiencies = GetItemProficiencies(character, typeof(Tool));
+            ToolProficiencies = GetItemProficiencies(character, ItemType.Tool);
             WeaponAndArmorProficiencies =
             [
-                .. GetItemProficiencies(character, typeof(Apparel)),
-                .. GetItemProficiencies(character, typeof(Weapon)),
+                .. GetItemProficiencies(character, ItemType.HeavyArmor),
+                .. GetItemProficiencies(character, ItemType.MediumArmor),
+                .. GetItemProficiencies(character, ItemType.LightArmor),
+                .. GetItemProficiencies(character, ItemType.Shield),
+                .. GetItemProficiencies(character, ItemType.Clothing),
+                .. GetItemProficiencies(character, ItemType.SimpleWeapon),
+                .. GetItemProficiencies(character, ItemType.MartialWeapon),
             ];
             Race = GetRace(character);
             Size = GetSize(character);
@@ -164,12 +169,12 @@ namespace pracadyplomowa.Models.DTOs
             public int Id { get; set; }
             public string Name { get; set; } = null!;
         }
-        public static List<ItemFamily> GetItemProficiencies(Character character, Type itemClass){
+        public static List<ItemFamily> GetItemProficiencies(Character character, ItemType itemType){
             var itemProficiencies =  character.R_AffectedBy
                                 .OfType<ProficiencyEffectInstance>()
                                 // .Where(ei => ei.ProficiencyEffectType.ProficiencyEffect == proficiency)
                                 .Select(ei => ei.R_GrantsProficiencyInItemFamily)
-                                .Where(it => it.ItemType == itemClass )
+                                .Where(it => it.ItemType == itemType )
                                 .Select(itemFamily => new ItemFamily{
                                     Id = itemFamily.Id,
                                     Name = itemFamily.Name,

@@ -7,7 +7,7 @@ using pracadyplomowa.Models.Entities.Characters;
 
 namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
-    public class LanguageEffectBlueprint(string name) : EffectBlueprint(name)
+    public class LanguageEffectBlueprint : EffectBlueprint
     {
         public LanguageEffectType LanguageEffectType{ get; set;} = new LanguageEffectType();
 
@@ -16,6 +16,12 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
         public int R_LanguageId { get; set; }
         //constructors
         private LanguageEffectBlueprint(): this("EF"){}
+        public LanguageEffectBlueprint(string name) : base(name){
+            Description = "Knowledge of spoken and written language";
+        }
+        public LanguageEffectBlueprint(string name, string description) : this(name){
+            Description = description;
+        }
         //methods
         public override EffectInstance Generate(Character roller, Character target){
             return new LanguageEffectInstance(this, target);

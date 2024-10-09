@@ -17,7 +17,7 @@ namespace pracadyplomowa.Repository
 
         public async Task<List<CharacterSummaryDto>> GetCharacterSummaries(int OwnerId)
         {
-            List<CharacterSummarryDto> characters = await _context.Characters
+            List<CharacterSummaryDto> characters = await _context.Characters
             .Where(c => c.R_OwnerId == OwnerId)
             .Include(c => c.R_CharacterBelongsToRace)
             .Include(c => c.R_CharacterHasLevelsInClass)

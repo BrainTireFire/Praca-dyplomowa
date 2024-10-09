@@ -5,6 +5,8 @@ import Button from "../../ui/interactive/Button";
 import Modal from "../../ui/containers/Modal";
 import CreateCampaign from "../campaigns/CreateCampaign";
 import TextArea from "../../ui/forms/TextArea";
+import CampaignsAttended from "../campaigns/CampaignsAttended";
+import { useNavigate } from "react-router-dom";
 
 const StyledElementBox = styled.div`
   display: grid;
@@ -14,25 +16,27 @@ const StyledElementBox = styled.div`
 `;
 
 export default function Campaigns() {
+  const navigate = useNavigate();
   return (
     <>
       <Heading as="h4" align="left">
         Campaigns
       </Heading>
       <StyledElementBox>
-        <Modal>
-          <Modal.Open opens="CampaignsAttended">
-            <Button size="large" variation="primary">
-              Campaigns I attend
-            </Button>
-          </Modal.Open>
-          <Modal.Window name="CampaignsAttended">
-            <CampaignsAttended />
-          </Modal.Window>
-        </Modal>
+        <Button
+          size="large"
+          variation="primary"
+          onClick={() => navigate(`/campaigns`)}
+        >
+          Campaigns I attend
+        </Button>
       </StyledElementBox>
       <StyledElementBox>
-        <Button size="large" variation="primary">
+        <Button
+          size="large"
+          variation="primary"
+          onClick={() => navigate(`/campaigns`)}
+        >
           Campaigns I run
         </Button>
         <Modal>

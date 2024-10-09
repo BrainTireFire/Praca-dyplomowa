@@ -20,6 +20,7 @@ import ProtectedRoute from "./features/account/ProtectedRoute";
 import Forbidden from "./pages/errors/Forbidden";
 import ServiceDown from "./pages/errors/ServiceDown";
 import MainBoard from "./pages/campaign/session/MainBoard";
+import CampaignsAttended from "./features/campaigns/CampaignsAttended";
 
 export default function Router() {
   return (
@@ -36,7 +37,6 @@ export default function Router() {
           <Route path="main" element={<MainDashboard />} />
           <Route path="campaigns" element={<Campagins />} />
           <Route path="campaigns/:campaignId" element={<CampaignInstance />} />
-          <Route path="campaigns/attended" element={<CampaignsAttended />} />
           <Route path="campaigns/:campaignId/shops" element={<Shops />} />
           <Route
             path="campaigns/:campaignId/shops/:shopId"

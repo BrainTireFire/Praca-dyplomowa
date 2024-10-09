@@ -28,10 +28,21 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetCampaigns()
+        public async Task<ActionResult<CampaignDto>> GetCampaigns()
         {
             var campaigns = await _campaignRepository.GetCampaigns(User.GetUserId());
+
             return Ok(campaigns);
+        }
+
+        [HttpGet("{campaignId}")]
+        public async Task<ActionResult> GetCampaign(int campaignId)
+        {
+            var campaign = await _campaignRepository.GetCampaign(campaignId);
+
+            var campaignDto = new CampaignDto(campaign.Id, campaign.Name, campaign.Description, campaign.InvitationLink);
+
+            return Ok(campaignDto);
         }
     }
 }

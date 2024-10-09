@@ -5,6 +5,7 @@ namespace pracadyplomowa.Repository
 {
     public interface ICampaignRepository : IBaseRepository<Campaign>
     {
-        public Task<List<CampaignInsertDto>> GetCampaigns(int OwnerId);
+        public Task<List<CampaignDto>> GetCampaigns(int OwnerId);
+        public Task<Campaign> GetCampaign(int campaignId);
     }
 }

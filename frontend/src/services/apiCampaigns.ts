@@ -1,13 +1,12 @@
-import { BASE_URL, BASE_URL_JSON_SERVER } from "./constAPI";
+import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
-import { customFetchJSON } from "./customFetchJSON";
 
 export async function getCampaigns(): Promise<Campaign[]> {
   const options: RequestInit = {
     method: "GET",
   };
 
-  const data = await customFetch(`${BASE_URL}/api/campaigns`, options);
+  const data = await customFetch(`${BASE_URL}/api/campaign`, options);
 
   return data;
 }
@@ -18,7 +17,7 @@ export async function getCampaign(campaignId: number): Promise<Campaign> {
   };
 
   const data = await customFetch(
-    `${BASE_URL}/api/campaigns/${campaignId}`,
+    `${BASE_URL}/api/campaign/${campaignId}`,
     options
   );
 
@@ -35,5 +34,5 @@ export async function postCampaign(
     },
     body: JSON.stringify(campaignDto),
   };
-  await customFetch(`${BASE_URL}/api/campaigns`, options);
+  await customFetch(`${BASE_URL}/api/campaign`, options);
 }

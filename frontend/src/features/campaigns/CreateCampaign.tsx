@@ -30,16 +30,19 @@ function CreateCampaign({ onCloseModal }) {
   }
 
   const handleChange = (e) => {
+    let { name, value } = e.target;
+
     setCampaign((previous) => ({
       ...previous,
-      [e.target.name]: e.target.value,
+      [name]: value,
     }));
 
     //May be temporary (appending invitation link as name of campaign)
-    if (e.target.name === "name") {
+    if (name === "name") {
+      const formattedName = value.replace(/ /g, "");
       setCampaign((previous) => ({
         ...previous,
-        invitationLink: previous.invitationLink + previous.name,
+        invitationLink: `http://ddbutbetter.com/join/${formattedName}`,
       }));
     }
   };

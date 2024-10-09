@@ -31,6 +31,7 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<ICharacterRepository, CharacterRepository>();
 builder.Services.AddScoped<IClassRepository, ClassRepository>();
 builder.Services.AddScoped<IRaceRepository, RaceRepository>();
+builder.Services.AddScoped<ICampaignRepository, CampaignRepository>();
 
 builder.Services.AddScoped<IAuthorizationHandler, OwnershipHandler>();
 // builder.Services.AddHttpContextAccessor();
@@ -47,7 +48,7 @@ builder.Services.Configure<ApiBehaviorOptions>(opt =>
 {
     opt.InvalidModelStateResponseFactory = actionContext =>
     {
-        var errors  = actionContext.ModelState
+        var errors = actionContext.ModelState
             .Where(e => e.Value != null && e.Value.Errors.Count > 0)
             .SelectMany(x => x.Value?.Errors)
             .Select(x => x.ErrorMessage).ToArray();
@@ -56,7 +57,7 @@ builder.Services.Configure<ApiBehaviorOptions>(opt =>
         {
             Errors = errors
         };
-        
+
         return new BadRequestObjectResult(errorResponse);
     };
 });

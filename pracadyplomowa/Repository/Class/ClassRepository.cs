@@ -34,7 +34,8 @@ namespace pracadyplomowa.Repository.Class
         public async Task<ClassLevel?> GetClassLevelWithChoiceGroups(int classId, int level){
             ClassLevel? classes = await _context.ClassLevels
             .Include(cl => cl.R_ChoiceGroups).ThenInclude(cg => cg.R_Effects)
-            .Include(cl => cl.R_ChoiceGroups).ThenInclude(cg => cg.R_Powers)
+            .Include(cl => cl.R_ChoiceGroups).ThenInclude(cg => cg.R_PowersAlwaysAvailable)
+            .Include(cl => cl.R_ChoiceGroups).ThenInclude(cg => cg.R_PowersToPrepare)
             .Include(cl => cl.R_ChoiceGroups).ThenInclude(cg => cg.R_Resources).ThenInclude(r => r.R_Blueprint)
             .FirstOrDefaultAsync(cl => cl.Level == level && cl.R_ClassId == classId);
             return classes;
@@ -43,7 +44,8 @@ namespace pracadyplomowa.Repository.Class
         public async Task<List<ClassLevel>> GetClassLevelsWithChoiceGroups(List<int> ids){
             List<ClassLevel> classes = await _context.ClassLevels
             .Include(cl => cl.R_ChoiceGroups).ThenInclude(cg => cg.R_Effects)
-            .Include(cl => cl.R_ChoiceGroups).ThenInclude(cg => cg.R_Powers)
+            .Include(cl => cl.R_ChoiceGroups).ThenInclude(cg => cg.R_PowersAlwaysAvailable)
+            .Include(cl => cl.R_ChoiceGroups).ThenInclude(cg => cg.R_PowersToPrepare)
             .Include(cl => cl.R_ChoiceGroups).ThenInclude(cg => cg.R_Resources).ThenInclude(r => r.R_Blueprint)
             .Include(cl => cl.HitDie)
             .Where(cl => ids.Contains(cl.Id))

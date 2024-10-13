@@ -14,7 +14,8 @@ namespace pracadyplomowa.Models.DTOs
         public int NumberToChoose { get; set; }
 
         public List<Effect> Effects { get; set; } = new List<Effect>();
-        public List<Power> Powers { get; set; } = new List<Power>();
+        public List<Power> PowersAlwaysAvailable { get; set; } = new List<Power>();
+        public List<Power> PowersToPrepare { get; set; } = new List<Power>();
         public List<Resource> Resources { get; set; } = new List<Resource>();
 
         public class Effect
@@ -58,7 +59,13 @@ namespace pracadyplomowa.Models.DTOs
                 Name = e.Name,
                 Description = e.Description,
             }).ToList();
-            Powers = cg.R_Powers.Select(e => new Power()
+            PowersAlwaysAvailable = cg.R_PowersAlwaysAvailable.Select(e => new Power()
+            {
+                Id = e.Id,
+                Name = e.Name,
+                Description = e.Description,
+            }).ToList();
+            PowersToPrepare = cg.R_PowersToPrepare.Select(e => new Power()
             {
                 Id = e.Id,
                 Name = e.Name,

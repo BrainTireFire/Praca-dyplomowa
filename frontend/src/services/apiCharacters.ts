@@ -98,7 +98,8 @@ export type ChoiceGroup = {
   name: string;
   numberToChoose: number;
   effects: Effect[];
-  powers: Power[];
+  powersAlwaysAvailable: Power[];
+  powersToPrepare: Power[];
   resources: Resource[];
 };
 
@@ -124,7 +125,8 @@ export type Resource = {
 export type ChoiceGroupUse = {
   id: number;
   effectIds: number[];
-  powerIds: number[];
+  powerAlwaysAvailableIds: number[];
+  powerToPrepareIds: number[];
   resourceIds: number[];
 };
 export type NextClassLevel = {

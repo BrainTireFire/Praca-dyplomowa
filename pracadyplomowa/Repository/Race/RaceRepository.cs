@@ -28,7 +28,13 @@ namespace pracadyplomowa.Repository
             .ThenInclude(cg => cg.R_Effects)
             .Include(r => r.R_RaceLevels)
             .ThenInclude(cl => cl.R_ChoiceGroups)
-            .ThenInclude(cg => cg.R_Powers)
+            .ThenInclude(cg => cg.R_PowersAlwaysAvailable)
+            .Include(r => r.R_RaceLevels)
+            .ThenInclude(cl => cl.R_ChoiceGroups)
+            .ThenInclude(cg => cg.R_PowersToPrepare)
+            .Include(r => r.R_RaceLevels)
+            .ThenInclude(cl => cl.R_ChoiceGroups)
+            .ThenInclude(cg => cg.R_Resources)
             .FirstAsync();
             return race;
         }

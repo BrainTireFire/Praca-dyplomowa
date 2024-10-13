@@ -63,7 +63,7 @@ function PowersRow({ power }: { power: Power }) {
     <Table.Row>
       <Cell>{power.name}</Cell>
 
-      <Cell>{power.source}</Cell>
+      <Cell>{power.source.join(", ")}</Cell>
 
       <Modal>
         <Menus.Menu>

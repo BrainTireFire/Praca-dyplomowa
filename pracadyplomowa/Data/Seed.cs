@@ -108,6 +108,13 @@ public class Seed
         context.ItemFamilies.AddRange(newFamilies);
         await context.SaveChangesAsync();
     }
+
+    public static async Task SeedItems(AppDbContext context){
+        var item = new MeleeWeapon("Iron longsword", "Basic sword", context.ItemFamilies.Where(i => i.Name == "Longsword").First(), 1);
+        context.Items.AddRange([item]);
+        await context.SaveChangesAsync();
+    }
+
     private static void CreateItemFamily(AppDbContext context, List<ItemFamily> newFamilies, string name, ItemType itemType){
         if(!context.ItemFamilies.Where(itemFam => itemFam.Name == name).Any()){
             newFamilies.Add(new ItemFamily{Name = name, ItemType = itemType});
@@ -387,7 +394,7 @@ public class Seed
                                 reaction to impose disadvantage on the attack roll. You 
                                 must be wielding a shield."
             };
-            fightingStyle.R_Powers.Add(protection);
+            fightingStyle.R_PowersAlwaysAvailable.Add(protection);
             fightingStyle.R_Effects.Add(new OffHandAttackEffectBlueprint("Two-Weapon Fighting"));
             fightingStyle.NumberToChoose = 1;
 
@@ -413,7 +420,7 @@ public class Seed
             AttackPerAttackActionEffectBlueprint extraAttack = new("Extra attack", 2, RollMoment.OnCast, AttackPerActionEffect.AttacksTotal);
 
             features.R_Effects.AddRange([extraAttack]);
-            features.R_Powers.AddRange([secondWind, actionSurge]);
+            features.R_PowersAlwaysAvailable.AddRange([secondWind, actionSurge]);
             features.R_Resources.AddRange([secondWindResourceAmount]);
 
             fighterClass.R_ClassLevels.Where(cl => cl.Level == 1).First().R_ChoiceGroups.AddRange(
@@ -489,12 +496,12 @@ public class Seed
             Power arcaneRecoveryLevel4 = PrepareArcaneRecoveryPower(4, arcaneRecoveryCharge);
             Power arcaneRecoveryLevel5 = PrepareArcaneRecoveryPower(5, arcaneRecoveryCharge);
             Power arcaneRecoveryLevel6 = PrepareArcaneRecoveryPower(6, arcaneRecoveryCharge);
-            wizardFeatures.R_Powers.Add(arcaneRecoveryLevel1);
-            wizardFeatures.R_Powers.Add(arcaneRecoveryLevel2);
-            wizardFeatures.R_Powers.Add(arcaneRecoveryLevel3);
-            wizardFeatures.R_Powers.Add(arcaneRecoveryLevel4);
-            wizardFeatures.R_Powers.Add(arcaneRecoveryLevel5);
-            wizardFeatures.R_Powers.Add(arcaneRecoveryLevel6);
+            wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel1);
+            wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel2);
+            wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel3);
+            wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel4);
+            wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel5);
+            wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel6);
 
             ImmaterialResourceBlueprint spellSlot = new()
             {

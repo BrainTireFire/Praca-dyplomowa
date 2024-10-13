@@ -10,7 +10,7 @@ namespace pracadyplomowa.Models.Entities.Characters
     public class EquipData : ObjectWithId
     {
         public bool IsEquipped { get; set; }
-        public SlotType Type { get; set; }
+        public List<SlotType> Types { get; set; }
 
         //Relationship
         public virtual Character R_Character { get; set; } = null!;

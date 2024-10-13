@@ -13,23 +13,26 @@ using pracadyplomowa.Errors;
 using pracadyplomowa.Models.ComplexTypes.Effects;
 using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.Entities.Characters;
+using pracadyplomowa.Models.Entities.Items;
 using pracadyplomowa.Models.Entities.Powers;
 using pracadyplomowa.Models.Enums;
 using pracadyplomowa.Models.Enums.EffectOptions;
 using pracadyplomowa.Repository;
 using pracadyplomowa.Repository.Class;
+using pracadyplomowa.Repository.Item;
 using pracadyplomowa.Repository.Race;
 using static pracadyplomowa.Models.Entities.Characters.ChoiceGroup;
 
 namespace pracadyplomowa.Controllers
 {
     [Authorize]
-    public class CharacterController(ICharacterRepository characterRepository, IClassRepository classRepository, IRaceRepository raceRepository, IMapper mapper) : BaseApiController
+    public class CharacterController(ICharacterRepository characterRepository, IClassRepository classRepository, IRaceRepository raceRepository, IItemRepository itemRepository, IMapper mapper) : BaseApiController
     {
         
         private readonly ICharacterRepository _characterRepository = characterRepository;
         private readonly IClassRepository _classRepository = classRepository;
         private readonly IRaceRepository _raceRepository = raceRepository;
+        private readonly IItemRepository _itemRepository = itemRepository;
         private readonly IMapper _mapper = mapper;
 
         [HttpGet("mycharacters")]
@@ -64,6 +67,10 @@ namespace pracadyplomowa.Controllers
                 race, 
                 ownerId
             );
+
+            var item = await _itemRepository.GetByName("Iron longsword");
+            character.R_CharacterHasBackpack = new Backpack(){R_BackpackOfCharacter = character, R_BackpackHasItems = [await _itemRepository.GetByName("Iron longsword")]};
+            // character.R_Equ
 
             _characterRepository.Add(character);
             await _characterRepository.SaveChanges();
@@ -115,8 +122,12 @@ namespace pracadyplomowa.Controllers
                     if(!allEffectChoicesCorrect){
                         return BadRequest(new ApiResponse(400, "Choice group with Id " + choiceGroupUsageDto.Id + " does not contain selected effects"));
                     }
-                    bool allPowerChoicesCorrect = choiceGroupUsageDto.PowerIds.All(item => choiceGroup.R_Powers.Select(e => e.Id).ToList().Contains(item));
-                    if(!allPowerChoicesCorrect){
+                    bool allPowerAlwaysAvailableChoicesCorrect = choiceGroupUsageDto.PowerAlwaysAvailableIds.All(item => choiceGroup.R_PowersAlwaysAvailable.Select(e => e.Id).ToList().Contains(item));
+                    if(!allPowerAlwaysAvailableChoicesCorrect){
+                        return BadRequest(new ApiResponse(400, "Choice group with Id " + choiceGroupUsageDto.Id + " does not contain selected powers"));
+                    }
+                    bool allPowerToPreapreChoicesCorrect = choiceGroupUsageDto.PowerToPrepareIds.All(item => choiceGroup.R_PowersToPrepare.Select(e => e.Id).ToList().Contains(item));
+                    if(!allPowerToPreapreChoicesCorrect){
                         return BadRequest(new ApiResponse(400, "Choice group with Id " + choiceGroupUsageDto.Id + " does not contain selected powers"));
                     }
                     bool allResourceChoicesCorrect = choiceGroupUsageDto.ResourceIds.All(item => choiceGroup.R_Resources.Select(e => e.Id).ToList().Contains(item));
@@ -124,11 +135,12 @@ namespace pracadyplomowa.Controllers
                         return BadRequest(new ApiResponse(400, "Choice group with Id " + choiceGroupUsageDto.Id + " does not contain selected resources"));
                     }
                     var selectedEffects = choiceGroup.R_Effects.Where(e => choiceGroupUsageDto.EffectIds.Contains(e.Id)).ToList();
-                    var selectedPowers = choiceGroup.R_Powers.Where(p => choiceGroupUsageDto.PowerIds.Contains(p.Id)).ToList();
+                    var selectedPowersAlwaysAvailable = choiceGroup.R_PowersAlwaysAvailable.Where(p => choiceGroupUsageDto.PowerAlwaysAvailableIds.Contains(p.Id)).ToList();
+                    var selectedPowersToPrepare = choiceGroup.R_PowersToPrepare.Where(p => choiceGroupUsageDto.PowerToPrepareIds.Contains(p.Id)).ToList();
                     var selectedResources = choiceGroup.R_Resources.Where(r => choiceGroupUsageDto.ResourceIds.Contains(r.Id)).ToList();
-                    var totalPicks = selectedEffects.Count + selectedPowers.Count + selectedResources.Count;
+                    var totalPicks = selectedEffects.Count + selectedPowersAlwaysAvailable.Count + selectedPowersToPrepare.Count + selectedResources.Count;
                     if(totalPicks != 0 && totalPicks == choiceGroup.NumberToChoose){
-                        choiceGroup.Generate(character, selectedEffects, selectedPowers, selectedResources);
+                        choiceGroup.Generate(character, selectedEffects, selectedPowersAlwaysAvailable, selectedPowersToPrepare, selectedResources);
                     }
                     else if(totalPicks != 0 && totalPicks != choiceGroup.NumberToChoose){
                         return BadRequest(new ApiResponse(400, "Incorrect number of choices"));

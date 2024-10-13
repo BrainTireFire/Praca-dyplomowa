@@ -228,7 +228,7 @@ function ClassLevelSelectionScreen({
                   ?.choiceGroups?.filter(
                     (cg) => cg.id === selectedChoiceGroupId
                   )[0]
-                  ?.powers.map((power) => (
+                  ?.powersAlwaysAvailable.map((power) => (
                     <EffectPowerOption
                       effectOrPower={power}
                       setSelectedEffectPowerId={updatePowerId}
@@ -268,7 +268,9 @@ function ClassLevelSelectionScreen({
                   ?.choiceGroups?.filter(
                     (cg) => cg.id === selectedChoiceGroupId
                   )[0]
-                  ?.powers?.filter((power) => power.id === selectedPowerId)
+                  ?.powersAlwaysAvailable?.filter(
+                    (power) => power.id === selectedPowerId
+                  )
                   .map((power) => (
                     <ElementToChoose
                       key={power.id}

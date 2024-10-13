@@ -12,7 +12,8 @@ namespace pracadyplomowa.Models.Entities.Characters
         public int NumberToChoose { get; set; } = 0; // get all if set to 0
         
         //Relationship
-        public virtual List<Power> R_Powers { get; set; } = [];
+        public virtual List<Power> R_PowersAlwaysAvailable { get; set; } = [];
+        public virtual List<Power> R_PowersToPrepare { get; set; } = [];
         public virtual List<EffectBlueprint> R_Effects { get; set; } = [];
         public virtual List<ImmaterialResourceAmount> R_Resources { get; set; } = [];
 
@@ -22,16 +23,21 @@ namespace pracadyplomowa.Models.Entities.Characters
         public virtual int? R_GrantedByClassLevelId { get; set; }
         public virtual ICollection<ChoiceGroupUsage> R_UsageInstances { get; set; } = [];
 
-        public ChoiceGroupUsage Generate(Character character, List<EffectBlueprint> effects, List<Power> powers, List<ImmaterialResourceAmount> resources){
+        public ChoiceGroupUsage Generate(Character character, List<EffectBlueprint> effects, List<Power> powersAlwaysAvailable, List<Power> powersToPrepare, List<ImmaterialResourceAmount> resources){
             ChoiceGroupUsage usage = new();
-            if(effects.Intersect(this.R_Effects).Count() == effects.Count && powers.Intersect(this.R_Powers).Count() == powers.Count && resources.Intersect(this.R_Resources).Count() == resources.Count 
-            && (this.NumberToChoose == 0 || this.NumberToChoose == effects.Count + powers.Count + resources.Count)){
+            if(effects.Intersect(this.R_Effects).Count() == effects.Count 
+            && powersAlwaysAvailable.Intersect(this.R_PowersAlwaysAvailable).Count() == powersAlwaysAvailable.Count 
+            && powersToPrepare.Intersect(this.R_PowersToPrepare).Count() == powersToPrepare.Count 
+            && resources.Intersect(this.R_Resources).Count() == resources.Count 
+            && (this.NumberToChoose == 0 || this.NumberToChoose == effects.Count + powersAlwaysAvailable.Count + powersToPrepare.Count + resources.Count)){
                 foreach(EffectBlueprint blueprint in effects){
                     usage.R_EffectsGranted.Add(blueprint.Generate(character, character));
                 } 
-                foreach(Power power in powers){
-                    usage.R_PowersGranted.Add(power);
-                    character.R_PowersKnown.Add(power);
+                foreach(Power power in powersAlwaysAvailable){
+                    usage.R_PowersAlwaysAvailableGranted.Add(power);
+                } 
+                foreach(Power power in powersToPrepare){
+                    usage.R_PowersToPrepareGranted.Add(power);
                 } 
                 foreach(ImmaterialResourceAmount resource in resources){
                     usage.R_ResourcesGranted.AddRange(resource.Generate());
@@ -48,7 +54,7 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
 
         public ChoiceGroupUsage Generate(Character character){
-            return Generate(character, this.R_Effects, this.R_Powers, R_Resources);
+            return Generate(character, this.R_Effects, this.R_PowersAlwaysAvailable, this.R_PowersToPrepare, this.R_Resources);
         }
 
         public class InvalidChoiceGroupSelectionException(string message) : Exception(message){};

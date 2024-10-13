@@ -16,6 +16,5 @@ namespace pracadyplomowa.Models.Entities.Characters
         public int R_RaceId { get; set; }
 
         public virtual ICollection<ChoiceGroup> R_ChoiceGroups { get; set; } = [];
-        public virtual ICollection<ImmaterialResourceAmount> R_ImmaterialResourceAmounts { get; set; } = [];
     }
 }

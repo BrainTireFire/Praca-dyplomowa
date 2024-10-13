@@ -127,16 +127,33 @@ namespace pracadyplomowa.Models.Entities.Characters
 
             this.R_AffectedBy.AddRange(basicStats.R_OwnedEffects);
 
-            List<ChoiceGroup> fullChoiceGroups = classLevel.R_ChoiceGroups.Union(
-                race.R_RaceLevels.SelectMany(rl => rl.R_ChoiceGroups)
-                ).Where(cg => cg.NumberToChoose == 0).ToList();
-            foreach(ChoiceGroup cg in fullChoiceGroups){
-                cg.Generate(this);
-            }
+            // List<ChoiceGroup> fullChoiceGroups = classLevel.R_ChoiceGroups.Union(
+            //     race.R_RaceLevels.SelectMany(rl => rl.R_ChoiceGroups)
+            //     ).Where(cg => cg.NumberToChoose == 0).ToList();
+            // foreach(ChoiceGroup cg in fullChoiceGroups){
+            //     cg.Generate(this);
+            // }
+            GenerateChoiceGroupUsage();
 
             this.Hitpoints = this.MaxHealth;
 
             this.R_OwnerId = ownerId;
+        }
+
+        protected void GenerateChoiceGroupUsage(){
+            List<ChoiceGroup> fullChoiceGroups = this.R_CharacterHasLevelsInClass.SelectMany(cl => cl.R_ChoiceGroups).Union(
+                this.R_CharacterBelongsToRace.R_RaceLevels.Where(rl => rl.Level <= this.R_CharacterHasLevelsInClass.Count).SelectMany(rl => rl.R_ChoiceGroups)
+                ).Where(cg => cg.NumberToChoose == 0 && !this.R_UsedChoiceGroups.Select(ucg => ucg.R_ChoiceGroup).Contains(cg)).ToList();
+            foreach(ChoiceGroup cg in fullChoiceGroups){
+                cg.Generate(this);
+            }
+        }
+
+        public void AddClassLevel(ClassLevel classLevel){
+            this.R_CharacterHasLevelsInClass.Add(classLevel);
+            classLevel.R_Characters.Add(this);
+
+            GenerateChoiceGroupUsage();
         }
 
         [NotMapped]
@@ -301,7 +318,10 @@ namespace pracadyplomowa.Models.Entities.Characters
 
             value += AbilityModifier(AbilityValue(Utils.SkillToAbility(skill)));
 
-            value += SkillProficiency(skill) ? this.ProficiencyBonus : 0;
+            var proficiencyBonus = this.ProficiencyBonus;
+            if(SkillExpertise(skill)) proficiencyBonus *= 2;
+
+            value += SkillProficiency(skill) ? proficiencyBonus : 0;
 
             return value;
         }
@@ -309,6 +329,13 @@ namespace pracadyplomowa.Models.Entities.Characters
         public bool SkillProficiency(Skill skill){
             return this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances).OfType<SkillEffectInstance>().Where(aei => 
             aei.SkillEffectType.SkillEffect == SkillEffect.Proficiency &&
+            aei.SkillEffectType.SkillEffect_Skill == skill
+            ).Any();
+        }
+
+        public bool SkillExpertise(Skill skill){
+            return this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances).OfType<SkillEffectInstance>().Where(aei => 
+            aei.SkillEffectType.SkillEffect == SkillEffect.UpgradeToExpertise &&
             aei.SkillEffectType.SkillEffect_Skill == skill
             ).Any();
         }

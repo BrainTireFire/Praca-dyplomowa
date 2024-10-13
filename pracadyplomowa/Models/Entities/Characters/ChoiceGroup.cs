@@ -14,6 +14,7 @@ namespace pracadyplomowa.Models.Entities.Characters
         //Relationship
         public virtual List<Power> R_Powers { get; set; } = [];
         public virtual List<EffectBlueprint> R_Effects { get; set; } = [];
+        public virtual List<ImmaterialResourceAmount> R_Resources { get; set; } = [];
 
         public virtual RaceLevel? R_GrantedByRaceLevel { get; set; }
         public virtual int? R_GrantedByRaceLevelId { get; set; }
@@ -21,14 +22,19 @@ namespace pracadyplomowa.Models.Entities.Characters
         public virtual int? R_GrantedByClassLevelId { get; set; }
         public virtual ICollection<ChoiceGroupUsage> R_UsageInstances { get; set; } = [];
 
-        public ChoiceGroupUsage Generate(Character character, List<EffectBlueprint> effects, List<Power> powers){
+        public ChoiceGroupUsage Generate(Character character, List<EffectBlueprint> effects, List<Power> powers, List<ImmaterialResourceAmount> resources){
             ChoiceGroupUsage usage = new();
-            if(effects.Intersect(this.R_Effects).Count() == effects.Count && (powers.Intersect(this.R_Powers).Count() == powers.Count) && (this.NumberToChoose == 0 || this.NumberToChoose == effects.Count + powers.Count)){
+            if(effects.Intersect(this.R_Effects).Count() == effects.Count && powers.Intersect(this.R_Powers).Count() == powers.Count && resources.Intersect(this.R_Resources).Count() == resources.Count 
+            && (this.NumberToChoose == 0 || this.NumberToChoose == effects.Count + powers.Count + resources.Count)){
                 foreach(EffectBlueprint blueprint in effects){
                     usage.R_EffectsGranted.Add(blueprint.Generate(character, character));
                 } 
                 foreach(Power power in powers){
                     usage.R_PowersGranted.Add(power);
+                    character.R_PowersKnown.Add(power);
+                } 
+                foreach(ImmaterialResourceAmount resource in resources){
+                    usage.R_ResourcesGranted.AddRange(resource.Generate());
                 } 
             }
             else{
@@ -42,7 +48,7 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
 
         public ChoiceGroupUsage Generate(Character character){
-            return Generate(character, this.R_Effects, this.R_Powers);
+            return Generate(character, this.R_Effects, this.R_Powers, R_Resources);
         }
 
         public class InvalidChoiceGroupSelectionException(string message) : Exception(message){};

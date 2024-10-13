@@ -14,7 +14,13 @@ namespace pracadyplomowa.Repository.Class
 
         public Task<ClassLevel?> GetClassLevel(int classId, int level);
 
+        public Task<ClassLevel?> GetClassLevelById(int classLevelId);
+
         public Task<ClassLevel?> GetClassLevelWithChoiceGroups(int classId, int level);
+
+        public Task<List<ClassLevel>> GetClassLevelsWithChoiceGroups(List<int> ids);
+
+        public Task<List<Models.Entities.Characters.Class>> GetClassesWithClassLevels(bool track);
 
     }
 }

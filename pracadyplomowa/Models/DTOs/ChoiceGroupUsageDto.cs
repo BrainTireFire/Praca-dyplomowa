@@ -10,5 +10,6 @@ namespace pracadyplomowa.Models.DTOs
         public int Id { get; set; }
         public List<int> EffectIds { get; set; } = [];
         public List<int> PowerIds { get; set; } = [];
+        public List<int> ResourceIds { get; set; } = [];
     }
 }

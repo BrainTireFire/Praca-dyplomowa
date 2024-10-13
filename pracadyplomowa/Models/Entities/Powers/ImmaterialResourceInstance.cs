@@ -24,8 +24,10 @@ namespace pracadyplomowa.Models.Entities.Powers
 
         // public virtual ICollection<ClassLevel> R_GrantedByClassLevels { get; set; } = [];
 
-        public virtual Character? R_Character { get; set; }
-        public int? R_CharacterId { get; set; }
+        // public virtual Character? R_Character { get; set; }
+        // public int? R_CharacterId { get; set; }
+        public virtual ChoiceGroupUsage R_ChoiceGroupUsage { get; set; } = null!;
+        public virtual int R_ChoiceGroupUsageId { get; set; }
 
         [NotMapped]
         public string Source {
@@ -33,8 +35,8 @@ namespace pracadyplomowa.Models.Entities.Powers
                 if(R_Item != null){
                     return R_Item.Name;
                 }
-                else if(R_Character != null){
-                    return R_Character.Name;
+                else if(R_ChoiceGroupUsage != null){
+                    return R_ChoiceGroupUsage.R_Character.Name;
                 }
                 else throw new UnreachableException();
             }

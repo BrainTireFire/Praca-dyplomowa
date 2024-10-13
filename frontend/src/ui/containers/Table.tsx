@@ -1,7 +1,8 @@
-import { useContext } from "react";
+import { ReactElement, useContext } from "react";
 import { createContext } from "react";
 import styled from "styled-components";
 import Button from "../interactive/Button";
+import Modal from "./Modal";
 
 const StyledTableContainer = styled.div`
   border: 1px solid var(--color-border);
@@ -24,7 +25,7 @@ const CommonRow = styled.div`
   display: contents;
 `;
 
-const CommonTable = styled.div`
+const CommonTable = styled.div<CommonTableProps>`
   display: grid;
   grid-template-columns: ${(props) => props.columns};
   column-gap: 2.4rem;
@@ -76,7 +77,7 @@ const Footer = styled.footer`
   }
 `;
 
-const Empty = styled.p`
+const Empty = styled.p<EmptyProps>`
   font-size: 1.6rem;
   font-weight: 500;
   text-align: center;
@@ -91,7 +92,7 @@ const TableHeader = styled.div`
   text-align: left;
 `;
 
-const TableButton = styled(Button)`
+export const TableButton = styled(Button)`
   background-color: var(--color-button-primary);
   color: var(--color-secondary-text);
   font-size: 1rem;
@@ -108,15 +109,27 @@ type TableProps = {
   button?: string;
   columns: string;
   children: React.ReactNode;
+  modal?: ReactElement;
+};
+type CommonTableProps = {
+  columns: string;
+};
+type EmptyProps = {
+  width: number;
 };
 
-function Table({ header, columns, children, button }: TableProps) {
+function Table({ header, columns, children, button, modal }: TableProps) {
   return (
     <StyledTableContainer role="table">
       {header && (
         <StyledHeaderWithButton>
           <TableHeader>{header}</TableHeader>
-          {button && <TableButton>{button}</TableButton>}
+          <Modal>
+            <Modal.Open opens="TableAction">
+              <TableButton>{button}</TableButton>
+            </Modal.Open>
+            <Modal.Window name="TableAction">{modal}</Modal.Window>
+          </Modal>
         </StyledHeaderWithButton>
       )}
       <CommonTable columns={columns}>{children}</CommonTable>
@@ -142,7 +155,7 @@ function Body({
   render,
 }: {
   data: any[];
-  columnCount: Number;
+  columnCount: number;
   render: (item: any) => React.ReactNode;
 }) {
   if (!data.length) {

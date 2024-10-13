@@ -39,8 +39,10 @@ export default function PowersTable({ powers }: { powers: Power[] }) {
         <Table.Header>
           <div>Name</div>
           <div>Source</div>
+          <div>*</div>
         </Table.Header>
         <Table.Body
+          columnCount={3}
           data={powers}
           render={(power) => <PowersRow key={power.id} power={power} />}
         />

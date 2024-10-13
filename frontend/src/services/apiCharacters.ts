@@ -3,6 +3,7 @@ import {
   Character,
   CharacterInsertDto,
 } from "../models/character";
+import { DiceSet } from "../models/diceset";
 import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
 import { customFetchJSON } from "./customFetchJSON";
@@ -65,12 +66,40 @@ export async function makeUseCharacterChoiceGroups(
   return;
 }
 
+export async function getCharacterNextClassLevels(
+  characterId: number
+): Promise<NextClassLevel[]> {
+  const response = await customFetch(
+    `${BASE_URL}/api/character/${characterId}/classes/nextLevels`
+  );
+
+  return response;
+}
+
+export async function selectNextClassLevel(
+  characterId: number,
+  classLevelId: number
+): Promise<void> {
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  await customFetch(
+    `${BASE_URL}/api/character/${characterId}/classes/nextLevels/${classLevelId}/use`,
+    options
+  );
+  return;
+}
+
 export type ChoiceGroup = {
   id: number;
   name: string;
   numberToChoose: number;
   effects: Effect[];
   powers: Power[];
+  resources: Resource[];
 };
 
 export type Effect = {
@@ -85,8 +114,25 @@ export type Power = {
   description: string;
 };
 
+export type Resource = {
+  id: number;
+  name: string;
+  level: number;
+  amount: number;
+};
+
 export type ChoiceGroupUse = {
   id: number;
   effectIds: number[];
   powerIds: number[];
+  resourceIds: number[];
+};
+export type NextClassLevel = {
+  id: number;
+  classId: number;
+  level: number;
+  name: string;
+  choiceGroups: ChoiceGroup[];
+  hitDice: DiceSet;
+  hitPoints: number;
 };

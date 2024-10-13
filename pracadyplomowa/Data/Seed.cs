@@ -398,7 +398,8 @@ public class Seed
                 Name = "Second wind charge",
                 RefreshesOn = RefreshType.ShortRest
             };
-            fighterClass.R_ClassLevels.Where(cl => cl.Level == 1).First().R_ImmaterialResourceAmounts.Add(new ImmaterialResourceAmount(){Count = 1, Level = 1, R_Blueprint = secondWindResource});
+            // fighterClass.R_ClassLevels.Where(cl => cl.Level == 1).First().R_ImmaterialResourceAmounts.Add(new ImmaterialResourceAmount(){Count = 1, Level = 1, R_Blueprint = secondWindResource});
+            ImmaterialResourceAmount secondWindResourceAmount = new ImmaterialResourceAmount(){Count = 1, Level = 1, R_Blueprint = secondWindResource};
             Power secondWind = new("Second wind", ActionType.BonusAction, CastableBy.Character, PowerType.PassiveEffect, TargetType.Caster){
                 R_UsesImmaterialResource = secondWindResource
             };
@@ -411,7 +412,9 @@ public class Seed
             
             AttackPerAttackActionEffectBlueprint extraAttack = new("Extra attack", 2, RollMoment.OnCast, AttackPerActionEffect.AttacksTotal);
 
-            
+            features.R_Effects.AddRange([extraAttack]);
+            features.R_Powers.AddRange([secondWind, actionSurge]);
+            features.R_Resources.AddRange([secondWindResourceAmount]);
 
             fighterClass.R_ClassLevels.Where(cl => cl.Level == 1).First().R_ChoiceGroups.AddRange(
                 [savingThrowProficiency, armorProficiency, simpleWeaponProficiency, fighterSkillProficiency, fightingStyle, features]
@@ -475,10 +478,11 @@ public class Seed
             ImmaterialResourceAmount arcaneRecoveryChargeAmount = new()
             {
                 Count = 1,
-                Level = 0
+                Level = 0,
+                R_Blueprint = arcaneRecoveryCharge
             };
-            arcaneRecoveryChargeAmount.R_Blueprint = arcaneRecoveryCharge;
-            wizardClass.R_ClassLevels.Where(cl => cl.Level == 1).First().R_ImmaterialResourceAmounts.Add(arcaneRecoveryChargeAmount);
+            // wizardClass.R_ClassLevels.Where(cl => cl.Level == 1).First().R_ImmaterialResourceAmounts.Add(arcaneRecoveryChargeAmount);
+            wizardFeatures.R_Resources.Add(arcaneRecoveryChargeAmount);
             Power arcaneRecoveryLevel1 = PrepareArcaneRecoveryPower(1, arcaneRecoveryCharge);
             Power arcaneRecoveryLevel2 = PrepareArcaneRecoveryPower(2, arcaneRecoveryCharge);
             Power arcaneRecoveryLevel3 = PrepareArcaneRecoveryPower(3, arcaneRecoveryCharge);
@@ -491,7 +495,6 @@ public class Seed
             wizardFeatures.R_Powers.Add(arcaneRecoveryLevel4);
             wizardFeatures.R_Powers.Add(arcaneRecoveryLevel5);
             wizardFeatures.R_Powers.Add(arcaneRecoveryLevel6);
-            wizardClass.R_ClassLevels.Where(cl => cl.Level == 1).First().R_ChoiceGroups.Add(wizardFeatures);
 
             ImmaterialResourceBlueprint spellSlot = new()
             {
@@ -504,7 +507,12 @@ public class Seed
                 Count = 2,
                 R_Blueprint = spellSlot
             };
-            wizardClass.R_ClassLevels.Where(cl => cl.Level == 1).First().R_ImmaterialResourceAmounts.Add(spellSlot1Amount);
+            // wizardClass.R_ClassLevels.Where(cl => cl.Level == 1).First().R_ImmaterialResourceAmounts.Add(spellSlot1Amount);
+            wizardFeatures.R_Resources.Add(spellSlot1Amount);
+
+            wizardClass.R_ClassLevels.Where(cl => cl.Level == 1).First().R_ChoiceGroups.AddRange(
+                [wizardSavingThrowProficiency, wizardSkillProficiency, wizardWeaponProficiency, wizardFeatures]
+                );
 
             context.Classes.Add(wizardClass);
         }
@@ -563,8 +571,25 @@ public class Seed
             rogueSkillProficiency.NumberToChoose = 4;
 
             ChoiceGroup rogueExpertisePick = new("Rogue skill expertise");
-            rogueExpertisePick.R_Effects.Add(new SkillEffectBlueprint("Expertise"));
-            rogueExpertisePick.R_Effects.Add(new SkillEffectBlueprint("Expertise"));
+            rogueExpertisePick.R_Effects.Add(new SkillEffectBlueprint("Expertise Athletics", 0, RollMoment.OnCast, SkillEffect.UpgradeToExpertise, Skill.Athletics));
+            rogueExpertisePick.R_Effects.Add(new SkillEffectBlueprint("Expertise Acrobatics", 0, RollMoment.OnCast, SkillEffect.UpgradeToExpertise, Skill.Acrobatics));
+            rogueExpertisePick.R_Effects.Add(new SkillEffectBlueprint("Expertise Sleight_of_Hand", 0, RollMoment.OnCast, SkillEffect.UpgradeToExpertise, Skill.Sleight_of_Hand));
+            rogueExpertisePick.R_Effects.Add(new SkillEffectBlueprint("Expertise Stealth", 0, RollMoment.OnCast, SkillEffect.UpgradeToExpertise, Skill.Stealth));
+            rogueExpertisePick.R_Effects.Add(new SkillEffectBlueprint("Expertise Arcana", 0, RollMoment.OnCast, SkillEffect.UpgradeToExpertise, Skill.Arcana));
+            rogueExpertisePick.R_Effects.Add(new SkillEffectBlueprint("Expertise History", 0, RollMoment.OnCast, SkillEffect.UpgradeToExpertise, Skill.History));
+            rogueExpertisePick.R_Effects.Add(new SkillEffectBlueprint("Expertise Investigation", 0, RollMoment.OnCast, SkillEffect.UpgradeToExpertise, Skill.Investigation));
+            rogueExpertisePick.R_Effects.Add(new SkillEffectBlueprint("Expertise Nature", 0, RollMoment.OnCast, SkillEffect.UpgradeToExpertise, Skill.Nature));
+            rogueExpertisePick.R_Effects.Add(new SkillEffectBlueprint("Expertise Religion", 0, RollMoment.OnCast, SkillEffect.UpgradeToExpertise, Skill.Religion));
+            rogueExpertisePick.R_Effects.Add(new SkillEffectBlueprint("Expertise Animal_Handling", 0, RollMoment.OnCast, SkillEffect.UpgradeToExpertise, Skill.Animal_Handling));
+            rogueExpertisePick.R_Effects.Add(new SkillEffectBlueprint("Expertise Insight", 0, RollMoment.OnCast, SkillEffect.UpgradeToExpertise, Skill.Insight));
+            rogueExpertisePick.R_Effects.Add(new SkillEffectBlueprint("Expertise Medicine", 0, RollMoment.OnCast, SkillEffect.UpgradeToExpertise, Skill.Medicine));
+            rogueExpertisePick.R_Effects.Add(new SkillEffectBlueprint("Expertise Perception", 0, RollMoment.OnCast, SkillEffect.UpgradeToExpertise, Skill.Perception));
+            rogueExpertisePick.R_Effects.Add(new SkillEffectBlueprint("Expertise Survival", 0, RollMoment.OnCast, SkillEffect.UpgradeToExpertise, Skill.Survival));
+            rogueExpertisePick.R_Effects.Add(new SkillEffectBlueprint("Expertise Deception", 0, RollMoment.OnCast, SkillEffect.UpgradeToExpertise, Skill.Deception));
+            rogueExpertisePick.R_Effects.Add(new SkillEffectBlueprint("Expertise Intimidation", 0, RollMoment.OnCast, SkillEffect.UpgradeToExpertise, Skill.Intimidation));
+            rogueExpertisePick.R_Effects.Add(new SkillEffectBlueprint("Expertise Performance", 0, RollMoment.OnCast, SkillEffect.UpgradeToExpertise, Skill.Performance));
+            rogueExpertisePick.R_Effects.Add(new SkillEffectBlueprint("Expertise Persuasion", 0, RollMoment.OnCast, SkillEffect.UpgradeToExpertise, Skill.Persuasion));
+            rogueExpertisePick.NumberToChoose = 2;
 
             ChoiceGroup rogueFeatures = new("Rogue features");
             ImmaterialResourceBlueprint sneakAttackCharge = new()
@@ -615,6 +640,17 @@ public class Seed
             strokeOfLuckAmount.R_Blueprint = strokeOfLuckCharge;
             strokeOfLuckAmount.Level = 1;
             strokeOfLuckAmount.Count = 1;
+
+            rogueFeatures.R_Effects.AddRange([
+                cunningAction, uncannyDodge, evasion, blindsense, slipperyMind, elusive, strokeOfLuck
+            ]);
+            rogueFeatures.R_Resources.AddRange([
+                strokeOfLuckAmount
+            ]);
+
+            rogueClass.R_ClassLevels.Where(cl => cl.Level == 1).First().R_ChoiceGroups.AddRange([
+                rogueArmorProficiency, rogueSavingThrowProficiency, rogueSkillProficiency, rogueExpertisePick, rogueFeatures
+            ]);
 
             context.Classes.Add(rogueClass);
 

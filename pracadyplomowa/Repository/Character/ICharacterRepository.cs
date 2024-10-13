@@ -12,5 +12,6 @@ namespace pracadyplomowa.Repository
         public Task<List<CharacterSummaryDto>> GetCharacterSummaries(int OwnerId);
         public Task<Character> GetByIdWithAll(int Id);
         public Task<Character> GetByIdWithChoiceGroups(int Id);
+        public Task<Character> GetByIdWithClassLevels(int Id);
     }
 }

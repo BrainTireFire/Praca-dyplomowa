@@ -15,6 +15,7 @@ namespace pracadyplomowa.Models.DTOs
 
         public List<Effect> Effects { get; set; } = new List<Effect>();
         public List<Power> Powers { get; set; } = new List<Power>();
+        public List<Resource> Resources { get; set; } = new List<Resource>();
 
         public class Effect
         {
@@ -28,6 +29,13 @@ namespace pracadyplomowa.Models.DTOs
             public string Name { get; set; } = null!;
             public string Description { get; set; } = null!;
         }
+        public class Resource
+        {
+            public int Id { get; set; }
+            public string Name { get; set; } = null!;
+            public int Amount { get; set; }
+            public int Level { get; set; }
+        }
 
         public static List<ChoiceGroupDto> Get(Character character)
         {
@@ -37,24 +45,32 @@ namespace pracadyplomowa.Models.DTOs
                     .Select(used => used.R_ChoiceGroupId)
                     .Contains(choiceGroup.Id)
                     )
-                    .Select(cg => new ChoiceGroupDto()
-                    {
-                        Id = cg.Id,
-                        Name = cg.Name,
-                        NumberToChoose = cg.NumberToChoose,
-                        Effects = cg.R_Effects.Select(e => new Effect()
-                        {
-                            Id = e.Id,
-                            Name = e.Name,
-                            Description = e.Description,
-                        }).ToList(),
-                        Powers = cg.R_Powers.Select(e => new Power()
-                        {
-                            Id = e.Id,
-                            Name = e.Name,
-                            Description = e.Description,
-                        }).ToList()
-                    }).ToList();
+                    .Select(cg => new ChoiceGroupDto(cg)).ToList();
+        }
+
+        public ChoiceGroupDto(ChoiceGroup cg){
+            Id = cg.Id;
+            Name = cg.Name;
+            NumberToChoose = cg.NumberToChoose;
+            Effects = cg.R_Effects.Select(e => new Effect()
+            {
+                Id = e.Id,
+                Name = e.Name,
+                Description = e.Description,
+            }).ToList();
+            Powers = cg.R_Powers.Select(e => new Power()
+            {
+                Id = e.Id,
+                Name = e.Name,
+                Description = e.Description,
+            }).ToList();
+            Resources = cg.R_Resources.Select(e => new Resource()
+            {
+                Id = e.Id,
+                Name = e.R_Blueprint.Name,
+                Level = e.Level,
+                Amount = e.Count,
+            }).ToList();
         }
     }
 }

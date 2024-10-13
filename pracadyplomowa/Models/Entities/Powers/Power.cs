@@ -41,8 +41,8 @@ namespace pracadyplomowa.Models.Entities.Powers
         public int? R_ClassForUpcastingId {get; set;}
 
         // Relationships
-        public virtual List<Character> R_CharacterPreparedPowers { get; set; } = [];
-        public virtual List<Character> R_CharacterKnownsPowers { get; set; } = [];
+        public virtual List<Character> R_CharacterPreparedPowers { get; set; } = []; // list of selected powers out of all available from 
+        public virtual List<Character> R_CharacterKnownsPowers { get; set; } = []; // always available powers
         public virtual List<Item> R_ItemsGrantingPower { get; set; } = [];
         public virtual List<Weapon> R_WeaponsCastingOnHit { get; set; } = [];
 
@@ -59,5 +59,14 @@ namespace pracadyplomowa.Models.Entities.Powers
 
         public virtual List<Character> R_SpawnedCharacters { get; set; } = [];
         public virtual List<ChoiceGroupUsage> R_GrantedThrough { get; set; } = []; // means actual usage of a choice group
+
+        // public string GetSourceName(int usingCharacterId){
+        //     var choiceGroupSource = this.R_GrantedThrough.Where(cgu => cgu.R_CharacterId == usingCharacterId).FirstOrDefault();
+        //     if(choiceGroupSource != null){
+        //         return choiceGroupSource.R_ChoiceGroup.Name;
+        //     }
+        //     var itemSource = this.R_ItemsGrantingPower.Where(i => i.R_EquipData?.R_CharacterId == usingCharacterId).FirstOrDefault();
+        //     if(itemSource = this.R_Item)
+        // }
     }
 }

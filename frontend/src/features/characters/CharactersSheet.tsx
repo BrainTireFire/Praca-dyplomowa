@@ -7,7 +7,7 @@ import FormRowVertical from "../../ui/forms/FormRowVertical";
 import Input from "../../ui/forms/Input";
 import KnownLanguagesTable from "./tables/KnownLanguagesTable";
 import ToolProficiencyTable from "./tables/ToolProficiencyTable";
-import DisplayBox from "./DisplayBox";
+import DisplayBox, { DisplayBoxContent } from "./DisplayBox";
 import TextArea from "../../ui/forms/TextArea";
 import WeaponArmorProficiencyTable from "./tables/WeaponArmorProficiencyTable";
 import ClassTable from "./tables/ClassTable";
@@ -67,15 +67,10 @@ const MainGridColumn3 = styled.div`
   overflow: auto;
 `;
 
-const DisplayBoxContent = styled.div`
-  font-size: 2rem;
-  text-align: center;
-`;
-
 export default function CharactersSheet({
   characterId,
 }: {
-  characterId: number | null;
+  characterId: number;
 }) {
   const { isLoading, isError, error, character } = useCharacter(characterId);
 
@@ -188,7 +183,10 @@ export default function CharactersSheet({
                 gridRowEnd: 3,
               }}
             >
-              <ClassTable characterClasses={character.classes}></ClassTable>
+              <ClassTable
+                characterClasses={character.classes}
+                characterId={characterId}
+              ></ClassTable>
             </div>
             <div
               style={{
@@ -205,6 +203,7 @@ export default function CharactersSheet({
                 <Modal.Window name="DevelopCharacter">
                   <SelectFromChoiceGroupScreen
                     characterId={character.id}
+                    onCloseModal={() => {}}
                   ></SelectFromChoiceGroupScreen>
                 </Modal.Window>
               </Modal>

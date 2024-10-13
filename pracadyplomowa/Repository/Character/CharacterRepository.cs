@@ -93,6 +93,7 @@ namespace pracadyplomowa.Repository
 
             var character = _context.Characters
             .Where(c => c.Id == Id)
+            .Include(c => c.R_AffectedBy)
             .Include(c => c.R_CharacterBelongsToRace)
                 .ThenInclude(r => r.R_RaceLevels.Where(rl => rl.Level <= characterLevel))
                     .ThenInclude(rl => rl.R_ChoiceGroups)
@@ -101,6 +102,11 @@ namespace pracadyplomowa.Repository
                 .ThenInclude(r => r.R_RaceLevels)
                     .ThenInclude(rl => rl.R_ChoiceGroups)
                         .ThenInclude(cg => cg.R_Powers)
+            .Include(c => c.R_CharacterBelongsToRace)
+                .ThenInclude(r => r.R_RaceLevels)
+                    .ThenInclude(rl => rl.R_ChoiceGroups)
+                        .ThenInclude(cg => cg.R_Resources)
+                            .ThenInclude(r => r.R_Blueprint)
 
             .Include(c => c.R_CharacterHasLevelsInClass)
                 .ThenInclude(cl => cl.R_Class)
@@ -123,6 +129,15 @@ namespace pracadyplomowa.Repository
                 .ThenInclude(cg => cg.R_PowersGranted)
 
             .AsSplitQuery() // IMPORTANT !!!!! https://learn.microsoft.com/en-us/ef/core/querying/single-split-queries
+            .FirstAsync();
+            return character;
+        }
+
+        public Task<Character> GetByIdWithClassLevels(int Id){
+            var character = _context.Characters
+            .Where(c => c.Id == Id)
+            .Include(c => c.R_CharacterHasLevelsInClass)
+                .ThenInclude(cl => cl.R_Class)
             .FirstAsync();
             return character;
         }

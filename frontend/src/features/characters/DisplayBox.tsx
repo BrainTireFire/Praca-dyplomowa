@@ -17,6 +17,11 @@ const Label = styled.div`
   grid-row-end: 3;
 `;
 
+export const DisplayBoxContent = styled.div`
+  font-size: 2rem;
+  text-align: center;
+`;
+
 export default function DisplayBox({
   label,
   children,

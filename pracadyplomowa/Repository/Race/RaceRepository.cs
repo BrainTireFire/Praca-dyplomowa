@@ -20,7 +20,7 @@ namespace pracadyplomowa.Repository
             return races;
         }
 
-        public Task<Models.Entities.Characters.Race> GetRaceByIdWithRaceLevelAndChoiceGroups(int id, int level){
+        public Task<Models.Entities.Characters.Race> GetRaceByIdWithRaceLevelAndChoiceGroupsAndSlots(int id, int level){
             Task<Models.Entities.Characters.Race> race = _context.Races
             .Where(r => r.Id == id)
             .Include(r => r.R_RaceLevels.Where(rl => rl.Level == level))
@@ -28,7 +28,14 @@ namespace pracadyplomowa.Repository
             .ThenInclude(cg => cg.R_Effects)
             .Include(r => r.R_RaceLevels)
             .ThenInclude(cl => cl.R_ChoiceGroups)
-            .ThenInclude(cg => cg.R_Powers)
+            .ThenInclude(cg => cg.R_PowersAlwaysAvailable)
+            .Include(r => r.R_RaceLevels)
+            .ThenInclude(cl => cl.R_ChoiceGroups)
+            .ThenInclude(cg => cg.R_PowersToPrepare)
+            .Include(r => r.R_RaceLevels)
+            .ThenInclude(cl => cl.R_ChoiceGroups)
+            .ThenInclude(cg => cg.R_Resources)
+            .Include(r => r.R_EquipmentSlots)
             .FirstAsync();
             return race;
         }

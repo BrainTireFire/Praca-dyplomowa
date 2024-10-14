@@ -41,15 +41,16 @@ namespace pracadyplomowa.Models.Entities.Powers
         public int? R_ClassForUpcastingId {get; set;}
 
         // Relationships
-        public virtual List<Character> R_CharacterPreparedPowers { get; set; } = [];
-        public virtual List<Character> R_CharacterKnownsPowers { get; set; } = [];
+        public virtual List<Character> R_CharacterPreparedPowers { get; set; } = []; // list of selected powers out of all available from 
+        public virtual List<Character> R_CharacterKnownsPowers { get; set; } = []; // always available powers
         public virtual List<Item> R_ItemsGrantingPower { get; set; } = [];
         public virtual List<Weapon> R_WeaponsCastingOnHit { get; set; } = [];
 
         public virtual List<Class> R_ClassesWithAccess { get; set; } = [];
         public virtual ImmaterialResourceBlueprint? R_UsesImmaterialResource { get; set; }
         public int? R_UsesImmaterialResourceId { get; set; }
-        public virtual List<ChoiceGroup> R_ChoiceGroups { get; set; } = []; // means possibility of being granted through a choice group
+        public virtual List<ChoiceGroup> R_AlwaysAvailableThroughChoiceGroup { get; set; } = []; // means possibility of being granted through a choice group
+        public virtual List<ChoiceGroup> R_ToPrepareThroughChoiceGroups { get; set; } = []; // means possibility of being granted through a choice group
 
         public virtual List<Field> R_FieldsCasting { get; set; } = [];
 
@@ -58,6 +59,16 @@ namespace pracadyplomowa.Models.Entities.Powers
         public virtual List<EffectBlueprint> R_EffectBlueprints { get; set; } = [];
 
         public virtual List<Character> R_SpawnedCharacters { get; set; } = [];
-        public virtual List<ChoiceGroupUsage> R_GrantedThrough { get; set; } = []; // means actual usage of a choice group
+        public virtual List<ChoiceGroupUsage> R_AlwaysAvailableThroughChoiceGroupUsage { get; set; } = []; // means actual usage of a choice group
+        public virtual List<ChoiceGroupUsage> R_ToPrepareThroughChoiceGroupUsage { get; set; } = []; // means actual usage of a choice group
+
+        public List<string?> GetSourceNames(int usingCharacterId){
+            var source = this.R_AlwaysAvailableThroughChoiceGroupUsage.Union(
+                this.R_ToPrepareThroughChoiceGroupUsage
+                ).Where(cgu => cgu.R_CharacterId == usingCharacterId).Select(cgu => cgu.R_ChoiceGroup.Name)
+                .Union(this.R_ItemsGrantingPower.Where(i => i.R_EquipData?.R_CharacterId == usingCharacterId).Select(i => i.R_EquipData?.R_Item.Name)).ToList();
+            if(source == null) return [];
+            return source;
+        }
     }
 }

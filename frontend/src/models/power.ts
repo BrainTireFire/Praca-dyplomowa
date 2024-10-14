@@ -1,5 +1,5 @@
 export type Power = {
   id: number;
   name: string;
-  source: string;
+  source: string[];
 };

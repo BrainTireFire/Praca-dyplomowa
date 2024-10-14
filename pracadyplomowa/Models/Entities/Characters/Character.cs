@@ -46,7 +46,7 @@ namespace pracadyplomowa.Models.Entities.Characters
         public virtual ICollection<Power> R_PowersKnown { get; set; } = [];
         public virtual Power? R_SpawnedByPower { get; set; }
         public int? R_SpawnedByPowerId { get; set; }
-        public virtual ICollection<ImmaterialResourceInstance> R_ImmaterialResourceInstances { get; set; } = [];
+        public virtual List<ImmaterialResourceInstance> R_ImmaterialResourceInstances { get; set; } = []; // only for manual assignment
         public virtual ICollection<ChoiceGroupUsage> R_UsedChoiceGroups { get; set;} = [];
 
         public Character(){
@@ -127,23 +127,46 @@ namespace pracadyplomowa.Models.Entities.Characters
 
             this.R_AffectedBy.AddRange(basicStats.R_OwnedEffects);
 
-            List<ChoiceGroup> fullChoiceGroups = classLevel.R_ChoiceGroups.Union(
-                race.R_RaceLevels.SelectMany(rl => rl.R_ChoiceGroups)
-                ).Where(cg => cg.NumberToChoose == 0).ToList();
-            foreach(ChoiceGroup cg in fullChoiceGroups){
-                cg.Generate(this);
-            }
+            // List<ChoiceGroup> fullChoiceGroups = classLevel.R_ChoiceGroups.Union(
+            //     race.R_RaceLevels.SelectMany(rl => rl.R_ChoiceGroups)
+            //     ).Where(cg => cg.NumberToChoose == 0).ToList();
+            // foreach(ChoiceGroup cg in fullChoiceGroups){
+            //     cg.Generate(this);
+            // }
+            GenerateChoiceGroupUsage();
 
             this.Hitpoints = this.MaxHealth;
 
             this.R_OwnerId = ownerId;
         }
 
+        protected void GenerateChoiceGroupUsage(){
+            List<ChoiceGroup> fullChoiceGroups = this.R_CharacterHasLevelsInClass.SelectMany(cl => cl.R_ChoiceGroups).Union(
+                this.R_CharacterBelongsToRace.R_RaceLevels.Where(rl => rl.Level <= this.R_CharacterHasLevelsInClass.Count).SelectMany(rl => rl.R_ChoiceGroups)
+                ).Where(cg => cg.NumberToChoose == 0 && !this.R_UsedChoiceGroups.Select(ucg => ucg.R_ChoiceGroup).Contains(cg)).ToList();
+            foreach(ChoiceGroup cg in fullChoiceGroups){
+                cg.Generate(this);
+            }
+        }
+
+        public void AddClassLevel(ClassLevel classLevel){
+            this.R_CharacterHasLevelsInClass.Add(classLevel);
+            classLevel.R_Characters.Add(this);
+
+            GenerateChoiceGroupUsage();
+        }
+
+        // public void EquipItem(Item item){
+        //     if(this.R_CharacterHasBackpack.R_BackpackHasItems.Contains(item)){
+        //         this.
+        //     }
+        // }
+
         [NotMapped]
         public int MaxHealth {
             get {
                 int healthBase = this.R_CharacterHasLevelsInClass.Sum(cl => cl.HitPoints);
-                int optional = this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances).OfType<HitpointEffectInstance>().Where(hei => 
+                int optional = this.AffectedByApprovedEffects.OfType<HitpointEffectInstance>().Where(hei => 
                     hei.HitpointEffectType.HitpointEffect == HitpointEffect.HitpointMaximumBonus
                 ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet);
                 return healthBase + optional;
@@ -152,7 +175,7 @@ namespace pracadyplomowa.Models.Entities.Characters
 
         [NotMapped]
         public int TemporaryHitpoints {
-            get => this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances).OfType<HitpointEffectInstance>().Where(hei => 
+            get => this.AffectedByApprovedEffects.OfType<HitpointEffectInstance>().Where(hei => 
                     hei.HitpointEffectType.HitpointEffect == HitpointEffect.TemporaryHitpoints
                 ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet);
         }
@@ -166,7 +189,7 @@ namespace pracadyplomowa.Models.Entities.Characters
         public List<EffectInstance> ApprovedConditionalEffectInstances {get; set;} = [];
 
         public int AbilityValue(Ability ability){
-            return this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances).OfType<AbilityEffectInstance>().Where(aei => 
+            return this.AffectedByApprovedEffects.OfType<AbilityEffectInstance>().Where(aei => 
             aei.AbilityEffectType.AbilityEffect == AbilityEffect.Bonus &&
             aei.AbilityEffectType.AbilityEffect_Ability == ability
             ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet);
@@ -227,7 +250,7 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
 
         public int SavingThrowValue(Ability ability){
-            int returnValue = this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances).OfType<SavingThrowEffectInstance>().Where(aei => 
+            int returnValue = this.AffectedByApprovedEffects.OfType<SavingThrowEffectInstance>().Where(aei => 
             aei.SavingThrowEffectType.SavingThrowEffect == SavingThrowEffect.Bonus &&
             aei.SavingThrowEffectType.SavingThrowEffect_Ability == ability
             ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet) 
@@ -237,7 +260,7 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
 
         public bool SavingThrowProficiency(Ability ability){
-            return this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances).OfType<SavingThrowEffectInstance>().Where(aei => 
+            return this.AffectedByApprovedEffects.OfType<SavingThrowEffectInstance>().Where(aei => 
             aei.SavingThrowEffectType.SavingThrowEffect == SavingThrowEffect.Proficiency &&
             aei.SavingThrowEffectType.SavingThrowEffect_Ability == ability
             ).Any();
@@ -294,21 +317,31 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
 
         public int SkillValue(Skill skill){
-            int value = this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances).OfType<SkillEffectInstance>().Where(aei => 
+            int value = this.AffectedByApprovedEffects.OfType<SkillEffectInstance>().Where(aei => 
             aei.SkillEffectType.SkillEffect == SkillEffect.Bonus &&
             aei.SkillEffectType.SkillEffect_Skill == skill
             ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet);
 
             value += AbilityModifier(AbilityValue(Utils.SkillToAbility(skill)));
 
-            value += SkillProficiency(skill) ? this.ProficiencyBonus : 0;
+            var proficiencyBonus = this.ProficiencyBonus;
+            if(SkillExpertise(skill)) proficiencyBonus *= 2;
+
+            value += SkillProficiency(skill) ? proficiencyBonus : 0;
 
             return value;
         }
 
         public bool SkillProficiency(Skill skill){
-            return this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances).OfType<SkillEffectInstance>().Where(aei => 
+            return this.AffectedByApprovedEffects.OfType<SkillEffectInstance>().Where(aei => 
             aei.SkillEffectType.SkillEffect == SkillEffect.Proficiency &&
+            aei.SkillEffectType.SkillEffect_Skill == skill
+            ).Any();
+        }
+
+        public bool SkillExpertise(Skill skill){
+            return this.AffectedByApprovedEffects.OfType<SkillEffectInstance>().Where(aei => 
+            aei.SkillEffectType.SkillEffect == SkillEffect.UpgradeToExpertise &&
             aei.SkillEffectType.SkillEffect_Skill == skill
             ).Any();
         }
@@ -388,7 +421,7 @@ namespace pracadyplomowa.Models.Entities.Characters
 
         [NotMapped]
         public int Initiative {
-            get => this.DexterityModifier + this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances).OfType<InitiativeEffectInstance>()
+            get => this.DexterityModifier + this.AffectedByApprovedEffects.OfType<InitiativeEffectInstance>()
             .Sum(valueEffectInstance => valueEffectInstance.DiceSet);
         }
 
@@ -396,7 +429,7 @@ namespace pracadyplomowa.Models.Entities.Characters
         public int Speed {
             get {
                 int speed = this.R_CharacterBelongsToRace.Speed;
-                IEnumerable<MovementEffectInstance> multiplierData = this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances)
+                IEnumerable<MovementEffectInstance> multiplierData = this.AffectedByApprovedEffects
                                 .OfType<MovementEffectInstance>()
                                 .Where(m => m.MovementEffectType.MovementEffect == MovementEffect.Multiplier);
                 bool hasMultiplier = multiplierData.Any();
@@ -406,7 +439,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                                 .Sum(m => m.DiceSet.flat);
                 }
 
-                int bonus = this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances)
+                int bonus = this.AffectedByApprovedEffects
                                 .OfType<MovementEffectInstance>()
                                 .Where(m => m.MovementEffectType.MovementEffect == MovementEffect.Bonus)
                                 .Sum(m => m.DiceSet.flat);
@@ -420,7 +453,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             get {
                 int baseArmorClass = 10;
                 int dexterityModifier = this.DexterityModifier;
-                IEnumerable<Apparel> apparel = this.R_EquippedItems.Where(ed => ed.Type == SlotType.Apparel).Select(aed => aed.R_Item).OfType<Apparel>();
+                IEnumerable<Apparel> apparel = this.R_EquippedItems.Where(ed => ed.R_Slots.Select(s => s.Type).Contains(SlotType.Apparel)).Select(aed => aed.R_Item).OfType<Apparel>();
                 bool wearsHeavyArmor = apparel.Where(a => a.R_ItemInItemsFamily.ItemType == ItemType.HeavyArmor).Any();
                 if(wearsHeavyArmor){
                     dexterityModifier = Math.Min(dexterityModifier, 0);
@@ -431,11 +464,11 @@ namespace pracadyplomowa.Models.Entities.Characters
                         dexterityModifier = Math.Min(dexterityModifier, 2);
                     }
                 }
-                int armorClassFromEffects = this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances)
+                int armorClassFromEffects = this.AffectedByApprovedEffects
                                 .OfType<ArmorClassEffectInstance>()
                                 .Sum(m => m.DiceSet);
                 int armorClassFromItems = this.R_EquippedItems
-                                .Where(ei => ei.Type == SlotType.Apparel)
+                                .Where(ei => ei.R_Slots.Select(s => s.Type).Contains(SlotType.Apparel))
                                 .Select(ei => ei.R_Item)
                                 .OfType<Apparel>()
                                 .Distinct()
@@ -464,7 +497,7 @@ namespace pracadyplomowa.Models.Entities.Characters
         public Size Size {
             get {
                 var size = this.R_CharacterBelongsToRace.Size;
-                var setSizes = this.R_AffectedBy
+                var setSizes = this.AffectedByApprovedEffects
                                     .OfType<SizeEffectInstance>()
                                     .Where(ei => ei.SizeEffectType.SizeEffect == SizeEffect.Change)
                                     .Select(ei => ei.SizeEffectType.SizeEffect_SizeToSet)
@@ -472,7 +505,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                 if(setSizes.Count != 0){
                     size = setSizes.Max();
                 }
-                var sizeChanges = this.R_AffectedBy
+                var sizeChanges = this.AffectedByApprovedEffects
                                     .OfType<SizeEffectInstance>()
                                     .Where(ei => ei.SizeEffectType.SizeEffect == SizeEffect.Bonus)
                                     .Select(ei => ei.SizeEffectType.SizeBonus)
@@ -488,6 +521,43 @@ namespace pracadyplomowa.Models.Entities.Characters
                     else return Size.Gargantuan;
                 }
             }
+        }
+
+        [NotMapped]
+        public List<ImmaterialResourceInstance> ImmaterialResources {
+            get {
+                return this.R_ImmaterialResourceInstances
+                .Union(this.R_UsedChoiceGroups
+                    .SelectMany(ucg => ucg.R_ResourcesGranted)
+                )
+                .Union(this.R_EquippedItems
+                    .Select(equipData => equipData.R_Item)
+                    .Distinct()
+                    .SelectMany(item => item.R_ItemGrantsResources)
+                )
+                .ToList();
+            }
+        }
+
+        [NotMapped]
+        public IEnumerable<EffectInstance> AffectedByApprovedEffects {
+            get {
+                return this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances);
+            }
+        }
+
+
+        public bool ItemFamilyProficiency(int familyId){
+            return this.AffectedByApprovedEffects.OfType<ProficiencyEffectInstance>().Where(pei => 
+                        pei.R_GrantsProficiencyInItemFamilyId == familyId
+                        ).Any();
+        }
+
+        public void EquipItem(Item item, EquipmentSlot slot){
+            item.Equip(this, slot);
+        }
+        public void UnequipItem(Item item){
+            item.Unequip(this);
         }
     }
 }

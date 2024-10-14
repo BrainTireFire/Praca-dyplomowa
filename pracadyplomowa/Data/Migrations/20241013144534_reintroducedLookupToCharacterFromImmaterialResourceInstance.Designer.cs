@@ -2,17 +2,20 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using pracadyplomowa;
 
 #nullable disable
 
-namespace pracadyplomowa.Migrations
+namespace pracadyplomowa.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241013144534_reintroducedLookupToCharacterFromImmaterialResourceInstance")]
+    partial class reintroducedLookupToCharacterFromImmaterialResourceInstance
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
@@ -180,21 +183,6 @@ namespace pracadyplomowa.Migrations
                     b.HasIndex("R_EffectOnFieldId");
 
                     b.ToTable("EffectGroupField");
-                });
-
-            modelBuilder.Entity("EquipDataEquipmentSlot", b =>
-                {
-                    b.Property<int>("R_SlotsId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("UsagesId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("R_SlotsId", "UsagesId");
-
-                    b.HasIndex("UsagesId");
-
-                    b.ToTable("EquipDataEquipmentSlot");
                 });
 
             modelBuilder.Entity("EquipmentSlotItem", b =>
@@ -681,6 +669,9 @@ namespace pracadyplomowa.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("R_ItemId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Type")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -1660,6 +1651,15 @@ namespace pracadyplomowa.Migrations
                     b.Property<int>("DamageValueId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("Finesse")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("LoadedRange")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Range")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("WeaponWeight")
                         .HasColumnType("INTEGER");
 
@@ -1836,45 +1836,6 @@ namespace pracadyplomowa.Migrations
                     b.HasDiscriminator().HasValue("SkillEffectInstance");
                 });
 
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.MeleeWeapon", b =>
-                {
-                    b.HasBaseType("pracadyplomowa.Models.Entities.Items.Weapon");
-
-                    b.Property<bool>("Finesse")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("Reach")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("Versatile")
-                        .HasColumnType("INTEGER");
-
-                    b.ToTable("MeleeWeapons");
-                });
-
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.RangedWeapon", b =>
-                {
-                    b.HasBaseType("pracadyplomowa.Models.Entities.Items.Weapon");
-
-                    b.Property<bool>("LoadedRange")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Range")
-                        .HasColumnType("INTEGER");
-
-                    b.ToTable("RangedWeapons");
-                });
-
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.MeleeThrowableWeapon", b =>
-                {
-                    b.HasBaseType("pracadyplomowa.Models.Entities.Items.MeleeWeapon");
-
-                    b.Property<int>("Range")
-                        .HasColumnType("INTEGER");
-
-                    b.ToTable("MeleeThrowableWeapons");
-                });
-
             modelBuilder.Entity("CampaignUser", b =>
                 {
                     b.HasOne("pracadyplomowa.Models.Entities.Campaign.Campaign", null)
@@ -2036,21 +1997,6 @@ namespace pracadyplomowa.Migrations
                     b.HasOne("pracadyplomowa.Models.Entities.Campaign.Field", null)
                         .WithMany()
                         .HasForeignKey("R_EffectOnFieldId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("EquipDataEquipmentSlot", b =>
-                {
-                    b.HasOne("pracadyplomowa.Models.Entities.Characters.EquipmentSlot", null)
-                        .WithMany()
-                        .HasForeignKey("R_SlotsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("pracadyplomowa.Models.Entities.Characters.EquipData", null)
-                        .WithMany()
-                        .HasForeignKey("UsagesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -2426,7 +2372,7 @@ namespace pracadyplomowa.Migrations
                         .HasForeignKey("R_CastedOnTilesByAuraId");
 
                     b.HasOne("pracadyplomowa.Models.Entities.Items.Item", "R_CreatedByEquipping")
-                        .WithMany()
+                        .WithMany("R_ItemCreateEffectsOnEquip")
                         .HasForeignKey("R_CreatedByEquippingId");
 
                     b.HasOne("pracadyplomowa.Models.Entities.Powers.Power", "R_Power")
@@ -3479,33 +3425,6 @@ namespace pracadyplomowa.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.MeleeWeapon", b =>
-                {
-                    b.HasOne("pracadyplomowa.Models.Entities.Items.Weapon", null)
-                        .WithOne()
-                        .HasForeignKey("pracadyplomowa.Models.Entities.Items.MeleeWeapon", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.RangedWeapon", b =>
-                {
-                    b.HasOne("pracadyplomowa.Models.Entities.Items.Weapon", null)
-                        .WithOne()
-                        .HasForeignKey("pracadyplomowa.Models.Entities.Items.RangedWeapon", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.MeleeThrowableWeapon", b =>
-                {
-                    b.HasOne("pracadyplomowa.Models.Entities.Items.MeleeWeapon", null)
-                        .WithOne()
-                        .HasForeignKey("pracadyplomowa.Models.Entities.Items.MeleeThrowableWeapon", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Campaign.ParticipanceData", b =>
                 {
                     b.Navigation("R_OccupiedFields");
@@ -3672,6 +3591,8 @@ namespace pracadyplomowa.Migrations
                     b.Navigation("R_EffectsOnEquip");
 
                     b.Navigation("R_EquipData");
+
+                    b.Navigation("R_ItemCreateEffectsOnEquip");
 
                     b.Navigation("R_ItemGrantsResources");
 

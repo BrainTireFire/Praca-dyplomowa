@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using pracadyplomowa.Models.Entities.Items;
 using pracadyplomowa.Models.Entities.Powers.EffectBlueprints;
 using pracadyplomowa.Models.Enums;
 
@@ -20,14 +21,39 @@ namespace pracadyplomowa.Models.Entities.Characters
         public static implicit operator int(DiceSet d) => d.flat;
         public static implicit operator DiceSet(int d) => new(){flat = d};
 
+        public static DiceSet operator +(DiceSet x, DiceSet y) => new DiceSet(){
+            d20 = x.d20 + y.d20,
+            d12 = x.d12 + y.d12,
+            d10 = x.d10 + y.d10,
+            d8 = x.d8 + y.d8,
+            d6 = x.d6 + y.d6,
+            d4 = x.d4 + y.d4,
+            d100 = x.d100 + y.d100,
+            flat = x.flat + y.flat,
+            additionalValues = x.additionalValues.Union(y.additionalValues).ToList()
+        };
+
+        public DiceSet getPersonalizedSet(Character? roller){
+            var personalizedSet = new DiceSet(){
+                d20 = this.d20,
+                d12 = this.d12,
+                d10 = this.d10,
+                d8 = this.d8,
+                d6 = this.d6,
+                d4 = this.d4,
+                d100 = this.d100,
+                flat = this.flat + (roller != null ? ResolveAdditionalValues(roller) : 0)
+            };
+            return personalizedSet;
+        }
+
 
         public class AdditionalValue : ObjectWithId{
             public enum AdditionalValueType{
                 LevelsInClass = 0,
-                ProficiencyModifier = 1,
-                TotalLevel = 2,
-                AbilityScoreModifier = 3,
-                SkillBonus = 4
+                TotalLevel = 1,
+                AbilityScoreModifier = 2,
+                SkillBonus = 3,
             }
             public AdditionalValueType additionalValueType;
             public Class? R_LevelsInClass { get; set; }
@@ -42,9 +68,6 @@ namespace pracadyplomowa.Models.Entities.Characters
                 else if(additionalValueType == AdditionalValueType.TotalLevel){
                     return roller.R_CharacterHasLevelsInClass.Count;
                 }
-                else if(additionalValueType == AdditionalValueType.ProficiencyModifier){
-                    return roller.ProficiencyBonus;
-                }
                 else if(additionalValueType == AdditionalValueType.AbilityScoreModifier){
                     return Character.AbilityModifier(roller.AbilityValue(Ability));
                 }
@@ -52,6 +75,20 @@ namespace pracadyplomowa.Models.Entities.Characters
                     return roller.SkillValue(Skill);
                 }
                 else throw new UnreachableException();
+            }
+
+            public override bool Equals(object? obj)
+            {
+                if(obj is not AdditionalValue)
+                    return false;
+                return this ==(AdditionalValue)obj;
+            }
+
+            public static bool operator ==(AdditionalValue x, AdditionalValue y) {
+                return x.additionalValueType == y.additionalValueType && x.R_LevelsInClassId == y.R_LevelsInClassId && x.Ability == y.Ability && x.Skill == y.Skill;
+            }
+            public static bool operator !=(AdditionalValue x, AdditionalValue y) {
+                return !(x==y);
             }
         }
 
@@ -65,6 +102,12 @@ namespace pracadyplomowa.Models.Entities.Characters
             result += d4 * rnd.Next(1, 4);
             result += d100 * rnd.Next(1, 100);
             result += flat;
+            result += ResolveAdditionalValues(roller);
+            return result;
+        }
+
+        public int ResolveAdditionalValues(Character roller){
+            int result = 0;
             foreach(AdditionalValue adVal in additionalValues){
                 result += adVal.ReturnValue(roller);
             }

@@ -15,7 +15,6 @@ namespace pracadyplomowa.Models.Entities.Characters
         // Relationships
         public virtual ICollection<Character> R_Characters { get; set; } = [];
         public virtual List<ChoiceGroup> R_ChoiceGroups { get; set; } = [];
-        public virtual ICollection<ImmaterialResourceAmount> R_ImmaterialResourceAmounts { get; set; } = [];
 
         public virtual Class R_Class { get; set; } = null!;
         public int R_ClassId { get; set; }

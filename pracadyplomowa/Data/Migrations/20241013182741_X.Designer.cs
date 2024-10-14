@@ -2,17 +2,20 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using pracadyplomowa;
 
 #nullable disable
 
-namespace pracadyplomowa.Migrations
+namespace pracadyplomowa.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241013182741_X")]
+    partial class X
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
@@ -180,21 +183,6 @@ namespace pracadyplomowa.Migrations
                     b.HasIndex("R_EffectOnFieldId");
 
                     b.ToTable("EffectGroupField");
-                });
-
-            modelBuilder.Entity("EquipDataEquipmentSlot", b =>
-                {
-                    b.Property<int>("R_SlotsId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("UsagesId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("R_SlotsId", "UsagesId");
-
-                    b.HasIndex("UsagesId");
-
-                    b.ToTable("EquipDataEquipmentSlot");
                 });
 
             modelBuilder.Entity("EquipmentSlotItem", b =>
@@ -681,6 +669,9 @@ namespace pracadyplomowa.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("R_ItemId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Type")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -2036,21 +2027,6 @@ namespace pracadyplomowa.Migrations
                     b.HasOne("pracadyplomowa.Models.Entities.Campaign.Field", null)
                         .WithMany()
                         .HasForeignKey("R_EffectOnFieldId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("EquipDataEquipmentSlot", b =>
-                {
-                    b.HasOne("pracadyplomowa.Models.Entities.Characters.EquipmentSlot", null)
-                        .WithMany()
-                        .HasForeignKey("R_SlotsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("pracadyplomowa.Models.Entities.Characters.EquipData", null)
-                        .WithMany()
-                        .HasForeignKey("UsagesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

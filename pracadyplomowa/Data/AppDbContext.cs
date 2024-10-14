@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using pracadyplomowa.Models;
@@ -54,6 +55,9 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         // public DbSet<Purse> Purses { get; set; }
         public DbSet<Tool> Tools { get; set; }
         public DbSet<Weapon> Weapons { get; set; }
+        public DbSet<MeleeWeapon> MeleeWeapons { get; set; }
+        public DbSet<MeleeThrowableWeapon> MeleeThrowableWeapons { get; set; }
+        public DbSet<RangedWeapon> RangedWeapons { get; set; }
 
         // Powers
         public DbSet<Aura> Auras { get; set; }
@@ -207,11 +211,13 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .WithOne(ei => ei.R_TargetedItem)
                         .HasForeignKey(ei => ei.R_TargetedItemId)
                         .IsRequired(false);
-                builder.Entity<Item>()
-                        .HasMany(c => c.R_ItemCreateEffectsOnEquip)
-                        .WithOne(ei => ei.R_CreatedByEquipping)
-                        .HasForeignKey(ei => ei.R_CreatedByEquippingId)
-                        .IsRequired(false);
+                builder.Entity<Item>().Navigation(i => i.R_ItemInItemsFamily).AutoInclude();
+                builder.Entity<EquipData>().Navigation(ed => ed.R_Slots).AutoInclude();
+                // builder.Entity<Item>()
+                //         .HasMany(c => c.R_ItemCreateEffectsOnEquip)
+                //         .WithOne(ei => ei.R_CreatedByEquipping)
+                //         .HasForeignKey(ei => ei.R_CreatedByEquippingId)
+                //         .IsRequired(false);
 
                 
                 builder.Entity<Class>()
@@ -241,5 +247,11 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .HasForeignKey(lei => lei.R_LanguageId);
                 builder.Entity<ProficiencyEffectBlueprint>().Navigation(e=>e.R_GrantsProficiencyInItemFamily).AutoInclude();
                 builder.Entity<ProficiencyEffectInstance>().Navigation(e=>e.R_GrantsProficiencyInItemFamily).AutoInclude();
+
+                builder.Entity<ChoiceGroup>().HasMany(cg => cg.R_PowersAlwaysAvailable).WithMany(p => p.R_AlwaysAvailableThroughChoiceGroup);
+                builder.Entity<ChoiceGroup>().HasMany(cg => cg.R_PowersToPrepare).WithMany(p => p.R_ToPrepareThroughChoiceGroups);
+                builder.Entity<ChoiceGroupUsage>().HasMany(cg => cg.R_PowersAlwaysAvailableGranted).WithMany(p => p.R_AlwaysAvailableThroughChoiceGroupUsage);
+                builder.Entity<ChoiceGroupUsage>().HasMany(cg => cg.R_PowersToPrepareGranted).WithMany(p => p.R_ToPrepareThroughChoiceGroupUsage);
+                builder.Entity<ImmaterialResourceInstance>().Navigation(i => i.R_Blueprint).AutoInclude();
         }
 }

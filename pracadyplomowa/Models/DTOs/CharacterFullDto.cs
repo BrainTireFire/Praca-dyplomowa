@@ -307,9 +307,10 @@ namespace pracadyplomowa.Models.DTOs
             public bool Main { get; set; } = false;
 
             public DiceSet Damage { get; set; } = null!;
+            public DiceSet AttackBonus { get; set; } = null!;
             public DamageType DamageType;
 
-            public int Range { get; set; } = 0;
+            public int? Range { get; set; } = 0;
         
             // public class Damage {
             //     public DamageType DamageType{ get; set; }
@@ -317,15 +318,17 @@ namespace pracadyplomowa.Models.DTOs
             // }
 
         }
+
         public static List<WeaponAttack> GetAttacks(Character character){
-            return character.R_EquippedItems.Where(ei => ei.Type == SlotType.MainHand || ei.Type == SlotType.OffHand).Select(ei => ei.R_Item).OfType<Weapon>().Select(w => new WeaponAttack(){
+            return character.R_EquippedItems.Where(ei => ei.R_Slots.Select(s => s.Type).Contains(SlotType.MainHand) || ei.R_Slots.Select(s => s.Type).Contains(SlotType.OffHand)).Select(ei => ei.R_Item).OfType<Weapon>().Select(w => new WeaponAttack(){
                 Id = w.Id,
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-                Main = w.R_EquipData.Type == SlotType.MainHand,
+                Main = w.R_EquipData.R_Slots.Select(s => s.Type).Contains(SlotType.MainHand),
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
-                Damage = w.DamageValue,
+                Damage = w.GetDamageDiceSet(),
+                AttackBonus = w.GetAttackBonus(),
                 DamageType = w.DamageType,
-                Range = w.Range
+                Range = w is IRangedWeapon weapon ? weapon.Range : null
             }).ToList();
         }
         // public static List<WeaponAttack> GetAttacks(Character character){
@@ -413,36 +416,27 @@ namespace pracadyplomowa.Models.DTOs
         public class Power {
             public int Id { get; set;}
             public string Name { get; set;} = "";
-            public string Source { get; set;} = "";
+            public List<string?> Source { get; set;} = [];
         }
         public static List<Power> GetPreparedPowers(Character character){
             List<Power> powers = character.R_PowersPrepared.Select(power => new Power() {
                 Id = power.Id,
                 Name = power.Name,
-                Source = ""
+                Source = power.GetSourceNames(character.Id)
             }).ToList();
             return powers;
         }
 
         public static List<Power> GetKnownPowers(Character character){
-            List<Power> powers = character.R_PowersKnown.Select(power => new Power() {
-                Id = power.Id,
-                Name = power.Name,
-                Source = "Known"
-            }).ToList();
-
-            powers.AddRange(character.R_EquippedItems
+            var powersx = character.R_PowersKnown.Union(character.R_EquippedItems
             .Select(equipData => equipData.R_Item)
             .Distinct()
-            .SelectMany(item => item.R_EquipItemGrantsAccessToPower)
-            .Select(power => new Power() {
+            .SelectMany(item => item.R_EquipItemGrantsAccessToPower)).Union(character.R_UsedChoiceGroups.SelectMany(ucg => ucg.R_PowersAlwaysAvailableGranted)).ToList();
+            List<Power> powers = powersx.Select(power => new Power() {
                 Id = power.Id,
                 Name = power.Name,
-                Source = "Item"
-                }
-            )); //TODO: how to put item name here?
-
-
+                Source = power.GetSourceNames(character.Id)
+            }).ToList();
             return powers;
         }
 
@@ -507,9 +501,26 @@ namespace pracadyplomowa.Models.DTOs
             public string Source { get; set; } = "";
             public string Refresh { get; set; } = "";
         }
+        // public static List<Resource> GetResources(Character character){
+        //     List<Resource> resources = character.R_ImmaterialResourceInstances
+        //     .GroupBy(resource => new {resource.R_BlueprintId, resource.R_ChoiceGroupUsageId, resource.R_ItemId})
+        //     .Select(group => {
+        //         return new Resource() {
+        //             Id = group.Key.R_BlueprintId,
+        //             Name = group.Take(1).First().R_Blueprint.Name,
+        //             Left = group.Where(resource => !resource.NeedsRefresh).Count(),
+        //             Total = group.Count(),
+        //             Source = group.Take(1).First().Source,
+        //             Refresh = group.Take(1).First().R_Blueprint.RefreshesOn.ToString()
+        //         };
+        //     })
+        //     .ToList();
+
+        //     return resources;
+        // }
+
         public static List<Resource> GetResources(Character character){
-            List<Resource> resources = character.R_ImmaterialResourceInstances
-            .GroupBy(resource => new {resource.R_BlueprintId, resource.R_CharacterId, resource.R_ItemId})
+            var resources = character.ImmaterialResources.GroupBy(resource => new {resource.R_BlueprintId, resource.R_ChoiceGroupUsageId, resource.R_ItemId})
             .Select(group => {
                 return new Resource() {
                     Id = group.Key.R_BlueprintId,
@@ -521,15 +532,16 @@ namespace pracadyplomowa.Models.DTOs
                 };
             })
             .ToList();
-
             return resources;
+            // return [];
         }
 
         public class ChoiceGroup {
             public int Id { get; set;}
             public string Name { get; set;} = null!;
             public bool ContainsEffects {get; set;}
-            public bool ContainsPowers {get; set;}
+            public bool ContainsPowersAlwaysAvailable {get; set;}
+            public bool ContainsPowersToPrepare {get; set;}
         }
         public static List<ChoiceGroup> GetChoiceGroups(Character character){
             List<ChoiceGroup> choiceGroups = character.R_CharacterBelongsToRace.R_RaceLevels.SelectMany(raceLevel => raceLevel.R_ChoiceGroups)
@@ -543,7 +555,8 @@ namespace pracadyplomowa.Models.DTOs
                     Id = choiceGroup.Id, 
                     Name = choiceGroup.Name, 
                     ContainsEffects = choiceGroup.R_Effects.Count > 0, 
-                    ContainsPowers = choiceGroup.R_Powers.Count > 0
+                    ContainsPowersAlwaysAvailable = choiceGroup.R_PowersAlwaysAvailable.Count > 0,
+                    ContainsPowersToPrepare = choiceGroup.R_PowersToPrepare.Count > 0,
                     };
             }).ToList();
 

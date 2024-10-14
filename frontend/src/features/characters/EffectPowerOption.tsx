@@ -1,6 +1,11 @@
 import styled from "styled-components";
 import Box from "../../ui/containers/Box";
-import { Choice, EffectLocal, PowerLocal } from "./SelectFromChoiceGroupScreen";
+import {
+  Choice,
+  EffectLocal,
+  PowerLocal,
+  ResourceLocal,
+} from "./SelectFromChoiceGroupScreen";
 
 const EffectPowerSelector = styled(Box)`
   display: flex;
@@ -17,7 +22,7 @@ export default function EffectPowerOption({
   updateChoiceGroupsLocal,
 }: {
   choiceGroupId: number;
-  effectOrPower: EffectLocal | PowerLocal;
+  effectOrPower: EffectLocal | PowerLocal | ResourceLocal;
   setSelectedEffectPowerId: (arg: number) => void;
   updateChoiceGroupsLocal: (arg: Choice) => void;
 }) {

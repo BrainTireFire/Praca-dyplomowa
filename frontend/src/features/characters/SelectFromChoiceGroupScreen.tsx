@@ -3,13 +3,19 @@ import Box from "../../ui/containers/Box";
 import Spinner from "../../ui/interactive/Spinner";
 import { useChoiceGroups } from "./hooks/useChoiceGroups";
 import { useEffect, useState } from "react";
-import EffectPowerToChoose from "./EffectPowerToChoose";
-import { ChoiceGroup, Effect, Power } from "../../services/apiCharacters";
+import EffectPowerToChoose from "./ElementToChoose";
+import {
+  ChoiceGroup,
+  Effect,
+  Power,
+  Resource,
+} from "../../services/apiCharacters";
 import EffectPowerOption from "./EffectPowerOption";
 import VerticalLine from "../../ui/separators/VerticalLine";
 import Button from "../../ui/interactive/Button";
 import { useChoiceGroupUsage } from "./hooks/useChoiceGroupsUsage";
 import toast from "react-hot-toast";
+import ElementToChoose from "./ElementToChoose";
 
 const MainGrid = styled(Box)`
   display: grid;
@@ -94,7 +100,11 @@ const ChoiceGroupContainer = styled.div<ChoiceGroupContainerPropsType>`
 export type Choice = {
   choiceGroupId: number;
   elementId: number;
-  elementType: "effect" | "power";
+  elementType:
+    | "effect"
+    | "powerAlwaysAvailable"
+    | "powerToPrepare"
+    | "resource";
 };
 
 const ChoiceGroupName = styled.span`
@@ -115,10 +125,20 @@ function SelectFromChoiceGroupScreen({
     error: errorChoiceGroups,
   } = useChoiceGroups(characterId);
 
+  console.log(choiceGroups);
+
   const [selectedChoiceGroupId, setSelectedChoiceGroupId] = useState<
     number | null
   >(null);
   const [selectedEffectId, setSelectedEffectId] = useState<number | null>(null);
+  const [selectedPowerAlwaysAvailableId, setSelectedPowerAlwaysAvailableId] =
+    useState<number | null>(null);
+  const [selectedPowerToPrepareId, setSelectedPowerToPrepareId] = useState<
+    number | null
+  >(null);
+  const [selectedResourceId, setSelectedResourceId] = useState<number | null>(
+    null
+  );
 
   // State to store transformed data
   const [choiceGroupsLocal, setChoiceGroupsLocal] = useState<
@@ -139,13 +159,31 @@ function SelectFromChoiceGroupScreen({
                   : effect
               ),
             };
-          } else if (newChoice.elementType === "power") {
+          } else if (newChoice.elementType === "powerAlwaysAvailable") {
             return {
               ...group,
-              powers: group.powers.map((power) =>
+              powersAlwaysAvailable: group.powersAlwaysAvailable.map((power) =>
                 power.id === newChoice.elementId
                   ? { ...power, selected: !power.selected }
                   : power
+              ),
+            };
+          } else if (newChoice.elementType === "powerToPrepare") {
+            return {
+              ...group,
+              powersToPrepare: group.powersToPrepare.map((power) =>
+                power.id === newChoice.elementId
+                  ? { ...power, selected: !power.selected }
+                  : power
+              ),
+            };
+          } else if (newChoice.elementType === "resource") {
+            return {
+              ...group,
+              resources: group.resources.map((resource) =>
+                resource.id === newChoice.elementId
+                  ? { ...resource, selected: !resource.selected }
+                  : resource
               ),
             };
           }
@@ -168,10 +206,20 @@ function SelectFromChoiceGroupScreen({
         selected: false, // Default selected value
         selectionType: "effect",
       })),
-      powers: group.powers.map((power) => ({
+      powersAlwaysAvailable: group.powersAlwaysAvailable.map((power) => ({
         ...power,
         selected: false, // Default selected value
-        selectionType: "power",
+        selectionType: "powerAlwaysAvailable",
+      })),
+      powersToPrepare: group.powersToPrepare.map((power) => ({
+        ...power,
+        selected: false, // Default selected value
+        selectionType: "powerToPrepare",
+      })),
+      resources: group.resources.map((resource) => ({
+        ...resource,
+        selected: false, // Default selected value
+        selectionType: "resource",
       })),
     }));
   };
@@ -202,10 +250,14 @@ function SelectFromChoiceGroupScreen({
     choiceGroupsLocal.filter(
       (cg) =>
         cg.effects.filter((e) => e.selected).length +
-          cg.powers.filter((e) => e.selected).length ===
+          cg.powersAlwaysAvailable.filter((e) => e.selected).length +
+          cg.powersToPrepare.filter((e) => e.selected).length +
+          cg.resources.filter((e) => e.selected).length ===
           cg.numberToChoose ||
         cg.effects.filter((e) => e.selected).length +
-          cg.powers.filter((e) => e.selected).length ===
+          cg.powersAlwaysAvailable.filter((e) => e.selected).length +
+          cg.powersToPrepare.filter((e) => e.selected).length +
+          cg.resources.filter((e) => e.selected).length ===
           0
     ).length !== choiceGroupsLocal.length;
   console.log(disableButton);
@@ -215,7 +267,13 @@ function SelectFromChoiceGroupScreen({
       return {
         id: cg.id,
         effectIds: cg.effects.filter((e) => e.selected).map((e) => e.id),
-        powerIds: cg.powers.filter((p) => p.selected).map((p) => p.id),
+        powerAlwaysAvailableIds: cg.powersAlwaysAvailable
+          .filter((p) => p.selected)
+          .map((p) => p.id),
+        powerToPrepareIds: cg.powersToPrepare
+          .filter((p) => p.selected)
+          .map((p) => p.id),
+        resourceIds: cg.resources.filter((r) => r.selected).map((r) => r.id),
       };
     });
   };
@@ -234,7 +292,10 @@ function SelectFromChoiceGroupScreen({
               <VerticalLine />
               <span>
                 {choiceGroup.effects.filter((e) => e.selected).length +
-                  choiceGroup.powers.filter((p) => p.selected).length}
+                  choiceGroup.powersAlwaysAvailable.filter((p) => p.selected)
+                    .length +
+                  choiceGroup.powersToPrepare.filter((p) => p.selected).length +
+                  choiceGroup.resources.filter((p) => p.selected).length}
                 /{choiceGroup.numberToChoose} selected
               </span>
             </ChoiceGroupContainer>
@@ -252,6 +313,39 @@ function SelectFromChoiceGroupScreen({
                   updateChoiceGroupsLocal={updateChoiceGroupsLocal}
                 ></EffectPowerOption>
               ))}
+          {selectedChoiceGroupId &&
+            choiceGroupsLocal
+              ?.filter((cg) => cg.id === selectedChoiceGroupId)[0]
+              .powersAlwaysAvailable.map((power) => (
+                <EffectPowerOption
+                  choiceGroupId={selectedChoiceGroupId}
+                  effectOrPower={power}
+                  setSelectedEffectPowerId={setSelectedPowerAlwaysAvailableId}
+                  updateChoiceGroupsLocal={updateChoiceGroupsLocal}
+                ></EffectPowerOption>
+              ))}
+          {selectedChoiceGroupId &&
+            choiceGroupsLocal
+              ?.filter((cg) => cg.id === selectedChoiceGroupId)[0]
+              .powersToPrepare.map((power) => (
+                <EffectPowerOption
+                  choiceGroupId={selectedChoiceGroupId}
+                  effectOrPower={power}
+                  setSelectedEffectPowerId={setSelectedResourceId}
+                  updateChoiceGroupsLocal={updateChoiceGroupsLocal}
+                ></EffectPowerOption>
+              ))}
+          {selectedChoiceGroupId &&
+            choiceGroupsLocal
+              ?.filter((cg) => cg.id === selectedChoiceGroupId)[0]
+              .resources.map((resource) => (
+                <EffectPowerOption
+                  choiceGroupId={selectedChoiceGroupId}
+                  effectOrPower={resource}
+                  setSelectedEffectPowerId={setSelectedPowerToPrepareId}
+                  updateChoiceGroupsLocal={updateChoiceGroupsLocal}
+                ></EffectPowerOption>
+              ))}
         </MainGridColumn2>
         <MainGridColumn3>
           {selectedEffectId &&
@@ -259,10 +353,46 @@ function SelectFromChoiceGroupScreen({
               ?.filter((cg) => cg.id === selectedChoiceGroupId)[0]
               .effects.filter((effect) => effect.id === selectedEffectId)
               .map((effect) => (
-                <EffectPowerToChoose
+                <ElementToChoose
                   key={effect.id}
-                  effectOrPower={effect}
-                ></EffectPowerToChoose>
+                  element={effect}
+                ></ElementToChoose>
+              ))}
+          {selectedPowerToPrepareId &&
+            choiceGroupsLocal
+              ?.filter((cg) => cg.id === selectedChoiceGroupId)[0]
+              .powersToPrepare.filter(
+                (effect) => effect.id === selectedPowerToPrepareId
+              )
+              .map((power) => (
+                <ElementToChoose
+                  key={power.id}
+                  element={power}
+                ></ElementToChoose>
+              ))}
+          {selectedPowerAlwaysAvailableId &&
+            choiceGroupsLocal
+              ?.filter((cg) => cg.id === selectedChoiceGroupId)[0]
+              .powersAlwaysAvailable.filter(
+                (effect) => effect.id === selectedPowerAlwaysAvailableId
+              )
+              .map((power) => (
+                <ElementToChoose
+                  key={power.id}
+                  element={power}
+                ></ElementToChoose>
+              ))}
+          {selectedResourceId &&
+            choiceGroupsLocal
+              ?.filter((cg) => cg.id === selectedChoiceGroupId)[0]
+              .resources.filter(
+                (resource) => resource.id === selectedResourceId
+              )
+              .map((resource) => (
+                <ElementToChoose
+                  key={resource.id}
+                  element={resource}
+                ></ElementToChoose>
               ))}
         </MainGridColumn3>
       </MainGrid>
@@ -286,7 +416,9 @@ type ChoiceGroupLocal = {
   name: string;
   numberToChoose: number;
   effects: EffectLocal[];
-  powers: PowerLocal[];
+  powersAlwaysAvailable: PowerLocal[];
+  powersToPrepare: PowerLocal[];
+  resources: ResourceLocal[];
 };
 
 export type EffectLocal = Effect & {
@@ -296,5 +428,10 @@ export type EffectLocal = Effect & {
 
 export type PowerLocal = Power & {
   selected: boolean;
-  selectionType: "power";
+  selectionType: "powerAlwaysAvailable" | "powerToPrepare";
+};
+
+export type ResourceLocal = Resource & {
+  selected: boolean;
+  selectionType: "resource";
 };

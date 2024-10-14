@@ -39,8 +39,10 @@ export default function PowersTable({ powers }: { powers: Power[] }) {
         <Table.Header>
           <div>Name</div>
           <div>Source</div>
+          <div>*</div>
         </Table.Header>
         <Table.Body
+          columnCount={3}
           data={powers}
           render={(power) => <PowersRow key={power.id} power={power} />}
         />
@@ -61,7 +63,7 @@ function PowersRow({ power }: { power: Power }) {
     <Table.Row>
       <Cell>{power.name}</Cell>
 
-      <Cell>{power.source}</Cell>
+      <Cell>{power.source.join(", ")}</Cell>
 
       <Modal>
         <Menus.Menu>

@@ -25,12 +25,44 @@ namespace pracadyplomowa.Repository.Class
             return classes;
         }
 
+
+        public async Task<ClassLevel?> GetClassLevelById(int classLevelId){
+            ClassLevel? classes = await _context.ClassLevels.FirstOrDefaultAsync(cl => cl.Id == classLevelId);
+            return classes;
+        }
+
         public async Task<ClassLevel?> GetClassLevelWithChoiceGroups(int classId, int level){
             ClassLevel? classes = await _context.ClassLevels
             .Include(cl => cl.R_ChoiceGroups).ThenInclude(cg => cg.R_Effects)
-            .Include(cl => cl.R_ChoiceGroups).ThenInclude(cg => cg.R_Powers)
+            .Include(cl => cl.R_ChoiceGroups).ThenInclude(cg => cg.R_PowersAlwaysAvailable)
+            .Include(cl => cl.R_ChoiceGroups).ThenInclude(cg => cg.R_PowersToPrepare)
+            .Include(cl => cl.R_ChoiceGroups).ThenInclude(cg => cg.R_Resources).ThenInclude(r => r.R_Blueprint)
             .FirstOrDefaultAsync(cl => cl.Level == level && cl.R_ClassId == classId);
             return classes;
+        }
+
+        public async Task<List<ClassLevel>> GetClassLevelsWithChoiceGroups(List<int> ids){
+            List<ClassLevel> classes = await _context.ClassLevels
+            .Include(cl => cl.R_ChoiceGroups).ThenInclude(cg => cg.R_Effects)
+            .Include(cl => cl.R_ChoiceGroups).ThenInclude(cg => cg.R_PowersAlwaysAvailable)
+            .Include(cl => cl.R_ChoiceGroups).ThenInclude(cg => cg.R_PowersToPrepare)
+            .Include(cl => cl.R_ChoiceGroups).ThenInclude(cg => cg.R_Resources).ThenInclude(r => r.R_Blueprint)
+            .Include(cl => cl.HitDie)
+            .Where(cl => ids.Contains(cl.Id))
+            .AsSplitQuery()
+            .ToListAsync();
+            return classes;
+        }
+
+        public Task<List<Models.Entities.Characters.Class>> GetClassesWithClassLevels(bool track){
+            var x = _context.Classes.Include(c => c.R_ClassLevels);
+
+            if(!track){
+                return x.AsNoTracking().ToListAsync();
+            }
+            else{
+                return x.ToListAsync();
+            }
         }
         
     }

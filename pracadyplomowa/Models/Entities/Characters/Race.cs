@@ -20,8 +20,8 @@ namespace pracadyplomowa.Models.Entities.Characters
         public required int Speed { get; set; }
 
         //Relationship
-        public virtual ICollection<Character> R_Characters { get; set; } = [];
-        public virtual ICollection<RaceLevel> R_RaceLevels { get; set; } = [];
-        public virtual ICollection<EquipmentSlot> R_EquipmentSlots { get; set; } = [];
+        public virtual List<Character> R_Characters { get; set; } = [];
+        public virtual List<RaceLevel> R_RaceLevels { get; set; } = [];
+        public virtual List<EquipmentSlot> R_EquipmentSlots { get; set; } = [];
     }
 }

@@ -11,6 +11,7 @@ using pracadyplomowa.Repository.Race;
 using pracadyplomowa.Errors;
 using pracadyplomowa.Hubs;
 using pracadyplomowa.Middleware;
+using pracadyplomowa.Repository.Item;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,7 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<ICharacterRepository, CharacterRepository>();
 builder.Services.AddScoped<IClassRepository, ClassRepository>();
 builder.Services.AddScoped<IRaceRepository, RaceRepository>();
+builder.Services.AddScoped<IItemRepository, ItemRepository>();
 
 builder.Services.AddScoped<IAuthorizationHandler, OwnershipHandler>();
 // builder.Services.AddHttpContextAccessor();
@@ -108,7 +110,9 @@ try
     var dbContext = services.GetRequiredService<AppDbContext>();
     await context.Database.MigrateAsync();
     await Seed.SeedUsers(userManager, roleManger);
+    await Seed.SeedEquipmentSlots(context);
     await Seed.SeedItemFamilies(dbContext);
+    await Seed.SeedItems(dbContext);
     await Seed.SeedLanguages(dbContext);
     await Seed.SeedRaces(dbContext);
     await Seed.SeedClasses(dbContext);

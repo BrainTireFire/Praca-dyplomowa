@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using pracadyplomowa.Models.Entities.Campaign;
 using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Models.Entities.Powers;
+using pracadyplomowa.Models.Enums;
 
 namespace pracadyplomowa.Models.Entities.Items
 {
@@ -44,26 +45,32 @@ namespace pracadyplomowa.Models.Entities.Items
         // public virtual ICollection<EffectBlueprint> R_ItemCreateEffectsOnEquip { get; set; } = [];
         public virtual ICollection<Power> R_EquipItemGrantsAccessToPower { get; set; } = [];
 
-        // private EquipData Equip(Character character){
-        //     EquipData equipData = new()
-        //     {
-        //         R_Character = character,
-        //         R_Item = this
-        //     };
-        //     return equipData;
-        // }
+        public void Unequip(Character character){
+            character.R_EquippedItems.ToList().RemoveAll(ed => ed.R_Character == character && ed.R_Item == this);
+            this.R_EquipData = null;
+        }
+// powersAlwaysAvailable.Intersect(this.R_PowersAlwaysAvailable).Count() == powersAlwaysAvailable.Count
+        public EquipData Equip(Character character, EquipmentSlot slot){
+            if(this.R_ItemIsEquippableInSlots.Where(s => s == slot).Any()){
+                if(this.R_ItemIsEquippableInSlots.Intersect(character.R_CharacterBelongsToRace.R_EquipmentSlots).Count() == this.R_ItemIsEquippableInSlots.Count){
+                    character.R_EquippedItems.Where(ed => ed.R_Slots.Contains(slot)).Select(ed => ed.R_Item).ToList().ForEach(i => i.Unequip(character));
+                    EquipData equipData = new()
+                    {
+                        R_Character = character,
+                        R_Item = this
+                    };
+                    character.R_EquippedItems.Add(equipData);
+                    this.R_EquipData = equipData;
+                    equipData.R_Slots.AddRange(this.R_ItemIsEquippableInSlots);
+                    return equipData;
+                }
+                throw new EquippingException("Race does not have necessary equipment slot");
+            }
+            else{
+                throw new EquippingException("Item is not equippable in this slot");
+            }
+        }
 
-        // public void Unequip(Character character){
-        //     character.R_EquippedItems.ToList().RemoveAll(ed => ed.R_Character == character && ed.R_Item == this);
-        //     this.R_EquipData = null;
-        // }
-
-        // public EquipData EquipInMainHand(Character character){
-        //     if(this.R_ItemIsEquippableInSlots.Where(slot => slot.Type == Enums.SlotType.MainHand).Any()){
-        //         character.R_EquippedItems.Where(ed => ed.Types.Contains(Enums.SlotType.MainHand)).Select(ed => ed.R_Item).ToList().ForEach(i => i.Unequip(character));
-        //         EquipData equipData = Equip(character);
-        //         equipData.Types.AddRange(this.R_ItemIsEquippableInSlots)
-        //     }
-        // }
+        public class EquippingException(string message) : Exception(message);
     }
 }

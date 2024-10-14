@@ -16,5 +16,9 @@ namespace pracadyplomowa.Repository.Item
         {
             return await _context.Items.Where(i => i.Name == name).FirstAsync();
         }
+        public async Task<Models.Entities.Items.Item> GetByNameWithEquipmentSlots(string name)
+        {
+            return await _context.Items.Where(i => i.Name == name).Include(i => i.R_ItemIsEquippableInSlots).FirstAsync();
+        }
     }
 }

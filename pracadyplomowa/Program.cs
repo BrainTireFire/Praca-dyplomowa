@@ -110,6 +110,7 @@ try
     var dbContext = services.GetRequiredService<AppDbContext>();
     await context.Database.MigrateAsync();
     await Seed.SeedUsers(userManager, roleManger);
+    await Seed.SeedEquipmentSlots(context);
     await Seed.SeedItemFamilies(dbContext);
     await Seed.SeedItems(dbContext);
     await Seed.SeedLanguages(dbContext);

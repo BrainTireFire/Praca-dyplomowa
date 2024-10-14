@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using pracadyplomowa.Models;
@@ -211,6 +212,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .HasForeignKey(ei => ei.R_TargetedItemId)
                         .IsRequired(false);
                 builder.Entity<Item>().Navigation(i => i.R_ItemInItemsFamily).AutoInclude();
+                builder.Entity<EquipData>().Navigation(ed => ed.R_Slots).AutoInclude();
                 // builder.Entity<Item>()
                 //         .HasMany(c => c.R_ItemCreateEffectsOnEquip)
                 //         .WithOne(ei => ei.R_CreatedByEquipping)

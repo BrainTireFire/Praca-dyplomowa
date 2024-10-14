@@ -453,7 +453,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             get {
                 int baseArmorClass = 10;
                 int dexterityModifier = this.DexterityModifier;
-                IEnumerable<Apparel> apparel = this.R_EquippedItems.Where(ed => ed.Types.Contains(SlotType.Apparel)).Select(aed => aed.R_Item).OfType<Apparel>();
+                IEnumerable<Apparel> apparel = this.R_EquippedItems.Where(ed => ed.R_Slots.Select(s => s.Type).Contains(SlotType.Apparel)).Select(aed => aed.R_Item).OfType<Apparel>();
                 bool wearsHeavyArmor = apparel.Where(a => a.R_ItemInItemsFamily.ItemType == ItemType.HeavyArmor).Any();
                 if(wearsHeavyArmor){
                     dexterityModifier = Math.Min(dexterityModifier, 0);
@@ -468,7 +468,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                                 .OfType<ArmorClassEffectInstance>()
                                 .Sum(m => m.DiceSet);
                 int armorClassFromItems = this.R_EquippedItems
-                                .Where(ei => ei.Types.Contains(SlotType.Apparel))
+                                .Where(ei => ei.R_Slots.Select(s => s.Type).Contains(SlotType.Apparel))
                                 .Select(ei => ei.R_Item)
                                 .OfType<Apparel>()
                                 .Distinct()
@@ -551,6 +551,13 @@ namespace pracadyplomowa.Models.Entities.Characters
             return this.AffectedByApprovedEffects.OfType<ProficiencyEffectInstance>().Where(pei => 
                         pei.R_GrantsProficiencyInItemFamilyId == familyId
                         ).Any();
+        }
+
+        public void EquipItem(Item item, EquipmentSlot slot){
+            item.Equip(this, slot);
+        }
+        public void UnequipItem(Item item){
+            item.Unequip(this);
         }
     }
 }

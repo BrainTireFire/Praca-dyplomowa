@@ -9,6 +9,6 @@ namespace pracadyplomowa.Repository.Race
     {
         public Task<List<Models.Entities.Characters.Race>> GetRaceList();
 
-        public Task<Models.Entities.Characters.Race> GetRaceByIdWithRaceLevelAndChoiceGroups(int id, int level);
+        public Task<Models.Entities.Characters.Race> GetRaceByIdWithRaceLevelAndChoiceGroupsAndSlots(int id, int level);
     }
 }

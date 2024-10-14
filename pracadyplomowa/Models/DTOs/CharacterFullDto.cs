@@ -320,10 +320,10 @@ namespace pracadyplomowa.Models.DTOs
         }
 
         public static List<WeaponAttack> GetAttacks(Character character){
-            return character.R_EquippedItems.Where(ei => ei.Types.Contains(SlotType.MainHand) || ei.Types.Contains(SlotType.OffHand)).Select(ei => ei.R_Item).OfType<Weapon>().Select(w => new WeaponAttack(){
+            return character.R_EquippedItems.Where(ei => ei.R_Slots.Select(s => s.Type).Contains(SlotType.MainHand) || ei.R_Slots.Select(s => s.Type).Contains(SlotType.OffHand)).Select(ei => ei.R_Item).OfType<Weapon>().Select(w => new WeaponAttack(){
                 Id = w.Id,
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-                Main = w.R_EquipData.Types.Contains(SlotType.MainHand),
+                Main = w.R_EquipData.R_Slots.Select(s => s.Type).Contains(SlotType.MainHand),
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
                 Damage = w.GetDamageDiceSet(),
                 AttackBonus = w.GetAttackBonus(),

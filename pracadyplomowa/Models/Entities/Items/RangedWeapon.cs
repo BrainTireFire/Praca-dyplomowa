@@ -32,7 +32,7 @@ namespace pracadyplomowa.Models.Entities.Items
                 && ei.AttackRollEffectType.AttackRollEffect_Range == Enums.EffectOptions.AttackRollEffect_Range.Ranged)
                 .Select(ei => ei.DiceSet.getPersonalizedSet(Wielder))
                 .Aggregate(new DiceSet(), (accumulator, value) => accumulator + value)
-                + (R_EquipData != null && R_EquipData.Types.Contains(Enums.SlotType.MainHand) ? Wielder.Dexterity : 0);
+                + (R_EquipData != null && R_EquipData.R_Slots.Select(s => s.Type).Contains(Enums.SlotType.MainHand) ? Wielder.Dexterity : 0);
             }
         }
     }

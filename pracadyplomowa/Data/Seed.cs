@@ -55,6 +55,26 @@ public class Seed
         await context.SaveChangesAsync();
     }
 
+    public static async Task SeedEquipmentSlots(AppDbContext context){
+        List<EquipmentSlot> slots  = new List<EquipmentSlot>();
+        CheckIfSlotExistsAlready(context, slots, new EquipmentSlot(){Name = "Body", Type = SlotType.Apparel});
+        CheckIfSlotExistsAlready(context, slots, new EquipmentSlot(){Name = "Right palm", Type = SlotType.MainHand});
+        CheckIfSlotExistsAlready(context, slots, new EquipmentSlot(){Name = "Left palm", Type = SlotType.OffHand});
+        CheckIfSlotExistsAlready(context, slots, new EquipmentSlot(){Name = "Arms", Type = SlotType.Apparel});
+        CheckIfSlotExistsAlready(context, slots, new EquipmentSlot(){Name = "Legs", Type = SlotType.Apparel});
+        CheckIfSlotExistsAlready(context, slots, new EquipmentSlot(){Name = "Head", Type = SlotType.Apparel});
+        CheckIfSlotExistsAlready(context, slots, new EquipmentSlot(){Name = "Neck", Type = SlotType.Apparel});
+        context.EquipmentSlots.AddRange(slots);
+        await context.SaveChangesAsync();
+    }
+
+    
+    private static void CheckIfSlotExistsAlready(AppDbContext context, List<EquipmentSlot> slots, EquipmentSlot newSlot){
+        if(!context.EquipmentSlots.Where(slot => slot.Name == newSlot.Name).Any()){
+            slots.Add(newSlot);
+        }
+    }
+
     public static async Task SeedItemFamilies(AppDbContext context){
         List<ItemFamily> newFamilies = new();
 
@@ -111,7 +131,10 @@ public class Seed
 
     public static async Task SeedItems(AppDbContext context){
         var item = new MeleeWeapon("Iron longsword", "Basic sword", context.ItemFamilies.Where(i => i.Name == "Longsword").First(), 1);
-        context.Items.AddRange([item]);
+        item.R_ItemIsEquippableInSlots.Add(context.EquipmentSlots.Where(s => s.Name == "Right palm").First());
+        var items = new List<Item>();
+        CheckIfExistsAlready(context, items, item);
+        context.Items.AddRange(items);
         await context.SaveChangesAsync();
     }
 
@@ -121,12 +144,19 @@ public class Seed
         }
     }
 
+    private static void CheckIfExistsAlready(AppDbContext context, List<Item> newItems, Item newItem){
+        if(!context.Items.Where(item => item.Name == newItem.Name).Any()){
+            newItems.Add(newItem);
+        }
+    }
+
     public static async Task SeedRaces(AppDbContext context)
     {   
 
         List<Language> existingLanguages = context.Languages.ToList();
         if(context.Races.Where(race => race.Name == "Human").FirstOrDefault() == null){
             Race human = prepareRace("Human", Size.Medium, 30);
+            human.R_EquipmentSlots.AddRange(context.EquipmentSlots);
 
             ChoiceGroup grantedLanguage = new("Race language");
             Language commonLanguage = existingLanguages.Where(lang => lang.Name == "Common").First();
@@ -181,6 +211,7 @@ public class Seed
         }
         if(context.Races.Where(race => race.Name == "Elf").FirstOrDefault() == null){
             Race elf = prepareRace("Elf", Size.Medium, 30);
+            elf.R_EquipmentSlots.AddRange(context.EquipmentSlots);
 
             ChoiceGroup languages = new("Race language");
             Language commonLanguage = existingLanguages.Where(lang => lang.Name == "Common").First();
@@ -243,6 +274,7 @@ public class Seed
         }
         if(context.Races.Where(race => race.Name == "Dwarf").FirstOrDefault() == null){
             Race dwarf = prepareRace("Dwarf", Size.Medium, 25);
+            dwarf.R_EquipmentSlots.AddRange(context.EquipmentSlots);
 
             ChoiceGroup constitutionBonusGroup = new("Ability score increase");
             AbilityEffectBlueprint constitutionBonus = new("Dwarven constitution", 2, RollMoment.OnCast);

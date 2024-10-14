@@ -46,7 +46,7 @@ namespace pracadyplomowa.Controllers
         
         [HttpPost]
         public async Task<ActionResult> CreateNewCharacter(CharacterInsertDto characterDto){
-            var race = await _raceRepository.GetRaceByIdWithRaceLevelAndChoiceGroups(characterDto.RaceId, 1);
+            var race = await _raceRepository.GetRaceByIdWithRaceLevelAndChoiceGroupsAndSlots(characterDto.RaceId, 1);
             if(race == null){
                 return BadRequest(new ApiResponse(400, "Race with Id " + characterDto.RaceId + " does not exist"));
             }
@@ -68,9 +68,9 @@ namespace pracadyplomowa.Controllers
                 ownerId
             );
 
-            var item = await _itemRepository.GetByName("Iron longsword");
+            var item = await _itemRepository.GetByNameWithEquipmentSlots("Iron longsword");
             character.R_CharacterHasBackpack = new Backpack(){R_BackpackOfCharacter = character, R_BackpackHasItems = [await _itemRepository.GetByName("Iron longsword")]};
-            // character.R_Equ
+            character.EquipItem(item, item.R_ItemIsEquippableInSlots.First());
 
             _characterRepository.Add(character);
             await _characterRepository.SaveChanges();

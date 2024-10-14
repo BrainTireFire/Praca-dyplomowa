@@ -9,6 +9,7 @@ import {
   drawGrid,
   highlightBox,
   drawCustomCursor,
+  drawSelectedBox,
 } from "./CanvasUtils";
 import { VirtualBoardProps } from "./../../../models/session/VirtualBoardProps";
 import { Coordinate } from "../../../models/session/Coordinate";
@@ -68,12 +69,12 @@ export default function VirtualBoard({
     const height = canvas.height;
 
     ctx.clearRect(0, 0, width, height);
-    drawGrid(ctx, width, height);
+    drawGrid(ctx, width, height, 16, 9);
 
     Object.keys(selectedBoxes).forEach((connectionId) => {
       const box = selectedBoxes[connectionId];
       const color = getColorForUser(connectionId);
-      highlightBox(ctx, box.x, box.y, color);
+      drawSelectedBox(ctx, box, 16, 9);
     });
 
     // Draw cursors
@@ -90,15 +91,29 @@ export default function VirtualBoard({
   }, [drawCanvas]);
 
   const handleCanvasClick = debounce(
-    async (event: React.MouseEvent<HTMLCanvasElement>) => {
+    async (
+      event: React.MouseEvent<HTMLCanvasElement>,
+      columns: number,
+      rows: number
+    ) => {
       const canvas = canvasRef.current;
       if (!canvas || !connection || !groupName) return;
       const rect = canvas.getBoundingClientRect();
-      const x = event.clientX - rect.left - translatePos.x;
-      const y = event.clientY - rect.top - translatePos.y;
+      // const x = event.clientX - rect.left - translatePos.x;
+      // const y = event.clientY - rect.top - translatePos.y;
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
 
-      const gridX = Math.floor(x / GRID_SIZE);
-      const gridY = Math.floor(y / GRID_SIZE);
+      const squareSize = Math.min(
+        INITIAL_WIDTH / columns,
+        INITIAL_HEIGHT / rows
+      );
+
+      const gridX = Math.floor(x / squareSize);
+      const gridY = Math.floor(y / squareSize);
+
+      // const gridX = Math.floor(x / GRID_SIZE);
+      // const gridY = Math.floor(y / GRID_SIZE);
 
       const connectionId = connection?.connectionId as string;
 
@@ -253,7 +268,7 @@ export default function VirtualBoard({
         ref={canvasRef}
         width={INITIAL_WIDTH}
         height={INITIAL_HEIGHT}
-        onClick={handleCanvasClick}
+        onClick={(event) => handleCanvasClick(event, 16, 9)}
         onContextMenu={handleCanvasRightClick}
       >
         Canvas

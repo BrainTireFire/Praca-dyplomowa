@@ -388,6 +388,9 @@ namespace pracadyplomowa.Migrations
                     b.Property<int>("FieldCoverLevel")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("FieldMovementCost")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("PositionX")
                         .HasColumnType("INTEGER");
 
@@ -400,7 +403,7 @@ namespace pracadyplomowa.Migrations
                     b.Property<int>("R_BoardId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("R_OccupiedById")
+                    b.Property<int?>("R_OccupiedById")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -1223,9 +1226,18 @@ namespace pracadyplomowa.Migrations
                 {
                     b.HasBaseType("pracadyplomowa.Models.Entities.ObjectWithOwner");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("SizeX")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SizeY")
+                        .HasColumnType("INTEGER");
 
                     b.ToTable("Boards");
                 });
@@ -2187,9 +2199,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasOne("pracadyplomowa.Models.Entities.Campaign.ParticipanceData", "R_OccupiedBy")
                         .WithMany("R_OccupiedFields")
-                        .HasForeignKey("R_OccupiedById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("R_OccupiedById");
 
                     b.Navigation("R_Board");
 
@@ -2767,6 +2777,25 @@ namespace pracadyplomowa.Migrations
                         .WithMany("R_ProficiencyGrantedByEffectBlueprint")
                         .HasForeignKey("R_GrantsProficiencyInItemFamilyId");
 
+                    b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.ProficiencyEffectType", "ProficiencyEffectType", b1 =>
+                        {
+                            b1.Property<int>("ProficiencyEffectBlueprintId")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("ProficiencyEffect")
+                                .HasColumnType("INTEGER");
+
+                            b1.HasKey("ProficiencyEffectBlueprintId");
+
+                            b1.ToTable("EffectBlueprints");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ProficiencyEffectBlueprintId");
+                        });
+
+                    b.Navigation("ProficiencyEffectType")
+                        .IsRequired();
+
                     b.Navigation("R_GrantsProficiencyInItemFamily");
                 });
 
@@ -2998,6 +3027,131 @@ namespace pracadyplomowa.Migrations
                         .IsRequired();
 
                     b.Navigation("DiceSet");
+                });
+
+            modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.ResistanceEffectInstance", b =>
+                {
+                    b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.ResistanceEffectType", "ResistanceEffectType", b1 =>
+                        {
+                            b1.Property<int>("ResistanceEffectInstanceId")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("ResistanceEffect")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("ResistanceEffect_DamageType")
+                                .HasColumnType("INTEGER");
+
+                            b1.HasKey("ResistanceEffectInstanceId");
+
+                            b1.ToTable("EffectInstances");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ResistanceEffectInstanceId");
+                        });
+
+                    b.Navigation("ResistanceEffectType")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.SavingThrowEffectInstance", b =>
+                {
+                    b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.SavingThrowEffectType", "SavingThrowEffectType", b1 =>
+                        {
+                            b1.Property<int>("SavingThrowEffectInstanceId")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("SavingThrowEffect")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("SavingThrowEffect_Ability")
+                                .HasColumnType("INTEGER");
+
+                            b1.HasKey("SavingThrowEffectInstanceId");
+
+                            b1.ToTable("EffectInstances");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SavingThrowEffectInstanceId");
+                        });
+
+                    b.Navigation("SavingThrowEffectType")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.SizeEffectInstance", b =>
+                {
+                    b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.SizeEffectType", "SizeEffectType", b1 =>
+                        {
+                            b1.Property<int>("SizeEffectInstanceId")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("SizeBonus")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("SizeEffect")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("SizeEffect_SizeToSet")
+                                .HasColumnType("INTEGER");
+
+                            b1.HasKey("SizeEffectInstanceId");
+
+                            b1.ToTable("EffectInstances");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SizeEffectInstanceId");
+                        });
+
+                    b.Navigation("SizeEffectType")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.SkillEffectInstance", b =>
+                {
+                    b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.SkillEffectType", "SkillEffectType", b1 =>
+                        {
+                            b1.Property<int>("SkillEffectInstanceId")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("SkillEffect")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("SkillEffect_Skill")
+                                .HasColumnType("INTEGER");
+
+                            b1.HasKey("SkillEffectInstanceId");
+
+                            b1.ToTable("EffectInstances");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SkillEffectInstanceId");
+                        });
+
+                    b.Navigation("SkillEffectType")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.StatusEffectInstance", b =>
+                {
+                    b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.StatusEffectType", "StatusEffectType", b1 =>
+                        {
+                            b1.Property<int>("StatusEffectInstanceId")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("StatusEffect")
+                                .HasColumnType("INTEGER");
+
+                            b1.HasKey("StatusEffectInstanceId");
+
+                            b1.ToTable("EffectInstances");
+
+                            b1.WithOwner()
+                                .HasForeignKey("StatusEffectInstanceId");
+                        });
+
+                    b.Navigation("StatusEffectType")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.Apparel", b =>

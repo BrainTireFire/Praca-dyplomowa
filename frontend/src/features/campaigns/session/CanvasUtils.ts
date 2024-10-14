@@ -5,8 +5,8 @@ const getCssVariable = (variableName: string): string => {
 };
 
 export const GRID_SIZE = 70;
-export const INITIAL_WIDTH = 1260;
-export const INITIAL_HEIGHT = 700;
+export const INITIAL_WIDTH = 1280;
+export const INITIAL_HEIGHT = 720;
 export const CURSOR_SIZE = 10;
 
 export const getColorForUser = (connectionId: string) => {
@@ -26,21 +26,25 @@ export const getColorForUser = (connectionId: string) => {
 export const drawGrid = (
   ctx: CanvasRenderingContext2D,
   width: number,
-  height: number
+  height: number,
+  columns?: number = 16,
+  rows?: number = 9
 ) => {
   ctx.save();
+
+  const squareSize = Math.min(width / columns, height / rows);
 
   ctx.strokeStyle = getCssVariable("--color-border");
   ctx.lineWidth = 1;
 
-  for (let x = 0; x <= width; x += GRID_SIZE) {
+  for (let x = 0; x <= width; x += squareSize) {
     ctx.beginPath();
     ctx.moveTo(x, 0);
     ctx.lineTo(x, height);
     ctx.stroke();
   }
 
-  for (let y = 0; y <= height; y += GRID_SIZE) {
+  for (let y = 0; y <= height; y += squareSize) {
     ctx.beginPath();
     ctx.moveTo(0, y);
     ctx.lineTo(width, y);
@@ -102,5 +106,80 @@ export const drawCustomCursor = (
   const textY = y * GRID_SIZE + GRID_SIZE / 2 - CURSOR_SIZE - 5;
 
   ctx.fillText(userName, textX, textY);
+  ctx.restore();
+};
+
+export const drawSelectedBox = (
+  ctx: CanvasRenderingContext2D,
+  selectedBox: { x: number; y: number } | null,
+  columns: number,
+  rows: number
+) => {
+  if (!selectedBox) return;
+
+  const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
+
+  ctx.save();
+  ctx.strokeStyle = getCssVariable("--color-link");
+  ctx.lineWidth = 2;
+
+  // Draw the selected box at the correct position and size
+  ctx.strokeRect(
+    selectedBox.x * squareSize, // X position of the selected square
+    selectedBox.y * squareSize, // Y position of the selected square
+    squareSize, // Width of the square
+    squareSize // Height of the square
+  );
+
+  ctx.restore();
+};
+
+export const drawSelectedBoxes = (
+  ctx: CanvasRenderingContext2D,
+  selectedBoxes: { x: number; y: number }[], // Array of selected boxes
+  columns: number,
+  rows: number
+) => {
+  if (!selectedBoxes.length) return; // No boxes to draw
+
+  const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
+
+  ctx.save();
+  ctx.strokeStyle = getCssVariable("--color-link");
+  ctx.lineWidth = 2;
+
+  // Iterate over each selected box and draw it
+  selectedBoxes.forEach((box) => {
+    ctx.strokeRect(
+      box.x * squareSize, // X position of the selected square
+      box.y * squareSize, // Y position of the selected square
+      squareSize, // Width of the square
+      squareSize // Height of the square
+    );
+  });
+
+  ctx.restore();
+};
+
+export const fillSelectedBox = (
+  ctx: CanvasRenderingContext2D,
+  selectedBox: { positionX: number; positionY: number } | null,
+  columns: number,
+  rows: number,
+  color: string
+) => {
+  if (!selectedBox) return;
+
+  const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
+
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.strokeStyle = getCssVariable("--color-border");
+  ctx.fillRect(
+    selectedBox.positionX * squareSize, // X position of the selected square
+    selectedBox.positionY * squareSize, // Y position of the selected square
+    squareSize, // Width of the square
+    squareSize // Height of the square
+  );
   ctx.restore();
 };

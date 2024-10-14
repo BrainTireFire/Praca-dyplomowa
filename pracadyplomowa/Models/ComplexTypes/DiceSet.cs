@@ -93,6 +93,12 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
 
         public int Roll(Character roller){
+            int result = Roll();
+            result += ResolveAdditionalValues(roller);
+            return result;
+        }
+
+        public int Roll(){
             Random rnd = new();
             int result = d20 * rnd.Next(1, 20);
             result += d12 * rnd.Next(1, 12);
@@ -102,7 +108,6 @@ namespace pracadyplomowa.Models.Entities.Characters
             result += d4 * rnd.Next(1, 4);
             result += d100 * rnd.Next(1, 100);
             result += flat;
-            result += ResolveAdditionalValues(roller);
             return result;
         }
 

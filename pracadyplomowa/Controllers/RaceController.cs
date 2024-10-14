@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.Entities.Characters;
+using pracadyplomowa.Models.Enums;
 using pracadyplomowa.Repository.Race;
 
 namespace pracadyplomowa.Controllers
@@ -33,8 +34,8 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<RaceDTO>> PostRace([FromBody] string name){
-            Race characterRace = new Race(name);
+        public async Task<ActionResult<RaceDTO>> PostRace([FromBody] RaceDTO race){
+            Race characterRace = new Race{Name = race.Name, Size = race.Size, Speed = race.Speed};
             _raceRepository.Add(characterRace);
             await _raceRepository.SaveChanges();
 

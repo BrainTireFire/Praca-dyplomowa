@@ -17,16 +17,18 @@ export default function EffectTable({ effects }: { effects: Effect[] }) {
       <Table
         header="Temporary effects"
         button="Add new"
-        columns="1fr 1fr 1fr 1fr 3.2rem"
+        columns="1fr 1fr 1fr 1fr 0.01rem"
       >
         <Table.Header>
           <div>Name</div>
           <div>Time left</div>
           <div>Source</div>
           <div>Target</div>
+          <div></div>
         </Table.Header>
         <Table.Body
           data={effects}
+          columnCount={5}
           render={(effect) => <EffectRow key={effect.id} effect={effect} />}
         />
         <Table.Footer>{/* <Pagination count={count} /> */}</Table.Footer>

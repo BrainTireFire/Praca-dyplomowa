@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.EntityFrameworkCore.Update.Internal;
 using Npgsql.Replication;
 using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Models.Entities.Items;
@@ -11,6 +12,8 @@ using pracadyplomowa.Models.Entities.Powers.EffectBlueprints;
 using pracadyplomowa.Models.Entities.Powers.EffectInstances;
 using pracadyplomowa.Models.Enums;
 using pracadyplomowa.Models.Enums.EffectOptions;
+using pracadyplomowa.Utility;
+using static pracadyplomowa.Models.DTOs.CharacterFullDto;
 
 namespace pracadyplomowa.Models.DTOs
 {
@@ -26,7 +29,7 @@ namespace pracadyplomowa.Models.DTOs
         public List<ItemFamily> ToolProficiencies { get; set; } = null!;
         public List<ItemFamily> WeaponAndArmorProficiencies { get; set; } = null!;
         public RaceClass Race { get; set; } = null!;
-        public Size Size { get; set; }
+        public SizeWithName Size { get; set; }
         public List<ClassWithLevel> Classes { get; set; } = null!;
         public Hitpoints HitPoints { get; set; } = null!;
         public int Initiative { get; set; } = 0;
@@ -41,29 +44,35 @@ namespace pracadyplomowa.Models.DTOs
         public List<Effect> ConstantEffects { get; set; } = null!;
         public List<Effect> Effects { get; set; } = null!;
         public List<Resource> Resources { get; set; } = null!;
+        public List<ChoiceGroup> ChoiceGroups {get; set;} = null!;
+        public int ProficiencyBonus { get; set; }
 
         public CharacterFullDto(Character character){
             Id = character.Id;
             Name = character.Name;
-            Description = character.Description;
+            Description = character.Description ?? "";
             Attributes = GetAttributes(character);
             SavingThrows = GetSavingThrows(character);
             Skills = GetSkills(character);
             Languages = GetLanguages(character);
-            ToolProficiencies = GetItemProficiencies(character, ProficiencyEffect.Tool);
+            ToolProficiencies = GetItemProficiencies(character, ItemType.Tool);
             WeaponAndArmorProficiencies =
             [
-                .. GetItemProficiencies(character, ProficiencyEffect.Armor),
-                .. GetItemProficiencies(character, ProficiencyEffect.Weapon),
-                .. GetItemProficiencies(character, ProficiencyEffect.Shields),
+                .. GetItemProficiencies(character, ItemType.HeavyArmor),
+                .. GetItemProficiencies(character, ItemType.MediumArmor),
+                .. GetItemProficiencies(character, ItemType.LightArmor),
+                .. GetItemProficiencies(character, ItemType.Shield),
+                .. GetItemProficiencies(character, ItemType.Clothing),
+                .. GetItemProficiencies(character, ItemType.SimpleWeapon),
+                .. GetItemProficiencies(character, ItemType.MartialWeapon),
             ];
             Race = GetRace(character);
             Size = GetSize(character);
             Classes = GetClasses(character);
             HitPoints = GetHitpoints(character);
-            Initiative = GetInitiative(character);
-            Speed = GetSpeed(character);
-            ArmorClass = GetArmorClass(character);
+            Initiative = character.Initiative;
+            Speed = character.Speed;
+            ArmorClass = character.ArmorClass;
             DeathSaves = GetDeathSaves(character);
             HitDice = GetHitDice(character);
             WeaponAttacks = GetAttacks(character);
@@ -73,6 +82,8 @@ namespace pracadyplomowa.Models.DTOs
             ConstantEffects = GetConstantEffects(character);
             Effects = GetTemporaryEffects(character);
             Resources = GetResources(character);
+            ChoiceGroups = GetChoiceGroups(character);
+            ProficiencyBonus = character.ProficiencyBonus;
         }
 
 
@@ -81,19 +92,20 @@ namespace pracadyplomowa.Models.DTOs
         {
             public string Name { get; set; } = null!;
             public int Value { get; set; }
+            public int Modifier { get; set; }
         }
         public static List<Attribute> GetAttributes(Character character)
         {
-            var attributes =  character.R_AffectedBy
-                    .SelectMany(group => group.R_OwnedEffects)
-                    .OfType<AbilityEffectInstance>()
-                    .Where(ei => ei.AbilityEffectType.AbilityEffect == AbilityEffect.Bonus)
-                    .GroupBy(ei => ei.AbilityEffectType.AbilityEffect_Ability)
-                    .Select(g => new Attribute{
-                        Name = g.Key.ToString(),
-                        Value = g.Sum(ei => ei.DiceSet.flat)
-                    })
-                    .ToList();
+            var attributes = new List<Attribute>();
+            foreach(int i in Enum.GetValues(typeof(Enums.Ability))){
+                #pragma warning disable CS8601 // Possible null reference assignment.
+                attributes.Add(new Attribute(){
+                    Name = Enum.GetName(typeof(Enums.Ability), i),
+                    Value = character.AbilityValue((Enums.Ability)i),
+                    Modifier = Character.AbilityModifier(character.AbilityValue((Enums.Ability)i))
+                });
+                #pragma warning restore CS8601 // Possible null reference assignment.
+            }
             return attributes;
         }
 
@@ -105,28 +117,17 @@ namespace pracadyplomowa.Models.DTOs
         }
         public static List<SavingThrow> GetSavingThrows(Character character)
         {
-            var savingThrows =  character.R_AffectedBy
-                                .SelectMany(group => group.R_OwnedEffects)
-                                .OfType<SavingThrowEffectInstance>()
-                                .Where(ei => ei.SavingThrowEffectType.SavingThrowEffect == SavingThrowEffect.Bonus)
-                                .GroupBy(ei => ei.SavingThrowEffectType.SavingThrowEffect_Ability)
-                                .Select(g => new SavingThrow{
-                                    Name = g.Key.ToString(),
-                                    Value = g.Sum(ei => ei.DiceSet.flat)
-                                })
-                                .ToList();
-            var proficiencies = character.R_AffectedBy
-                                .SelectMany(group => group.R_OwnedEffects)
-                                .OfType<SavingThrowEffectInstance>()
-                                .Where(ei => ei.SavingThrowEffectType.SavingThrowEffect == SavingThrowEffect.Proficiency)
-                                .Select(ei => ei.SavingThrowEffectType.SavingThrowEffect_Ability.ToString())
-                                .Distinct()
-                                .ToList();
-            savingThrows.ForEach(savingThrow => {
-                if(proficiencies.Contains(savingThrow.Name)){
-                    savingThrow.Proficient = true;
-                }
-            });
+            var savingThrows = new List<SavingThrow>();
+            foreach(int i in Enum.GetValues(typeof(Enums.Ability))){
+                #pragma warning disable CS8601 // Possible null reference assignment.
+                savingThrows.Add(new SavingThrow(){
+                    Name = Enum.GetName(typeof(Enums.Ability), i),
+                    Value = character.SavingThrowValue((Enums.Ability)i),
+                    Proficient = character.SavingThrowProficiency((Enums.Ability)i)
+                });
+                #pragma warning restore CS8601 // Possible null reference assignment.
+            }
+            
             return savingThrows;
         }
 
@@ -139,28 +140,18 @@ namespace pracadyplomowa.Models.DTOs
         }
         public static List<Skill> GetSkills(Character character)
         {
-            var skills =  character.R_AffectedBy
-                                .SelectMany(group => group.R_OwnedEffects)
-                                .OfType<SkillEffectInstance>()
-                                .Where(ei => ei.SkillEffectType.SkillEffect == SkillEffect.Bonus)
-                                .GroupBy(ei => ei.SkillEffectType.SkillEffect_Skill)
-                                .Select(g => new Skill{
-                                    Name = g.Key.ToString(),
-                                    Value = g.Sum(ei => ei.DiceSet.flat)
-                                })
-                                .ToList();
-            var proficiencies = character.R_AffectedBy
-                                .SelectMany(group => group.R_OwnedEffects)
-                                .OfType<SkillEffectInstance>()
-                                .Where(ei => ei.SkillEffectType.SkillEffect == SkillEffect.Proficiency)
-                                .Select(ei => ei.SkillEffectType.SkillEffect_Skill.ToString())
-                                .Distinct()
-                                .ToList();
-            skills.ForEach(skill => {
-                if(proficiencies.Contains(skill.Name)){
-                    skill.Proficient = true;
-                }
-            });
+            var skills = new List<Skill>();
+            foreach(int i in Enum.GetValues(typeof(Enums.Skill))){
+                #pragma warning disable CS8601 // Possible null reference assignment.
+                skills.Add(new Skill(){
+                    Name = Enum.GetName(typeof(Enums.Skill), i),
+                    Ability = Enum.GetName(typeof(Ability), Utils.SkillToAbility((Enums.Skill)i)),
+                    Value = character.SkillValue((Enums.Skill)i),
+                    Proficient = character.SkillProficiency((Enums.Skill)i)
+                });
+                #pragma warning restore CS8601 // Possible null reference assignment.
+            }
+            
             return skills;
         }
 
@@ -170,7 +161,7 @@ namespace pracadyplomowa.Models.DTOs
         }
 
         public List<Language> GetLanguages(Character character){
-            var languages = new List<Language>();
+            var languages = character.R_AffectedBy.OfType<LanguageEffectInstance>().Select(effect => new Language{Id = effect.R_LanguageId, Name = effect.R_Language.Name}).ToList();
             return languages;
         }
 
@@ -178,12 +169,12 @@ namespace pracadyplomowa.Models.DTOs
             public int Id { get; set; }
             public string Name { get; set; } = null!;
         }
-        public static List<ItemFamily> GetItemProficiencies(Character character, ProficiencyEffect proficiency){
+        public static List<ItemFamily> GetItemProficiencies(Character character, ItemType itemType){
             var itemProficiencies =  character.R_AffectedBy
-                                .SelectMany(group => group.R_OwnedEffects)
                                 .OfType<ProficiencyEffectInstance>()
-                                .Where(ei => ei.ProficiencyEffectType.ProficiencyEffect == proficiency)
+                                // .Where(ei => ei.ProficiencyEffectType.ProficiencyEffect == proficiency)
                                 .Select(ei => ei.R_GrantsProficiencyInItemFamily)
+                                .Where(it => it.ItemType == itemType )
                                 .Select(itemFamily => new ItemFamily{
                                     Id = itemFamily.Id,
                                     Name = itemFamily.Name,
@@ -202,35 +193,6 @@ namespace pracadyplomowa.Models.DTOs
                 Id = character.R_CharacterBelongsToRace.Id,
                 Name = character.R_CharacterBelongsToRace.Name
             };
-        }
-
-        public static Size GetSize(Character character){
-            var size = character.R_CharacterBelongsToRace.Size;
-            var setSizes = character.R_AffectedBy
-                                .SelectMany(group => group.R_OwnedEffects)
-                                .OfType<SizeEffectInstance>()
-                                .Where(ei => ei.SizeEffectType.SizeEffect == SizeEffect.Change)
-                                .Select(ei => ei.SizeEffectType.SizeEffect_SizeToSet)
-                                .ToList();
-            if(setSizes.Count != 0){
-                size = setSizes.Max();
-            }
-            var sizeChanges = character.R_AffectedBy
-                                .SelectMany(group => group.R_OwnedEffects)
-                                .OfType<SizeEffectInstance>()
-                                .Where(ei => ei.SizeEffectType.SizeEffect == SizeEffect.Bonus)
-                                .Select(ei => ei.SizeEffectType.SizeBonus)
-                                .Sum();
-            var result = ((int)size) + sizeChanges;
-            if (Enum.IsDefined(typeof(Size), result))
-            {
-                return (Size)result;
-            }
-            else
-            {
-                if(result < 0) return Size.Tiny;
-                else return Size.Gargantuan;
-            }
         }
 
         public class ClassWithLevel
@@ -258,64 +220,50 @@ namespace pracadyplomowa.Models.DTOs
             public int Temporary {get; set;}
         }
         public static Hitpoints GetHitpoints(Character character){
-            var current = character.Hitpoints;
-            var temporary = character.R_AffectedBy
-                    .SelectMany(g => g.R_OwnedEffects)
-                    .OfType<HitpointEffectInstance>()
-                    .Where(h => h.HitpointEffectType.HitpointEffect == HitpointEffect.TemporaryHitpoints)
-                    .Sum(t => t.DiceSet.flat);
-            var maximum = character.R_AffectedBy
-                    .SelectMany(g => g.R_OwnedEffects)
-                    .OfType<HitpointEffectInstance>()
-                    .Where(h => h.HitpointEffectType.HitpointEffect == HitpointEffect.HitpointMaximumBonus)
-                    .Sum(t => t.DiceSet.flat);
             return new Hitpoints{
-                Current = current,
-                Temporary = temporary,
-                Maximum = maximum
+                Current = character.Hitpoints,
+                Temporary = character.TemporaryHitpoints,
+                Maximum = character.MaxHealth
             };
         }
 
 
         public static int GetFlatValue<T>(Character character) where T : ValueEffectInstance {
             int value = character.R_AffectedBy
-                                .SelectMany(g => g.R_OwnedEffects)
                                 .OfType<T>()
                                 .Sum(i => i.DiceSet.flat);
             return value;
         }
-        public static int GetInitiative(Character character){
-            int initiative = GetFlatValue<InitiativeEffectInstance>(character);
-            return initiative;
-        }
+        // public static int GetInitiative(Character character){
+        //     int initiative = character.Initiative;
+        //     return initiative;
+        // }
 
-        public static int GetSpeed(Character character){
-            int speed = character.R_CharacterBelongsToRace.Speed;
-            int multiplier =  character.R_AffectedBy
-                            .SelectMany(g => g.R_OwnedEffects)
-                            .OfType<MovementEffectInstance>()
-                            .Where(m => m.MovementEffectType.MovementEffect == MovementEffect.Multiplier)
-                            .Sum(m => m.DiceSet.flat);
-            int bonus = character.R_AffectedBy
-                            .SelectMany(g => g.R_OwnedEffects)
-                            .OfType<MovementEffectInstance>()
-                            .Where(m => m.MovementEffectType.MovementEffect == MovementEffect.Bonus)
-                            .Sum(m => m.DiceSet.flat);
+        // public static int GetSpeed(Character character){
+        //     int speed = character.R_CharacterBelongsToRace.Speed;
+        //     int multiplier =  character.R_AffectedBy
+        //                     .OfType<MovementEffectInstance>()
+        //                     .Where(m => m.MovementEffectType.MovementEffect == MovementEffect.Multiplier)
+        //                     .Sum(m => m.DiceSet.flat);
+        //     int bonus = character.R_AffectedBy
+        //                     .OfType<MovementEffectInstance>()
+        //                     .Where(m => m.MovementEffectType.MovementEffect == MovementEffect.Bonus)
+        //                     .Sum(m => m.DiceSet.flat);
 
-            return speed*multiplier+bonus;
-        }
+        //     return speed*multiplier+bonus;
+        // }
 
-        public static int GetArmorClass(Character character) {
-            int armorClassFromEffects = GetFlatValue<ArmorClassEffectInstance>(character);
-            int armorClassFromItems = character.R_EquippedItems
-            .Where(ei => ei.Type == SlotType.Apparel)
-            .Select(ei => ei.R_Item)
-            .OfType<Apparel>()
-            .Distinct()
-            .Sum(i => i.ArmorClass);
+        // public static int GetArmorClass(Character character) {
+        //     int armorClassFromEffects = GetFlatValue<ArmorClassEffectInstance>(character);
+        //     int armorClassFromItems = character.R_EquippedItems
+        //     .Where(ei => ei.Type == SlotType.Apparel)
+        //     .Select(ei => ei.R_Item)
+        //     .OfType<Apparel>()
+        //     .Distinct()
+        //     .Sum(i => i.ArmorClass);
 
-            return armorClassFromItems + armorClassFromEffects;
-        }
+        //     return armorClassFromItems + armorClassFromEffects;
+        // }
 
         public class DeathSavingThrows
         {
@@ -335,17 +283,7 @@ namespace pracadyplomowa.Models.DTOs
             public DiceSet Left { get; set; } = null!;
         }
         public static HitDiceClass GetHitDice(Character character){
-            DiceSet total = new()
-            {
-                d20 = character.R_CharacterHasLevelsInClass.Sum(cl => cl.HitDie.d20),
-                d12 = character.R_CharacterHasLevelsInClass.Sum(cl => cl.HitDie.d12),
-                d10 = character.R_CharacterHasLevelsInClass.Sum(cl => cl.HitDie.d10),
-                d8 = character.R_CharacterHasLevelsInClass.Sum(cl => cl.HitDie.d8),
-                d6 = character.R_CharacterHasLevelsInClass.Sum(cl => cl.HitDie.d6),
-                d4 = character.R_CharacterHasLevelsInClass.Sum(cl => cl.HitDie.d4),
-                d100 = character.R_CharacterHasLevelsInClass.Sum(cl => cl.HitDie.d100),
-                flat = 0,
-            };
+            DiceSet total = character.HitDiceTotal;
             DiceSet left = new()
             {
                 d20 = total.d20 - character.UsedHitDice.d20,
@@ -368,66 +306,78 @@ namespace pracadyplomowa.Models.DTOs
             public int Id { get; set; }
             public bool Main { get; set; } = false;
 
-            public List<Damage> Damages { get; set; } = [];
+            public DiceSet Damage { get; set; } = null!;
+            public DamageType DamageType;
 
             public int Range { get; set; } = 0;
         
-            public class Damage {
-                public DamageType DamageType{ get; set; }
-                public DiceSet DamageValue { get; set; } = null!;
-            }
+            // public class Damage {
+            //     public DamageType DamageType{ get; set; }
+            //     public DiceSet DamageValue { get; set; } = null!;
+            // }
 
         }
         public static List<WeaponAttack> GetAttacks(Character character){
-            var mainHandAttacks = character.R_CharacterHasBackpack.R_BackpackHasItems
-                    .OfType<Weapon>()
-                    .Where(i => i.R_EquipData != null && i.R_EquipData.Type == SlotType.MainHand)
-                    .SelectMany(i => i.R_PowersCastedOnHit)
-                    .Where(p => p.CastableBy == CastableBy.OnWeaponHit && p.RequiredActionType == ActionType.WeaponAttack)
-                    .ToList();
-            
-            var offHandAttacks = character.R_CharacterHasBackpack.R_BackpackHasItems
-                    .OfType<Weapon>()
-                    .Where(i => i.R_EquipData != null && i.R_EquipData.Type == SlotType.OffHand)
-                    .SelectMany(i => i.R_PowersCastedOnHit)
-                    .Where(p => p.CastableBy == CastableBy.OnWeaponHit && p.RequiredActionType == ActionType.WeaponAttack)
-                    .ToList();
-
-            var attacks = new List<WeaponAttack>();
-
-            attacks.AddRange(
-                mainHandAttacks.Select(attack => new WeaponAttack{
-                    Id = attack.Id,
-                    Main = true,
-                    Damages = attack.R_EffectBlueprints
-                    .OfType<DamageEffectBlueprint>()
-                    .Where(effect => effect.DamageEffectType.DamageEffect == DamageEffect.DamageDealt)
-                    .Select(effect => new WeaponAttack.Damage{
-                        DamageType = effect.DamageEffectType.DamageEffect_DamageType,
-                        DamageValue = effect.DiceSet
-                    })
-                    .ToList(),
-                    Range = attack.Range
-                })
-            );
-            attacks.AddRange(
-                offHandAttacks.Select(attack => new WeaponAttack{
-                    Id = attack.Id,
-                    Main = false,
-                    Damages = attack.R_EffectBlueprints
-                    .OfType<DamageEffectBlueprint>()
-                    .Where(effect => effect.DamageEffectType.DamageEffect == DamageEffect.DamageDealt)
-                    .Select(effect => new WeaponAttack.Damage{
-                        DamageType = effect.DamageEffectType.DamageEffect_DamageType,
-                        DamageValue = effect.DiceSet
-                    })
-                    .ToList(),
-                    Range = attack.Range
-                })
-            );
-
-            return attacks;
+            return character.R_EquippedItems.Where(ei => ei.Type == SlotType.MainHand || ei.Type == SlotType.OffHand).Select(ei => ei.R_Item).OfType<Weapon>().Select(w => new WeaponAttack(){
+                Id = w.Id,
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+                Main = w.R_EquipData.Type == SlotType.MainHand,
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+                Damage = w.DamageValue,
+                DamageType = w.DamageType,
+                Range = w.Range
+            }).ToList();
         }
+        // public static List<WeaponAttack> GetAttacks(Character character){
+        //     var mainHandAttacks = character.R_CharacterHasBackpack.R_BackpackHasItems
+        //             .OfType<Weapon>()
+        //             .Where(i => i.R_EquipData != null && i.R_EquipData.Type == SlotType.MainHand)
+        //             .SelectMany(i => i.R_PowersCastedOnHit)
+        //             .Where(p => p.CastableBy == CastableBy.OnWeaponHit && p.RequiredActionType == ActionType.WeaponAttack)
+        //             .ToList();
+            
+        //     var offHandAttacks = character.R_CharacterHasBackpack.R_BackpackHasItems
+        //             .OfType<Weapon>()
+        //             .Where(i => i.R_EquipData != null && i.R_EquipData.Type == SlotType.OffHand)
+        //             .SelectMany(i => i.R_PowersCastedOnHit)
+        //             .Where(p => p.CastableBy == CastableBy.OnWeaponHit && p.RequiredActionType == ActionType.WeaponAttack)
+        //             .ToList();
+
+        //     var attacks = new List<WeaponAttack>();
+
+        //     attacks.AddRange(
+        //         mainHandAttacks.Select(attack => new WeaponAttack{
+        //             Id = attack.Id,
+        //             Main = true,
+        //             Damages = attack.R_EffectBlueprints
+        //             .OfType<DamageEffectBlueprint>()
+        //             .Where(effect => effect.DamageEffectType.DamageEffect == DamageEffect.DamageDealt)
+        //             .Select(effect => new WeaponAttack.Damage{
+        //                 DamageType = effect.DamageEffectType.DamageEffect_DamageType,
+        //                 DamageValue = effect.DiceSet
+        //             })
+        //             .ToList(),
+        //             Range = (int) attack.Range
+        //         })
+        //     );
+        //     attacks.AddRange(
+        //         offHandAttacks.Select(attack => new WeaponAttack{
+        //             Id = attack.Id,
+        //             Main = false,
+        //             Damages = attack.R_EffectBlueprints
+        //             .OfType<DamageEffectBlueprint>()
+        //             .Where(effect => effect.DamageEffectType.DamageEffect == DamageEffect.DamageDealt)
+        //             .Select(effect => new WeaponAttack.Damage{
+        //                 DamageType = effect.DamageEffectType.DamageEffect_DamageType,
+        //                 DamageValue = effect.DiceSet
+        //             })
+        //             .ToList(),
+        //             Range = (int) attack.Range
+        //         })
+        //     );
+
+        //     return attacks;
+        // }
 
         
         public class Item {
@@ -501,36 +451,52 @@ namespace pracadyplomowa.Models.DTOs
             public string Name { get; set; } = "";
             public string Source { get; set; } = "";
             public string Target { get; set; } = "";
-            public int TurnsLeft { get; set; }
+            public int? TurnsLeft { get; set; }
         }
         public static List<Effect> GetConstantEffects(Character character){
-            List<Effect> effects = character.R_AffectedBy
-            .Where(group => group.IsConstant)
-            .SelectMany(group => group.R_OwnedEffects)
+            List<Effect> effectsOnCharacter = character.R_AffectedBy
+            .Where(effect => effect.R_OwnedByGroup == null || effect.R_OwnedByGroup.IsConstant == true)
             .Select(effect => new Effect() {
                 Id = effect.Id,
                 Name = effect.Name,
-                Source = "Placeholder",
-                Target = "Placeholder",
-                TurnsLeft = 1
+                Source = effect.Source,
+                Target = "Character",
+                TurnsLeft = null
             }).ToList();
-
-            return effects;
-        }
-
-        public static List<Effect> GetTemporaryEffects(Character character){
-            List<Effect> effects = character.R_AffectedBy
-            .Where(group => !group.IsConstant)
-            .SelectMany(group => group.R_OwnedEffects)
+            List<Effect> effectsOnItems = character.R_CharacterHasBackpack.R_BackpackHasItems.SelectMany(item => item.R_AffectedBy)
+            .Where(effect => effect.R_OwnedByGroup == null || effect.R_OwnedByGroup.IsConstant == true)
             .Select(effect => new Effect() {
                 Id = effect.Id,
                 Name = effect.Name,
-                Source = "Placeholder",
-                Target = "Placeholder",
+                Source = effect.Source,
+                Target = effect.R_TargetedItem.Name,
                 TurnsLeft = effect.R_OwnedByGroup.DurationLeft
             }).ToList();
 
-            return effects;
+            return effectsOnCharacter.Union(effectsOnItems).ToList();
+        }
+
+        public static List<Effect> GetTemporaryEffects(Character character){
+            List<Effect> effectsOnCharacter = character.R_AffectedBy
+            .Where(effect => effect.R_OwnedByGroup != null && effect.R_OwnedByGroup.IsConstant == false)
+            .Select(effect => new Effect() {
+                Id = effect.Id,
+                Name = effect.Name,
+                Source = effect.Source,
+                Target = "Character",
+                TurnsLeft = effect.R_OwnedByGroup.DurationLeft
+            }).ToList();
+            List<Effect> effectsOnItems = character.R_CharacterHasBackpack.R_BackpackHasItems.SelectMany(item => item.R_AffectedBy)
+            .Where(effect => effect.R_OwnedByGroup != null && effect.R_OwnedByGroup.IsConstant == false)
+            .Select(effect => new Effect() {
+                Id = effect.Id,
+                Name = effect.Name,
+                Source = effect.Source,
+                Target = effect.R_TargetedItem.Name,
+                TurnsLeft = effect.R_OwnedByGroup.DurationLeft
+            }).ToList();
+            
+            return effectsOnCharacter.Union(effectsOnItems).ToList();
         }
 
         public class Resource {
@@ -543,18 +509,56 @@ namespace pracadyplomowa.Models.DTOs
         }
         public static List<Resource> GetResources(Character character){
             List<Resource> resources = character.R_ImmaterialResourceInstances
-            .GroupBy(resource => resource.R_BlueprintId)
-            .Select(group => new Resource() {
-                Id = group.Key,
-                Name = group.Take(1).First().R_Blueprint.Name,
-                Left = group.Where(resource => !resource.NeedsRefresh).Count(),
-                Total = group.Count(),
-                Source = "Placeholder",
-                Refresh = group.Take(1).First().R_Blueprint.RefreshesOn.ToString()
+            .GroupBy(resource => new {resource.R_BlueprintId, resource.R_CharacterId, resource.R_ItemId})
+            .Select(group => {
+                return new Resource() {
+                    Id = group.Key.R_BlueprintId,
+                    Name = group.Take(1).First().R_Blueprint.Name,
+                    Left = group.Where(resource => !resource.NeedsRefresh).Count(),
+                    Total = group.Count(),
+                    Source = group.Take(1).First().Source,
+                    Refresh = group.Take(1).First().R_Blueprint.RefreshesOn.ToString()
+                };
             })
             .ToList();
 
             return resources;
+        }
+
+        public class ChoiceGroup {
+            public int Id { get; set;}
+            public string Name { get; set;} = null!;
+            public bool ContainsEffects {get; set;}
+            public bool ContainsPowers {get; set;}
+        }
+        public static List<ChoiceGroup> GetChoiceGroups(Character character){
+            List<ChoiceGroup> choiceGroups = character.R_CharacterBelongsToRace.R_RaceLevels.SelectMany(raceLevel => raceLevel.R_ChoiceGroups)
+            .Union(character.R_CharacterHasLevelsInClass.SelectMany(raceLevel => raceLevel.R_ChoiceGroups))
+            .Where(choiceGroup => !character.R_UsedChoiceGroups
+                .Select(used => used.R_ChoiceGroupId)
+                .Contains(choiceGroup.Id)
+                )
+            .Select(choiceGroup => {
+                return new ChoiceGroup{
+                    Id = choiceGroup.Id, 
+                    Name = choiceGroup.Name, 
+                    ContainsEffects = choiceGroup.R_Effects.Count > 0, 
+                    ContainsPowers = choiceGroup.R_Powers.Count > 0
+                    };
+            }).ToList();
+
+            return choiceGroups;
+        }
+
+        public class SizeWithName {
+            public int Order { get; set;}
+            public string Name { get; set;} = null!;
+        }
+        public static SizeWithName GetSize(Character character){
+            return new(){
+                Order = (int)character.Size,
+                Name = Enum.GetName(typeof(Size), (int)character.Size)
+            };
         }
         
     }

@@ -1,4 +1,4 @@
 export type Size = {
-  numeric: number;
-  label: string;
+  order: number;
+  name: string;
 };

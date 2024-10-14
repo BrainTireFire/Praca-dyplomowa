@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using pracadyplomowa.Models.ComplexTypes.Effects;
@@ -10,18 +12,45 @@ using pracadyplomowa.Models.Enums.EffectOptions;
 
 namespace pracadyplomowa.Models.Entities.Powers
 {
-    public class EffectInstance : ObjectWithId
+    public abstract class EffectInstance(string name) : ObjectWithId
     {
-        public string Name { get; set; } = null!;
-        public string Description { get; set; } = null!;
-        public string SourceName { get; set; } = null!;
-        public EffectType EffectType { get; set; }
+        private EffectInstance() : this("EF"){}
+        public EffectInstance(EffectBlueprint blueprint, Character target) : this(blueprint.Name){
+            Description = blueprint.Description;
+            IsImplemented = blueprint.IsImplemented;
+            Conditional = blueprint.Conditional;
+            HasNoEffectInCombat = blueprint.HasNoEffectInCombat;
+            R_TargetedCharacter = target;
+            R_TargetedCharacterId = target.Id;
+            target.R_AffectedBy.Add(this);
+        }
+
+        public string Name { get; set; } = name;
+        public string Description { get; set; } = "";
+        public bool Conditional { get; set; }
+        public bool IsImplemented { get; set; }
+        public bool HasNoEffectInCombat { get; set; } = false;
         
         //Relationship
-        public virtual EffectGroup R_OwnedByGroup { get; set; } = null!;
-        public virtual int OwnedByGroupId { get; set; }
-        // public virtual ItemFamily? R_GrantsProficiencyInItemFamily { get; set; }
-        // public virtual int? R_GrantsProficiencyInItemFamilyId { get; set; }
-        
+        public virtual EffectGroup? R_OwnedByGroup { get; set; }
+        public virtual int? R_OwnedByGroupId { get; set; }
+        public virtual ChoiceGroupUsage? R_GrantedThrough { get; set; } // means actual usage of a choice group
+        public virtual int? R_GrantedThroughId { get; set;}
+        public virtual Character? R_TargetedCharacter { get; set; }
+        public virtual int? R_TargetedCharacterId { get; set; }
+        public virtual Item? R_TargetedItem { get; set; }
+        public virtual int? R_TargetedItemId { get; set; }
+        public virtual Item? R_GrantedByEquippingItem { get; set; }
+        public virtual int? R_GrantedByEquippingItemId {get; set;}
+
+        [NotMapped]
+        public string Source {
+            get {
+                if(R_OwnedByGroup != null) return R_OwnedByGroup.Name;
+                else if(R_GrantedThrough != null) return R_GrantedThrough.R_ChoiceGroup.Name;
+                else if(R_GrantedByEquippingItem != null) return R_GrantedByEquippingItem.Name;
+                else throw new UnreachableException();
+            }
+        }
     }
 }

@@ -5,6 +5,7 @@ namespace pracadyplomowa.Models.Enums.EffectOptions
         Bonus,
         Advantage,
         Proficiency,
-        RerollLowerThan
+        RerollLowerThan,
+        AlwaysSucceed
     }
 }

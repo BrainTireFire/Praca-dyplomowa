@@ -8,5 +8,7 @@ namespace pracadyplomowa.Repository.Race
     public interface IRaceRepository: IBaseRepository<Models.Entities.Characters.Race>
     {
         public Task<List<Models.Entities.Characters.Race>> GetRaceList();
+
+        public Task<Models.Entities.Characters.Race> GetRaceByIdWithRaceLevelAndChoiceGroups(int id, int level);
     }
 }

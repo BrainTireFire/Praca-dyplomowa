@@ -113,6 +113,10 @@ const GlobalStyles = createGlobalStyle`
 
 html {
   font-size: 62.5%;
+  height: 100%;
+    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
@@ -124,6 +128,14 @@ body {
   min-height: 100vh;
   line-height: 1.5;
   font-size: 1.6rem;
+  height: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  height: 100%; /* Ensure root div takes full height */
 }
 
 input,

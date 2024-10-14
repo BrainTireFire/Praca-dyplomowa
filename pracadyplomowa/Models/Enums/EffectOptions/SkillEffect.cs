@@ -5,6 +5,8 @@ namespace pracadyplomowa.Models.Enums.EffectOptions
         Bonus,
         Advantage,
         RerollLowerThan,
-        Proficiency
+        Proficiency,
+        Expertise,
+        UpgradeToExpertise // upgrade existing skill proficiency to expertise by supplying additional expertise effect. No need to specify skill in effect blueprint
     }
 }

@@ -25,13 +25,15 @@ export default function ResourceTable({
         columns="1fr 1fr 1fr 1fr 3.2rem"
       >
         <Table.Header>
-          <div>Name</div>
-          <div>Count</div>
-          <div>Source</div>
-          <div>Refresh</div>
+          <Cell>Name</Cell>
+          <Cell>Count</Cell>
+          <Cell>Source</Cell>
+          <Cell>Refresh</Cell>
+          <Cell></Cell>
         </Table.Header>
         <Table.Body
           data={resources}
+          columnCount={6}
           render={(resource) => (
             <ResourceRow key={resource.id} resource={resource} />
           )}

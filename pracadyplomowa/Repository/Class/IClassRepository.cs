@@ -14,5 +14,7 @@ namespace pracadyplomowa.Repository.Class
 
         public Task<ClassLevel?> GetClassLevel(int classId, int level);
 
+        public Task<ClassLevel?> GetClassLevelWithChoiceGroups(int classId, int level);
+
     }
 }

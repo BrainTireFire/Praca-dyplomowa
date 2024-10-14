@@ -8,6 +8,7 @@ using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Models.Entities.Items;
 using pracadyplomowa.Models.Entities.Powers;
 using pracadyplomowa.Models.Entities.Powers.EffectBlueprints;
+using pracadyplomowa.Models.Entities.Powers.EffectInstances;
 
 namespace pracadyplomowa;
 
@@ -73,7 +74,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         public DbSet<DamageEffectBlueprint> DamageEffectBlueprints { get; set; }
         public DbSet<HealingEffectBlueprint> HealingEffectBlueprints { get; set; }
         public DbSet<HitpointEffectBlueprint> HitpointEffectBlueprints { get; set; }
-        public DbSet<IniativeEffectBlueprint> IniativeEffectBlueprints { get; set; }
+        public DbSet<InitiativeEffectBlueprint> InitiativeEffectBlueprints { get; set; }
         public DbSet<MagicEffectBlueprint> MagicEffectBlueprints { get; set; }
         public DbSet<MovementCostEffectBlueprint> MovementCostEffectBlueprints { get; set; }
         public DbSet<MovementEffectBlueprint> MovementEffectBlueprints { get; set; }
@@ -83,13 +84,18 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         public DbSet<SizeEffectBlueprint> SizeEffectBlueprints { get; set; }
         public DbSet<SkillEffectBlueprint> SkillEffectBlueprints { get; set; }
         public DbSet<StatusEffectBlueprint> StatusEffectBlueprints { get; set; }
-        // public DbSet<ValueEffectBlueprint> ValueEffectBlueprints { get; set; }
+        public DbSet<ValueEffectBlueprint> ValueEffectBlueprints { get; set; }
+        public DbSet<DummyEffectBlueprint> DummyEffectBlueprints { get; set; }
+        public DbSet<OffHandAttackEffectBlueprint> OffHandEffectBlueprints { get; set; }
+        public DbSet<LanguageEffectBlueprint> LanguageEffectBlueprints { get; set; }
         
         public DbSet<AbilityEffectInstance> AbilityEffectInstances { get; set; }
         public DbSet<ActionEffectInstance> ActionEffectInstances { get; set; }
+        public DbSet<ArmorClassEffectInstance> ArmorClassEffectInstances { get; set; }
         public DbSet<AttackPerAttackActionEffectInstance> AttackPerAttackActionEffectInstances { get; set; }
         public DbSet<AttackRollEffectInstance> AttackRollEffectInstances { get; set; }
         public DbSet<DamageEffectInstance> DamageEffectInstances { get; set; }
+        public DbSet<HealingEffectInstance> HealingEffectInstances { get; set; }
         public DbSet<HitpointEffectInstance> HitpointEffectInstances { get; set; }
         public DbSet<MovementCostEffectInstance> MovementCostEffectInstances { get; set; }
         public DbSet<MovementEffectInstance> MovementEffectInstances { get; set; }
@@ -99,6 +105,12 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         public DbSet<SizeEffectInstance> SizeEffectInstances { get; set; }
         public DbSet<SkillEffectInstance> SkillEffectInstances { get; set; }
         public DbSet<StatusEffectInstance> StatusEffectInstances { get; set; }
+        public DbSet<ValueEffectInstance> ValueEffectInstances { get; set; }
+        public DbSet<DummyEffectInstance> DummyEffectInstances { get; set; }
+        public DbSet<OffHandAttackEffectInstance> OffHandEffectInstances { get; set; }
+        public DbSet<LanguageEffectInstance> LanguageEffectInstances { get; set; }
+        public DbSet<ChoiceGroupUsage> ChoiceGroupUsages {get; set;}
+        public DbSet<Language> Languages {get; set;}
         
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -124,7 +136,8 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .HasOne(i => i.R_Owner)
                         .WithMany(o => o.R_Objects)
                         .HasForeignKey(i => i.R_OwnerId)
-                        .IsRequired();
+                        .IsRequired(false)
+                        .OnDelete(DeleteBehavior.Cascade);
 
                 builder.Entity<Character>()
                         .HasOne(c => c.R_ConcentratesOn)
@@ -134,7 +147,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
 
                 builder.Entity<Character>()
                         .HasMany(c => c.R_AffectedBy)
-                        .WithMany(c => c.R_TargetedCharacters);
+                        .WithOne(c => c.R_TargetedCharacter);
 
                 builder.Entity<Character>()
                         .HasMany(c => c.R_PowersKnown)
@@ -178,20 +191,55 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .HasForeignKey(c => c.R_OriginatesFromAuraId)
                         .IsRequired(false);
 
-                builder.Entity<EffectGroup>()
-                        .HasOne(c => c.R_ItemAffectedBy)
-                        .WithMany(c => c.R_EffectGroupAffectedBy)
-                        .HasForeignKey(c => c.R_ItemAffectedById)
+                // builder.Entity<EffectGroup>()
+                //         .HasOne(c => c.R_ItemAffectedBy)
+                //         .WithMany(c => c.R_EffectGroupAffectedBy)
+                //         .HasForeignKey(c => c.R_ItemAffectedById)
+                //         .IsRequired(false);
+
+                // builder.Entity<EffectGroup>()
+                //         .HasOne(c => c.R_ItemGiveEffect)
+                //         .WithMany(c => c.R_EffectGroupFromItem)
+                //         .HasForeignKey(c => c.R_ItemGiveEffectId)
+                //         .IsRequired(false);
+                builder.Entity<Item>()
+                        .HasMany(c => c.R_AffectedBy)
+                        .WithOne(ei => ei.R_TargetedItem)
+                        .HasForeignKey(ei => ei.R_TargetedItemId)
+                        .IsRequired(false);
+                builder.Entity<Item>()
+                        .HasMany(c => c.R_ItemCreateEffectsOnEquip)
+                        .WithOne(ei => ei.R_CreatedByEquipping)
+                        .HasForeignKey(ei => ei.R_CreatedByEquippingId)
                         .IsRequired(false);
 
-                builder.Entity<EffectGroup>()
-                        .HasOne(c => c.R_ItemGiveEffect)
-                        .WithMany(c => c.R_EffectGroupFromItem)
-                        .HasForeignKey(c => c.R_ItemGiveEffectId)
+                
+                builder.Entity<Class>()
+                        .HasMany(c => c.R_AccessiblePowers)
+                        .WithMany(p => p.R_ClassesWithAccess);
+                
+                builder.Entity<Class>()
+                        .HasMany(c => c.R_UsedForUpcastingOfPowers)
+                        .WithOne(p => p.R_ClassForUpcasting)
+                        .HasForeignKey(p => p.R_ClassForUpcastingId)
                         .IsRequired(false);
 
 
                 builder.Entity<Item>().UseTptMappingStrategy();
                 builder.Entity<EffectBlueprint>().UseTphMappingStrategy();
+                builder.Entity<EffectInstance>().UseTphMappingStrategy();
+                builder.Entity<ValueEffectInstance>().Navigation(e=>e.DiceSet).AutoInclude();
+                builder.Entity<LanguageEffectBlueprint>().Navigation(e=>e.R_Language).AutoInclude();
+                builder.Entity<LanguageEffectBlueprint>()
+                        .HasOne(lei => lei.R_Language)
+                        .WithMany(l => l.R_EffectBlueprints)
+                        .HasForeignKey(lei => lei.R_LanguageId);
+                builder.Entity<LanguageEffectInstance>().Navigation(e=>e.R_Language).AutoInclude();
+                builder.Entity<LanguageEffectInstance>()
+                        .HasOne(lei => lei.R_Language)
+                        .WithMany(l => l.R_EffectInstances)
+                        .HasForeignKey(lei => lei.R_LanguageId);
+                builder.Entity<ProficiencyEffectBlueprint>().Navigation(e=>e.R_GrantsProficiencyInItemFamily).AutoInclude();
+                builder.Entity<ProficiencyEffectInstance>().Navigation(e=>e.R_GrantsProficiencyInItemFamily).AutoInclude();
         }
 }

@@ -3,13 +3,15 @@ import { createContext } from "react";
 import styled from "styled-components";
 import Button from "../interactive/Button";
 
-const StyledTable = styled.div`
+const StyledTableContainer = styled.div`
   border: 1px solid var(--color-border);
 
   font-size: 1rem;
   background-color: var(--color-main-background);
   border-radius: 7px;
-  overflow: hidden;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
 `;
 
 const StyledHeaderWithButton = styled.div`
@@ -19,16 +21,25 @@ const StyledHeaderWithButton = styled.div`
 `;
 
 const CommonRow = styled.div`
+  display: contents;
+`;
+
+const CommonTable = styled.div`
   display: grid;
   grid-template-columns: ${(props) => props.columns};
-
   column-gap: 2.4rem;
   font-size: 1rem;
   align-items: center;
   transition: none;
+  overflow-y: auto;
+  max-height: 100%;
+  scrollbar-color: var(--color-button-primary) var(--color-main-background);
+  scrollbar-width: thin;
+  scrollbar-gutter: stable;
 `;
 
 const StyledHeader = styled(CommonRow)`
+  // none of these CSS properties will work due to CommonRow having display: contents
   padding: 0.2rem 2.4rem;
 
   background-color: var(--color-main-background);
@@ -40,8 +51,8 @@ const StyledHeader = styled(CommonRow)`
 `;
 
 const StyledRow = styled(CommonRow)`
-  padding: 0rem 0.9rem;
-  font-size: 1rem;
+  padding: 0rem 0.9rem; //useless due to common row having display: contents
+  font-size: 1rem; //useless due to common row having display: contents
 
   &:not(:last-child) {
     border-bottom: 1px solid var(--color-border);
@@ -50,6 +61,7 @@ const StyledRow = styled(CommonRow)`
 
 const StyledBody = styled.section`
   margin: 0rem 0;
+  display: contents;
 `;
 
 const Footer = styled.footer`
@@ -69,6 +81,7 @@ const Empty = styled.p`
   font-weight: 500;
   text-align: center;
   margin: 2.4rem;
+  grid-column: 1 / ${(props) => props.width + 1};
 `;
 
 const TableHeader = styled.div`
@@ -90,8 +103,6 @@ const TableButton = styled(Button)`
   border-radius: 0.7rem;
 `;
 
-const TableContext = createContext({ columns: "" });
-
 type TableProps = {
   header?: string;
   button?: string;
@@ -101,49 +112,41 @@ type TableProps = {
 
 function Table({ header, columns, children, button }: TableProps) {
   return (
-    <TableContext.Provider value={{ columns }}>
-      <StyledTable role="table">
-        {header && (
-          <StyledHeaderWithButton>
-            <TableHeader>{header}</TableHeader>
-            {button && <TableButton>{button}</TableButton>}
-          </StyledHeaderWithButton>
-        )}
-        {children}
-      </StyledTable>
-    </TableContext.Provider>
+    <StyledTableContainer role="table">
+      {header && (
+        <StyledHeaderWithButton>
+          <TableHeader>{header}</TableHeader>
+          {button && <TableButton>{button}</TableButton>}
+        </StyledHeaderWithButton>
+      )}
+      <CommonTable columns={columns}>{children}</CommonTable>
+    </StyledTableContainer>
   );
 }
 
 function Header({ children }: { children: React.ReactNode }) {
-  const { columns } = useContext(TableContext);
-
   return (
-    <StyledHeader role="row" columns={columns} as="header">
+    <StyledHeader role="row" as="header">
       {children}
     </StyledHeader>
   );
 }
 
 function Row({ children }: { children: React.ReactNode }) {
-  const { columns } = useContext(TableContext);
-
-  return (
-    <StyledRow role="row" columns={columns}>
-      {children}
-    </StyledRow>
-  );
+  return <StyledRow role="row">{children}</StyledRow>;
 }
 
 function Body({
   data,
+  columnCount,
   render,
 }: {
   data: any[];
+  columnCount: Number;
   render: (item: any) => React.ReactNode;
 }) {
   if (!data.length) {
-    return <Empty>No data to show at the moment</Empty>;
+    return <Empty width={columnCount}>No data to show at the moment</Empty>;
   }
 
   return <StyledBody>{data.map(render)}</StyledBody>;

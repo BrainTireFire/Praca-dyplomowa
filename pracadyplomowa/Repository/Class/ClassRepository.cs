@@ -24,6 +24,14 @@ namespace pracadyplomowa.Repository.Class
             ClassLevel? classes = await _context.ClassLevels.FirstOrDefaultAsync(cl => cl.Level == level && cl.R_ClassId == classId);
             return classes;
         }
+
+        public async Task<ClassLevel?> GetClassLevelWithChoiceGroups(int classId, int level){
+            ClassLevel? classes = await _context.ClassLevels
+            .Include(cl => cl.R_ChoiceGroups).ThenInclude(cg => cg.R_Effects)
+            .Include(cl => cl.R_ChoiceGroups).ThenInclude(cg => cg.R_Powers)
+            .FirstOrDefaultAsync(cl => cl.Level == level && cl.R_ClassId == classId);
+            return classes;
+        }
         
     }
 }

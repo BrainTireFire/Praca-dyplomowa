@@ -7,21 +7,19 @@ using pracadyplomowa.Models.Enums;
 
 namespace pracadyplomowa.Models.Entities.Characters
 {
-    public class Class : ObjectWithId
+    public class Class(string name) : ObjectWithId
     {
 
-        public Class(string name)
-        {
-            Name = name;
-        }
-
         //Properties
-        public string Name { get; set; } = null!;
-        public string? MaximumPreparedSpellsFormula { get; set; }
+        public string Name { get; set; } = name;
+        // public string? MaximumPreparedSpellsFormula { get; set; }
+        public DiceSet? MaximumPreparedSpellsFormula { get; set; } = 0;
         public Ability? SpellcastingAbility { get; set; }
 
         //Relationships
-        public ICollection<Power> R_AccessiblePowers { get; set; } = [];
-        public ICollection<ClassLevel> R_ClassLevels { get; set; } = [];
+        public List<Power> R_AccessiblePowers { get; set; } = [];
+        public List<ClassLevel> R_ClassLevels { get; set; } = [];
+
+        public List<Power> R_UsedForUpcastingOfPowers {get; set;} = [];
     }
 }

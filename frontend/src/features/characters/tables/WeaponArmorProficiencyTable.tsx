@@ -16,7 +16,7 @@ export default function WeaponAndArmorProficiencyTable({
       <Table
         header="Weapon proficiency"
         button="Choices available"
-        columns="1fr 3.2rem"
+        columns="1fr 1fr 1fr"
       >
         <Table.Body
           data={weaponAndArmorProficiencies}

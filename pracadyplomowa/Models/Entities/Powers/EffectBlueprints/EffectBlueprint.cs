@@ -10,18 +10,22 @@ using pracadyplomowa.Models.Enums.EffectOptions;
 
 namespace pracadyplomowa.Models.Entities.Powers
 {
-    public class EffectBlueprint : ObjectWithId
+    public abstract class EffectBlueprint(string name) : ObjectWithId
     {
-        public string Name { get; set; } = null!;
-        public string Description { get; set; } = null!;
-        public int ResourceLevel { get; set; }
+        public string Name { get; set; } = name;
+        public string  Description { get; set; } = "";
+        public int Level { get; set; } // use this effect if Level value matches value selected by 
+        public int ResourceAmount { get; set;}
         public bool Saved { get; set; }
         public EffectType EffectType { get; set; }
+        public bool Conditional { get; set; } = false;
+        public bool IsImplemented { get; set; } = true;
+        public bool HasNoEffectInCombat { get; set; } = false;
 
 
         //Relationship
         public virtual Item? R_CreatedByEquipping { get; set; }
-        public int R_CreatedByEquippingId { get; set; }
+        public int? R_CreatedByEquippingId { get; set; }
 
         public virtual Power? R_Power { get; set; }
         public int? R_PowerId { get; set; }
@@ -33,5 +37,11 @@ namespace pracadyplomowa.Models.Entities.Powers
 
 
         public virtual ICollection<ChoiceGroup> R_ChoiceGroups { get; set; } = [];
+        //constructors
+        private EffectBlueprint() : this("EF"){}
+        //methods
+        public abstract EffectInstance Generate(Character roller, Character target); //roller added to parameter list as it will be used by overriding methods
+        //     return new EffectInstance(this, target);
+        // }
     }
 }

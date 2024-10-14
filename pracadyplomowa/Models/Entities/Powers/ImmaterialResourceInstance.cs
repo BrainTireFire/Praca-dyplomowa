@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using pracadyplomowa.Models.Entities.Characters;
@@ -14,15 +16,28 @@ namespace pracadyplomowa.Models.Entities.Powers
         public int Level { get; set; }
 
         // Relationships
-        public virtual Item? R_ResourceGrantedToItem { get; set; }
-        public int? R_ResourceGrantedToItemId { get; set; }
+        public virtual Item? R_Item { get; set; }
+        public int? R_ItemId { get; set; }
 
         public virtual ImmaterialResourceBlueprint R_Blueprint { get; set; } = null!;
         public virtual int R_BlueprintId { get; set; }
 
-        public virtual ICollection<ClassLevel> R_GrantedByClassLevels { get; set; } = [];
+        // public virtual ICollection<ClassLevel> R_GrantedByClassLevels { get; set; } = [];
 
-        public virtual Character R_Character { get; set; } = null!;
+        public virtual Character? R_Character { get; set; }
         public int? R_CharacterId { get; set; }
+
+        [NotMapped]
+        public string Source {
+            get {
+                if(R_Item != null){
+                    return R_Item.Name;
+                }
+                else if(R_Character != null){
+                    return R_Character.Name;
+                }
+                else throw new UnreachableException();
+            }
+        }
     }
 }

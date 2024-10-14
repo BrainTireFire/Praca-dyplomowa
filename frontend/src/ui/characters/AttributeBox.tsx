@@ -54,13 +54,16 @@ const Text = styled.p`
 `;
 
 function AttributeBox({ attribute }: { attribute: Attribute }) {
-  const modifier = Math.floor((attribute.value - 10) / 2);
   return (
     <StyledDropdown>
       <Header>{attribute.name}</Header>
       <Box>
         <Text>{attribute.value}</Text>
-        <Circle>{modifier >= 0 ? `+${modifier}` : `-${modifier}`}</Circle>
+        <Circle>
+          {attribute.modifier >= 0
+            ? `+${attribute.modifier}`
+            : `${attribute.modifier}`}
+        </Circle>
       </Box>
     </StyledDropdown>
   );

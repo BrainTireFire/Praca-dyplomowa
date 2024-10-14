@@ -24,8 +24,9 @@ namespace pracadyplomowa.Models.Entities.Items
         public virtual EquipData? R_EquipData { get; set; }
 
         public virtual ICollection<ImmaterialResourceInstance> R_ItemGrantsResources { get; set; } = [];
-        public virtual ICollection<EffectGroup> R_EffectGroupAffectedBy { get; set; } = [];
-        public virtual ICollection<EffectGroup> R_EffectGroupFromItem { get; set; } = [];
+        public virtual List<EffectInstance> R_AffectedBy { get; set; } = [];
+        // public virtual ICollection<EffectGroup> R_EffectGroupFromItem { get; set; } = [];
+        public virtual List<EffectInstance> R_EffectsOnEquip { get; set; } = [];
         public virtual ICollection<ShopItem> R_ItemInShops { get; set; } = [];
         public virtual ICollection<EffectBlueprint> R_ItemCreateEffectsOnEquip { get; set; } = [];
         public virtual ICollection<Power> R_EquipItemGrantsAccessToPower { get; set; } = [];

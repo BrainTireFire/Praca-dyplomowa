@@ -4,6 +4,7 @@ type TypesBox = {
   radius?: "tiny" | "small" | "medium" | "large";
   variation?:
     | "none"
+    | "fullScreen"
     | "squaredTiny"
     | "squaredSmall"
     | "squaredMedium"
@@ -36,6 +37,13 @@ const variations = {
     padding: 0.5rem 1rem;
     width: auto;
     height: auto;
+  `,
+  fullScreen: css`
+    padding: 0.5rem 1rem;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
   `,
   squaredTiny: css`
     padding: 1rem 2rem;

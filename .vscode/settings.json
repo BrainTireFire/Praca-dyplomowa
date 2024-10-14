@@ -5,6 +5,13 @@
       "driver": "SQLite",
       "name": "praca",
       "database": "${workspaceFolder:Praca-dyplomowa-1}/pracadyplomowa/identity.db"
+    },
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "name": "newdb",
+      "database": "${workspaceFolder:Praca-dyplomowa}/pracadyplomowa/identity.db"
     }
-  ]
+  ],
+  "FSharp.suggestGitignore": false
 }

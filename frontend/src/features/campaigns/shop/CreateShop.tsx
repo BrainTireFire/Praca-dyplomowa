@@ -4,6 +4,7 @@ import Input from "../../../ui/forms/Input";
 import Button from "../../../ui/interactive/Button";
 import TextArea from "../../../ui/forms/TextArea";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 const Container = styled.div`
   display: flex;
@@ -13,9 +14,8 @@ const Container = styled.div`
   gap: 12px;
 `;
 
-function CreateShop() {
+function CreateShop({ onCloseModal }) {
   const [shop, setShop] = useState({
-    id: Date.now(), // CHANGE THIS ?
     name: "",
     type: "",
     location: "",
@@ -30,8 +30,8 @@ function CreateShop() {
   };
 
   const handleClick = () => {
-    // REQUEST TO DB
-    console.log(shop);
+    // toast.success("Shop created");
+    onCloseModal();
   };
 
   return (

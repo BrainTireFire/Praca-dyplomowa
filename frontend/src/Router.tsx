@@ -20,6 +20,7 @@ import ProtectedRoute from "./features/account/ProtectedRoute";
 import Forbidden from "./pages/errors/Forbidden";
 import ServiceDown from "./pages/errors/ServiceDown";
 import MainBoard from "./pages/campaign/session/MainBoard";
+import CampaignsAttended from "./features/campaigns/CampaignsAttended";
 
 export default function Router() {
   return (

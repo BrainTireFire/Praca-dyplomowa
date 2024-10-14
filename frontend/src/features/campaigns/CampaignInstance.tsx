@@ -9,7 +9,7 @@ import InputCopyToClipboard from "../../ui/forms/InputCopyToClipboard";
 import Modal from "../../ui/containers/Modal";
 import ShortRest from "./ShortRestModal";
 import GiveXP from "./GiveXP";
-import { useCampaign } from "./useCampaign";
+import { useCampaign } from "./hooks/useCampaign";
 import Spinner from "../../ui/interactive/Spinner";
 
 const Container = styled.div`
@@ -66,8 +66,7 @@ export default function CampaignInstance() {
     return <div>{t("campaign.error.notFound")}</div>;
   }
 
-  const { id, name, description, gameMaster, members, shops }: Campaign =
-    campaign;
+  const { id, name, description, invitationLink, members }: Campaign = campaign;
 
   return (
     <>
@@ -87,18 +86,18 @@ export default function CampaignInstance() {
               <Modal.Open opens="GiveXP">
                 <Button size="large">{t("campaignInstance.giveXP")}</Button>
               </Modal.Open>
-              <Modal.Window name="GiveXP">
+              {/* <Modal.Window name="GiveXP">
                 <GiveXP membersList={members} />
-              </Modal.Window>
+              </Modal.Window> */}
             </Modal>
-            <Modal>
+            {/* <Modal>
               <Modal.Open opens="ShortRestModal">
                 <Button size="large">{t("campaignInstance.shortRest")}</Button>
               </Modal.Open>
               <Modal.Window name="ShortRestModal">
                 <ShortRest membersList={members} />
               </Modal.Window>
-            </Modal>
+            </Modal> */}
             <Button size="large">{t("campaignInstance.longRest")}</Button>
             <Button
               size="large"
@@ -121,18 +120,7 @@ export default function CampaignInstance() {
         <Heading as="h2" align="left">
           Description
         </Heading>
-        <DescriptionStyled>
-          {description}
-          <br />
-          <br />
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum.
-        </DescriptionStyled>
+        <DescriptionStyled>{description}</DescriptionStyled>
         <Line size="percantage" />
       </div>
       <div>
@@ -140,12 +128,8 @@ export default function CampaignInstance() {
           Game Master
         </Heading>
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <Avatar>
-            <img src={gameMaster.img} alt="avatar"></img>
-          </Avatar>
-          <span>
-            {gameMaster.name} - {gameMaster.description}
-          </span>
+          <Avatar>{/* <img src={gameMaster.img} alt="avatar"></img> */}</Avatar>
+          <span>{/* {gameMaster.name} - {gameMaster.description} */}</span>
         </div>
         <Line size="percantage" />
       </div>
@@ -154,9 +138,9 @@ export default function CampaignInstance() {
           Members
         </Heading>
         <MemberContainer>
-          {members.map((e) => (
+          {/* {members.map((e) => (
             <MemberBox>{e}</MemberBox>
-          ))}
+          ))} */}
         </MemberContainer>
         <Line size="percantage" />
       </div>
@@ -164,7 +148,7 @@ export default function CampaignInstance() {
         <Heading as="h2" align="left">
           Link for invite to the campaign
         </Heading>
-        <InputCopyToClipboard valueDefault="http://ddbutbetter.com/1234" />
+        <InputCopyToClipboard valueDefault={invitationLink} />
       </div>
     </>
   );

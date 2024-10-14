@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getCampaign } from "../../services/apiCampaigns";
+import { getCampaign } from "../../../services/apiCampaigns";
 import { useParams } from "react-router-dom";
 
 export function useCampaign() {
@@ -13,7 +13,7 @@ export function useCampaign() {
     queryKey: ["campaign", campaignId],
     queryFn: () => {
       if (campaignId) {
-        return getCampaign(campaignId);
+        return getCampaign(Number(campaignId));
       }
       return Promise.reject(new Error("Campaign ID is undefined"));
     },

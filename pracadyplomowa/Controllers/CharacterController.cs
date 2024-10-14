@@ -28,7 +28,7 @@ namespace pracadyplomowa.Controllers
     [Authorize]
     public class CharacterController(ICharacterRepository characterRepository, IClassRepository classRepository, IRaceRepository raceRepository, IItemRepository itemRepository, IMapper mapper) : BaseApiController
     {
-        
+
         private readonly ICharacterRepository _characterRepository = characterRepository;
         private readonly IClassRepository _classRepository = classRepository;
         private readonly IRaceRepository _raceRepository = raceRepository;
@@ -40,38 +40,41 @@ namespace pracadyplomowa.Controllers
         {
             var userId = User.GetUserId();
             var characters = await _characterRepository.GetCharacterSummaries(userId, characterParams);
-            
+
             Response.AddPaginationHeader(characters);
-            
+
             return Ok(characters);
         }
-        
+
         [HttpPost]
-        public async Task<ActionResult> CreateNewCharacter(CharacterInsertDto characterDto){
+        public async Task<ActionResult> CreateNewCharacter(CharacterInsertDto characterDto)
+        {
             var race = await _raceRepository.GetRaceByIdWithRaceLevelAndChoiceGroupsAndSlots(characterDto.RaceId, 1);
-            if(race == null){
+            if (race == null)
+            {
                 return BadRequest(new ApiResponse(400, "Race with Id " + characterDto.RaceId + " does not exist"));
             }
             ClassLevel? classLevel = await _classRepository.GetClassLevelWithChoiceGroups(characterDto.StartingClassId, 1);
-            if(classLevel == null){
+            if (classLevel == null)
+            {
                 return BadRequest(new ApiResponse(400, "First level of Class with Id " + characterDto.StartingClassId + " does not exist"));
             }
             var ownerId = User.GetUserId();
             var character = new Character(
-                characterDto.Name, 
-                characterDto.Strength, 
-                characterDto.Dexterity, 
-                characterDto.Constitution, 
-                characterDto.Intelligence, 
-                characterDto.Wisdom, 
-                characterDto.Charisma, 
-                classLevel, 
-                race, 
+                characterDto.Name,
+                characterDto.Strength,
+                characterDto.Dexterity,
+                characterDto.Constitution,
+                characterDto.Intelligence,
+                characterDto.Wisdom,
+                characterDto.Charisma,
+                classLevel,
+                race,
                 ownerId
             );
 
             var item = await _itemRepository.GetByNameWithEquipmentSlots("Iron longsword");
-            character.R_CharacterHasBackpack = new Backpack(){R_BackpackOfCharacter = character, R_BackpackHasItems = [await _itemRepository.GetByName("Iron longsword")]};
+            character.R_CharacterHasBackpack = new Backpack() { R_BackpackOfCharacter = character, R_BackpackHasItems = [await _itemRepository.GetByName("Iron longsword")] };
             character.EquipItem(item, item.R_ItemIsEquippableInSlots.First());
 
             _characterRepository.Add(character);
@@ -79,11 +82,13 @@ namespace pracadyplomowa.Controllers
 
             return Created();
         }
-        
+
         [HttpGet("{characterId}")]
-        public async Task<ActionResult> GetCharacter(int characterId){
+        public async Task<ActionResult> GetCharacter(int characterId)
+        {
             var character = _characterRepository.GetById(characterId);
-            if(character == null){
+            if (character == null)
+            {
                 return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not exist"));
             }
             character = await _characterRepository.GetByIdWithAll(characterId);
@@ -92,12 +97,14 @@ namespace pracadyplomowa.Controllers
             return Ok(characterDto);
         }
 
-        
-        
+
+
         [HttpGet("{characterId}/choiceGroups")]
-        public async Task<ActionResult> GetCharactersChoiceGroups(int characterId){
+        public async Task<ActionResult> GetCharactersChoiceGroups(int characterId)
+        {
             var character = _characterRepository.GetById(characterId);
-            if(character == null){
+            if (character == null)
+            {
                 return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not exist"));
             }
             character = await _characterRepository.GetByIdWithChoiceGroups(characterId);
@@ -107,33 +114,42 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpPost("{characterId}/choiceGroups/use")]
-        public async Task<ActionResult> GenerateChoiceGroupUsage(int characterId, [FromBody] List<ChoiceGroupUsageDto> ChoiceGroupUsageDtos){
+        public async Task<ActionResult> GenerateChoiceGroupUsage(int characterId, [FromBody] List<ChoiceGroupUsageDto> ChoiceGroupUsageDtos)
+        {
             var character = _characterRepository.GetById(characterId);
-            if(character == null){
+            if (character == null)
+            {
                 return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not exist"));
             }
             character = await _characterRepository.GetByIdWithChoiceGroups(characterId);
             var choiceGroupsEnumerable = character.R_CharacterHasLevelsInClass.SelectMany(cl => cl.R_ChoiceGroups).Union(character.R_CharacterBelongsToRace.R_RaceLevels.SelectMany(cl => cl.R_ChoiceGroups));
-            try{
-                foreach(ChoiceGroupUsageDto choiceGroupUsageDto in ChoiceGroupUsageDtos){
+            try
+            {
+                foreach (ChoiceGroupUsageDto choiceGroupUsageDto in ChoiceGroupUsageDtos)
+                {
                     var choiceGroup = choiceGroupsEnumerable.Where(cg => cg.Id == choiceGroupUsageDto.Id).FirstOrDefault();
-                    if(choiceGroup == null){
+                    if (choiceGroup == null)
+                    {
                         return NotFound(new ApiResponse(404, "Choice group with Id " + choiceGroupUsageDto.Id + " was not found"));
                     }
                     bool allEffectChoicesCorrect = choiceGroupUsageDto.EffectIds.All(item => choiceGroup.R_Effects.Select(e => e.Id).ToList().Contains(item));
-                    if(!allEffectChoicesCorrect){
+                    if (!allEffectChoicesCorrect)
+                    {
                         return BadRequest(new ApiResponse(400, "Choice group with Id " + choiceGroupUsageDto.Id + " does not contain selected effects"));
                     }
                     bool allPowerAlwaysAvailableChoicesCorrect = choiceGroupUsageDto.PowerAlwaysAvailableIds.All(item => choiceGroup.R_PowersAlwaysAvailable.Select(e => e.Id).ToList().Contains(item));
-                    if(!allPowerAlwaysAvailableChoicesCorrect){
+                    if (!allPowerAlwaysAvailableChoicesCorrect)
+                    {
                         return BadRequest(new ApiResponse(400, "Choice group with Id " + choiceGroupUsageDto.Id + " does not contain selected powers"));
                     }
                     bool allPowerToPreapreChoicesCorrect = choiceGroupUsageDto.PowerToPrepareIds.All(item => choiceGroup.R_PowersToPrepare.Select(e => e.Id).ToList().Contains(item));
-                    if(!allPowerToPreapreChoicesCorrect){
+                    if (!allPowerToPreapreChoicesCorrect)
+                    {
                         return BadRequest(new ApiResponse(400, "Choice group with Id " + choiceGroupUsageDto.Id + " does not contain selected powers"));
                     }
                     bool allResourceChoicesCorrect = choiceGroupUsageDto.ResourceIds.All(item => choiceGroup.R_Resources.Select(e => e.Id).ToList().Contains(item));
-                    if(!allResourceChoicesCorrect){
+                    if (!allResourceChoicesCorrect)
+                    {
                         return BadRequest(new ApiResponse(400, "Choice group with Id " + choiceGroupUsageDto.Id + " does not contain selected resources"));
                     }
                     var selectedEffects = choiceGroup.R_Effects.Where(e => choiceGroupUsageDto.EffectIds.Contains(e.Id)).ToList();
@@ -141,25 +157,30 @@ namespace pracadyplomowa.Controllers
                     var selectedPowersToPrepare = choiceGroup.R_PowersToPrepare.Where(p => choiceGroupUsageDto.PowerToPrepareIds.Contains(p.Id)).ToList();
                     var selectedResources = choiceGroup.R_Resources.Where(r => choiceGroupUsageDto.ResourceIds.Contains(r.Id)).ToList();
                     var totalPicks = selectedEffects.Count + selectedPowersAlwaysAvailable.Count + selectedPowersToPrepare.Count + selectedResources.Count;
-                    if(totalPicks != 0 && totalPicks == choiceGroup.NumberToChoose){
+                    if (totalPicks != 0 && totalPicks == choiceGroup.NumberToChoose)
+                    {
                         choiceGroup.Generate(character, selectedEffects, selectedPowersAlwaysAvailable, selectedPowersToPrepare, selectedResources);
                     }
-                    else if(totalPicks != 0 && totalPicks != choiceGroup.NumberToChoose){
+                    else if (totalPicks != 0 && totalPicks != choiceGroup.NumberToChoose)
+                    {
                         return BadRequest(new ApiResponse(400, "Incorrect number of choices"));
                     }
                 }
                 await _characterRepository.SaveChanges();
             }
-            catch(InvalidChoiceGroupSelectionException exception){
+            catch (InvalidChoiceGroupSelectionException exception)
+            {
                 return BadRequest(new ApiResponse(400, exception.Message));
             }
             return Ok();
         }
 
         [HttpGet("{characterId}/classes/nextLevels")]
-        public async Task<ActionResult> GetNextLevelsInClasses(int characterId){
+        public async Task<ActionResult> GetNextLevelsInClasses(int characterId)
+        {
             var character = await _characterRepository.GetByIdWithClassLevels(characterId);
-            if(character == null){
+            if (character == null)
+            {
                 return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not exist"));
             }
             // var currentLevels = character.R_CharacterHasLevelsInClass.GroupBy(cl => cl.R_ClassId).Select(g => new ClassLevel(g.Max(g => g.Level)){
@@ -167,18 +188,22 @@ namespace pracadyplomowa.Controllers
             // });
             var allClassesWithLevels = await _classRepository.GetClassesWithClassLevels(true);
             var firstLevels = allClassesWithLevels.SelectMany(c => c.R_ClassLevels).Where(cl => cl.Level == 1).ToList();
-            
+
             var notPosessedLevels = new List<ClassLevel>();
-            foreach(var characterClass in allClassesWithLevels){
-                foreach(var classLevel in characterClass.R_ClassLevels.OrderBy(cl => cl.Level)){
-                    if(!character.R_CharacterHasLevelsInClass.Contains(classLevel)){
+            foreach (var characterClass in allClassesWithLevels)
+            {
+                foreach (var classLevel in characterClass.R_ClassLevels.OrderBy(cl => cl.Level))
+                {
+                    if (!character.R_CharacterHasLevelsInClass.Contains(classLevel))
+                    {
                         notPosessedLevels.Add(classLevel);
                         break;
                     }
                 }
             }
             notPosessedLevels = await _classRepository.GetClassLevelsWithChoiceGroups(notPosessedLevels.Select(cl => cl.Id).ToList());
-            var result = notPosessedLevels.Select(cl => new {
+            var result = notPosessedLevels.Select(cl => new
+            {
                 Id = cl.Id,
                 ClassId = cl.R_ClassId,
                 Name = cl.R_Class.Name,
@@ -191,13 +216,16 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpPost("{characterId}/classes/nextLevels/{nextClassLevelId}/use")]
-        public async Task<ActionResult> SelectNextClassLevel(int characterId, int nextClassLevelId){
+        public async Task<ActionResult> SelectNextClassLevel(int characterId, int nextClassLevelId)
+        {
             var character = await _characterRepository.GetByIdWithChoiceGroups(characterId);
-            if(character == null){
+            if (character == null)
+            {
                 return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not exist"));
             }
             var classLevel = await _classRepository.GetClassLevelsWithChoiceGroups([nextClassLevelId]);
-            if(classLevel.Count == 0){
+            if (classLevel.Count == 0)
+            {
                 return BadRequest(new ApiResponse(400, "Class level with Id " + characterId + " does not exist"));
             }
             character.AddClassLevel(classLevel[0]);

@@ -1,5 +1,5 @@
 import Heading from "../../../ui/text/Heading";
-import { useCampaign } from "../../../features/campaigns/useCampaign";
+import { useCampaign } from "../../../features/campaigns/hooks/useCampaign";
 import { useParams } from "react-router-dom";
 import Spinner from "../../../ui/interactive/Spinner";
 import { useTranslation } from "react-i18next";

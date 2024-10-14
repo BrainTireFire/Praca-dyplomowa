@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using pracadyplomowa.Const;
 
-namespace pracadyplomowa;
+namespace pracadyplomowa.Token.Services;
 
 public class TokenService : ITokenService
 {

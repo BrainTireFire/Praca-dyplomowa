@@ -10,6 +10,7 @@ using pracadyplomowa.Const;
 using pracadyplomowa.Errors;
 using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.DTOs.Account;
+using pracadyplomowa.Token.Services;
 
 namespace pracadyplomowa;
 

@@ -1226,9 +1226,18 @@ namespace pracadyplomowa.Data.Migrations
                 {
                     b.HasBaseType("pracadyplomowa.Models.Entities.ObjectWithOwner");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("SizeX")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SizeY")
+                        .HasColumnType("INTEGER");
 
                     b.ToTable("Boards");
                 });

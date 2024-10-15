@@ -42,6 +42,26 @@ namespace pracadyplomowa.Data.Migrations
                 name: "IX_EquipDataEquipmentSlot_UsagesId",
                 table: "EquipDataEquipmentSlot",
                 column: "UsagesId");
+
+            migrationBuilder.AddColumn<string>(
+                name: "Description",
+                table: "Boards",
+                type: "TEXT",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "SizeX",
+                table: "Boards",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "SizeY",
+                table: "Boards",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
         }
 
         /// <inheritdoc />
@@ -56,6 +76,18 @@ namespace pracadyplomowa.Data.Migrations
                 type: "INTEGER",
                 nullable: false,
                 defaultValue: 0);
+
+            migrationBuilder.DropColumn(
+                name: "Description",
+                table: "Boards");
+
+            migrationBuilder.DropColumn(
+                name: "SizeX",
+                table: "Boards");
+
+            migrationBuilder.DropColumn(
+                name: "SizeY",
+                table: "Boards");
         }
     }
 }

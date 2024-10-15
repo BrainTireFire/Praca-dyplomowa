@@ -8,6 +8,21 @@ namespace pracadyplomowa.Models.Entities.Characters
 {
     public class DiceSet : ObjectWithId
     {
+        public DiceSet(){
+
+        }
+
+        public DiceSet(DiceSet diceSet){
+            this.d20 = diceSet.d20;
+            this.d12 = diceSet.d12;
+            this.d10 = diceSet.d10;
+            this.d8 = diceSet.d8;
+            this.d6 = diceSet.d6;
+            this.d4 = diceSet.d4;
+            this.d100 = diceSet.d100;
+            this.flat = diceSet.flat;
+            this.additionalValues = diceSet.additionalValues.Select(x => new AdditionalValue(x)).ToList();
+        }
         public int d20 { get; set; }
         public int d12 { get; set; }
         public int d10 { get; set; }
@@ -49,6 +64,16 @@ namespace pracadyplomowa.Models.Entities.Characters
 
 
         public class AdditionalValue : ObjectWithId{
+            public AdditionalValue(){
+                
+            }
+            public AdditionalValue(AdditionalValue value){
+                this.additionalValueType = value.additionalValueType;
+                this.R_LevelsInClass = value.R_LevelsInClass;
+                this.R_LevelsInClassId = value.R_LevelsInClassId;
+                this.Ability = value.Ability;
+                this.Skill = value.Skill;
+            }
             public enum AdditionalValueType{
                 LevelsInClass = 0,
                 TotalLevel = 1,
@@ -82,6 +107,10 @@ namespace pracadyplomowa.Models.Entities.Characters
                 if(obj is not AdditionalValue)
                     return false;
                 return this ==(AdditionalValue)obj;
+            }
+
+            public override int GetHashCode(){
+                return base.GetHashCode();
             }
 
             public static bool operator ==(AdditionalValue x, AdditionalValue y) {

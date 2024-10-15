@@ -13,5 +13,10 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectInstances
         public HealingEffectInstance(string name) : base(name, 0){}
         public HealingEffectInstance(HealingEffectBlueprint initiativeEffectBlueprint, Character roller, Character target) : base(initiativeEffectBlueprint, roller, target){
         }
+        public HealingEffectInstance(HealingEffectInstance effectInstance) : base(effectInstance){
+        }
+        public override EffectInstance Clone(){
+            return new HealingEffectInstance(this);
+        }
     }
 }

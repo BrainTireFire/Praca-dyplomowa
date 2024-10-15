@@ -15,6 +15,10 @@ namespace pracadyplomowa.Models.Entities.Items
         public RangedWeapon(string name, string description, ItemFamily itemFamily, int weight) : base(name, description, itemFamily, weight)
         {
         }
+        public RangedWeapon(RangedWeapon weapon) : base(weapon){
+            this.Range = weapon.Range;
+            this.LoadedRange = weapon.LoadedRange;
+        }
 
         public int Range { get; set; }
         public bool LoadedRange { get; set; }
@@ -27,13 +31,17 @@ namespace pracadyplomowa.Models.Entities.Items
             else{
                 return base.GetAttackBonus() + Wielder.AffectedByApprovedEffects
                 .OfType<AttackRollEffectInstance>()
-                .Where(ei => ei.AttackRollEffectType.AttackRollEffect_Type == Enums.EffectOptions.AttackRollEffect_Type.Bonus 
-                && ei.AttackRollEffectType.AttackRollEffect_Source == Enums.EffectOptions.AttackRollEffect_Source.Weapon 
-                && ei.AttackRollEffectType.AttackRollEffect_Range == Enums.EffectOptions.AttackRollEffect_Range.Ranged)
+                .Where(ei => ei.EffectType.AttackRollEffect_Type == Enums.EffectOptions.AttackRollEffect_Type.Bonus 
+                && ei.EffectType.AttackRollEffect_Source == Enums.EffectOptions.AttackRollEffect_Source.Weapon 
+                && ei.EffectType.AttackRollEffect_Range == Enums.EffectOptions.AttackRollEffect_Range.Ranged)
                 .Select(ei => ei.DiceSet.getPersonalizedSet(Wielder))
                 .Aggregate(new DiceSet(), (accumulator, value) => accumulator + value)
                 + (R_EquipData != null && R_EquipData.R_Slots.Select(s => s.Type).Contains(Enums.SlotType.MainHand) ? Wielder.DexterityModifier : 0);
             }
+        }
+
+        public override Item Clone(){
+            return new RangedWeapon(this);
         }
     }
 }

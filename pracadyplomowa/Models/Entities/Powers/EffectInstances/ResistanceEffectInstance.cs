@@ -6,10 +6,16 @@ namespace pracadyplomowa.Models.Entities.Powers;
 
 public class ResistanceEffectInstance : EffectInstance
 {
-    public ResistanceEffectType ResistanceEffectType { get; set; } = new ResistanceEffectType();
+    public ResistanceEffectType EffectType { get; set; } = new ResistanceEffectType();
     private ResistanceEffectInstance() : base("EF"){}
     public ResistanceEffectInstance(string name) : base(name){}
     public ResistanceEffectInstance(ResistanceEffectBlueprint resistanceEffectBlueprint, Character target) : base(resistanceEffectBlueprint, target){
-        ResistanceEffectType = resistanceEffectBlueprint.ResistanceEffectType;
+        EffectType = resistanceEffectBlueprint.ResistanceEffectType;
+    }
+    public ResistanceEffectInstance(ResistanceEffectInstance effectInstance) : base(effectInstance){
+        EffectType  = effectInstance.EffectType;
+    }
+    public override EffectInstance Clone(){
+        return new ResistanceEffectInstance(this);
     }
 }

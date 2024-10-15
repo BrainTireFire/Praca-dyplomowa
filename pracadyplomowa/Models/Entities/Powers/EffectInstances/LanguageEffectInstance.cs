@@ -9,7 +9,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class LanguageEffectInstance : EffectInstance
     {
-        public LanguageEffectType LanguageEffectType{ get; set;} = new LanguageEffectType();
+        public LanguageEffectType EffectType{ get; set;} = new LanguageEffectType();
 
         
         public virtual required Language R_Language { get; set; }
@@ -18,9 +18,18 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
         public LanguageEffectInstance(string name) : base(name){}
         [System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute]
         public LanguageEffectInstance(LanguageEffectBlueprint languageEffectBlueprint, Character target) : base(languageEffectBlueprint, target){
-            LanguageEffectType = languageEffectBlueprint.LanguageEffectType;
+            EffectType = languageEffectBlueprint.LanguageEffectType;
             R_Language = languageEffectBlueprint.R_Language;
             R_LanguageId = languageEffectBlueprint.R_LanguageId;
+        }
+        [System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute]
+        public LanguageEffectInstance(LanguageEffectInstance effectInstance) : base(effectInstance){
+            EffectType  = effectInstance.EffectType;
+            R_Language = effectInstance.R_Language;
+            R_LanguageId = R_LanguageId;
+        }
+        public override EffectInstance Clone(){
+            return new LanguageEffectInstance(this);
         }
     }
 }

@@ -14,5 +14,10 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectInstances
         public ArmorClassEffectInstance(ArmorClassEffectBlueprint actionEffectBlueprint, Character roller, Character target) : base(actionEffectBlueprint, roller, target){
             
         }
+        public ArmorClassEffectInstance(ArmorClassEffectInstance effectInstance) : base(effectInstance){
+        }
+        public override EffectInstance Clone(){
+            return new ArmorClassEffectInstance(this);
+        }
     }
 }

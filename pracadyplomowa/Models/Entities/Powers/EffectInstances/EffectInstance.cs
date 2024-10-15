@@ -12,9 +12,12 @@ using pracadyplomowa.Models.Enums.EffectOptions;
 
 namespace pracadyplomowa.Models.Entities.Powers
 {
-    public abstract class EffectInstance(string name) : ObjectWithId
+    public abstract class EffectInstance : ObjectWithId
     {
         private EffectInstance() : this("EF"){}
+        public EffectInstance(string name){
+            Name = name;
+        }
         public EffectInstance(EffectBlueprint blueprint, Character target) : this(blueprint.Name){
             Description = blueprint.Description;
             IsImplemented = blueprint.IsImplemented;
@@ -24,8 +27,15 @@ namespace pracadyplomowa.Models.Entities.Powers
             R_TargetedCharacterId = target.Id;
             target.R_AffectedBy.Add(this);
         }
+        public EffectInstance(EffectInstance effectInstance){
+            this.Name = effectInstance.Name;
+            this.Description = effectInstance.Description;
+            this.Conditional = effectInstance.Conditional;
+            this.IsImplemented = effectInstance.IsImplemented;
+            this.HasNoEffectInCombat = effectInstance.HasNoEffectInCombat;
+        }
 
-        public string Name { get; set; } = name;
+        public string Name { get; set; }
         public string Description { get; set; } = "";
         public bool Conditional { get; set; }
         public bool IsImplemented { get; set; }
@@ -52,5 +62,7 @@ namespace pracadyplomowa.Models.Entities.Powers
                 else throw new UnreachableException();
             }
         }
+
+        public abstract EffectInstance Clone();
     }
 }

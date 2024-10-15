@@ -13,5 +13,10 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectInstances
         public InitiativeEffectInstance(string name) : base(name, 0){}
         public InitiativeEffectInstance(InitiativeEffectBlueprint initiativeEffectBlueprint, Character roller, Character target) : base(initiativeEffectBlueprint, roller, target){
         }
+        public InitiativeEffectInstance(InitiativeEffectInstance effectInstance) : base(effectInstance){
+        }
+        public override EffectInstance Clone(){
+            return new InitiativeEffectInstance(this);
+        }
     }
 }

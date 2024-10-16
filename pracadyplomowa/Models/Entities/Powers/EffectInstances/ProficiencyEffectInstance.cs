@@ -20,5 +20,13 @@ public class ProficiencyEffectInstance : EffectInstance
         R_GrantsProficiencyInItemFamily = proficiencyEffectBlueprint.R_GrantsProficiencyInItemFamily;
         R_GrantsProficiencyInItemFamilyId = R_GrantsProficiencyInItemFamily?.Id;
         ItemType = proficiencyEffectBlueprint.ItemType;
+    }        
+    public ProficiencyEffectInstance(ProficiencyEffectInstance effectInstance) : base(effectInstance){
+        R_GrantsProficiencyInItemFamily  = effectInstance.R_GrantsProficiencyInItemFamily;
+        R_GrantsProficiencyInItemFamilyId  = effectInstance.R_GrantsProficiencyInItemFamilyId;
+        ItemType  = effectInstance.ItemType;
+    }
+    public override EffectInstance Clone(){
+        return new ProficiencyEffectInstance(this);
     }
 }

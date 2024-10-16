@@ -13,5 +13,12 @@ namespace pracadyplomowa.Models.Entities.Items
         public Tool(string name, string description, ItemFamily itemFamily, int weight) : base(name, description, itemFamily, weight)
         {
         }
+        protected Tool(Tool tool) : base(tool){
+            
+        }
+
+        public override Item Clone(){
+            return new Tool(this);
+        }
     }
 }

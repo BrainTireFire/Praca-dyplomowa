@@ -120,8 +120,17 @@ namespace pracadyplomowa.Repository
 
             .Include(c => c.R_CharacterHasBackpack)
                 .ThenInclude(b => b.R_BackpackHasItems)
+                    .ThenInclude(b => b.R_EffectsOnEquip)
+            .Include(c => c.R_CharacterHasBackpack)
+                .ThenInclude(b => b.R_BackpackHasItems)
+                    .ThenInclude(b => b.R_EquipItemGrantsAccessToPower)
 
             .Include(c => c.R_EquippedItems)
+                .ThenInclude(ed => ed.R_Item)
+                    .ThenInclude(b => b.R_EffectsOnEquip)
+            .Include(c => c.R_EquippedItems)
+                .ThenInclude(ed => ed.R_Item)
+                    .ThenInclude(b => b.R_EquipItemGrantsAccessToPower)
 
             .AsSplitQuery() // IMPORTANT !!!!! https://learn.microsoft.com/en-us/ef/core/querying/single-split-queries
             .FirstAsync();

@@ -7,14 +7,20 @@ namespace pracadyplomowa.Models.Entities.Powers;
 
 public class SkillEffectInstance : ValueEffectInstance
 {
-    public SkillEffectType SkillEffectType { get; set; } = new SkillEffectType();
+    public SkillEffectType EffectType { get; set; } = new SkillEffectType();
     private SkillEffectInstance() : base("EF", 0){}
     public SkillEffectInstance(string name) : base(name, 0){}
     public SkillEffectInstance(SkillEffectBlueprint skillEffectBlueprint, Character roller, Character target) : base(skillEffectBlueprint, roller, target){
-        SkillEffectType = skillEffectBlueprint.SkillEffectType;
-        if(SkillEffectType.SkillEffect == SkillEffect.UpgradeToExpertise && !target.SkillProficiency(SkillEffectType.SkillEffect_Skill)){
+        EffectType = skillEffectBlueprint.SkillEffectType;
+        if(EffectType.SkillEffect == SkillEffect.UpgradeToExpertise && !target.SkillProficiency(EffectType.SkillEffect_Skill)){
             throw new ExpertiseException("Invalid expertise selection");
         }
+    }
+    public SkillEffectInstance(SkillEffectInstance effectInstance) : base(effectInstance){
+        EffectType  = effectInstance.EffectType;
+    }
+    public override EffectInstance Clone(){
+        return new SkillEffectInstance(this);
     }
 
     public class ExpertiseException(string message) : Exception(message){}

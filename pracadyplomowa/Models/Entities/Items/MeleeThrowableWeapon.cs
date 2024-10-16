@@ -10,6 +10,13 @@ namespace pracadyplomowa.Models.Entities.Items
         protected MeleeThrowableWeapon() : base(){
             
         }
+        public MeleeThrowableWeapon(MeleeThrowableWeapon weapon) : base(weapon){
+            this.Range = weapon.Range;
+        }
         public int Range { get; set; }
+
+        public override Item Clone(){
+            return new MeleeThrowableWeapon(this);
+        }
     }
 }

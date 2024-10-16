@@ -73,8 +73,8 @@ namespace pracadyplomowa.Controllers
                 ownerId
             );
 
-            var item = await _itemRepository.GetByNameWithEquipmentSlots("Iron longsword");
-            character.R_CharacterHasBackpack = new Backpack() { R_BackpackOfCharacter = character, R_BackpackHasItems = [await _itemRepository.GetByName("Iron longsword")] };
+            var item = (await _itemRepository.GetByNameWithEquipmentSlots("Iron longsword")).Clone();
+            character.R_CharacterHasBackpack = new Backpack() { R_BackpackOfCharacter = character, R_BackpackHasItems = [item] };
             character.EquipItem(item, item.R_ItemIsEquippableInSlots.First());
 
             _characterRepository.Add(character);

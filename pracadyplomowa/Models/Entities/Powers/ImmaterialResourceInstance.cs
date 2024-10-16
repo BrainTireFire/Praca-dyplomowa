@@ -12,6 +12,15 @@ namespace pracadyplomowa.Models.Entities.Powers
     public class ImmaterialResourceInstance : ObjectWithId
     {
 
+        public ImmaterialResourceInstance(){
+
+        }
+        public ImmaterialResourceInstance(ImmaterialResourceInstance resource){
+            this.NeedsRefresh = resource.NeedsRefresh;
+            this.Level = resource.Level;
+            this.R_Blueprint = resource.R_Blueprint;
+            this.R_BlueprintId = resource.R_BlueprintId;
+        }
         public bool NeedsRefresh { get; set; }
         public int Level { get; set; }
 

@@ -63,48 +63,48 @@ namespace pracadyplomowa.Models.Entities.Characters
             {
                 Description = "Strength base"
             };
-            strength.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
-            strength.AbilityEffectType.AbilityEffect_Ability = Ability.STRENGTH;
+            strength.EffectType.AbilityEffect = AbilityEffect.Bonus;
+            strength.EffectType.AbilityEffect_Ability = Ability.STRENGTH;
             strength.DiceSet = strengthValue;
 
             AbilityEffectInstance dexterity = new("Dexterity base")
             {
                 Description = "Dexterity base"
             };
-            dexterity.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
-            dexterity.AbilityEffectType.AbilityEffect_Ability = Ability.DEXTERITY;
+            dexterity.EffectType.AbilityEffect = AbilityEffect.Bonus;
+            dexterity.EffectType.AbilityEffect_Ability = Ability.DEXTERITY;
             dexterity.DiceSet = dexterityValue;
 
             AbilityEffectInstance constitution = new("Constitution base")
             {
                 Description = "Constitution base"
             };
-            constitution.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
-            constitution.AbilityEffectType.AbilityEffect_Ability = Ability.CONSTITUTION;
+            constitution.EffectType.AbilityEffect = AbilityEffect.Bonus;
+            constitution.EffectType.AbilityEffect_Ability = Ability.CONSTITUTION;
             constitution.DiceSet = constitutionValue;
 
             AbilityEffectInstance intelligence = new("Intelligence base")
             {
                 Description = "Intelligence base"
             };
-            intelligence.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
-            intelligence.AbilityEffectType.AbilityEffect_Ability = Ability.INTELLIGENCE;
+            intelligence.EffectType.AbilityEffect = AbilityEffect.Bonus;
+            intelligence.EffectType.AbilityEffect_Ability = Ability.INTELLIGENCE;
             intelligence.DiceSet = intelligenceValue;
 
             AbilityEffectInstance wisdom = new("Wisdom base")
             {
                 Description = "Wisdom base"
             };
-            wisdom.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
-            wisdom.AbilityEffectType.AbilityEffect_Ability = Ability.WISDOM;
+            wisdom.EffectType.AbilityEffect = AbilityEffect.Bonus;
+            wisdom.EffectType.AbilityEffect_Ability = Ability.WISDOM;
             wisdom.DiceSet = wisdomValue;
 
             AbilityEffectInstance charisma = new("Charisma base")
             {
                 Description = "Charisma base"
             };
-            charisma.AbilityEffectType.AbilityEffect = AbilityEffect.Bonus;
-            charisma.AbilityEffectType.AbilityEffect_Ability = Ability.CHARISMA;
+            charisma.EffectType.AbilityEffect = AbilityEffect.Bonus;
+            charisma.EffectType.AbilityEffect_Ability = Ability.CHARISMA;
             charisma.DiceSet = charismaValue;
 
             EffectGroup basicStats = new()
@@ -167,7 +167,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             get {
                 int healthBase = this.R_CharacterHasLevelsInClass.Sum(cl => cl.HitPoints);
                 int optional = this.AffectedByApprovedEffects.OfType<HitpointEffectInstance>().Where(hei => 
-                    hei.HitpointEffectType.HitpointEffect == HitpointEffect.HitpointMaximumBonus
+                    hei.EffectType.HitpointEffect == HitpointEffect.HitpointMaximumBonus
                 ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet);
                 return healthBase + optional;
             }
@@ -176,7 +176,7 @@ namespace pracadyplomowa.Models.Entities.Characters
         [NotMapped]
         public int TemporaryHitpoints {
             get => this.AffectedByApprovedEffects.OfType<HitpointEffectInstance>().Where(hei => 
-                    hei.HitpointEffectType.HitpointEffect == HitpointEffect.TemporaryHitpoints
+                    hei.EffectType.HitpointEffect == HitpointEffect.TemporaryHitpoints
                 ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet);
         }
 
@@ -190,8 +190,8 @@ namespace pracadyplomowa.Models.Entities.Characters
 
         public int AbilityValue(Ability ability){
             return this.AffectedByApprovedEffects.OfType<AbilityEffectInstance>().Where(aei => 
-            aei.AbilityEffectType.AbilityEffect == AbilityEffect.Bonus &&
-            aei.AbilityEffectType.AbilityEffect_Ability == ability
+            aei.EffectType.AbilityEffect == AbilityEffect.Bonus &&
+            aei.EffectType.AbilityEffect_Ability == ability
             ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet);
         }
 
@@ -251,8 +251,8 @@ namespace pracadyplomowa.Models.Entities.Characters
 
         public int SavingThrowValue(Ability ability){
             int returnValue = this.AffectedByApprovedEffects.OfType<SavingThrowEffectInstance>().Where(aei => 
-            aei.SavingThrowEffectType.SavingThrowEffect == SavingThrowEffect.Bonus &&
-            aei.SavingThrowEffectType.SavingThrowEffect_Ability == ability
+            aei.EffectType.SavingThrowEffect == SavingThrowEffect.Bonus &&
+            aei.EffectType.SavingThrowEffect_Ability == ability
             ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet) 
             + AbilityModifier(AbilityValue(ability));
 
@@ -261,8 +261,8 @@ namespace pracadyplomowa.Models.Entities.Characters
 
         public bool SavingThrowProficiency(Ability ability){
             return this.AffectedByApprovedEffects.OfType<SavingThrowEffectInstance>().Where(aei => 
-            aei.SavingThrowEffectType.SavingThrowEffect == SavingThrowEffect.Proficiency &&
-            aei.SavingThrowEffectType.SavingThrowEffect_Ability == ability
+            aei.EffectType.SavingThrowEffect == SavingThrowEffect.Proficiency &&
+            aei.EffectType.SavingThrowEffect_Ability == ability
             ).Any();
         }
 
@@ -318,8 +318,8 @@ namespace pracadyplomowa.Models.Entities.Characters
 
         public int SkillValue(Skill skill){
             int value = this.AffectedByApprovedEffects.OfType<SkillEffectInstance>().Where(aei => 
-            aei.SkillEffectType.SkillEffect == SkillEffect.Bonus &&
-            aei.SkillEffectType.SkillEffect_Skill == skill
+            aei.EffectType.SkillEffect == SkillEffect.Bonus &&
+            aei.EffectType.SkillEffect_Skill == skill
             ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet);
 
             value += AbilityModifier(AbilityValue(Utils.SkillToAbility(skill)));
@@ -334,15 +334,15 @@ namespace pracadyplomowa.Models.Entities.Characters
 
         public bool SkillProficiency(Skill skill){
             return this.AffectedByApprovedEffects.OfType<SkillEffectInstance>().Where(aei => 
-            aei.SkillEffectType.SkillEffect == SkillEffect.Proficiency &&
-            aei.SkillEffectType.SkillEffect_Skill == skill
+            aei.EffectType.SkillEffect == SkillEffect.Proficiency &&
+            aei.EffectType.SkillEffect_Skill == skill
             ).Any();
         }
 
         public bool SkillExpertise(Skill skill){
             return this.AffectedByApprovedEffects.OfType<SkillEffectInstance>().Where(aei => 
-            aei.SkillEffectType.SkillEffect == SkillEffect.UpgradeToExpertise &&
-            aei.SkillEffectType.SkillEffect_Skill == skill
+            aei.EffectType.SkillEffect == SkillEffect.UpgradeToExpertise &&
+            aei.EffectType.SkillEffect_Skill == skill
             ).Any();
         }
 
@@ -431,7 +431,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                 int speed = this.R_CharacterBelongsToRace.Speed;
                 IEnumerable<MovementEffectInstance> multiplierData = this.AffectedByApprovedEffects
                                 .OfType<MovementEffectInstance>()
-                                .Where(m => m.MovementEffectType.MovementEffect == MovementEffect.Multiplier);
+                                .Where(m => m.EffectType.MovementEffect == MovementEffect.Multiplier);
                 bool hasMultiplier = multiplierData.Any();
                 int multiplier = 1;
                 if(hasMultiplier){
@@ -441,7 +441,7 @@ namespace pracadyplomowa.Models.Entities.Characters
 
                 int bonus = this.AffectedByApprovedEffects
                                 .OfType<MovementEffectInstance>()
-                                .Where(m => m.MovementEffectType.MovementEffect == MovementEffect.Bonus)
+                                .Where(m => m.EffectType.MovementEffect == MovementEffect.Bonus)
                                 .Sum(m => m.DiceSet.flat);
 
                 return speed*multiplier+bonus;
@@ -499,16 +499,16 @@ namespace pracadyplomowa.Models.Entities.Characters
                 var size = this.R_CharacterBelongsToRace.Size;
                 var setSizes = this.AffectedByApprovedEffects
                                     .OfType<SizeEffectInstance>()
-                                    .Where(ei => ei.SizeEffectType.SizeEffect == SizeEffect.Change)
-                                    .Select(ei => ei.SizeEffectType.SizeEffect_SizeToSet)
+                                    .Where(ei => ei.EffectType.SizeEffect == SizeEffect.Change)
+                                    .Select(ei => ei.EffectType.SizeEffect_SizeToSet)
                                     .ToList();
                 if(setSizes.Count != 0){
                     size = setSizes.Max();
                 }
                 var sizeChanges = this.AffectedByApprovedEffects
                                     .OfType<SizeEffectInstance>()
-                                    .Where(ei => ei.SizeEffectType.SizeEffect == SizeEffect.Bonus)
-                                    .Select(ei => ei.SizeEffectType.SizeBonus)
+                                    .Where(ei => ei.EffectType.SizeEffect == SizeEffect.Bonus)
+                                    .Select(ei => ei.EffectType.SizeBonus)
                                     .Sum();
                 var result = ((int)size) + sizeChanges;
                 if (Enum.IsDefined(typeof(Size), result))
@@ -547,9 +547,9 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
 
 
-        public bool ItemFamilyProficiency(int familyId){
+        public bool ItemFamilyProficiency(ItemFamily family){
             return this.AffectedByApprovedEffects.OfType<ProficiencyEffectInstance>().Where(pei => 
-                        pei.R_GrantsProficiencyInItemFamilyId == familyId
+                        pei.R_GrantsProficiencyInItemFamilyId == family.Id || pei.ItemType == family.ItemType
                         ).Any();
         }
 

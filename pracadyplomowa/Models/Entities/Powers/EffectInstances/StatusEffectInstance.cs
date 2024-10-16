@@ -6,10 +6,16 @@ namespace pracadyplomowa.Models.Entities.Powers;
 
 public class StatusEffectInstance : EffectInstance
 {
-    public StatusEffectType StatusEffectType { get; set; } = new StatusEffectType();
+    public StatusEffectType EffectType { get; set; } = new StatusEffectType();
     private StatusEffectInstance() : base("EF"){}
     public StatusEffectInstance(string name) : base(name){}
     public StatusEffectInstance(StatusEffectBlueprint statusEffectBlueprint, Character target) : base(statusEffectBlueprint, target){
-        StatusEffectType = statusEffectBlueprint.StatusEffectType;
+        EffectType = statusEffectBlueprint.StatusEffectType;
+    }
+    public StatusEffectInstance(StatusEffectInstance effectInstance) : base(effectInstance){
+        EffectType  = effectInstance.EffectType;
+    }
+    public override EffectInstance Clone(){
+        return new StatusEffectInstance(this);
     }
 }

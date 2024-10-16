@@ -12,5 +12,10 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectInstances
         private OffHandAttackEffectInstance() : base("EF"){}
         public OffHandAttackEffectInstance(string name) : base(name){}
         public OffHandAttackEffectInstance(OffHandAttackEffectBlueprint offHandAttackEffectBlueprint, Character target) : base(offHandAttackEffectBlueprint, target){}
+        public OffHandAttackEffectInstance(OffHandAttackEffectInstance effectInstance) : base(effectInstance){
+        }
+        public override EffectInstance Clone(){
+            return new OffHandAttackEffectInstance(this);
+        }
     }
 }

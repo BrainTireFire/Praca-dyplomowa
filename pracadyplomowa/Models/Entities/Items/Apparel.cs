@@ -17,5 +17,14 @@ namespace pracadyplomowa.Models.Entities.Items
         public bool StealthDisadvantage { get; set; }
         public int StrengthRequirement { get; set; }
 
+        protected Apparel(Apparel apparel) : base(apparel){
+            this.ArmorClass = apparel.ArmorClass;
+            this.StealthDisadvantage = apparel.StealthDisadvantage;
+            this.StrengthRequirement = apparel.StrengthRequirement;
+        }
+
+        public override Item Clone(){
+            return new Apparel(this);
+        }
     }
 }

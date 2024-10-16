@@ -14,5 +14,10 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectInstances
         [System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute]
         public DummyEffectInstance(DummyEffectBlueprint dummyEffectBlueprint, Character target) : base(dummyEffectBlueprint, target){
         }
+        public DummyEffectInstance(DummyEffectInstance effectInstance) : base(effectInstance){
+        }
+        public override EffectInstance Clone(){
+            return new DummyEffectInstance(this);
+        }
     }
 }

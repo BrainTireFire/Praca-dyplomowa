@@ -18,6 +18,13 @@ namespace pracadyplomowa.Models.Entities.Items
         {
         }
 
+        public Weapon(Weapon weapon) : base(weapon){
+            WeaponWeight = weapon.WeaponWeight;
+            DamageType = weapon.DamageType;
+            DamageValue = new DiceSet(weapon.DamageValue);
+            R_PowersCastedOnHit = [.. weapon.R_PowersCastedOnHit];
+        }
+
         public WeaponWeight WeaponWeight { get; set; }
         public DamageType DamageType { get; set; }
         public DiceSet DamageValue { get; set; } = new DiceSet();
@@ -41,7 +48,7 @@ namespace pracadyplomowa.Models.Entities.Items
                 return 0;
             }
             else{
-                return Wielder.ItemFamilyProficiency(this.R_ItemInItemsFamilyId) ? Wielder.ProficiencyBonus : 0;
+                return Wielder.ItemFamilyProficiency(this.R_ItemInItemsFamily) ? Wielder.ProficiencyBonus : 0;
             }
         }
     }

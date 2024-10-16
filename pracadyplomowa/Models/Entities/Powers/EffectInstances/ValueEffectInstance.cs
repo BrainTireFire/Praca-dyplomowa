@@ -25,4 +25,8 @@ public abstract class ValueEffectInstance : EffectInstance
             throw new UnreachableException();
         }
     }
+
+    public ValueEffectInstance(ValueEffectInstance effectInstance) : base(effectInstance){
+        this.DiceSet = new DiceSet(effectInstance.DiceSet);
+    }
 }

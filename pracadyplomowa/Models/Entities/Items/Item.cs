@@ -24,6 +24,23 @@ namespace pracadyplomowa.Models.Entities.Items
             R_ItemInItemsFamilyId = itemFamily.Id;
         }
 
+        public Item(Item item){
+            Name = item.Name;
+            Description = item.Description;
+            Weight = item.Weight;
+            IsSpellFocus = item.IsSpellFocus;
+            R_ItemIsEquippableInSlots = [.. item.R_ItemIsEquippableInSlots];
+            R_ItemInItemsFamily = item.R_ItemInItemsFamily;
+            R_ItemInItemsFamilyId = item.R_ItemInItemsFamilyId;
+            R_BackpackHasItem = item.R_BackpackHasItem;
+            R_BackpackHasItemId = item.R_BackpackHasItemId;
+            R_EquipData = item.R_EquipData;
+            R_ItemGrantsResources = item.R_ItemGrantsResources.Select(x => new ImmaterialResourceInstance(x)).ToList();
+            R_AffectedBy = item.R_AffectedBy.Select(x => x.Clone()).ToList();
+            R_EffectsOnEquip = item.R_EffectsOnEquip.Select(x => x.Clone()).ToList();
+            R_EquipItemGrantsAccessToPower = [.. item.R_EquipItemGrantsAccessToPower];
+        }
+
         public string Name { get; set; } = null!;
         public int Weight { get; set; }
         public string Description { get; set; } = null!;
@@ -69,6 +86,10 @@ namespace pracadyplomowa.Models.Entities.Items
             else{
                 throw new EquippingException("Item is not equippable in this slot");
             }
+        }
+
+        public virtual Item Clone(){
+            return new Item(this);
         }
 
         public class EquippingException(string message) : Exception(message);

@@ -32,22 +32,22 @@ namespace pracadyplomowa.Models.Entities.Characters
         public int R_CharacterBelongsToRaceId { get; set; }
         public virtual EffectGroup? R_ConcentratesOn { get; set; }
         public int? R_ConcentratesOnId { get; set; }
-        public virtual ICollection<ParticipanceData> R_CharactersParticipatesInEncounters { get; set; } = [];
+        public virtual List<ParticipanceData> R_CharactersParticipatesInEncounters { get; set; } = [];
         public virtual Backpack R_CharacterHasBackpack { get; set; } = new Backpack();
         public int R_CharacterHasBackpackId { get; set; }
 
-        public virtual ICollection<EquipData> R_EquippedItems { get; set; } = [];
+        public virtual List<EquipData> R_EquippedItems { get; set; } = [];
         public virtual Campaign.Campaign? R_Campaign { get; set; }
         public int? R_CampaignId { get; set; }
-        public virtual ICollection<ClassLevel> R_CharacterHasLevelsInClass { get; set; } = [];
-        public virtual ICollection<Aura> R_AuraCenteredAtCharacter { get; set; } = [];
+        public virtual List<ClassLevel> R_CharacterHasLevelsInClass { get; set; } = [];
+        public virtual List<Aura> R_AuraCenteredAtCharacter { get; set; } = [];
         public virtual List<EffectInstance> R_AffectedBy { get; set; } = [];
-        public virtual ICollection<Power> R_PowersPrepared { get; set; } = [];
-        public virtual ICollection<Power> R_PowersKnown { get; set; } = [];
+        public virtual List<Power> R_PowersPrepared { get; set; } = [];
+        public virtual List<Power> R_PowersKnown { get; set; } = [];
         public virtual Power? R_SpawnedByPower { get; set; }
         public int? R_SpawnedByPowerId { get; set; }
         public virtual List<ImmaterialResourceInstance> R_ImmaterialResourceInstances { get; set; } = []; // only for manual assignment
-        public virtual ICollection<ChoiceGroupUsage> R_UsedChoiceGroups { get; set;} = [];
+        public virtual List<ChoiceGroupUsage> R_UsedChoiceGroups { get; set;} = [];
 
         public Character(){
 

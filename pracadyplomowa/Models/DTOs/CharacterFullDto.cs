@@ -283,7 +283,7 @@ namespace pracadyplomowa.Models.DTOs
             public DiceSet Left { get; set; } = null!;
         }
         public static HitDiceClass GetHitDice(Character character){
-            DiceSet total = character.HitDiceTotal;
+            DiceSet total = new DiceSet(character.HitDiceTotal);
             DiceSet left = new()
             {
                 d20 = total.d20 - character.UsedHitDice.d20,
@@ -308,16 +308,35 @@ namespace pracadyplomowa.Models.DTOs
 
             public DiceSet Damage { get; set; } = null!;
             public DiceSet AttackBonus { get; set; } = null!;
-            public DamageType DamageType;
-
-            public int? Range { get; set; } = 0;
-        
-            // public class Damage {
-            //     public DamageType DamageType{ get; set; }
-            //     public DiceSet DamageValue { get; set; } = null!;
-            // }
-
+            public int DamageType { get; set; }
+            public int? Reach { get; set; }
+            public int? Range { get; set; }
+            
         }
+
+        public class DiceSet {
+            public int d4 {get; set;}
+            public int d6 {get; set;}
+            public int d8 {get; set;}
+            public int d10 {get; set;}
+            public int d12 {get; set;}
+            public int d20 {get; set;}
+            public int d100 {get; set;}
+            public int flat {get; set;}
+
+            public DiceSet(pracadyplomowa.Models.Entities.Characters.DiceSet diceSet){
+                this.d4 = diceSet.d4;
+                this.d6 = diceSet.d6;
+                this.d8 = diceSet.d8;
+                this.d10 = diceSet.d10;
+                this.d12 = diceSet.d12;
+                this.d20 = diceSet.d20;
+                this.flat = diceSet.flat;
+            }
+            public DiceSet(){
+            }
+        }
+
 
         public static List<WeaponAttack> GetAttacks(Character character){
             return character.R_EquippedItems.Where(ei => ei.R_Slots.Select(s => s.Type).Contains(SlotType.MainHand) || ei.R_Slots.Select(s => s.Type).Contains(SlotType.OffHand)).Select(ei => ei.R_Item).OfType<Weapon>().Select(w => new WeaponAttack(){
@@ -325,10 +344,11 @@ namespace pracadyplomowa.Models.DTOs
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
                 Main = w.R_EquipData.R_Slots.Select(s => s.Type).Contains(SlotType.MainHand),
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
-                Damage = w.GetDamageDiceSet(),
-                AttackBonus = w.GetAttackBonus(),
-                DamageType = w.DamageType,
-                Range = w is IRangedWeapon weapon ? weapon.Range : null
+                Damage = new DiceSet(w.GetDamageDiceSet()),
+                AttackBonus = new DiceSet(w.GetAttackBonus()),
+                DamageType = (int)w.DamageType,
+                Range = w is IRangedWeapon weapon ? weapon.Range : null,
+                Reach = w is MeleeWeapon meleeWeapon ? (meleeWeapon.Reach ? 10 : 5) : null,
             }).ToList();
         }
         // public static List<WeaponAttack> GetAttacks(Character character){
@@ -403,10 +423,10 @@ namespace pracadyplomowa.Models.DTOs
                     Id = item.R_ItemInItemsFamily.Id,
                     Name = item.R_ItemInItemsFamily.Name
                 },
-                Slots = item.R_ItemIsEquippableInSlots.Select(slot => new Item.Slot() {
+                Slots = item.R_EquipData != null ? item.R_EquipData.R_Slots.Select(slot => new Item.Slot() {
                     Id = slot.Id,
                     Name = slot.Name
-                }).ToList(),
+                }).ToList() : [],
                 Equipped = item.R_EquipData != null
             }).ToList();
 

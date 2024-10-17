@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Models.Entities.Powers;
+using pracadyplomowa.Models.Enums;
 
 namespace pracadyplomowa.Models.Entities.Items
 {
@@ -12,7 +13,7 @@ namespace pracadyplomowa.Models.Entities.Items
         protected RangedWeapon() : base(){
             
         }
-        public RangedWeapon(string name, string description, ItemFamily itemFamily, int weight) : base(name, description, itemFamily, weight)
+        public RangedWeapon(string name, string description, ItemFamily itemFamily, int weight, DamageType damageType, DiceSet damageValue) : base(name, description, itemFamily, weight, damageType, damageValue)
         {
         }
         public RangedWeapon(RangedWeapon weapon) : base(weapon){

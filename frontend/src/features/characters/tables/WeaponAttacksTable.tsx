@@ -5,6 +5,8 @@ import styled from "styled-components";
 
 import RadioButton from "../../../ui/containers/RadioButton";
 import { WeaponAttack } from "../../../models/weaponattack";
+import { DiceSetString } from "../../../models/diceset";
+import { DamageType } from "../../../models/damageType";
 
 export default function WeaponAttackTable({
   weaponAttacks,
@@ -13,12 +15,13 @@ export default function WeaponAttackTable({
 }) {
   return (
     <Menus>
-      <Table header="Weapon attack" columns="1fr 1fr 1fr 1fr">
+      <Table header="Weapon attack" columns="1fr 1fr 1fr 1fr 1fr">
         <Table.Header>
           <div>Main</div>
           <div>Damage</div>
+          <div>Attack bonus</div>
           <div>D. type</div>
-          <div>Range</div>
+          <div>Reach/Range</div>
         </Table.Header>
         <Table.Body
           data={weaponAttacks}
@@ -50,28 +53,12 @@ function WeaponAttackRow({ weaponAttack }: { weaponAttack: WeaponAttack }) {
         //   onChange={handleRadioChange}
       />
 
+      <Cell>{DiceSetString(weaponAttack.damage)}</Cell>
+      <Cell>{DiceSetString(weaponAttack.attackBonus)}</Cell>
+      <Cell>{DamageType(weaponAttack.damageType)}</Cell>
       <Cell>
-        {Object.entries(weaponAttack.damage).reduce(
-          (accumulator, currentValue) => {
-            if (accumulator === "") {
-              return (
-                accumulator +
-                (currentValue[1] > 0 ? currentValue[1] + currentValue[0] : "")
-              );
-            } else {
-              return (
-                accumulator +
-                (currentValue[1] > 0
-                  ? "+" + currentValue[1] + currentValue[0]
-                  : "")
-              );
-            }
-          },
-          ""
-        )}
+        {weaponAttack.reach ?? "-"}/{weaponAttack.range ?? "-"}
       </Cell>
-      <Cell>{weaponAttack.damageType}</Cell>
-      <Cell>{weaponAttack.range}</Cell>
     </Table.Row>
   );
 }

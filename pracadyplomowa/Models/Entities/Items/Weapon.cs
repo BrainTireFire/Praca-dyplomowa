@@ -12,10 +12,11 @@ namespace pracadyplomowa.Models.Entities.Items
     public abstract class Weapon : Item
     {
         protected Weapon() : base(){
-            
         }
-        protected Weapon(string name, string description, ItemFamily itemFamily, int weight) : base(name, description, itemFamily, weight)
+        protected Weapon(string name, string description, ItemFamily itemFamily, int weight, DamageType damageType, DiceSet damageValue) : base(name, description, itemFamily, weight)
         {
+            this.DamageValue = damageValue;
+            this.DamageType = damageType;
         }
 
         public Weapon(Weapon weapon) : base(weapon){
@@ -27,7 +28,7 @@ namespace pracadyplomowa.Models.Entities.Items
 
         public WeaponWeight WeaponWeight { get; set; }
         public DamageType DamageType { get; set; }
-        public DiceSet DamageValue { get; set; } = new DiceSet();
+        public DiceSet DamageValue { get; set; } = null!;
         
         //Relationship
         public virtual ICollection<Power> R_PowersCastedOnHit { get; set; } = [];
@@ -39,7 +40,7 @@ namespace pracadyplomowa.Models.Entities.Items
             }
         }
         
-        public DiceSet GetDamageDiceSet(){
+        public virtual DiceSet GetDamageDiceSet(){
             return DamageValue.getPersonalizedSet(Wielder);
         }
 

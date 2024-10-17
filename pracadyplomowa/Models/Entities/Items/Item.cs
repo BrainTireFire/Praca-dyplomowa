@@ -45,6 +45,7 @@ namespace pracadyplomowa.Models.Entities.Items
         public int Weight { get; set; }
         public string Description { get; set; } = null!;
         public bool IsSpellFocus { get; set; }
+        public bool OccupiesAllSlots { get; set;} // if false then can be placed in any of listed slots, if true then occupies all of them at once
 
         //Relationship
         public virtual ICollection<EquipmentSlot> R_ItemIsEquippableInSlots { get; set; } = [];
@@ -63,29 +64,48 @@ namespace pracadyplomowa.Models.Entities.Items
         public virtual ICollection<Power> R_EquipItemGrantsAccessToPower { get; set; } = [];
 
         public void Unequip(Character character){
-            character.R_EquippedItems.ToList().RemoveAll(ed => ed.R_Character == character && ed.R_Item == this);
+            character.R_EquippedItems.RemoveAll(ed => ed.R_Character == character && ed.R_Item == this);
             this.R_EquipData = null;
         }
 // powersAlwaysAvailable.Intersect(this.R_PowersAlwaysAvailable).Count() == powersAlwaysAvailable.Count
-        public EquipData Equip(Character character, EquipmentSlot slot){
+        public void Equip(Character character, EquipmentSlot slot){
             if(this.R_ItemIsEquippableInSlots.Where(s => s == slot).Any()){
                 if(this.R_ItemIsEquippableInSlots.Intersect(character.R_CharacterBelongsToRace.R_EquipmentSlots).Count() == this.R_ItemIsEquippableInSlots.Count){
-                    character.R_EquippedItems.Where(ed => ed.R_Slots.Contains(slot)).Select(ed => ed.R_Item).ToList().ForEach(i => i.Unequip(character));
-                    EquipData equipData = new()
-                    {
-                        R_Character = character,
-                        R_Item = this
-                    };
-                    character.R_EquippedItems.Add(equipData);
-                    this.R_EquipData = equipData;
-                    equipData.R_Slots.AddRange(this.R_ItemIsEquippableInSlots);
-                    return equipData;
+                    if(!this.OccupiesAllSlots){
+                        EquipInSingleSlot(character, slot);
+                    }
+                    else{
+                        EquipInAllSlots(character);
+                    }
                 }
-                throw new EquippingException("Race does not have necessary equipment slot");
+                else{
+                    throw new EquippingException("Race does not have necessary equipment slot");
+                }
             }
             else{
                 throw new EquippingException("Item is not equippable in this slot");
             }
+        }
+
+        protected void EquipInSingleSlot(Character character, EquipmentSlot slot){
+            character.R_EquippedItems.Where(ed => ed.R_Slots.Contains(slot)).Select(ed => ed.R_Item).ToList().ForEach(i => i.Unequip(character));
+            prepareEquipData(character).R_Slots.Add(slot);
+        }
+
+        protected void EquipInAllSlots(Character character){
+            character.R_EquippedItems.Where(ed => ed.R_Slots.Intersect(this.R_ItemIsEquippableInSlots).Any()).Select(ed => ed.R_Item).ToList().ForEach(i => i.Unequip(character));
+            prepareEquipData(character).R_Slots.AddRange(this.R_ItemIsEquippableInSlots);
+        }
+
+        private EquipData prepareEquipData(Character character){
+            EquipData equipData = new()
+            {
+                R_Character = character,
+                R_Item = this
+            };
+            character.R_EquippedItems.Add(equipData);
+            this.R_EquipData = equipData;
+            return equipData;
         }
 
         public virtual Item Clone(){

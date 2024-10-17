@@ -253,5 +253,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                 builder.Entity<ChoiceGroupUsage>().HasMany(cg => cg.R_PowersAlwaysAvailableGranted).WithMany(p => p.R_AlwaysAvailableThroughChoiceGroupUsage);
                 builder.Entity<ChoiceGroupUsage>().HasMany(cg => cg.R_PowersToPrepareGranted).WithMany(p => p.R_ToPrepareThroughChoiceGroupUsage);
                 builder.Entity<ImmaterialResourceInstance>().Navigation(i => i.R_Blueprint).AutoInclude();
+                builder.Entity<Weapon>().Navigation(i => i.DamageValue).AutoInclude();
+                builder.Entity<MeleeWeapon>().Navigation(i => i.VersatileDamageValue).AutoInclude();
         }
 }

@@ -130,8 +130,9 @@ public class Seed
     }
 
     public static async Task SeedItems(AppDbContext context){
-        var item = new MeleeWeapon("Iron longsword", "Basic sword", context.ItemFamilies.Where(i => i.Name == "Longsword").First(), 1);
+        var item = new MeleeWeapon("Iron longsword", "Basic sword", context.ItemFamilies.Where(i => i.Name == "Longsword").First(), 1, DamageType.slashing, new DiceSet(){d8 = 1}, new DiceSet(){d10 = 1});
         item.R_ItemIsEquippableInSlots.Add(context.EquipmentSlots.Where(s => s.Name == "Right palm").First());
+        item.R_ItemIsEquippableInSlots.Add(context.EquipmentSlots.Where(s => s.Name == "Left palm").First());
         var items = new List<Item>();
         CheckIfExistsAlready(context, items, item);
         context.Items.AddRange(items);

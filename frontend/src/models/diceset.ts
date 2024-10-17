@@ -1,4 +1,5 @@
 export type DiceSet = {
+  d100: number;
   d20: number;
   d12: number;
   d10: number;
@@ -15,6 +16,7 @@ export function DiceSetString(diceSet: DiceSet): string {
   const parts: string[] = [];
 
   // Add dice values to parts array, ignoring 0s
+  if (diceSet.d100 > 0) parts.push(`${diceSet.d100}d100`);
   if (diceSet.d20 > 0) parts.push(`${diceSet.d20}d20`);
   if (diceSet.d12 > 0) parts.push(`${diceSet.d12}d12`);
   if (diceSet.d10 > 0) parts.push(`${diceSet.d10}d10`);

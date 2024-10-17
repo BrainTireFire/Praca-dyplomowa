@@ -74,8 +74,14 @@ namespace pracadyplomowa.Controllers
             );
 
             var item = (await _itemRepository.GetByNameWithEquipmentSlots("Iron longsword")).Clone();
-            character.R_CharacterHasBackpack = new Backpack() { R_BackpackOfCharacter = character, R_BackpackHasItems = [item] };
-            character.EquipItem(item, item.R_ItemIsEquippableInSlots.First());
+            var item2 = item.Clone();
+            character.R_CharacterHasBackpack = new Backpack() { R_BackpackOfCharacter = character, R_BackpackHasItems = [item, item2] };
+            character.EquipItem(item, item.R_ItemIsEquippableInSlots.Where(x => x.Name == "Right palm").First());
+            character.EquipItem(item2, item2.R_ItemIsEquippableInSlots.Where(x => x.Name == "Left palm").First());
+            if(item2 is MeleeWeapon weapon && weapon.Versatile)
+            {
+                weapon.EquipVersatile();
+            }
 
             _characterRepository.Add(character);
             await _characterRepository.SaveChanges();

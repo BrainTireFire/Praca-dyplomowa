@@ -2,8 +2,10 @@ import { DiceSet } from "./diceset";
 
 export type WeaponAttack = {
   id: number;
-  main: true;
+  main: boolean;
   damage: DiceSet;
-  damageType: string;
-  range: 0;
+  attackBonus: DiceSet;
+  damageType: number;
+  range: number | null;
+  reach: number | null;
 };

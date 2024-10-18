@@ -16,8 +16,7 @@ namespace pracadyplomowa.Controllers
             var campaign = new Campaign
             {
                 Name = campaignInsertDto.Name,
-                Description = campaignInsertDto.Description,
-                InvitationLink = campaignInsertDto.InvitationLink
+                Description = campaignInsertDto.Description
             };
             var userId = User.GetUserId();
             campaign.R_OwnerId = userId;
@@ -28,7 +27,7 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<CampaignDto>> GetCampaigns()
+        public async Task<ActionResult<List<CampaignDto>>> GetCampaigns()
         {
             var campaigns = await _campaignRepository.GetCampaigns(User.GetUserId());
 
@@ -36,13 +35,20 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpGet("{campaignId}")]
-        public async Task<ActionResult> GetCampaign(int campaignId)
+        public async Task<ActionResult<CampaignDto>> GetCampaign(int campaignId)
         {
             var campaign = await _campaignRepository.GetCampaign(campaignId);
 
-            var campaignDto = new CampaignDto(campaign.Id, campaign.Name, campaign.Description, campaign.InvitationLink);
+            var campaignDto = new CampaignDto(campaign.Id, campaign.Name, campaign.Description);
 
             return Ok(campaignDto);
+        }
+
+        [HttpPost("addCharacterToCampaign/{campaignId}/{characterId}")]
+        public ActionResult AddCharacterToCampaign(int campaignId, int characterId)
+        {
+            _campaignRepository.AddCharacter(campaignId, characterId);
+            return Ok();
         }
     }
 }

@@ -11,6 +11,12 @@
       "driver": "SQLite",
       "name": "newdb",
       "database": "${workspaceFolder:Praca-dyplomowa}/pracadyplomowa/identity.db"
+    },
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "name": "newest for sure",
+      "database": "${workspaceFolder:Praca-dyplomowa}/pracadyplomowa/identity.db"
     }
   ],
   "FSharp.suggestGitignore": false

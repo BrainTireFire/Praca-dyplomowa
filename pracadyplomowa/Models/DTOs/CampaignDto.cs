@@ -1,8 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using pracadyplomowa.Models.Entities.Characters;
 
 namespace pracadyplomowa.Models.DTOs
 {
-    public class CampaignDto(int id, string name, string description, string invitationLink)
+    public class CampaignDto(int id, string name, string description)
     {
         public int Id { get; set; } = id;
         [Required]
@@ -10,7 +11,5 @@ namespace pracadyplomowa.Models.DTOs
         public string Name { get; set; } = name;
 
         public string Description { get; set; } = description;
-
-        public string InvitationLink { get; set; } = invitationLink;
     }
 }

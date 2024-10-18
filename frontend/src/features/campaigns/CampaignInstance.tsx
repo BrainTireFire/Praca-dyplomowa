@@ -47,13 +47,6 @@ const DescriptionStyled = styled.div`
   width: 50%;
 `;
 
-const Avatar = styled.div`
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  padding: 10px;
-`;
-
 export default function CampaignInstance() {
   const { isLoading, campaign } = useCampaign();
   const navigate = useNavigate();
@@ -66,14 +59,12 @@ export default function CampaignInstance() {
     return <div>{t("campaign.error.notFound")}</div>;
   }
 
-  const { id, name, description, invitationLink, members }: Campaign = campaign;
+  const { id, name, description, members }: Campaign = campaign;
 
   return (
     <>
       <Container>
-        <Heading as="h1">
-          Campaign #{id} - {name}
-        </Heading>
+        <Heading as="h1">Campaign - {name}</Heading>
         <Line size="percantage" bold="large" />
       </Container>
       <div>
@@ -128,7 +119,6 @@ export default function CampaignInstance() {
           Game Master
         </Heading>
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <Avatar>{/* <img src={gameMaster.img} alt="avatar"></img> */}</Avatar>
           <span>{/* {gameMaster.name} - {gameMaster.description} */}</span>
         </div>
         <Line size="percantage" />
@@ -148,7 +138,7 @@ export default function CampaignInstance() {
         <Heading as="h2" align="left">
           Link for invite to the campaign
         </Heading>
-        <InputCopyToClipboard valueDefault={invitationLink} />
+        <InputCopyToClipboard valueDefault={`localhost:5173/join/${id}`} />
       </div>
     </>
   );

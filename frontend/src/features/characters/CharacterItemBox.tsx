@@ -13,9 +13,11 @@ const StyledElementBox = styled.div`
 export default function CharacterItemBox({
   character,
   onClick,
+  showButtons = true,
 }: {
   character: CharacterItem;
   onClick: any;
+  showButtons: boolean;
 }) {
   console.log(character);
   return (
@@ -25,16 +27,18 @@ export default function CharacterItemBox({
         {character.class} & {character.race}
       </StyledElementBox>
       <StyledElementBox>{character.description}</StyledElementBox>
-      <div>
-        <ButtonGroup justify="center">
-          <Button variation="primary" size="medium">
-            Remove
-          </Button>
-          <Button variation="primary" size="medium">
-            Show campaign
-          </Button>
-        </ButtonGroup>
-      </div>
+      {showButtons && (
+        <div>
+          <ButtonGroup justify="center">
+            <Button variation="primary" size="medium">
+              Remove
+            </Button>
+            <Button variation="primary" size="medium">
+              Show campaign
+            </Button>
+          </ButtonGroup>
+        </div>
+      )}
     </Box>
   );
 }

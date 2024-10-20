@@ -9,6 +9,7 @@ import Router from "./Router";
 import i18n from "./i18n/i18n";
 import queryClient from "./queryClient";
 import { DarkModeProvider } from "./context/DarkModeContext";
+import styled from "styled-components";
 
 function App() {
   return (
@@ -39,6 +40,15 @@ function App() {
               },
             }}
           />
+          {/* <div
+            id="draggable"
+            style={{
+              position: "absolute",
+              pointerEvents: "none",
+              height: "100%",
+              width: "100%",
+            }}
+          ></div> */}
         </I18nextProvider>
       </QueryClientProvider>
     </DarkModeProvider>

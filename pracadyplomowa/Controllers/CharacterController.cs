@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata;
 using pracadyplomowa.Authorization.AuthorizationAttributes;
 using pracadyplomowa.Const;
 using pracadyplomowa.Errors;
@@ -237,6 +238,38 @@ namespace pracadyplomowa.Controllers
             character.AddClassLevel(classLevel[0]);
             await _characterRepository.SaveChanges();
             return Ok();
+        }
+
+        [HttpGet("{characterId}/equipmentSlots")]
+        public async Task<ActionResult> GetCharacterEquipmentAndSlots(int characterId)
+        {
+            var character = await _characterRepository.GetCharacterEquipmentAndSlots(characterId);
+            if (character == null)
+            {
+                return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not exist"));
+            }
+            var characterDto = new CharacterEquipmentAndSlotsDto();
+            characterDto.Items = character.R_EquippedItems.Select(ed => ed.R_Item).Select(i => new CharacterEquipmentAndSlotsDto.Item(){
+                Id = i.Id,
+                Name = i.Name,
+                ItemFamily = new CharacterEquipmentAndSlotsDto.ItemFamily(){
+                    Id = i.R_ItemInItemsFamily.Id,
+                    Name = i.R_ItemInItemsFamily.Name
+                },
+                Slots = i.R_EquipData != null ? i.R_EquipData.R_Slots.Select(s => new CharacterEquipmentAndSlotsDto.Slot(){
+                    Id = s.Id,
+                    Name = s.Name
+                }).ToList() : [],
+                EquippableInSlots = i.R_ItemIsEquippableInSlots.Select(s => new CharacterEquipmentAndSlotsDto.Slot(){
+                    Id = s.Id,
+                    Name = s.Name
+                }).ToList()
+            }).ToList();
+            characterDto.Slots = character.R_CharacterBelongsToRace.R_EquipmentSlots.Select(s => new CharacterEquipmentAndSlotsDto.Slot(){
+                Id = s.Id,
+                Name = s.Name
+            }).ToList();
+            return Ok(characterDto);
         }
     }
 }

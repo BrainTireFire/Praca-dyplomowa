@@ -73,6 +73,8 @@ namespace pracadyplomowa.Repository
                 .ThenInclude(r => r.R_RaceLevels)
                     .ThenInclude(rl => rl.R_ChoiceGroups)
                         .ThenInclude(cg => cg.R_PowersToPrepare)
+            .Include(c => c.R_CharacterBelongsToRace)
+                .ThenInclude(r => r.R_EquipmentSlots)
 
             .Include(c => c.R_CharacterHasLevelsInClass)
                 .ThenInclude(cl => cl.R_Class)
@@ -200,6 +202,24 @@ namespace pracadyplomowa.Repository
             .Where(c => c.Id == Id)
             .Include(c => c.R_CharacterHasLevelsInClass)
                 .ThenInclude(cl => cl.R_Class)
+            .FirstAsync();
+            return character;
+        }
+
+        public Task<Character> GetCharacterEquipmentAndSlots(int id){
+            var character = _context.Characters
+            .Where(c => c.Id == id)
+            .Include(c => c.R_CharacterHasBackpack)
+                .ThenInclude(b => b.R_BackpackHasItems)
+                    .ThenInclude(i => i.R_ItemIsEquippableInSlots)
+            .Include(c => c.R_CharacterHasBackpack)
+                .ThenInclude(b => b.R_BackpackHasItems)
+                    .ThenInclude(i => i.R_EquipData)
+            .Include(c => c.R_CharacterHasBackpack)
+                .ThenInclude(b => b.R_BackpackHasItems)
+                    .ThenInclude(i => i.R_ItemInItemsFamily)
+            .Include(c => c.R_CharacterBelongsToRace)
+                .ThenInclude(r => r.R_EquipmentSlots)
             .FirstAsync();
             return character;
         }

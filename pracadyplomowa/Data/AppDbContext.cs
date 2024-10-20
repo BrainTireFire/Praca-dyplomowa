@@ -255,5 +255,6 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                 builder.Entity<ImmaterialResourceInstance>().Navigation(i => i.R_Blueprint).AutoInclude();
                 builder.Entity<Weapon>().Navigation(i => i.DamageValue).AutoInclude();
                 builder.Entity<MeleeWeapon>().Navigation(i => i.VersatileDamageValue).AutoInclude();
+                builder.Entity<EquipData>().Navigation(i => i.R_Slots).AutoInclude();
         }
 }

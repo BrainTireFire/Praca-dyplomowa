@@ -187,11 +187,16 @@ namespace pracadyplomowa.Models.DTOs
         public class RaceClass {
             public int Id { get; set;}
             public string Name { get; set;} = "";
+            public List<Slot> Slots { get; set; } = [];
         }
         public RaceClass GetRace(Character character){
             return new RaceClass(){
                 Id = character.R_CharacterBelongsToRace.Id,
-                Name = character.R_CharacterBelongsToRace.Name
+                Name = character.R_CharacterBelongsToRace.Name,
+                Slots = character.R_CharacterBelongsToRace.R_EquipmentSlots.Select(slot => new Slot(){
+                    Id = slot.Id,
+                    Name = slot.Name,
+                }).ToList()
             };
         }
 
@@ -408,13 +413,14 @@ namespace pracadyplomowa.Models.DTOs
             public string Name { get; set;} = "";
             public ItemFamily ItemFamily { get; set;} = new ItemFamily();
             public List<Slot> Slots { get; set;} = new List<Slot>();
+            public List<Slot> EquippableInSlots { get; set;} = new List<Slot>();
             public bool Equipped { get; set;}
-
-            public class Slot {
-                public int Id { get; set;}
-                public string Name {get; set;} = "";
-            }
         }
+        public class Slot {
+            public int Id { get; set;}
+            public string Name {get; set;} = "";
+        }
+        
         public static List<Item> GetItems(Character character){
             List<Item> items = character.R_CharacterHasBackpack.R_BackpackHasItems.Select(item => new Item() {
                 Id = item.Id,
@@ -423,10 +429,14 @@ namespace pracadyplomowa.Models.DTOs
                     Id = item.R_ItemInItemsFamily.Id,
                     Name = item.R_ItemInItemsFamily.Name
                 },
-                Slots = item.R_EquipData != null ? item.R_EquipData.R_Slots.Select(slot => new Item.Slot() {
+                Slots = item.R_EquipData != null ? item.R_EquipData.R_Slots.Select(slot => new Slot() {
                     Id = slot.Id,
                     Name = slot.Name
                 }).ToList() : [],
+                EquippableInSlots = item.R_ItemIsEquippableInSlots.Select(slot => new Slot() {
+                    Id = slot.Id,
+                    Name = slot.Name
+                }).ToList(),
                 Equipped = item.R_EquipData != null
             }).ToList();
 

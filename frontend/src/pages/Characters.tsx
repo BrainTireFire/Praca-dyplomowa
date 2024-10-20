@@ -2,6 +2,7 @@ import styled from "styled-components";
 import CharactersSheet from "../features/characters/CharactersSheet";
 import CharacterList from "../features/characters/CharacterList";
 import { useState } from "react";
+import { CharacterIdContext } from "../features/characters/contexts/CharacterIdContext";
 
 const Container = styled.div`
   display: flex; /* Enable flexbox layout */
@@ -22,9 +23,7 @@ const Column2 = styled.div`
 `;
 
 export default function Characters() {
-  const [chosenCharacterId, setChosenCharacterId] = useState<number | null>(
-    null
-  );
+  const [chosenCharacterId, setChosenCharacterId] = useState<number>(null);
 
   const handleChangeCharacter = (chosenCharacterId: number) => {
     console.log(chosenCharacterId);
@@ -39,7 +38,14 @@ export default function Characters() {
       </Column1>
       <Column2>
         {chosenCharacterId && (
-          <CharactersSheet characterId={chosenCharacterId}></CharactersSheet>
+          <CharacterIdContext.Provider
+            value={{
+              characterId: chosenCharacterId,
+              // setCharacterId: setChosenCharacterId,
+            }}
+          >
+            <CharactersSheet></CharactersSheet>
+          </CharacterIdContext.Provider>
         )}
       </Column2>
     </Container>

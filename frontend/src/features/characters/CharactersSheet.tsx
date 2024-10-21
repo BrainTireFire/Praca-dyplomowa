@@ -282,7 +282,6 @@ export default function CharactersSheet() {
           </MainGridColumn3>
         </MainGrid>
       )}
-      <EquipmentSlotScreen onCloseModal={() => {}}></EquipmentSlotScreen>
     </Box>
   );
 }

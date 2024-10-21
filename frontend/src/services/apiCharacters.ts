@@ -111,6 +111,39 @@ export async function getEquipmentAndSlots(
   return response;
 }
 
+export async function equipItemInSlot(
+  characterId: number,
+  itemId: number,
+  slotId: number
+): Promise<void> {
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  await customFetch(
+    `${BASE_URL}/api/character/${characterId}/equipmentSlots/${slotId}/equip/${itemId}`,
+    options
+  );
+}
+export async function unequipItemInSlot(
+  characterId: number,
+  itemId: number,
+  slotId: number
+): Promise<void> {
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  await customFetch(
+    `${BASE_URL}/api/character/${characterId}/equipmentSlots/${slotId}/unequip/${itemId}`,
+    options
+  );
+}
+
 export type ChoiceGroup = {
   id: number;
   name: string;

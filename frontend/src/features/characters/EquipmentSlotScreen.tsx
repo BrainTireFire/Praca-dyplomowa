@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { CharacterIdContext } from "./contexts/CharacterIdContext";
 import { useEquipmentSlots } from "./hooks/useEquipmentSlots";
 import Spinner from "../../ui/interactive/Spinner";
@@ -8,6 +8,9 @@ import { CharacterEquipmentAndSlotsDto_Item } from "../../services/apiCharacters
 import { Slot } from "../../models/slot";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { StrictModeDroppable } from "../../utils/StrictModeDroppable";
+import { useDraggableInPortal } from "../../utils/useDraggableInPortal";
+import { useEquipItem } from "./hooks/useEquipItem";
+import { useUnequipItem } from "./hooks/useUnequipItem";
 // import { DraggableGoal } from "../../utils/DraggableGoal";
 
 export default function EquipmentSlotScreen({
@@ -18,10 +21,38 @@ export default function EquipmentSlotScreen({
   const { characterId } = useContext(CharacterIdContext);
   const { equipmentAndSlots, isError, isLoading, error } =
     useEquipmentSlots(characterId);
+  const renderDraggable = useDraggableInPortal();
 
-  const onDragEnd = (result) => {};
+  const { equipItemInSlot, isPending: isPendingEquip } = useEquipItem(() => {});
+  const { unequipItemInSlot, isPending: isPendingUnequip } = useUnequipItem(
+    () => {}
+  );
 
-  if (isLoading) {
+  const onDragEnd = (result: any) => {
+    if (result.reason === "DROP") {
+      if (
+        result.destination.droppableId === "equipmentColumn" &&
+        result.source.droppableId !== "equipmentColumn"
+      ) {
+        unequipItemInSlot({
+          characterId,
+          slotId: result.source.droppableId,
+          itemId: result.draggableId,
+        });
+      } else if (
+        result.destination.droppableId !== "equipmentColumn" &&
+        result.source.droppableId === "equipmentColumn"
+      ) {
+        equipItemInSlot({
+          characterId,
+          slotId: result.destination.droppableId,
+          itemId: result.draggableId,
+        });
+      }
+    }
+  };
+
+  if (isLoading || isPendingEquip || isPendingUnequip) {
     return <Spinner />;
   }
   if (isError) {
@@ -39,23 +70,25 @@ export default function EquipmentSlotScreen({
                 ref={provided.innerRef}
                 {...provided.droppableProps}
               >
-                {equipmentAndSlots?.items.map((item, index) => (
-                  <Draggable
-                    draggableId={item.id.toString()}
-                    index={index}
-                    key={item.id.toString()}
-                  >
-                    {(provided) => (
-                      <ItemBox
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        ref={provided.innerRef}
-                      >
-                        {item.name}
-                      </ItemBox>
-                    )}
-                  </Draggable>
-                ))}
+                {equipmentAndSlots?.items
+                  .filter((item) => item.slots.length === 0)
+                  .map((item, index) => (
+                    <Draggable
+                      draggableId={item.id.toString()}
+                      index={index}
+                      key={item.id.toString()}
+                    >
+                      {renderDraggable((provided: any) => (
+                        <ItemBox
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          ref={provided.innerRef}
+                        >
+                          {item.name}
+                        </ItemBox>
+                      ))}
+                    </Draggable>
+                  ))}
                 {provided.placeholder}
               </EquipmentColumn>
             )}
@@ -69,6 +102,28 @@ export default function EquipmentSlotScreen({
                 {(provided) => (
                   <SlotBox ref={provided.innerRef} {...provided.droppableProps}>
                     {slot.name}
+                    {equipmentAndSlots?.items
+                      .filter((item) =>
+                        item.slots.some((s) => s.id === slot.id)
+                      )
+                      .map((item, index) => (
+                        <Draggable
+                          draggableId={item.id.toString()}
+                          index={index}
+                          key={item.id.toString()}
+                        >
+                          {renderDraggable((provided: any) => (
+                            <ItemBox
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              ref={provided.innerRef}
+                            >
+                              {item.name}
+                            </ItemBox>
+                          ))}
+                        </Draggable>
+                      ))}
+
                     {provided.placeholder}
                   </SlotBox>
                 )}

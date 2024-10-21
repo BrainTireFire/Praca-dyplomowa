@@ -40,15 +40,6 @@ function App() {
               },
             }}
           />
-          {/* <div
-            id="draggable"
-            style={{
-              position: "absolute",
-              pointerEvents: "none",
-              height: "100%",
-              width: "100%",
-            }}
-          ></div> */}
         </I18nextProvider>
       </QueryClientProvider>
     </DarkModeProvider>

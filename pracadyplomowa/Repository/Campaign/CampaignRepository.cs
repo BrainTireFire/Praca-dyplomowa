@@ -13,32 +13,32 @@ namespace pracadyplomowa.Repository
         }
 
 
-        public async Task<List<CampaignDto>> GetCampaigns(int OwnerId)
+        public async Task<List<Campaign>> GetCampaigns(int OwnerId)
         {
-            List<CampaignDto> campaigns = await _context.Campaigns
-            .Where(c => c.R_OwnerId == OwnerId)
-            .Select(c => new CampaignDto(c.Id, c.Name, c.Description)).ToListAsync();
+            List<Campaign> campaigns = await _context.Campaigns.Where(c => c.R_OwnerId == OwnerId).ToListAsync();
 
             return campaigns;
         }
-        public Task<Campaign> GetCampaign(int campaignId)
+        public async Task<Campaign> GetCampaign(int campaignId)
         {
-            var campaign = _context.Campaigns
+            var campaign = await _context.Campaigns
             .Where(c => c.Id == campaignId)
-            .FirstAsync();
+            .Include(c => c.R_CampaignHasCharacters)
+            .ThenInclude(ch => ch.R_CharacterHasLevelsInClass).ThenInclude(cl => cl.R_Class)
+            .Include(c => c.R_CampaignHasCharacters)
+            .ThenInclude(ch => ch.R_CharacterBelongsToRace)
+            .FirstOrDefaultAsync();
 
             return campaign;
         }
 
-        public async void AddCharacter(int campaignId, int characterId)
-        {
-            var campaign = await _context.Campaigns.Where(c => c.Id == campaignId).FirstAsync();
-            var character = await _context.Characters.Where(c => c.Id == characterId).FirstAsync();
-            campaign.R_CampaignHasCharacters.Add(character);
-            character.R_CampaignId = campaignId;
-            character.R_Campaign = campaign;
+        // public async void AddCharacter(int campaignId, int characterId)
+        // {
+        //     var campaign = await _context.Campaigns.Where(c => c.Id == campaignId).FirstAsync();
+        //     var character = await _context.Characters.Where(c => c.Id == characterId).FirstAsync();
+        //     campaign.R_CampaignHasCharacters.Add(character);
 
-            await _context.SaveChangesAsync();
-        }
+        //     await _context.SaveChangesAsync();
+        // }
     }
 }

@@ -4,13 +4,14 @@ import Heading from "../../ui/text/Heading";
 import Button from "../../ui/interactive/Button";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import MemberBox from "./MemberBox";
 import InputCopyToClipboard from "../../ui/forms/InputCopyToClipboard";
 import Modal from "../../ui/containers/Modal";
 import ShortRest from "./ShortRestModal";
 import GiveXP from "./GiveXP";
 import { useCampaign } from "./hooks/useCampaign";
 import Spinner from "../../ui/interactive/Spinner";
+import CharacterDetailBox from "./CharacterDetailBox";
+import { Campaign } from "../../models/campaign";
 
 const Container = styled.div`
   display: flex;
@@ -20,7 +21,7 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const MemberContainer = styled.div`
+const CharacterContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 2fr);
   gap: 20px;
@@ -127,11 +128,13 @@ export default function CampaignInstance() {
         <Heading as="h2" align="left">
           Members
         </Heading>
-        <MemberContainer>
-          {/* {members.map((e) => (
-            <MemberBox>{e}</MemberBox>
-          ))} */}
-        </MemberContainer>
+        <CharacterContainer>
+          {members.length > 0 ? (
+            members.map((e) => <CharacterDetailBox>{e}</CharacterDetailBox>)
+          ) : (
+            <Heading as="h2">There are no members in this campaign</Heading>
+          )}
+        </CharacterContainer>
         <Line size="percantage" />
       </div>
       <div style={{ display: "flex", gap: "30px" }}>

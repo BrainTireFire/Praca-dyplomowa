@@ -4,6 +4,7 @@ import Heading from "../../ui/text/Heading";
 import ButtonGroup from "../../ui/interactive/ButtonGroup";
 import Button from "../../ui/interactive/Button";
 import styled, { css } from "styled-components";
+import { CharacterItem } from "../../models/character";
 
 const BoxCustomStyles = css`
   display: grid;
@@ -13,23 +14,19 @@ const BoxCustomStyles = css`
   text-align: center;
 `;
 
-export default function MemberBox({ children }) {
-  const { id, character, level, xp, race, className, rest, img } = children;
+export default function CharacterDetailBox({ children }) {
   return (
     <Box customStyles={BoxCustomStyles}>
-      <img
-        src={img}
-        alt="member"
-        style={{ gridColumn: "1/2", maxWidth: "180px" }}
-      ></img>
       <div style={{ gridColumn: "2/3" }}>
-        <Heading as="h6">{id}</Heading>
-        <Heading as="h3">{character}</Heading>
-        <p>Level: {level}</p>
-        <p>XP: {xp}</p>
-        <p>Race: {race}</p>
-        <p>Class: {className}</p>
-        <p>Rest: {rest ? "true" : "false"}</p>
+        <Heading as="h3">
+          {children.name} id:{children.id}
+        </Heading>
+        {/* <p>Level: {level}</p> */}
+        {/* <p>XP: {xp}</p> */}
+        <p>Race: {children.race}</p>
+        <p>Class: {children.class}</p>
+        {/* <p>Rest: {rest ? "true" : "false"}</p> */}
+        <p>Description: {children.description}</p>
       </div>
       <div style={{ gridColumn: "1/3", gridRow: "2/3" }}>
         <ButtonGroup justify="center">

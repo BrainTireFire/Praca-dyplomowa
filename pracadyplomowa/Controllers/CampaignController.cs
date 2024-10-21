@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using pracadyplomowa.Errors;
 using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.Entities.Campaign;
 using pracadyplomowa.Repository;
@@ -6,10 +7,10 @@ using pracadyplomowa.Repository;
 namespace pracadyplomowa.Controllers
 {
 
-    public class CampaignController(ICampaignRepository campaignRepository) : BaseApiController
+    public class CampaignController(ICampaignRepository campaignRepository, ICharacterRepository characterRepository) : BaseApiController
     {
         private readonly ICampaignRepository _campaignRepository = campaignRepository;
-
+        private readonly ICharacterRepository _characterRepository = characterRepository;
         [HttpPost]
         public async Task<ActionResult> CreateCampaign(CampaignInsertDto campaignInsertDto)
         {
@@ -29,9 +30,11 @@ namespace pracadyplomowa.Controllers
         [HttpGet]
         public async Task<ActionResult<List<CampaignDto>>> GetCampaigns()
         {
-            var campaigns = await _campaignRepository.GetCampaigns(User.GetUserId());
+            List<Campaign> campaigns = await _campaignRepository.GetCampaigns(User.GetUserId());
 
-            return Ok(campaigns);
+            List<CampaignDto> campaignsDto = campaigns.Select(c => new CampaignDto(c)).ToList();
+
+            return Ok(campaignsDto);
         }
 
         [HttpGet("{campaignId}")]
@@ -39,7 +42,12 @@ namespace pracadyplomowa.Controllers
         {
             var campaign = await _campaignRepository.GetCampaign(campaignId);
 
-            var campaignDto = new CampaignDto(campaign.Id, campaign.Name, campaign.Description);
+            if (campaign == null)
+            {
+                return BadRequest(new ApiResponse(400, "Campaign with given id - does not exist"));
+            }
+
+            var campaignDto = new CampaignDto(campaign);
 
             return Ok(campaignDto);
         }
@@ -47,7 +55,18 @@ namespace pracadyplomowa.Controllers
         [HttpPost("addCharacterToCampaign/{campaignId}/{characterId}")]
         public ActionResult AddCharacterToCampaign(int campaignId, int characterId)
         {
-            _campaignRepository.AddCharacter(campaignId, characterId);
+            var campaign = _campaignRepository.GetById(campaignId);
+            var character = _characterRepository.GetById(characterId);
+
+
+            if (campaign == null || character == null)
+            {
+                return BadRequest(new ApiResponse(400, "campaign or character with given id - does not exist"));
+            }
+
+            campaign.R_CampaignHasCharacters.Add(character);
+
+            _campaignRepository.SaveChanges();
             return Ok();
         }
     }

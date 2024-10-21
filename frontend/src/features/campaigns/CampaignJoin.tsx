@@ -50,8 +50,8 @@ function CampaignJoin() {
     return <>{`${error}`}</>;
   }
 
-  const handleChangeCharacter = (chosenCharacterId: number) => {
-    addCharacterToCampaign(campaign.id, chosenCharacterId);
+  const handleChangeCharacter = async (chosenCharacterId: number) => {
+    await addCharacterToCampaign(campaign.id, chosenCharacterId);
     navigate(`/campaigns/${campaign.id}`);
   };
 

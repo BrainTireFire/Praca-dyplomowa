@@ -40,7 +40,7 @@ export async function postCampaign(
 export async function addCharacterToCampaign(
   campaignId: number,
   characterId: number
-): Promise<void> {
+): Promise<Response> {
   const options: RequestInit = {
     method: "POST",
     headers: {
@@ -48,9 +48,9 @@ export async function addCharacterToCampaign(
     },
   };
 
-  await customFetch(
+  // Return the result of customFetch (e.g., to inspect status or response body)
+  return await customFetch(
     `${BASE_URL}/api/campaign/addCharacterToCampaign/${campaignId}/${characterId}`,
     options
   );
-  return;
 }

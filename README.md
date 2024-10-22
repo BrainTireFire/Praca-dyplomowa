@@ -13,6 +13,14 @@ The aim of the project is to assist players in managing the flow of gameplay in 
 
 FIGMA LINK: https://www.figma.com/file/3K8swnK4xG7Mmle2jC6Mcn/In%C5%BCynierka-prototyp?type=design&node-id=214%3A4786&mode=design&t=DhvcnQP63MMple4K-1
 
+## How to start
+### Backend:
+- VSC: Please write in the terminal: dotnet run watch
+- Raider: Press the button to start :)
+
+### Frontend:
+- Please write in the terminal: npm run dev
+
 ## Endpoints
 
 ### Permission: All
@@ -62,5 +70,6 @@ json server: npx json-server db.json
 None
 
 ## Dev
-dotnet ef migrations add inheritanceInEffectInstance2 --output-dir Data/Migrations --context AppDbContext
-dotnet ef database update --context AppDbContext
+- dotnet ef migrations add inheritanceInEffectInstance2 --output-dir Data/Migrations --context AppDbContext
+- dotnet ef database update --context AppDbContext
+

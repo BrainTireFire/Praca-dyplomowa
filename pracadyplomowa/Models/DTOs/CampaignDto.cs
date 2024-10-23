@@ -1,16 +1,25 @@
 using System.ComponentModel.DataAnnotations;
+using pracadyplomowa.Models.Entities.Campaign;
+using pracadyplomowa.Models.Entities.Characters;
 
 namespace pracadyplomowa.Models.DTOs
 {
-    public class CampaignDto(int id, string name, string description, string invitationLink)
+    public class CampaignDto
     {
-        public int Id { get; set; } = id;
+        public int Id { get; set; }
         [Required]
         [MaxLength(50)]
-        public string Name { get; set; } = name;
+        public string Name { get; set; }
+        public string Description { get; set; } = null!;
+        public List<CharacterSummaryDto> Members { get; set; } = null!;
+        public CampaignDto(Campaign campaign)
+        {
+            Id = campaign.Id;
+            Name = campaign.Name;
+            Description = campaign.Description;
 
-        public string Description { get; set; } = description;
-
-        public string InvitationLink { get; set; } = invitationLink;
+            var characterSummaries = campaign.R_CampaignHasCharacters.Select(c => new CharacterSummaryDto(c)).ToList();
+            Members = new List<CharacterSummaryDto>(characterSummaries);
+        }
     }
 }

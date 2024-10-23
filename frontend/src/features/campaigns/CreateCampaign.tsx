@@ -20,7 +20,6 @@ function CreateCampaign({ onCloseModal }) {
   const [campaign, setCampaign] = useState({
     name: "",
     description: "",
-    invitationLink: "http://ddbutbetter.com/join/",
   });
 
   const { createCampaign, isPending } = useCreateCampaign();
@@ -36,15 +35,6 @@ function CreateCampaign({ onCloseModal }) {
       ...previous,
       [name]: value,
     }));
-
-    //May be temporary (appending invitation link as name of campaign)
-    if (name === "name") {
-      const formattedName = value.replace(/ /g, "");
-      setCampaign((previous) => ({
-        ...previous,
-        invitationLink: `http://ddbutbetter.com/join/${formattedName}`,
-      }));
-    }
   };
 
   const handleClick = () => {

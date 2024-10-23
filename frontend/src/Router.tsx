@@ -20,11 +20,11 @@ import ProtectedRoute from "./features/account/ProtectedRoute";
 import Forbidden from "./pages/errors/Forbidden";
 import ServiceDown from "./pages/errors/ServiceDown";
 import MainBoard from "./pages/campaign/session/MainBoard";
-import CampaignsAttended from "./features/campaigns/CampaignsAttended";
 import BoardCreateForm from "./features/homebrew/maps/BoardCreateForm";
 import HomebrewMap from "./pages/homebrew/maps/HomebrewMap";
 import MapInstance from "./features/homebrew/maps/MapInstance";
 import MapUpdateBoardForm from "./features/homebrew/maps/MapUpdateBoardForm";
+import CampaignJoin from "./features/campaigns/CampaignJoin";
 
 export default function Router() {
   return (
@@ -39,6 +39,7 @@ export default function Router() {
         >
           <Route index element={<Navigate replace to="main" />} />
           <Route path="main" element={<MainDashboard />} />
+          <Route path="join/:campaignId" element={<CampaignJoin />} />
           <Route path="campaigns" element={<Campagins />} />
           <Route path="campaigns/:campaignId" element={<CampaignInstance />} />
           <Route path="campaigns/:campaignId/shops" element={<Shops />} />

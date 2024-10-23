@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using pracadyplomowa.Models.Entities.Characters;
 
 namespace pracadyplomowa.Models.DTOs
 {
@@ -10,21 +11,27 @@ namespace pracadyplomowa.Models.DTOs
     {
         [Required]
         public int Id { get; set; } = id;
-        
+
         [Required]
         [MaxLength(50)]
         public string Name { get; set; } = name;
-        
+
         [Required]
         [MaxLength(1000)]
         public string Description { get; set; } = description;
-        
+
         [Required]
         [MaxLength(50)]
         public string Class { get; set; } = characterClass;
-        
+
         [Required]
         [MaxLength(50)]
         public string Race { get; set; } = race;
+
+        public CharacterSummaryDto(Character character) :
+            this(character.Id, character.Name, character.Description, character.R_CharacterBelongsToRace.Name, character.R_CharacterHasLevelsInClass.First().R_Class.Name)
+        {
+
+        }
     }
 }

@@ -36,3 +36,21 @@ export async function postCampaign(
   };
   await customFetch(`${BASE_URL}/api/campaign`, options);
 }
+
+export async function addCharacterToCampaign(
+  campaignId: number,
+  characterId: number
+): Promise<Response> {
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  // Return the result of customFetch (e.g., to inspect status or response body)
+  return await customFetch(
+    `${BASE_URL}/api/campaign/addCharacterToCampaign/${campaignId}/${characterId}`,
+    options
+  );
+}

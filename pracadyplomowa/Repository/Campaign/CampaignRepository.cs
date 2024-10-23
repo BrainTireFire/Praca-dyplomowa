@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.Entities.Campaign;
@@ -11,18 +13,21 @@ namespace pracadyplomowa.Repository
         }
 
 
-        public async Task<List<CampaignDto>> GetCampaigns(int OwnerId)
+        public async Task<List<Campaign>> GetCampaigns(int OwnerId)
         {
-            List<CampaignDto> campaigns = await _context.Campaigns
-            .Where(c => c.R_OwnerId == OwnerId)
-            .Select(c => new CampaignDto(c.Id, c.Name, c.Description, c.InvitationLink)).ToListAsync();
+            List<Campaign> campaigns = await _context.Campaigns.Where(c => c.R_OwnerId == OwnerId).ToListAsync();
+
             return campaigns;
         }
-        public Task<Campaign> GetCampaign(int campaignId)
+        public async Task<Campaign> GetCampaign(int campaignId)
         {
-            var campaign = _context.Campaigns
+            var campaign = await _context.Campaigns
             .Where(c => c.Id == campaignId)
-            .FirstAsync();
+            .Include(c => c.R_CampaignHasCharacters)
+            .ThenInclude(ch => ch.R_CharacterHasLevelsInClass).ThenInclude(cl => cl.R_Class)
+            .Include(c => c.R_CampaignHasCharacters)
+            .ThenInclude(ch => ch.R_CharacterBelongsToRace)
+            .FirstOrDefaultAsync();
 
             return campaign;
         }

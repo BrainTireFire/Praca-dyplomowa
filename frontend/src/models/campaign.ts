@@ -1,15 +1,15 @@
-type Campaign = {
+import { CharacterItem } from "./character";
+
+export type Campaign = {
   id: number;
   name: string;
   description: string;
   gameMaster: GameMaster;
-  members: Member[];
+  members: CharacterItem[];
   shops: Shop[];
-  invitationLink: string;
 };
 
-type CampaignInsertDto = {
+export type CampaignInsertDto = {
   name: string;
   description: string;
-  invitationLink: string;
 };

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata;
 using pracadyplomowa.Authorization.AuthorizationAttributes;
 using pracadyplomowa.Const;
 using pracadyplomowa.Errors;
@@ -235,6 +236,82 @@ namespace pracadyplomowa.Controllers
                 return BadRequest(new ApiResponse(400, "Class level with Id " + characterId + " does not exist"));
             }
             character.AddClassLevel(classLevel[0]);
+            await _characterRepository.SaveChanges();
+            return Ok();
+        }
+
+        [HttpGet("{characterId}/equipmentSlots")]
+        public async Task<ActionResult> GetCharacterEquipmentAndSlots(int characterId)
+        {
+            var character = await _characterRepository.GetCharacterEquipmentAndSlots(characterId);
+            if (character == null)
+            {
+                return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not exist"));
+            }
+            var characterDto = new CharacterEquipmentAndSlotsDto();
+            characterDto.Items = character.R_CharacterHasBackpack.R_BackpackHasItems.Select(i => new CharacterEquipmentAndSlotsDto.Item(){
+                Id = i.Id,
+                Name = i.Name,
+                ItemFamily = new CharacterEquipmentAndSlotsDto.ItemFamily(){
+                    Id = i.R_ItemInItemsFamily.Id,
+                    Name = i.R_ItemInItemsFamily.Name
+                },
+                Slots = i.R_EquipData != null ? i.R_EquipData.R_Slots.Select(s => new CharacterEquipmentAndSlotsDto.Slot(){
+                    Id = s.Id,
+                    Name = s.Name
+                }).ToList() : [],
+                EquippableInSlots = i.R_ItemIsEquippableInSlots.Select(s => new CharacterEquipmentAndSlotsDto.Slot(){
+                    Id = s.Id,
+                    Name = s.Name
+                }).ToList()
+            }).ToList();
+            characterDto.Slots = character.R_CharacterBelongsToRace.R_EquipmentSlots.Select(s => new CharacterEquipmentAndSlotsDto.Slot(){
+                Id = s.Id,
+                Name = s.Name
+            }).ToList();
+            return Ok(characterDto);
+        }
+
+        [HttpPost("{characterId}/equipmentSlots/{slotId}/equip/{itemId}")]
+        public async Task<ActionResult> EquipItemInSlot(int characterId, int slotId, int itemId)
+        {
+            var character = await _characterRepository.GetCharacterEquipmentAndSlots(characterId);
+            if (character == null)
+            {
+                return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not exist"));
+            }
+            if(!character.R_CharacterBelongsToRace.R_EquipmentSlots.Where(s => s.Id == slotId).Any()){
+                return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not have slot with Id " + slotId));
+            }
+            if(!character.R_CharacterHasBackpack.R_BackpackHasItems.Where(i => i.Id == itemId).Any()){
+                return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not have item with Id " + itemId));
+            }
+            if(!character.R_CharacterHasBackpack.R_BackpackHasItems.Where(i => i.Id == itemId).First().R_ItemIsEquippableInSlots.Where(s => s.Id == slotId).Any()){
+                return BadRequest(new ApiResponse(400, "Item with Id " + itemId + " is not equippable in slot with Id " + slotId));
+            }
+            character.EquipItem(character.R_CharacterHasBackpack.R_BackpackHasItems.Where(i => i.Id == itemId).First(), character.R_CharacterBelongsToRace.R_EquipmentSlots.Where(s => s.Id == slotId).First());
+            await _characterRepository.SaveChanges();
+            return Ok();
+        }
+
+        [HttpPost("{characterId}/equipmentSlots/{slotId}/unequip/{itemId}")]
+        public async Task<ActionResult> UnequipItemInSlot(int characterId, int slotId, int itemId)
+        {
+            var character = await _characterRepository.GetCharacterEquipmentAndSlots(characterId);
+            if (character == null)
+            {
+                return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not exist"));
+            }
+            if(!character.R_CharacterBelongsToRace.R_EquipmentSlots.Where(s => s.Id == slotId).Any()){
+                return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not have slot with Id " + slotId));
+            }
+            if(!character.R_CharacterHasBackpack.R_BackpackHasItems.Where(i => i.Id == itemId).Any()){
+                return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not have item with Id " + itemId));
+            }
+            if(!character.R_CharacterHasBackpack.R_BackpackHasItems.Where(i => i.Id == itemId).First().R_ItemIsEquippableInSlots.Where(s => s.Id == slotId).Any()){
+                return BadRequest(new ApiResponse(400, "Item with Id " + itemId + " is not equippable in slot with Id " + slotId));
+            }
+            character.UnequipItem(character.R_CharacterHasBackpack.R_BackpackHasItems.Where(i => i.Id == itemId).First());
             await _characterRepository.SaveChanges();
             return Ok();
         }

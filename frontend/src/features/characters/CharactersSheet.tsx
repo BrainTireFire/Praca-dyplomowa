@@ -23,6 +23,9 @@ import Modal from "../../ui/containers/Modal";
 import Button from "../../ui/interactive/Button";
 import NewCharacter from "./NewCharacter";
 import SelectFromChoiceGroupScreen from "./SelectFromChoiceGroupScreen";
+import { CharacterIdContext } from "./contexts/CharacterIdContext";
+import { useContext } from "react";
+import EquipmentSlotScreen from "./EquipmentSlotScreen";
 
 const MainGrid = styled.div`
   display: grid;
@@ -67,11 +70,8 @@ const MainGridColumn3 = styled.div`
   overflow: auto;
 `;
 
-export default function CharactersSheet({
-  characterId,
-}: {
-  characterId: number;
-}) {
+export default function CharactersSheet() {
+  const { characterId } = useContext(CharacterIdContext);
   const { isLoading, isError, error, character } = useCharacter(characterId);
 
   console.log(characterId);

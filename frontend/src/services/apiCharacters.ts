@@ -4,6 +4,8 @@ import {
   CharacterInsertDto,
 } from "../models/character";
 import { DiceSet } from "../models/diceset";
+import { ItemFamily } from "../models/itemfamily";
+import { Slot } from "../models/slot";
 import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
 import { customFetchJSON } from "./customFetchJSON";
@@ -93,6 +95,55 @@ export async function selectNextClassLevel(
   return;
 }
 
+export async function getEquipmentAndSlots(
+  characterId: number
+): Promise<CharacterEquipmentAndSlotsDto> {
+  const options: RequestInit = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  const response = await customFetch(
+    `${BASE_URL}/api/character/${characterId}/equipmentSlots`,
+    options
+  );
+  return response;
+}
+
+export async function equipItemInSlot(
+  characterId: number,
+  itemId: number,
+  slotId: number
+): Promise<void> {
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  await customFetch(
+    `${BASE_URL}/api/character/${characterId}/equipmentSlots/${slotId}/equip/${itemId}`,
+    options
+  );
+}
+export async function unequipItemInSlot(
+  characterId: number,
+  itemId: number,
+  slotId: number
+): Promise<void> {
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  await customFetch(
+    `${BASE_URL}/api/character/${characterId}/equipmentSlots/${slotId}/unequip/${itemId}`,
+    options
+  );
+}
+
 export type ChoiceGroup = {
   id: number;
   name: string;
@@ -137,4 +188,17 @@ export type NextClassLevel = {
   choiceGroups: ChoiceGroup[];
   hitDice: DiceSet;
   hitPoints: number;
+};
+
+export type CharacterEquipmentAndSlotsDto = {
+  items: CharacterEquipmentAndSlotsDto_Item[];
+  slots: Slot[];
+};
+
+export type CharacterEquipmentAndSlotsDto_Item = {
+  id: number;
+  name: string;
+  itemFamily: ItemFamily;
+  slots: Slot[];
+  equippableInSlots: Slot[];
 };

@@ -4,6 +4,7 @@ import Table from "../../../ui/containers/Table";
 import EquipmentRow from "./EquipmentRow";
 import styled from "styled-components";
 import { Item } from "../../../models/item";
+import EquipmentSlotScreen from "../EquipmentSlotScreen";
 
 // const equipments = [
 //   {
@@ -35,6 +36,7 @@ export default function EquipmentTable({ equipments }: { equipments: Item[] }) {
       <Table
         header="Equipment"
         button="Add new"
+        modal={<EquipmentSlotScreen onCloseModal={() => {}} />}
         columns="1fr 1fr 1fr 1fr 3.2rem"
       >
         <Table.Header>

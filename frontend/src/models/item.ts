@@ -6,5 +6,6 @@ export type Item = {
   name: string;
   itemFamily: ItemFamily;
   slots: Slot[];
+  equippableInSlots: Slot[];
   equipped: boolean;
 };

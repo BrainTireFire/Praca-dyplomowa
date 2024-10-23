@@ -6,46 +6,31 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import InputCopyToClipboard from "../../ui/forms/InputCopyToClipboard";
 import Modal from "../../ui/containers/Modal";
-import ShortRest from "./ShortRestModal";
-import GiveXP from "./GiveXP";
 import { useCampaign } from "./hooks/useCampaign";
 import Spinner from "../../ui/interactive/Spinner";
 import CharacterDetailBox from "./CharacterDetailBox";
 import { Campaign } from "../../models/campaign";
 
 const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 20px;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%;
+  gap: 3%;
+  justify-items: center;
+  margin-top: 1%;
 `;
 
 const CharacterContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 2fr);
-  gap: 20px;
-  margin: 20px;
-`;
-
-const HeaderLeft = styled.div`
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  max-width: 70vw;
+  gap: 2%;
 `;
 
 const HeaderButtons = styled.div`
   display: flex;
-  align-items: end;
   gap: 1rem;
-  margin-bottom: 1rem;
-`;
-
-const DescriptionStyled = styled.div`
-  margin-bottom: 1rem;
-  width: 50%;
+  /* margin-bottom: 1rem; */
 `;
 
 export default function CampaignInstance() {
@@ -63,26 +48,20 @@ export default function CampaignInstance() {
   const { id, name, description, members }: Campaign = campaign;
 
   return (
-    <>
-      <Container>
-        <Heading as="h1">Campaign - {name}</Heading>
-        <Line size="percantage" bold="large" />
-      </Container>
+    <Container>
+      <Heading as="h1">{name}</Heading>
+      <Line size="percantage" bold="large" />
       <div>
-        <HeaderLeft>
-          <Heading as="h2" align="left">
-            Details
-          </Heading>
-          <HeaderButtons>
-            <Modal>
-              <Modal.Open opens="GiveXP">
-                <Button size="large">{t("campaignInstance.giveXP")}</Button>
-              </Modal.Open>
-              {/* <Modal.Window name="GiveXP">
+        <HeaderButtons>
+          <Modal>
+            <Modal.Open opens="GiveXP">
+              <Button size="large">{t("campaignInstance.giveXP")}</Button>
+            </Modal.Open>
+            {/* <Modal.Window name="GiveXP">
                 <GiveXP membersList={members} />
               </Modal.Window> */}
-            </Modal>
-            {/* <Modal>
+          </Modal>
+          {/* <Modal>
               <Modal.Open opens="ShortRestModal">
                 <Button size="large">{t("campaignInstance.shortRest")}</Button>
               </Modal.Open>
@@ -90,59 +69,55 @@ export default function CampaignInstance() {
                 <ShortRest membersList={members} />
               </Modal.Window>
             </Modal> */}
-            <Button size="large">{t("campaignInstance.longRest")}</Button>
-            <Button
-              size="large"
-              onClick={() => navigate(`/campaigns/session/1`)}
-            >
-              {t("campaignInstance.session")}
-            </Button>
-            <Button size="large" onClick={() => navigate("shops")}>
-              {t("campaignInstance.shops")}
-            </Button>
-            <Button size="large" onClick={() => navigate(`/encounter`)}>
-              {t("campaignInstance.createEncounter")}
-            </Button>
-            <Button size="large">{t("campaignInstance.remove")}</Button>
-          </HeaderButtons>
-        </HeaderLeft>
-        <Line size="percantage" />
+          <Button size="large">{t("campaignInstance.longRest")}</Button>
+          <Button size="large" onClick={() => navigate(`/campaigns/session/1`)}>
+            {t("campaignInstance.session")}
+          </Button>
+          <Button size="large" onClick={() => navigate("shops")}>
+            {t("campaignInstance.shops")}
+          </Button>
+          <Button size="large" onClick={() => navigate(`/encounter`)}>
+            {t("campaignInstance.createEncounter")}
+          </Button>
+        </HeaderButtons>
       </div>
+      <Line size="percantage" />
+
+      <Heading as="h2">Description</Heading>
+      <div style={{ width: "73%", textAlign: "justify" }}>{description}</div>
+
+      <Line size="percantage" />
       <div>
-        <Heading as="h2" align="left">
-          Description
-        </Heading>
-        <DescriptionStyled>{description}</DescriptionStyled>
-        <Line size="percantage" />
+        <Heading as="h2">Game Master</Heading>
+        {/* {gameMaster.name} - {gameMaster.description} */}
       </div>
-      <div>
-        <Heading as="h2" align="left">
-          Game Master
-        </Heading>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <span>{/* {gameMaster.name} - {gameMaster.description} */}</span>
-        </div>
-        <Line size="percantage" />
-      </div>
-      <div>
-        <Heading as="h2" align="left">
-          Members
-        </Heading>
-        <CharacterContainer>
-          {members.length > 0 ? (
-            members.map((e) => <CharacterDetailBox>{e}</CharacterDetailBox>)
-          ) : (
-            <Heading as="h2">There are no members in this campaign</Heading>
-          )}
-        </CharacterContainer>
-        <Line size="percantage" />
-      </div>
-      <div style={{ display: "flex", gap: "30px" }}>
-        <Heading as="h2" align="left">
-          Link for invite to the campaign
-        </Heading>
+      <Line size="percantage" />
+
+      <Heading as="h2">Members</Heading>
+      <CharacterContainer>
+        {members.length > 0 ? (
+          members.map((e) => (
+            <CharacterDetailBox key={e.id}>{e}</CharacterDetailBox>
+          ))
+        ) : (
+          <Heading as="h2">There are no members in this campaign</Heading>
+        )}
+      </CharacterContainer>
+
+      <Line size="percantage" />
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          gap: "1%",
+          alignItems: "center",
+        }}
+      >
+        <Heading as="h2">Link for invite to the campaign</Heading>
         <InputCopyToClipboard valueDefault={`localhost:5173/join/${id}`} />
       </div>
-    </>
+      <Line size="percantage" />
+      <Button size="large">{t("campaignInstance.remove")}</Button>
+    </Container>
   );
 }

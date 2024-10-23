@@ -9,32 +9,26 @@ import { CharacterItem } from "../../models/character";
 const BoxCustomStyles = css`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-gap: 15px;
+  grid-gap: 10px;
   justify-content: center;
   text-align: center;
 `;
 
 export default function CharacterDetailBox({ children }) {
   return (
-    <Box customStyles={BoxCustomStyles}>
-      <div style={{ gridColumn: "2/3" }}>
-        <Heading as="h3">
-          {children.name} id:{children.id}
-        </Heading>
+    <Box customStyles={BoxCustomStyles} style={{ borderRadius: "10px" }}>
+      <div style={{ gridColumn: "1/3" }}>
+        <Heading as="h3">{children.name}</Heading>
         {/* <p>Level: {level}</p> */}
         {/* <p>XP: {xp}</p> */}
         <p>Race: {children.race}</p>
         <p>Class: {children.class}</p>
         {/* <p>Rest: {rest ? "true" : "false"}</p> */}
-        <p>Description: {children.description}</p>
       </div>
       <div style={{ gridColumn: "1/3", gridRow: "2/3" }}>
         <ButtonGroup justify="center">
           <Button variation="primary" size="large">
             View
-          </Button>
-          <Button variation="primary" size="large">
-            Edit
           </Button>
           <Button variation="primary" size="large">
             Kick

@@ -1,11 +1,10 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { CharacterIdContext } from "./contexts/CharacterIdContext";
 import { useEquipmentSlots } from "./hooks/useEquipmentSlots";
 import Spinner from "../../ui/interactive/Spinner";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import Heading from "../../ui/text/Heading";
 import { CharacterEquipmentAndSlotsDto_Item } from "../../services/apiCharacters";
-import { Slot } from "../../models/slot";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { StrictModeDroppable } from "../../utils/StrictModeDroppable";
 import { useDraggableInPortal } from "../../utils/useDraggableInPortal";
@@ -28,7 +27,12 @@ export default function EquipmentSlotScreen({
     () => {}
   );
 
+  const [draggableId, setDraggableId] = useState("");
+  const [hoverDroppableId, setHoverDroppableId] = useState("");
+
   const onDragEnd = (result: any) => {
+    setHoverDroppableId("");
+    setDraggableId("");
     if (result.reason === "DROP") {
       if (
         result.destination.droppableId === "equipmentColumn" &&
@@ -52,6 +56,23 @@ export default function EquipmentSlotScreen({
     }
   };
 
+  const onDragStart = (entry: any) => setDraggableId(entry.draggableId);
+
+  const onDragUpdate = (entry: any) =>
+    setHoverDroppableId(entry.destination.droppableId);
+
+  const isHoveringOverApplicableSlot = (
+    slotIdString: string,
+    draggable: CharacterEquipmentAndSlotsDto_Item
+  ) => {
+    const slotId = parseInt(slotIdString);
+    if (draggable.equippableInSlots.filter((x) => x.id === slotId).length > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   if (isLoading || isPendingEquip || isPendingUnequip) {
     return <Spinner />;
   }
@@ -60,9 +81,13 @@ export default function EquipmentSlotScreen({
   }
   console.log(equipmentAndSlots);
   return (
-    <ModalBreaker>
+    <>
       <Heading as="h1">Equipment selection</Heading>
-      <DragDropContext onDragEnd={onDragEnd}>
+      <DragDropContext
+        onDragEnd={onDragEnd}
+        onDragStart={onDragStart}
+        onDragUpdate={onDragUpdate}
+      >
         <ScreenGrid>
           <StrictModeDroppable droppableId={"equipmentColumn"}>
             {(provided) => (
@@ -70,6 +95,7 @@ export default function EquipmentSlotScreen({
                 ref={provided.innerRef}
                 {...provided.droppableProps}
               >
+                <Heading as="h3">Equippable items</Heading>
                 {equipmentAndSlots?.items
                   .filter((item) => item.slots.length === 0)
                   .map((item, index) => (
@@ -78,13 +104,18 @@ export default function EquipmentSlotScreen({
                       index={index}
                       key={item.id.toString()}
                     >
-                      {renderDraggable((provided: any) => (
+                      {renderDraggable((provided: any, snapshot: any) => (
                         <ItemBox
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                           ref={provided.innerRef}
+                          isOverCorrectTarget={isHoveringOverApplicableSlot(
+                            snapshot.draggingOver,
+                            item
+                          )}
                         >
                           {item.name}
+                          {console.log(snapshot)}
                         </ItemBox>
                       ))}
                     </Draggable>
@@ -93,62 +124,83 @@ export default function EquipmentSlotScreen({
               </EquipmentColumn>
             )}
           </StrictModeDroppable>
-          <SlotsMenu>
-            {equipmentAndSlots?.slots.map((slot) => (
-              <StrictModeDroppable
-                droppableId={slot.id.toString()}
-                key={slot.id}
-              >
-                {(provided) => (
-                  <SlotBox ref={provided.innerRef} {...provided.droppableProps}>
-                    {slot.name}
-                    {equipmentAndSlots?.items
-                      .filter((item) =>
-                        item.slots.some((s) => s.id === slot.id)
-                      )
-                      .map((item, index) => (
-                        <Draggable
-                          draggableId={item.id.toString()}
-                          index={index}
-                          key={item.id.toString()}
-                        >
-                          {renderDraggable((provided: any) => (
-                            <ItemBox
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              ref={provided.innerRef}
-                            >
-                              {item.name}
-                            </ItemBox>
-                          ))}
-                        </Draggable>
-                      ))}
+          <SlotsColumn>
+            <Heading as="h3">Available equipment slots</Heading>
+            <SlotsMenu>
+              {equipmentAndSlots?.slots.map((slot) => (
+                <StrictModeDroppable
+                  droppableId={slot.id.toString()}
+                  key={slot.id}
+                >
+                  {(provided) => (
+                    <SlotBox
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                      dragging={draggableId !== ""}
+                      isMatching={equipmentAndSlots?.items
+                        .find((item) => item.id.toString() === draggableId)
+                        ?.equippableInSlots.find((s) => s.id === slot.id)}
+                      draggedOver={hoverDroppableId === slot.id.toString()}
+                    >
+                      <Heading as="h4">{slot.name}</Heading>
+                      {equipmentAndSlots?.items
+                        .filter((item) =>
+                          item.slots.some((s) => s.id === slot.id)
+                        )
+                        .map((item, index) => (
+                          <Draggable
+                            draggableId={item.id.toString()}
+                            index={index}
+                            key={item.id.toString()}
+                          >
+                            {renderDraggable((provided: any, snapshot: any) => (
+                              <ItemBox
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                ref={provided.innerRef}
+                                isOverCorrectTarget={isHoveringOverApplicableSlot(
+                                  snapshot.draggingOver,
+                                  item
+                                )}
+                              >
+                                {item.name}
+                              </ItemBox>
+                            ))}
+                          </Draggable>
+                        ))}
 
-                    {provided.placeholder}
-                  </SlotBox>
-                )}
-              </StrictModeDroppable>
-            ))}
-          </SlotsMenu>
+                      {provided.placeholder}
+                    </SlotBox>
+                  )}
+                </StrictModeDroppable>
+              ))}
+            </SlotsMenu>
+          </SlotsColumn>
         </ScreenGrid>
       </DragDropContext>
-    </ModalBreaker>
+    </>
   );
 }
 
 const ScreenGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 150px 2fr;
   grid-template-rows: 1fr;
+  height: 500px;
+  width: 1000px;
 `;
 
 const EquipmentColumn = styled.div`
   grid-column-start: 1;
   grid-column-end: 2;
+  border-right: 1px solid var(--color-border);
+  margin-right: 5px;
+  padding-right: 5px;
 `;
 
 const ItemBox = styled.div`
-  background-color: rgba(var(--color-secondary-background-rgb), 0.05);
+  background-color: ${(props: any) =>
+    props.isOverCorrectTarget ? "green" : css`var(--color-main-background)`};
   border: 1px solid var(--color-border);
   padding: 1rem 1rem;
   width: 100%;
@@ -156,37 +208,29 @@ const ItemBox = styled.div`
   border-radius: var(--border-radius-lg);
 `;
 
-const SlotsMenu = styled.div`
+const SlotsColumn = styled.div`
   grid-column-start: 2;
   grid-column-end: 3;
+`;
+const SlotsMenu = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
 `;
 
-const SlotBox = styled.div`
-  background-color: rgba(var(--color-secondary-background-rgb), 0.05);
-  border: 1px solid var(--color-border);
-  width: 25%;
+const SlotBox = styled.div<any>`
+  background-color: ${(props: any) =>
+    props.draggedOver
+      ? css`rgba(var(--color-secondary-background-rgb), 0.2)`
+      : css`rgba(var(--color-secondary-background-rgb), 0.05)`};
+  border: 5px solid var(--color-border);
+  border-color: ${(props: any) =>
+    props.dragging
+      ? props.isMatching
+        ? "green"
+        : "darkred"
+      : css`rgba(var(--color-secondary-background-rgb), 0.05)`};
+  width: 150px;
   aspect-ratio: 1; /* This ensures a square shape */
   border-radius: var(--border-radius-lg);
-`;
-
-// const StyledModal = styled.div`
-//   position: fixed;
-//   top: 50%;
-//   left: 50%;
-//   transform: translate(-50%, -50%);
-//   background-color: var(--color-navbar);
-//   border-radius: var(--border-radius-lg);
-//   box-shadow: var(--shadow-lg);
-//   padding: 3.2rem 4rem;
-//   transition: all 0.5s;
-// `;
-
-const ModalBreaker = styled.div`
-  position: relative;
-  top: 0;
-  left: 0;
-  transform: none;
 `;

@@ -31,14 +31,5 @@ namespace pracadyplomowa.Repository
 
             return campaign;
         }
-
-        // public async void AddCharacter(int campaignId, int characterId)
-        // {
-        //     var campaign = await _context.Campaigns.Where(c => c.Id == campaignId).FirstAsync();
-        //     var character = await _context.Characters.Where(c => c.Id == characterId).FirstAsync();
-        //     campaign.R_CampaignHasCharacters.Add(character);
-
-        //     await _context.SaveChangesAsync();
-        // }
     }
 }

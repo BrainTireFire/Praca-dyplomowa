@@ -173,13 +173,25 @@ export const fillSelectedBox = (
   const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
 
   ctx.save();
+
+  // Fill the box with the provided color
   ctx.fillStyle = color;
-  ctx.strokeStyle = getCssVariable("--color-border");
   ctx.fillRect(
     selectedBox.positionX * squareSize, // X position of the selected square
     selectedBox.positionY * squareSize, // Y position of the selected square
     squareSize, // Width of the square
     squareSize // Height of the square
   );
+
+  // Now, apply the stroke (border)
+  ctx.strokeStyle = getCssVariable("--color-border");
+  ctx.lineWidth = 1; // Set the width of the border
+  ctx.strokeRect(
+    selectedBox.positionX * squareSize, // X position of the selected square
+    selectedBox.positionY * squareSize, // Y position of the selected square
+    squareSize, // Width of the square
+    squareSize // Height of the square
+  );
+
   ctx.restore();
 };

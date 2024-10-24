@@ -1,15 +1,12 @@
-import { BASE_URL, BASE_URL_JSON_SERVER } from "./constAPI";
-import { customFetchJSON } from "./customFetchJSON";
+import { BASE_URL } from "./constAPI";
+import { customFetch } from "./customFetch";
 
 export async function getDice(): Promise<Dice[]> {
   const options: RequestInit = {
     method: "GET",
   };
 
-  const data: Dice[] = await customFetchJSON(
-    `${BASE_URL_JSON_SERVER}/dice`,
-    options
-  );
+  const data: Dice[] = await customFetch(`${BASE_URL}/dice`, options);
 
   return data;
 }
@@ -19,10 +16,7 @@ export async function getDiceById(diceId: string): Promise<Dice> {
     method: "GET",
   };
 
-  const data: Dice = await customFetchJSON(
-    `${BASE_URL_JSON_SERVER}/dice/${diceId}`,
-    options
-  );
+  const data: Dice = await customFetch(`${BASE_URL}/dice/${diceId}`, options);
 
   return data;
 }

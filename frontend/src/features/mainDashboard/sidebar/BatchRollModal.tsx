@@ -6,14 +6,26 @@ import Box from "../../../ui/containers/Box";
 import { useEffect, useRef, useState } from "react";
 import { useAllDice } from "../useDice";
 import Spinner from "../../../ui/interactive/Spinner";
+import { DiceSet } from "../../../models/diceset";
 
 const Container = styled.div`
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 5vw 9vw;
   align-items: center;
   align-content: center;
-  gap: 12px;
+  gap: 8px;
 `;
+
+const initialDiceSet: DiceSet = {
+  d100: 0,
+  d20: 0,
+  d12: 0,
+  d10: 0,
+  d8: 0,
+  d6: 0,
+  d4: 0,
+  flat: 0,
+};
 
 interface DiceResult {
   dice: string;
@@ -21,61 +33,50 @@ interface DiceResult {
 }
 
 function BatchRollModal() {
-  const { isLoading, dice } = useAllDice();
-  const [diceCounts, setDiceCounts] = useState<number[]>([]);
-  const [results, setResults] = useState<DiceResult[]>([]);
+  const [diceSet, setDiceSet] = useState<DiceSet>(initialDiceSet);
+  // const [results, setResults] = useState<DiceResult[]>([]);
   const showBox = useRef(false);
 
-  useEffect(() => {
-    if (dice) {
-      setDiceCounts(dice.map(() => 0));
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    diceType: keyof DiceSet
+  ) => {
+    let value = parseInt(e.target.value);
+    if (isNaN(value)) {
+      value = 0;
+    } else {
+      value = value < 1 ? 0 : value;
     }
-  }, [dice]);
 
-  if (isLoading) {
-    return <Spinner />;
-  }
-
-  if (!dice) {
-    return <div>Error loading dice data</div>;
-  }
-
-  const handleChange = (index: number, e) => {
-    const value = Number(e.target.value);
-    const newCounts = [...diceCounts];
-    newCounts[index] = isNaN(value) ? 0 : value < 1 ? 0 : value;
-    setDiceCounts(newCounts);
+    setDiceSet((previous) => ({
+      ...previous,
+      [diceType]: value,
+    }));
   };
 
   const handleRoll = () => {
-    if (diceCounts.reduce((acc, value) => acc + value, 0) === 0) return;
-
-    const newResults = dice.map((dice, index) => {
-      const rolls = [];
-      for (let i = 0; i < diceCounts[index]; i++) {
-        rolls.push(Math.floor(Math.random() * dice.sides + 1));
-      }
-      return { dice: dice.name, rolls };
-    });
-
-    const filteredResults = newResults.filter((e) => e.rolls.length !== 0);
-    setResults(filteredResults);
-    showBox.current = true;
+    //   const filteredResults = newResults.filter((e) => e.rolls.length !== 0);
+    //   setResults(filteredResults);
+    //   showBox.current = true;
+    // };
   };
 
   return (
     <Container>
-      {dice.map((e, index) => (
-        <div style={{ gap: "1px" }}>
-          <Heading as="h1">Dice {e.name}</Heading>
+      {Object.keys(initialDiceSet).map((diceType) => (
+        <div key={diceType} style={{ display: "contents" }}>
+          <Heading as="h3">Dice {diceType}</Heading>
           <Input
-            placeholder="Select number of dice"
-            style={{ width: "200px" }}
-            onChange={(e) => handleChange(index, e)}
+            type="number"
+            placeholder="Select number"
+            style={{ height: "80%" }}
+            onChange={(e) => handleChange(e, diceType as keyof DiceSet)}
           ></Input>
         </div>
       ))}
-      <Button onClick={handleRoll}>Roll the dice</Button>
+      <Button style={{ gridColumn: "1/3" }} onClick={handleRoll}>
+        Roll the dice
+      </Button>
 
       {showBox.current && (
         <Box>

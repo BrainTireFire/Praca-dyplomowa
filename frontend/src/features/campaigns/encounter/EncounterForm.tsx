@@ -32,9 +32,6 @@ const TableContainerStyled = styled.div`
 
 const TableStyled = styled.div`
   flex: 1;
-  min-width: 300px;
-  max-height: 300px;
-  overflow-x: auto;
 `;
 
 const GridButtonStyled = styled.div`

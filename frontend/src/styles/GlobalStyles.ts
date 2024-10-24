@@ -23,6 +23,7 @@ const GlobalStyles = createGlobalStyle`
   --color-button-text: #DCE1DE;
   --color-secondary-text: #DCE1DE;
   --color-header-text: #9CC5A1;
+  --color-header-text-hover: #638767;
 
   --color-secondary-hover-text: #9a9b9a;
   --color-image-hover: #000000;

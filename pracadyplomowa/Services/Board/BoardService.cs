@@ -32,6 +32,12 @@ public class BoardService : IBoardService
         return boards;
     }
     
+    public async Task<PagedList<BoardShortDto>> GetBoardsShortAsync(int ownerId, BoardParams boardParams)
+    {
+        var boards = await _boardRepository.GetBoardsShort(ownerId, boardParams);
+        return boards;
+    }
+    
     public async Task<ActionResult<BoardSummaryDto>> GetBoardAsync(int boardId, int ownerId)
     {
         var board = await _boardRepository.GetBoardFullAsync(boardId, ownerId);

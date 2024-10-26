@@ -1,34 +1,45 @@
-import React, { useState } from "react";
-import Menus from "../../../ui/containers/Menus";
-import EncounterMapRow from "./EncounterMapRow";
-import { Cell } from "../../../ui/containers/Cell";
-import { useBoards } from "../../homebrew/maps/useBoards";
+import { useState } from "react";
 import Spinner from "../../../ui/interactive/Spinner";
-import { Board } from "../../../models/map/Board";
+import { ReusableTable } from "../../../ui/containers/ReusableTable";
+import { useMaps } from "./useMaps";
 import styled from "styled-components";
-import { TableNormal } from "../../../ui/containers/TableNormal";
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
 
 export default function EncounterMapTable() {
-  const { isLoading, boards } = useBoards();
+  const { isLoading, maps } = useMaps();
   const [selected, setSelected] = useState(null);
 
   if (isLoading) {
     return <Spinner />;
   }
 
-  if (!boards || boards.length === 0) {
+  if (!maps || maps.length === 0) {
     return <div>No maps available.</div>;
   }
 
-  console.log(boards);
+  const formattedMaps = maps.map((map) => ({
+    id: map.id,
+    name: map.name,
+    size: `${map.sizeX} x ${map.sizeY}`,
+    test: map.id,
+  }));
 
   return (
-    <div>
-      <TableNormal
-        data={boards}
+    <Container>
+      Pick a map
+      <ReusableTable
+        tableRowsColomns={{ Name: "name", Size: "size", "Create at": "test" }}
+        data={formattedMaps}
         selected={selected}
         setSelected={setSelected}
+        //isSearching={true}
+        //mainHeader="Maps"
       />
-    </div>
+    </Container>
   );
 }

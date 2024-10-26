@@ -1,4 +1,4 @@
-import { Board } from "../models/map/Board";
+import { Board, BoardShort } from "../models/map/Board";
 import { BoardCreateDto } from "../models/map/BoardDto";
 import { BoardUpdateDto } from "../models/map/BoardUpdate";
 import { BASE_URL } from "./constAPI";
@@ -49,6 +49,22 @@ export async function getBoards(): Promise<Board[]> {
 
   const data: Board[] = await customFetch(
     `${BASE_URL}/api/board/myboards`,
+    options
+  );
+
+  return data;
+}
+
+export async function getBoardsShort(): Promise<BoardShort[]> {
+  const options: RequestInit = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  const data: Board[] = await customFetch(
+    `${BASE_URL}/api/board/myboardsShort`,
     options
   );
 

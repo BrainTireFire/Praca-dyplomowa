@@ -68,6 +68,7 @@ const GlobalStyles = createGlobalStyle`
   --color-button-text: #fff; /* Dark gray for text */
   --color-secondary-text: #555555; /* Dark gray for text */
   --color-header-text: #171717; /* Black for header text */
+  --color-header-text-hover: #a1a1a1;
 
   --color-secondary-hover-text: #555555; /* Mid gray for hover text */
   --color-image-hover: #fff;

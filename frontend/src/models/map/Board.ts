@@ -17,3 +17,11 @@ export type Field = {
   fieldCoverLevel: string;
   fieldMovementCost: string;
 };
+
+export type BoardShort = {
+  id: number;
+  name: string;
+  description: string;
+  sizeX: number;
+  sizeY: number;
+};

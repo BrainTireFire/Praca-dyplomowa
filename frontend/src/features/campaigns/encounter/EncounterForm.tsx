@@ -7,6 +7,7 @@ import Button from "../../../ui/interactive/Button";
 import Form from "../../../ui/forms/Form";
 import styled from "styled-components";
 import EncounterMapTable from "./EncounterMapTable";
+import EncounterNPCTable from "./EncounterNPCTable";
 
 const GridStyled = styled.div`
   display: grid;
@@ -67,7 +68,7 @@ export default function EncounterForm() {
             <EncounterMapTable />
           </TableStyled>
           <TableStyled>
-            <EncounterMapTable />
+            <EncounterNPCTable />
           </TableStyled>
         </TableContainerStyled>
 

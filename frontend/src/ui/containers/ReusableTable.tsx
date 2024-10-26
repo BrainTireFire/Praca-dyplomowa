@@ -112,8 +112,9 @@ type ReusableTableProps = {
   tableRowsColomns: { [key: string]: string };
   mainHeader?: string;
   data: { id: string | number; [key: string]: any }[];
-  selected: number | null;
-  setSelected: React.Dispatch<React.SetStateAction<number | null>>;
+  // selected?: number | null;
+  onSelect?: React.Dispatch<React.SetStateAction<any>>;
+  isSelectable?: boolean;
   isSearching?: boolean;
 };
 
@@ -121,8 +122,8 @@ export const ReusableTable = ({
   tableRowsColomns,
   mainHeader,
   data,
-  selected,
-  setSelected,
+  onSelect,
+  isSelectable,
   isSearching,
 }: ReusableTableProps) => {
   const [sortConfig, setSortConfig] = useState<{
@@ -130,6 +131,7 @@ export const ReusableTable = ({
     direction: "asc" | "desc";
   } | null>(null);
   const [filterText, setFilterText] = useState("");
+  const [selected, setSelected] = useState<number | null>(null);
 
   const sortedData = [...data].sort((a, b) => {
     if (sortConfig) {
@@ -150,11 +152,10 @@ export const ReusableTable = ({
   );
 
   const handleRowClick = (index: number) => {
-    if (setSelected == null && selected == null) {
-      return;
+    if (setSelected && isSelectable) {
+      setSelected(index);
+      onSelect && onSelect(data[index]);
     }
-
-    setSelected(index);
   };
 
   const handleSort = (headerIndex: number) => {

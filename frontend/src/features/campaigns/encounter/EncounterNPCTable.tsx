@@ -3,6 +3,7 @@ import Spinner from "../../../ui/interactive/Spinner";
 import { ReusableTable } from "../../../ui/containers/ReusableTable";
 import { useMaps } from "./useMaps";
 import styled from "styled-components";
+import Button from "../../../ui/interactive/Button";
 
 const Container = styled.div`
   display: flex;
@@ -10,15 +11,27 @@ const Container = styled.div`
   align-items: center;
 `;
 
+const StyledHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 775px;
+`;
+
+const StyledTitle = styled.div`
+  flex: 1;
+  text-align: center;
+`;
+
 const TABLE_COLUMNS = {
   Name: "name",
   Size: "size",
-  "Create at": "test",
+  Description: "description",
 };
 
-export default function EncounterMapTable() {
+export default function EncounterNPCTable() {
   const { isLoading, maps } = useMaps();
-  const [selectedMap, setSelectedMap] = useState(null);
 
   if (isLoading) {
     return <Spinner />;
@@ -32,17 +45,19 @@ export default function EncounterMapTable() {
     id: map.id,
     name: map.name,
     size: `${map.sizeX} x ${map.sizeY}`,
-    test: map.id,
+    description: map.description,
   }));
 
   return (
     <Container>
-      Pick a map
+      <StyledHeader>
+        <StyledTitle>Pick a NCP</StyledTitle>
+        <Button> Add NPC </Button>
+      </StyledHeader>
       <ReusableTable
         tableRowsColomns={TABLE_COLUMNS}
         data={formattedMaps}
         isSelectable={true}
-        onSelect={setSelectedMap}
         //isSearching={true}
         //mainHeader="Maps"
       />

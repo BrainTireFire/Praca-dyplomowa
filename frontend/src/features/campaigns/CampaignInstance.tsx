@@ -76,7 +76,7 @@ export default function CampaignInstance() {
           <Button size="large" onClick={() => navigate("shops")}>
             {t("campaignInstance.shops")}
           </Button>
-          <Button size="large" onClick={() => navigate(`/encounter`)}>
+          <Button size="large" onClick={() => navigate(`/campaigns/encounter`)}>
             {t("campaignInstance.createEncounter")}
           </Button>
         </HeaderButtons>

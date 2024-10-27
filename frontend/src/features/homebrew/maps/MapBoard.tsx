@@ -47,14 +47,14 @@ export default function MapBoard({
     ctx.clearRect(0, 0, width, height);
     drawGrid(ctx, width, height, board.sizeX, board.sizeY);
 
-    if (selectedBox) {
-      drawSelectedBox(ctx, selectedBox, board.sizeX, board.sizeY);
-    }
-
     if (fields) {
       fields.forEach((field: any) => {
         fillSelectedBox(ctx, field, board.sizeX, board.sizeY, field.color);
       });
+    }
+
+    if (selectedBox) {
+      drawSelectedBox(ctx, selectedBox, board.sizeX, board.sizeY);
     }
   }, [selectedBox, fields, board.sizeX, board.sizeY]);
 

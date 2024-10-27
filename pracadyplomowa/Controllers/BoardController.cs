@@ -32,6 +32,17 @@ public class BoardController : BaseApiController
 
         return Ok(boards);
     }
+    
+    [HttpGet("myboardsShort")]
+    public async Task<ActionResult<IEnumerable<BoardShortDto>>> GetBoardsShort([FromQuery] BoardParams boardParams)
+    {
+        var userId = User.GetUserId();
+        var boards = await _boardService.GetBoardsShortAsync(userId, boardParams);
+
+        Response.AddPaginationHeader(boards);
+
+        return Ok(boards);
+    }
 
     [HttpGet("{boardId}")]
     public async Task<ActionResult<BoardSummaryDto>> GetBoard(int boardId)

@@ -20,7 +20,7 @@ export default function MapList() {
   }
 
   if (!boards || boards.length === 0) {
-    return <div>No campaigns available.</div>;
+    return <div>No maps available.</div>;
   }
 
   return (

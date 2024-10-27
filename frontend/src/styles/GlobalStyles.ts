@@ -23,6 +23,7 @@ const GlobalStyles = createGlobalStyle`
   --color-button-text: #DCE1DE;
   --color-secondary-text: #DCE1DE;
   --color-header-text: #9CC5A1;
+  --color-header-text-hover: #638767;
 
   --color-secondary-hover-text: #9a9b9a;
   --color-image-hover: #000000;
@@ -67,6 +68,7 @@ const GlobalStyles = createGlobalStyle`
   --color-button-text: #fff; /* Dark gray for text */
   --color-secondary-text: #555555; /* Dark gray for text */
   --color-header-text: #171717; /* Black for header text */
+  --color-header-text-hover: #a1a1a1;
 
   --color-secondary-hover-text: #555555; /* Mid gray for hover text */
   --color-image-hover: #fff;

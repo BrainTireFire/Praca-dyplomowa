@@ -51,13 +51,34 @@ const StyledHeader = styled(CommonRow)`
   color: var(--color-secondary-text);
 `;
 
-const StyledRow = styled(CommonRow)`
-  padding: 0rem 0.9rem; //useless due to common row having display: contents
-  font-size: 1rem; //useless due to common row having display: contents
+type StyledRowProps = {
+  clickable: boolean;
+  pressed: boolean | undefined;
+};
+
+const StyledRow = styled(CommonRow)<StyledRowProps>`
+  padding: 0rem 0.9rem;
+  font-size: 1rem;
 
   &:not(:last-child) {
     border-bottom: 1px solid var(--color-border);
   }
+
+  ${(props) =>
+    props.clickable &&
+    `
+    cursor: pointer;
+    &:hover {
+      background-color: var(--color-link-hover);
+    }
+  `}
+
+  ${(props) =>
+    props.pressed &&
+    `
+    background-color: var(--color-link);
+    border: 1px solid var(--color-link-hover);
+  `}
 `;
 
 const StyledBody = styled.section`
@@ -118,6 +139,12 @@ type EmptyProps = {
   width: number;
 };
 
+type RowProps = {
+  onClick?: () => void;
+  pressed?: boolean | undefined;
+  children: React.ReactNode;
+};
+
 function Table({ header, columns, children, button, modal }: TableProps) {
   return (
     <StyledTableContainer role="table">
@@ -145,8 +172,17 @@ function Header({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Row({ children }: { children: React.ReactNode }) {
-  return <StyledRow role="row">{children}</StyledRow>;
+function Row({ onClick, pressed, children }: RowProps) {
+  return (
+    <StyledRow
+      role="row"
+      onClick={onClick}
+      clickable={!!onClick}
+      pressed={pressed}
+    >
+      {children}
+    </StyledRow>
+  );
 }
 
 function Body({

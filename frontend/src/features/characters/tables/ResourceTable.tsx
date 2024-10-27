@@ -2,6 +2,7 @@ import React from "react";
 import Menus from "../../../ui/containers/Menus";
 import Table from "../../../ui/containers/Table";
 import styled from "styled-components";
+import { Cell } from "../../../ui/containers/Cell";
 import Modal from "../../../ui/containers/Modal";
 import {
   HiArrowDownOnSquare,
@@ -43,12 +44,6 @@ export default function ResourceTable({
     </Menus>
   );
 }
-
-const Cell = styled.div`
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--color-secondary-text);
-`;
 
 function ResourceRow({ resource }: { resource: Resource }) {
   return (

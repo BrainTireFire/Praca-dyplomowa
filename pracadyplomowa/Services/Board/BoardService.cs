@@ -15,6 +15,9 @@ public class BoardService : IBoardService
     private readonly IBoardRepository _boardRepository;
     private readonly IFieldRepository _fieldRepository;
     private readonly IMapper _mapper;
+    private const string COLOR_DEFAULT = "#1F2421";
+    private const string FIELD_COVER_LEVEL_DEFAULT = "NoCover";
+    private const string FIELD_MOVEMENT_COST_DEFAULT = "Low";
 
     public BoardService(IBoardRepository boardRepository, IFieldRepository fieldRepository, IMapper mapper)
     {
@@ -26,6 +29,12 @@ public class BoardService : IBoardService
     public async Task<PagedList<BoardSummaryDto>> GetBoardsAsync(int ownerId, BoardParams boardParams)
     {
         var boards = await _boardRepository.GetBoardSummaries(ownerId, boardParams);
+        return boards;
+    }
+    
+    public async Task<PagedList<BoardShortDto>> GetBoardsShortAsync(int ownerId, BoardParams boardParams)
+    {
+        var boards = await _boardRepository.GetBoardsShort(ownerId, boardParams);
         return boards;
     }
     
@@ -64,12 +73,14 @@ public class BoardService : IBoardService
         {
             board.AddField(field);
         }
+        
+        AddMissingFieldsToBoard(board, fields);
 
         _boardRepository.Add(board);
         await _boardRepository.SaveChanges();
         return new CreatedResult(string.Empty, null);
     }
-    
+
     public async Task<ActionResult> RemoveBoardAsync(int boardId, int ownerId)
     {
         var board = _boardRepository.GetById(boardId);
@@ -106,7 +117,7 @@ public class BoardService : IBoardService
         {
             return new UnauthorizedObjectResult(new ApiResponse(401, "You are not the owner of this board"));
         }
-
+        
         var updateResult = await UpdateFieldsAsync(boardId, board, boardUpdateDto.Fields);
         if (updateResult != null)
         {
@@ -114,10 +125,43 @@ public class BoardService : IBoardService
         }
 
         UpdateBoardProperties(board, boardUpdateDto);
+        
+        if (boardUpdateDto.SizeX > 0 && boardUpdateDto.SizeY > 0)
+        {
+            var fields = board.R_ConsistsOfFields.ToList();
+            AddMissingFieldsToBoard(board, fields);
+        }
+        
         _boardRepository.Update(board);
         await _boardRepository.SaveChanges();
 
         return null;
+    }
+    
+    private static void AddMissingFieldsToBoard(Models.Entities.Campaign.Board board, List<Field> fields)
+    {
+        // Create and add remaining fields that are not provided
+        for (int positionX = 0; positionX < board.SizeX; positionX++)
+        {
+            for (int positionY = 0; positionY < board.SizeY; positionY++)
+            {
+                // Check if a field already exists at this position
+                if (!fields.Any(f => f.PositionX == positionX && f.PositionY == positionY))
+                {
+                    // Create a default field if not already provided
+                    var defaultField = new Field(
+                        positionX,
+                        positionY,
+                        1,
+                        COLOR_DEFAULT,
+                        FIELD_COVER_LEVEL_DEFAULT,
+                        FIELD_MOVEMENT_COST_DEFAULT
+                    );
+                
+                    board.AddField(defaultField);
+                }
+            }
+        }
     }
 
     private async Task<ActionResult?> UpdateFieldsAsync(int boardId, Models.Entities.Campaign.Board board, ICollection<FieldUpdateDto> fieldsToUpdate)

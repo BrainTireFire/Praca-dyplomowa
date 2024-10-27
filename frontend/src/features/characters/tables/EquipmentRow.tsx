@@ -11,12 +11,7 @@ import {
 import styled from "styled-components";
 import RadioButton from "../../../ui/containers/RadioButton";
 import { Item } from "../../../models/item";
-
-const Cell = styled.div`
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--color-secondary-text);
-`;
+import { Cell } from "../../../ui/containers/Cell";
 
 const Stacked = styled.div`
   display: flex;

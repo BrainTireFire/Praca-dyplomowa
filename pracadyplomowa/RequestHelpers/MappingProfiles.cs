@@ -21,6 +21,7 @@ public class MappingProfiles : Profile
                     src => src.R_ConsistsOfFields
                 )
             );
+        CreateMap<Models.Entities.Campaign.Board, BoardShortDto>();
         CreateMap<BoardCreateDto, Models.Entities.Campaign.Board>();
         CreateMap<FieldDto, Field>();
         CreateMap<Field, FieldDto>();

@@ -2,6 +2,7 @@ import React from "react";
 import Menus from "../../../ui/containers/Menus";
 import Table from "../../../ui/containers/Table";
 import styled from "styled-components";
+import { Cell } from "../../../ui/containers/Cell";
 
 import RadioButton from "../../../ui/containers/RadioButton";
 import { WeaponAttack } from "../../../models/weaponattack";
@@ -36,12 +37,6 @@ export default function WeaponAttackTable({
     </Menus>
   );
 }
-
-const Cell = styled.div`
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--color-secondary-text);
-`;
 
 function WeaponAttackRow({ weaponAttack }: { weaponAttack: WeaponAttack }) {
   return (

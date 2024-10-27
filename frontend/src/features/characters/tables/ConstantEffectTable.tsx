@@ -12,6 +12,7 @@ import {
 } from "react-icons/hi2";
 import RadioButton from "../../../ui/containers/RadioButton";
 import { Effect } from "../../../models/effect";
+import { Cell } from "../../../ui/containers/Cell";
 
 export default function ConstantEffectTable({
   effects,
@@ -42,12 +43,6 @@ export default function ConstantEffectTable({
     </Menus>
   );
 }
-
-const Cell = styled.div`
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--color-secondary-text);
-`;
 
 function ConstantEffectRow({ effect }: { effect: Effect }) {
   return (

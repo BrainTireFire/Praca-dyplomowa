@@ -25,6 +25,7 @@ import HomebrewMap from "./pages/homebrew/maps/HomebrewMap";
 import MapInstance from "./features/homebrew/maps/MapInstance";
 import MapUpdateBoardForm from "./features/homebrew/maps/MapUpdateBoardForm";
 import CampaignJoin from "./features/campaigns/CampaignJoin";
+import Encounter from "./pages/campaign/encounter/Encounter";
 
 export default function Router() {
   return (
@@ -48,6 +49,7 @@ export default function Router() {
             element={<CustomizeShop />}
           />
           <Route path="campaigns/session/:groupName" element={<MainBoard />} />
+          <Route path="campaigns/encounter" element={<Encounter />} />
           <Route path="characters" element={<Characters />} />
           <Route path="homebrew" element={<Homebrew />} />
           <Route

@@ -20,11 +20,13 @@ export default function RadioGroup({
   onChange,
   name,
   label,
+  currentValue,
 }: {
   values: ValueSet[];
   onChange: (param: string) => void;
   name: string;
   label: string;
+  currentValue: string;
 }) {
   return (
     <RadioGroupContainer>
@@ -36,6 +38,7 @@ export default function RadioGroup({
             id={value.value}
             name={name}
             onChange={() => onChange(value.value)}
+            checked={currentValue === value.value}
           ></Input>
         </FormRowLabelRight>
       ))}

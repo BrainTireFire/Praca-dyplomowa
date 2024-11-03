@@ -26,6 +26,8 @@ import MapInstance from "./features/homebrew/maps/MapInstance";
 import MapUpdateBoardForm from "./features/homebrew/maps/MapUpdateBoardForm";
 import CampaignJoin from "./features/campaigns/CampaignJoin";
 import Encounter from "./pages/campaign/encounter/Encounter";
+import Items from "./pages/Items";
+import Effects from "./pages/Effects";
 
 export default function Router() {
   return (
@@ -51,6 +53,9 @@ export default function Router() {
           <Route path="campaigns/session/:groupName" element={<MainBoard />} />
           <Route path="campaigns/encounter" element={<Encounter />} />
           <Route path="characters" element={<Characters />} />
+          <Route path="items" element={<Items />} />
+          <Route path="effects" element={<Effects />} />
+          {/* effects present for testing purposes only, to be removed in final version */}
           <Route path="homebrew" element={<Homebrew />} />
           <Route
             path="homebrew/createPower"

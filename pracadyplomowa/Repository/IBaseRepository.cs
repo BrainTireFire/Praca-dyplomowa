@@ -15,7 +15,7 @@ namespace pracadyplomowa.Repository
 
         public void Update(T entity);
 
-        public List<T> GetAll();
+        public Task<List<T>> GetAll();
 
         public T? GetById(int id);
 

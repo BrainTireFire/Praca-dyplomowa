@@ -41,6 +41,7 @@ builder.Services.AddScoped<IItemRepository, ItemRepository>();
 builder.Services.AddScoped<ICampaignRepository, CampaignRepository>();
 builder.Services.AddScoped<IBoardRepository, BoardRepository>();
 builder.Services.AddScoped<IFieldRepository, FieldRepository>();
+builder.Services.AddScoped<IItemFamilyRepository, ItemFamilyRepository>();
 
 builder.Services.AddScoped<IAuthorizationHandler, OwnershipHandler>();
 // builder.Services.AddHttpContextAccessor();

@@ -1,8 +1,8 @@
-import { Race } from "../models/race";
+import { CharacterClass } from "../models/characterclass";
 import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
 
-export async function getClasses(): Promise<Race[]> {
+export async function getClasses(): Promise<CharacterClass[]> {
   const options: RequestInit = {
     method: "GET",
     headers: {
@@ -10,7 +10,10 @@ export async function getClasses(): Promise<Race[]> {
     },
   };
 
-  const data: Race[] = await customFetch(`${BASE_URL}/api/class`, options);
+  const data: CharacterClass[] = await customFetch(
+    `${BASE_URL}/api/class`,
+    options
+  );
 
   return data;
 }

@@ -33,9 +33,9 @@ namespace pracadyplomowa.Repository
             _context.Entry(entity).State = EntityState.Modified;
         }
 
-        public List<T> GetAll()
+        public Task<List<T>> GetAll()
         {
-            return _context.Set<T>().Select(a=>a).ToList();
+            return _context.Set<T>().Select(a=>a).ToListAsync();
         }
 
         public T? GetById(int id)

@@ -4,6 +4,7 @@ using pracadyplomowa.Models.DTOs.Board;
 using pracadyplomowa.Models.DTOs.Map.Field;
 using pracadyplomowa.Models.Entities.Campaign;
 using pracadyplomowa.Models.Entities.Characters;
+using pracadyplomowa.Models.Entities.Items;
 
 namespace pracadyplomowa;
 
@@ -14,6 +15,8 @@ public class MappingProfiles : Profile
         CreateMap<RegisterDto, User>();
         CreateMap<Class, ClassDTO>();
         CreateMap<Race, RaceDTO>();
+        CreateMap<ItemFamily, ItemFamilyDto>();
+        CreateMap<ItemFamilyDto, ItemFamily>();
         CreateMap<Models.Entities.Campaign.Board, BoardSummaryDto>()
             .ForMember(
                 dest => dest.Fields,

@@ -1,0 +1,66 @@
+export const skills = [
+  "acrobatics",
+  "animalHandling",
+  "arcana",
+  "athletics",
+  "deception",
+  "history",
+  "insight",
+  "intimidation",
+  "investigation",
+  "medicine",
+  "nature",
+  "perception",
+  "performance",
+  "persuasion",
+  "religion",
+  "sleightOfHand",
+  "stealth",
+  "survival",
+] as const;
+
+// export const skillsDropdown = [
+//   { value: "acrobatics", label: "Acrobatics" },
+//   { value: "animalHandling", label: "Animal Handling" },
+//   { value: "arcana", label: "Arcana" },
+//   { value: "athletics", label: "Athletics" },
+//   { value: "deception", label: "Deception" },
+//   { value: "history", label: "History" },
+//   { value: "insight", label: "Insight" },
+//   { value: "intimidation", label: "Intimidation" },
+//   { value: "investigation", label: "Investigation" },
+//   { value: "medicine", label: "Medicine" },
+//   { value: "nature", label: "Nature" },
+//   { value: "perception", label: "Perception" },
+//   { value: "performance", label: "Performance" },
+//   { value: "persuasion", label: "Persuasion" },
+//   { value: "religion", label: "Religion" },
+//   { value: "sleightOfHand", label: "Sleight of Hand" },
+//   { value: "stealth", label: "Stealth" },
+//   { value: "survival", label: "Survival" },
+// ] as const;
+
+export const SkillsLabelMap = {
+  acrobatics: "Acrobatics",
+  animalHandling: "Animal Handling",
+  arcana: "Arcana",
+  athletics: "Athletics",
+  deception: "Deception",
+  history: "History",
+  insight: "Insight",
+  intimidation: "Intimidation",
+  investigation: "Investigation",
+  medicine: "Medicine",
+  nature: "Nature",
+  perception: "Perception",
+  performance: "Performance",
+  persuasion: "Persuasion",
+  religion: "Religion",
+  sleightOfHand: "Sleight of Hand",
+  stealth: "Stealth",
+  survival: "Survival",
+} as const;
+
+export const skillsDropdown = skills.map((x) => {
+  return { value: x, label: SkillsLabelMap[x] };
+});

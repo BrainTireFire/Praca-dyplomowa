@@ -4,9 +4,8 @@ import Heading from "../../../ui/text/Heading";
 import Button from "../../../ui/interactive/Button";
 import Box from "../../../ui/containers/Box";
 import { useEffect, useRef, useState } from "react";
-import { useAllDice } from "../useDice";
-import Spinner from "../../../ui/interactive/Spinner";
 import { DiceSet } from "../../../models/diceset";
+import { rollDice } from "../../../services/apiDice";
 
 const Container = styled.div`
   display: grid;
@@ -17,25 +16,20 @@ const Container = styled.div`
 `;
 
 const initialDiceSet: DiceSet = {
-  d100: 0,
   d20: 0,
   d12: 0,
   d10: 0,
   d8: 0,
   d6: 0,
   d4: 0,
+  d100: 0,
   flat: 0,
 };
 
-interface DiceResult {
-  dice: string;
-  rolls: number[];
-}
-
 function BatchRollModal() {
   const [diceSet, setDiceSet] = useState<DiceSet>(initialDiceSet);
-  // const [results, setResults] = useState<DiceResult[]>([]);
-  const showBox = useRef(false);
+  const [results, setResults] = useState<DiceSet>(initialDiceSet);
+  const [diceSetSnapshot, setDiceSetSnapshot] = useState<DiceSet>();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -54,11 +48,10 @@ function BatchRollModal() {
     }));
   };
 
-  const handleRoll = () => {
-    //   const filteredResults = newResults.filter((e) => e.rolls.length !== 0);
-    //   setResults(filteredResults);
-    //   showBox.current = true;
-    // };
+  const handleRoll = async () => {
+    const data = await rollDice(diceSet);
+    setResults(data);
+    setDiceSetSnapshot(diceSet);
   };
 
   return (
@@ -78,14 +71,23 @@ function BatchRollModal() {
         Roll the dice
       </Button>
 
-      {showBox.current && (
-        <Box>
-          {results.map((e, index) => (
-            <div key={index}>
-              Result of rolling {e.dice} is: [{e.rolls.join(", ")}] and the sum
-              is {e.rolls.reduce((acc, value) => acc + value, 0)}
-            </div>
-          ))}
+      {diceSetSnapshot && (
+        <Box
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gridColumn: "1/3",
+          }}
+        >
+          {Object.keys(results).map((diceType) =>
+            results[diceType as keyof DiceSet] ? (
+              <p key={diceType}>{`Rolling ${diceType} - ${
+                diceSetSnapshot[diceType as keyof DiceSet]
+              } times: ${results[diceType as keyof DiceSet]}`}</p>
+            ) : (
+              ""
+            )
+          )}
         </Box>
       )}
     </Container>

@@ -12,6 +12,17 @@ namespace pracadyplomowa.Models.Entities.Characters
         {
 
         }
+        public DiceSet(DiceRollDto diceRollDto)
+        {
+            this.d20 = diceRollDto.d20;
+            this.d12 = diceRollDto.d12;
+            this.d10 = diceRollDto.d10;
+            this.d8 = diceRollDto.d8;
+            this.d6 = diceRollDto.d6;
+            this.d4 = diceRollDto.d4;
+            this.d100 = diceRollDto.d100;
+            this.flat = diceRollDto.flat;
+        }
 
         public DiceSet(DiceSet diceSet)
         {
@@ -140,22 +151,28 @@ namespace pracadyplomowa.Models.Entities.Characters
 
         public int Roll(Character roller)
         {
-            int result = Roll();
+            int[] arr = Roll();
+            int result = 0;
+            foreach (var val in arr)
+            {
+                result += val;
+            }
             result += ResolveAdditionalValues(roller);
             return result;
         }
 
-        public int Roll()
+        public int[] Roll()
         {
             Random rnd = new();
-            int result = d20 * rnd.Next(1, 20);
-            result += d12 * rnd.Next(1, 12);
-            result += d10 * rnd.Next(1, 10);
-            result += d8 * rnd.Next(1, 8);
-            result += d6 * rnd.Next(1, 6);
-            result += d4 * rnd.Next(1, 4);
-            result += d100 * rnd.Next(1, 100);
-            result += flat;
+            int[] result = new int[8];
+            result[0] = d20 * rnd.Next(1, 20);
+            result[1] = d12 * rnd.Next(1, 12);
+            result[2] = d10 * rnd.Next(1, 10);
+            result[3] = d8 * rnd.Next(1, 8);
+            result[4] = d6 * rnd.Next(1, 6);
+            result[5] = d4 * rnd.Next(1, 4);
+            result[6] = d100 * rnd.Next(1, 100);
+            result[7] = flat;
             return result;
         }
 

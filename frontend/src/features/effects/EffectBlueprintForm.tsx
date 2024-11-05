@@ -144,7 +144,7 @@ const EffectTypeToInitialStateMap = new Map<
   ["movementCost", MovementCostEffectInitialState],
 ]);
 
-type EffectBlueprint = {
+export type EffectBlueprint = {
   id: number | null;
   name: string;
   description: string;

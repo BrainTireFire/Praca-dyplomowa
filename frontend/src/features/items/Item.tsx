@@ -25,15 +25,6 @@ export default function Item() {
       <FormRowVertical label="Weight">
         <Input type="number"></Input>
       </FormRowVertical>
-      <FormRowVertical label="Gold pieces">
-        <Input type="number"></Input>
-      </FormRowVertical>
-      <FormRowVertical label="Silver pieces">
-        <Input type="number"></Input>
-      </FormRowVertical>
-      <FormRowVertical label="Copper pieces">
-        <Input type="number"></Input>
-      </FormRowVertical>
       <GrantedPowersTable powers={[]}></GrantedPowersTable>
       <GrantedResourcesTable resources={[]}></GrantedResourcesTable>
     </Box>

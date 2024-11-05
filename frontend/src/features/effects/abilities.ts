@@ -7,6 +7,8 @@ export const abilities = [
   "charisma",
 ] as const;
 
+export type ability = (typeof abilities)[number];
+
 export const AbilitiesLabelMap = {
   strength: "Strength",
   dexterity: "Dexterity",

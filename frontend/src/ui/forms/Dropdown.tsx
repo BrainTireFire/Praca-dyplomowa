@@ -32,7 +32,7 @@ function Dropdown({
   chosenValue,
   setChosenValue,
 }: {
-  valuesList: { value: string; label: string }[];
+  valuesList: readonly { value: string; label: string }[];
   chosenValue: string;
   setChosenValue: (value: string) => void;
 }) {

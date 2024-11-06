@@ -9,6 +9,17 @@ export type DiceSet = {
   flat: number | undefined;
 };
 
+export const DiceSetDefaultValue = {
+  d100: 0,
+  d20: 0,
+  d12: 0,
+  d10: 0,
+  d8: 0,
+  d6: 0,
+  d4: 0,
+  flat: 0,
+};
+
 export function DiceSetString(diceSet: DiceSet): string {
   if (!diceSet) {
     return "none";

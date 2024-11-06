@@ -7,6 +7,7 @@ const StyledFormRow = styled.div<StyledFormRowProps>`
   gap: 0.8rem;
   padding: 1.2rem 0;
   ${(props) => (props.fillHeight ? heights["expanding"] : heights["normal"])}
+  ${(props) => props.customStyles}
 `;
 
 const heights = {
@@ -48,9 +49,11 @@ type FormRowVerticalProps = {
   error?: string;
   children: ReactNode;
   fillHeight?: boolean;
+  customStyles?: ReturnType<typeof css>;
 };
 type StyledFormRowProps = {
   fillHeight?: boolean;
+  customStyles?: ReturnType<typeof css>;
 };
 
 function FormRowVertical({
@@ -61,9 +64,10 @@ function FormRowVertical({
   error,
   children,
   fillHeight,
+  customStyles,
 }: FormRowVerticalProps) {
   return (
-    <StyledFormRow fillHeight={fillHeight}>
+    <StyledFormRow fillHeight={fillHeight} customStyles={customStyles}>
       {label && React.isValidElement(children) && (
         <Label htmlFor={children.props.id}>{label}</Label>
       )}

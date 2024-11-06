@@ -26,8 +26,8 @@ namespace pracadyplomowa.Models.DTOs
         public List<SavingThrow> SavingThrows { get; set; } = null!;
         public List<Skill> Skills { get; set; } = null!;
         public List<Language> Languages { get; set; } = null!;
-        public List<ItemFamily> ToolProficiencies { get; set; } = null!;
-        public List<ItemFamily> WeaponAndArmorProficiencies { get; set; } = null!;
+        public List<ItemFamilyDto> ToolProficiencies { get; set; } = null!;
+        public List<ItemFamilyDto> WeaponAndArmorProficiencies { get; set; } = null!;
         public RaceClass Race { get; set; } = null!;
         public SizeWithName Size { get; set; }
         public List<ClassWithLevel> Classes { get; set; } = null!;
@@ -165,17 +165,13 @@ namespace pracadyplomowa.Models.DTOs
             return languages;
         }
 
-        public class ItemFamily {
-            public int Id { get; set; }
-            public string Name { get; set; } = null!;
-        }
-        public static List<ItemFamily> GetItemProficiencies(Character character, ItemType itemType){
+        public static List<ItemFamilyDto> GetItemProficiencies(Character character, ItemType itemType){
             var itemProficiencies =  character.R_AffectedBy
                                 .OfType<ProficiencyEffectInstance>()
                                 // .Where(ei => ei.ProficiencyEffectType.ProficiencyEffect == proficiency)
                                 .Select(ei => ei.R_GrantsProficiencyInItemFamily)
                                 .Where(it => it.ItemType == itemType )
-                                .Select(itemFamily => new ItemFamily{
+                                .Select(itemFamily => new ItemFamilyDto{
                                     Id = itemFamily.Id,
                                     Name = itemFamily.Name,
                                 })

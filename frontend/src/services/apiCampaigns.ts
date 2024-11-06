@@ -1,3 +1,4 @@
+import { Campaign, CampaignInsertDto } from "../models/campaign";
 import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
 

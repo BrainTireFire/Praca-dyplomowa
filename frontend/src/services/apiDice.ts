@@ -1,15 +1,13 @@
-import { BASE_URL, BASE_URL_JSON_SERVER } from "./constAPI";
-import { customFetchJSON } from "./customFetchJSON";
+import { DiceSet } from "../models/diceset";
+import { BASE_URL } from "./constAPI";
+import { customFetch } from "./customFetch";
 
 export async function getDice(): Promise<Dice[]> {
   const options: RequestInit = {
     method: "GET",
   };
 
-  const data: Dice[] = await customFetchJSON(
-    `${BASE_URL_JSON_SERVER}/dice`,
-    options
-  );
+  const data: Dice[] = await customFetch(`${BASE_URL}/dice`, options);
 
   return data;
 }
@@ -19,10 +17,18 @@ export async function getDiceById(diceId: string): Promise<Dice> {
     method: "GET",
   };
 
-  const data: Dice = await customFetchJSON(
-    `${BASE_URL_JSON_SERVER}/dice/${diceId}`,
-    options
-  );
+  const data: Dice = await customFetch(`${BASE_URL}/dice/${diceId}`, options);
 
   return data;
+}
+
+export async function rollDice(DiceSet: DiceSet): Promise<DiceSet> {
+  const options: RequestInit = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(DiceSet),
+  };
+
+  const result: DiceSet = await customFetch(`${BASE_URL}/roll-dice`, options);
+  return result;
 }

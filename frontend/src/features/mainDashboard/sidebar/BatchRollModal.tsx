@@ -30,6 +30,7 @@ function BatchRollModal() {
   const [diceSet, setDiceSet] = useState<DiceSet>(initialDiceSet);
   const [results, setResults] = useState<DiceSet>(initialDiceSet);
   const [diceSetSnapshot, setDiceSetSnapshot] = useState<DiceSet>();
+  const sum = useRef(0);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -52,21 +53,27 @@ function BatchRollModal() {
     const data = await rollDice(diceSet);
     setResults(data);
     setDiceSetSnapshot(diceSet);
+    sum.current = Object.entries(data).reduce(
+      (acc, [, value]) => (value ? acc + value : acc),
+      0
+    );
   };
 
   return (
     <Container>
-      {Object.keys(initialDiceSet).map((diceType) => (
-        <div key={diceType} style={{ display: "contents" }}>
-          <Heading as="h3">Dice {diceType}</Heading>
-          <Input
-            type="number"
-            placeholder="Select number"
-            style={{ height: "80%" }}
-            onChange={(e) => handleChange(e, diceType as keyof DiceSet)}
-          ></Input>
-        </div>
-      ))}
+      {Object.keys(initialDiceSet)
+        .filter((diceType) => diceType !== "flat") // "flat" is not needed in this component
+        .map((diceType) => (
+          <div key={diceType} style={{ display: "contents" }}>
+            <Heading as="h3">Dice {diceType}</Heading>
+            <Input
+              type="number"
+              placeholder="Select number"
+              style={{ height: "80%" }}
+              onChange={(e) => handleChange(e, diceType as keyof DiceSet)}
+            ></Input>
+          </div>
+        ))}
       <Button style={{ gridColumn: "1/3" }} onClick={handleRoll}>
         Roll the dice
       </Button>
@@ -79,15 +86,14 @@ function BatchRollModal() {
             gridColumn: "1/3",
           }}
         >
-          {Object.keys(results).map((diceType) =>
-            results[diceType as keyof DiceSet] ? (
+          {Object.entries(results).map(([diceType, value]) =>
+            value ? (
               <p key={diceType}>{`Rolling ${diceType} - ${
                 diceSetSnapshot[diceType as keyof DiceSet]
-              } times: ${results[diceType as keyof DiceSet]}`}</p>
-            ) : (
-              ""
-            )
+              } times: ${value}`}</p>
+            ) : null
           )}
+          Sum of the rolls equals to : {sum.current}
         </Box>
       )}
     </Container>

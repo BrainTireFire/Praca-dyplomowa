@@ -6,7 +6,7 @@ export type DiceSet = {
   d6: number;
   d4: number;
   d100: number;
-  flat: number;
+  flat: number | undefined;
 };
 
 export function DiceSetString(diceSet: DiceSet): string {

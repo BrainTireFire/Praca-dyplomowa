@@ -7,6 +7,7 @@ using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Models.Entities.Powers;
 using pracadyplomowa.Models.Entities.Powers.EffectBlueprints;
+using pracadyplomowa.Models.Enums;
 
 namespace pracadyplomowa.Repository
 {
@@ -17,13 +18,14 @@ namespace pracadyplomowa.Repository
         {
         }
 
-        public async Task<PagedList<CharacterSummaryDto>> GetCharacterSummaries(int OwnerId, CharacterParams characterParams)
+        public async Task<PagedList<CharacterSummaryDto>> GetCharacterSummaries(int OwnerId, bool isNpc, CharacterParams characterParams)
         {
             var query = _context.Characters
                     .Where(c => c.R_OwnerId == OwnerId)
+                    .Where(c => c.IsNpc == isNpc)
                     .Include(c => c.R_CharacterBelongsToRace)
                     .Include(c => c.R_CharacterHasLevelsInClass)
-                    .ThenInclude(cl => cl.R_Class)
+                        .ThenInclude(cl => cl.R_Class)
                     .AsQueryable();
 
             // Filtering
@@ -43,12 +45,15 @@ namespace pracadyplomowa.Repository
 
             var charactersSumaries = query.Select(c => new CharacterSummaryDto(
                 c.Id,
+                c.IsNpc,
                 c.Name,
                 c.Description,
                 c.R_CharacterBelongsToRace.Name,
-                c.R_CharacterHasLevelsInClass.First().R_Class.Name
+                c.R_CharacterHasLevelsInClass.First().R_Class.Name,
+                c.R_CharacterBelongsToRace.Size.ToString()
             ));
 
+            Console.WriteLine("charactersSumaries: " + charactersSumaries);
             return await PagedList<CharacterSummaryDto>.CreateAsync(charactersSumaries, characterParams.PageNumber, characterParams.PageSize);
         }
 

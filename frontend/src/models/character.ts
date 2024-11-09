@@ -20,6 +20,7 @@ export type CharacterItem = {
   description: string;
   class: string;
   race: string;
+  isNpc: boolean;
 };
 
 export type Character = {
@@ -72,4 +73,5 @@ export type CharacterInsertDto = {
   intelligence: number;
   wisdom: number;
   charisma: number;
+  isNpc: boolean;
 };

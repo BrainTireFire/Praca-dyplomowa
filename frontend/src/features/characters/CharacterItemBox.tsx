@@ -19,7 +19,6 @@ export default function CharacterItemBox({
   onClick: any;
   showButtons: boolean;
 }) {
-  console.log(character);
   return (
     <Box radius="tiny" onClick={() => onClick(character.id)}>
       <Heading as="h3">{character.name}</Heading>

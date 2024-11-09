@@ -43,7 +43,7 @@ export default function EncounterMapTable() {
         data={formattedMaps}
         isSelectable={true}
         onSelect={setSelectedMap}
-        //isSearching={true}
+        isSearching={true}
         //mainHeader="Maps"
       />
     </Container>

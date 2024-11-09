@@ -4,6 +4,7 @@ import { ReusableTable } from "../../../ui/containers/ReusableTable";
 import { useMaps } from "./useMaps";
 import styled from "styled-components";
 import Button from "../../../ui/interactive/Button";
+import { useNpcCharacters } from "../../characters/hooks/useNpcCharacters";
 
 const Container = styled.div`
   display: flex;
@@ -31,22 +32,15 @@ const TABLE_COLUMNS = {
 };
 
 export default function EncounterNPCTable() {
-  const { isLoading, maps } = useMaps();
+  const { isLoading, npcCharacters } = useNpcCharacters();
 
   if (isLoading) {
     return <Spinner />;
   }
 
-  if (!maps || maps.length === 0) {
-    return <div>No maps available.</div>;
+  if (!npcCharacters || npcCharacters.length === 0) {
+    return <div>No npcCharacters available.</div>;
   }
-
-  const formattedMaps = maps.map((map) => ({
-    id: map.id,
-    name: map.name,
-    size: `${map.sizeX} x ${map.sizeY}`,
-    description: map.description,
-  }));
 
   return (
     <Container>
@@ -56,8 +50,8 @@ export default function EncounterNPCTable() {
       </StyledHeader>
       <ReusableTable
         tableRowsColomns={TABLE_COLUMNS}
-        data={formattedMaps}
-        isSelectable={true}
+        data={npcCharacters}
+        isSelectable={false}
         //isSearching={true}
         //mainHeader="Maps"
       />

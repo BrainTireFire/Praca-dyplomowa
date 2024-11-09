@@ -7,10 +7,13 @@ using pracadyplomowa.Models.Entities.Characters;
 
 namespace pracadyplomowa.Models.DTOs
 {
-    public class CharacterSummaryDto(int id, string name, string description, string characterClass, string race)
+    public class CharacterSummaryDto(int id, bool isNpc, string name, string description, string characterClass, string race, string size)
     {
         [Required]
         public int Id { get; set; } = id;
+        
+        [Required]
+        public bool IsNpc { get; set; } = isNpc;
 
         [Required]
         [MaxLength(50)]
@@ -27,9 +30,11 @@ namespace pracadyplomowa.Models.DTOs
         [Required]
         [MaxLength(50)]
         public string Race { get; set; } = race;
+        
+        public string Size { get; set; } = size;
 
         public CharacterSummaryDto(Character character) :
-            this(character.Id, character.Name, character.Description, character.R_CharacterBelongsToRace.Name, character.R_CharacterHasLevelsInClass.First().R_Class.Name)
+            this(character.Id, character.IsNpc, character.Name, character.Description, character.R_CharacterBelongsToRace.Name, character.R_CharacterHasLevelsInClass.First().R_Class.Name, character.Size.ToString())
         {
 
         }

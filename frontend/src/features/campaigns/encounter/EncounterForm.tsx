@@ -26,7 +26,6 @@ const GridInputStyled = styled.div`
 const TableContainerStyled = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
   margin: 0 100px;
   gap: 20px;
 `;

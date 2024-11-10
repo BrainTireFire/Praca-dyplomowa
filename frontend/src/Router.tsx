@@ -52,7 +52,10 @@ export default function Router() {
             element={<CustomizeShop />}
           />
           <Route path="campaigns/session/:groupName" element={<MainBoard />} />
-          <Route path="campaigns/encounter" element={<Encounter />} />
+          <Route
+            path="campaigns/:campaignId/encounter"
+            element={<Encounter />}
+          />
           <Route path="characters" element={<Characters />} />
           <Route path="npc" element={<NpcCharacter />} />
           <Route path="items" element={<Items />} />

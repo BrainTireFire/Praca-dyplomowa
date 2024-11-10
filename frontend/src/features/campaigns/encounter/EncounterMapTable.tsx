@@ -16,9 +16,20 @@ const TABLE_COLUMNS = {
   "Create at": "test",
 };
 
-export default function EncounterMapTable() {
+type TypeMap = {
+  id: number;
+  name: string;
+  size: string;
+  test: string;
+};
+
+export default function EncounterMapTable({
+  onSelectBoard,
+}: {
+  onSelectBoard: any;
+}) {
+  const [selectedMap, setSelectedMap] = useState<TypeMap | null>(null);
   const { isLoading, maps } = useMaps();
-  const [selectedMap, setSelectedMap] = useState(null);
 
   if (isLoading) {
     return <Spinner />;
@@ -26,6 +37,11 @@ export default function EncounterMapTable() {
 
   if (!maps || maps.length === 0) {
     return <div>No maps available.</div>;
+  }
+
+  if (selectedMap) {
+    const board = maps.find((map) => map.id === selectedMap.id);
+    onSelectBoard(board);
   }
 
   const formattedMaps = maps.map((map) => ({

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getBoardsShort } from "../,./../../../services/apiBoard";
+import { getBoards } from "../,./../../../services/apiBoard";
 
 export function useMaps() {
   const {
@@ -8,7 +8,7 @@ export function useMaps() {
     error,
   } = useQuery({
     queryKey: ["maps"],
-    queryFn: getBoardsShort,
+    queryFn: getBoards,
   });
 
   return { isLoading, maps, error };

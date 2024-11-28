@@ -7,7 +7,7 @@ using pracadyplomowa.Models.Entities.Characters;
 
 namespace pracadyplomowa.Models.DTOs
 {
-    public class CharacterSummaryDto(int id, string name, string description, string characterClass, string race)
+    public class CharacterSummaryDto(int id, string name, string description, string characterClass, string race, int? campaignId)
     {
         [Required]
         public int Id { get; set; } = id;
@@ -28,8 +28,10 @@ namespace pracadyplomowa.Models.DTOs
         [MaxLength(50)]
         public string Race { get; set; } = race;
 
+        public int? CampaignId { get; set; } = campaignId;
+
         public CharacterSummaryDto(Character character) :
-            this(character.Id, character.Name, character.Description, character.R_CharacterBelongsToRace.Name, character.R_CharacterHasLevelsInClass.First().R_Class.Name)
+            this(character.Id, character.Name, character.Description, character.R_CharacterBelongsToRace.Name, character.R_CharacterHasLevelsInClass.First().R_Class.Name, character.R_CampaignId)
         {
 
         }

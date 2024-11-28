@@ -20,6 +20,7 @@ export type CharacterItem = {
   description: string;
   class: string;
   race: string;
+  campaignId: number;
 };
 
 export type Character = {

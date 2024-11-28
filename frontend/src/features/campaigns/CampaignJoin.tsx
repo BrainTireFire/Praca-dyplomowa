@@ -38,6 +38,11 @@ function CampaignJoin() {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
+  const filteredCharacters = characters?.filter(
+    // Filter out those Characters that are already assigned to a Campaign
+    (character) => !character.campaignId
+  );
+
   if (!campaign) {
     return <Spinner />;
   }
@@ -65,8 +70,8 @@ function CampaignJoin() {
           </Heading>
           <Heading as="h2">Pick a character</Heading>
           <CharacterListLayout>
-            {characters && characters?.length > 0 ? (
-              characters?.map((character) => (
+            {filteredCharacters && filteredCharacters?.length > 0 ? (
+              filteredCharacters?.map((character) => (
                 <CharacterItemBox
                   key={character.id}
                   character={character}
@@ -76,7 +81,7 @@ function CampaignJoin() {
               ))
             ) : (
               <Heading as="h1" color="textColor">
-                No characters available.
+                No characters eligible for joining.
               </Heading>
             )}
           </CharacterListLayout>

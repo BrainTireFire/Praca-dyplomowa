@@ -58,7 +58,6 @@ function CampaignJoin() {
   return (
     <Container>
       <Box variation="squaredLarge">
-        {}
         <BoxContent>
           <Heading as="h1">Looks like you want to join to a campaign</Heading>
           <Heading as="h1" color="textColor">

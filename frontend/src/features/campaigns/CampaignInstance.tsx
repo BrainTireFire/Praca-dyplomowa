@@ -61,14 +61,14 @@ export default function CampaignInstance() {
                 <GiveXP membersList={members} />
               </Modal.Window> */}
           </Modal>
-          {/* <Modal>
-              <Modal.Open opens="ShortRestModal">
-                <Button size="large">{t("campaignInstance.shortRest")}</Button>
-              </Modal.Open>
-              <Modal.Window name="ShortRestModal">
+          <Modal>
+            <Modal.Open opens="ShortRestModal">
+              <Button size="large">{t("campaignInstance.shortRest")}</Button>
+            </Modal.Open>
+            {/*    <Modal.Window name="ShortRestModal">
                 <ShortRest membersList={members} />
-              </Modal.Window>
-            </Modal> */}
+              </Modal.Window>*/}
+          </Modal>
           <Button size="large">{t("campaignInstance.longRest")}</Button>
           <Button size="large" onClick={() => navigate(`/campaigns/session/1`)}>
             {t("campaignInstance.session")}

@@ -55,3 +55,16 @@ export async function addCharacterToCampaign(
     options
   );
 }
+
+export async function removeCharacterFromCampaign(
+  characterId: number
+): Promise<Response> {
+  const options: RequestInit = {
+    method: "DELETE",
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/campaign/removeCharacterFromCampaign/${characterId}`,
+    options
+  );
+}

@@ -38,6 +38,13 @@ export async function postCampaign(
   await customFetch(`${BASE_URL}/api/campaign`, options);
 }
 
+export async function removeCampaign(campaignId: number) {
+  const options: RequestInit = {
+    method: "DELETE",
+  };
+  await customFetch(`${BASE_URL}/api/campaign/${campaignId}`, options);
+}
+
 export async function addCharacterToCampaign(
   campaignId: number,
   characterId: number

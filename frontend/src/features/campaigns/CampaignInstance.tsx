@@ -10,6 +10,7 @@ import { useCampaign } from "./hooks/useCampaign";
 import Spinner from "../../ui/interactive/Spinner";
 import CharacterDetailBox from "./CharacterDetailBox";
 import { Campaign } from "../../models/campaign";
+import { removeCampaign } from "../../services/apiCampaigns";
 
 const Container = styled.div`
   display: grid;
@@ -46,6 +47,11 @@ export default function CampaignInstance() {
   }
 
   const { id, name, description, members }: Campaign = campaign;
+
+  const handleRemove = async () => {
+    await removeCampaign(campaign.id);
+    navigate("/campaigns");
+  };
 
   return (
     <Container>
@@ -117,7 +123,9 @@ export default function CampaignInstance() {
         <InputCopyToClipboard valueDefault={`localhost:5173/join/${id}`} />
       </div>
       <Line size="percantage" />
-      <Button size="large">{t("campaignInstance.remove")}</Button>
+      <Button size="large" onClick={handleRemove}>
+        {t("campaignInstance.remove")}
+      </Button>
     </Container>
   );
 }

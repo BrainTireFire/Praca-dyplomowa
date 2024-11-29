@@ -87,5 +87,13 @@ namespace pracadyplomowa.Controllers
             _campaignRepository.SaveChanges();
             return Ok();
         }
+
+        [HttpDelete("{campaignId}")]
+        public ActionResult RemoveCampaign(int campaignId)
+        {
+            _campaignRepository.RemoveCampaign(campaignId);
+
+            return Ok();
+        }
     }
 }

@@ -149,7 +149,10 @@ export type EffectBlueprint = {
   name: string;
   description: string;
   resourceLevel: number;
+  resourceAmount: number;
   savingThrowSuccess: boolean;
+  conditional: boolean;
+  isImplemented: boolean;
   effectType: (typeof effectTypes)[number];
   effectTypeBody: EffectBody;
 };
@@ -173,6 +176,9 @@ export const initialState: EffectBlueprint = {
   savingThrowSuccess: false,
   effectType: "movementEffect",
   effectTypeBody: MovementEffectInitialState,
+  resourceAmount: 0,
+  conditional: false,
+  isImplemented: false,
 };
 
 const effectReducer = (

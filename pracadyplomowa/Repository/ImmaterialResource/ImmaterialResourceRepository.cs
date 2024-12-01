@@ -8,7 +8,7 @@ namespace pracadyplomowa.Repository.Item
 {
     public class ImmaterialResourceBlueprintRepository : BaseRepository<Models.Entities.Powers.ImmaterialResourceBlueprint>, IImmaterialResourceBlueprintRepository
     {
-        public ItemFamilyRepository(AppDbContext context) : base(context)
+        public ImmaterialResourceBlueprintRepository(AppDbContext context) : base(context)
         {
         }
 

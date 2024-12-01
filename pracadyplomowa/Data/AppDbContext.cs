@@ -235,6 +235,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                 builder.Entity<EffectBlueprint>().UseTphMappingStrategy();
                 builder.Entity<EffectInstance>().UseTphMappingStrategy();
                 builder.Entity<ValueEffectInstance>().Navigation(e=>e.DiceSet).AutoInclude();
+                builder.Entity<ValueEffectBlueprint>().Navigation(e=>e.DiceSet).AutoInclude();
                 builder.Entity<LanguageEffectBlueprint>().Navigation(e=>e.R_Language).AutoInclude();
                 builder.Entity<LanguageEffectBlueprint>()
                         .HasOne(lei => lei.R_Language)

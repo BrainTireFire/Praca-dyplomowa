@@ -24,7 +24,7 @@ type Action = {
 export const initialState: Effect = {
   effectType: "bonus",
   value: DiceSetExtendedDefaultValue,
-  ability: "strength",
+  ability: "Strength",
 };
 
 const effectReducer = (state: Effect, action: Action): Effect => {
@@ -76,7 +76,10 @@ export default function AbilityEffectForm({
         currentValue={state.effectType}
       ></RadioGroup>
       <FormRowVertical label="Value">
-        <DiceSetForm onChange={handleValueFormStateUpdate}></DiceSetForm>
+        <DiceSetForm
+          onChange={handleValueFormStateUpdate}
+          diceSet={effect.value}
+        ></DiceSetForm>
       </FormRowVertical>
       <FormRowVertical label="Ability">
         <Dropdown

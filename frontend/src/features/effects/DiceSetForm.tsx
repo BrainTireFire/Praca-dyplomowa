@@ -23,7 +23,8 @@ const HorizontalContainer = styled.div`
 `;
 
 export type AdditionalValue = {
-  Id: number | null; // Id in database
+  Id: number; // Local id
+  DatabaseId: number | null; // Id in database
   AdditionalValueType: (typeof AdditionalValueTypes)[number];
   LevelsInClassId: number;
   ClassName: string;
@@ -32,11 +33,12 @@ export type AdditionalValue = {
 };
 
 const initialAdditionalValue: AdditionalValue = {
-  Id: null,
+  Id: -1, // Local id
+  DatabaseId: null, // Id in database
   AdditionalValueType: "LevelsInClass",
   LevelsInClassId: 0,
   ClassName: "",
-  Ability: "strength",
+  Ability: "Strength",
   Skill: "acrobatics",
 };
 
@@ -90,8 +92,10 @@ const initialState: DiceSetExtended = DiceSetExtendedDefaultValue;
 
 export function DiceSetForm({
   onChange,
+  diceSet,
 }: {
   onChange: (updatedState: DiceSetExtended) => void;
+  diceSet: DiceSetExtended;
 }) {
   const [selectedAdditionalValueIndex, setSelectedAdditionalValueIndex] =
     useState<number | null>(null);
@@ -170,7 +174,7 @@ export function DiceSetForm({
     console.log(newState);
     return newState;
   };
-  const [state, dispatch] = useReducer(effectReducer, initialState);
+  const [state, dispatch] = useReducer(effectReducer, diceSet);
   useEffect(() => {
     onChange(state);
   }, [state, onChange]);
@@ -352,7 +356,9 @@ export function DiceSetForm({
           return {
             id: index,
             AdditionalValueType:
-              AdditionalValueTypeLabelMap[additionalValue.AdditionalValueType],
+              AdditionalValueTypeLabelMap[additionalValue.AdditionalValueType] +
+              " " +
+              index,
             Value: value,
           };
         })}

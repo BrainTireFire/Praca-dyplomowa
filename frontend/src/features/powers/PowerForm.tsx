@@ -1,23 +1,38 @@
 import { useReducer } from "react";
 import FormRowVertical from "../../ui/forms/FormRowVertical";
 import Input from "../../ui/forms/Input";
-import { ability } from "../effects/abilities";
+import { abilitiesDropdown, ability } from "../effects/abilities";
 import { EffectBlueprint } from "../effects/EffectBlueprintForm";
 import {
   ActionType,
   actionTypeOptions,
   AreaShape,
+  areaShapeOptions,
   CastableBy,
+  castableByOptions,
   CharacterClass,
   ImmaterialResource,
   MaterialResource,
   Power,
   PowerType,
-  SavingThrowRoll,
+  powerTypeOptions,
+  SavingThrowBehaviour,
+  savingThrowBehaviourOptions,
+  // SavingThrowRoll,
   TargetType,
+  targetTypeOptions,
   UpcastBy,
-} from "./power";
+} from "./models/power";
 import Dropdown from "../../ui/forms/Dropdown";
+import { useImmaterialResourceBlueprints } from "./hooks/useImmaterialResourceBlueprints";
+import Spinner from "../../ui/interactive/Spinner";
+import FormRowLabelRight from "../../ui/forms/FormRowLabelRight";
+import RadioGroup from "../../ui/forms/RadioGroup";
+import styled, { css } from "styled-components";
+import EffectTable from "./tables/EffectTable";
+import MatierialResourceTable from "./tables/MaterialResourceTable";
+import Box from "../../ui/containers/Box";
+import { EffectBlueprintListItem } from "./models/effectBlueprint";
 
 // Action types
 export enum PowerActionTypes {
@@ -112,12 +127,12 @@ interface UpdateAreaShapeAction {
 
 interface UpdateAuraSizeAction {
   type: PowerActionTypes.UPDATE_AURA_SIZE;
-  payload: number | null;
+  payload: number;
 }
 
 interface UpdateDifficultyClassAction {
   type: PowerActionTypes.UPDATE_DIFFICULTY_CLASS;
-  payload: number | null;
+  payload: number;
 }
 
 interface UpdateSavingThrowAbilityAction {
@@ -137,7 +152,7 @@ interface UpdateSavingThrowBehaviourAction {
 
 interface UpdateSavingThrowRollAction {
   type: PowerActionTypes.UPDATE_SAVING_THROW_ROLL;
-  payload: SavingThrowRoll;
+  payload: boolean;
 }
 
 interface UpdateVerbalComponentAction {
@@ -177,7 +192,7 @@ interface UpdateMaterialResourcesUsedAction {
 
 interface UpdateEffectBlueprintsAction {
   type: PowerActionTypes.UPDATE_EFFECT_BLUEPRINTS;
-  payload: EffectBlueprint;
+  payload: EffectBlueprintListItem[];
 }
 
 // Union type for all action interfaces
@@ -210,6 +225,7 @@ type PowerAction =
   | UpdateEffectBlueprintsAction;
 
 const powerReducer = (state: Power, action: PowerAction): Power => {
+  console.log(action);
   switch (action.type) {
     case PowerActionTypes.UPDATE_NAME:
       return { ...state, name: action.payload };
@@ -268,56 +284,471 @@ const powerReducer = (state: Power, action: PowerAction): Power => {
   }
 };
 
+export const initialState: Power = {
+  id: null,
+  name: "New effect",
+  description: "Effect description",
+  actionType: "Action",
+  isImplemented: false,
+  castableBy: "Character",
+  powerType: "Attack",
+  targetType: "Character",
+  range: 0,
+  maxTargets: 0,
+  maxTargetsToExclude: 0,
+  areaSize: 0,
+  areaShape: "None",
+  auraSize: 0,
+  difficultyClass: 0,
+  savingThrowAbility: null,
+  requiresConcentration: false,
+  savingThrowBehaviour: "Breaks",
+  savingThrowRoll: false,
+  verbalComponent: false,
+  somaticComponent: false,
+  duration: 0,
+  upcastBy: "ResourceLevel",
+  classForUpcasting: {
+    id: 0,
+    name: "",
+  },
+  immaterialResourceUsed: {
+    id: 0,
+    name: "",
+  },
+  materialResourcesUsed: [],
+  effectBlueprints: [],
+};
+
 export default function PowerForm({ power }: { power: Power }) {
   const [state, dispatch] = useReducer(powerReducer, power);
+  console.log(state);
+
+  const {
+    isLoading: isLoadingImmaterialResources,
+    immaterialResourceBlueprints,
+    error,
+  } = useImmaterialResourceBlueprints();
+
+  const localImmaterialResourceBlueprints = immaterialResourceBlueprints?.map(
+    (x) => {
+      return { id: x.id, name: x.name };
+    }
+  );
+  const immaterialResourceBlueprintsDropdown = localImmaterialResourceBlueprints
+    ? localImmaterialResourceBlueprints.map((x) => {
+        return { value: x.id.toString(), label: x.name };
+      })
+    : [];
+  if (isLoadingImmaterialResources) {
+    return <Spinner></Spinner>;
+  }
+  if (error) return <>Error</>;
   return (
-    <>
-      <FormRowVertical label="Name">
-        <Input
-          value={state.name}
-          onChange={(e) =>
-            dispatch({
-              type: PowerActionTypes.UPDATE_NAME,
-              payload: e.target.value,
-            })
-          }
-        ></Input>
-      </FormRowVertical>
-      <FormRowVertical label="Description">
-        <Input
-          value={state.description}
-          onChange={(e) =>
-            dispatch({
-              type: PowerActionTypes.UPDATE_DESCRIPTION,
-              payload: e.target.value,
-            })
-          }
-        ></Input>
-      </FormRowVertical>
-      <FormRowVertical label="Action type">
-        <Dropdown
-          valuesList={actionTypeOptions}
-          setChosenValue={(e) =>
-            dispatch({
-              type: PowerActionTypes.UPDATE_ACTION_TYPE,
-              payload: e as ActionType,
-            })
-          }
-          chosenValue={state.actionType}
-        ></Dropdown>
-      </FormRowVertical>
-      <FormRowVertical label="Immaterial resource used">
-        <Dropdown
-          valuesList={}
-          setChosenValue={(e) =>
-            dispatch({
-              type: PowerActionTypes.UPDATE_ACTION_TYPE,
-              payload: e as ActionType,
-            })
-          }
-          chosenValue={state.actionType}
-        ></Dropdown>
-      </FormRowVertical>
-    </>
+    <Grid>
+      <Row1>
+        <FormRowVertical label="Name">
+          <Input
+            value={state.name}
+            onChange={(e) =>
+              dispatch({
+                type: PowerActionTypes.UPDATE_NAME,
+                payload: e.target.value,
+              })
+            }
+          ></Input>
+        </FormRowVertical>
+        <FormRowVertical label="Description">
+          <Input
+            value={state.description}
+            onChange={(e) =>
+              dispatch({
+                type: PowerActionTypes.UPDATE_DESCRIPTION,
+                payload: e.target.value,
+              })
+            }
+          ></Input>
+        </FormRowVertical>
+        <FormRowVertical label="Action type">
+          <Dropdown
+            valuesList={actionTypeOptions}
+            setChosenValue={(e) =>
+              dispatch({
+                type: PowerActionTypes.UPDATE_ACTION_TYPE,
+                payload: e as ActionType,
+              })
+            }
+            chosenValue={state.actionType}
+          ></Dropdown>
+        </FormRowVertical>
+        <FormRowVertical label="Immaterial resource used">
+          <Dropdown
+            valuesList={immaterialResourceBlueprintsDropdown}
+            setChosenValue={(e) =>
+              dispatch({
+                type: PowerActionTypes.UPDATE_ACTION_TYPE,
+                payload: e as ActionType,
+              })
+            }
+            chosenValue={state.actionType}
+          ></Dropdown>
+        </FormRowVertical>
+        <FormRowLabelRight label="Verbal component">
+          <Input
+            type="checkbox"
+            checked={state.verbalComponent}
+            onChange={(x) =>
+              dispatch({
+                type: PowerActionTypes.UPDATE_VERBAL_COMPONENT,
+                payload: x.target.checked,
+              })
+            }
+          ></Input>
+        </FormRowLabelRight>
+        <FormRowLabelRight label="Somatic component">
+          <Input
+            type="checkbox"
+            checked={state.somaticComponent}
+            onChange={(x) =>
+              dispatch({
+                type: PowerActionTypes.UPDATE_SOMATIC_COMPONENT,
+                payload: x.target.checked,
+              })
+            }
+          ></Input>
+        </FormRowLabelRight>
+      </Row1>
+      <Row2>
+        <Column1>
+          <FormRowLabelRight label="Is implemented">
+            <Input
+              type="checkbox"
+              checked={state.somaticComponent}
+              onChange={(x) =>
+                dispatch({
+                  type: PowerActionTypes.UPDATE_IS_IMPLEMENTED,
+                  payload: x.target.checked,
+                })
+              }
+            ></Input>
+          </FormRowLabelRight>
+          <RadioGroup
+            values={castableByOptions}
+            onChange={(x) => {
+              dispatch({
+                type: PowerActionTypes.UPDATE_CASTABLE_BY,
+                payload: x as CastableBy,
+              });
+            }}
+            name="castableBy"
+            label="Castable by"
+            currentValue={state.castableBy}
+          ></RadioGroup>
+          <RadioGroup
+            values={powerTypeOptions}
+            onChange={(x) => {
+              dispatch({
+                type: PowerActionTypes.UPDATE_POWER_TYPE,
+                payload: x as PowerType,
+              });
+            }}
+            name="powerType"
+            label="Power type"
+            currentValue={state.powerType}
+          ></RadioGroup>
+          <RadioGroup
+            values={targetTypeOptions}
+            onChange={(x) => {
+              dispatch({
+                type: PowerActionTypes.UPDATE_TARGET_TYPE,
+                payload: x as TargetType,
+              });
+            }}
+            name="targetType"
+            label="Target type"
+            currentValue={state.targetType}
+          ></RadioGroup>
+        </Column1>
+        <Column2>
+          <Row1InColumn2>
+            <EffectTable effects={state.effectBlueprints}></EffectTable>
+            <MatierialResourceTable
+              materialComponents={state.materialResourcesUsed}
+            ></MatierialResourceTable>
+            <EffectTable effects={state.effectBlueprints}></EffectTable>
+          </Row1InColumn2>
+          <Row2InColumn2>
+            <FormRowVertical
+              label="Range"
+              customStyles={css`
+                grid-column: 1;
+                grid-row: 1;
+              `}
+            >
+              <Input
+                value={state.range}
+                type="number"
+                onChange={(e) =>
+                  dispatch({
+                    type: PowerActionTypes.UPDATE_RANGE,
+                    payload: Number(e.target.value),
+                  })
+                }
+              ></Input>
+            </FormRowVertical>
+            <FormRowVertical
+              label="Max targets"
+              customStyles={css`
+                grid-column: 1;
+                grid-row: 2;
+              `}
+            >
+              <Input
+                value={state.maxTargets}
+                type="number"
+                onChange={(e) =>
+                  dispatch({
+                    type: PowerActionTypes.UPDATE_MAX_TARGETS,
+                    payload: Number(e.target.value),
+                  })
+                }
+              ></Input>
+            </FormRowVertical>
+            <FormRowVertical
+              label="Max targets to exclude"
+              customStyles={css`
+                grid-column: 1;
+                grid-row: 3;
+              `}
+            >
+              <Input
+                value={state.maxTargetsToExclude}
+                type="number"
+                onChange={(e) =>
+                  dispatch({
+                    type: PowerActionTypes.UPDATE_MAX_TARGETS_TO_EXCLUDE,
+                    payload: Number(e.target.value),
+                  })
+                }
+              ></Input>
+            </FormRowVertical>
+            <FormRowVertical
+              label="Area size"
+              customStyles={css`
+                grid-column: 2;
+                grid-row: 1;
+              `}
+            >
+              <Input
+                value={state.areaSize}
+                type="number"
+                onChange={(e) =>
+                  dispatch({
+                    type: PowerActionTypes.UPDATE_AREA_SIZE,
+                    payload: Number(e.target.value),
+                  })
+                }
+              ></Input>
+            </FormRowVertical>
+            <FormRowVertical
+              label="Area shape"
+              customStyles={css`
+                grid-column: 2;
+                grid-row: 2;
+              `}
+            >
+              <Dropdown
+                valuesList={[
+                  ...areaShapeOptions,
+                  { value: null, label: "Not applicable" },
+                ]}
+                setChosenValue={(e) =>
+                  dispatch({
+                    type: PowerActionTypes.UPDATE_AREA_SHAPE,
+                    payload: e as AreaShape,
+                  })
+                }
+                chosenValue={state.areaShape}
+              ></Dropdown>
+            </FormRowVertical>
+            <FormRowVertical
+              label="Aura size"
+              customStyles={css`
+                grid-column: 2;
+                grid-row: 3;
+              `}
+            >
+              <Input
+                value={state.auraSize}
+                type="number"
+                onChange={(e) =>
+                  dispatch({
+                    type: PowerActionTypes.UPDATE_AURA_SIZE,
+                    payload: Number(e.target.value),
+                  })
+                }
+              ></Input>
+            </FormRowVertical>
+            <FormRowVertical
+              label="Difficulty class"
+              customStyles={css`
+                grid-column: 3;
+                grid-row: 1;
+              `}
+            >
+              <Input
+                value={state.difficultyClass}
+                type="number"
+                onChange={(e) =>
+                  dispatch({
+                    type: PowerActionTypes.UPDATE_DIFFICULTY_CLASS,
+                    payload: Number(e.target.value),
+                  })
+                }
+              ></Input>
+            </FormRowVertical>
+            <FormRowVertical
+              label="Saving throw"
+              customStyles={css`
+                grid-column: 3;
+                grid-row: 2;
+              `}
+            >
+              <Dropdown
+                valuesList={[
+                  ...abilitiesDropdown,
+                  { value: null, label: "Not applicable" },
+                ]}
+                setChosenValue={(e) =>
+                  dispatch({
+                    type: PowerActionTypes.UPDATE_SAVING_THROW_ABILITY,
+                    payload: e as ability,
+                  })
+                }
+                chosenValue={state.savingThrowAbility}
+              ></Dropdown>
+            </FormRowVertical>
+            <FormRowLabelRight
+              label="Concentration"
+              customStyles={css`
+                grid-column: 3;
+                grid-row: 3;
+              `}
+            >
+              <Input
+                type="checkbox"
+                checked={state.requiresConcentration}
+                onChange={(x) =>
+                  dispatch({
+                    type: PowerActionTypes.UPDATE_REQUIRES_CONCENTRATION,
+                    payload: x.target.checked,
+                  })
+                }
+              ></Input>
+            </FormRowLabelRight>
+            <RadioGroup
+              values={savingThrowBehaviourOptions}
+              onChange={(x) => {
+                dispatch({
+                  type: PowerActionTypes.UPDATE_SAVING_THROW_BEHAVIOUR,
+                  payload: x as SavingThrowBehaviour,
+                });
+              }}
+              name="savingThrowBehaviour"
+              label="Saving throw behaviour"
+              currentValue={state.savingThrowBehaviour}
+              customStyles={css`
+                grid-column: 4;
+                grid-row: 1;
+              `}
+            ></RadioGroup>
+            <FormRowLabelRight
+              label="Saving throw retaken every turn"
+              customStyles={css`
+                grid-column: 4;
+                grid-row: 2;
+              `}
+            >
+              <Input
+                type="checkbox"
+                checked={state.savingThrowRoll}
+                onChange={(x) =>
+                  dispatch({
+                    type: PowerActionTypes.UPDATE_SAVING_THROW_ROLL,
+                    payload: x.target.checked,
+                  })
+                }
+              ></Input>
+            </FormRowLabelRight>
+            <FormRowVertical
+              label="Effect duration"
+              customStyles={css`
+                grid-column: 4;
+                grid-row: 3;
+              `}
+            >
+              <Input
+                value={state.duration}
+                type="number"
+                onChange={(e) =>
+                  dispatch({
+                    type: PowerActionTypes.UPDATE_DURATION,
+                    payload: Number(e.target.value),
+                  })
+                }
+              ></Input>
+            </FormRowVertical>
+          </Row2InColumn2>
+        </Column2>
+      </Row2>
+    </Grid>
   );
 }
+
+const Grid = styled(Box)`
+  display: grid;
+  grid-template-rows: auto auto;
+  column-gap: 10px;
+  row-gap: 10px;
+`;
+
+const Row1 = styled.div`
+  display: flex;
+  flex-direction: row;
+  grid-row: 1/2;
+  gap: 10px;
+`;
+const Row2 = styled.div`
+  display: grid;
+  grid-template-rows: auto auto;
+  grid-row: 2/3;
+  column-gap: 10px;
+  row-gap: 10px;
+`;
+
+const Column1 = styled.div`
+  display: flex;
+  flex-direction: column;
+  grid-column: 1/2;
+  gap: 10px;
+`;
+const Column2 = styled.div`
+  display: flex;
+  flex-direction: column;
+  grid-column: 2/3;
+  gap: 10px;
+`;
+
+const Row1InColumn2 = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+`;
+
+const Row2InColumn2 = styled.div`
+  display: grid;
+  column-gap: 10px;
+  row-gap: 10px;
+  grid-template-columns: auto auto auto auto;
+  grid-template-rows: auto auto auto;
+`;

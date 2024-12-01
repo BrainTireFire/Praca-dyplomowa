@@ -51,7 +51,10 @@ export default function InitiativeEffectForm({
   return (
     <Box>
       <FormRowVertical label="Value">
-        <DiceSetForm onChange={handleValueFormStateUpdate}></DiceSetForm>
+        <DiceSetForm
+          onChange={handleValueFormStateUpdate}
+          diceSet={effect.value}
+        ></DiceSetForm>
       </FormRowVertical>
     </Box>
   );

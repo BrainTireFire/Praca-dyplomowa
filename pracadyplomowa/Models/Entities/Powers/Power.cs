@@ -34,9 +34,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         public bool VerbalComponent { get; set; }
         public bool SomaticComponent { get; set; }
         public int Duration {get; set;} = 1;
-        public bool UpcastByResourceLevel {get; set;} = true;
-        public bool UpcastByCharacterLevel {get; set;} = false;
-        public bool UpcastByClassLevel {get; set;} = false;
+        public UpcastBy? UpcastBy {get; set;}
         public Class? R_ClassForUpcasting {get; set;}
         public int? R_ClassForUpcastingId {get; set;}
 

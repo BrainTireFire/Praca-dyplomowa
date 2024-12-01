@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import Box from "../containers/Box";
 import Heading from "../text/Heading";
 import FormRowLabelRight from "./FormRowLabelRight";
@@ -13,6 +13,7 @@ const RadioGroupContainer = styled(Box)`
   display: flex;
   flex-direction: column;
   width: fit-content;
+  ${(props) => props.customStyles}
 `;
 
 export default function RadioGroup({
@@ -21,18 +22,20 @@ export default function RadioGroup({
   name,
   label,
   currentValue,
+  customStyles,
 }: {
   values: ValueSet[];
   onChange: (param: string) => void;
   name: string;
   label: string;
   currentValue: string;
+  customStyles?: ReturnType<typeof css>;
 }) {
   return (
-    <RadioGroupContainer>
+    <RadioGroupContainer customStyles={customStyles}>
       <Heading as="h3">{label}</Heading>
       {values.map((value) => (
-        <FormRowLabelRight label={value.label}>
+        <FormRowLabelRight label={value.label} key={value.value}>
           <Input
             type="radio"
             id={value.value}

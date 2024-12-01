@@ -10,20 +10,22 @@ import {
 import { size, sizesDropdown } from "../sizes";
 import Dropdown from "../../../ui/forms/Dropdown";
 
-const effectTypes = ["bonus", "change"] as const;
+const sizeEffects = ["Bonus", "Change"] as const;
 
-type effectType = (typeof effectTypes)[number];
+type sizeEffect = (typeof sizeEffects)[number];
 
 export type Effect = {
-  effectType: effectType;
+  effectType: {
+    sizeEffect: sizeEffect;
+    sizeEffect_SizeToSet: size;
+  };
   value: DiceSetExtended;
-  sizeToSet: size;
 };
 
 type Action = EffectAction | ValueAction | SizeAction;
 type EffectAction = {
   type: "setEffectType";
-  payload: effectType;
+  payload: sizeEffect;
 };
 type ValueAction = {
   type: "setValue";
@@ -35,22 +37,33 @@ type SizeAction = {
 };
 
 export const initialState: Effect = {
-  effectType: "bonus",
+  effectType: { sizeEffect: "Bonus", sizeEffect_SizeToSet: "Medium" },
   value: DiceSetExtendedDefaultValue,
-  sizeToSet: "medium",
 };
 
 const effectReducer = (state: Effect, action: Action): Effect => {
   let newState: Effect;
   switch (action.type) {
     case "setEffectType":
-      newState = { ...state, effectType: action.payload as effectType };
+      newState = {
+        ...state,
+        effectType: {
+          ...state.effectType,
+          sizeEffect: action.payload as sizeEffect,
+        },
+      };
       break;
     case "setValue":
       newState = { ...state, value: action.payload as DiceSetExtended };
       break;
     case "setSize":
-      newState = { ...state, sizeToSet: action.payload as size };
+      newState = {
+        ...state,
+        effectType: {
+          ...state.effectType,
+          sizeEffect_SizeToSet: action.payload as size,
+        },
+      };
       break;
     default:
       newState = state;
@@ -81,25 +94,28 @@ export default function SizeEffectForm({
     <Box>
       <RadioGroup
         values={[
-          { label: "Bonus", value: "bonus" },
-          { label: "Change", value: "change" },
+          { label: "Bonus", value: "Bonus" },
+          { label: "Change", value: "Change" },
         ]}
         label="Size effect"
         name="sizeEffect"
         onChange={(x) =>
-          dispatch({ type: "setEffectType", payload: x as effectType })
+          dispatch({ type: "setEffectType", payload: x as sizeEffect })
         }
-        currentValue={state.effectType}
+        currentValue={state.effectType.sizeEffect}
       ></RadioGroup>
       <FormRowVertical label="Value">
-        <DiceSetForm onChange={handleValueFormStateUpdate}></DiceSetForm>
+        <DiceSetForm
+          onChange={handleValueFormStateUpdate}
+          diceSet={effect.value}
+        ></DiceSetForm>
       </FormRowVertical>
       <FormRowVertical label="Size to set">
         <Dropdown
           setChosenValue={(x) =>
             dispatch({ type: "setSize", payload: x as size })
           }
-          chosenValue={state.sizeToSet}
+          chosenValue={state.effectType.sizeEffect_SizeToSet}
           valuesList={sizesDropdown}
         ></Dropdown>
       </FormRowVertical>

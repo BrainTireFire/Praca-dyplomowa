@@ -865,9 +865,6 @@ namespace pracadyplomowa.Migrations
                         .HasMaxLength(55)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("EffectType")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("HasNoEffectInCombat")
                         .HasColumnType("INTEGER");
 
@@ -1455,13 +1452,7 @@ namespace pracadyplomowa.Migrations
                     b.Property<int>("TargetType")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("UpcastByCharacterLevel")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("UpcastByClassLevel")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("UpcastByResourceLevel")
+                    b.Property<int?>("UpcastBy")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("VerbalComponent")

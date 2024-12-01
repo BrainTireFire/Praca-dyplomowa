@@ -6,14 +6,23 @@ import Dropdown from "../../../ui/forms/Dropdown";
 import { useItemFamilies } from "../hooks/useItemFamilies";
 import Spinner from "../../../ui/interactive/Spinner";
 
-const effectTypes = [
-  "martialWeapons",
-  "simpleWeapons",
-  "shields",
-  "specificItemFamily",
+const proficiencyEffects = ["ItemType", "SpecificItemFamily"] as const;
+
+type proficiencyEffect = (typeof proficiencyEffects)[number];
+
+const itemTypes = [
+  "Item",
+  "Tool",
+  "Clothing",
+  "LightArmor",
+  "MediumArmor",
+  "HeavyArmor",
+  "Shield",
+  "SimpleWeapon",
+  "MartialWeapon",
 ] as const;
 
-type effectType = (typeof effectTypes)[number];
+type itemType = (typeof itemTypes)[number];
 
 type itemFamily = {
   id: number;
@@ -21,17 +30,23 @@ type itemFamily = {
 };
 
 export type Effect = {
-  effectType: effectType;
+  effectType: {
+    proficiencyEffect: proficiencyEffect;
+    itemType: itemType;
+  };
   itemFamily: itemFamily | null;
 };
 
 type Action = {
-  type: "setEffectType" | "setItemFamily";
-  payload: effectType | number;
+  type: "setProficiencyEffect" | "setItemType" | "setItemFamily";
+  payload: proficiencyEffect | itemType | number;
 };
 
 export const initialState: Effect = {
-  effectType: "martialWeapons",
+  effectType: {
+    proficiencyEffect: "ItemType",
+    itemType: "Clothing",
+  },
   itemFamily: null,
 };
 
@@ -49,8 +64,23 @@ export default function ProficiencyEffectForm({
   const effectReducer = (state: Effect, action: Action): Effect => {
     let newState: Effect;
     switch (action.type) {
-      case "setEffectType":
-        newState = { ...state, effectType: action.payload as effectType };
+      case "setProficiencyEffect":
+        newState = {
+          ...state,
+          effectType: {
+            ...state.effectType,
+            proficiencyEffect: action.payload as proficiencyEffect,
+          },
+        };
+        break;
+      case "setItemType":
+        newState = {
+          ...state,
+          effectType: {
+            ...state.effectType,
+            itemType: action.payload as itemType,
+          },
+        };
         break;
       case "setItemFamily":
         newState = {
@@ -81,17 +111,40 @@ export default function ProficiencyEffectForm({
     <Box>
       <RadioGroup
         values={[
-          { label: "Martial weapons", value: "martialWeapons" },
-          { label: "Simple weapons", value: "simpleWeapons" },
-          { label: "Shields", value: "shields" },
-          { label: "Specific item family", value: "specificItemFamily" },
+          { label: "Item type", value: "ItemType" },
+          { label: "Specific item family", value: "SpecificItemFamily" },
         ]}
         label="Proficiency"
         name="proficiency"
         onChange={(x) =>
-          dispatch({ type: "setEffectType", payload: x as effectType })
+          dispatch({
+            type: "setProficiencyEffect",
+            payload: x as proficiencyEffect,
+          })
         }
-        currentValue={state.effectType}
+        currentValue={state.effectType.proficiencyEffect}
+      ></RadioGroup>
+      <RadioGroup
+        values={[
+          { label: "Item", value: "Item" },
+          { label: "Tool", value: "Tool" },
+          { label: "Clothing", value: "Clothing" },
+          { label: "Light armor", value: "LightArmor" },
+          { label: "Medium armor", value: "MediumArmor" },
+          { label: "Heavy armor", value: "HeavyArmor" },
+          { label: "Shield", value: "Shield" },
+          { label: "Simple weapons", value: "SimpleWeapon" },
+          { label: "Martial weapons", value: "MartialWeapon" },
+        ]}
+        label="Item type"
+        name="Item type"
+        onChange={(x) =>
+          dispatch({
+            type: "setItemType",
+            payload: x as proficiencyEffect,
+          })
+        }
+        currentValue={state.effectType.itemType}
       ></RadioGroup>
       <FormRowVertical label="Item family">
         <Dropdown

@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using pracadyplomowa.Models.DTOs;
+using pracadyplomowa.Repository;
 using pracadyplomowa.Repository.Item;
 
 namespace pracadyplomowa.Controllers
@@ -15,11 +16,13 @@ namespace pracadyplomowa.Controllers
     {
         private const int MAX_CLASS_LEVEL = 20;
         private readonly IItemFamilyRepository _itemFamilyRepository;
+        private readonly IEffectBlueprintRepository _effectBlueprintRepository;
         private readonly IMapper _mapper;
 
-        public EffectController(IItemFamilyRepository itemFamilyRepository, IMapper mapper)
+        public EffectController(IItemFamilyRepository itemFamilyRepository, IEffectBlueprintRepository effectBlueprintRepository, IMapper mapper)
         {
             _itemFamilyRepository = itemFamilyRepository;
+            _effectBlueprintRepository = effectBlueprintRepository;
             _mapper = mapper;
         }
 
@@ -33,6 +36,18 @@ namespace pracadyplomowa.Controllers
 
 
             return Ok(itemFamiliesDto);
+        }
+
+        [HttpGet("blueprint/{effectId}")]
+        public async Task<ActionResult<EffectBlueprintFormDto>> GetEffectBlueprint(int effectId)
+        {
+            var effectBlueprint = _effectBlueprintRepository.GetById(effectId);
+
+
+            var effectBlueprintDtos = _mapper.Map<EffectBlueprintFormDto>(effectBlueprint);
+
+
+            return Ok(effectBlueprintDtos);
         }
 
     }

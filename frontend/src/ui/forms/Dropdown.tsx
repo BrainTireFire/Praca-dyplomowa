@@ -32,26 +32,31 @@ function Dropdown({
   chosenValue,
   setChosenValue,
 }: {
-  valuesList: readonly { value: string; label: string }[];
-  chosenValue: string;
-  setChosenValue: (value: string) => void;
+  valuesList: readonly { value: string | null; label: string }[];
+  chosenValue: string | null;
+  setChosenValue: (value: string | null) => void;
 }) {
+  let nullElement = valuesList.find((element) => element.value === null);
   return (
     <StyledRow>
       <Select
-        onChange={(e) => setChosenValue(e.target.value)}
-        value={chosenValue}
+        onChange={(e) =>
+          setChosenValue(e.target.value === "null" ? null : e.target.value)
+        }
+        value={chosenValue === null ? "null" : chosenValue}
       >
-        <option value={0} disabled>
-          Select value
+        <option value={"null"} disabled={nullElement ? false : true}>
+          {nullElement ? nullElement.label : "Select value"}
         </option>
-        {valuesList.map((element) => {
-          return (
-            <option key={element.value} value={element.value}>
-              {element.label}
-            </option>
-          );
-        })}
+        {valuesList
+          .filter((element) => element.value !== null)
+          .map((element) => {
+            return (
+              <option key={element.value} value={element.value as string}>
+                {element.label}
+              </option>
+            );
+          })}
       </Select>
     </StyledRow>
   );

@@ -8,22 +8,26 @@ import {
   DiceSetForm,
 } from "../DiceSetForm";
 
-const effectTypes = ["temporaryHitpoints", "hitpointMaximumBonus"] as const;
+const hitpointEffects = ["TemporaryHitpoints", "HitpointMaximumBonus"] as const;
 
-type effectType = (typeof effectTypes)[number];
+type hitpointEffect = (typeof hitpointEffects)[number];
 
 export type Effect = {
-  effectType: effectType;
+  effectType: {
+    hitpointEffect: hitpointEffect;
+  };
   value: DiceSetExtended;
 };
 
 type Action = {
   type: "setEffectType" | "setValue";
-  payload: effectType | DiceSetExtended;
+  payload: hitpointEffect | DiceSetExtended;
 };
 
 export const initialState: Effect = {
-  effectType: "temporaryHitpoints",
+  effectType: {
+    hitpointEffect: "TemporaryHitpoints",
+  },
   value: DiceSetExtendedDefaultValue,
 };
 
@@ -31,7 +35,13 @@ const effectReducer = (state: Effect, action: Action): Effect => {
   let newState: Effect;
   switch (action.type) {
     case "setEffectType":
-      newState = { ...state, effectType: action.payload as effectType };
+      newState = {
+        ...state,
+        effectType: {
+          ...state.effectType,
+          hitpointEffect: action.payload as hitpointEffect,
+        },
+      };
       break;
     case "setValue":
       newState = { ...state, value: action.payload as DiceSetExtended };
@@ -65,18 +75,21 @@ export default function HitpointEffectForm({
     <Box>
       <RadioGroup
         values={[
-          { label: "Temporary hitpoints", value: "temporaryHitpoints" },
-          { label: "Hitpoint maximum bonus", value: "hitpointMaximumBonus" },
+          { label: "Temporary hitpoints", value: "TemporaryHitpoints" },
+          { label: "Hitpoint maximum bonus", value: "HitpointMaximumBonus" },
         ]}
         label="Hitpoint effect"
         name="hitpointEffect"
         onChange={(x) =>
-          dispatch({ type: "setEffectType", payload: x as effectType })
+          dispatch({ type: "setEffectType", payload: x as hitpointEffect })
         }
-        currentValue={state.effectType}
+        currentValue={state.effectType.hitpointEffect}
       ></RadioGroup>
       <FormRowVertical label="Value">
-        <DiceSetForm onChange={handleValueFormStateUpdate}></DiceSetForm>
+        <DiceSetForm
+          onChange={handleValueFormStateUpdate}
+          diceSet={effect.value}
+        ></DiceSetForm>
       </FormRowVertical>
     </Box>
   );

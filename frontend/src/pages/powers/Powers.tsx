@@ -1,0 +1,69 @@
+import { usePowers } from "./hooks/usePowers";
+import PowerForm, { initialState } from "../../features/powers/PowerForm";
+import { ReusableTable } from "../../ui/containers/ReusableTable";
+import Spinner from "../../ui/interactive/Spinner";
+import styled, { css } from "styled-components";
+import { useState } from "react";
+import { usePower } from "../../features/powers/hooks/usePower";
+import { PowerListItem } from "../../models/power";
+
+export default function Powers() {
+  const { isLoading, powers, error } = usePowers();
+
+  const [selectedPowerId, setSelectedPowerId] = useState<null | number>(null);
+  const {
+    isLoading: isLoadingPower,
+    power,
+    error: powerError,
+  } = usePower(selectedPowerId);
+  const handleSelect = (row: any) => {
+    console.log(powers);
+    console.log(row);
+    let selectedPower = powers?.find((_value, index) => index === row.id);
+    console.log(selectedPower);
+
+    setSelectedPowerId(selectedPower ? selectedPower.id : null);
+    console.log(selectedPowerId);
+  };
+
+  if (isLoading || isLoadingPower) {
+    return <Spinner></Spinner>;
+  }
+  console.log(power);
+  return (
+    <Container>
+      <Column1>
+        <ReusableTable
+          tableRowsColomns={{
+            Name: "Name",
+          }}
+          data={
+            powers
+              ? powers.map((power, index) => {
+                  return {
+                    id: index,
+                    Name: power.name,
+                  };
+                })
+              : []
+          }
+          isSelectable={true}
+          onSelect={handleSelect}
+        ></ReusableTable>
+      </Column1>
+      <Column2>{power && <PowerForm power={power}></PowerForm>}</Column2>
+    </Container>
+  );
+}
+
+const Container = styled.div`
+  display: grid;
+  grid-template-columns: auto 1fr;
+`;
+
+const Column1 = styled.div`
+  grid-column: 1;
+`;
+const Column2 = styled.div`
+  grid-column: 2;
+`;

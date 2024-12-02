@@ -1,4 +1,4 @@
-import { useCallback, useReducer } from "react";
+import { useCallback, useContext, useEffect, useReducer } from "react";
 import Box from "../../ui/containers/Box";
 import FormRowLabelRight from "../../ui/forms/FormRowLabelRight";
 import FormRowVertical from "../../ui/forms/FormRowVertical";
@@ -79,6 +79,10 @@ import MovementCostEffectForm, {
 } from "./effectTypes/MovementCostEffectForm";
 import styled from "styled-components";
 import Button from "../../ui/interactive/Button";
+import Spinner from "../../ui/interactive/Spinner";
+import { useEffectBlueprint } from "./hooks/useEffectBlueprint";
+import { useUpdateEffectBlueprint } from "./hooks/useUpdateEffectBlueprint";
+import { PowerIdContext } from "../characters/contexts/CharacterIdContext";
 
 const effectTypes = [
   "movementEffect",
@@ -165,7 +169,8 @@ type Action = {
     | "setResourceLevel"
     | "setSavingThrowSuccess"
     | "setEffectType"
-    | "setEffectTypeBody";
+    | "setEffectTypeBody"
+    | "resetState";
   payload: any;
 };
 
@@ -210,6 +215,9 @@ const effectReducer = (
     case "setEffectTypeBody":
       newState = { ...state, effectTypeBody: action.payload };
       break;
+    case "resetState":
+      newState = action.payload;
+      break;
     default:
       newState = state;
       break;
@@ -219,208 +227,247 @@ const effectReducer = (
 };
 
 export default function EffectBlueprintForm({
-  effectBlueprint,
+  effectId,
 }: {
-  effectBlueprint: EffectBlueprint;
+  effectId: number;
 }) {
-  const [state, dispatch] = useReducer(effectReducer, effectBlueprint);
+  const { powerId } = useContext(PowerIdContext);
+  const { isLoading, effectBlueprint, error } = useEffectBlueprint(effectId);
+  const { isPending, updateEffectBlueprint } = useUpdateEffectBlueprint(
+    () => {},
+    effectId,
+    powerId
+  );
+  const [state, dispatch] = useReducer(effectReducer, initialState);
+  // Update local state when data is fetched
+  useEffect(() => {
+    if (effectBlueprint) {
+      dispatch({
+        type: "resetState",
+        payload: effectBlueprint,
+      });
+    }
+  }, [effectBlueprint]);
   const handleChildStateUpdate = useCallback((x: EffectBody) => {
     dispatch({ type: "setEffectTypeBody", payload: x });
   }, []);
+  if (isLoading || isPending) {
+    return <Spinner></Spinner>;
+  }
+  if (error) {
+    console.log(error);
+    return <>Error</>;
+  }
   return (
     <>
-      <Container>
-        <Div1>
-          <FormRowVertical label="Name">
-            <Input
-              value={state.name}
-              onChange={(x) =>
-                dispatch({ type: "setName", payload: x.target.value })
-              }
-            ></Input>
-          </FormRowVertical>
-          <FormRowVertical label="Description">
-            <TextArea
-              value={state.description}
-              onChange={(x) =>
-                dispatch({ type: "setDescription", payload: x.target.value })
-              }
-            ></TextArea>
-          </FormRowVertical>
-          <FormRowVertical label="Level of immaterial resource used">
-            <Input
-              type="number"
-              value={state.resourceLevel}
-              onChange={(x) =>
-                dispatch({ type: "setResourceLevel", payload: x.target.value })
-              }
-            ></Input>
-          </FormRowVertical>
-          <FormRowLabelRight label="Successful saving throw">
-            <Input
-              type="checkbox"
-              checked={state.savingThrowSuccess}
-              onChange={(x) =>
-                dispatch({
-                  type: "setSavingThrowSuccess",
-                  payload: x.target.checked,
-                })
-              }
-            ></Input>
-          </FormRowLabelRight>
-        </Div1>
-        <Div2>
-          <RadioGroup
-            values={[
-              { value: "movementEffect", label: "Movement effect" },
-              { value: "savingThrow", label: "Saving throw" },
-              { value: "abilityCheck", label: "Ability check" },
-              { value: "skillCheck", label: "Skill check" },
-              { value: "resistance", label: "Resistance" },
-              { value: "attackBonus", label: "Attack bonus" },
-              { value: "armorClassBonus", label: "Armor class bonus" },
-              { value: "proficiency", label: "Proficiency" },
-              { value: "healing", label: "Healing" },
-              { value: "actions", label: "Actions" },
-              { value: "magicItemStatus", label: "Magic item status" },
-              { value: "size", label: "Size" },
-              { value: "initiative", label: "Initiative" },
-              { value: "damage", label: "Damage" },
-              { value: "hitpoints", label: "Hit points" },
-              { value: "attacksPerAction", label: "Attacks per action" },
-              { value: "statusEffect", label: "Status effect" },
-              { value: "movementCost", label: "Movement cost" },
-            ]}
-            onChange={(x) => {
-              console.log(x);
-              dispatch({ type: "setEffectType", payload: x });
-            }}
-            name="effectType"
-            label="Effect type"
-            currentValue={state.effectType}
-          ></RadioGroup>
-        </Div2>
-        <Div3>
-          {state.effectType === "movementEffect" && (
-            <MovementEffectForm
-              onChange={handleChildStateUpdate}
-              effect={state.effectTypeBody as MovementEffect}
-            ></MovementEffectForm>
-          )}
-          {state.effectType === "savingThrow" && (
-            <SavingThrowEffectForm
-              onChange={handleChildStateUpdate}
-              effect={state.effectTypeBody as SavingThrowEffect}
-            ></SavingThrowEffectForm>
-          )}
-          {state.effectType === "abilityCheck" && (
-            <AbilityEffectForm
-              onChange={handleChildStateUpdate}
-              effect={state.effectTypeBody as AbilityEffect}
-            ></AbilityEffectForm>
-          )}
-          {state.effectType === "skillCheck" && (
-            <SkillEffectForm
-              onChange={handleChildStateUpdate}
-              effect={state.effectTypeBody as SkillEffect}
-            ></SkillEffectForm>
-          )}
-          {state.effectType === "resistance" && (
-            <ResistanceEffectForm
-              onChange={handleChildStateUpdate}
-              effect={state.effectTypeBody as ResistanceEffect}
-            ></ResistanceEffectForm>
-          )}
-          {state.effectType === "attackBonus" && (
-            <AttackRollEffectForm
-              onChange={handleChildStateUpdate}
-              effect={state.effectTypeBody as AttackRollEffect}
-            ></AttackRollEffectForm>
-          )}
-          {state.effectType === "armorClassBonus" && (
-            <ArmorClassEffectForm
-              onChange={handleChildStateUpdate}
-              effect={state.effectTypeBody as ArmorClassEffect}
-            ></ArmorClassEffectForm>
-          )}
-          {state.effectType === "proficiency" && (
-            <ProficiencyEffectForm
-              onChange={handleChildStateUpdate}
-              effect={state.effectTypeBody as ProficiencyEffect}
-            ></ProficiencyEffectForm>
-          )}
-          {state.effectType === "healing" && (
-            <HealingEffectForm
-              onChange={handleChildStateUpdate}
-              effect={state.effectTypeBody as HealingEffect}
-            ></HealingEffectForm>
-          )}
-          {state.effectType === "actions" && (
-            <ActionEffectForm
-              onChange={handleChildStateUpdate}
-              effect={state.effectTypeBody as ActionEffect}
-            ></ActionEffectForm>
-          )}
-          {state.effectType === "magicItemStatus" && (
-            <MagicItemEffectForm
-              onChange={handleChildStateUpdate}
-              effect={state.effectTypeBody as MagicItemEffect}
-            ></MagicItemEffectForm>
-          )}
-          {state.effectType === "size" && (
-            <SizeEffectForm
-              onChange={handleChildStateUpdate}
-              effect={state.effectTypeBody as SizeEffect}
-            ></SizeEffectForm>
-          )}
-          {state.effectType === "initiative" && (
-            <InitiativeEffectForm
-              onChange={handleChildStateUpdate}
-              effect={state.effectTypeBody as InitiativeEffect}
-            ></InitiativeEffectForm>
-          )}
-          {state.effectType === "damage" && (
-            <DamageEffectForm
-              onChange={handleChildStateUpdate}
-              effect={state.effectTypeBody as DamageEffect}
-            ></DamageEffectForm>
-          )}
-          {state.effectType === "hitpoints" && (
-            <HitpointsEffectForm
-              onChange={handleChildStateUpdate}
-              effect={state.effectTypeBody as HitpointsEffect}
-            ></HitpointsEffectForm>
-          )}
-          {state.effectType === "attacksPerAction" && (
-            <AttacksPerActionEffectForm
-              onChange={handleChildStateUpdate}
-              effect={state.effectTypeBody as AttacksPerActionEffect}
-            ></AttacksPerActionEffectForm>
-          )}
-          {state.effectType === "statusEffect" && (
-            <StatusEffectForm
-              onChange={handleChildStateUpdate}
-              effect={state.effectTypeBody as StatusEffect}
-            ></StatusEffectForm>
-          )}
-          {state.effectType === "movementCost" && (
-            <MovementCostEffectForm
-              onChange={handleChildStateUpdate}
-              effect={state.effectTypeBody as MovementCostEffect}
-            ></MovementCostEffectForm>
-          )}
-        </Div3>
-      </Container>
-      <Button onClick={() => {}}>Update</Button>
+      <ScrollContainer>
+        <Container>
+          <Div1>
+            <FormRowVertical label="Name">
+              <Input
+                value={state.name}
+                onChange={(x) =>
+                  dispatch({ type: "setName", payload: x.target.value })
+                }
+              ></Input>
+            </FormRowVertical>
+            <FormRowVertical label="Description">
+              <TextArea
+                value={state.description}
+                onChange={(x) =>
+                  dispatch({ type: "setDescription", payload: x.target.value })
+                }
+              ></TextArea>
+            </FormRowVertical>
+            <FormRowVertical label="Level of immaterial resource used">
+              <Input
+                type="number"
+                value={state.resourceLevel}
+                onChange={(x) =>
+                  dispatch({
+                    type: "setResourceLevel",
+                    payload: x.target.value,
+                  })
+                }
+              ></Input>
+            </FormRowVertical>
+            <FormRowLabelRight label="Successful saving throw">
+              <Input
+                type="checkbox"
+                checked={state.savingThrowSuccess}
+                onChange={(x) =>
+                  dispatch({
+                    type: "setSavingThrowSuccess",
+                    payload: x.target.checked,
+                  })
+                }
+              ></Input>
+            </FormRowLabelRight>
+          </Div1>
+          <Div2>
+            <RadioGroup
+              values={[
+                { value: "movementEffect", label: "Movement effect" },
+                { value: "savingThrow", label: "Saving throw" },
+                { value: "abilityCheck", label: "Ability check" },
+                { value: "skillCheck", label: "Skill check" },
+                { value: "resistance", label: "Resistance" },
+                { value: "attackBonus", label: "Attack bonus" },
+                { value: "armorClassBonus", label: "Armor class bonus" },
+                { value: "proficiency", label: "Proficiency" },
+                { value: "healing", label: "Healing" },
+                { value: "actions", label: "Actions" },
+                { value: "magicItemStatus", label: "Magic item status" },
+                { value: "size", label: "Size" },
+                { value: "initiative", label: "Initiative" },
+                { value: "damage", label: "Damage" },
+                { value: "hitpoints", label: "Hit points" },
+                { value: "attacksPerAction", label: "Attacks per action" },
+                { value: "statusEffect", label: "Status effect" },
+                { value: "movementCost", label: "Movement cost" },
+              ]}
+              onChange={(x) => {
+                console.log(x);
+                dispatch({ type: "setEffectType", payload: x });
+              }}
+              name="effectType"
+              label="Effect type"
+              currentValue={state.effectType}
+            ></RadioGroup>
+          </Div2>
+          <Div3>
+            {state.effectType === "movementEffect" && (
+              <MovementEffectForm
+                onChange={handleChildStateUpdate}
+                effect={state.effectTypeBody as MovementEffect}
+              ></MovementEffectForm>
+            )}
+            {state.effectType === "savingThrow" && (
+              <SavingThrowEffectForm
+                onChange={handleChildStateUpdate}
+                effect={state.effectTypeBody as SavingThrowEffect}
+              ></SavingThrowEffectForm>
+            )}
+            {state.effectType === "abilityCheck" && (
+              <AbilityEffectForm
+                onChange={handleChildStateUpdate}
+                effect={state.effectTypeBody as AbilityEffect}
+              ></AbilityEffectForm>
+            )}
+            {state.effectType === "skillCheck" && (
+              <SkillEffectForm
+                onChange={handleChildStateUpdate}
+                effect={state.effectTypeBody as SkillEffect}
+              ></SkillEffectForm>
+            )}
+            {state.effectType === "resistance" && (
+              <ResistanceEffectForm
+                onChange={handleChildStateUpdate}
+                effect={state.effectTypeBody as ResistanceEffect}
+              ></ResistanceEffectForm>
+            )}
+            {state.effectType === "attackBonus" && (
+              <AttackRollEffectForm
+                onChange={handleChildStateUpdate}
+                effect={state.effectTypeBody as AttackRollEffect}
+              ></AttackRollEffectForm>
+            )}
+            {state.effectType === "armorClassBonus" && (
+              <ArmorClassEffectForm
+                onChange={handleChildStateUpdate}
+                effect={state.effectTypeBody as ArmorClassEffect}
+              ></ArmorClassEffectForm>
+            )}
+            {state.effectType === "proficiency" && (
+              <ProficiencyEffectForm
+                onChange={handleChildStateUpdate}
+                effect={state.effectTypeBody as ProficiencyEffect}
+              ></ProficiencyEffectForm>
+            )}
+            {state.effectType === "healing" && (
+              <HealingEffectForm
+                onChange={handleChildStateUpdate}
+                effect={state.effectTypeBody as HealingEffect}
+              ></HealingEffectForm>
+            )}
+            {state.effectType === "actions" && (
+              <ActionEffectForm
+                onChange={handleChildStateUpdate}
+                effect={state.effectTypeBody as ActionEffect}
+              ></ActionEffectForm>
+            )}
+            {state.effectType === "magicItemStatus" && (
+              <MagicItemEffectForm
+                onChange={handleChildStateUpdate}
+                effect={state.effectTypeBody as MagicItemEffect}
+              ></MagicItemEffectForm>
+            )}
+            {state.effectType === "size" && (
+              <SizeEffectForm
+                onChange={handleChildStateUpdate}
+                effect={state.effectTypeBody as SizeEffect}
+              ></SizeEffectForm>
+            )}
+            {state.effectType === "initiative" && (
+              <InitiativeEffectForm
+                onChange={handleChildStateUpdate}
+                effect={state.effectTypeBody as InitiativeEffect}
+              ></InitiativeEffectForm>
+            )}
+            {state.effectType === "damage" && (
+              <DamageEffectForm
+                onChange={handleChildStateUpdate}
+                effect={state.effectTypeBody as DamageEffect}
+              ></DamageEffectForm>
+            )}
+            {state.effectType === "hitpoints" && (
+              <HitpointsEffectForm
+                onChange={handleChildStateUpdate}
+                effect={state.effectTypeBody as HitpointsEffect}
+              ></HitpointsEffectForm>
+            )}
+            {state.effectType === "attacksPerAction" && (
+              <AttacksPerActionEffectForm
+                onChange={handleChildStateUpdate}
+                effect={state.effectTypeBody as AttacksPerActionEffect}
+              ></AttacksPerActionEffectForm>
+            )}
+            {state.effectType === "statusEffect" && (
+              <StatusEffectForm
+                onChange={handleChildStateUpdate}
+                effect={state.effectTypeBody as StatusEffect}
+              ></StatusEffectForm>
+            )}
+            {state.effectType === "movementCost" && (
+              <MovementCostEffectForm
+                onChange={handleChildStateUpdate}
+                effect={state.effectTypeBody as MovementCostEffect}
+              ></MovementCostEffectForm>
+            )}
+          </Div3>
+        </Container>
+      </ScrollContainer>
+      <Button onClick={() => updateEffectBlueprint(state)}>Update</Button>
     </>
   );
 }
 
-const Container = styled(Box)`
+const Container = styled.div`
   display: grid;
   grid-template-columns: auto 1fr;
   grid-template-rows: auto auto;
   gap: 10px;
+  width: 70vw;
+  height: 90vh;
+  overflow-y: scroll;
+  scrollbar-color: var(--color-button-primary) var(--color-main-background);
+  scrollbar-width: thin;
+  padding: 10px;
+`;
+
+const ScrollContainer = styled(Box)`
+  overflow-y: hidden;
+  padding: 0;
 `;
 
 const Div1 = styled.div`

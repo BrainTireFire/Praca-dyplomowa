@@ -21,3 +21,18 @@ export async function getEffectBlueprint(
 
   return response;
 }
+
+export async function updateEffectBlueprint(
+  effectBlueprintDto: EffectBlueprint
+): Promise<void> {
+  console.log(effectBlueprintDto);
+  const options: RequestInit = {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ formData: effectBlueprintDto }),
+  };
+  await customFetch(`${BASE_URL}/api/effect/blueprint`, options);
+  return;
+}

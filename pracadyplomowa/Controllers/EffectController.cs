@@ -53,14 +53,26 @@ namespace pracadyplomowa.Controllers
 
 
 
-        // [HttpPatch]
-        // public async Task<ActionResult> UpdatePower(PowerFormDto powerDto)
-        // {
-        //     var power = _mapper.Map<Power>(powerDto);
-        //     _powerRepository.Update(power);
-        //     await _powerRepository.SaveChanges();
-        //     return Ok(_mapper.Map<PowerFormDto>(power));
-        // }
+        [HttpPatch("blueprint")]
+        public async Task<ActionResult> UpdateEffectBlueprint([FromBody] EffectBlueprintFormDtoWrapper effectDtoWrapper)
+        {
+            var id = effectDtoWrapper.formData.Id;
+            if(id != null){
+                var effectBlueprintOriginal = _effectBlueprintRepository.GetById((int)id);
+                if(effectBlueprintOriginal != null){
+                    var effectBlueprint = _mapper.Map<EffectBlueprintFormDto, EffectBlueprint>(effectDtoWrapper.formData, effectBlueprintOriginal);
+                    _effectBlueprintRepository.Update(effectBlueprint);
+                    await _effectBlueprintRepository.SaveChanges();
+                    return Ok(_mapper.Map<EffectBlueprintFormDto>(effectBlueprint));
+                }
+                else{
+                    return NotFound("Id not found");
+                }
+            }
+            else{
+                return BadRequest("Missing Id");
+            }
+        }
 
     }
 }

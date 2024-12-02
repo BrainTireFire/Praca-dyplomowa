@@ -5,13 +5,14 @@ import { HiEye, HiTrash } from "react-icons/hi2";
 import { Cell } from "../../../ui/containers/Cell";
 import RadioButton from "../../../ui/containers/RadioButton";
 import { EffectBlueprintListItem } from "../models/effectBlueprint";
-import { useEffectBlueprint } from "../hooks/useEffectBlueprint";
+import { useEffectBlueprint } from "../../effects/hooks/useEffectBlueprint";
 import EffectBlueprintForm, {
   EffectBlueprint,
   initialState,
 } from "../../effects/EffectBlueprintForm";
 import Spinner from "../../../ui/interactive/Spinner";
 import { useCreateEffectBlueprint } from "../hooks/useCreateEffectBlueprint";
+import { PowerIdContext } from "../../characters/contexts/CharacterIdContext";
 
 export default function EffectTable({
   effects,
@@ -28,27 +29,33 @@ export default function EffectTable({
     return <Spinner></Spinner>;
   }
   return (
-    <Menus>
-      <Table
-        header="Effects"
-        button="Add new"
-        columns="1fr 1fr 1fr 0.01rem"
-        buttonOnClick={() => createEffectBlueprint(initialState)}
-      >
-        <Table.Header>
-          <div>Saved</div>
-          <div>Level</div>
-          <div>Name</div>
-          <div></div>
-        </Table.Header>
-        <Table.Body
-          data={effects}
-          columnCount={4}
-          render={(effect) => <EffectRow key={effect.id} effect={effect} />}
-        />
-        <Table.Footer>{/* <Pagination count={count} /> */}</Table.Footer>
-      </Table>
-    </Menus>
+    <PowerIdContext.Provider
+      value={{
+        powerId: powerId,
+      }}
+    >
+      <Menus>
+        <Table
+          header="Effects"
+          button="Add new"
+          columns="1fr 1fr 1fr 0.01rem"
+          buttonOnClick={() => createEffectBlueprint(initialState)}
+        >
+          <Table.Header>
+            <div>Saved</div>
+            <div>Level</div>
+            <div>Name</div>
+            <div></div>
+          </Table.Header>
+          <Table.Body
+            data={effects}
+            columnCount={4}
+            render={(effect) => <EffectRow key={effect.id} effect={effect} />}
+          />
+          <Table.Footer>{/* <Pagination count={count} /> */}</Table.Footer>
+        </Table>
+      </Menus>
+    </PowerIdContext.Provider>
   );
 }
 
@@ -81,32 +88,9 @@ function EffectRow({ effect }: { effect: EffectBlueprintListItem }) {
           /> */}
         </Modal.Window>
         <Modal.Window name="open">
-          <EffectBlueprintFormContainer
-            effect={effect}
-          ></EffectBlueprintFormContainer>
+          <EffectBlueprintForm effectId={effect.id}></EffectBlueprintForm>
         </Modal.Window>
       </Modal>
     </Table.Row>
   );
-
-  function EffectBlueprintFormContainer({
-    effect,
-  }: {
-    effect: EffectBlueprintListItem;
-  }) {
-    const { isLoading, effectBlueprint, error } = useEffectBlueprint(effect.id);
-    if (isLoading) {
-      return <Spinner></Spinner>;
-    }
-    if (error) {
-      console.log(error);
-      return <>Error</>;
-    }
-    console.log(effectBlueprint);
-    return (
-      <EffectBlueprintForm
-        effectBlueprint={effectBlueprint as EffectBlueprint}
-      ></EffectBlueprintForm>
-    );
-  }
 }

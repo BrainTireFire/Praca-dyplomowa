@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import FormRowVertical from "../../ui/forms/FormRowVertical";
 import Input from "../../ui/forms/Input";
 import { abilitiesDropdown, ability } from "../effects/abilities";
@@ -37,6 +37,7 @@ import Box from "../../ui/containers/Box";
 import { EffectBlueprintListItem } from "./models/effectBlueprint";
 import { useUpdatePower } from "./hooks/useUpdatePower";
 import Button from "../../ui/interactive/Button";
+import { usePower } from "./hooks/usePower";
 
 // Action types
 export enum PowerActionTypes {
@@ -66,6 +67,7 @@ export enum PowerActionTypes {
   UPDATE_IMMATERIAL_RESOURCE_USED = "UPDATE_IMMATERIAL_RESOURCE_USED",
   UPDATE_MATERIAL_RESOURCES_USED = "UPDATE_MATERIAL_RESOURCES_USED",
   UPDATE_EFFECT_BLUEPRINTS = "UPDATE_EFFECT_BLUEPRINTS",
+  RESET_STATE = "RESET_STATE",
 }
 
 // Action interfaces
@@ -199,8 +201,14 @@ interface UpdateEffectBlueprintsAction {
   payload: EffectBlueprintListItem[];
 }
 
+interface ResetState {
+  type: PowerActionTypes.RESET_STATE;
+  payload: Power;
+}
+
 // Union type for all action interfaces
 type PowerAction =
+  | ResetState
   | UpdateNameAction
   | UpdateDescriptionAction
   | UpdateActionTypeAction
@@ -283,6 +291,8 @@ const powerReducer = (state: Power, action: PowerAction): Power => {
       return { ...state, materialResourcesUsed: action.payload };
     case PowerActionTypes.UPDATE_EFFECT_BLUEPRINTS:
       return { ...state, effectBlueprints: action.payload };
+    case PowerActionTypes.RESET_STATE:
+      return action.payload;
     default:
       return state;
   }
@@ -318,8 +328,22 @@ export const initialState: Power = {
   effectBlueprints: [],
 };
 
-export default function PowerForm({ power }: { power: Power }) {
-  const [state, dispatch] = useReducer(powerReducer, power);
+export default function PowerForm({ powerId }: { powerId: number }) {
+  const {
+    isLoading: isLoadingPower,
+    power,
+    error: powerError,
+  } = usePower(powerId);
+  const [state, dispatch] = useReducer(powerReducer, power ?? initialState);
+  // Update local state when data is fetched
+  useEffect(() => {
+    if (power) {
+      dispatch({
+        type: PowerActionTypes.RESET_STATE,
+        payload: power,
+      });
+    }
+  }, [power]);
   const { updatePower, isPending } = useUpdatePower(() => {});
   console.log(state);
 
@@ -339,7 +363,7 @@ export default function PowerForm({ power }: { power: Power }) {
         return { value: x.id.toString(), label: x.name };
       })
     : [];
-  if (isLoadingImmaterialResources || isPending) {
+  if (isLoadingImmaterialResources || isPending || isLoadingPower) {
     return <Spinner></Spinner>;
   }
   if (error) return <>Error</>;
@@ -476,14 +500,15 @@ export default function PowerForm({ power }: { power: Power }) {
             <Row1InColumn2>
               <EffectTable
                 effects={state.effectBlueprints}
-                powerId={power.id ?? -1}
+                powerId={powerId ?? -1}
               ></EffectTable>
               <MatierialResourceTable
                 materialComponents={state.materialResourcesUsed}
               ></MatierialResourceTable>
+
               <EffectTable
                 effects={state.effectBlueprints}
-                powerId={power.id ?? -1}
+                powerId={powerId ?? -1}
               ></EffectTable>
             </Row1InColumn2>
             <Row2InColumn2>

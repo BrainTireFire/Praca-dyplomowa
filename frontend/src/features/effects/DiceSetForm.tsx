@@ -38,8 +38,8 @@ const initialAdditionalValue: AdditionalValue = {
   AdditionalValueType: "LevelsInClass",
   LevelsInClassId: 0,
   ClassName: "",
-  Ability: "Strength",
-  Skill: "acrobatics",
+  Ability: "STRENGTH",
+  Skill: "Acrobatics",
 };
 
 export const AdditionalValueTypes = [

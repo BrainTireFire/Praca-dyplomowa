@@ -4,7 +4,6 @@ import { ReusableTable } from "../../ui/containers/ReusableTable";
 import Spinner from "../../ui/interactive/Spinner";
 import styled, { css } from "styled-components";
 import { useState } from "react";
-import { usePower } from "../../features/powers/hooks/usePower";
 import { PowerListItem } from "../../models/power";
 import Button from "../../ui/interactive/Button";
 import { useCreatePower } from "./hooks/useCreatePower";
@@ -13,11 +12,6 @@ export default function Powers() {
   const { isLoading, powers, error } = usePowers();
 
   const [selectedPowerId, setSelectedPowerId] = useState<null | number>(null);
-  const {
-    isLoading: isLoadingPower,
-    power,
-    error: powerError,
-  } = usePower(selectedPowerId);
   const { createPower, isPending: isPendingCreation } = useCreatePower(
     () => {}
   );
@@ -31,10 +25,10 @@ export default function Powers() {
     console.log(selectedPowerId);
   };
 
-  if (isLoading || isLoadingPower || isPendingCreation) {
+  if (isLoading || isPendingCreation) {
     return <Spinner></Spinner>;
   }
-  console.log(power);
+  // console.log(power);
   return (
     <Container>
       <Column1>
@@ -64,7 +58,12 @@ export default function Powers() {
         </Button>
       </Column1>
       <Column2>
-        {power && <PowerForm power={power} key={power.id}></PowerForm>}
+        {selectedPowerId && (
+          <PowerForm
+            powerId={selectedPowerId}
+            key={selectedPowerId}
+          ></PowerForm>
+        )}
       </Column2>
     </Container>
   );

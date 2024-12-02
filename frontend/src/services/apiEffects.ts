@@ -36,3 +36,15 @@ export async function updateEffectBlueprint(
   await customFetch(`${BASE_URL}/api/effect/blueprint`, options);
   return;
 }
+
+export async function deleteEffectBlueprint(id: number): Promise<void> {
+  console.log(id);
+  const options: RequestInit = {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  await customFetch(`${BASE_URL}/api/effect/blueprint/${id}`, options);
+  return;
+}

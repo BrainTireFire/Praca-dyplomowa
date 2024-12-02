@@ -82,7 +82,7 @@ import Button from "../../ui/interactive/Button";
 import Spinner from "../../ui/interactive/Spinner";
 import { useEffectBlueprint } from "./hooks/useEffectBlueprint";
 import { useUpdateEffectBlueprint } from "./hooks/useUpdateEffectBlueprint";
-import { PowerIdContext } from "../characters/contexts/CharacterIdContext";
+import { PowerIdContext } from "../powers/contexts/PowerIdContext";
 
 const effectTypes = [
   "movementEffect",

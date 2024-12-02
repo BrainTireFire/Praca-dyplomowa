@@ -5,14 +5,15 @@ import { HiEye, HiTrash } from "react-icons/hi2";
 import { Cell } from "../../../ui/containers/Cell";
 import RadioButton from "../../../ui/containers/RadioButton";
 import { EffectBlueprintListItem } from "../models/effectBlueprint";
-import { useEffectBlueprint } from "../../effects/hooks/useEffectBlueprint";
 import EffectBlueprintForm, {
-  EffectBlueprint,
   initialState,
 } from "../../effects/EffectBlueprintForm";
 import Spinner from "../../../ui/interactive/Spinner";
 import { useCreateEffectBlueprint } from "../hooks/useCreateEffectBlueprint";
-import { PowerIdContext } from "../../characters/contexts/CharacterIdContext";
+import { useDeleteEffectBlueprint } from "../hooks/useDeleteEffectBlueprint";
+import ConfirmDelete from "../../../ui/containers/ConfirmDelete";
+import { useContext } from "react";
+import { PowerIdContext } from "../contexts/PowerIdContext";
 
 export default function EffectTable({
   effects,
@@ -60,6 +61,11 @@ export default function EffectTable({
 }
 
 function EffectRow({ effect }: { effect: EffectBlueprintListItem }) {
+  const { powerId } = useContext(PowerIdContext);
+  const { deleteEffectBlueprint, isPending } = useDeleteEffectBlueprint(
+    () => {},
+    powerId
+  );
   return (
     <Table.Row>
       <RadioButton checked={effect.savingThrowSuccess} />
@@ -79,13 +85,13 @@ function EffectRow({ effect }: { effect: EffectBlueprintListItem }) {
           </Menus.List>
         </Menus.Menu>
         <Modal.Window name="delete">
-          {/* <ConfirmDelete
-            resourceName="equipment"
-            disabled={isDeleting}
+          <ConfirmDelete
+            resourceName="effect blueprint"
+            disabled={isPending}
             onConfirm={() => {
-              deleteBooking(bookingId);
+              deleteEffectBlueprint(effect.id);
             }}
-          /> */}
+          />
         </Modal.Window>
         <Modal.Window name="open">
           <EffectBlueprintForm effectId={effect.id}></EffectBlueprintForm>

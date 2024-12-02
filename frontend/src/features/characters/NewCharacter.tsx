@@ -11,10 +11,10 @@ import { CharacterInsertDto } from "../../models/character";
 import { useCreateCharacter } from "./hooks/useCreateCharacter";
 import toast from "react-hot-toast";
 
-const initialState = {
+const initialState: CharacterInsertDto = {
   name: "",
-  startingClassId: 0,
-  raceId: 0,
+  startingClassId: null,
+  raceId: null,
   strength: 0,
   dexterity: 0,
   constitution: 0,
@@ -105,13 +105,13 @@ function NewCharacter({ onCloseModal }) {
   //derived state
   const raceList = races
     ? races.map((race) => ({
-        value: race.id,
+        value: race.id.toString(),
         label: race.name,
       }))
     : [];
   const classList = classes
     ? classes.map((characterClass) => ({
-        value: characterClass.id,
+        value: characterClass.id.toString(),
         label: characterClass.name,
       }))
     : [];
@@ -135,7 +135,7 @@ function NewCharacter({ onCloseModal }) {
         </FormRow>
         <FormRow label="Starting class">
           <Dropdown
-            chosenValue={state.startingClassId.toString()}
+            chosenValue={state.startingClassId?.toString() || null}
             setChosenValue={(e) =>
               dispatch({ type: "setClass", value: Number(e) })
             }
@@ -144,7 +144,7 @@ function NewCharacter({ onCloseModal }) {
         </FormRow>
         <FormRow label="Race">
           <Dropdown
-            chosenValue={state.raceId.toString()}
+            chosenValue={state.startingClassId?.toString() || null}
             setChosenValue={(e) =>
               dispatch({ type: "setRace", value: Number(e) })
             }

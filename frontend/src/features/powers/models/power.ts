@@ -6,7 +6,7 @@ export type Power = {
   id: number | null;
   name: string;
   description: string;
-  actionType: ActionType;
+  requiredActionType: ActionType;
   isImplemented: boolean;
   castableBy: CastableBy;
   powerType: PowerType;
@@ -21,13 +21,13 @@ export type Power = {
   savingThrowAbility: ability | null;
   requiresConcentration: boolean;
   savingThrowBehaviour: SavingThrowBehaviour;
-  savingThrowRoll: boolean;
+  savingThrowRoll: SavingThrowRoll;
   verbalComponent: boolean;
   somaticComponent: boolean;
   duration: number;
   upcastBy: UpcastBy;
-  classForUpcasting: CharacterClass;
-  immaterialResourceUsed: ImmaterialResource;
+  classForUpcasting: CharacterClass | null;
+  immaterialResourceUsed: ImmaterialResource | null;
   materialResourcesUsed: MaterialResource[];
   effectBlueprints: EffectBlueprintListItem[];
 };
@@ -147,18 +147,18 @@ export const savingThrowBehaviourOptions = (
   label: SavingThrowBehaviourLabels[key],
 }));
 
-// export type SavingThrowRoll = "none" | "takenOnce" | "retakenEveryTurn";
-// export const SavingThrowRollLabels: { [key in SavingThrowRoll]: string } = {
-//   none: "None",
-//   takenOnce: "Taken Once",
-//   retakenEveryTurn: "Retaken Every Turn",
-// };
-// export const savingThrowRollOptions = (
-//   Object.keys(SavingThrowRollLabels) as SavingThrowRoll[]
-// ).map((key) => ({
-//   value: key,
-//   label: SavingThrowRollLabels[key],
-// }));
+export type SavingThrowRoll = "None" | "TakenOnce" | "RetakenEveryTurn";
+export const SavingThrowRollLabels: { [key in SavingThrowRoll]: string } = {
+  None: "None",
+  TakenOnce: "Taken Once",
+  RetakenEveryTurn: "Retaken Every Turn",
+};
+export const savingThrowRollOptions = (
+  Object.keys(SavingThrowRollLabels) as SavingThrowRoll[]
+).map((key) => ({
+  value: key,
+  label: SavingThrowRollLabels[key],
+}));
 
 export type UpcastBy = "ResourceLevel" | "CharacterLevel" | "ClassLevel";
 export const UpcastByLabels: { [key in UpcastBy]: string } = {

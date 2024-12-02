@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using pracadyplomowa.Models.DTOs;
+using pracadyplomowa.Models.Entities.Powers;
 using pracadyplomowa.Repository;
 using pracadyplomowa.Repository.Item;
 
@@ -49,6 +50,17 @@ namespace pracadyplomowa.Controllers
 
             return Ok(effectBlueprintDtos);
         }
+
+
+
+        // [HttpPatch]
+        // public async Task<ActionResult> UpdatePower(PowerFormDto powerDto)
+        // {
+        //     var power = _mapper.Map<Power>(powerDto);
+        //     _powerRepository.Update(power);
+        //     await _powerRepository.SaveChanges();
+        //     return Ok(_mapper.Map<PowerFormDto>(power));
+        // }
 
     }
 }

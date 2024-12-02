@@ -21,6 +21,7 @@ namespace pracadyplomowa.Repository
             .Include(p => p.R_EffectBlueprints)
             .Include(p => p.R_ItemsCostRequirement)
             .ThenInclude(icr => icr.R_ItemFamily)
+            .Include(p => p.R_UsesImmaterialResource)
             .FirstAsync();
         }
     }

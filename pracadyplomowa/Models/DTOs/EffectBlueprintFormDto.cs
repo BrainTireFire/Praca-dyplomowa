@@ -7,8 +7,41 @@ using pracadyplomowa.Models.Enums;
 
 namespace pracadyplomowa.Models.DTOs
 {
+
+    public class EffectBlueprintFormDtoWrapper
+    {
+        public EffectBlueprintFormDto formData { get; set; }
+    }
     public class EffectBlueprintFormDto
     {
+
+    //     public EffectBlueprintFormDto(
+    //     int? id,
+    //     string name,
+    //     string description,
+    //     int resourceLevel,
+    //     int resourceAmount,
+    //     bool savingThrowSuccess,
+    //     bool conditional,
+    //     bool isImplemented,
+    //     bool hasNoEffectInCombat,
+    //     string effectType,
+    //     SubeffectFormDto effectTypeBody
+    // )
+    // {
+    //     Id = id;
+    //     Name = name;
+    //     Description = description;
+    //     ResourceLevel = resourceLevel;
+    //     ResourceAmount = resourceAmount;
+    //     SavingThrowSuccess = savingThrowSuccess;
+    //     Conditional = conditional;
+    //     IsImplemented = isImplemented;
+    //     HasNoEffectInCombat = hasNoEffectInCombat;
+    //     EffectType = effectType;
+    //     EffectTypeBody = effectTypeBody;
+    // }
+
         public int? Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
@@ -24,7 +57,6 @@ namespace pracadyplomowa.Models.DTOs
             
         }
         public class ValueEffectBlueprintFormDto : EffectBlueprintFormDto{
-            public ValueSubeffectBlueprintFormDto EffectTypeBody { get; set; }
 
             public class ValueSubeffectBlueprintFormDto : SubeffectFormDto {
                 public RollMoment RollMoment { get; set; }

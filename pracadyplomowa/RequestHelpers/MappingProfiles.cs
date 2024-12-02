@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Diagnostics;
+using AutoMapper;
 using Microsoft.AspNetCore.SignalR;
 using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.DTOs.Board;
@@ -58,30 +59,6 @@ public class MappingProfiles : Profile
             );
         CreateMap<Power, PowerFormDto>()
             .ForMember(
-                dest => dest.ActionType, opt => opt.MapFrom(src => src.RequiredActionType.ToString())
-            )
-            .ForMember(
-                dest => dest.CastableBy, opt => opt.MapFrom(src => src.CastableBy.ToString())
-            )
-            .ForMember(
-                dest => dest.PowerType, opt => opt.MapFrom(src => src.PowerType.ToString())
-            )
-            .ForMember(
-                dest => dest.AreaShape, opt => opt.MapFrom(src => src.AreaShape.ToString())
-            )
-            .ForMember(
-                dest => dest.SavingThrow, opt => opt.MapFrom(src => src.SavingThrow.ToString())
-            )
-            .ForMember(
-                dest => dest.SavingThrowBehaviour, opt => opt.MapFrom(src => src.SavingThrowBehaviour.ToString())
-            )
-            .ForMember(
-                dest => dest.SavingThrowRoll, opt => opt.MapFrom(src => src.SavingThrowRoll.ToString())
-            )
-            .ForMember(
-                dest => dest.UpcastBy, opt => opt.MapFrom(src => src.UpcastBy.ToString())
-            )
-            .ForMember(
                 dest => dest.ClassForUpcasting, 
                 opt => opt.MapFrom(src => src.R_ClassForUpcasting)
             )
@@ -96,6 +73,15 @@ public class MappingProfiles : Profile
             .ForMember(
                 dest => dest.EffectBlueprints, 
                 opt => opt.MapFrom(src => src.R_EffectBlueprints)
+            );
+        CreateMap<PowerFormDto, Power>()
+            .ForMember(
+                dest => dest.R_ClassForUpcastingId,
+                opt => opt.MapFrom(src => src.ClassForUpcasting != null ? src.ClassForUpcasting.Id : (int?)null) // Explicitly cast to nullable
+            )
+            .ForMember(
+                dest => dest.R_UsesImmaterialResourceId,
+                opt => opt.MapFrom(src => src.ImmaterialResourceUsed != null ? src.ImmaterialResourceUsed.Id : (int?)null)
             );
 
         CreateMap<EffectBlueprint, EffectBlueprintFormDto>()
@@ -116,7 +102,22 @@ public class MappingProfiles : Profile
                 opt => opt.MapFrom(src => src is MovementEffectBlueprint ? "movementEffect" :
                 src is ActionEffectBlueprint ? "actions" :
                 src is SavingThrowEffectBlueprint ? "savingThrow" :
-                src is AbilityEffectBlueprint ? "abilityCheck" : "x")
+                src is AbilityEffectBlueprint ? "abilityCheck" :
+                src is SkillEffectBlueprint ? "skillCheck" :
+                src is ResistanceEffectBlueprint ? "resistance" :
+                src is AttackRollEffectBlueprint ? "attackBonus" :
+                src is ArmorClassEffectBlueprint ? "armorClassBonus" :
+                src is ProficiencyEffectBlueprint ? "proficiency" :
+                src is HealingEffectBlueprint ? "healing" :
+                src is ActionEffectBlueprint ? "actions" :
+                src is MagicEffectBlueprint ? "magicItemStatus" :
+                src is SizeEffectBlueprint ? "sizeCheck" :
+                src is InitiativeEffectBlueprint ? "initiative" :
+                src is DamageEffectBlueprint ? "damage" :
+                src is HitpointEffectBlueprint ? "hitpoints" :
+                src is AttackPerAttackActionEffectBlueprint ? "attacksPerAction" :
+                src is StatusEffectBlueprint ? "statusEffect" :
+                src is MovementCostEffectBlueprint ? "movementCost" : "UNREACHABLE")
             );
 
         CreateMap<ValueEffectBlueprint, EffectBlueprintFormDto.ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto>()
@@ -308,5 +309,203 @@ public class MappingProfiles : Profile
                     effectType = src.MovementCostEffectType
                 })
             );
+
+        
+        CreateMap<EffectBlueprintFormDto, EffectBlueprint>()
+            .ConvertUsing<EffectBlueprintConverter>();
+
+        CreateMap<EffectBlueprintFormDto.ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto, DiceSet>();
+        CreateMap<EffectBlueprintFormDto.ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto, ValueEffectBlueprint>();
+
+        CreateMap<EffectBlueprintFormDto.ActionEffectBlueprintFormDto, ActionEffectBlueprint>()
+            .IncludeBase<EffectBlueprintFormDto, EffectBlueprint>()
+            .ForMember(
+                dest => dest.ActionEffectType,
+                opt => opt.MapFrom(src => src.EffectTypeBody.effectType)
+            )
+            .ForMember(
+                dest => dest.RollMoment,
+                opt => opt.MapFrom(src => src.EffectTypeBody.RollMoment)
+            )
+            .ForMember(
+                dest => dest.DiceSet,
+                opt => opt.MapFrom(src => src.EffectTypeBody.value)
+            );
+
+        // CreateMap<MovementEffectBlueprint, EffectBlueprintFormDto.MovementEffectBlueprintFormDto>()
+        //     .IncludeBase<EffectBlueprint, EffectBlueprintFormDto>()
+        //     .ForMember(
+        //         dest => dest.EffectTypeBody,
+        //         opt => opt.MapFrom((src, dest, member, context) => new EffectBlueprintFormDto.MovementEffectBlueprintFormDto.MovementSubeffectBlueprintFormDto(){
+        //             RollMoment = src.RollMoment,
+        //             value = context.Mapper.Map<EffectBlueprintFormDto.ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto>(src),
+        //             effectType = src.MovementEffectType
+        //         })
+        //     );
+
+        // CreateMap<SavingThrowEffectBlueprint, EffectBlueprintFormDto.SavingThrowEffectBlueprintFormDto>()
+        //     .IncludeBase<EffectBlueprint, EffectBlueprintFormDto>()
+        //     .ForMember(
+        //         dest => dest.EffectTypeBody,
+        //         opt => opt.MapFrom((src, dest, member, context) => new EffectBlueprintFormDto.SavingThrowEffectBlueprintFormDto.SavingThrowSubeffectBlueprintFormDto(){
+        //             RollMoment = src.RollMoment,
+        //             value = context.Mapper.Map<EffectBlueprintFormDto.ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto>(src),
+        //             effectType = src.SavingThrowEffectType,
+        //         })
+        //     );
+
+        // CreateMap<AbilityEffectBlueprint, EffectBlueprintFormDto.AbilityEffectBlueprintFormDto>()
+        //     .IncludeBase<EffectBlueprint, EffectBlueprintFormDto>()
+        //     .ForMember(
+        //         dest => dest.EffectTypeBody,
+        //         opt => opt.MapFrom((src, dest, member, context) => new EffectBlueprintFormDto.AbilityEffectBlueprintFormDto.AbilitySubeffectBlueprintFormDto(){
+        //             RollMoment = src.RollMoment,
+        //             value = context.Mapper.Map<EffectBlueprintFormDto.ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto>(src),
+        //             effectType = src.AbilityEffectType,
+        //         })
+        //     );
+
+        // CreateMap<SkillEffectBlueprint, EffectBlueprintFormDto.SkillEffectBlueprintFormDto>()
+        //     .IncludeBase<EffectBlueprint, EffectBlueprintFormDto>()
+        //     .ForMember(
+        //         dest => dest.EffectTypeBody,
+        //         opt => opt.MapFrom((src, dest, member, context) => new EffectBlueprintFormDto.SkillEffectBlueprintFormDto.SkillSubeffectBlueprintFormDto(){
+        //             RollMoment = src.RollMoment,
+        //             value = context.Mapper.Map<EffectBlueprintFormDto.ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto>(src),
+        //             effectType = src.SkillEffectType,
+        //         })
+        //     );
+
+        // CreateMap<ResistanceEffectBlueprint, EffectBlueprintFormDto.ResistanceEffectBlueprintFormDto>()
+        //     .IncludeBase<EffectBlueprint, EffectBlueprintFormDto>()
+        //     .ForMember(
+        //         dest => dest.EffectTypeBody,
+        //         opt => opt.MapFrom((src, dest, member, context) => new EffectBlueprintFormDto.ResistanceEffectBlueprintFormDto.ResistanceSubeffectBlueprintFormDto(){
+        //             effectType = src.ResistanceEffectType,
+        //         })
+        //     );
+
+        // CreateMap<AttackRollEffectBlueprint, EffectBlueprintFormDto.AttackRollEffectBlueprintFormDto>()
+        //     .IncludeBase<EffectBlueprint, EffectBlueprintFormDto>()
+        //     .ForMember(
+        //         dest => dest.EffectTypeBody,
+        //         opt => opt.MapFrom((src, dest, member, context) => new EffectBlueprintFormDto.AttackRollEffectBlueprintFormDto.AttackRollSubeffectBlueprintFormDto(){
+        //             RollMoment = src.RollMoment,
+        //             value = context.Mapper.Map<EffectBlueprintFormDto.ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto>(src),
+        //             effectType = src.AttackRollEffectType,
+        //         })
+        //     );
+
+        // CreateMap<ArmorClassEffectBlueprint, EffectBlueprintFormDto.ArmorClassEffectBlueprintFormDto>()
+        //     .IncludeBase<EffectBlueprint, EffectBlueprintFormDto>()
+        //     .ForMember(
+        //         dest => dest.EffectTypeBody,
+        //         opt => opt.MapFrom((src, dest, member, context) => new EffectBlueprintFormDto.ArmorClassEffectBlueprintFormDto.ArmorClassSubeffectBlueprintFormDto(){
+        //             RollMoment = src.RollMoment,
+        //             value = context.Mapper.Map<EffectBlueprintFormDto.ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto>(src),
+        //         })
+        //     );
+
+        // CreateMap<ProficiencyEffectBlueprint, EffectBlueprintFormDto.ProficiencyEffectBlueprintFormDto>()
+        //     .IncludeBase<EffectBlueprint, EffectBlueprintFormDto>()
+        //     .ForMember(
+        //         dest => dest.EffectTypeBody,
+        //         opt => opt.MapFrom((src, dest, member, context) => new EffectBlueprintFormDto.ProficiencyEffectBlueprintFormDto.ProficiencySubeffectBlueprintFormDto(){
+        //             GrantsProficiencyInItemFamilyId = src.R_GrantsProficiencyInItemFamilyId,
+        //             effectType = src.ProficiencyEffectType
+        //         })
+        //     );
+
+        // CreateMap<HealingEffectBlueprint, EffectBlueprintFormDto.HealingEffectBlueprintFormDto>()
+        //     .IncludeBase<EffectBlueprint, EffectBlueprintFormDto>()
+        //     .ForMember(
+        //         dest => dest.EffectTypeBody,
+        //         opt => opt.MapFrom((src, dest, member, context) => new EffectBlueprintFormDto.HealingEffectBlueprintFormDto.HealingSubeffectBlueprintFormDto(){
+        //             RollMoment = src.RollMoment,
+        //             value = context.Mapper.Map<EffectBlueprintFormDto.ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto>(src),
+        //         })
+        //     );
+
+        // CreateMap<MagicEffectBlueprint, EffectBlueprintFormDto.MagicEffectBlueprintFormDto>()
+        //     .IncludeBase<EffectBlueprint, EffectBlueprintFormDto>()
+        //     .ForMember(
+        //         dest => dest.EffectTypeBody,
+        //         opt => opt.MapFrom((src, dest, member, context) => new EffectBlueprintFormDto.MagicEffectBlueprintFormDto.MagicSubeffectBlueprintFormDto(){
+        //             RollMoment = src.RollMoment,
+        //             value = context.Mapper.Map<EffectBlueprintFormDto.ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto>(src),
+        //         })
+        //     );
+
+        // CreateMap<SizeEffectBlueprint, EffectBlueprintFormDto.SizeEffectBlueprintFormDto>()
+        //     .IncludeBase<EffectBlueprint, EffectBlueprintFormDto>()
+        //     .ForMember(
+        //         dest => dest.EffectTypeBody,
+        //         opt => opt.MapFrom((src, dest, member, context) => new EffectBlueprintFormDto.SizeEffectBlueprintFormDto.SizeSubeffectBlueprintFormDto(){
+        //             RollMoment = src.RollMoment,
+        //             value = context.Mapper.Map<EffectBlueprintFormDto.ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto>(src),
+        //             effectType = src.SizeEffectType,
+        //         })
+        //     );
+
+        // CreateMap<InitiativeEffectBlueprint, EffectBlueprintFormDto.InitiativeEffectBlueprintFormDto>()
+        //     .IncludeBase<EffectBlueprint, EffectBlueprintFormDto>()
+        //     .ForMember(
+        //         dest => dest.EffectTypeBody,
+        //         opt => opt.MapFrom((src, dest, member, context) => new EffectBlueprintFormDto.InitiativeEffectBlueprintFormDto.InitiativeSubeffectBlueprintFormDto(){
+        //             RollMoment = src.RollMoment,
+        //             value = context.Mapper.Map<EffectBlueprintFormDto.ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto>(src),
+        //         })
+        //     );
+
+        // CreateMap<DamageEffectBlueprint, EffectBlueprintFormDto.DamageEffectBlueprintFormDto>()
+        //     .IncludeBase<EffectBlueprint, EffectBlueprintFormDto>()
+        //     .ForMember(
+        //         dest => dest.EffectTypeBody,
+        //         opt => opt.MapFrom((src, dest, member, context) => new EffectBlueprintFormDto.DamageEffectBlueprintFormDto.DamageSubeffectBlueprintFormDto(){
+        //             RollMoment = src.RollMoment,
+        //             value = context.Mapper.Map<EffectBlueprintFormDto.ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto>(src),
+        //             effectType = src.DamageEffectType,
+        //         })
+        //     );
+
+        // CreateMap<HitpointEffectBlueprint, EffectBlueprintFormDto.HitpointEffectBlueprintFormDto>()
+        //     .IncludeBase<EffectBlueprint, EffectBlueprintFormDto>()
+        //     .ForMember(
+        //         dest => dest.EffectTypeBody,
+        //         opt => opt.MapFrom((src, dest, member, context) => new EffectBlueprintFormDto.HitpointEffectBlueprintFormDto.HitpointSubeffectBlueprintFormDto(){
+        //             RollMoment = src.RollMoment,
+        //             value = context.Mapper.Map<EffectBlueprintFormDto.ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto>(src),
+        //             effectType = src.HitpointEffectType,
+        //         })
+        //     );
+
+        // CreateMap<AttackPerAttackActionEffectBlueprint, EffectBlueprintFormDto.AttackPerAttackActionEffectBlueprintFormDto>()
+        //     .IncludeBase<EffectBlueprint, EffectBlueprintFormDto>()
+        //     .ForMember(
+        //         dest => dest.EffectTypeBody,
+        //         opt => opt.MapFrom((src, dest, member, context) => new EffectBlueprintFormDto.AttackPerAttackActionEffectBlueprintFormDto.AttackPerAttackActionSubeffectBlueprintFormDto(){
+        //             RollMoment = src.RollMoment,
+        //             value = context.Mapper.Map<EffectBlueprintFormDto.ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto>(src),
+        //             effectType = src.AttackPerAttackActionEffectType,
+        //         })
+        //     );
+
+        // CreateMap<StatusEffectBlueprint, EffectBlueprintFormDto.StatusEffectBlueprintFormDto>()
+        //     .IncludeBase<EffectBlueprint, EffectBlueprintFormDto>()
+        //     .ForMember(
+        //         dest => dest.EffectTypeBody,
+        //         opt => opt.MapFrom((src, dest, member, context) => new EffectBlueprintFormDto.StatusEffectBlueprintFormDto.StatusSubeffectBlueprintFormDto(){
+        //             effectType = src.StatusEffectType
+        //         })
+        //     );
+
+        // CreateMap<MovementCostEffectBlueprint, EffectBlueprintFormDto.MovementCostEffectBlueprintFormDto>()
+        //     .IncludeBase<EffectBlueprint, EffectBlueprintFormDto>()
+        //     .ForMember(
+        //         dest => dest.EffectTypeBody,
+        //         opt => opt.MapFrom((src, dest, member, context) => new EffectBlueprintFormDto.MovementCostEffectBlueprintFormDto.MovementCostSubeffectBlueprintFormDto(){
+        //             effectType = src.MovementCostEffectType
+        //         })
+        //     );
     }
 }

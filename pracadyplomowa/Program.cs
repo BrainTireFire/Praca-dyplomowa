@@ -17,6 +17,7 @@ using pracadyplomowa.Repository.Field;
 using pracadyplomowa.Services.Board;
 using pracadyplomowa.Token.Services;
 using System.Text.Json.Serialization;
+using pracadyplomowa.RequestHelpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,7 @@ builder.Services.AddIdentityServices(builder.Configuration);
 builder.Services.AddControllers().AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        options.JsonSerializerOptions.Converters.Add(new EffectBlueprintJsonConverter());
     });
 builder.Services.AddSignalR();
 builder.Services.AddScoped<ITokenService, TokenService>();

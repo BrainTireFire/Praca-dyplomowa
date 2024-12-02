@@ -16,13 +16,15 @@ namespace pracadyplomowa.Controllers
     public class PowerController: BaseApiController
     {
         private readonly IImmaterialResourceBlueprintRepository _immaterialResourceBlueprintRepository;
+        private readonly IEffectBlueprintRepository _effectBlueprintRepository;
         private readonly IPowerRepository _powerRepository;
         private readonly IMapper _mapper;
 
-        public PowerController(IImmaterialResourceBlueprintRepository immaterialResourceBlueprintRepository, IPowerRepository powerRepository, IMapper mapper)
+        public PowerController(IImmaterialResourceBlueprintRepository immaterialResourceBlueprintRepository, IEffectBlueprintRepository effectBlueprintRepository, IPowerRepository powerRepository, IMapper mapper)
         {
             _immaterialResourceBlueprintRepository = immaterialResourceBlueprintRepository;
             _powerRepository = powerRepository;
+            _effectBlueprintRepository = effectBlueprintRepository;
             _mapper = mapper;
         }
 
@@ -62,5 +64,37 @@ namespace pracadyplomowa.Controllers
             return Ok(powerDto);
         }
 
+        [HttpPost]
+        public async Task<ActionResult> CreateNewPower(PowerFormDto powerDto)
+        {
+            var power = _mapper.Map<Power>(powerDto);
+            power.R_OwnerId = User.GetUserId();
+
+            _powerRepository.Add(power);
+            await _powerRepository.SaveChanges();
+            return Ok(_mapper.Map<PowerFormDto>(power));
+        }
+
+        
+        [HttpPatch]
+        public async Task<ActionResult> UpdatePower(PowerFormDto powerDto)
+        {
+            var power = _mapper.Map<Power>(powerDto);
+            _powerRepository.Update(power);
+            await _powerRepository.SaveChanges();
+            return Ok(_mapper.Map<PowerFormDto>(power));
+        }
+
+        
+        [HttpPost("{powerId}/effects")]
+        public async Task<ActionResult> AddNewEffectBlueprint([FromBody] EffectBlueprintFormDtoWrapper effectDtoWrapper, [FromRoute] int powerId)
+        {
+            var effectBlueprint = _mapper.Map<EffectBlueprint>(effectDtoWrapper.formData);
+            effectBlueprint.R_PowerId = powerId;
+
+            _effectBlueprintRepository.Add(effectBlueprint);
+            await _effectBlueprintRepository.SaveChanges();
+            return Ok(_mapper.Map<EffectBlueprintFormDto>(effectBlueprint));
+        }
     }
 }

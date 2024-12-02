@@ -6,6 +6,8 @@ import styled, { css } from "styled-components";
 import { useState } from "react";
 import { usePower } from "../../features/powers/hooks/usePower";
 import { PowerListItem } from "../../models/power";
+import Button from "../../ui/interactive/Button";
+import { useCreatePower } from "./hooks/useCreatePower";
 
 export default function Powers() {
   const { isLoading, powers, error } = usePowers();
@@ -16,6 +18,9 @@ export default function Powers() {
     power,
     error: powerError,
   } = usePower(selectedPowerId);
+  const { createPower, isPending: isPendingCreation } = useCreatePower(
+    () => {}
+  );
   const handleSelect = (row: any) => {
     console.log(powers);
     console.log(row);
@@ -26,7 +31,7 @@ export default function Powers() {
     console.log(selectedPowerId);
   };
 
-  if (isLoading || isLoadingPower) {
+  if (isLoading || isLoadingPower || isPendingCreation) {
     return <Spinner></Spinner>;
   }
   console.log(power);
@@ -50,8 +55,17 @@ export default function Powers() {
           isSelectable={true}
           onSelect={handleSelect}
         ></ReusableTable>
+        <Button
+          onClick={() => {
+            createPower(initialState);
+          }}
+        >
+          Create new
+        </Button>
       </Column1>
-      <Column2>{power && <PowerForm power={power}></PowerForm>}</Column2>
+      <Column2>
+        {power && <PowerForm power={power} key={power.id}></PowerForm>}
+      </Column2>
     </Container>
   );
 }

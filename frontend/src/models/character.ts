@@ -64,8 +64,8 @@ export type Character = {
 
 export type CharacterInsertDto = {
   name: string;
-  raceId: number;
-  startingClassId: number;
+  raceId: number | null;
+  startingClassId: number | null;
   strength: number;
   dexterity: number;
   constitution: number;

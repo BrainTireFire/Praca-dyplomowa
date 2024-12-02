@@ -1,32 +1,40 @@
-import React, { useEffect } from "react";
 import Menus from "../../../ui/containers/Menus";
 import Table from "../../../ui/containers/Table";
-import styled from "styled-components";
 import Modal from "../../../ui/containers/Modal";
-import {
-  HiArrowDownOnSquare,
-  HiArrowUpOnSquare,
-  HiEye,
-  HiTrash,
-} from "react-icons/hi2";
+import { HiEye, HiTrash } from "react-icons/hi2";
 import { Cell } from "../../../ui/containers/Cell";
 import RadioButton from "../../../ui/containers/RadioButton";
 import { EffectBlueprintListItem } from "../models/effectBlueprint";
-import { usePower } from "../hooks/usePower";
 import { useEffectBlueprint } from "../hooks/useEffectBlueprint";
 import EffectBlueprintForm, {
   EffectBlueprint,
+  initialState,
 } from "../../effects/EffectBlueprintForm";
 import Spinner from "../../../ui/interactive/Spinner";
+import { useCreateEffectBlueprint } from "../hooks/useCreateEffectBlueprint";
 
 export default function EffectTable({
   effects,
+  powerId,
 }: {
   effects: EffectBlueprintListItem[];
+  powerId: number;
 }) {
+  const { createEffectBlueprint, isPending } = useCreateEffectBlueprint(
+    () => {},
+    powerId
+  );
+  if (isPending) {
+    return <Spinner></Spinner>;
+  }
   return (
     <Menus>
-      <Table header="Effects" button="Add new" columns="1fr 1fr 1fr 0.01rem">
+      <Table
+        header="Effects"
+        button="Add new"
+        columns="1fr 1fr 1fr 0.01rem"
+        buttonOnClick={() => createEffectBlueprint(initialState)}
+      >
         <Table.Header>
           <div>Saved</div>
           <div>Level</div>

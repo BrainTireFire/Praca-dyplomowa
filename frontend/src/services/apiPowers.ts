@@ -1,3 +1,4 @@
+import { EffectBlueprint } from "../features/effects/EffectBlueprintForm";
 import { Power } from "../features/powers/models/power";
 import { ImmaterialResourceBlueprint } from "../models/immaterialResourceBlueprint";
 import { PowerListItem } from "../models/power";
@@ -27,4 +28,46 @@ export async function getPowers(): Promise<PowerListItem[]> {
 export async function getPower(powerId: number): Promise<Power> {
   const response = await customFetch(`${BASE_URL}/api/power/${powerId}`);
   return response;
+}
+
+export async function postPower(powerDto: Power): Promise<void> {
+  console.log(powerDto);
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(powerDto),
+  };
+  await customFetch(`${BASE_URL}/api/power`, options);
+  return;
+}
+
+export async function updatePower(powerDto: Power): Promise<void> {
+  console.log(powerDto);
+  const options: RequestInit = {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(powerDto),
+  };
+  await customFetch(`${BASE_URL}/api/power`, options);
+  return;
+}
+
+export async function addEffectBlueprint(
+  effectBlueprintDto: EffectBlueprint,
+  powerId: number
+): Promise<void> {
+  console.log(effectBlueprintDto);
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ formData: effectBlueprintDto }),
+  };
+  await customFetch(`${BASE_URL}/api/power/${powerId}/effects`, options);
+  return;
 }

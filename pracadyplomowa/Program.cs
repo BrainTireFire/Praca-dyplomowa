@@ -51,6 +51,7 @@ builder.Services.AddScoped<IPowerRepository, PowerRepository>();
 builder.Services.AddScoped<IEffectBlueprintRepository, EffectBlueprintRepository>();
 builder.Services.AddScoped<IItemFamilyRepository, ItemFamilyRepository>();
 builder.Services.AddScoped<IImmaterialResourceBlueprintRepository, ImmaterialResourceBlueprintRepository>();
+builder.Services.AddScoped<IItemCostRequirementRepository, ItemCostRequirementRepository>();
 
 builder.Services.AddScoped<IAuthorizationHandler, OwnershipHandler>();
 // builder.Services.AddHttpContextAccessor();

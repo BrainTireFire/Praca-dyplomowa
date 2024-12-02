@@ -77,10 +77,14 @@ function EffectRow({ effect }: { effect: EffectBlueprintListItem }) {
           <Menus.Toggle id={effect.id} />
           <Menus.List id={effect.id}>
             <Modal.Open opens="open">
-              <Menus.Button icon={<HiEye />}>Open</Menus.Button>
+              <Menus.Button icon={<HiEye />} onClick={() => {}}>
+                Open
+              </Menus.Button>
             </Modal.Open>
             <Modal.Open opens="delete">
-              <Menus.Button icon={<HiTrash />}>Delete</Menus.Button>
+              <Menus.Button icon={<HiTrash />} onClick={() => {}}>
+                Delete
+              </Menus.Button>
             </Modal.Open>
           </Menus.List>
         </Menus.Menu>

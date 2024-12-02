@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using pracadyplomowa.Models.DTOs;
+using pracadyplomowa.Models.Entities.Items;
 using pracadyplomowa.Models.Entities.Powers;
 using pracadyplomowa.Repository;
 using pracadyplomowa.Repository.Item;
@@ -18,13 +19,15 @@ namespace pracadyplomowa.Controllers
         private readonly IImmaterialResourceBlueprintRepository _immaterialResourceBlueprintRepository;
         private readonly IEffectBlueprintRepository _effectBlueprintRepository;
         private readonly IPowerRepository _powerRepository;
+        private readonly IItemCostRequirementRepository _itemCostRequirementRepository;
         private readonly IMapper _mapper;
 
-        public PowerController(IImmaterialResourceBlueprintRepository immaterialResourceBlueprintRepository, IEffectBlueprintRepository effectBlueprintRepository, IPowerRepository powerRepository, IMapper mapper)
+        public PowerController(IImmaterialResourceBlueprintRepository immaterialResourceBlueprintRepository, IEffectBlueprintRepository effectBlueprintRepository, IPowerRepository powerRepository, IItemCostRequirementRepository itemCostRequirementRepository, IMapper mapper)
         {
             _immaterialResourceBlueprintRepository = immaterialResourceBlueprintRepository;
             _powerRepository = powerRepository;
             _effectBlueprintRepository = effectBlueprintRepository;
+            _itemCostRequirementRepository = itemCostRequirementRepository;
             _mapper = mapper;
         }
 
@@ -96,5 +99,40 @@ namespace pracadyplomowa.Controllers
             await _effectBlueprintRepository.SaveChanges();
             return Ok(_mapper.Map<EffectBlueprintFormDto>(effectBlueprint));
         }
+
+        
+        [HttpPost("{powerId}/materialComponents")]
+        public async Task<ActionResult> AddMaterialComponent([FromBody] ItemFamilyWithWorthDto materialComponentDto, [FromRoute] int powerId)
+        {
+            var materialComponent = new ItemCostRequirement
+            {
+                R_ItemFamilyId = materialComponentDto.Id,
+                PowerId = powerId,
+                GoldPieces = materialComponentDto.Worth.GoldPieces,
+                SilverPieces = materialComponentDto.Worth.SilverPieces,
+                CopperPieces = materialComponentDto.Worth.CopperPieces
+            };
+
+            _itemCostRequirementRepository.Add(materialComponent);
+            await _itemCostRequirementRepository.SaveChanges();
+            return Ok();
+        }
+        [HttpPatch("{powerId}/materialComponents/{componentId}")]
+        public async Task<ActionResult> AddMaterialComponent([FromBody] ItemFamilyWithWorthDto materialComponentDto, [FromRoute] int powerId, [FromRoute] int componentId)
+        {
+            var materialComponent = new ItemCostRequirement
+            {
+                R_ItemFamilyId = materialComponentDto.Id,
+                PowerId = powerId,
+                GoldPieces = materialComponentDto.Worth.GoldPieces,
+                SilverPieces = materialComponentDto.Worth.SilverPieces,
+                CopperPieces = materialComponentDto.Worth.CopperPieces
+            };
+
+            _itemCostRequirementRepository.Update(materialComponent);
+            await _itemCostRequirementRepository.SaveChanges();
+            return Ok();
+        }
+
     }
 }

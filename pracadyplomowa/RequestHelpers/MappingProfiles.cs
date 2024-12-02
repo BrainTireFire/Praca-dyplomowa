@@ -42,7 +42,11 @@ public class MappingProfiles : Profile
         CreateMap<BoardUpdateDto, Models.Entities.Campaign.Board>();
         CreateMap<ItemCostRequirement, ItemFamilyWithWorthDto>()
             .ForMember(
-                dest => dest.Worth, opt => opt.MapFrom(src => src.Value)
+                dest => dest.Worth, opt => opt.MapFrom(src => new CoinPurseDto(){
+                    GoldPieces = src.GoldPieces,
+                    SilverPieces = src.SilverPieces,
+                    CopperPieces = src.CopperPieces
+                })
             )
             .ForMember(
                 dest => dest.Name, opt => opt.MapFrom(src => src.R_ItemFamily.Name)

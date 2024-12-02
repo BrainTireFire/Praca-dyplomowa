@@ -12,7 +12,7 @@ import {
   castableByOptions,
   CharacterClass,
   ImmaterialResource,
-  MaterialResource,
+  MaterialComponent,
   Power,
   PowerType,
   powerTypeOptions,
@@ -38,6 +38,7 @@ import { EffectBlueprintListItem } from "./models/effectBlueprint";
 import { useUpdatePower } from "./hooks/useUpdatePower";
 import Button from "../../ui/interactive/Button";
 import { usePower } from "./hooks/usePower";
+import { useMaterialComponents } from "./hooks/useMaterialResources";
 
 // Action types
 export enum PowerActionTypes {
@@ -193,7 +194,7 @@ interface UpdateImmaterialResourceUsedAction {
 
 interface UpdateMaterialResourcesUsedAction {
   type: PowerActionTypes.UPDATE_MATERIAL_RESOURCES_USED;
-  payload: MaterialResource[];
+  payload: MaterialComponent[];
 }
 
 interface UpdateEffectBlueprintsAction {
@@ -350,8 +351,13 @@ export default function PowerForm({ powerId }: { powerId: number }) {
   const {
     isLoading: isLoadingImmaterialResources,
     immaterialResourceBlueprints,
-    error,
+    error: errorImmaterialResources,
   } = useImmaterialResourceBlueprints();
+  // const {
+  //   isLoading: isLoadingMaterialResources,
+  //   materialComponents: materialResources,
+  //   error: errorMaterialResources,
+  // } = useMaterialComponents(powerId);
 
   const localImmaterialResourceBlueprints = immaterialResourceBlueprints?.map(
     (x) => {
@@ -366,7 +372,7 @@ export default function PowerForm({ powerId }: { powerId: number }) {
   if (isLoadingImmaterialResources || isPending || isLoadingPower) {
     return <Spinner></Spinner>;
   }
-  if (error) return <>Error</>;
+  if (errorImmaterialResources) return <>Error</>;
   return (
     <>
       <Grid>
@@ -504,6 +510,7 @@ export default function PowerForm({ powerId }: { powerId: number }) {
               ></EffectTable>
               <MatierialResourceTable
                 materialComponents={state.materialResourcesUsed}
+                powerId={powerId ?? -1}
               ></MatierialResourceTable>
 
               <EffectTable

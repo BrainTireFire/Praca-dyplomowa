@@ -1,3 +1,4 @@
+import { ItemFamilyWithWorth } from "../../../models/itemfamily";
 import { ability } from "../../effects/abilities";
 import { CoinPurse } from "../../items/coinPurse";
 import { EffectBlueprintListItem } from "./effectBlueprint";
@@ -28,7 +29,7 @@ export type Power = {
   upcastBy: UpcastBy;
   classForUpcasting: CharacterClass | null;
   immaterialResourceUsed: ImmaterialResource | null;
-  materialResourcesUsed: MaterialResource[];
+  materialResourcesUsed: MaterialComponent[];
   effectBlueprints: EffectBlueprintListItem[];
 };
 
@@ -181,8 +182,4 @@ export type ImmaterialResource = {
   id: number;
   name: string;
 };
-export type MaterialResource = {
-  id: number;
-  name: string;
-  worth: CoinPurse;
-};
+export type MaterialComponent = ItemFamilyWithWorth;

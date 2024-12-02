@@ -1,6 +1,7 @@
 import { EffectBlueprint } from "../features/effects/EffectBlueprintForm";
-import { Power } from "../features/powers/models/power";
+import { MaterialComponent, Power } from "../features/powers/models/power";
 import { ImmaterialResourceBlueprint } from "../models/immaterialResourceBlueprint";
+import { ItemFamilyWithWorth } from "../models/itemfamily";
 import { PowerListItem } from "../models/power";
 import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
@@ -69,5 +70,47 @@ export async function addEffectBlueprint(
     body: JSON.stringify({ formData: effectBlueprintDto }),
   };
   await customFetch(`${BASE_URL}/api/power/${powerId}/effects`, options);
+  return;
+}
+
+export async function getMaterialComponents(
+  powerId: number
+): Promise<ItemFamilyWithWorth[]> {
+  const response = await customFetch(
+    `${BASE_URL}/api/power/${powerId}/materialComponents`
+  );
+
+  console.log(response);
+
+  return response;
+}
+
+export async function getMaterialComponent(
+  componentId: number
+): Promise<ItemFamilyWithWorth[]> {
+  const response = await customFetch(
+    `${BASE_URL}/api/power/materialComponent/${componentId}`
+  );
+
+  console.log(response);
+
+  return response;
+}
+export async function addMaterialComponent(
+  materialResourceDto: MaterialComponent,
+  powerId: number
+): Promise<void> {
+  console.log(materialResourceDto);
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(materialResourceDto),
+  };
+  await customFetch(
+    `${BASE_URL}/api/power/${powerId}/materialComponents`,
+    options
+  );
   return;
 }

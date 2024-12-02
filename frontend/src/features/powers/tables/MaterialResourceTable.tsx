@@ -14,45 +14,56 @@ import RadioButton from "../../../ui/containers/RadioButton";
 import { EffectBlueprint } from "../../effects/EffectBlueprintForm";
 import { ItemFamilyWithWorth } from "../../../models/itemfamily";
 import { coinPursePrint } from "../../items/coinPurse";
-import { ImmaterialResource } from "../models/power";
+import { ImmaterialResource, MaterialComponent } from "../models/power";
+import MaterialComponentForm from "../MaterialComponentForm";
+import { PowerIdContext } from "../contexts/PowerIdContext";
 
 export default function MatierialResourceTable({
   materialComponents,
+  powerId,
 }: {
-  materialComponents: ImmaterialResource[];
+  materialComponents: MaterialComponent[];
+  powerId: number;
 }) {
   return (
-    <Menus>
-      <Table
-        header="Material resources"
-        button="Add new"
-        columns="1fr 1fr 0.01rem"
-      >
-        <Table.Header>
-          <div>Family</div>
-          <div>Value</div>
-          <div></div>
-        </Table.Header>
-        <Table.Body
-          data={materialComponents}
-          columnCount={3}
-          render={(materialComponent) => (
-            <MaterialComponentRow
-              key={materialComponent.id}
-              materialComponent={materialComponent}
-            />
-          )}
-        />
-        <Table.Footer>{/* <Pagination count={count} /> */}</Table.Footer>
-      </Table>
-    </Menus>
+    <PowerIdContext.Provider
+      value={{
+        powerId: powerId,
+      }}
+    >
+      <Menus>
+        <Table
+          header="Material resources"
+          button="Add new"
+          columns="1fr 1fr 0.01rem"
+          modal={<MaterialComponentForm materialComponentId={null} />}
+        >
+          <Table.Header>
+            <div>Family</div>
+            <div>Value</div>
+            <div></div>
+          </Table.Header>
+          <Table.Body
+            data={materialComponents}
+            columnCount={3}
+            render={(materialComponent) => (
+              <MaterialComponentRow
+                key={materialComponent.id}
+                materialComponent={materialComponent}
+              />
+            )}
+          />
+          <Table.Footer>{/* <Pagination count={count} /> */}</Table.Footer>
+        </Table>
+      </Menus>
+    </PowerIdContext.Provider>
   );
 }
 
 function MaterialComponentRow({
   materialComponent,
 }: {
-  materialComponent: ImmaterialResource;
+  materialComponent: ItemFamilyWithWorth;
 }) {
   return (
     <Table.Row>
@@ -63,26 +74,15 @@ function MaterialComponentRow({
         <Menus.Menu>
           <Menus.Toggle id={materialComponent.id} />
           <Menus.List id={materialComponent.id}>
-            <Menus.Button icon={<HiEye />} onClick={() => alert("Test")}>
-              Test 1
-            </Menus.Button>
-
-            <Menus.Button
-              icon={<HiArrowDownOnSquare />}
-              onClick={() => alert("Test")}
-            >
-              Test 2
-            </Menus.Button>
-
-            <Menus.Button
-              icon={<HiArrowUpOnSquare />}
-              onClick={() => alert("Test")}
-            >
-              Test 3
-            </Menus.Button>
-
+            <Modal.Open opens="open">
+              <Menus.Button icon={<HiEye />} onClick={() => {}}>
+                Open
+              </Menus.Button>
+            </Modal.Open>
             <Modal.Open opens="delete">
-              <Menus.Button icon={<HiTrash />}>Test 4</Menus.Button>
+              <Menus.Button icon={<HiTrash />} onClick={() => {}}>
+                Delete
+              </Menus.Button>
             </Modal.Open>
           </Menus.List>
         </Menus.Menu>

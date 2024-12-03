@@ -1,4 +1,3 @@
-import { ItemFamilyWithWorth } from "../../../models/itemfamily";
 import { ability } from "../../effects/abilities";
 import { CoinPurse } from "../../items/coinPurse";
 import { EffectBlueprintListItem } from "./effectBlueprint";
@@ -182,4 +181,9 @@ export type ImmaterialResource = {
   id: number;
   name: string;
 };
-export type MaterialComponent = ItemFamilyWithWorth;
+export type MaterialComponent = {
+  id: number | null;
+  itemFamilyId: number | null;
+  name: string;
+  worth: CoinPurse;
+};

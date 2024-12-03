@@ -1,7 +1,6 @@
 import { EffectBlueprint } from "../features/effects/EffectBlueprintForm";
 import { MaterialComponent, Power } from "../features/powers/models/power";
 import { ImmaterialResourceBlueprint } from "../models/immaterialResourceBlueprint";
-import { ItemFamilyWithWorth } from "../models/itemfamily";
 import { PowerListItem } from "../models/power";
 import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
@@ -75,7 +74,7 @@ export async function addEffectBlueprint(
 
 export async function getMaterialComponents(
   powerId: number
-): Promise<ItemFamilyWithWorth[]> {
+): Promise<MaterialComponent[]> {
   const response = await customFetch(
     `${BASE_URL}/api/power/${powerId}/materialComponents`
   );
@@ -87,7 +86,7 @@ export async function getMaterialComponents(
 
 export async function getMaterialComponent(
   componentId: number
-): Promise<ItemFamilyWithWorth[]> {
+): Promise<MaterialComponent[]> {
   const response = await customFetch(
     `${BASE_URL}/api/power/materialComponent/${componentId}`
   );
@@ -103,6 +102,40 @@ export async function addMaterialComponent(
   console.log(materialResourceDto);
   const options: RequestInit = {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(materialResourceDto),
+  };
+  await customFetch(
+    `${BASE_URL}/api/power/${powerId}/materialComponents`,
+    options
+  );
+  return;
+}
+export async function deleteMaterialComponent(
+  componentId: number
+): Promise<void> {
+  const options: RequestInit = {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  await customFetch(
+    `${BASE_URL}/api/power/materialComponent/${componentId}`,
+    options
+  );
+  return;
+}
+
+export async function updateMaterialComponent(
+  materialResourceDto: MaterialComponent,
+  powerId: number
+): Promise<void> {
+  console.log(materialResourceDto);
+  const options: RequestInit = {
+    method: "PATCH",
     headers: {
       "Content-Type": "application/json",
     },

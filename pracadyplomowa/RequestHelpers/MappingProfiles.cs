@@ -40,7 +40,7 @@ public class MappingProfiles : Profile
         CreateMap<Field, FieldDto>();
         CreateMap<FieldUpdateDto, Field>();
         CreateMap<BoardUpdateDto, Models.Entities.Campaign.Board>();
-        CreateMap<ItemCostRequirement, ItemFamilyWithWorthDto>()
+        CreateMap<ItemCostRequirement, ItemCostRequirementDto>()
             .ForMember(
                 dest => dest.Worth, opt => opt.MapFrom(src => new CoinPurseDto(){
                     GoldPieces = src.GoldPieces,
@@ -52,7 +52,10 @@ public class MappingProfiles : Profile
                 dest => dest.Name, opt => opt.MapFrom(src => src.R_ItemFamily.Name)
             )
             .ForMember(
-                dest => dest.Id, opt => opt.MapFrom(src => src.R_ItemFamily.Id)
+                dest => dest.ItemFamilyId, opt => opt.MapFrom(src => src.R_ItemFamily.Id)
+            )
+            .ForMember(
+                dest => dest.Id, opt => opt.MapFrom(src => src.Id)
             );
         CreateMap<EffectBlueprint, EffectBlueprintDto>()
             .ForMember(

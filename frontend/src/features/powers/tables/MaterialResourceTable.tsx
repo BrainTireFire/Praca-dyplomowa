@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import Menus from "../../../ui/containers/Menus";
 import Table from "../../../ui/containers/Table";
 import styled from "styled-components";
@@ -12,11 +12,12 @@ import {
 import { Cell } from "../../../ui/containers/Cell";
 import RadioButton from "../../../ui/containers/RadioButton";
 import { EffectBlueprint } from "../../effects/EffectBlueprintForm";
-import { ItemFamilyWithWorth } from "../../../models/itemfamily";
 import { coinPursePrint } from "../../items/coinPurse";
 import { ImmaterialResource, MaterialComponent } from "../models/power";
 import MaterialComponentForm from "../MaterialComponentForm";
 import { PowerIdContext } from "../contexts/PowerIdContext";
+import { useDeleteMaterialComponent } from "../hooks/useDeleteMaterialComponent";
+import ConfirmDelete from "../../../ui/containers/ConfirmDelete";
 
 export default function MatierialResourceTable({
   materialComponents,
@@ -36,7 +37,20 @@ export default function MatierialResourceTable({
           header="Material resources"
           button="Add new"
           columns="1fr 1fr 0.01rem"
-          modal={<MaterialComponentForm materialComponentId={null} />}
+          modal={
+            <MaterialComponentForm
+              materialComponent={{
+                id: null,
+                itemFamilyId: null,
+                name: "",
+                worth: {
+                  goldPieces: 0,
+                  silverPieces: 0,
+                  copperPieces: 0,
+                },
+              }}
+            />
+          }
         >
           <Table.Header>
             <div>Family</div>
@@ -63,8 +77,13 @@ export default function MatierialResourceTable({
 function MaterialComponentRow({
   materialComponent,
 }: {
-  materialComponent: ItemFamilyWithWorth;
+  materialComponent: MaterialComponent;
 }) {
+  const { powerId } = useContext(PowerIdContext);
+  const { isPending, deleteMaterialComponent } = useDeleteMaterialComponent(
+    () => {},
+    powerId
+  );
   return (
     <Table.Row>
       <Cell>{materialComponent.name}</Cell>
@@ -86,14 +105,17 @@ function MaterialComponentRow({
             </Modal.Open>
           </Menus.List>
         </Menus.Menu>
+        <Modal.Window name="open">
+          <MaterialComponentForm materialComponent={materialComponent} />
+        </Modal.Window>
         <Modal.Window name="delete">
-          {/* <ConfirmDelete
-            resourceName="equipment"
-            disabled={isDeleting}
+          <ConfirmDelete
+            resourceName="material component"
+            disabled={isPending}
             onConfirm={() => {
-              deleteBooking(bookingId);
+              deleteMaterialComponent(Number(materialComponent.id));
             }}
-          /> */}
+          />
         </Modal.Window>
       </Modal>
     </Table.Row>

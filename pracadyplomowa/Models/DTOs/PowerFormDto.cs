@@ -33,7 +33,7 @@ public class PowerFormDto
     public UpcastBy UpcastBy { get; set; }
     public ClassDTO? ClassForUpcasting { get; set; }
     public ImmaterialResourceBlueprintDto? ImmaterialResourceUsed { get; set; }
-    public List<ItemFamilyWithWorthDto> MaterialResourcesUsed { get; set; } = [];
+    public List<ItemCostRequirementDto> MaterialResourcesUsed { get; set; } = [];
     public List<EffectBlueprintDto> EffectBlueprints { get; set; } = [];
 
     public class EffectBlueprintDto {

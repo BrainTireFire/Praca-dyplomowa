@@ -2,7 +2,6 @@ import { useEffect, useReducer } from "react";
 import FormRowVertical from "../../ui/forms/FormRowVertical";
 import Input from "../../ui/forms/Input";
 import { abilitiesDropdown, ability } from "../effects/abilities";
-import { EffectBlueprint } from "../effects/EffectBlueprintForm";
 import {
   ActionType,
   actionTypeOptions,
@@ -32,13 +31,12 @@ import FormRowLabelRight from "../../ui/forms/FormRowLabelRight";
 import RadioGroup from "../../ui/forms/RadioGroup";
 import styled, { css } from "styled-components";
 import EffectTable from "./tables/EffectTable";
-import MatierialResourceTable from "./tables/MaterialResourceTable";
 import Box from "../../ui/containers/Box";
 import { EffectBlueprintListItem } from "./models/effectBlueprint";
 import { useUpdatePower } from "./hooks/useUpdatePower";
 import Button from "../../ui/interactive/Button";
 import { usePower } from "./hooks/usePower";
-import { useMaterialComponents } from "./hooks/useMaterialResources";
+import MaterialResourceTable from "./tables/MaterialResourceTable";
 
 // Action types
 export enum PowerActionTypes {
@@ -508,10 +506,10 @@ export default function PowerForm({ powerId }: { powerId: number }) {
                 effects={state.effectBlueprints}
                 powerId={powerId ?? -1}
               ></EffectTable>
-              <MatierialResourceTable
+              <MaterialResourceTable
                 materialComponents={state.materialResourcesUsed}
                 powerId={powerId ?? -1}
-              ></MatierialResourceTable>
+              ></MaterialResourceTable>
 
               <EffectTable
                 effects={state.effectBlueprints}

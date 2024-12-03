@@ -75,7 +75,7 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpDelete("blueprint/{effectId}")]
-        public async Task<ActionResult> UpdateEffectBlueprint([FromRoute] int effectId)
+        public async Task<ActionResult> DeleteEffectBlueprint([FromRoute] int effectId)
         {
             _effectBlueprintRepository.Delete(effectId);
             await _effectBlueprintRepository.SaveChanges();

@@ -7,29 +7,37 @@ import Spinner from "../../ui/interactive/Spinner";
 import Button from "../../ui/interactive/Button";
 import { useCreateMaterialComponent } from "./hooks/useCreateMaterialComponent";
 import { PowerIdContext } from "./contexts/PowerIdContext";
+import { useUpdateMaterialComponent } from "./hooks/useUpdateMaterialComponent";
+import { MaterialComponent } from "./models/power";
 
 export default function MaterialComponentForm({
-  materialComponentId,
+  materialComponent,
 }: {
-  materialComponentId: number | null;
+  materialComponent: MaterialComponent;
 }) {
   const { powerId } = useContext(PowerIdContext);
   const { isLoading, itemFamilies, error } = useItemFamilies();
 
-  const [goldPieces, setGoldPieces] = useState(0);
-  const [silverPieces, setSilverPieces] = useState(0);
-  const [copperPieces, setCopperPieces] = useState(0);
+  const [goldPieces, setGoldPieces] = useState(
+    materialComponent.worth.goldPieces
+  );
+  const [silverPieces, setSilverPieces] = useState(
+    materialComponent.worth.goldPieces
+  );
+  const [copperPieces, setCopperPieces] = useState(
+    materialComponent.worth.goldPieces
+  );
 
   const [selectedItemFamilyId, setSelectedItemFamilyId] = useState<
     null | number
-  >(null);
+  >(materialComponent.itemFamilyId);
 
-  const { createMaterialComponent, isPending } = useCreateMaterialComponent(
-    () => {},
-    powerId
-  );
+  const { createMaterialComponent, isPending: isPendingCreate } =
+    useCreateMaterialComponent(() => {}, powerId);
+  const { updateMaterialComponent, isPending: isPendingUpdate } =
+    useUpdateMaterialComponent(() => {}, powerId);
 
-  if (isLoading || isPending) {
+  if (isLoading || isPendingCreate || isPendingUpdate) {
     return <Spinner></Spinner>;
   }
 
@@ -74,12 +82,13 @@ export default function MaterialComponentForm({
           setChosenValue={(value) => setSelectedItemFamilyId(Number(value))}
         ></Dropdown>
       </FormRowVertical>
-      {materialComponentId == null && (
+      {materialComponent.id == null && (
         <Button
           disabled={selectedItemFamilyId == null}
           onClick={() =>
             createMaterialComponent({
-              id: selectedItemFamilyId ?? 0,
+              id: -1,
+              itemFamilyId: Number(selectedItemFamilyId),
               name: "",
               worth: {
                 goldPieces: goldPieces,
@@ -92,7 +101,24 @@ export default function MaterialComponentForm({
           Save
         </Button>
       )}
-      {materialComponentId != null && <Button>Update</Button>}
+      {materialComponent.id != null && (
+        <Button
+          onClick={() => {
+            updateMaterialComponent({
+              id: materialComponent.id,
+              itemFamilyId: Number(selectedItemFamilyId),
+              name: "",
+              worth: {
+                goldPieces: goldPieces,
+                silverPieces: silverPieces,
+                copperPieces: copperPieces,
+              },
+            });
+          }}
+        >
+          Update
+        </Button>
+      )}
     </>
   );
 }

@@ -102,11 +102,11 @@ namespace pracadyplomowa.Controllers
 
         
         [HttpPost("{powerId}/materialComponents")]
-        public async Task<ActionResult> AddMaterialComponent([FromBody] ItemFamilyWithWorthDto materialComponentDto, [FromRoute] int powerId)
+        public async Task<ActionResult> AddMaterialComponent([FromBody] ItemCostRequirementDto materialComponentDto, [FromRoute] int powerId)
         {
             var materialComponent = new ItemCostRequirement
             {
-                R_ItemFamilyId = materialComponentDto.Id,
+                R_ItemFamilyId = materialComponentDto.ItemFamilyId,
                 PowerId = powerId,
                 GoldPieces = materialComponentDto.Worth.GoldPieces,
                 SilverPieces = materialComponentDto.Worth.SilverPieces,
@@ -117,12 +117,13 @@ namespace pracadyplomowa.Controllers
             await _itemCostRequirementRepository.SaveChanges();
             return Ok();
         }
-        [HttpPatch("{powerId}/materialComponents/{componentId}")]
-        public async Task<ActionResult> AddMaterialComponent([FromBody] ItemFamilyWithWorthDto materialComponentDto, [FromRoute] int powerId, [FromRoute] int componentId)
+        [HttpPatch("{powerId}/materialComponents")]
+        public async Task<ActionResult> UpdateMaterialComponent([FromBody] ItemCostRequirementDto materialComponentDto, [FromRoute] int powerId)
         {
             var materialComponent = new ItemCostRequirement
             {
-                R_ItemFamilyId = materialComponentDto.Id,
+                Id = materialComponentDto.Id,
+                R_ItemFamilyId = materialComponentDto.ItemFamilyId,
                 PowerId = powerId,
                 GoldPieces = materialComponentDto.Worth.GoldPieces,
                 SilverPieces = materialComponentDto.Worth.SilverPieces,
@@ -132,6 +133,14 @@ namespace pracadyplomowa.Controllers
             _itemCostRequirementRepository.Update(materialComponent);
             await _itemCostRequirementRepository.SaveChanges();
             return Ok();
+        }
+
+        [HttpDelete("materialComponent/{componentId}")]
+        public async Task<ActionResult> DeleteEffectBlueprint([FromRoute] int componentId)
+        {
+            _itemCostRequirementRepository.Delete(componentId);
+            await _itemCostRequirementRepository.SaveChanges();
+            return Ok("Resource deleted");
         }
 
     }

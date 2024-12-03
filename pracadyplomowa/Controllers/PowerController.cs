@@ -90,9 +90,9 @@ namespace pracadyplomowa.Controllers
 
         
         [HttpPost("{powerId}/effects")]
-        public async Task<ActionResult> AddNewEffectBlueprint([FromBody] EffectBlueprintFormDtoWrapper effectDtoWrapper, [FromRoute] int powerId)
+        public async Task<ActionResult> AddNewEffectBlueprint([FromBody] EffectBlueprintFormDto effectDto, [FromRoute] int powerId)
         {
-            var effectBlueprint = _mapper.Map<EffectBlueprint>(effectDtoWrapper.formData);
+            var effectBlueprint = _mapper.Map<EffectBlueprint>(effectDto);
             effectBlueprint.R_PowerId = powerId;
 
             _effectBlueprintRepository.Add(effectBlueprint);

@@ -66,7 +66,7 @@ export async function addEffectBlueprint(
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ formData: effectBlueprintDto }),
+    body: JSON.stringify(effectBlueprintDto),
   };
   await customFetch(`${BASE_URL}/api/power/${powerId}/effects`, options);
   return;

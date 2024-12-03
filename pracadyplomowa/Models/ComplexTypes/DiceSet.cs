@@ -83,8 +83,8 @@ namespace pracadyplomowa.Models.Entities.Characters
             public AdditionalValueType additionalValueType;
             public Class? R_LevelsInClass { get; set; }
             public int? R_LevelsInClassId { get; set; }
-            public Ability Ability {get; set;}
-            public Skill Skill {get; set;}
+            public Ability? Ability {get; set;}
+            public Skill? Skill {get; set;}
 
             public int ReturnValue(Character roller){
                 if(additionalValueType == AdditionalValueType.LevelsInClass){
@@ -94,10 +94,10 @@ namespace pracadyplomowa.Models.Entities.Characters
                     return roller.R_CharacterHasLevelsInClass.Count;
                 }
                 else if(additionalValueType == AdditionalValueType.AbilityScoreModifier){
-                    return Character.AbilityModifier(roller.AbilityValue(Ability));
+                    return Character.AbilityModifier(roller.AbilityValue((Ability)Ability));
                 }
                 else if(additionalValueType == AdditionalValueType.SkillBonus){
-                    return roller.SkillValue(Skill);
+                    return roller.SkillValue((Skill)Skill);
                 }
                 else throw new UnreachableException();
             }

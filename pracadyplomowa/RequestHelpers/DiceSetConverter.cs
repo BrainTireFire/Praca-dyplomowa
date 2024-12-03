@@ -4,30 +4,55 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using pracadyplomowa.Models.DTOs;
+using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Models.Entities.Powers.EffectBlueprints;
 
 namespace pracadyplomowa.RequestHelpers
 {
-    public class DiceSetConverter : ITypeConverter<ValueEffectBlueprint, EffectBlueprintFormDto.ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto>
+    public class DiceSetToDtoConverter : ITypeConverter<DiceSet, ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto>
     {
-        public EffectBlueprintFormDto.ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto Convert(ValueEffectBlueprint source, EffectBlueprintFormDto.ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto destination, ResolutionContext context)
+        public ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto Convert(DiceSet source, ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto destination, ResolutionContext context)
         {
-            return new EffectBlueprintFormDto.ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto
+            return new ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto
             {
-                d100 = source.DiceSet.d100,
-                d20 = source.DiceSet.d20,
-                d12 = source.DiceSet.d12,
-                d10 = source.DiceSet.d10,
-                d8 = source.DiceSet.d8,
-                d6 = source.DiceSet.d6,
-                d4 = source.DiceSet.d4,
-                flat = source.DiceSet.flat,
-                additionalValues = source.DiceSet.additionalValues.Select(av => new EffectBlueprintFormDto.ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto.AdditionalValueFormDto
+                d100 = source.d100,
+                d20 = source.d20,
+                d12 = source.d12,
+                d10 = source.d10,
+                d8 = source.d8,
+                d6 = source.d6,
+                d4 = source.d4,
+                flat = source.flat,
+                additionalValues = source.additionalValues.Select(av => new ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto.AdditionalValueFormDto
                 {
                     LevelsInClassId = av.R_LevelsInClassId,
                     ClassName = av.R_LevelsInClass?.Name,
-                    Ability = av.Ability.ToString(),
-                    Skill = av.Skill.ToString()
+                    Ability = av.Ability,
+                    Skill = av.Skill
+                }).ToList()
+            };
+        }
+    }
+
+    public class DtoToDiceSetConverter : ITypeConverter<ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto, DiceSet>
+    {
+        public DiceSet Convert(ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto source, DiceSet destination, ResolutionContext context)
+        {
+            return new DiceSet
+            {
+                d100 = source.d100,
+                d20 = source.d20,
+                d12 = source.d12,
+                d10 = source.d10,
+                d8 = source.d8,
+                d6 = source.d6,
+                d4 = source.d4,
+                flat = source.flat,
+                additionalValues = source.additionalValues.Select(av => new DiceSet.AdditionalValue
+                {
+                    R_LevelsInClassId = av.LevelsInClassId,
+                    Ability = av.Ability,
+                    Skill = av.Skill
                 }).ToList()
             };
         }

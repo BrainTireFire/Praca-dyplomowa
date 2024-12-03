@@ -31,7 +31,7 @@ export async function updateEffectBlueprint(
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ formData: effectBlueprintDto }),
+    body: JSON.stringify(effectBlueprintDto),
   };
   await customFetch(`${BASE_URL}/api/effect/blueprint`, options);
   return;

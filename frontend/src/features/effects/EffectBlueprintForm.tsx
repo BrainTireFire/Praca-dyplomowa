@@ -216,12 +216,14 @@ const effectReducer = (
       newState = { ...state, effectTypeBody: action.payload };
       break;
     case "resetState":
+      console.log("reset state");
       newState = action.payload;
       break;
     default:
       newState = state;
       break;
   }
+  console.log(action.type);
   console.log(newState);
   return newState;
 };

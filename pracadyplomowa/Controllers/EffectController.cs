@@ -54,13 +54,13 @@ namespace pracadyplomowa.Controllers
 
 
         [HttpPatch("blueprint")]
-        public async Task<ActionResult> UpdateEffectBlueprint([FromBody] EffectBlueprintFormDtoWrapper effectDtoWrapper)
+        public async Task<ActionResult> UpdateEffectBlueprint([FromBody] EffectBlueprintFormDto effectDto)
         {
-            var id = effectDtoWrapper.formData.Id;
+            var id = effectDto.Id;
             if(id != null){
                 var effectBlueprintOriginal = _effectBlueprintRepository.GetById((int)id);
                 if(effectBlueprintOriginal != null){
-                    var effectBlueprint = _mapper.Map<EffectBlueprintFormDto, EffectBlueprint>(effectDtoWrapper.formData, effectBlueprintOriginal);
+                    var effectBlueprint = _mapper.Map<EffectBlueprintFormDto, EffectBlueprint>(effectDto, effectBlueprintOriginal);
                     _effectBlueprintRepository.Update(effectBlueprint);
                     await _effectBlueprintRepository.SaveChanges();
                     return Ok(_mapper.Map<EffectBlueprintFormDto>(effectBlueprint));

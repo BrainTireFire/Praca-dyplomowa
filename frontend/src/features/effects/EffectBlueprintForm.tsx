@@ -1,4 +1,10 @@
-import { useCallback, useContext, useEffect, useReducer } from "react";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
 import Box from "../../ui/containers/Box";
 import FormRowLabelRight from "../../ui/forms/FormRowLabelRight";
 import FormRowVertical from "../../ui/forms/FormRowVertical";
@@ -83,6 +89,7 @@ import Spinner from "../../ui/interactive/Spinner";
 import { useEffectBlueprint } from "./hooks/useEffectBlueprint";
 import { useUpdateEffectBlueprint } from "./hooks/useUpdateEffectBlueprint";
 import { PowerIdContext } from "../powers/contexts/PowerIdContext";
+import { ValueEffect } from "./valueEffect";
 
 const effectTypes = [
   "movementEffect",
@@ -241,6 +248,7 @@ export default function EffectBlueprintForm({
     powerId
   );
   const [state, dispatch] = useReducer(effectReducer, initialState);
+  const [resetHappened, setResetHappened] = useState(false);
   // Update local state when data is fetched
   useEffect(() => {
     if (effectBlueprint) {
@@ -248,12 +256,20 @@ export default function EffectBlueprintForm({
         type: "resetState",
         payload: effectBlueprint,
       });
+      setResetHappened(true);
     }
   }, [effectBlueprint]);
   const handleChildStateUpdate = useCallback((x: EffectBody) => {
     dispatch({ type: "setEffectTypeBody", payload: x });
   }, []);
-  if (isLoading || isPending) {
+  const disableUpdateButton = () => {
+    let x =
+      (state.effectTypeBody as ValueEffect)?.value?.additionalValues?.some(
+        (value) => value.levelsInClassId === null
+      ) || false;
+    return x;
+  };
+  if (isLoading || isPending || !resetHappened) {
     return <Spinner></Spinner>;
   }
   if (error) {
@@ -449,7 +465,12 @@ export default function EffectBlueprintForm({
           </Div3>
         </Container>
       </ScrollContainer>
-      <Button onClick={() => updateEffectBlueprint(state)}>Update</Button>
+      <Button
+        onClick={() => updateEffectBlueprint(state)}
+        disabled={disableUpdateButton()}
+      >
+        Update
+      </Button>
     </>
   );
 }

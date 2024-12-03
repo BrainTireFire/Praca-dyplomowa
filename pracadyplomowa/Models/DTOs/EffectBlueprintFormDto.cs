@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using pracadyplomowa.Models.ComplexTypes.Effects;
+using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Models.Enums;
 
 namespace pracadyplomowa.Models.DTOs
@@ -67,7 +68,7 @@ namespace pracadyplomowa.Models.DTOs
                 public List<AdditionalValueFormDto> additionalValues { get; set; } = [];
 
                 public class AdditionalValueFormDto {
-                    public string AdditionalValueType;
+                    public DiceSet.AdditionalValue.AdditionalValueType AdditionalValueType { get; set; }
                     public int? LevelsInClassId { get; set; }
                     public string? ClassName { get; set; }
                     public Ability? Ability {get; set;}

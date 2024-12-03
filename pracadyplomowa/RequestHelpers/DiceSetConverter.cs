@@ -28,7 +28,8 @@ namespace pracadyplomowa.RequestHelpers
                     LevelsInClassId = av.R_LevelsInClassId,
                     ClassName = av.R_LevelsInClass?.Name,
                     Ability = av.Ability,
-                    Skill = av.Skill
+                    Skill = av.Skill,
+                    AdditionalValueType = av.additionalValueType
                 }).ToList()
             };
         }
@@ -52,7 +53,8 @@ namespace pracadyplomowa.RequestHelpers
                 {
                     R_LevelsInClassId = av.LevelsInClassId,
                     Ability = av.Ability,
-                    Skill = av.Skill
+                    Skill = av.Skill,
+                    additionalValueType = av.AdditionalValueType
                 }).ToList()
             };
         }

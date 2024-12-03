@@ -80,7 +80,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                 AbilityScoreModifier = 2,
                 SkillBonus = 3,
             }
-            public AdditionalValueType additionalValueType;
+            public AdditionalValueType additionalValueType { get; set; }
             public Class? R_LevelsInClass { get; set; }
             public int? R_LevelsInClassId { get; set; }
             public Ability? Ability {get; set;}

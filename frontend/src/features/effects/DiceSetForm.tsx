@@ -23,23 +23,23 @@ const HorizontalContainer = styled.div`
 `;
 
 export type AdditionalValue = {
-  Id: number; // Local id
-  DatabaseId: number | null; // Id in database
-  AdditionalValueType: (typeof AdditionalValueTypes)[number];
-  LevelsInClassId: number;
-  ClassName: string;
-  Ability: (typeof abilities)[number];
-  Skill: (typeof skills)[number];
+  id: number; // Local id
+  databaseId: number | null; // Id in database
+  additionalValueType: (typeof AdditionalValueTypes)[number];
+  levelsInClassId: number | null;
+  className: string;
+  ability: (typeof abilities)[number];
+  skill: (typeof skills)[number];
 };
 
 const initialAdditionalValue: AdditionalValue = {
-  Id: -1, // Local id
-  DatabaseId: null, // Id in database
-  AdditionalValueType: "LevelsInClass",
-  LevelsInClassId: 0,
-  ClassName: "",
-  Ability: "STRENGTH",
-  Skill: "Acrobatics",
+  id: -1, // Local id
+  databaseId: null, // Id in database
+  additionalValueType: "LevelsInClass",
+  levelsInClassId: null,
+  className: "",
+  ability: "STRENGTH",
+  skill: "Acrobatics",
 };
 
 export const AdditionalValueTypes = [
@@ -336,18 +336,18 @@ export function DiceSetForm({
           let value: string | null;
 
           // Determine the value based on AdditionalValueType
-          switch (additionalValue.AdditionalValueType) {
+          switch (additionalValue.additionalValueType) {
             case "LevelsInClass":
-              value = additionalValue.ClassName;
+              value = additionalValue.className;
               break;
             case "TotalLevel":
-              value = additionalValue.ClassName;
+              value = additionalValue.className;
               break;
             case "AbilityScoreModifier":
-              value = AbilitiesLabelMap[additionalValue.Ability];
+              value = AbilitiesLabelMap[additionalValue.ability];
               break;
             case "SkillBonus":
-              value = SkillsLabelMap[additionalValue.Skill];
+              value = SkillsLabelMap[additionalValue.skill];
               break;
             default:
               value = null; // Handle unexpected types
@@ -356,7 +356,7 @@ export function DiceSetForm({
           return {
             id: index,
             AdditionalValueType:
-              AdditionalValueTypeLabelMap[additionalValue.AdditionalValueType] +
+              AdditionalValueTypeLabelMap[additionalValue.additionalValueType] +
               " " +
               index,
             Value: value,

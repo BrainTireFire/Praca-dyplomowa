@@ -27,9 +27,9 @@ export type AdditionalValue = {
   databaseId: number | null; // Id in database
   additionalValueType: (typeof AdditionalValueTypes)[number];
   levelsInClassId: number | null;
-  className: string;
-  ability: (typeof abilities)[number];
-  skill: (typeof skills)[number];
+  className: string | null;
+  ability: (typeof abilities)[number] | null;
+  skill: (typeof skills)[number] | null;
 };
 
 const initialAdditionalValue: AdditionalValue = {
@@ -37,9 +37,9 @@ const initialAdditionalValue: AdditionalValue = {
   databaseId: null, // Id in database
   additionalValueType: "LevelsInClass",
   levelsInClassId: null,
-  className: "",
-  ability: "STRENGTH",
-  skill: "Acrobatics",
+  className: null,
+  ability: null,
+  skill: null,
 };
 
 export const AdditionalValueTypes = [
@@ -338,16 +338,20 @@ export function DiceSetForm({
           // Determine the value based on AdditionalValueType
           switch (additionalValue.additionalValueType) {
             case "LevelsInClass":
-              value = additionalValue.className;
+              value = additionalValue.className ?? "Select value";
               break;
             case "TotalLevel":
-              value = additionalValue.className;
+              value = additionalValue.className ?? "Select value";
               break;
             case "AbilityScoreModifier":
-              value = AbilitiesLabelMap[additionalValue.ability];
+              value = additionalValue.ability
+                ? AbilitiesLabelMap[additionalValue.ability]
+                : "Select value";
               break;
             case "SkillBonus":
-              value = SkillsLabelMap[additionalValue.skill];
+              value = additionalValue.skill
+                ? SkillsLabelMap[additionalValue.skill]
+                : "Select value";
               break;
             default:
               value = null; // Handle unexpected types
@@ -356,9 +360,7 @@ export function DiceSetForm({
           return {
             id: index,
             AdditionalValueType:
-              AdditionalValueTypeLabelMap[additionalValue.additionalValueType] +
-              " " +
-              index,
+              AdditionalValueTypeLabelMap[additionalValue.additionalValueType],
             Value: value,
           };
         })}

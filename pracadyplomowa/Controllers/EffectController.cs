@@ -60,9 +60,21 @@ namespace pracadyplomowa.Controllers
             if(id != null){
                 var effectBlueprintOriginal = _effectBlueprintRepository.GetById((int)id);
                 if(effectBlueprintOriginal != null){
-                    var effectBlueprint = _mapper.Map<EffectBlueprintFormDto, EffectBlueprint>(effectDto, effectBlueprintOriginal);
-                    _effectBlueprintRepository.Update(effectBlueprint);
+                    var effectBlueprint = _mapper.Map<EffectBlueprint>(effectDto);
+
+                    effectBlueprint.R_CreatedByEquippingId = effectBlueprintOriginal.R_CreatedByEquippingId;
+                    effectBlueprint.R_CastedOnCharactersByAuraId = effectBlueprintOriginal.R_CastedOnCharactersByAuraId;
+                    effectBlueprint.R_CastedOnTilesByAuraId = effectBlueprintOriginal.R_CastedOnTilesByAuraId;
+                    effectBlueprint.R_PowerId = effectBlueprintOriginal.R_PowerId;
+
+                    // _effectBlueprintRepository.DetachEntity(effectBlueprintOriginal);
+                    _effectBlueprintRepository.Delete(effectBlueprintOriginal.Id);
                     await _effectBlueprintRepository.SaveChanges();
+                    _effectBlueprintRepository.ClearTracker();
+
+                    _effectBlueprintRepository.Add(effectBlueprint);
+                    await _effectBlueprintRepository.SaveChanges();
+
                     return Ok(_mapper.Map<EffectBlueprintFormDto>(effectBlueprint));
                 }
                 else{

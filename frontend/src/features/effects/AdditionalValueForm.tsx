@@ -88,14 +88,14 @@ export function AdditionalValueForm({
         <Dropdown
           valuesList={abilitiesDropdown}
           setChosenValue={(e) => updateAbility(e as (typeof abilities)[number])}
-          chosenValue={localValue.additionalValueType}
+          chosenValue={localValue.ability}
         ></Dropdown>
       </FormRowVertical>
       <FormRowVertical label={"Skill"}>
         <Dropdown
           valuesList={skillsDropdown}
           setChosenValue={(e) => updateSkill(e as (typeof skills)[number])}
-          chosenValue={localValue.additionalValueType}
+          chosenValue={localValue.skill}
         ></Dropdown>
       </FormRowVertical>
     </Box>

@@ -11,9 +11,11 @@ import {
 } from "../DiceSetForm";
 
 export type Effect = {
-  effectType: "bonus" | "rerollLowerThan" | "advantage";
+  effectType: {
+    abilityEffect: "Bonus" | "RerollLowerThan" | "Advantage";
+    abilityEffect_Ability: (typeof abilities)[number];
+  };
   value: DiceSetExtended;
-  ability: (typeof abilities)[number];
 };
 
 type Action = {
@@ -22,22 +24,30 @@ type Action = {
 };
 
 export const initialState: Effect = {
-  effectType: "bonus",
+  effectType: { abilityEffect: "Bonus", abilityEffect_Ability: "STRENGTH" },
   value: DiceSetExtendedDefaultValue,
-  ability: "Strength",
 };
 
 const effectReducer = (state: Effect, action: Action): Effect => {
   let newState: Effect;
   switch (action.type) {
     case "setEffectType":
-      newState = { ...state, effectType: action.payload };
+      newState = {
+        ...state,
+        effectType: { ...state.effectType, abilityEffect: action.payload },
+      };
       break;
     case "setValue":
       newState = { ...state, value: action.payload };
       break;
     case "setAbility":
-      newState = { ...state, ability: action.payload };
+      newState = {
+        ...state,
+        effectType: {
+          ...state.effectType,
+          abilityEffect_Ability: action.payload,
+        },
+      };
       break;
     default:
       newState = state;
@@ -66,14 +76,14 @@ export default function AbilityEffectForm({
     <Box>
       <RadioGroup
         values={[
-          { label: "Bonus", value: "bonus" },
-          { label: "Advantage", value: "advantage" },
-          { label: "Reroll lower than", value: "rerollLowerThan" },
+          { label: "Bonus", value: "Bonus" },
+          { label: "Advantage", value: "Advantage" },
+          { label: "Reroll lower than", value: "RerollLowerThan" },
         ]}
         label="Ability effect"
         name="abilityEffect"
         onChange={(x) => dispatch({ type: "setEffectType", payload: x })}
-        currentValue={state.effectType}
+        currentValue={state.effectType.abilityEffect}
       ></RadioGroup>
       <FormRowVertical label="Value">
         <DiceSetForm
@@ -83,7 +93,7 @@ export default function AbilityEffectForm({
       </FormRowVertical>
       <FormRowVertical label="Ability">
         <Dropdown
-          chosenValue={state.ability}
+          chosenValue={state.effectType.abilityEffect_Ability}
           setChosenValue={(e) => dispatch({ type: "setAbility", payload: e })}
           valuesList={abilitiesDropdown}
         ></Dropdown>

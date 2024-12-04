@@ -263,11 +263,19 @@ export default function EffectBlueprintForm({
     dispatch({ type: "setEffectTypeBody", payload: x });
   }, []);
   const disableUpdateButton = () => {
-    let x =
-      (state.effectTypeBody as ValueEffect)?.value?.additionalValues?.some(
-        (value) => value.levelsInClassId === null
-      ) || false;
-    return x;
+    let body = state.effectTypeBody as ValueEffect;
+    return (
+      body.value?.additionalValues?.some(
+        (value) =>
+          (value.levelsInClassId === null &&
+            (value.additionalValueType === "LevelsInClass" ||
+              value.additionalValueType === "TotalLevel")) ||
+          (value.skill === null &&
+            value.additionalValueType === "SkillBonus") ||
+          (value.ability === null &&
+            value.additionalValueType === "AbilityScoreModifier")
+      ) || false
+    );
   };
   if (isLoading || isPending || !resetHappened) {
     return <Spinner></Spinner>;

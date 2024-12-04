@@ -40,10 +40,11 @@ namespace pracadyplomowa.RequestHelpers
                 EffectBlueprintFormDto dto = new EffectBlueprintFormDto();
 
                 // Deserialize EffectTypeBody based on effectType
+#pragma warning disable CS8601 // Possible null reference assignment.
                 switch (effectType)
                 {
-                    case "actions":
-                        dto = new ActionEffectBlueprintFormDto(){
+                    case "movementEffect":
+                        dto = new MovementEffectBlueprintFormDto(){
                             Id = id,
                             Name = Name,
                             Description = Description,
@@ -54,8 +55,127 @@ namespace pracadyplomowa.RequestHelpers
                             IsImplemented = IsImplemented,
                             HasNoEffectInCombat = HasNoEffectInCombat,
                             EffectType = EffectType,
-                            EffectTypeBody = jsonObject.TryGetProperty("effectTypeBody", out var effectTypeBodyProp_actions)
-                                ? JsonSerializer.Deserialize<ActionEffectBlueprintFormDto.ActionSubeffectBlueprintFormDto>(effectTypeBodyProp_actions.GetRawText(), options)
+                            EffectTypeBody = EffectTypeBody
+                                ? JsonSerializer.Deserialize<MovementEffectBlueprintFormDto.MovementSubeffectBlueprintFormDto>(effectTypeBodyProp.GetRawText(), options)
+                                : null
+                        };
+                        break;
+                    case "savingThrow":
+                        dto = new SavingThrowEffectBlueprintFormDto(){
+                            Id = id,
+                            Name = Name,
+                            Description = Description,
+                            ResourceLevel = ResourceLevel,
+                            ResourceAmount = ResourceAmount,
+                            SavingThrowSuccess = SavingThrowSuccess,
+                            Conditional = Conditional,
+                            IsImplemented = IsImplemented,
+                            HasNoEffectInCombat = HasNoEffectInCombat,
+                            EffectType = EffectType,
+                            EffectTypeBody = EffectTypeBody
+                                ? JsonSerializer.Deserialize<SavingThrowEffectBlueprintFormDto.SavingThrowSubeffectBlueprintFormDto>(effectTypeBodyProp.GetRawText(), options)
+                                : null
+                        };
+                        break;
+                    case "abilityCheck":
+                        dto = new AbilityEffectBlueprintFormDto(){
+                            Id = id,
+                            Name = Name,
+                            Description = Description,
+                            ResourceLevel = ResourceLevel,
+                            ResourceAmount = ResourceAmount,
+                            SavingThrowSuccess = SavingThrowSuccess,
+                            Conditional = Conditional,
+                            IsImplemented = IsImplemented,
+                            HasNoEffectInCombat = HasNoEffectInCombat,
+                            EffectType = EffectType,
+                            EffectTypeBody = EffectTypeBody
+                                ? JsonSerializer.Deserialize<AbilityEffectBlueprintFormDto.AbilitySubeffectBlueprintFormDto>(effectTypeBodyProp.GetRawText(), options)
+                                : null
+                        };
+                        break;
+                    case "skillCheck":
+                        dto = new SkillEffectBlueprintFormDto(){
+                            Id = id,
+                            Name = Name,
+                            Description = Description,
+                            ResourceLevel = ResourceLevel,
+                            ResourceAmount = ResourceAmount,
+                            SavingThrowSuccess = SavingThrowSuccess,
+                            Conditional = Conditional,
+                            IsImplemented = IsImplemented,
+                            HasNoEffectInCombat = HasNoEffectInCombat,
+                            EffectType = EffectType,
+                            EffectTypeBody = EffectTypeBody
+                                ? JsonSerializer.Deserialize<SkillEffectBlueprintFormDto.SkillSubeffectBlueprintFormDto>(effectTypeBodyProp.GetRawText(), options)
+                                : null
+                        };
+                        break;
+                    case "resistance":
+                        dto = new ResistanceEffectBlueprintFormDto(){
+                            Id = id,
+                            Name = Name,
+                            Description = Description,
+                            ResourceLevel = ResourceLevel,
+                            ResourceAmount = ResourceAmount,
+                            SavingThrowSuccess = SavingThrowSuccess,
+                            Conditional = Conditional,
+                            IsImplemented = IsImplemented,
+                            HasNoEffectInCombat = HasNoEffectInCombat,
+                            EffectType = EffectType,
+                            EffectTypeBody = EffectTypeBody
+                                ? JsonSerializer.Deserialize<ResistanceEffectBlueprintFormDto.ResistanceSubeffectBlueprintFormDto>(effectTypeBodyProp.GetRawText(), options)
+                                : null
+                        };
+                        break;
+                    case "attackBonus":
+                        dto = new AttackRollEffectBlueprintFormDto(){
+                            Id = id,
+                            Name = Name,
+                            Description = Description,
+                            ResourceLevel = ResourceLevel,
+                            ResourceAmount = ResourceAmount,
+                            SavingThrowSuccess = SavingThrowSuccess,
+                            Conditional = Conditional,
+                            IsImplemented = IsImplemented,
+                            HasNoEffectInCombat = HasNoEffectInCombat,
+                            EffectType = EffectType,
+                            EffectTypeBody = EffectTypeBody
+                                ? JsonSerializer.Deserialize<AttackRollEffectBlueprintFormDto.AttackRollSubeffectBlueprintFormDto>(effectTypeBodyProp.GetRawText(), options)
+                                : null
+                        };
+                        break;
+                    case "armorClassBonus":
+                        dto = new ArmorClassEffectBlueprintFormDto(){
+                            Id = id,
+                            Name = Name,
+                            Description = Description,
+                            ResourceLevel = ResourceLevel,
+                            ResourceAmount = ResourceAmount,
+                            SavingThrowSuccess = SavingThrowSuccess,
+                            Conditional = Conditional,
+                            IsImplemented = IsImplemented,
+                            HasNoEffectInCombat = HasNoEffectInCombat,
+                            EffectType = EffectType,
+                            EffectTypeBody = EffectTypeBody
+                                ? JsonSerializer.Deserialize<ArmorClassEffectBlueprintFormDto.ArmorClassSubeffectBlueprintFormDto>(effectTypeBodyProp.GetRawText(), options)
+                                : null
+                        };
+                        break;
+                    case "proficiency":
+                        dto = new ProficiencyEffectBlueprintFormDto(){
+                            Id = id,
+                            Name = Name,
+                            Description = Description,
+                            ResourceLevel = ResourceLevel,
+                            ResourceAmount = ResourceAmount,
+                            SavingThrowSuccess = SavingThrowSuccess,
+                            Conditional = Conditional,
+                            IsImplemented = IsImplemented,
+                            HasNoEffectInCombat = HasNoEffectInCombat,
+                            EffectType = EffectType,
+                            EffectTypeBody = EffectTypeBody
+                                ? JsonSerializer.Deserialize<ProficiencyEffectBlueprintFormDto.ProficiencySubeffectBlueprintFormDto>(effectTypeBodyProp.GetRawText(), options)
                                 : null
                         };
                         break;
@@ -71,13 +191,167 @@ namespace pracadyplomowa.RequestHelpers
                             IsImplemented = IsImplemented,
                             HasNoEffectInCombat = HasNoEffectInCombat,
                             EffectType = EffectType,
-                            EffectTypeBody = jsonObject.TryGetProperty("effectTypeBody", out var effectTypeBodyProp_healing)
-                                ? JsonSerializer.Deserialize<HealingEffectBlueprintFormDto.HealingSubeffectBlueprintFormDto>(effectTypeBodyProp_healing.GetRawText(), options)
+                            EffectTypeBody = EffectTypeBody
+                                ? JsonSerializer.Deserialize<HealingEffectBlueprintFormDto.HealingSubeffectBlueprintFormDto>(effectTypeBodyProp.GetRawText(), options)
+                                : null
+                        };
+                        break;
+                    case "actions":
+                        dto = new ActionEffectBlueprintFormDto(){
+                            Id = id,
+                            Name = Name,
+                            Description = Description,
+                            ResourceLevel = ResourceLevel,
+                            ResourceAmount = ResourceAmount,
+                            SavingThrowSuccess = SavingThrowSuccess,
+                            Conditional = Conditional,
+                            IsImplemented = IsImplemented,
+                            HasNoEffectInCombat = HasNoEffectInCombat,
+                            EffectType = EffectType,
+                            EffectTypeBody = EffectTypeBody
+                                ? JsonSerializer.Deserialize<ActionEffectBlueprintFormDto.ActionSubeffectBlueprintFormDto>(effectTypeBodyProp.GetRawText(), options)
+                                : null
+                        };
+                        break;
+                    case "magicItemStatus":
+                        dto = new MagicEffectBlueprintFormDto(){
+                            Id = id,
+                            Name = Name,
+                            Description = Description,
+                            ResourceLevel = ResourceLevel,
+                            ResourceAmount = ResourceAmount,
+                            SavingThrowSuccess = SavingThrowSuccess,
+                            Conditional = Conditional,
+                            IsImplemented = IsImplemented,
+                            HasNoEffectInCombat = HasNoEffectInCombat,
+                            EffectType = EffectType,
+                            EffectTypeBody = EffectTypeBody
+                                ? JsonSerializer.Deserialize<MagicEffectBlueprintFormDto.MagicSubeffectBlueprintFormDto>(effectTypeBodyProp.GetRawText(), options)
+                                : null
+                        };
+                        break;
+                    case "size":
+                        dto = new SizeEffectBlueprintFormDto(){
+                            Id = id,
+                            Name = Name,
+                            Description = Description,
+                            ResourceLevel = ResourceLevel,
+                            ResourceAmount = ResourceAmount,
+                            SavingThrowSuccess = SavingThrowSuccess,
+                            Conditional = Conditional,
+                            IsImplemented = IsImplemented,
+                            HasNoEffectInCombat = HasNoEffectInCombat,
+                            EffectType = EffectType,
+                            EffectTypeBody = EffectTypeBody
+                                ? JsonSerializer.Deserialize<SizeEffectBlueprintFormDto.SizeSubeffectBlueprintFormDto>(effectTypeBodyProp.GetRawText(), options)
+                                : null
+                        };
+                        break;
+                    case "initiative":
+                        dto = new InitiativeEffectBlueprintFormDto(){
+                            Id = id,
+                            Name = Name,
+                            Description = Description,
+                            ResourceLevel = ResourceLevel,
+                            ResourceAmount = ResourceAmount,
+                            SavingThrowSuccess = SavingThrowSuccess,
+                            Conditional = Conditional,
+                            IsImplemented = IsImplemented,
+                            HasNoEffectInCombat = HasNoEffectInCombat,
+                            EffectType = EffectType,
+                            EffectTypeBody = EffectTypeBody
+                                ? JsonSerializer.Deserialize<InitiativeEffectBlueprintFormDto.InitiativeSubeffectBlueprintFormDto>(effectTypeBodyProp.GetRawText(), options)
+                                : null
+                        };
+                        break;
+                    case "damage":
+                        dto = new DamageEffectBlueprintFormDto(){
+                            Id = id,
+                            Name = Name,
+                            Description = Description,
+                            ResourceLevel = ResourceLevel,
+                            ResourceAmount = ResourceAmount,
+                            SavingThrowSuccess = SavingThrowSuccess,
+                            Conditional = Conditional,
+                            IsImplemented = IsImplemented,
+                            HasNoEffectInCombat = HasNoEffectInCombat,
+                            EffectType = EffectType,
+                            EffectTypeBody = EffectTypeBody
+                                ? JsonSerializer.Deserialize<DamageEffectBlueprintFormDto.DamageSubeffectBlueprintFormDto>(effectTypeBodyProp.GetRawText(), options)
+                                : null
+                        };
+                        break;
+                    case "hitpoints":
+                        dto = new HitpointEffectBlueprintFormDto(){
+                            Id = id,
+                            Name = Name,
+                            Description = Description,
+                            ResourceLevel = ResourceLevel,
+                            ResourceAmount = ResourceAmount,
+                            SavingThrowSuccess = SavingThrowSuccess,
+                            Conditional = Conditional,
+                            IsImplemented = IsImplemented,
+                            HasNoEffectInCombat = HasNoEffectInCombat,
+                            EffectType = EffectType,
+                            EffectTypeBody = EffectTypeBody
+                                ? JsonSerializer.Deserialize<HitpointEffectBlueprintFormDto.HitpointSubeffectBlueprintFormDto>(effectTypeBodyProp.GetRawText(), options)
+                                : null
+                        };
+                        break;
+                    case "attacksPerAction":
+                        dto = new AttackPerAttackActionEffectBlueprintFormDto(){
+                            Id = id,
+                            Name = Name,
+                            Description = Description,
+                            ResourceLevel = ResourceLevel,
+                            ResourceAmount = ResourceAmount,
+                            SavingThrowSuccess = SavingThrowSuccess,
+                            Conditional = Conditional,
+                            IsImplemented = IsImplemented,
+                            HasNoEffectInCombat = HasNoEffectInCombat,
+                            EffectType = EffectType,
+                            EffectTypeBody = EffectTypeBody
+                                ? JsonSerializer.Deserialize<AttackPerAttackActionEffectBlueprintFormDto.AttackPerAttackActionSubeffectBlueprintFormDto>(effectTypeBodyProp.GetRawText(), options)
+                                : null
+                        };
+                        break;
+                    case "statusEffect":
+                        dto = new StatusEffectBlueprintFormDto(){
+                            Id = id,
+                            Name = Name,
+                            Description = Description,
+                            ResourceLevel = ResourceLevel,
+                            ResourceAmount = ResourceAmount,
+                            SavingThrowSuccess = SavingThrowSuccess,
+                            Conditional = Conditional,
+                            IsImplemented = IsImplemented,
+                            HasNoEffectInCombat = HasNoEffectInCombat,
+                            EffectType = EffectType,
+                            EffectTypeBody = EffectTypeBody
+                                ? JsonSerializer.Deserialize<StatusEffectBlueprintFormDto.StatusSubeffectBlueprintFormDto>(effectTypeBodyProp.GetRawText(), options)
+                                : null
+                        };
+                        break;
+                    case "movementCost":
+                        dto = new MovementCostEffectBlueprintFormDto(){
+                            Id = id,
+                            Name = Name,
+                            Description = Description,
+                            ResourceLevel = ResourceLevel,
+                            ResourceAmount = ResourceAmount,
+                            SavingThrowSuccess = SavingThrowSuccess,
+                            Conditional = Conditional,
+                            IsImplemented = IsImplemented,
+                            HasNoEffectInCombat = HasNoEffectInCombat,
+                            EffectType = EffectType,
+                            EffectTypeBody = EffectTypeBody
+                                ? JsonSerializer.Deserialize<MovementCostEffectBlueprintFormDto.MovementCostSubeffectBlueprintFormDto>(effectTypeBodyProp.GetRawText(), options)
                                 : null
                         };
                         break;
                     default:
                         throw new JsonException($"Unknown effectType: {effectType}");
+#pragma warning restore CS8601 // Possible null reference assignment.
                 }
 
                 return dto;

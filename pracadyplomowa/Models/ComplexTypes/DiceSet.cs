@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using pracadyplomowa.Models.Entities.Items;
+using pracadyplomowa.Models.Entities.Powers;
 using pracadyplomowa.Models.Entities.Powers.EffectBlueprints;
 using pracadyplomowa.Models.Enums;
 
@@ -23,6 +24,8 @@ namespace pracadyplomowa.Models.Entities.Characters
             this.flat = diceSet.flat;
             this.additionalValues = diceSet.additionalValues.Select(x => new AdditionalValue(x)).ToList();
         }
+        public ValueEffectBlueprint? R_ValueEffectBlueprint { get; set; }
+        public int? R_ValueEffectBlueprintId { get; set; }
         public int d20 { get; set; }
         public int d12 { get; set; }
         public int d10 { get; set; }

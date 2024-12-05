@@ -1,12 +1,12 @@
 export type DiceSet = {
-  d100: number;
   d20: number;
   d12: number;
   d10: number;
   d8: number;
   d6: number;
   d4: number;
-  flat: number;
+  d100: number;
+  flat: number | undefined;
 };
 
 export const DiceSetDefaultValue = {

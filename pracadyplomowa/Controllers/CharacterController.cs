@@ -60,9 +60,11 @@ namespace pracadyplomowa.Controllers
             {
                 return BadRequest(new ApiResponse(400, "First level of Class with Id " + characterDto.StartingClassId + " does not exist"));
             }
+            
             var ownerId = User.GetUserId();
             var character = new Character(
                 characterDto.Name,
+                characterDto.IsNpc,
                 characterDto.Strength,
                 characterDto.Dexterity,
                 characterDto.Constitution,
@@ -76,9 +78,24 @@ namespace pracadyplomowa.Controllers
 
             var item = (await _itemRepository.GetByNameWithEquipmentSlots("Iron longsword")).Clone();
             var item2 = item.Clone();
-            character.R_CharacterHasBackpack = new Backpack() { R_BackpackOfCharacter = character, R_BackpackHasItems = [item, item2] };
-            character.EquipItem(item, item.R_ItemIsEquippableInSlots.Where(x => x.Name == "Right palm").First());
-            character.EquipItem(item2, item2.R_ItemIsEquippableInSlots.Where(x => x.Name == "Left palm").First());
+            character.R_CharacterHasBackpack = new Backpack()
+            {
+                R_BackpackOfCharacter = character, 
+                R_BackpackHasItems = [item, item2]
+            };
+            
+            var rightPalmSlot = item.R_ItemIsEquippableInSlots.FirstOrDefault(x => x.Name == "Right palm");
+            if (rightPalmSlot != null)
+            {
+                character.EquipItem(item, rightPalmSlot);
+            }
+            
+            var leftPalmSlot = item2.R_ItemIsEquippableInSlots.FirstOrDefault(x => x.Name == "Left palm");
+            if (leftPalmSlot != null)
+            {
+                character.EquipItem(item2, leftPalmSlot);
+            }
+            
             if(item2 is MeleeWeapon weapon && weapon.Versatile)
             {
                 weapon.EquipVersatile();

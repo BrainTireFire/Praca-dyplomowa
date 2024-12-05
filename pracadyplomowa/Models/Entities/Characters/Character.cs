@@ -22,6 +22,7 @@ namespace pracadyplomowa.Models.Entities.Characters
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
         public int Hitpoints { get; set; }
+        public bool IsNpc { get; set; } = false;
         public DiceSet UsedHitDice { get; set; } = new DiceSet();
 
         public int SucceededDeathSavingThrows { get; set; }
@@ -52,9 +53,10 @@ namespace pracadyplomowa.Models.Entities.Characters
         public Character(){
 
         }
-        public Character(string name, int strengthValue, int dexterityValue, int constitutionValue, int intelligenceValue, int wisdomValue, int charismaValue, ClassLevel classLevel, Race race, int ownerId){
+        public Character(string name, bool isNpc, int strengthValue, int dexterityValue, int constitutionValue, int intelligenceValue, int wisdomValue, int charismaValue, ClassLevel classLevel, Race race, int ownerId){
 
             this.Name = name;
+            this.IsNpc = isNpc;
 
             this.R_CharacterHasLevelsInClass.Add(classLevel);
             this.R_CharacterBelongsToRace = race;

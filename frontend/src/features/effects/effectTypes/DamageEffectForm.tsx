@@ -41,14 +41,13 @@ const damageTypesDropdown = [
   { value: "thunder", label: "Thunder" },
 ];
 
-const effectTypes = ["damageDealt", "rerollLowerThan", "damageTaken"] as const;
+const effectTypes = ["DamageDealt", "RerollLowerThan", "DamageTaken"] as const;
 
 type effectType = (typeof effectTypes)[number];
 type damageType = (typeof damageTypes)[number];
 
 export type Effect = {
-  effectType: effectType;
-  damageType: damageType;
+  effectType: { damageEffect: effectType; damageEffect_DamageType: damageType };
   value: DiceSetExtended;
 };
 
@@ -58,8 +57,7 @@ type Action = {
 };
 
 export const initialState: Effect = {
-  effectType: "damageDealt",
-  damageType: "acid",
+  effectType: { damageEffect: "DamageDealt", damageEffect_DamageType: "acid" },
   value: DiceSetExtendedDefaultValue,
 };
 
@@ -67,10 +65,22 @@ const effectReducer = (state: Effect, action: Action): Effect => {
   let newState: Effect;
   switch (action.type) {
     case "setEffectType":
-      newState = { ...state, effectType: action.payload as effectType };
+      newState = {
+        ...state,
+        effectType: {
+          ...state.effectType,
+          damageEffect: action.payload as effectType,
+        },
+      };
       break;
     case "setDamageType":
-      newState = { ...state, damageType: action.payload as damageType };
+      newState = {
+        ...state,
+        effectType: {
+          ...state.effectType,
+          damageEffect_DamageType: action.payload as damageType,
+        },
+      };
       break;
     case "setValue":
       newState = { ...state, value: action.payload as DiceSetExtended };
@@ -102,20 +112,20 @@ export default function DamageEffectForm({
     <Box>
       <RadioGroup
         values={[
-          { label: "Damage dealt", value: "damageDealt" },
-          { label: "Reroll lower than", value: "rerollLowerThan" },
-          { label: "Damage taken", value: "damageTaken" },
+          { label: "Damage dealt", value: "DamageDealt" },
+          { label: "Reroll lower than", value: "RerollLowerThan" },
+          { label: "Damage taken", value: "DamageTaken" },
         ]}
         label="Damage effect"
         name="damageEffect"
         onChange={(x) =>
           dispatch({ type: "setEffectType", payload: x as effectType })
         }
-        currentValue={state.effectType}
+        currentValue={state.effectType.damageEffect}
       ></RadioGroup>
       <FormRowVertical label="Damage type">
         <Dropdown
-          chosenValue={state.damageType}
+          chosenValue={state.effectType.damageEffect_DamageType}
           setChosenValue={(e) =>
             dispatch({ type: "setDamageType", payload: e as damageType })
           }
@@ -123,7 +133,10 @@ export default function DamageEffectForm({
         ></Dropdown>
       </FormRowVertical>
       <FormRowVertical label="Value">
-        <DiceSetForm onChange={handleValueFormStateUpdate}></DiceSetForm>
+        <DiceSetForm
+          onChange={handleValueFormStateUpdate}
+          diceSet={effect.value}
+        ></DiceSetForm>
       </FormRowVertical>
     </Box>
   );

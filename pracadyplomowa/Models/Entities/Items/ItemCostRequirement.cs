@@ -8,7 +8,9 @@ namespace pracadyplomowa.Models.Entities.Items
 {
     public class ItemCostRequirement : ObjectWithId
     {
-        public int Value { get; set; }
+        public int GoldPieces { get; set; }
+        public int SilverPieces { get; set; }
+        public int CopperPieces { get; set; }
 
         //Relationships
         public Power R_Power { get; set; } = null!;

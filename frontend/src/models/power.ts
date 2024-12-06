@@ -3,3 +3,8 @@ export type Power = {
   name: string;
   source: string[];
 };
+
+export type PowerListItem = {
+  id: number;
+  name: string;
+};

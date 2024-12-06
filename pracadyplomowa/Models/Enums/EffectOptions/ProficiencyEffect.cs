@@ -1,10 +1,8 @@
 namespace pracadyplomowa.Models.Enums.EffectOptions
 {
-    public enum ProficiencyEffect //obsolete
+    public enum ProficiencyEffect
     {
-        Armor,
-        Weapon,
-        Shields,
-        Tool
+        ItemType,
+        SpecificItemFamily
     }
 }

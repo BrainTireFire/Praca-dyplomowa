@@ -8,12 +8,12 @@ import {
   DiceSetForm,
 } from "../DiceSetForm";
 
-const effectTypes = ["action", "bonusAction", "reaction"] as const;
+const effectTypes = ["Action", "BonusAction", "Reaction"] as const;
 
 type effectType = (typeof effectTypes)[number];
 
 export type Effect = {
-  effectType: effectType;
+  effectType: { actionEffect: effectType };
   value: DiceSetExtended;
 };
 
@@ -23,7 +23,7 @@ type Action = {
 };
 
 export const initialState: Effect = {
-  effectType: "action",
+  effectType: { actionEffect: effectTypes[0] },
   value: DiceSetExtendedDefaultValue,
 };
 
@@ -31,7 +31,13 @@ const effectReducer = (state: Effect, action: Action): Effect => {
   let newState: Effect;
   switch (action.type) {
     case "setEffectType":
-      newState = { ...state, effectType: action.payload as effectType };
+      newState = {
+        ...state,
+        effectType: {
+          ...state.effectType,
+          actionEffect: action.payload as effectType,
+        },
+      };
       break;
     case "setValue":
       newState = { ...state, value: action.payload as DiceSetExtended };
@@ -65,19 +71,22 @@ export default function ActionEffectForm({
     <Box>
       <RadioGroup
         values={[
-          { label: "Action", value: "action" },
-          { label: "Bonus action", value: "bonusAction" },
-          { label: "Reaction", value: "reaction" },
+          { label: "Action", value: "Action" },
+          { label: "Bonus action", value: "BonusAction" },
+          { label: "Reaction", value: "Reaction" },
         ]}
         label="Action effect"
         name="actionEffect"
         onChange={(x) =>
           dispatch({ type: "setEffectType", payload: x as effectType })
         }
-        currentValue={state.effectType}
+        currentValue={state.effectType.actionEffect}
       ></RadioGroup>
       <FormRowVertical label="Value">
-        <DiceSetForm onChange={handleValueFormStateUpdate}></DiceSetForm>
+        <DiceSetForm
+          onChange={handleValueFormStateUpdate}
+          diceSet={effect.value}
+        ></DiceSetForm>
       </FormRowVertical>
     </Box>
   );

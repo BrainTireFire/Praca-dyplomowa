@@ -234,7 +234,16 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                 builder.Entity<Item>().UseTptMappingStrategy();
                 builder.Entity<EffectBlueprint>().UseTphMappingStrategy();
                 builder.Entity<EffectInstance>().UseTphMappingStrategy();
+                builder.Entity<ValueEffectBlueprint>()
+                        .HasOne(veb => veb.DiceSet)
+                        .WithOne(ds => ds.R_ValueEffectBlueprint)
+                        .HasForeignKey<DiceSet>(ds => ds.R_ValueEffectBlueprintId)
+                        .OnDelete(DeleteBehavior.Cascade);
+                        
                 builder.Entity<ValueEffectInstance>().Navigation(e=>e.DiceSet).AutoInclude();
+                builder.Entity<ValueEffectBlueprint>().Navigation(e=>e.DiceSet).AutoInclude();
+                builder.Entity<DiceSet>().Navigation(e=>e.additionalValues).AutoInclude();
+                builder.Entity<DiceSet.AdditionalValue>().Navigation(e=>e.R_LevelsInClass).AutoInclude();
                 builder.Entity<LanguageEffectBlueprint>().Navigation(e=>e.R_Language).AutoInclude();
                 builder.Entity<LanguageEffectBlueprint>()
                         .HasOne(lei => lei.R_Language)

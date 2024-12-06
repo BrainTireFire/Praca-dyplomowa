@@ -8,12 +8,12 @@ import {
   DiceSetForm,
 } from "../DiceSetForm";
 
-const effectTypes = ["attacksTotal", "additionalAttacks"] as const;
+const effectTypes = ["AttacksTotal", "AdditionalAttacks"] as const;
 
 type effectType = (typeof effectTypes)[number];
 
 export type Effect = {
-  effectType: effectType;
+  effectType: { attackPerActionEffect: effectType };
   value: DiceSetExtended;
 };
 
@@ -23,7 +23,7 @@ type Action = {
 };
 
 export const initialState: Effect = {
-  effectType: "attacksTotal",
+  effectType: { attackPerActionEffect: "AttacksTotal" },
   value: DiceSetExtendedDefaultValue,
 };
 
@@ -31,7 +31,13 @@ const effectReducer = (state: Effect, action: Action): Effect => {
   let newState: Effect;
   switch (action.type) {
     case "setEffectType":
-      newState = { ...state, effectType: action.payload as effectType };
+      newState = {
+        ...state,
+        effectType: {
+          ...state.effectType,
+          attackPerActionEffect: action.payload as effectType,
+        },
+      };
       break;
     case "setValue":
       newState = { ...state, value: action.payload as DiceSetExtended };
@@ -65,18 +71,21 @@ export default function AttacksPerActionEffectForm({
     <Box>
       <RadioGroup
         values={[
-          { label: "Attacks total", value: "attacksTotal" },
-          { label: "Additional attacks", value: "additionalAttacks" },
+          { label: "Attacks total", value: "AttacksTotal" },
+          { label: "Additional attacks", value: "AdditionalAttacks" },
         ]}
         label="Attack per action effect"
         name="attackEffect"
         onChange={(x) =>
           dispatch({ type: "setEffectType", payload: x as effectType })
         }
-        currentValue={state.effectType}
+        currentValue={state.effectType.attackPerActionEffect}
       ></RadioGroup>
       <FormRowVertical label="Value">
-        <DiceSetForm onChange={handleValueFormStateUpdate}></DiceSetForm>
+        <DiceSetForm
+          onChange={handleValueFormStateUpdate}
+          diceSet={effect.value}
+        ></DiceSetForm>
       </FormRowVertical>
     </Box>
   );

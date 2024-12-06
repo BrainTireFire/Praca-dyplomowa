@@ -6,7 +6,9 @@ import Dropdown from "../../../ui/forms/Dropdown";
 import { movementCost, movementCostsDropdown } from "../movementCosts";
 
 export type Effect = {
-  statusEffect: movementCost;
+  effectType: {
+    movementCostEffect: movementCost;
+  };
 };
 
 type Action = {
@@ -15,14 +17,22 @@ type Action = {
 };
 
 export const initialState: Effect = {
-  statusEffect: "high",
+  effectType: {
+    movementCostEffect: "High",
+  },
 };
 
 const effectReducer = (state: Effect, action: Action): Effect => {
   let newState: Effect;
   switch (action.type) {
     case "setMovementCost":
-      newState = { ...state, statusEffect: action.payload as movementCost };
+      newState = {
+        ...state,
+        effectType: {
+          ...state.effectType,
+          movementCostEffect: action.payload as movementCost,
+        },
+      };
       break;
     default:
       newState = state;
@@ -48,7 +58,7 @@ export default function MovementCostEffectForm({
     <Box>
       <FormRowVertical label="Movement cost">
         <Dropdown
-          chosenValue={state.statusEffect}
+          chosenValue={state.effectType.movementCostEffect}
           setChosenValue={(e) =>
             dispatch({ type: "setMovementCost", payload: e as movementCost })
           }

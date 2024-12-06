@@ -131,6 +131,7 @@ type TableProps = {
   columns: string;
   children: React.ReactNode;
   modal?: ReactElement;
+  buttonOnClick?: () => void;
 };
 type CommonTableProps = {
   columns: string;
@@ -145,18 +146,30 @@ type RowProps = {
   children: React.ReactNode;
 };
 
-function Table({ header, columns, children, button, modal }: TableProps) {
+function Table({
+  header,
+  columns,
+  children,
+  button,
+  modal,
+  buttonOnClick,
+}: TableProps) {
   return (
     <StyledTableContainer role="table">
       {header && (
         <StyledHeaderWithButton>
           <TableHeader>{header}</TableHeader>
-          <Modal>
-            <Modal.Open opens="TableAction">
-              <TableButton>{button}</TableButton>
-            </Modal.Open>
-            <Modal.Window name="TableAction">{modal}</Modal.Window>
-          </Modal>
+          {modal && (
+            <Modal>
+              <Modal.Open opens="TableAction">
+                <TableButton>{button}</TableButton>
+              </Modal.Open>
+              <Modal.Window name="TableAction">{modal}</Modal.Window>
+            </Modal>
+          )}
+          {!modal && (
+            <TableButton onClick={buttonOnClick}>{button}</TableButton>
+          )}
         </StyledHeaderWithButton>
       )}
       <CommonTable columns={columns}>{children}</CommonTable>

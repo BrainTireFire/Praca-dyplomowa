@@ -47,5 +47,16 @@ namespace pracadyplomowa.Repository
         {
             return  _context.SaveChangesAsync();
         }
+
+
+        public void DetachEntity(T entity)
+        {
+            _context.Entry(entity).State = EntityState.Detached;
+        }
+
+        public void ClearTracker()
+        {
+            _context.ChangeTracker.Clear();
+        }
     }
 }

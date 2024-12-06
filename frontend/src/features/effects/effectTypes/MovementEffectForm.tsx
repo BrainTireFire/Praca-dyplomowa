@@ -7,10 +7,12 @@ import {
   DiceSetExtendedDefaultValue,
   DiceSetForm,
 } from "../DiceSetForm";
+import { ValueEffect } from "../valueEffect";
 
-export type Effect = {
-  effectType: "bonus" | "multiplier";
-  value: DiceSetExtended;
+export type Effect = ValueEffect & {
+  effectType: {
+    movementEffect: "bonus" | "multiplier";
+  };
 };
 
 type Action = {
@@ -19,15 +21,21 @@ type Action = {
 };
 
 export const initialState: Effect = {
-  effectType: "bonus",
+  effectType: {
+    movementEffect: "bonus",
+  },
   value: DiceSetExtendedDefaultValue,
+  rollMoment: "OnCast",
 };
 
 const effectReducer = (state: Effect, action: Action): Effect => {
   let newState: Effect;
   switch (action.type) {
     case "setEffectType":
-      newState = { ...state, effectType: action.payload };
+      newState = {
+        ...state,
+        effectType: { ...state.effectType, movementEffect: action.payload },
+      };
       break;
     case "setValue":
       newState = { ...state, value: action.payload };
@@ -67,10 +75,13 @@ export default function MovementEffectForm({
         label="Movement effect"
         name="movementEffect"
         onChange={(x) => dispatch({ type: "setEffectType", payload: x })}
-        currentValue={state.effectType}
+        currentValue={state.effectType.movementEffect}
       ></RadioGroup>
       <FormRowVertical label="Value">
-        <DiceSetForm onChange={handleValueFormStateUpdate}></DiceSetForm>
+        <DiceSetForm
+          onChange={handleValueFormStateUpdate}
+          diceSet={effect.value}
+        ></DiceSetForm>
       </FormRowVertical>
     </Box>
   );

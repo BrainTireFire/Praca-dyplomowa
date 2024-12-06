@@ -510,7 +510,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                 var sizeChanges = this.AffectedByApprovedEffects
                                     .OfType<SizeEffectInstance>()
                                     .Where(ei => ei.EffectType.SizeEffect == SizeEffect.Bonus)
-                                    .Select(ei => ei.EffectType.SizeBonus)
+                                    .Select(ei => ei.DiceSet.flat)
                                     .Sum();
                 var result = ((int)size) + sizeChanges;
                 if (Enum.IsDefined(typeof(Size), result))
@@ -551,7 +551,7 @@ namespace pracadyplomowa.Models.Entities.Characters
 
         public bool ItemFamilyProficiency(ItemFamily family){
             return this.AffectedByApprovedEffects.OfType<ProficiencyEffectInstance>().Where(pei => 
-                        pei.R_GrantsProficiencyInItemFamilyId == family.Id || pei.ItemType == family.ItemType
+                        pei.R_GrantsProficiencyInItemFamilyId == family.Id || pei.ProficiencyEffectType.ItemType == family.ItemType
                         ).Any();
         }
 

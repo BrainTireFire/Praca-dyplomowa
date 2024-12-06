@@ -9,9 +9,11 @@ import {
 } from "../DiceSetForm";
 
 export type Effect = {
-  range: "melee" | "ranged";
-  source: "weapon" | "spell";
-  effectType: "bonus" | "rerollLowerThan";
+  effectType: {
+    attackRollEffect_Range: "melee" | "ranged";
+    attackRollEffect_Source: "weapon" | "spell";
+    attackRollEffect_Type: "bonus" | "rerollLowerThan";
+  };
   value: DiceSetExtended;
 };
 
@@ -21,9 +23,11 @@ type Action = {
 };
 
 export const initialState: Effect = {
-  range: "melee",
-  source: "weapon",
-  effectType: "bonus",
+  effectType: {
+    attackRollEffect_Range: "melee",
+    attackRollEffect_Source: "weapon",
+    attackRollEffect_Type: "bonus",
+  },
   value: DiceSetExtendedDefaultValue,
 };
 
@@ -31,16 +35,34 @@ const effectReducer = (state: Effect, action: Action): Effect => {
   let newState: Effect;
   switch (action.type) {
     case "setEffectType":
-      newState = { ...state, effectType: action.payload };
+      newState = {
+        ...state,
+        effectType: {
+          ...state.effectType,
+          attackRollEffect_Type: action.payload,
+        },
+      };
       break;
     case "setValue":
       newState = { ...state, value: action.payload };
       break;
     case "setSource":
-      newState = { ...state, source: action.payload };
+      newState = {
+        ...state,
+        effectType: {
+          ...state.effectType,
+          attackRollEffect_Source: action.payload,
+        },
+      };
       break;
     case "setRange":
-      newState = { ...state, range: action.payload };
+      newState = {
+        ...state,
+        effectType: {
+          ...state.effectType,
+          attackRollEffect_Range: action.payload,
+        },
+      };
       break;
     default:
       newState = state;
@@ -75,7 +97,7 @@ export default function AttackRollEffectForm({
         label="Range"
         name="range"
         onChange={(x) => dispatch({ type: "setRange", payload: x })}
-        currentValue={state.range}
+        currentValue={state.effectType.attackRollEffect_Range}
       ></RadioGroup>
       <RadioGroup
         values={[
@@ -85,7 +107,7 @@ export default function AttackRollEffectForm({
         label="Source"
         name="source"
         onChange={(x) => dispatch({ type: "setSource", payload: x })}
-        currentValue={state.source}
+        currentValue={state.effectType.attackRollEffect_Source}
       ></RadioGroup>
       <RadioGroup
         values={[
@@ -95,10 +117,13 @@ export default function AttackRollEffectForm({
         label="Attack roll effect"
         name="attackRollEffect"
         onChange={(x) => dispatch({ type: "setEffectType", payload: x })}
-        currentValue={state.effectType}
+        currentValue={state.effectType.attackRollEffect_Type}
       ></RadioGroup>
       <FormRowVertical label="Value">
-        <DiceSetForm onChange={handleValueFormStateUpdate}></DiceSetForm>
+        <DiceSetForm
+          onChange={handleValueFormStateUpdate}
+          diceSet={effect.value}
+        ></DiceSetForm>
       </FormRowVertical>
     </Box>
   );

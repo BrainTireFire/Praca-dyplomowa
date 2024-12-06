@@ -15,7 +15,5 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     {
         public SizeEffect SizeEffect { get; set; }
         public Size SizeEffect_SizeToSet { get; set; }
-
-        public int SizeBonus { get; set; }
     }
 }

@@ -637,7 +637,7 @@ public class Seed
                 Name = "Sneak attack charge",
                 RefreshesOn = RefreshType.TurnStart
             };
-            Power sneakAttack = new("Sneak attack", ActionType.WeaponAttack, CastableBy.OnWeaponHit, PowerType.PassiveEffect, TargetType.Character){UpcastByClassLevel = true, R_ClassForUpcasting = rogueClass, R_UsesImmaterialResource = sneakAttackCharge}; // since its castable on weapon attack, we dont need additional attack roll so power type is passive effect aka always hits and assigns its effects
+            Power sneakAttack = new("Sneak attack", ActionType.WeaponAttack, CastableBy.OnWeaponHit, PowerType.PassiveEffect, TargetType.Character){UpcastBy = UpcastBy.ClassLevel, R_ClassForUpcasting = rogueClass, R_UsesImmaterialResource = sneakAttackCharge}; // since its castable on weapon attack, we dont need additional attack roll so power type is passive effect aka always hits and assigns its effects
             // this shouldnt count as an actual weapon attack. Lets do it so if character "casts" a power of OnWeaponHit type then whether it actually gets cast depends on whether automatically performed attack hits. This means we are going to need to go back to explicitly setting damage values on weapons
             DamageEffectBlueprint sneakAttackDamage1 = new("Sneak damage 1", new DiceSet(){d6 = 1}, RollMoment.OnCast){Level = 1};
             DamageEffectBlueprint sneakAttackDamage2 = new("Sneak damage 2", new DiceSet(){d6 = 2}, RollMoment.OnCast){Level = 3};
@@ -712,7 +712,13 @@ public class Seed
             Level = 0,
             ResourceAmount = level
         };
+        SavingThrowEffectBlueprint testEffect = new SavingThrowEffectBlueprint("test", 1, RollMoment.OnCast, SavingThrowEffect.Bonus, Ability.STRENGTH, Condition.Deafened, AttackNature.Physical)
+        {
+            Level = 0,
+            ResourceAmount = level,
+        };
         arcaneRecoveryLevel.R_EffectBlueprints.Add(arcaneRecoveryEffect);
+        arcaneRecoveryLevel.R_EffectBlueprints.Add(testEffect);
         return arcaneRecoveryLevel;
     }
 }

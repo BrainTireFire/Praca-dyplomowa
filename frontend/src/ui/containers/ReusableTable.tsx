@@ -154,7 +154,7 @@ export const ReusableTable = ({
   const handleRowClick = (index: number) => {
     if (setSelected && isSelectable) {
       setSelected(index);
-      onSelect && onSelect(data[index]);
+      onSelect && onSelect(filteredData[index]);
     }
   };
 

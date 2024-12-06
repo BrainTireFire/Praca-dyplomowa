@@ -20,6 +20,8 @@ const damageTypes = [
   "thunder",
 ] as const;
 
+export type damageType = (typeof damageTypes)[number];
+
 const damageTypesDropdown = [
   { value: "acid", label: "Acid" },
   { value: "bludgeoning", label: "Bludgeoning" },
@@ -37,13 +39,15 @@ const damageTypesDropdown = [
 ];
 
 export type Effect = {
-  effectType:
-    | "resistance"
-    | "immunity"
-    | "vulnerability"
-    | "advantage"
-    | "disadvantage";
-  damageType: (typeof damageTypes)[number];
+  effectType: {
+    resistanceEffect:
+      | "Resistance"
+      | "Immunity"
+      | "Vulnerability"
+      | "Advantage"
+      | "Disadvantage";
+    resistanceEffect_DamageType: damageType;
+  };
 };
 
 type Action = {
@@ -52,18 +56,29 @@ type Action = {
 };
 
 export const initialState: Effect = {
-  effectType: "resistance",
-  damageType: "acid",
+  effectType: {
+    resistanceEffect: "Resistance",
+    resistanceEffect_DamageType: "acid",
+  },
 };
 
 const effectReducer = (state: Effect, action: Action): Effect => {
   let newState: Effect;
   switch (action.type) {
     case "setEffectType":
-      newState = { ...state, effectType: action.payload };
+      newState = {
+        ...state,
+        effectType: { ...state.effectType, resistanceEffect: action.payload },
+      };
       break;
     case "setDamageType":
-      newState = { ...state, damageType: action.payload };
+      newState = {
+        ...state,
+        effectType: {
+          ...state.effectType,
+          resistanceEffect_DamageType: action.payload,
+        },
+      };
       break;
     default:
       newState = state;
@@ -88,20 +103,20 @@ export default function ResistanceEffectForm({
     <Box>
       <RadioGroup
         values={[
-          { label: "Resistance", value: "resistance" },
-          { label: "Immunity", value: "immunity" },
-          { label: "Vulnerability", value: "vulnerability" },
-          { label: "Advantage", value: "advantage" },
-          { label: "Disadvantage", value: "disadvantage" },
+          { label: "Resistance", value: "Resistance" },
+          { label: "Immunity", value: "Immunity" },
+          { label: "Vulnerability", value: "Vulnerability" },
+          { label: "Advantage", value: "Advantage" },
+          { label: "Disadvantage", value: "Disadvantage" },
         ]}
         label="Resistance effect"
         name="resistanceEffect"
         onChange={(x) => dispatch({ type: "setEffectType", payload: x })}
-        currentValue={state.effectType}
+        currentValue={state.effectType.resistanceEffect}
       ></RadioGroup>
       <FormRowVertical label="Damage type">
         <Dropdown
-          chosenValue={state.damageType}
+          chosenValue={state.effectType.resistanceEffect_DamageType}
           setChosenValue={(e) =>
             dispatch({ type: "setDamageType", payload: e })
           }

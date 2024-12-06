@@ -5,7 +5,9 @@ import Dropdown from "../../../ui/forms/Dropdown";
 import { statusEffect, statusEffectDropdown } from "../statusEffects";
 
 export type Effect = {
-  statusEffect: statusEffect;
+  effectType: {
+    statusEffect: statusEffect;
+  };
 };
 
 type Action = {
@@ -14,14 +16,22 @@ type Action = {
 };
 
 export const initialState: Effect = {
-  statusEffect: "blinded",
+  effectType: {
+    statusEffect: "Blinded",
+  },
 };
 
 const effectReducer = (state: Effect, action: Action): Effect => {
   let newState: Effect;
   switch (action.type) {
     case "setStatusEffect":
-      newState = { ...state, statusEffect: action.payload as statusEffect };
+      newState = {
+        ...state,
+        effectType: {
+          ...state.effectType,
+          statusEffect: action.payload as statusEffect,
+        },
+      };
       break;
     default:
       newState = state;

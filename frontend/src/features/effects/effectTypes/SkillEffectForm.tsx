@@ -3,7 +3,7 @@ import Box from "../../../ui/containers/Box";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import RadioGroup from "../../../ui/forms/RadioGroup";
 import Dropdown from "../../../ui/forms/Dropdown";
-import { skills, skillsDropdown } from "../skills";
+import { skill, skills, skillsDropdown } from "../skills";
 import {
   DiceSetExtended,
   DiceSetExtendedDefaultValue,
@@ -12,9 +12,11 @@ import {
 import styled from "styled-components";
 
 export type Effect = {
-  effectType: "bonus" | "rerollLowerThan" | "advantage";
+  effectType: {
+    skillEffect: "bonus" | "rerollLowerThan" | "advantage";
+    skillEffect_Skill: skill;
+  };
   value: DiceSetExtended;
-  skill: (typeof skills)[number];
 };
 
 type Action = {
@@ -23,23 +25,31 @@ type Action = {
 };
 
 export const initialState: Effect = {
-  effectType: "advantage",
+  effectType: {
+    skillEffect: "advantage",
+    skillEffect_Skill: "Acrobatics",
+  },
   value: DiceSetExtendedDefaultValue,
-  skill: "acrobatics",
 };
 
 const effectReducer = (state: Effect, action: Action): Effect => {
   let newState: Effect;
   switch (action.type) {
     case "setEffectType":
-      newState = { ...state, effectType: action.payload };
+      newState = {
+        ...state,
+        effectType: { ...state.effectType, skillEffect: action.payload },
+      };
       break;
     case "setValue":
       console.log("updated value in skill effect form");
       newState = { ...state, value: action.payload };
       break;
     case "setSkill":
-      newState = { ...state, skill: action.payload };
+      newState = {
+        ...state,
+        effectType: { ...state.effectType, skillEffect_Skill: action.payload },
+      };
       break;
     default:
       newState = state;
@@ -76,20 +86,23 @@ export default function SkillEffectForm({
           label="Skill effect"
           name="skillEffect"
           onChange={(x) => dispatch({ type: "setEffectType", payload: x })}
-          currentValue={state.effectType}
+          currentValue={state.effectType.skillEffect}
         ></RadioGroup>
       </Div1>
       <Div2>
         <FormRowVertical label="Skill">
           <Dropdown
-            chosenValue={state.skill}
+            chosenValue={state.effectType.skillEffect_Skill}
             setChosenValue={(e) => dispatch({ type: "setSkill", payload: e })}
             valuesList={skillsDropdown}
           ></Dropdown>
         </FormRowVertical>
       </Div2>
       <Div3>
-        <DiceSetForm onChange={handleValueFormStateUpdate}></DiceSetForm>
+        <DiceSetForm
+          onChange={handleValueFormStateUpdate}
+          diceSet={effect.value}
+        ></DiceSetForm>
       </Div3>
     </Container>
   );

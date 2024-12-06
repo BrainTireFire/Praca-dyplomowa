@@ -23,21 +23,23 @@ const HorizontalContainer = styled.div`
 `;
 
 export type AdditionalValue = {
-  Id: number | null; // Id in database
-  AdditionalValueType: (typeof AdditionalValueTypes)[number];
-  LevelsInClassId: number;
-  ClassName: string;
-  Ability: (typeof abilities)[number];
-  Skill: (typeof skills)[number];
+  id: number; // Local id
+  databaseId: number | null; // Id in database
+  additionalValueType: (typeof AdditionalValueTypes)[number];
+  levelsInClassId: number | null;
+  className: string | null;
+  ability: (typeof abilities)[number] | null;
+  skill: (typeof skills)[number] | null;
 };
 
 const initialAdditionalValue: AdditionalValue = {
-  Id: null,
-  AdditionalValueType: "LevelsInClass",
-  LevelsInClassId: 0,
-  ClassName: "",
-  Ability: "strength",
-  Skill: "acrobatics",
+  id: -1, // Local id
+  databaseId: null, // Id in database
+  additionalValueType: "LevelsInClass",
+  levelsInClassId: null,
+  className: null,
+  ability: null,
+  skill: null,
 };
 
 export const AdditionalValueTypes = [
@@ -90,8 +92,10 @@ const initialState: DiceSetExtended = DiceSetExtendedDefaultValue;
 
 export function DiceSetForm({
   onChange,
+  diceSet,
 }: {
   onChange: (updatedState: DiceSetExtended) => void;
+  diceSet: DiceSetExtended;
 }) {
   const [selectedAdditionalValueIndex, setSelectedAdditionalValueIndex] =
     useState<number | null>(null);
@@ -170,7 +174,7 @@ export function DiceSetForm({
     console.log(newState);
     return newState;
   };
-  const [state, dispatch] = useReducer(effectReducer, initialState);
+  const [state, dispatch] = useReducer(effectReducer, diceSet);
   useEffect(() => {
     onChange(state);
   }, [state, onChange]);
@@ -332,18 +336,22 @@ export function DiceSetForm({
           let value: string | null;
 
           // Determine the value based on AdditionalValueType
-          switch (additionalValue.AdditionalValueType) {
+          switch (additionalValue.additionalValueType) {
             case "LevelsInClass":
-              value = additionalValue.ClassName;
+              value = additionalValue.className ?? "Select value";
               break;
             case "TotalLevel":
-              value = additionalValue.ClassName;
+              value = additionalValue.className ?? "Select value";
               break;
             case "AbilityScoreModifier":
-              value = AbilitiesLabelMap[additionalValue.Ability];
+              value = additionalValue.ability
+                ? AbilitiesLabelMap[additionalValue.ability]
+                : "Select value";
               break;
             case "SkillBonus":
-              value = SkillsLabelMap[additionalValue.Skill];
+              value = additionalValue.skill
+                ? SkillsLabelMap[additionalValue.skill]
+                : "Select value";
               break;
             default:
               value = null; // Handle unexpected types
@@ -352,7 +360,7 @@ export function DiceSetForm({
           return {
             id: index,
             AdditionalValueType:
-              AdditionalValueTypeLabelMap[additionalValue.AdditionalValueType],
+              AdditionalValueTypeLabelMap[additionalValue.additionalValueType],
             Value: value,
           };
         })}

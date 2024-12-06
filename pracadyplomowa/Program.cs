@@ -16,6 +16,8 @@ using pracadyplomowa.Repository.Board;
 using pracadyplomowa.Repository.Field;
 using pracadyplomowa.Services.Board;
 using pracadyplomowa.Token.Services;
+using System.Text.Json.Serialization;
+using pracadyplomowa.RequestHelpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,7 +31,11 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 //     opt.UseNpgsql(builder.Configuration.GetConnectionString("IdentityConnection"));
 // });
 builder.Services.AddIdentityServices(builder.Configuration);
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        options.JsonSerializerOptions.Converters.Add(new EffectBlueprintJsonConverter());
+    });
 builder.Services.AddSignalR();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IBoardService, BoardService>();
@@ -41,7 +47,11 @@ builder.Services.AddScoped<IItemRepository, ItemRepository>();
 builder.Services.AddScoped<ICampaignRepository, CampaignRepository>();
 builder.Services.AddScoped<IBoardRepository, BoardRepository>();
 builder.Services.AddScoped<IFieldRepository, FieldRepository>();
+builder.Services.AddScoped<IPowerRepository, PowerRepository>();
+builder.Services.AddScoped<IEffectBlueprintRepository, EffectBlueprintRepository>();
 builder.Services.AddScoped<IItemFamilyRepository, ItemFamilyRepository>();
+builder.Services.AddScoped<IImmaterialResourceBlueprintRepository, ImmaterialResourceBlueprintRepository>();
+builder.Services.AddScoped<IItemCostRequirementRepository, ItemCostRequirementRepository>();
 
 builder.Services.AddScoped<IAuthorizationHandler, OwnershipHandler>();
 // builder.Services.AddHttpContextAccessor();

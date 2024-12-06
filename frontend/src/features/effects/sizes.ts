@@ -1,21 +1,21 @@
 export const sizes = [
-  "tiny",
-  "small",
-  "medium",
-  "large",
-  "huge",
-  "gargantuan",
+  "Tiny",
+  "Small",
+  "Medium",
+  "Large",
+  "Huge",
+  "Gargantuan",
 ] as const;
 
 export type size = (typeof sizes)[number];
 
 export const SizeLabelMap = {
-  tiny: "Tiny",
-  small: "Small",
-  medium: "Medium",
-  large: "Large",
-  huge: "Huge",
-  gargantuan: "Gargantuan",
+  Tiny: "Tiny",
+  Small: "Small",
+  Medium: "Medium",
+  Large: "Large",
+  Huge: "Huge",
+  Gargantuan: "Gargantuan",
 } as const;
 
 export const sizesDropdown = sizes.map((x) => {

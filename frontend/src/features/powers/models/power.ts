@@ -1,5 +1,5 @@
 import { ability } from "../../effects/abilities";
-import { CoinPurse } from "../../items/coinPurse";
+import { CoinPurse } from "../../items/models/coinPurse";
 import { EffectBlueprintListItem } from "./effectBlueprint";
 
 export type Power = {

@@ -8,21 +8,23 @@ using pracadyplomowa.Models.Enums;
 
 namespace pracadyplomowa.Models.Entities.Items
 {
-    public class RangedWeapon : Weapon, IRangedWeapon
+    public class RangedWeapon : Weapon
     {
         protected RangedWeapon() : base(){
             
         }
-        public RangedWeapon(string name, string description, ItemFamily itemFamily, int weight, DamageType damageType, DiceSet damageValue) : base(name, description, itemFamily, weight, damageType, damageValue)
+        public RangedWeapon(string name, string description, ItemFamily itemFamily, int weight, DamageType damageType, DiceSet damageValue, int range, bool loaded) : base(name, description, itemFamily, weight, damageType, damageValue, range)
         {
+            this.Loaded = loaded;
+            this.IsReloaded = false;
         }
         public RangedWeapon(RangedWeapon weapon) : base(weapon){
-            this.Range = weapon.Range;
-            this.LoadedRange = weapon.LoadedRange;
+            this.Loaded = weapon.Loaded;
+            this.IsReloaded = weapon.IsReloaded;
         }
 
-        public int Range { get; set; }
-        public bool LoadedRange { get; set; }
+        public bool Loaded { get; set; }
+        public bool IsReloaded { get; set; }
 
         public override DiceSet GetAttackBonus()
         {

@@ -5,11 +5,10 @@ import {
   HiEye,
   HiTrash,
 } from "react-icons/hi2";
-import Menus from "../../ui/containers/Menus";
-import Table from "../../ui/containers/Table";
-import { Power } from "../../models/power";
-import styled from "styled-components";
-import Modal from "../../ui/containers/Modal";
+import Menus from "../../../ui/containers/Menus";
+import { Power } from "../../../models/power";
+import Table from "../../../ui/containers/Table";
+import Modal from "../../../ui/containers/Modal";
 
 export default function GrantedPowersTable({ powers }: { powers: Power[] }) {
   return (

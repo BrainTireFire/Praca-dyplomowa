@@ -14,15 +14,21 @@ namespace pracadyplomowa.Models.Entities.Items
         protected MeleeWeapon() : base(){
 
         }
-        public MeleeWeapon(string name, string description, ItemFamily itemFamily, int weight, DamageType damageType, DiceSet damageValue, DiceSet? versatileDamageValue) : base(name, description, itemFamily, weight, damageType, damageValue)
+        public MeleeWeapon(string name, string description, ItemFamily itemFamily, int weight, DamageType damageType, DiceSet damageValue, DiceSet? versatileDamageValue) : this(name, description, itemFamily, weight, damageType, damageValue, versatileDamageValue, false, 0)
+        {
+        }
+        public MeleeWeapon(string name, string description, ItemFamily itemFamily, int weight, DamageType damageType, DiceSet damageValue, DiceSet? versatileDamageValue, bool thrown, int range) : base(name, description, itemFamily, weight, damageType, damageValue, range)
         {
             if(versatileDamageValue != null){
                 this.VersatileDamageValue = versatileDamageValue;
+                this.Versatile = true;
             }
+            this.Thrown = thrown;
         }
         public MeleeWeapon(MeleeWeapon weapon) : base(weapon){
             this.Finesse = weapon.Finesse;
             this.Reach = weapon.Reach;
+            this.Thrown = weapon.Thrown;
             if(weapon.Versatile){
 #pragma warning disable CS8604 // Possible null reference argument.
                 this.VersatileDamageValue = new DiceSet(weapon.VersatileDamageValue);
@@ -32,11 +38,10 @@ namespace pracadyplomowa.Models.Entities.Items
 
         public bool Finesse { get; set; }
         public bool Reach { get; set;}
-        [NotMapped]
-        public bool Versatile { get {
-            return this.VersatileDamageValue != null;
-        }}
-        public DiceSet? VersatileDamageValue { get; set; }
+        public bool Thrown { get; set;}
+        public bool Versatile { get; set;}
+        public DiceSet VersatileDamageValue { get; set; } = new DiceSet();
+        public int VersatileDamageValueId { get; set; }
 
         public override DiceSet GetDamageDiceSet(){ //TODO change this method so it returns different values if equipped in two hands for versatile weapons
             if(this.Versatile && this.R_EquipData != null && this.R_EquipData.R_Slots.Intersect(this.R_ItemIsEquippableInSlots).Count() == this.R_ItemIsEquippableInSlots.Count){

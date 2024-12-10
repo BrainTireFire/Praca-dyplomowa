@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { FaSort } from "react-icons/fa";
 
@@ -166,6 +166,12 @@ export const ReusableTable = ({
     }
 
     setSortConfig({ key, direction });
+    setSelected(null);
+  };
+
+  const handleSetFilterText = (text: string) => {
+    setFilterText(text);
+    setSelected(null);
   };
 
   return (
@@ -213,7 +219,7 @@ export const ReusableTable = ({
                     type="text"
                     placeholder="Search..."
                     value={filterText}
-                    onChange={(e) => setFilterText(e.target.value)}
+                    onChange={(e) => handleSetFilterText(e.target.value)}
                   />
                 </TableCell>
               </FooterRow>

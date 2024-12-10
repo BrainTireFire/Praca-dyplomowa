@@ -37,6 +37,7 @@ function Dropdown({
   setChosenValue: (value: string | null) => void;
 }) {
   let nullElement = valuesList.find((element) => element.value === null);
+  console.log(chosenValue);
   return (
     <StyledRow>
       <Select

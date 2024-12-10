@@ -46,16 +46,17 @@ namespace pracadyplomowa.Models.Entities.Items
         public string Description { get; set; } = null!;
         public bool IsSpellFocus { get; set; }
         public bool OccupiesAllSlots { get; set;} // if false then can be placed in any of listed slots, if true then occupies all of them at once
+        public CoinSack Price { get; set; }
 
         //Relationship
-        public virtual ICollection<EquipmentSlot> R_ItemIsEquippableInSlots { get; set; } = [];
+        public virtual List<EquipmentSlot> R_ItemIsEquippableInSlots { get; set; } = [];
         public virtual ItemFamily R_ItemInItemsFamily { get; set; } = null!;
         public int R_ItemInItemsFamilyId { get; set; }
         public virtual Backpack? R_BackpackHasItem { get; set; }
         public int? R_BackpackHasItemId { get; set; }
         public virtual EquipData? R_EquipData { get; set; }
 
-        public virtual ICollection<ImmaterialResourceInstance> R_ItemGrantsResources { get; set; } = [];
+        public virtual List<ImmaterialResourceInstance> R_ItemGrantsResources { get; set; } = [];
         public virtual List<EffectInstance> R_AffectedBy { get; set; } = [];
         // public virtual ICollection<EffectGroup> R_EffectGroupFromItem { get; set; } = [];
         public virtual List<EffectInstance> R_EffectsOnEquip { get; set; } = [];

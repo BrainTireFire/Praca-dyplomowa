@@ -27,6 +27,7 @@ public class MappingProfiles : Profile
         CreateMap<ImmaterialResourceBlueprintDto, ImmaterialResourceBlueprint>();
         CreateMap<PowerCompactDto, Power>();
         CreateMap<Power, PowerCompactDto>();
+        CreateMap<Item, ItemListElementDto>();
         CreateMap<Models.Entities.Campaign.Board, BoardSummaryDto>()
             .ForMember(
                 dest => dest.Fields,
@@ -574,6 +575,191 @@ public class MappingProfiles : Profile
                 dest => dest.MovementCostEffectType,
                 opt => opt.MapFrom(src => src.EffectTypeBody.effectType)
             );
+
+//--------------ITEMS---------------------------
+        CreateMap<Item, ItemFormDto>()
+        .ForMember(dest => dest.ItemFamilyId, opt => opt.MapFrom(src => src.R_ItemInItemsFamilyId));
+        CreateMap<ItemFormDto, Item>()
+        .ForMember(dest => dest.R_ItemInItemsFamilyId, opt => opt.MapFrom(src => src.ItemFamilyId));
+
+        CreateMap<CoinSack, CoinPurseDto>();
+        CreateMap<CoinPurseDto, CoinSack>();
+
+        CreateMap<Apparel, ApparelFormDto>()
+            .IncludeBase<Item, ItemFormDto>()
+            .ForMember(dest => dest.ItemType, opt => opt.MapFrom(src => "apparel"))
+            .ForMember(dest => dest.ItemTypeBody, opt => opt.MapFrom((src) => new ApparelFormDto.Body(){
+                IsSpellFocus = src.IsSpellFocus,
+                OccupiesAllSlots = src.OccupiesAllSlots,
+                MinimumStrength = src.StrengthRequirement,
+                DisadvantageOnStealth = src.StealthDisadvantage,
+                EffectsOnWearer = src.R_EffectsOnEquip.Select(effect => new EquippableItemFormDto.Body.EffectBlueprintDto(){
+                        Id = effect.Id,
+                        Name = effect.Name
+                    }).ToList(),
+                Powers = src.R_EquipItemGrantsAccessToPower.Select(effect => new EquippableItemFormDto.Body.PowerDto(){
+                        Id = effect.Id,
+                        Name = effect.Name
+                    }).ToList(),
+                ResourcesOnEquip = src.R_ItemGrantsResources
+                    .Select(x => x.R_Blueprint) // Select the blueprint
+                    .DistinctBy(resource => resource.Id) // Remove duplicates by ID
+                    .Select(resource => new EquippableItemFormDto.Body.ResourceDto(){
+                        Id = resource.Id,
+                        Name = resource.Name,
+                        Charges = resource.R_Instances.Count
+                    }).ToList(),
+                Slots = src.R_ItemIsEquippableInSlots.Select(slot => new EquippableItemFormDto.Body.SlotDto(){
+                    Id = slot.Id,
+                    Name = slot.Name
+                }).ToList()
+            }));
+        CreateMap<ApparelFormDto, Apparel>()
+            .IncludeBase<ItemFormDto, Item>()
+            .ForMember(dest => dest.IsSpellFocus, opt => opt.MapFrom(src => src.ItemTypeBody.IsSpellFocus))
+            .ForMember(dest => dest.OccupiesAllSlots, opt => opt.MapFrom(src => src.ItemTypeBody.OccupiesAllSlots))
+            .ForMember(dest => dest.StrengthRequirement, opt => opt.MapFrom(src => src.ItemTypeBody.MinimumStrength))
+            .ForMember(dest => dest.StealthDisadvantage, opt => opt.MapFrom(src => src.ItemTypeBody.DisadvantageOnStealth))
+            .ForMember(dest => dest.StrengthRequirement, opt => opt.MapFrom(src => src.ItemTypeBody.MinimumStrength));
+
+        CreateMap<MeleeWeapon, MeleeWeaponFormDto>()
+            .IncludeBase<Item, ItemFormDto>()
+            .ForMember(dest => dest.ItemType, opt => opt.MapFrom(src => "meleeWeapon"))
+            .ForMember(dest => dest.ItemTypeBody, opt => opt.MapFrom((src) => new MeleeWeaponFormDto.Body(){
+                IsSpellFocus = src.IsSpellFocus,
+                OccupiesAllSlots = src.OccupiesAllSlots,
+                Damage = new MeleeWeaponFormDto.Body.DiceSetFormDto(){
+                    d100 = src.DamageValue.d100,
+                    d20 = src.DamageValue.d20,
+                    d12 = src.DamageValue.d12,
+                    d10 = src.DamageValue.d10,
+                    d8 = src.DamageValue.d8,
+                    d6 = src.DamageValue.d6,
+                    d4 = src.DamageValue.d4,
+                    flat = src.DamageValue.flat,
+                },
+                VersatileDamage = new MeleeWeaponFormDto.Body.DiceSetFormDto() {
+                    d100 = src.VersatileDamageValue.d100,
+                    d20 = src.VersatileDamageValue.d20,
+                    d12 = src.VersatileDamageValue.d12,
+                    d10 = src.VersatileDamageValue.d10,
+                    d8 = src.VersatileDamageValue.d8,
+                    d6 = src.VersatileDamageValue.d6,
+                    d4 = src.VersatileDamageValue.d4,
+                    flat = src.VersatileDamageValue.flat,
+                },
+                DamageType = src.DamageType,
+                WeightProperty = src.WeaponWeight,
+                Reach = src.Reach,
+                Finesse = src.Finesse,
+                Throwable = src.Thrown,
+                RangeThrowable = src.Range,
+                EffectsOnWearer = src.R_EffectsOnEquip.Select(effect => new MeleeWeaponFormDto.Body.EffectBlueprintDto(){
+                        Id = effect.Id,
+                        Name = effect.Name
+                    }).ToList(),
+                Powers = src.R_EquipItemGrantsAccessToPower.Select(effect => new MeleeWeaponFormDto.Body.PowerDto(){
+                        Id = effect.Id,
+                        Name = effect.Name
+                    }).ToList(),
+                ResourcesOnEquip = src.R_ItemGrantsResources
+                    .Select(x => x.R_Blueprint) // Select the blueprint
+                    .DistinctBy(resource => resource.Id) // Remove duplicates by ID
+                    .Select(resource => new MeleeWeaponFormDto.Body.ResourceDto(){
+                        Id = resource.Id,
+                        Name = resource.Name,
+                        Charges = resource.R_Instances.Count
+                    }).ToList(),
+                Slots = src.R_ItemIsEquippableInSlots.Select(slot => new MeleeWeaponFormDto.Body.SlotDto(){
+                    Id = slot.Id,
+                    Name = slot.Name
+                }).ToList()
+            }));
+        CreateMap<MeleeWeaponFormDto, MeleeWeapon>()
+            .IncludeBase<ItemFormDto, Item>()
+            .ForMember(dest => dest.IsSpellFocus, opt => opt.MapFrom(src => src.ItemTypeBody.IsSpellFocus))
+            .ForMember(dest => dest.OccupiesAllSlots, opt => opt.MapFrom(src => src.ItemTypeBody.OccupiesAllSlots))
+            .ForPath(dest => dest.DamageValue.d100, opt => opt.MapFrom(src => src.ItemTypeBody.Damage.d100))
+            .ForPath(dest => dest.DamageValue.d20, opt => opt.MapFrom(src => src.ItemTypeBody.Damage.d20))
+            .ForPath(dest => dest.DamageValue.d12, opt => opt.MapFrom(src => src.ItemTypeBody.Damage.d12))
+            .ForPath(dest => dest.DamageValue.d10, opt => opt.MapFrom(src => src.ItemTypeBody.Damage.d10))
+            .ForPath(dest => dest.DamageValue.d8, opt => opt.MapFrom(src => src.ItemTypeBody.Damage.d8))
+            .ForPath(dest => dest.DamageValue.d6, opt => opt.MapFrom(src => src.ItemTypeBody.Damage.d6))
+            .ForPath(dest => dest.DamageValue.d4, opt => opt.MapFrom(src => src.ItemTypeBody.Damage.d4))
+            .ForPath(dest => dest.DamageValue.flat, opt => opt.MapFrom(src => src.ItemTypeBody.Damage.flat))
+            .ForPath(dest => dest.VersatileDamageValue.d100, opt => opt.MapFrom(src => src.ItemTypeBody.VersatileDamage.d100))
+            .ForPath(dest => dest.VersatileDamageValue.d20, opt => opt.MapFrom(src => src.ItemTypeBody.VersatileDamage.d20))
+            .ForPath(dest => dest.VersatileDamageValue.d12, opt => opt.MapFrom(src => src.ItemTypeBody.VersatileDamage.d12))
+            .ForPath(dest => dest.VersatileDamageValue.d10, opt => opt.MapFrom(src => src.ItemTypeBody.VersatileDamage.d10))
+            .ForPath(dest => dest.VersatileDamageValue.d8, opt => opt.MapFrom(src => src.ItemTypeBody.VersatileDamage.d8))
+            .ForPath(dest => dest.VersatileDamageValue.d6, opt => opt.MapFrom(src => src.ItemTypeBody.VersatileDamage.d6))
+            .ForPath(dest => dest.VersatileDamageValue.d4, opt => opt.MapFrom(src => src.ItemTypeBody.VersatileDamage.d4))
+            .ForPath(dest => dest.VersatileDamageValue.flat, opt => opt.MapFrom(src => src.ItemTypeBody.VersatileDamage.flat))
+            .ForMember(dest => dest.DamageType, opt => opt.MapFrom(src => src.ItemTypeBody.DamageType))
+            .ForMember(dest => dest.WeaponWeight, opt => opt.MapFrom(src => src.ItemTypeBody.WeightProperty))
+            .ForMember(dest => dest.Reach, opt => opt.MapFrom(src => src.ItemTypeBody.Reach))
+            .ForMember(dest => dest.Finesse, opt => opt.MapFrom(src => src.ItemTypeBody.Finesse));
+
+
+        CreateMap<RangedWeapon, RangedWeaponFormDto>()
+            .IncludeBase<Item, ItemFormDto>()
+            .ForMember(dest => dest.ItemType, opt => opt.MapFrom(src => "rangedWeapon"))
+            .ForMember(dest => dest.ItemTypeBody, opt => opt.MapFrom((src) => new RangedWeaponFormDto.Body(){
+                IsSpellFocus = src.IsSpellFocus,
+                OccupiesAllSlots = src.OccupiesAllSlots,
+                Damage = new RangedWeaponFormDto.Body.DiceSetFormDto(){
+                    d100 = src.DamageValue.d100,
+                    d20 = src.DamageValue.d20,
+                    d12 = src.DamageValue.d12,
+                    d10 = src.DamageValue.d10,
+                    d8 = src.DamageValue.d8,
+                    d6 = src.DamageValue.d6,
+                    d4 = src.DamageValue.d4,
+                    flat = src.DamageValue.flat,
+                },
+                DamageType = src.DamageType,
+                WeightProperty = src.WeaponWeight,
+                Range = src.Range,
+                Loaded = src.Loaded,
+                EffectsOnWearer = src.R_EffectsOnEquip.Select(effect => new RangedWeaponFormDto.Body.EffectBlueprintDto(){
+                        Id = effect.Id,
+                        Name = effect.Name
+                    }).ToList(),
+                Powers = src.R_EquipItemGrantsAccessToPower.Select(effect => new RangedWeaponFormDto.Body.PowerDto(){
+                        Id = effect.Id,
+                        Name = effect.Name
+                    }).ToList(),
+                ResourcesOnEquip = src.R_ItemGrantsResources
+                    .Select(x => x.R_Blueprint) // Select the blueprint
+                    .DistinctBy(resource => resource.Id) // Remove duplicates by ID
+                    .Select(resource => new RangedWeaponFormDto.Body.ResourceDto(){
+                        Id = resource.Id,
+                        Name = resource.Name,
+                        Charges = resource.R_Instances.Count
+                    }).ToList(),
+                Slots = src.R_ItemIsEquippableInSlots.Select(slot => new RangedWeaponFormDto.Body.SlotDto(){
+                    Id = slot.Id,
+                    Name = slot.Name
+                }).ToList()
+            }));
+        CreateMap<RangedWeaponFormDto, RangedWeapon>()
+            .IncludeBase<ItemFormDto, Item>()
+            .ForMember(dest => dest.IsSpellFocus, opt => opt.MapFrom(src => src.ItemTypeBody.IsSpellFocus))
+            .ForMember(dest => dest.OccupiesAllSlots, opt => opt.MapFrom(src => src.ItemTypeBody.OccupiesAllSlots))
+            .ForPath(dest => dest.DamageValue.d100, opt => opt.MapFrom(src => src.ItemTypeBody.Damage.d100))
+            .ForPath(dest => dest.DamageValue.d20, opt => opt.MapFrom(src => src.ItemTypeBody.Damage.d20))
+            .ForPath(dest => dest.DamageValue.d12, opt => opt.MapFrom(src => src.ItemTypeBody.Damage.d12))
+            .ForPath(dest => dest.DamageValue.d10, opt => opt.MapFrom(src => src.ItemTypeBody.Damage.d10))
+            .ForPath(dest => dest.DamageValue.d8, opt => opt.MapFrom(src => src.ItemTypeBody.Damage.d8))
+            .ForPath(dest => dest.DamageValue.d6, opt => opt.MapFrom(src => src.ItemTypeBody.Damage.d6))
+            .ForPath(dest => dest.DamageValue.d4, opt => opt.MapFrom(src => src.ItemTypeBody.Damage.d4))
+            .ForPath(dest => dest.DamageValue.flat, opt => opt.MapFrom(src => src.ItemTypeBody.Damage.flat))
+            .ForMember(dest => dest.DamageType, opt => opt.MapFrom(src => src.ItemTypeBody.DamageType))
+            .ForMember(dest => dest.WeaponWeight, opt => opt.MapFrom(src => src.ItemTypeBody.WeightProperty))
+            .ForMember(dest => dest.Range, opt => opt.MapFrom(src => src.ItemTypeBody.Range))
+            .ForMember(dest => dest.Loaded, opt => opt.MapFrom(src => src.ItemTypeBody.Loaded));
+
+        CreateMap<EquipmentSlot, SlotDto>();
 
             
 

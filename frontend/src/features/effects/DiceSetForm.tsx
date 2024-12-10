@@ -93,9 +93,11 @@ const initialState: DiceSetExtended = DiceSetExtendedDefaultValue;
 export function DiceSetForm({
   onChange,
   diceSet,
+  useExtendedValues,
 }: {
   onChange: (updatedState: DiceSetExtended) => void;
   diceSet: DiceSetExtended;
+  useExtendedValues: Boolean;
 }) {
   const [selectedAdditionalValueIndex, setSelectedAdditionalValueIndex] =
     useState<number | null>(null);
@@ -178,9 +180,10 @@ export function DiceSetForm({
   useEffect(() => {
     onChange(state);
   }, [state, onChange]);
-  const selectedAdditionalValue = state.additionalValues.find(
-    (_value, index) => index === selectedAdditionalValueIndex
-  );
+  const selectedAdditionalValue =
+    state.additionalValues?.find(
+      (_value, index) => index === selectedAdditionalValueIndex
+    ) ?? 0;
   const selectRow = (row: any) => {
     setSelectedAdditionalValueIndex(row.id);
   };
@@ -300,85 +303,95 @@ export function DiceSetForm({
           ></Input>
         </FormRowVertical>
       </HorizontalContainer>
-      <Button
-        onClick={() =>
-          dispatch({
-            type: "postAdditionalValue",
-            payload: { ...initialAdditionalValue },
-          })
-        }
-        customStyles={css`
-          margin: 5px;
-        `}
-      >
-        Add additional value
-      </Button>
-      <Button
-        onClick={() =>
-          dispatch({
-            type: "removeAdditionalValue",
-            index: selectedAdditionalValueIndex as number,
-          })
-        }
-        disabled={selectedAdditionalValueIndex == null}
-        customStyles={css`
-          margin: 5px;
-        `}
-      >
-        Remove selected additional value
-      </Button>
-      <ReusableTable
-        tableRowsColomns={{
-          Type: "AdditionalValueType",
-          Value: "Value",
-        }}
-        data={state.additionalValues.map((additionalValue, index) => {
-          let value: string | null;
+      {useExtendedValues && (
+        <>
+          <Button
+            onClick={() =>
+              dispatch({
+                type: "postAdditionalValue",
+                payload: { ...initialAdditionalValue },
+              })
+            }
+            customStyles={css`
+              margin: 5px;
+            `}
+          >
+            Add additional value
+          </Button>
+          <Button
+            onClick={() =>
+              dispatch({
+                type: "removeAdditionalValue",
+                index: selectedAdditionalValueIndex as number,
+              })
+            }
+            disabled={selectedAdditionalValueIndex == null}
+            customStyles={css`
+              margin: 5px;
+            `}
+          >
+            Remove selected additional value
+          </Button>
+          <ReusableTable
+            tableRowsColomns={{
+              Type: "AdditionalValueType",
+              Value: "Value",
+            }}
+            data={state.additionalValues.map((additionalValue, index) => {
+              let value: string | null;
 
-          // Determine the value based on AdditionalValueType
-          switch (additionalValue.additionalValueType) {
-            case "LevelsInClass":
-              value = additionalValue.className ?? "Select value";
-              break;
-            case "TotalLevel":
-              value = additionalValue.className ?? "Select value";
-              break;
-            case "AbilityScoreModifier":
-              value = additionalValue.ability
-                ? AbilitiesLabelMap[additionalValue.ability]
-                : "Select value";
-              break;
-            case "SkillBonus":
-              value = additionalValue.skill
-                ? SkillsLabelMap[additionalValue.skill]
-                : "Select value";
-              break;
-            default:
-              value = null; // Handle unexpected types
-          }
+              // Determine the value based on AdditionalValueType
+              switch (additionalValue.additionalValueType) {
+                case "LevelsInClass":
+                  value = additionalValue.className ?? "Select value";
+                  break;
+                case "TotalLevel":
+                  value = additionalValue.className ?? "Select value";
+                  break;
+                case "AbilityScoreModifier":
+                  value = additionalValue.ability
+                    ? AbilitiesLabelMap[additionalValue.ability]
+                    : "Select value";
+                  break;
+                case "SkillBonus":
+                  value = additionalValue.skill
+                    ? SkillsLabelMap[additionalValue.skill]
+                    : "Select value";
+                  break;
+                default:
+                  value = null; // Handle unexpected types
+              }
 
-          return {
-            id: index,
-            AdditionalValueType:
-              AdditionalValueTypeLabelMap[additionalValue.additionalValueType],
-            Value: value,
-          };
-        })}
-        isSelectable={true}
-        onSelect={selectRow}
-      ></ReusableTable>
-      {selectedAdditionalValue ? (
-        <AdditionalValueForm
-          value={selectedAdditionalValue}
-          onChange={(x) => {
-            dispatch({
-              type: "updateAdditionalValue",
-              index: selectedAdditionalValueIndex as number,
-              payload: x,
-            });
-          }}
-        ></AdditionalValueForm>
-      ) : null}
+              return {
+                id: index,
+                AdditionalValueType:
+                  AdditionalValueTypeLabelMap[
+                    additionalValue.additionalValueType
+                  ],
+                Value: value,
+              };
+            })}
+            isSelectable={true}
+            onSelect={selectRow}
+          ></ReusableTable>
+          {selectedAdditionalValue ? (
+            <AdditionalValueForm
+              value={selectedAdditionalValue}
+              onChange={(x) => {
+                dispatch({
+                  type: "updateAdditionalValue",
+                  index: selectedAdditionalValueIndex as number,
+                  payload: x,
+                });
+              }}
+            ></AdditionalValueForm>
+          ) : null}
+        </>
+      )}
     </Box>
   );
 }
+
+DiceSetForm.defaultProps = {
+  useExtendedValues: true,
+};

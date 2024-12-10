@@ -26,7 +26,11 @@ export default function Homebrew() {
         Homebrew
       </Heading>
       <StyledElementBox>
-        <Button size="large" variation="primary">
+        <Button
+          size="large"
+          variation="primary"
+          onClick={() => navigate(`/items`)}
+        >
           My custom items
         </Button>
         <Button size="large" variation="secondary">

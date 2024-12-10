@@ -1659,6 +1659,9 @@ namespace pracadyplomowa.Migrations
                     b.Property<int>("DamageValueId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("Range")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("WeaponWeight")
                         .HasColumnType("INTEGER");
 
@@ -1859,7 +1862,13 @@ namespace pracadyplomowa.Migrations
                     b.Property<bool>("Reach")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("VersatileDamageValueId")
+                    b.Property<bool>("Thrown")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Versatile")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("VersatileDamageValueId")
                         .HasColumnType("INTEGER");
 
                     b.HasIndex("VersatileDamageValueId");
@@ -1871,23 +1880,13 @@ namespace pracadyplomowa.Migrations
                 {
                     b.HasBaseType("pracadyplomowa.Models.Entities.Items.Weapon");
 
-                    b.Property<bool>("LoadedRange")
+                    b.Property<bool>("IsReloaded")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Range")
+                    b.Property<bool>("Loaded")
                         .HasColumnType("INTEGER");
 
                     b.ToTable("RangedWeapons");
-                });
-
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.MeleeThrowableWeapon", b =>
-                {
-                    b.HasBaseType("pracadyplomowa.Models.Entities.Items.MeleeWeapon");
-
-                    b.Property<int>("Range")
-                        .HasColumnType("INTEGER");
-
-                    b.ToTable("MeleeThrowableWeapons");
                 });
 
             modelBuilder.Entity("CampaignUser", b =>
@@ -2707,6 +2706,31 @@ namespace pracadyplomowa.Migrations
                         .WithMany("R_ItemFamilyInItems")
                         .HasForeignKey("R_ItemInItemsFamilyId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("pracadyplomowa.Models.Entities.Items.CoinSack", "Price", b1 =>
+                        {
+                            b1.Property<int>("ItemId")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("CopperPieces")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("GoldPieces")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("SilverPieces")
+                                .HasColumnType("INTEGER");
+
+                            b1.HasKey("ItemId");
+
+                            b1.ToTable("Items");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ItemId");
+                        });
+
+                    b.Navigation("Price")
                         .IsRequired();
 
                     b.Navigation("R_BackpackHasItem");
@@ -3539,7 +3563,9 @@ namespace pracadyplomowa.Migrations
 
                     b.HasOne("pracadyplomowa.Models.Entities.Characters.DiceSet", "VersatileDamageValue")
                         .WithMany()
-                        .HasForeignKey("VersatileDamageValueId");
+                        .HasForeignKey("VersatileDamageValueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("VersatileDamageValue");
                 });
@@ -3549,15 +3575,6 @@ namespace pracadyplomowa.Migrations
                     b.HasOne("pracadyplomowa.Models.Entities.Items.Weapon", null)
                         .WithOne()
                         .HasForeignKey("pracadyplomowa.Models.Entities.Items.RangedWeapon", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.MeleeThrowableWeapon", b =>
-                {
-                    b.HasOne("pracadyplomowa.Models.Entities.Items.MeleeWeapon", null)
-                        .WithOne()
-                        .HasForeignKey("pracadyplomowa.Models.Entities.Items.MeleeThrowableWeapon", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

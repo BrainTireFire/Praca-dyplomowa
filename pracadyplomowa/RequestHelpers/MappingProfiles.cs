@@ -9,6 +9,7 @@ using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Models.Entities.Items;
 using pracadyplomowa.Models.Entities.Powers;
 using pracadyplomowa.Models.Entities.Powers.EffectBlueprints;
+using pracadyplomowa.Models.Entities.Powers.EffectInstances;
 using pracadyplomowa.RequestHelpers;
 using static pracadyplomowa.Models.DTOs.PowerFormDto;
 
@@ -602,12 +603,12 @@ public class MappingProfiles : Profile
                         Name = effect.Name
                     }).ToList(),
                 ResourcesOnEquip = src.R_ItemGrantsResources
-                    .Select(x => x.R_Blueprint) // Select the blueprint
-                    .DistinctBy(resource => resource.Id) // Remove duplicates by ID
-                    .Select(resource => new EquippableItemFormDto.Body.ResourceDto(){
-                        Id = resource.Id,
-                        Name = resource.Name,
-                        Charges = resource.R_Instances.Count
+                    .GroupBy(x => new {x.R_BlueprintId, x.Level, x.R_Blueprint.Name})
+                    .Select(g => new RangedWeaponFormDto.Body.ResourceDto(){
+                        BlueprintId = g.Key.R_BlueprintId,
+                        Name = g.Key.Name,
+                        Count = g.Count(),
+                        Level = g.Key.Level
                     }).ToList(),
                 Slots = src.R_ItemIsEquippableInSlots.Select(slot => new EquippableItemFormDto.Body.SlotDto(){
                     Id = slot.Id,
@@ -663,12 +664,12 @@ public class MappingProfiles : Profile
                         Name = effect.Name
                     }).ToList(),
                 ResourcesOnEquip = src.R_ItemGrantsResources
-                    .Select(x => x.R_Blueprint) // Select the blueprint
-                    .DistinctBy(resource => resource.Id) // Remove duplicates by ID
-                    .Select(resource => new MeleeWeaponFormDto.Body.ResourceDto(){
-                        Id = resource.Id,
-                        Name = resource.Name,
-                        Charges = resource.R_Instances.Count
+                    .GroupBy(x => new {x.R_BlueprintId, x.Level, x.R_Blueprint.Name})
+                    .Select(g => new RangedWeaponFormDto.Body.ResourceDto(){
+                        BlueprintId = g.Key.R_BlueprintId,
+                        Name = g.Key.Name,
+                        Count = g.Count(),
+                        Level = g.Key.Level
                     }).ToList(),
                 Slots = src.R_ItemIsEquippableInSlots.Select(slot => new MeleeWeaponFormDto.Body.SlotDto(){
                     Id = slot.Id,
@@ -730,12 +731,12 @@ public class MappingProfiles : Profile
                         Name = effect.Name
                     }).ToList(),
                 ResourcesOnEquip = src.R_ItemGrantsResources
-                    .Select(x => x.R_Blueprint) // Select the blueprint
-                    .DistinctBy(resource => resource.Id) // Remove duplicates by ID
-                    .Select(resource => new RangedWeaponFormDto.Body.ResourceDto(){
-                        Id = resource.Id,
-                        Name = resource.Name,
-                        Charges = resource.R_Instances.Count
+                    .GroupBy(x => new {x.R_BlueprintId, x.Level, x.R_Blueprint.Name})
+                    .Select(g => new RangedWeaponFormDto.Body.ResourceDto(){
+                        BlueprintId = g.Key.R_BlueprintId,
+                        Name = g.Key.Name,
+                        Count = g.Count(),
+                        Level = g.Key.Level
                     }).ToList(),
                 Slots = src.R_ItemIsEquippableInSlots.Select(slot => new RangedWeaponFormDto.Body.SlotDto(){
                     Id = slot.Id,
@@ -761,7 +762,51 @@ public class MappingProfiles : Profile
 
         CreateMap<EquipmentSlot, SlotDto>();
 
-            
+        CreateMap<EffectBlueprint, EffectInstance>().ReverseMap();
+        CreateMap<AbilityEffectBlueprint, AbilityEffectInstance>()
+            .IncludeBase<EffectBlueprint, EffectInstance>().ReverseMap();
+        CreateMap<ActionEffectBlueprint, ActionEffectInstance>()
+            .IncludeBase<EffectBlueprint, EffectInstance>().ReverseMap();
+        CreateMap<ArmorClassEffectBlueprint, ArmorClassEffectInstance>()
+            .IncludeBase<EffectBlueprint, EffectInstance>().ReverseMap();
+        CreateMap<AttackPerAttackActionEffectBlueprint, AttackPerAttackActionEffectInstance>()
+            .IncludeBase<EffectBlueprint, EffectInstance>().ReverseMap();
+        CreateMap<AttackRollEffectBlueprint, AttackRollEffectInstance>()
+            .IncludeBase<EffectBlueprint, EffectInstance>().ReverseMap();
+        CreateMap<DamageEffectBlueprint, DamageEffectInstance>()
+            .IncludeBase<EffectBlueprint, EffectInstance>().ReverseMap();
+        CreateMap<DummyEffectBlueprint, DummyEffectInstance>()
+            .IncludeBase<EffectBlueprint, EffectInstance>().ReverseMap();
+        CreateMap<HealingEffectBlueprint, HealingEffectInstance>()
+            .IncludeBase<EffectBlueprint, EffectInstance>().ReverseMap();
+        CreateMap<HitpointEffectBlueprint, HitpointEffectInstance>()
+            .IncludeBase<EffectBlueprint, EffectInstance>().ReverseMap();
+        CreateMap<InitiativeEffectBlueprint, InitiativeEffectInstance>()
+            .IncludeBase<EffectBlueprint, EffectInstance>().ReverseMap();
+        CreateMap<LanguageEffectBlueprint, LanguageEffectInstance>()
+            .IncludeBase<EffectBlueprint, EffectInstance>().ReverseMap();
+        CreateMap<MagicEffectBlueprint, MagicEffectInstance>()
+            .IncludeBase<EffectBlueprint, EffectInstance>().ReverseMap();
+        CreateMap<MovementCostEffectBlueprint, MovementCostEffectInstance>()
+            .IncludeBase<EffectBlueprint, EffectInstance>().ReverseMap();
+        CreateMap<MovementEffectBlueprint, MovementEffectInstance>()
+            .IncludeBase<EffectBlueprint, EffectInstance>().ReverseMap();
+        CreateMap<OffHandAttackEffectBlueprint, OffHandAttackEffectInstance>()
+            .IncludeBase<EffectBlueprint, EffectInstance>().ReverseMap();
+        CreateMap<ProficiencyEffectBlueprint, ProficiencyEffectInstance>()
+            .IncludeBase<EffectBlueprint, EffectInstance>().ReverseMap();
+        CreateMap<ResistanceEffectBlueprint, ResistanceEffectInstance>()
+            .IncludeBase<EffectBlueprint, EffectInstance>().ReverseMap();
+        CreateMap<SavingThrowEffectBlueprint, SavingThrowEffectInstance>()
+            .IncludeBase<EffectBlueprint, EffectInstance>().ReverseMap();
+        CreateMap<SizeEffectBlueprint, SizeEffectInstance>()
+            .IncludeBase<EffectBlueprint, EffectInstance>().ReverseMap();
+        CreateMap<SkillEffectBlueprint, SkillEffectInstance>()
+            .IncludeBase<EffectBlueprint, EffectInstance>().ReverseMap();
+        CreateMap<StatusEffectBlueprint, StatusEffectInstance>()
+            .IncludeBase<EffectBlueprint, EffectInstance>().ReverseMap();
+        CreateMap<ValueEffectBlueprint, ValueEffectInstance>()
+            .IncludeBase<EffectBlueprint, EffectInstance>().ReverseMap();
 
         
     }

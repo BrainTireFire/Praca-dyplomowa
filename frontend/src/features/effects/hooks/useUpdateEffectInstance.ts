@@ -1,20 +1,20 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { EffectBlueprint } from "../EffectBlueprintForm";
-import { updateEffectBlueprint as updateEffectBlueprintApi } from "../../../services/apiEffectBlueprints";
+import { updateEffectInstance as updateEffectInstanceApi } from "../../../services/apiEffectInstances";
 
-export function useUpdateEffectBlueprint(
+export function useUpdateEffectInstance(
   onSuccess: () => void,
   effectId: number,
   powerId: number
 ) {
   const queryClient = useQueryClient();
-  const { mutate: updateEffectBlueprint, isPending } = useMutation({
+  const { mutate: updateEffectInstance, isPending } = useMutation({
     mutationFn: (effectBlueprint: EffectBlueprint) =>
-      updateEffectBlueprintApi(effectBlueprint),
+      updateEffectInstanceApi(effectBlueprint),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["effectBlueprint", effectId],
+        queryKey: ["effectInstance", effectId],
       });
 
       queryClient.invalidateQueries({ queryKey: ["power", powerId] });
@@ -22,12 +22,12 @@ export function useUpdateEffectBlueprint(
     },
     onError: (error) => {
       console.error(error);
-      toast.error("Effect Blueprint update failed");
+      toast.error("Effect Instance update failed");
     },
   });
 
   return {
-    updateEffectBlueprint,
+    updateEffectInstance,
     isPending,
   };
 }

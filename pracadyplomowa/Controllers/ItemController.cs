@@ -18,16 +18,18 @@ namespace pracadyplomowa.Controllers
     {
         private readonly IImmaterialResourceBlueprintRepository _immaterialResourceBlueprintRepository;
         private readonly IEffectBlueprintRepository _effectBlueprintRepository;
+        private readonly IEffectInstanceRepository _effectInstanceRepository;
         private readonly IPowerRepository _powerRepository;
         private readonly IItemRepository _itemRepository;
         private readonly IEquipmentSlotRepository _equipmentSlotRepository;
         private readonly IMapper _mapper;
 
-        public ItemController(IImmaterialResourceBlueprintRepository immaterialResourceBlueprintRepository, IEffectBlueprintRepository effectBlueprintRepository, IPowerRepository powerRepository, IItemRepository itemRepository, IEquipmentSlotRepository equipmentSlotRepository, IMapper mapper)
+        public ItemController(IImmaterialResourceBlueprintRepository immaterialResourceBlueprintRepository, IEffectBlueprintRepository effectBlueprintRepository, IEffectInstanceRepository effectInstanceRepository, IPowerRepository powerRepository, IItemRepository itemRepository, IEquipmentSlotRepository equipmentSlotRepository, IMapper mapper)
         {
             _immaterialResourceBlueprintRepository = immaterialResourceBlueprintRepository;
             _powerRepository = powerRepository;
             _effectBlueprintRepository = effectBlueprintRepository;
+            _effectInstanceRepository = effectInstanceRepository;
             _itemRepository = itemRepository;
             _equipmentSlotRepository = equipmentSlotRepository;
             _mapper = mapper;
@@ -128,6 +130,77 @@ namespace pracadyplomowa.Controllers
             item.R_ItemIsEquippableInSlots.Clear();
             item.R_ItemIsEquippableInSlots.AddRange(await slots);
             await _itemRepository.SaveChanges();
+            return Ok();
+        }
+
+        [HttpGet("{itemId}/powers")]
+        public async Task<ActionResult<List<SlotDto>>> GetItemPowers(int itemId){
+            var item = await _itemRepository.GetByIdWithSlotsPowersEffectsResources(itemId);
+            if(item == null){
+                return NotFound("Item with this Id does not exist");
+            }
+            var powers = _mapper.Map<List<PowerCompactDto>>(item.R_EquipItemGrantsAccessToPower);
+            return Ok(powers);
+        }
+
+        [HttpPatch("{itemId}/powers")]
+        public async Task<ActionResult<List<SlotDto>>> SetItemPowers(int itemId, [FromBody] List<PowerCompactDto> powerDtos){
+            var item = await _itemRepository.GetByIdWithSlotsPowersEffectsResources(itemId);
+            if(item == null){
+                return NotFound("Item with this Id does not exist");
+            }
+            var slots = _powerRepository.GetAllByIds(powerDtos.Select(x => x.Id).ToList());
+            item.R_EquipItemGrantsAccessToPower.Clear();
+            item.R_EquipItemGrantsAccessToPower.AddRange(await slots);
+            await _itemRepository.SaveChanges();
+            return Ok();
+        }
+
+        [HttpGet("{itemId}/resources")]
+        public async Task<ActionResult<List<SlotDto>>> GetItemResources(int itemId){
+            var item = await _itemRepository.GetByIdWithSlotsPowersEffectsResources(itemId);
+            if(item == null){
+                return NotFound("Item with this Id does not exist");
+            }
+            var resources = item.R_ItemGrantsResources.GroupBy(r => new {r.R_BlueprintId, r.R_Blueprint.Name, r.Level}).Select(g => new ImmaterialResourceAmountDto(){
+                BlueprintId = g.Key.R_BlueprintId,
+                Name = g.Key.Name,
+                Level = g.Key.Level,
+                Count = g.Count()
+            }).ToList();
+            return Ok(resources);
+        }
+
+        [HttpPatch("{itemId}/resources")]
+        public async Task<ActionResult<List<SlotDto>>> SetItemResources(int itemId, [FromBody] List<ImmaterialResourceAmountDto> resourceDtos){
+            var item = await _itemRepository.GetByIdWithSlotsPowersEffectsResources(itemId);
+            if(item == null){
+                return NotFound("Item with this Id does not exist");
+            }
+            // var resourceBlueprints = await _immaterialResourceBlueprintRepository.GetAllByIds(resourceDtos.Select(x => x.BlueprintId).ToList());
+            item.R_ItemGrantsResources.Clear();
+            var resourceInstances = resourceDtos
+                .SelectMany(dto => 
+                    Enumerable.Range(0, dto.Count).Select(_ => new ImmaterialResourceInstance 
+                    { 
+                        R_BlueprintId = dto.BlueprintId, 
+                        Level = dto.Level 
+                    })
+                ).ToList();
+            item.R_ItemGrantsResources.AddRange(resourceInstances);
+            await _itemRepository.SaveChanges();
+            return Ok();
+        }
+
+        [HttpPost("{itemId}/effects")]
+        public async Task<ActionResult> AddNewEffectBlueprint([FromBody] EffectBlueprintFormDto effectDto, [FromRoute] int itemId)
+        {
+            var effectBlueprint = _mapper.Map<EffectBlueprint>(effectDto);
+            var effectInstance = _mapper.Map<EffectInstance>(effectBlueprint);
+            effectInstance.R_GrantedByEquippingItemId = itemId;
+
+            _effectInstanceRepository.Add(effectInstance);
+            await _effectInstanceRepository.SaveChanges();
             return Ok();
         }
 

@@ -62,7 +62,7 @@ namespace pracadyplomowa.Models.Entities.Items
         public virtual List<EffectInstance> R_EffectsOnEquip { get; set; } = [];
         public virtual ICollection<ShopItem> R_ItemInShops { get; set; } = [];
         // public virtual ICollection<EffectBlueprint> R_ItemCreateEffectsOnEquip { get; set; } = [];
-        public virtual ICollection<Power> R_EquipItemGrantsAccessToPower { get; set; } = [];
+        public virtual List<Power> R_EquipItemGrantsAccessToPower { get; set; } = [];
 
         public void Unequip(Character character){
             character.R_EquippedItems.RemoveAll(ed => ed.R_Character == character && ed.R_Item == this);

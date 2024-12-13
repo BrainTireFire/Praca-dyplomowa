@@ -3,18 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using pracadyplomowa.Models.Entities.Powers;
 
 namespace pracadyplomowa.Repository.Item
 {
-    public class ImmaterialResourceBlueprintRepository : BaseRepository<Models.Entities.Powers.ImmaterialResourceBlueprint>, IImmaterialResourceBlueprintRepository
+    public class ImmaterialResourceBlueprintRepository : BaseRepository<ImmaterialResourceBlueprint>, IImmaterialResourceBlueprintRepository
     {
         public ImmaterialResourceBlueprintRepository(AppDbContext context) : base(context)
         {
         }
 
-        public async Task<Models.Entities.Powers.ImmaterialResourceBlueprint> GetByName(string name)
+        public async Task<ImmaterialResourceBlueprint> GetByName(string name)
         {
             return await _context.ImmaterialResourceBlueprints.Where(i => i.Name == name).FirstAsync();
+        }
+
+        public Task<List<ImmaterialResourceBlueprint>> GetAllByIds(List<int> Ids){
+            return _context.ImmaterialResourceBlueprints.Where(i => Ids.Contains(i.Id)).ToListAsync();
         }
     }
 }

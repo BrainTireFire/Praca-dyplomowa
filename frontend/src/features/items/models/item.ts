@@ -1,4 +1,5 @@
 import { DiceSet, DiceSetDefaultValue } from "../../../models/diceset";
+import { ImmaterialResourceAmount } from "../../../models/immaterialResourceAmount";
 import { ImmaterialResourceBlueprint } from "../../../models/immaterialResourceBlueprint";
 import { PowerListItem } from "../../../models/power";
 import { Slot } from "../../../models/slot";
@@ -40,9 +41,8 @@ export const toolBodyInitialValue: ToolBody = {
 export type EquippableItemBody = {
   effectsOnWearer: EffectBlueprintListItem[];
   powers: PowerListItem[];
-  powersOnHit: PowerListItem[];
   //   resources: (ImmaterialResourceBlueprint & { charges: number })[];
-  resourcesOnEquip: (ImmaterialResourceBlueprint & { charges: number })[];
+  resourcesOnEquip: ImmaterialResourceAmount[];
   slots: Slot[];
   isSpellFocus: boolean;
   occupiesAllSlots: boolean;
@@ -57,7 +57,6 @@ export type ApparelBody = EquippableItemBody & {
 export const apparelBodyInitialValue: ApparelBody = {
   effectsOnWearer: [],
   powers: [],
-  powersOnHit: [],
   resourcesOnEquip: [],
   slots: [],
   isSpellFocus: false,
@@ -85,7 +84,7 @@ export type MeleeWeaponBody = WeaponBody & {
 export const meleeWeaponBodyInitialValue: MeleeWeaponBody = {
   effectsOnWearer: [],
   powers: [],
-  powersOnHit: [],
+  // powersOnHit: [],
   resourcesOnEquip: [],
   slots: [],
   isSpellFocus: false,
@@ -106,7 +105,7 @@ export type RangedWeaponBody = WeaponBody & { range: number; loaded: boolean };
 export const rangedWeaponBodyInitialValue: RangedWeaponBody = {
   effectsOnWearer: [],
   powers: [],
-  powersOnHit: [],
+  // powersOnHit: [],
   resourcesOnEquip: [],
   slots: [],
   isSpellFocus: false,

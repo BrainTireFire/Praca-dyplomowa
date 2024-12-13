@@ -1,17 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
-import {
-  HiArrowDownOnSquare,
-  HiArrowUpOnSquare,
-  HiEye,
-  HiTrash,
-} from "react-icons/hi2";
+import { useContext, useEffect, useState } from "react";
 import Menus from "../../../ui/containers/Menus";
 import Table from "../../../ui/containers/Table";
 import styled from "styled-components";
-import Modal from "../../../ui/containers/Modal";
-import ConfirmDelete from "../../../ui/containers/ConfirmDelete";
 import { ItemIdContext } from "../contexts/ItemIdContext";
-import { useDeleteSlot } from "../hooks/useDeleteSlot";
 import { ReusableTable } from "../../../ui/containers/ReusableTable";
 import { useSlots } from "../hooks/useSlots";
 import { useItemSlots } from "../hooks/useItemSlots";
@@ -26,17 +17,16 @@ export default function SlotsTable({ slots }: { slots: Slot[] }) {
       <Table
         header="Occupied slots"
         button="Add new"
-        columns="1fr 3.2rem"
+        columns="1fr"
         modal={<SlotSelectionForm />}
       >
         <Table.Header>
           <div>Name</div>
-          <div></div>
         </Table.Header>
         <Table.Body
           data={slots}
           render={(slot) => <SlotRow key={slot.id} slot={slot} />}
-          columnCount={2}
+          columnCount={1}
         />
         <Table.Footer>{/* <Pagination count={count} /> */}</Table.Footer>
       </Table>
@@ -51,33 +41,9 @@ const Cell = styled.div`
 `;
 
 function SlotRow({ slot }: { slot: Slot }) {
-  const { itemId } = useContext(ItemIdContext);
-  const { isPending, removeSlot } = useDeleteSlot(() => {}, itemId as number);
   return (
     <Table.Row>
       <Cell>{slot.name}</Cell>
-
-      <Modal>
-        <Menus.Menu>
-          <Menus.Toggle id={slot.id} />
-          <Menus.List id={slot.id}>
-            <Modal.Open opens="delete">
-              <Menus.Button icon={<HiTrash />} onClick={() => {}}>
-                Delete
-              </Menus.Button>
-            </Modal.Open>
-          </Menus.List>
-        </Menus.Menu>
-        <Modal.Window name="delete">
-          <ConfirmDelete
-            resourceName="material component"
-            disabled={isPending}
-            onConfirm={() => {
-              removeSlot(slot.id);
-            }}
-          />
-        </Modal.Window>
-      </Modal>
     </Table.Row>
   );
 }
@@ -144,38 +110,42 @@ function SlotSelectionForm() {
         {isLoadingAllSlots && <Spinner />}
       </Column1>
       <Column2>
-        <Button
-          disabled={selectedSlotIdFromAll === null}
-          onClick={() => {
-            setItemSlotsLocal(() => {
-              return [
-                ...(itemSlotsLocal as Slot[]),
-                allSlots?.find(
-                  (slot) => slot.id === selectedSlotIdFromAll
-                ) as Slot,
-              ];
-            });
-            setSelectedSlotIdFromAll(null);
-          }}
-        >
-          {">>"}
-        </Button>
-        <Button
-          disabled={selectedSlotIdFromItem === null}
-          onClick={() => {
-            setItemSlotsLocal(() => {
-              return (itemSlotsLocal as Slot[]).filter(
-                (slot) => slot.id !== selectedSlotIdFromItem
-              );
-            });
-            setSelectedSlotIdFromItem(null);
-          }}
-        >
-          {"<<"}
-        </Button>
-        <Button onClick={() => updateItemSlots(itemSlotsLocal)}>
-          {"Save"}
-        </Button>
+        {!isPending && (
+          <>
+            <Button
+              disabled={selectedSlotIdFromAll === null}
+              onClick={() => {
+                setItemSlotsLocal(() => {
+                  return [
+                    ...(itemSlotsLocal as Slot[]),
+                    allSlots?.find(
+                      (slot) => slot.id === selectedSlotIdFromAll
+                    ) as Slot,
+                  ];
+                });
+                setSelectedSlotIdFromAll(null);
+              }}
+            >
+              {">>"}
+            </Button>
+            <Button
+              disabled={selectedSlotIdFromItem === null}
+              onClick={() => {
+                setItemSlotsLocal(() => {
+                  return (itemSlotsLocal as Slot[]).filter(
+                    (slot) => slot.id !== selectedSlotIdFromItem
+                  );
+                });
+                setSelectedSlotIdFromItem(null);
+              }}
+            >
+              {"<<"}
+            </Button>
+            <Button onClick={() => updateItemSlots(itemSlotsLocal)}>
+              {"Save"}
+            </Button>
+          </>
+        )}
       </Column2>
       <Column3>
         {!isLoadingItemSlots && (

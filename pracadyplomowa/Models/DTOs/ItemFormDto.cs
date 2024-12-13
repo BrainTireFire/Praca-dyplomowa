@@ -55,8 +55,10 @@ namespace pracadyplomowa.Models.DTOs
             }
             public class ResourceDto {
                 public int Id {get; set;}
+                public int BlueprintId {get; set;}
                 public string Name {get; set;}
-                public int Charges {get; set;}
+                public int Count {get; set;}
+                public int Level {get; set;}
             }
             public class SlotDto {
                 public int Id {get; set;}

@@ -1,5 +1,8 @@
+import { EffectBlueprint } from "../features/effects/EffectBlueprintForm";
 import { Item } from "../features/items/models/item";
+import { ImmaterialResourceAmount } from "../models/immaterialResourceAmount";
 import { ItemListItem } from "../models/item";
+import { PowerListItem } from "../models/power";
 import { Slot } from "../models/slot";
 import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
@@ -105,5 +108,71 @@ export async function updateItemSlots(
     body: JSON.stringify(slots),
   };
   await customFetch(`${BASE_URL}/api/item/${itemId}/slots`, options);
+  return;
+}
+
+export async function getItemPowers(itemId: number): Promise<PowerListItem[]> {
+  const response = await customFetch(`${BASE_URL}/api/item/${itemId}/powers`);
+
+  console.log(response);
+
+  return response;
+}
+
+export async function updateItemPowers(
+  itemId: number,
+  powers: PowerListItem[]
+): Promise<void> {
+  const options: RequestInit = {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(powers),
+  };
+  await customFetch(`${BASE_URL}/api/item/${itemId}/powers`, options);
+  return;
+}
+
+export async function getItemResources(
+  itemId: number
+): Promise<ImmaterialResourceAmount[]> {
+  const response = await customFetch(
+    `${BASE_URL}/api/item/${itemId}/resources`
+  );
+
+  console.log(response);
+
+  return response;
+}
+
+export async function updateItemResources(
+  itemId: number,
+  resources: ImmaterialResourceAmount[]
+): Promise<void> {
+  const options: RequestInit = {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(resources),
+  };
+  await customFetch(`${BASE_URL}/api/item/${itemId}/resources`, options);
+  return;
+}
+
+export async function addEffectInstance(
+  effectBlueprintDto: EffectBlueprint,
+  itemId: number
+): Promise<void> {
+  console.log(effectBlueprintDto);
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(effectBlueprintDto),
+  };
+  await customFetch(`${BASE_URL}/api/item/${itemId}/effects`, options);
   return;
 }

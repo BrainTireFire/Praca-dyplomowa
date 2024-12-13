@@ -2,17 +2,14 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { deleteEffectBlueprint as deleteEffectBlueprintApi } from "../../../services/apiEffectBlueprints";
 
-export function useDeleteEffectBlueprint(
-  onSuccess: () => void,
-  powerId: number
-) {
+export function useDeleteEffectInstance(onSuccess: () => void, itemId: number) {
   const queryClient = useQueryClient();
-  const { mutate: deleteEffectBlueprint, isPending } = useMutation({
+  const { mutate: deleteEffectInstance, isPending } = useMutation({
     mutationFn: (id: number) => deleteEffectBlueprintApi(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["power", powerId] });
+      queryClient.invalidateQueries({ queryKey: ["item", itemId] });
       // Explicitly refetch the query after invalidation
-      queryClient.refetchQueries({ queryKey: ["power", powerId] });
+      queryClient.refetchQueries({ queryKey: ["item", itemId] });
       onSuccess();
     },
     onError: (error) => {
@@ -22,7 +19,7 @@ export function useDeleteEffectBlueprint(
   });
 
   return {
-    deleteEffectBlueprint,
+    deleteEffectInstance,
     isPending,
   };
 }

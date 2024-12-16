@@ -502,10 +502,10 @@ export default function PowerForm({ powerId }: { powerId: number }) {
           </Column1>
           <Column2>
             <Row1InColumn2>
-              <EffectTable
+              {/* <EffectTable
                 effects={state.effectBlueprints}
                 powerId={powerId ?? -1}
-              ></EffectTable>
+              ></EffectTable> */}
               <MaterialResourceTable
                 materialComponents={state.materialResourcesUsed}
                 powerId={powerId ?? -1}
@@ -579,6 +579,10 @@ export default function PowerForm({ powerId }: { powerId: number }) {
                 `}
               >
                 <Input
+                  disabled={
+                    state.powerType === "Attack" ||
+                    state.powerType === "AuraCreator"
+                  }
                   value={state.areaSize}
                   type="number"
                   onChange={(e) =>
@@ -597,6 +601,10 @@ export default function PowerForm({ powerId }: { powerId: number }) {
                 `}
               >
                 <Dropdown
+                  disabled={
+                    state.powerType === "Attack" ||
+                    state.powerType === "AuraCreator"
+                  }
                   valuesList={[
                     ...areaShapeOptions,
                     { value: null, label: "Not applicable" },
@@ -618,6 +626,7 @@ export default function PowerForm({ powerId }: { powerId: number }) {
                 `}
               >
                 <Input
+                  disabled={state.powerType !== "AuraCreator"}
                   value={state.auraSize}
                   type="number"
                   onChange={(e) =>
@@ -636,6 +645,7 @@ export default function PowerForm({ powerId }: { powerId: number }) {
                 `}
               >
                 <Input
+                  disabled={state.powerType !== "Saveable"}
                   value={state.difficultyClass}
                   type="number"
                   onChange={(e) =>
@@ -654,6 +664,7 @@ export default function PowerForm({ powerId }: { powerId: number }) {
                 `}
               >
                 <Dropdown
+                  disabled={state.powerType !== "Saveable"}
                   valuesList={[
                     ...abilitiesDropdown,
                     { value: null, label: "Not applicable" },
@@ -667,6 +678,40 @@ export default function PowerForm({ powerId }: { powerId: number }) {
                   chosenValue={state.savingThrowAbility}
                 ></Dropdown>
               </FormRowVertical>
+              <RadioGroup
+                disabled={state.powerType !== "Saveable"}
+                values={savingThrowBehaviourOptions}
+                onChange={(x) => {
+                  dispatch({
+                    type: PowerActionTypes.UPDATE_SAVING_THROW_BEHAVIOUR,
+                    payload: x as SavingThrowBehaviour,
+                  });
+                }}
+                name="savingThrowBehaviour"
+                label="Saving throw behaviour"
+                currentValue={state.savingThrowBehaviour}
+                customStyles={css`
+                  grid-column: 4;
+                  grid-row: 1;
+                `}
+              ></RadioGroup>
+              <RadioGroup
+                disabled={state.powerType !== "Saveable"}
+                values={savingThrowRollOptions}
+                onChange={(x) => {
+                  dispatch({
+                    type: PowerActionTypes.UPDATE_SAVING_THROW_ROLL,
+                    payload: x as SavingThrowRoll,
+                  });
+                }}
+                name="savingThrowBehaviour"
+                label="Saving throw roll moment"
+                currentValue={state.savingThrowRoll}
+                customStyles={css`
+                  grid-column: 4;
+                  grid-row: 2;
+                `}
+              ></RadioGroup>
               <FormRowLabelRight
                 label="Concentration"
                 customStyles={css`
@@ -685,56 +730,6 @@ export default function PowerForm({ powerId }: { powerId: number }) {
                   }
                 ></Input>
               </FormRowLabelRight>
-              <RadioGroup
-                values={savingThrowBehaviourOptions}
-                onChange={(x) => {
-                  dispatch({
-                    type: PowerActionTypes.UPDATE_SAVING_THROW_BEHAVIOUR,
-                    payload: x as SavingThrowBehaviour,
-                  });
-                }}
-                name="savingThrowBehaviour"
-                label="Saving throw behaviour"
-                currentValue={state.savingThrowBehaviour}
-                customStyles={css`
-                  grid-column: 4;
-                  grid-row: 1;
-                `}
-              ></RadioGroup>
-              {/* <FormRowLabelRight
-              label="Saving throw retaken every turn"
-              customStyles={css`
-                grid-column: 4;
-                grid-row: 2;
-              `}
-            >
-              <Input
-                type="checkbox"
-                checked={state.savingThrowRoll}
-                onChange={(x) =>
-                  dispatch({
-                    type: PowerActionTypes.UPDATE_SAVING_THROW_ROLL,
-                    payload: x.target.checked,
-                  })
-                }
-              ></Input>
-            </FormRowLabelRight> */}
-              <RadioGroup
-                values={savingThrowRollOptions}
-                onChange={(x) => {
-                  dispatch({
-                    type: PowerActionTypes.UPDATE_SAVING_THROW_ROLL,
-                    payload: x as SavingThrowRoll,
-                  });
-                }}
-                name="savingThrowBehaviour"
-                label="Saving throw roll moment"
-                currentValue={state.savingThrowRoll}
-                customStyles={css`
-                  grid-column: 4;
-                  grid-row: 2;
-                `}
-              ></RadioGroup>
               <FormRowVertical
                 label="Effect duration"
                 customStyles={css`

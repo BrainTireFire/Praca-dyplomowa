@@ -43,9 +43,8 @@ namespace pracadyplomowa.Controllers
         public async Task<ActionResult<EffectBlueprintFormDto>> GetEffectInstance(int effectId)
         {
             var effectInstance = _effectInstanceRepository.GetById(effectId);
-            var effectBlueprint = _mapper.Map<EffectBlueprint>(effectInstance);
 
-            var effectBlueprintDtos = _mapper.Map<EffectBlueprintFormDto>(effectBlueprint);
+            var effectBlueprintDtos = _mapper.Map<EffectBlueprintFormDto>(effectInstance);
 
 
             return Ok(effectBlueprintDtos);
@@ -60,8 +59,11 @@ namespace pracadyplomowa.Controllers
             if(id != null){
                 var effectInstanceOriginal = _effectInstanceRepository.GetById((int)id);
                 if(effectInstanceOriginal != null){
-                    var effectBlueprint = _mapper.Map<EffectBlueprint>(effectDto);
-                    var effectInstance = _mapper.Map<EffectInstance>(effectBlueprint);
+                    _effectInstanceRepository.Delete(effectInstanceOriginal.Id);
+                    await _effectInstanceRepository.SaveChanges();
+                    _effectInstanceRepository.ClearTracker();
+
+                    var effectInstance = _mapper.Map<EffectInstance>(effectDto);
 
                     effectInstance.R_GrantedByEquippingItemId = effectInstanceOriginal.R_GrantedByEquippingItemId;
                     effectInstance.R_GrantedThroughId = effectInstanceOriginal.R_GrantedThroughId;
@@ -70,9 +72,6 @@ namespace pracadyplomowa.Controllers
                     effectInstance.R_TargetedItemId = effectInstanceOriginal.R_TargetedItemId;
 
                     // _effectBlueprintRepository.DetachEntity(effectBlueprintOriginal);
-                    _effectInstanceRepository.Delete(effectInstanceOriginal.Id);
-                    await _effectInstanceRepository.SaveChanges();
-                    _effectInstanceRepository.ClearTracker();
 
                     _effectInstanceRepository.Add(effectInstance);
                     await _effectInstanceRepository.SaveChanges();

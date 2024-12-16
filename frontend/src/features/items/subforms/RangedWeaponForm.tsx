@@ -9,6 +9,7 @@ import { DiceSetExtended, DiceSetForm } from "../../effects/DiceSetForm";
 import { weightsDropdown } from "../enums/weight";
 import { ItemAction } from "../ItemForm";
 import { MeleeWeaponBody, RangedWeaponBody } from "../models/item";
+import styled from "styled-components";
 
 export default function RangedWeaponForm({
   body,
@@ -28,7 +29,7 @@ export default function RangedWeaponForm({
     [dispatch]
   );
   return (
-    <div>
+    <Row>
       <FormRowVertical label="Damage">
         <DiceSetForm
           onChange={handleValueFormStateUpdate}
@@ -75,6 +76,12 @@ export default function RangedWeaponForm({
           }
         ></Input>
       </FormRowLabelRight>
-    </div>
+    </Row>
   );
 }
+
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+`;

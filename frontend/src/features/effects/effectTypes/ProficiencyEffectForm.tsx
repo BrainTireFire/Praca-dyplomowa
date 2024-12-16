@@ -24,17 +24,12 @@ const itemTypes = [
 
 type itemType = (typeof itemTypes)[number];
 
-type itemFamily = {
-  id: number;
-  name: string;
-};
-
 export type Effect = {
   effectType: {
     proficiencyEffect: proficiencyEffect;
     itemType: itemType;
   };
-  itemFamily: itemFamily | null;
+  grantsProficiencyInItemFamilyId: number | null;
 };
 
 type Action = {
@@ -47,7 +42,7 @@ export const initialState: Effect = {
     proficiencyEffect: "ItemType",
     itemType: "Clothing",
   },
-  itemFamily: null,
+  grantsProficiencyInItemFamilyId: null,
 };
 
 export default function ProficiencyEffectForm({
@@ -85,7 +80,7 @@ export default function ProficiencyEffectForm({
       case "setItemFamily":
         newState = {
           ...state,
-          itemFamily: localItemFamilies?.find((x) => x.id === action.payload)!,
+          grantsProficiencyInItemFamilyId: Number(action.payload),
         };
         break;
       default:
@@ -125,6 +120,7 @@ export default function ProficiencyEffectForm({
         currentValue={state.effectType.proficiencyEffect}
       ></RadioGroup>
       <RadioGroup
+        disabled={state.effectType.proficiencyEffect !== "ItemType"}
         values={[
           { label: "Item", value: "Item" },
           { label: "Tool", value: "Tool" },
@@ -148,7 +144,8 @@ export default function ProficiencyEffectForm({
       ></RadioGroup>
       <FormRowVertical label="Item family">
         <Dropdown
-          chosenValue={state.itemFamily ? state.itemFamily.id.toString() : ""}
+          disabled={state.effectType.proficiencyEffect !== "SpecificItemFamily"}
+          chosenValue={state.grantsProficiencyInItemFamilyId?.toString() ?? ""}
           setChosenValue={(e) =>
             dispatch({ type: "setItemFamily", payload: Number(e) })
           }

@@ -1,3 +1,4 @@
+import styled, { css } from "styled-components";
 import FormRowLabelRight from "../../../ui/forms/FormRowLabelRight";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import Input from "../../../ui/forms/Input";
@@ -12,8 +13,13 @@ export default function ApparelForm({
   dispatch: (value: ItemAction) => void;
 }) {
   return (
-    <>
-      <FormRowLabelRight label="Disadvantage on stealth">
+    <Grid>
+      <FormRowLabelRight
+        label="Disadvantage on stealth"
+        customStyles={css`
+          grid-column: 1;
+        `}
+      >
         <Input
           type="checkbox"
           checked={body.disadvantageOnStealth}
@@ -26,7 +32,12 @@ export default function ApparelForm({
           }
         ></Input>
       </FormRowLabelRight>
-      <FormRowVertical label="Minimum strength">
+      <FormRowVertical
+        label="Minimum strength"
+        customStyles={css`
+          grid-column: 2;
+        `}
+      >
         <Input
           type="number"
           value={body.minimumStrength}
@@ -39,7 +50,12 @@ export default function ApparelForm({
           }
         ></Input>
       </FormRowVertical>
-      <FormRowVertical label="Armor class">
+      <FormRowVertical
+        label="Armor class"
+        customStyles={css`
+          grid-column: 3;
+        `}
+      >
         <Input
           type="number"
           value={body.armorClass}
@@ -52,6 +68,11 @@ export default function ApparelForm({
           }
         ></Input>
       </FormRowVertical>
-    </>
+    </Grid>
   );
 }
+
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: auto auto auto;
+`;

@@ -178,8 +178,7 @@ export default function ItemForm({
             <FormRowVertical
               label="Item family"
               customStyles={css`
-                grid-row: 1/2;
-                grid-column: 1/2;
+                grid-column: 1;
               `}
             >
               <Dropdown
@@ -204,8 +203,7 @@ export default function ItemForm({
             <FormRowVertical
               label="Weight"
               customStyles={css`
-                grid-row: 2/3;
-                grid-column: 1/2;
+                grid-column: 2;
               `}
             >
               <Input type="number" value={state.weight}></Input>
@@ -213,8 +211,7 @@ export default function ItemForm({
             <FormRowVertical
               label="Cost"
               customStyles={css`
-                grid-row: 1/3;
-                grid-column: 2/3;
+                grid-column: 3;
               `}
             >
               <CoinPurseForm
@@ -298,8 +295,7 @@ const Row1 = styled.div`
 `;
 const Row2 = styled.div`
   display: grid;
-  grid-template-rows: auto auto;
-  grid-template-columns: auto auto;
+  grid-template-columns: auto auto auto;
   grid-row: 2/3;
   column-gap: 10px;
 `;

@@ -1,26 +1,28 @@
-import { useCallback, useEffect, useReducer } from "react";
+import { useCallback, useContext, useEffect, useReducer } from "react";
 import Box from "../../../ui/containers/Box";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import RadioGroup from "../../../ui/forms/RadioGroup";
 import Dropdown from "../../../ui/forms/Dropdown";
-import { skill, skills, skillsDropdown } from "../skills";
+import { skill, skillsDropdown } from "../skills";
 import {
   DiceSetExtended,
   DiceSetExtendedDefaultValue,
   DiceSetForm,
 } from "../DiceSetForm";
 import styled from "styled-components";
+import { ValueEffect } from "../valueEffect";
+import { rollMoment, rollMomentDropdown } from "../rollMoment";
+import { EffectContext } from "../contexts/BlueprintOrInstanceContext";
 
-export type Effect = {
+export type Effect = ValueEffect & {
   effectType: {
     skillEffect: "bonus" | "rerollLowerThan" | "advantage";
     skillEffect_Skill: skill;
   };
-  value: DiceSetExtended;
 };
 
 type Action = {
-  type: "setEffectType" | "setValue" | "setSkill";
+  type: "setEffectType" | "setValue" | "setSkill" | "setRollMoment";
   payload: any;
 };
 
@@ -30,6 +32,7 @@ export const initialState: Effect = {
     skillEffect_Skill: "Acrobatics",
   },
   value: DiceSetExtendedDefaultValue,
+  rollMoment: "OnCast",
 };
 
 const effectReducer = (state: Effect, action: Action): Effect => {
@@ -44,6 +47,9 @@ const effectReducer = (state: Effect, action: Action): Effect => {
     case "setValue":
       console.log("updated value in skill effect form");
       newState = { ...state, value: action.payload };
+      break;
+    case "setRollMoment":
+      newState = { ...state, rollMoment: action.payload as rollMoment };
       break;
     case "setSkill":
       newState = {
@@ -66,6 +72,7 @@ export default function SkillEffectForm({
   onChange: (updatedState: Effect) => void;
   effect: Effect;
 }) {
+  const effectContext = useContext(EffectContext);
   const [state, dispatch] = useReducer(effectReducer, effect);
   useEffect(() => {
     onChange(state);
@@ -99,10 +106,23 @@ export default function SkillEffectForm({
         </FormRowVertical>
       </Div2>
       <Div3>
-        <DiceSetForm
-          onChange={handleValueFormStateUpdate}
-          diceSet={effect.value}
-        ></DiceSetForm>
+        {effectContext.effect === "Blueprint" && (
+          <FormRowVertical label="Dice roll moment">
+            <Dropdown
+              valuesList={rollMomentDropdown}
+              chosenValue={state.rollMoment}
+              setChosenValue={(e) =>
+                dispatch({ type: "setRollMoment", payload: e })
+              }
+            ></Dropdown>
+          </FormRowVertical>
+        )}
+        <FormRowVertical label="Value">
+          <DiceSetForm
+            onChange={handleValueFormStateUpdate}
+            diceSet={effect.value}
+          ></DiceSetForm>
+        </FormRowVertical>
       </Div3>
     </Container>
   );

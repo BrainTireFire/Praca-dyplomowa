@@ -302,6 +302,22 @@ export function DiceSetForm({
             }
           ></Input>
         </FormRowVertical>
+        <FormRowVertical
+          label="Flat bonus"
+          customStyles={css`
+            max-width: 14%;
+            width: 7rem;
+            min-width: 5rem;
+          `}
+        >
+          <Input
+            type="number"
+            value={state.flat}
+            onChange={(e) =>
+              dispatch({ type: "setFlat", payload: Number(e.target.value) })
+            }
+          ></Input>
+        </FormRowVertical>
       </HorizontalContainer>
       {useExtendedValues && (
         <>

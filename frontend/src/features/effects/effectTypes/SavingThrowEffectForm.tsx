@@ -1,24 +1,26 @@
-import { useCallback, useEffect, useReducer } from "react";
+import { useCallback, useContext, useEffect, useReducer } from "react";
 import Box from "../../../ui/containers/Box";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import RadioGroup from "../../../ui/forms/RadioGroup";
 import Dropdown from "../../../ui/forms/Dropdown";
-import { abilities, abilitiesDropdown, ability } from "../abilities";
+import { abilitiesDropdown, ability } from "../abilities";
 import {
   DiceSetExtended,
   DiceSetExtendedDefaultValue,
   DiceSetForm,
 } from "../DiceSetForm";
 import { statusEffect } from "../statusEffects";
+import { ValueEffect } from "../valueEffect";
+import { rollMoment, rollMomentDropdown } from "../rollMoment";
+import { EffectContext } from "../contexts/BlueprintOrInstanceContext";
 
-export type Effect = {
+export type Effect = ValueEffect & {
   effectType: {
     savingThrowEffect: SavingThrowEffect;
     savingThrowEffect_Ability: ability;
     savingThrowEffect_Condition: statusEffect | null;
     savingThrowEffect_Nature: SavingThrowEffect_Nature | null;
   };
-  value: DiceSetExtended;
 };
 
 export type SavingThrowEffect =
@@ -29,7 +31,7 @@ export type SavingThrowEffect =
 export type SavingThrowEffect_Nature = "Physical" | "Magical";
 
 type Action = {
-  type: "setEffectType" | "setValue" | "setAbility";
+  type: "setEffectType" | "setValue" | "setAbility" | "setRollMoment";
   payload: any;
 };
 
@@ -41,6 +43,7 @@ export const initialState: Effect = {
     savingThrowEffect_Nature: null,
   },
   value: DiceSetExtendedDefaultValue,
+  rollMoment: "OnCast",
 };
 
 const effectReducer = (state: Effect, action: Action): Effect => {
@@ -54,6 +57,9 @@ const effectReducer = (state: Effect, action: Action): Effect => {
       break;
     case "setValue":
       newState = { ...state, value: action.payload };
+      break;
+    case "setRollMoment":
+      newState = { ...state, rollMoment: action.payload as rollMoment };
       break;
     case "setAbility":
       newState = {
@@ -79,6 +85,7 @@ export default function SavingThrowEffectForm({
   onChange: (updatedState: Effect) => void;
   effect: Effect;
 }) {
+  const effectContext = useContext(EffectContext);
   const [state, dispatch] = useReducer(effectReducer, effect);
   useEffect(() => {
     onChange(state);
@@ -107,6 +114,17 @@ export default function SavingThrowEffectForm({
           diceSet={effect.value}
         ></DiceSetForm>
       </FormRowVertical>
+      {effectContext.effect === "Blueprint" && (
+        <FormRowVertical label="Dice roll moment">
+          <Dropdown
+            valuesList={rollMomentDropdown}
+            chosenValue={state.rollMoment}
+            setChosenValue={(e) =>
+              dispatch({ type: "setRollMoment", payload: e })
+            }
+          ></Dropdown>
+        </FormRowVertical>
+      )}
       <FormRowVertical label="Ability">
         <Dropdown
           chosenValue={state.effectType.savingThrowEffect_Ability}

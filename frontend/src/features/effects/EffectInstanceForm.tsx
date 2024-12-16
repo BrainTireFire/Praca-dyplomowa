@@ -92,6 +92,7 @@ import { PowerIdContext } from "../powers/contexts/PowerIdContext";
 import { ValueEffect } from "./valueEffect";
 import { useEffectInstance } from "./hooks/useEffectInstance";
 import { useUpdateEffectInstance } from "./hooks/useUpdateEffectInstance";
+import { EffectContext } from "./contexts/BlueprintOrInstanceContext";
 
 const effectTypes = [
   "movementEffect",
@@ -283,7 +284,7 @@ export default function EffectInstanceForm({ effectId }: { effectId: number }) {
     return <>Error</>;
   }
   return (
-    <>
+    <EffectContext.Provider value={{ effect: "Instance" }}>
       <ScrollContainer>
         <Container>
           <Div1>
@@ -303,30 +304,6 @@ export default function EffectInstanceForm({ effectId }: { effectId: number }) {
                 }
               ></TextArea>
             </FormRowVertical>
-            <FormRowVertical label="Level of immaterial resource used">
-              <Input
-                type="number"
-                value={state.resourceLevel}
-                onChange={(x) =>
-                  dispatch({
-                    type: "setResourceLevel",
-                    payload: x.target.value,
-                  })
-                }
-              ></Input>
-            </FormRowVertical>
-            <FormRowLabelRight label="Successful saving throw">
-              <Input
-                type="checkbox"
-                checked={state.savingThrowSuccess}
-                onChange={(x) =>
-                  dispatch({
-                    type: "setSavingThrowSuccess",
-                    payload: x.target.checked,
-                  })
-                }
-              ></Input>
-            </FormRowLabelRight>
           </Div1>
           <Div2>
             <RadioGroup
@@ -477,7 +454,7 @@ export default function EffectInstanceForm({ effectId }: { effectId: number }) {
       >
         Update
       </Button>
-    </>
+    </EffectContext.Provider>
   );
 }
 

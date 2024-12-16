@@ -9,6 +9,7 @@ import { DiceSetExtended, DiceSetForm } from "../../effects/DiceSetForm";
 import { weightsDropdown } from "../enums/weight";
 import { ItemAction } from "../ItemForm";
 import { MeleeWeaponBody } from "../models/item";
+import styled, { css } from "styled-components";
 
 export default function MeleeWeaponForm({
   body,
@@ -28,95 +29,112 @@ export default function MeleeWeaponForm({
     [dispatch]
   );
   return (
-    <div>
-      <FormRowLabelRight label="Finesse">
-        <Input
-          type="checkbox"
-          checked={body.finesse}
-          onChange={(e) =>
-            dispatch({
-              type: "UPDATE_MELEE_WEAPON_BODY",
-              field: "finesse",
-              value: e.target.checked,
-            })
-          }
-        ></Input>
-      </FormRowLabelRight>
-      <FormRowLabelRight label="Reach">
-        <Input
-          type="checkbox"
-          checked={body.reach}
-          onChange={(e) =>
-            dispatch({
-              type: "UPDATE_MELEE_WEAPON_BODY",
-              field: "reach",
-              value: e.target.checked,
-            })
-          }
-        ></Input>
-      </FormRowLabelRight>
-      <FormRowVertical label={"Weight property"}>
-        <RadioGroup
-          values={weightsDropdown}
-          label=""
-          name="Weight"
-          currentValue={body.weightProperty}
-          onChange={(value) =>
-            dispatch({
-              type: "UPDATE_MELEE_WEAPON_BODY",
-              field: "weightProperty",
-              value: value,
-            })
-          }
-        ></RadioGroup>
-      </FormRowVertical>
-      <FormRowVertical label={"Damage"}>
-        <DiceSetForm
-          onChange={handleValueFormStateUpdate}
-          diceSet={body.damage as DiceSetExtended}
-          useExtendedValues={false}
-        ></DiceSetForm>
-      </FormRowVertical>
-      <FormRowVertical label="Damage type">
-        <Dropdown
-          valuesList={damageTypesDropdown}
-          chosenValue={body.damageType}
-          setChosenValue={(value) =>
-            dispatch({
-              type: "UPDATE_MELEE_WEAPON_BODY",
-              field: "damageType",
-              value: value,
-            })
-          }
-        ></Dropdown>
-      </FormRowVertical>
-      <FormRowLabelRight label="Thrown">
-        <Input
-          type="checkbox"
-          checked={body.throwable}
-          onChange={(e) =>
-            dispatch({
-              type: "UPDATE_MELEE_WEAPON_BODY",
-              field: "throwable",
-              value: e.target.checked,
-            })
-          }
-        ></Input>
-      </FormRowLabelRight>
-      <FormRowVertical label="Throw range">
-        <Input
-          disabled={!body.throwable}
-          type="number"
-          value={body.rangeThrowable}
-          onChange={(e) =>
-            dispatch({
-              type: "UPDATE_MELEE_WEAPON_BODY",
-              field: "rangeThrowable",
-              value: e.target.value,
-            })
-          }
-        ></Input>
-      </FormRowVertical>
-    </div>
+    <Grid>
+      <Row>
+        <FormRowVertical label={"Damage"}>
+          <DiceSetForm
+            onChange={handleValueFormStateUpdate}
+            diceSet={body.damage as DiceSetExtended}
+            useExtendedValues={false}
+          ></DiceSetForm>
+        </FormRowVertical>
+        <FormRowVertical label="Damage type">
+          <Dropdown
+            valuesList={damageTypesDropdown}
+            chosenValue={body.damageType}
+            setChosenValue={(value) =>
+              dispatch({
+                type: "UPDATE_MELEE_WEAPON_BODY",
+                field: "damageType",
+                value: value,
+              })
+            }
+          ></Dropdown>
+        </FormRowVertical>
+      </Row>
+      <Row>
+        <FormRowVertical label="Properties">
+          <FormRowLabelRight label="Finesse">
+            <Input
+              type="checkbox"
+              checked={body.finesse}
+              onChange={(e) =>
+                dispatch({
+                  type: "UPDATE_MELEE_WEAPON_BODY",
+                  field: "finesse",
+                  value: e.target.checked,
+                })
+              }
+            ></Input>
+          </FormRowLabelRight>
+          <FormRowLabelRight label="Reach">
+            <Input
+              type="checkbox"
+              checked={body.reach}
+              onChange={(e) =>
+                dispatch({
+                  type: "UPDATE_MELEE_WEAPON_BODY",
+                  field: "reach",
+                  value: e.target.checked,
+                })
+              }
+            ></Input>
+          </FormRowLabelRight>
+          <FormRowLabelRight label="Thrown">
+            <Input
+              type="checkbox"
+              checked={body.throwable}
+              onChange={(e) =>
+                dispatch({
+                  type: "UPDATE_MELEE_WEAPON_BODY",
+                  field: "throwable",
+                  value: e.target.checked,
+                })
+              }
+            ></Input>
+          </FormRowLabelRight>
+        </FormRowVertical>
+        <FormRowVertical label="Throw range">
+          <Input
+            disabled={!body.throwable}
+            type="number"
+            value={body.rangeThrowable}
+            onChange={(e) =>
+              dispatch({
+                type: "UPDATE_MELEE_WEAPON_BODY",
+                field: "rangeThrowable",
+                value: e.target.value,
+              })
+            }
+          ></Input>
+        </FormRowVertical>
+        <FormRowVertical label={"Weight property"}>
+          <RadioGroup
+            values={weightsDropdown}
+            label=""
+            name="Weight"
+            currentValue={body.weightProperty}
+            onChange={(value) =>
+              dispatch({
+                type: "UPDATE_MELEE_WEAPON_BODY",
+                field: "weightProperty",
+                value: value,
+              })
+            }
+          ></RadioGroup>
+        </FormRowVertical>
+      </Row>
+    </Grid>
   );
 }
+
+const Grid = styled.div`
+  display: grid;
+  grid-template-rows: auto auto;
+`;
+
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+`;

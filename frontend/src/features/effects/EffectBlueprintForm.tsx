@@ -90,6 +90,7 @@ import { useEffectBlueprint } from "./hooks/useEffectBlueprint";
 import { useUpdateEffectBlueprint } from "./hooks/useUpdateEffectBlueprint";
 import { PowerIdContext } from "../powers/contexts/PowerIdContext";
 import { ValueEffect } from "./valueEffect";
+import { EffectContext } from "./contexts/BlueprintOrInstanceContext";
 
 const effectTypes = [
   "movementEffect",
@@ -285,7 +286,7 @@ export default function EffectBlueprintForm({
     return <>Error</>;
   }
   return (
-    <>
+    <EffectContext.Provider value={{ effect: "Blueprint" }}>
       <ScrollContainer>
         <Container>
           <Div1>
@@ -479,7 +480,7 @@ export default function EffectBlueprintForm({
       >
         Update
       </Button>
-    </>
+    </EffectContext.Provider>
   );
 }
 

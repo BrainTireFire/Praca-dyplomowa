@@ -195,8 +195,7 @@ namespace pracadyplomowa.Controllers
         [HttpPost("{itemId}/effects")]
         public async Task<ActionResult> AddNewEffectBlueprint([FromBody] EffectBlueprintFormDto effectDto, [FromRoute] int itemId)
         {
-            var effectBlueprint = _mapper.Map<EffectBlueprint>(effectDto);
-            var effectInstance = _mapper.Map<EffectInstance>(effectBlueprint);
+            var effectInstance = _mapper.Map<EffectInstance>(effectDto);
             effectInstance.R_GrantedByEquippingItemId = itemId;
 
             _effectInstanceRepository.Add(effectInstance);

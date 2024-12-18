@@ -24,7 +24,7 @@ import BoardCreateForm from "./features/homebrew/maps/BoardCreateForm";
 import HomebrewMap from "./pages/homebrew/maps/HomebrewMap";
 import MapInstance from "./features/homebrew/maps/MapInstance";
 import MapUpdateBoardForm from "./features/homebrew/maps/MapUpdateBoardForm";
-import CampaignJoin from "./features/campaigns/CampaignJoin";
+import CampaignJoin from "./pages/campaign/CampaignJoin";
 import Encounter from "./pages/campaign/encounter/Encounter";
 import Items from "./pages/Items";
 import Effects from "./pages/Effects";

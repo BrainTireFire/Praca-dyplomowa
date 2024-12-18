@@ -1,12 +1,12 @@
 import Heading from "../../ui/text/Heading";
 import Box from "../../ui/containers/Box";
 import styled from "styled-components";
-import { useCampaign } from "./hooks/useCampaign";
+import { useCampaign } from "../../features/campaigns/hooks/useCampaign";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Spinner from "../../ui/interactive/Spinner";
-import CharacterItemBox from "../characters/CharacterItemBox";
-import { useCharacters } from "../characters/hooks/useCharacters";
+import CharacterItemBox from "../../features/characters/CharacterItemBox";
+import { useCharacters } from "../../features/characters/hooks/useCharacters";
 import { addCharacterToCampaign } from "../../services/apiCampaigns";
 
 const Container = styled.div`

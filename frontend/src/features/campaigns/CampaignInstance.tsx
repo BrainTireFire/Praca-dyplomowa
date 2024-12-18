@@ -11,6 +11,8 @@ import Spinner from "../../ui/interactive/Spinner";
 import CharacterDetailBox from "./CharacterDetailBox";
 import { Campaign } from "../../models/campaign";
 import { removeCampaign } from "../../services/apiCampaigns";
+import ConfirmDelete from "../../ui/containers/ConfirmDelete";
+import CryptoJS from "crypto-js";
 
 const Container = styled.div`
   display: grid;
@@ -38,6 +40,12 @@ export default function CampaignInstance() {
   const { isLoading, campaign } = useCampaign();
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+  // function hashNumber(number: number): string {
+  //   const hash = CryptoJS.SHA256(number.toString());
+  //   return hash.toString(CryptoJS.enc.Hex); // Convert to hex string
+  // }
+
   if (isLoading) {
     return <Spinner />;
   }
@@ -123,9 +131,19 @@ export default function CampaignInstance() {
         <InputCopyToClipboard valueDefault={`localhost:5173/join/${id}`} />
       </div>
       <Line size="percantage" />
-      <Button size="large" onClick={handleRemove}>
-        {t("campaignInstance.remove")}
-      </Button>
+      <Modal>
+        <Modal.Open opens="ConfirmDelete">
+          <Button size="large" onClick={handleRemove}>
+            {t("campaignInstance.remove")}
+          </Button>
+        </Modal.Open>
+        <Modal.Window name="ConfirmDelete">
+          <ConfirmDelete
+            resourceName={name + " campaign"}
+            onConfirm={handleRemove}
+          />
+        </Modal.Window>
+      </Modal>
     </Container>
   );
 }

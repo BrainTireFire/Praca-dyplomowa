@@ -7,6 +7,7 @@ import Button from "../../ui/interactive/Button";
 import toast from "react-hot-toast";
 import useCreateCampaign from "./hooks/useCreateCampaign";
 import Spinner from "../../ui/interactive/Spinner";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -16,7 +17,8 @@ const Container = styled.div`
   gap: 12px;
 `;
 
-function CreateCampaign({ onCloseModal }) {
+function CreateCampaign() {
+  const navigate = useNavigate();
   const [campaign, setCampaign] = useState({
     name: "",
     description: "",
@@ -39,7 +41,7 @@ function CreateCampaign({ onCloseModal }) {
 
   const handleClick = () => {
     createCampaign(campaign);
-    onCloseModal();
+    navigate(0);
   };
 
   return (

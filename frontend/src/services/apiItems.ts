@@ -164,7 +164,7 @@ export async function updateItemResources(
 export async function addEffectInstance(
   effectBlueprintDto: EffectBlueprint,
   itemId: number
-): Promise<void> {
+): Promise<number> {
   console.log(effectBlueprintDto);
   const options: RequestInit = {
     method: "POST",
@@ -173,6 +173,5 @@ export async function addEffectInstance(
     },
     body: JSON.stringify(effectBlueprintDto),
   };
-  await customFetch(`${BASE_URL}/api/item/${itemId}/effects`, options);
-  return;
+  return await customFetch(`${BASE_URL}/api/item/${itemId}/effects`, options);
 }

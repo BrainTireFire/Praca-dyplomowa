@@ -200,7 +200,7 @@ namespace pracadyplomowa.Controllers
 
             _effectInstanceRepository.Add(effectInstance);
             await _effectInstanceRepository.SaveChanges();
-            return Ok();
+            return Ok(effectInstance.Id);
         }
 
     }

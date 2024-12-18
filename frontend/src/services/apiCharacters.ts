@@ -207,7 +207,7 @@ export async function updateCharacterKnownPowers(
 export async function addConstantEffectInstance(
   effectBlueprintDto: EffectBlueprint,
   characterId: number
-): Promise<void> {
+): Promise<number> {
   console.log(effectBlueprintDto);
   const options: RequestInit = {
     method: "POST",
@@ -216,11 +216,11 @@ export async function addConstantEffectInstance(
     },
     body: JSON.stringify(effectBlueprintDto),
   };
-  await customFetch(
+
+  return await customFetch(
     `${BASE_URL}/api/character/${characterId}/constantEffects`,
     options
   );
-  return;
 }
 
 export type ChoiceGroup = {

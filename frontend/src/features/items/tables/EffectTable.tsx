@@ -12,6 +12,7 @@ import { useCreateEffectInstance } from "../hooks/useCreateEffectInstance";
 import { useDeleteEffectInstance } from "../hooks/useDeleteEffectInstance";
 import { EffectBlueprintListItem } from "../models/effectBlueprint";
 import EffectInstanceForm from "../../effects/EffectInstanceForm";
+import { EffectParentObjectIdContext } from "../../../context/EffectParentObjectIdContext";
 
 export default function EffectTable({
   effects,
@@ -30,7 +31,14 @@ export default function EffectTable({
         header="Effects"
         button="Add new"
         columns="1fr 0.01rem"
-        buttonOnClick={() => createEffectInstance(initialState)}
+        // buttonOnClick={() => createEffectInstance(initialState)}
+        modal={
+          <EffectParentObjectIdContext.Provider
+            value={{ objectId: itemId, objectType: "Item" }}
+          >
+            <EffectInstanceForm effectId={null}></EffectInstanceForm>
+          </EffectParentObjectIdContext.Provider>
+        }
       >
         <Table.Header>
           <div>Name</div>
@@ -81,7 +89,11 @@ function EffectRow({ effect }: { effect: EffectBlueprintListItem }) {
           />
         </Modal.Window>
         <Modal.Window name="open">
-          <EffectInstanceForm effectId={effect.id}></EffectInstanceForm>
+          <EffectParentObjectIdContext.Provider
+            value={{ objectId: itemId, objectType: "Item" }}
+          >
+            <EffectInstanceForm effectId={effect.id}></EffectInstanceForm>
+          </EffectParentObjectIdContext.Provider>
         </Modal.Window>
       </Modal>
     </Table.Row>

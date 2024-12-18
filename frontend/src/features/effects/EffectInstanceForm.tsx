@@ -93,6 +93,8 @@ import { ValueEffect } from "./valueEffect";
 import { useEffectInstance } from "./hooks/useEffectInstance";
 import { useUpdateEffectInstance } from "./hooks/useUpdateEffectInstance";
 import { EffectContext } from "./contexts/BlueprintOrInstanceContext";
+import { EffectParentObjectIdContext } from "../../context/EffectParentObjectIdContext";
+import { useCreateEffectInstance } from "./hooks/useCreateEffectInstance";
 
 const effectTypes = [
   "movementEffect",
@@ -238,14 +240,28 @@ const effectReducer = (
   return newState;
 };
 
-export default function EffectInstanceForm({ effectId }: { effectId: number }) {
-  const { powerId } = useContext(PowerIdContext);
-  const { isLoading, effectInstance, error } = useEffectInstance(effectId);
-  const { isPending, updateEffectInstance } = useUpdateEffectInstance(
-    () => {},
-    effectId,
-    powerId
-  );
+export default function EffectInstanceForm({
+  effectId,
+}: {
+  effectId: number | null;
+}) {
+  const [actualEffectId, setActualEffectId] = useState(effectId);
+  const { objectId, objectType } = useContext(EffectParentObjectIdContext);
+  const { isLoading, effectInstance, error } =
+    useEffectInstance(actualEffectId);
+  const { isPending: isPendingUpdate, updateEffectInstance } =
+    useUpdateEffectInstance(
+      () => {},
+      effectInstance?.id as number,
+      objectId as number,
+      objectType
+    );
+  const { isPending: isPendingCreate, createEffectInstance } =
+    useCreateEffectInstance(
+      (id: number) => setActualEffectId(id),
+      objectId as number,
+      objectType
+    );
   const [state, dispatch] = useReducer(effectReducer, initialState);
   const [resetHappened, setResetHappened] = useState(false);
   // Update local state when data is fetched
@@ -276,7 +292,12 @@ export default function EffectInstanceForm({ effectId }: { effectId: number }) {
       ) || false
     );
   };
-  if (isLoading || isPending || !resetHappened) {
+  if (
+    isLoading ||
+    isPendingUpdate ||
+    isPendingCreate ||
+    (!resetHappened && effectId)
+  ) {
     return <Spinner></Spinner>;
   }
   if (error) {
@@ -448,12 +469,22 @@ export default function EffectInstanceForm({ effectId }: { effectId: number }) {
           </Div3>
         </Container>
       </ScrollContainer>
-      <Button
-        onClick={() => updateEffectInstance(state)}
-        disabled={disableUpdateButton()}
-      >
-        Update
-      </Button>
+      {effectInstance && (
+        <Button
+          onClick={() => updateEffectInstance(state)}
+          disabled={disableUpdateButton()}
+        >
+          Update
+        </Button>
+      )}
+      {!effectInstance && (
+        <Button
+          onClick={() => createEffectInstance(state)}
+          disabled={disableUpdateButton()}
+        >
+          Save
+        </Button>
+      )}
     </EffectContext.Provider>
   );
 }

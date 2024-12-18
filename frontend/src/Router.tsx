@@ -27,7 +27,6 @@ import MapUpdateBoardForm from "./features/homebrew/maps/MapUpdateBoardForm";
 import CampaignJoin from "./features/campaigns/CampaignJoin";
 import Encounter from "./pages/campaign/encounter/Encounter";
 import Items from "./pages/items/Items";
-import Effects from "./pages/Effects";
 import Powers from "./pages/powers/Powers";
 
 export default function Router() {

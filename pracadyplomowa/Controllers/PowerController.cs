@@ -97,7 +97,7 @@ namespace pracadyplomowa.Controllers
 
             _effectBlueprintRepository.Add(effectBlueprint);
             await _effectBlueprintRepository.SaveChanges();
-            return Ok(_mapper.Map<EffectBlueprintFormDto>(effectBlueprint));
+            return Ok(effectBlueprint.Id);
         }
 
         

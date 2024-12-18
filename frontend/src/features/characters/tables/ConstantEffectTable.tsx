@@ -11,6 +11,7 @@ import { useDeleteConstantEffectInstance } from "../hooks/useDeleteConstantEffec
 import EffectInstanceForm from "../../effects/EffectInstanceForm";
 import { useCreateConstantEffectInstance } from "../hooks/useCreateConstantEffectInstance";
 import { initialState } from "../../effects/EffectBlueprintForm";
+import { EffectParentObjectIdContext } from "../../../context/EffectParentObjectIdContext";
 
 export default function ConstantEffectTable({
   effects,
@@ -28,7 +29,14 @@ export default function ConstantEffectTable({
         header="Constant effects"
         button="Add new"
         columns="1fr 1fr 0.01rem"
-        buttonOnClick={() => createConstantEffectInstance(initialState)}
+        // buttonOnClick={() => createConstantEffectInstance(initialState)}
+        modal={
+          <EffectParentObjectIdContext.Provider
+            value={{ objectId: characterId, objectType: "CharacterConstant" }}
+          >
+            <EffectInstanceForm effectId={null}></EffectInstanceForm>
+          </EffectParentObjectIdContext.Provider>
+        }
       >
         <Table.Header>
           <Cell>Name</Cell>
@@ -86,7 +94,11 @@ function ConstantEffectRow({ effect }: { effect: Effect }) {
           />
         </Modal.Window>
         <Modal.Window name="open">
-          <EffectInstanceForm effectId={effect.id}></EffectInstanceForm>
+          <EffectParentObjectIdContext.Provider
+            value={{ objectId: characterId, objectType: "CharacterConstant" }}
+          >
+            <EffectInstanceForm effectId={effect.id}></EffectInstanceForm>
+          </EffectParentObjectIdContext.Provider>
         </Modal.Window>
       </Modal>
     </Table.Row>

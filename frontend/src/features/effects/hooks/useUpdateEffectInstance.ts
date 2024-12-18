@@ -2,12 +2,15 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { EffectBlueprint } from "../EffectBlueprintForm";
 import { updateEffectInstance as updateEffectInstanceApi } from "../../../services/apiEffectInstances";
+import { EffectParentObjectIdContextTypeObjectType } from "../../../context/EffectParentObjectIdContext";
 
 export function useUpdateEffectInstance(
   onSuccess: () => void,
   effectId: number,
-  powerId: number
+  objectId: number,
+  objectType: EffectParentObjectIdContextTypeObjectType
 ) {
+  const queryKey = objectType === "Item" ? "item" : "character";
   const queryClient = useQueryClient();
   const { mutate: updateEffectInstance, isPending } = useMutation({
     mutationFn: (effectBlueprint: EffectBlueprint) =>
@@ -16,8 +19,9 @@ export function useUpdateEffectInstance(
       queryClient.invalidateQueries({
         queryKey: ["effectInstance", effectId],
       });
-
-      queryClient.invalidateQueries({ queryKey: ["power", powerId] });
+      console.log(queryKey);
+      console.log(objectId);
+      queryClient.invalidateQueries({ queryKey: [queryKey, objectId] });
       onSuccess();
     },
     onError: (error) => {

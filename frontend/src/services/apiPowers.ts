@@ -59,7 +59,7 @@ export async function updatePower(powerDto: Power): Promise<void> {
 export async function addEffectBlueprint(
   effectBlueprintDto: EffectBlueprint,
   powerId: number
-): Promise<void> {
+): Promise<number> {
   console.log(effectBlueprintDto);
   const options: RequestInit = {
     method: "POST",
@@ -68,8 +68,8 @@ export async function addEffectBlueprint(
     },
     body: JSON.stringify(effectBlueprintDto),
   };
-  await customFetch(`${BASE_URL}/api/power/${powerId}/effects`, options);
-  return;
+
+  return await customFetch(`${BASE_URL}/api/power/${powerId}/effects`, options);
 }
 
 export async function getMaterialComponents(

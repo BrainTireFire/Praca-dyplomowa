@@ -1,30 +1,34 @@
-import React from "react";
 import Menus from "../../../ui/containers/Menus";
 import Table from "../../../ui/containers/Table";
-import EquipmentRow from "./EquipmentRow";
-import styled from "styled-components";
 import Modal from "../../../ui/containers/Modal";
-import {
-  HiArrowDownOnSquare,
-  HiArrowUpOnSquare,
-  HiEye,
-  HiTrash,
-} from "react-icons/hi2";
-import RadioButton from "../../../ui/containers/RadioButton";
+import { HiEye, HiTrash } from "react-icons/hi2";
 import { Effect } from "../../../models/effect";
 import { Cell } from "../../../ui/containers/Cell";
+import ConfirmDelete from "../../../ui/containers/ConfirmDelete";
+import { CharacterIdContext } from "../contexts/CharacterIdContext";
+import { useContext } from "react";
+import { useDeleteConstantEffectInstance } from "../hooks/useDeleteConstantEffectInstance";
+import EffectInstanceForm from "../../effects/EffectInstanceForm";
+import { useCreateConstantEffectInstance } from "../hooks/useCreateConstantEffectInstance";
+import { initialState } from "../../effects/EffectBlueprintForm";
 
 export default function ConstantEffectTable({
   effects,
 }: {
   effects: Effect[];
 }) {
+  const { characterId } = useContext(CharacterIdContext);
+  const { createConstantEffectInstance } = useCreateConstantEffectInstance(
+    () => {},
+    characterId as number
+  );
   return (
     <Menus>
       <Table
         header="Constant effects"
         button="Add new"
         columns="1fr 1fr 0.01rem"
+        buttonOnClick={() => createConstantEffectInstance(initialState)}
       >
         <Table.Header>
           <Cell>Name</Cell>
@@ -45,6 +49,11 @@ export default function ConstantEffectTable({
 }
 
 function ConstantEffectRow({ effect }: { effect: Effect }) {
+  const { characterId } = useContext(CharacterIdContext);
+  const { deleteEffectInstance, isPending } = useDeleteConstantEffectInstance(
+    () => {},
+    characterId as number
+  );
   return (
     <Table.Row>
       <Cell>{effect.name}</Cell>
@@ -55,37 +64,29 @@ function ConstantEffectRow({ effect }: { effect: Effect }) {
         <Menus.Menu>
           <Menus.Toggle id={effect.id} />
           <Menus.List id={effect.id}>
-            <Menus.Button icon={<HiEye />} onClick={() => alert("Test")}>
-              Test 1
-            </Menus.Button>
-
-            <Menus.Button
-              icon={<HiArrowDownOnSquare />}
-              onClick={() => alert("Test")}
-            >
-              Test 2
-            </Menus.Button>
-
-            <Menus.Button
-              icon={<HiArrowUpOnSquare />}
-              onClick={() => alert("Test")}
-            >
-              Test 3
-            </Menus.Button>
-
+            <Modal.Open opens="open">
+              <Menus.Button icon={<HiEye />} onClick={() => {}}>
+                Open
+              </Menus.Button>
+            </Modal.Open>
             <Modal.Open opens="delete">
-              <Menus.Button icon={<HiTrash />}>Test 4</Menus.Button>
+              <Menus.Button icon={<HiTrash />} onClick={() => {}}>
+                Delete
+              </Menus.Button>
             </Modal.Open>
           </Menus.List>
         </Menus.Menu>
         <Modal.Window name="delete">
-          {/* <ConfirmDelete
-            resourceName="equipment"
-            disabled={isDeleting}
+          <ConfirmDelete
+            resourceName="effect instance"
+            disabled={isPending}
             onConfirm={() => {
-              deleteBooking(bookingId);
+              deleteEffectInstance(effect.id);
             }}
-          /> */}
+          />
+        </Modal.Window>
+        <Modal.Window name="open">
+          <EffectInstanceForm effectId={effect.id}></EffectInstanceForm>
         </Modal.Window>
       </Modal>
     </Table.Row>

@@ -537,6 +537,8 @@ namespace pracadyplomowa.Models.Entities.Characters
                     .Distinct()
                     .SelectMany(item => item.R_ItemGrantsResources)
                 )
+                .Union(this.R_ImmaterialResourceInstances
+                )
                 .ToList();
             }
         }

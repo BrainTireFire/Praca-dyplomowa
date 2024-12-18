@@ -33,9 +33,6 @@ export default function Homebrew() {
         >
           My custom items
         </Button>
-        <Button size="large" variation="secondary">
-          New Item
-        </Button>
       </StyledElementBox>
       <StyledElementBox>
         <Button
@@ -45,20 +42,10 @@ export default function Homebrew() {
         >
           My custom powers
         </Button>
-        <Button
-          size="large"
-          variation="secondary"
-          onClick={() => navigate(`/homebrew/createPower`)}
-        >
-          New Power
-        </Button>
       </StyledElementBox>
       <StyledElementBox>
         <Button size="large" variation="primary">
           My custom item families
-        </Button>
-        <Button size="large" variation="secondary">
-          New item family
         </Button>
       </StyledElementBox>
       <StyledElementBoxWithSpace>

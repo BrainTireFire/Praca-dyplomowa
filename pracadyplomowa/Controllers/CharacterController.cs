@@ -27,13 +27,15 @@ using static pracadyplomowa.Models.Entities.Characters.ChoiceGroup;
 namespace pracadyplomowa.Controllers
 {
     [Authorize]
-    public class CharacterController(ICharacterRepository characterRepository, IClassRepository classRepository, IRaceRepository raceRepository, IItemRepository itemRepository, IMapper mapper) : BaseApiController
+    public class CharacterController(ICharacterRepository characterRepository, IClassRepository classRepository, IRaceRepository raceRepository, IItemRepository itemRepository, IPowerRepository powerRepository, IEffectInstanceRepository effectInstanceRepository, IMapper mapper) : BaseApiController
     {
 
         private readonly ICharacterRepository _characterRepository = characterRepository;
         private readonly IClassRepository _classRepository = classRepository;
         private readonly IRaceRepository _raceRepository = raceRepository;
         private readonly IItemRepository _itemRepository = itemRepository;
+        private readonly IPowerRepository _powerRepository = powerRepository;
+        private readonly IEffectInstanceRepository _effectInstanceRepository = effectInstanceRepository;
         private readonly IMapper _mapper = mapper;
 
         [HttpGet("mycharacters")]
@@ -330,6 +332,76 @@ namespace pracadyplomowa.Controllers
             }
             character.UnequipItem(character.R_CharacterHasBackpack.R_BackpackHasItems.Where(i => i.Id == itemId).First());
             await _characterRepository.SaveChanges();
+            return Ok();
+        }
+
+        [HttpGet("{characterId}/resources")]
+        public async Task<ActionResult<List<SlotDto>>> GetCharacterResources(int characterId){
+            var character = await _characterRepository.GetByIdWithCustomResources(characterId);
+            if(character == null){
+                return NotFound("Character with this Id does not exist");
+            }
+            var resources = character.R_ImmaterialResourceInstances.GroupBy(r => new {r.R_BlueprintId, r.R_Blueprint.Name, r.Level}).Select(g => new ImmaterialResourceAmountDto(){
+                BlueprintId = g.Key.R_BlueprintId,
+                Name = g.Key.Name,
+                Level = g.Key.Level,
+                Count = g.Count()
+            }).ToList();
+            return Ok(resources);
+        }
+
+        [HttpPatch("{characterId}/resources")]
+        public async Task<ActionResult<List<SlotDto>>> SetCharacterResources(int characterId, [FromBody] List<ImmaterialResourceAmountDto> resourceDtos){
+            var character = await _characterRepository.GetByIdWithCustomResources(characterId);
+            if(character == null){
+                return NotFound("Character with this Id does not exist");
+            }
+            // var resourceBlueprints = await _immaterialResourceBlueprintRepository.GetAllByIds(resourceDtos.Select(x => x.BlueprintId).ToList());
+            character.R_ImmaterialResourceInstances.Clear();
+            var resourceInstances = resourceDtos
+                .SelectMany(dto => 
+                    Enumerable.Range(0, dto.Count).Select(_ => new ImmaterialResourceInstance 
+                    { 
+                        R_BlueprintId = dto.BlueprintId, 
+                        Level = dto.Level 
+                    })
+                ).ToList();
+            character.R_ImmaterialResourceInstances.AddRange(resourceInstances);
+            await _itemRepository.SaveChanges();
+            return Ok();
+        }
+
+        [HttpGet("{characterId}/powers")]
+        public async Task<ActionResult<List<SlotDto>>> GetCharacterCustomSourceKnownPowers(int characterId){ // returns list of powers which do not have source
+            var character = await _characterRepository.GetByIdWithKnownPowers(characterId);
+            if(character == null){
+                return NotFound("character with this Id does not exist");
+            }
+            var powers = _mapper.Map<List<PowerCompactDto>>(character.R_PowersKnown);
+            return Ok(powers);
+        }
+
+        [HttpPatch("{characterId}/powers")]
+        public async Task<ActionResult<List<SlotDto>>> SetItemPowers(int characterId, [FromBody] List<PowerCompactDto> powerDtos){
+            var character = await _characterRepository.GetByIdWithKnownPowers(characterId);
+            if(character == null){
+                return NotFound("character with this Id does not exist");
+            }
+            var powers = _powerRepository.GetAllByIds(powerDtos.Select(x => x.Id).ToList());
+            character.R_PowersKnown.Clear();
+            character.R_PowersKnown.AddRange(await powers);
+            await _powerRepository.SaveChanges();
+            return Ok();
+        }
+
+        [HttpPost("{characterId}/constantEffects")]
+        public async Task<ActionResult> AddNewEffectInstance([FromBody] EffectBlueprintFormDto effectDto, [FromRoute] int characterId)
+        {
+            var effectInstance = _mapper.Map<EffectInstance>(effectDto);
+            effectInstance.R_TargetedCharacterId = characterId;
+
+            _effectInstanceRepository.Add(effectInstance);
+            await _effectInstanceRepository.SaveChanges();
             return Ok();
         }
     }

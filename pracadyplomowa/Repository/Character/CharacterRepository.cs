@@ -144,6 +144,9 @@ namespace pracadyplomowa.Repository
                 .ThenInclude(ed => ed.R_Item)
                     .ThenInclude(b => b.R_ItemIsEquippableInSlots)
 
+            .Include(c => c.R_ImmaterialResourceInstances)
+                .ThenInclude(iri => iri.R_Blueprint)
+
             .AsSplitQuery() // IMPORTANT !!!!! https://learn.microsoft.com/en-us/ef/core/querying/single-split-queries
             .FirstAsync();
             return character;
@@ -220,6 +223,25 @@ namespace pracadyplomowa.Repository
                     .ThenInclude(i => i.R_ItemInItemsFamily)
             .Include(c => c.R_CharacterBelongsToRace)
                 .ThenInclude(r => r.R_EquipmentSlots)
+            .FirstAsync();
+            return character;
+        }
+
+        public Task<Character> GetByIdWithCustomResources(int Id)
+        {
+            var character = _context.Characters
+            .Where(c => c.Id == Id)
+            .Include(c => c.R_ImmaterialResourceInstances)
+                .ThenInclude(iri => iri.R_Blueprint)
+            .FirstAsync();
+            return character;
+        }
+
+        public Task<Character> GetByIdWithKnownPowers(int Id)
+        {
+            var character = _context.Characters
+            .Where(c => c.Id == Id)
+            .Include(c => c.R_PowersKnown)
             .FirstAsync();
             return character;
         }

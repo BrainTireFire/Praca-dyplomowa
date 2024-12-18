@@ -37,6 +37,7 @@ import { useUpdatePower } from "./hooks/useUpdatePower";
 import Button from "../../ui/interactive/Button";
 import { usePower } from "./hooks/usePower";
 import MaterialResourceTable from "./tables/MaterialResourceTable";
+import { useCreatePower } from "./hooks/useCreatePower";
 
 // Action types
 export enum PowerActionTypes {
@@ -327,7 +328,16 @@ export const initialState: Power = {
   effectBlueprints: [],
 };
 
-export default function PowerForm({ powerId }: { powerId: number }) {
+export default function PowerForm({
+  powerId,
+  onCreate,
+  onUpdate,
+}: {
+  powerId: number | null;
+  onCreate: (id: number) => void;
+  onUpdate: (id: number) => void;
+}) {
+  const [actualPowerId, setActualPowerId] = useState(powerId);
   const {
     isLoading: isLoadingPower,
     power,
@@ -344,6 +354,12 @@ export default function PowerForm({ powerId }: { powerId: number }) {
     }
   }, [power]);
   const { updatePower, isPending } = useUpdatePower(() => {});
+  const { createPower, isPending: isPendingCreate } = useCreatePower(
+    (id: number) => {
+      setActualPowerId(id);
+      onCreate(id);
+    }
+  );
   console.log(state);
 
   const {
@@ -367,7 +383,12 @@ export default function PowerForm({ powerId }: { powerId: number }) {
         return { value: x.id.toString(), label: x.name };
       })
     : [];
-  if (isLoadingImmaterialResources || isPending || isLoadingPower) {
+  if (
+    isLoadingImmaterialResources ||
+    isPending ||
+    isPendingCreate ||
+    isLoadingPower
+  ) {
     return <Spinner></Spinner>;
   }
   if (errorImmaterialResources) return <>Error</>;
@@ -506,15 +527,19 @@ export default function PowerForm({ powerId }: { powerId: number }) {
                 effects={state.effectBlueprints}
                 powerId={powerId ?? -1}
               ></EffectTable> */}
-              <MaterialResourceTable
-                materialComponents={state.materialResourcesUsed}
-                powerId={powerId ?? -1}
-              ></MaterialResourceTable>
+              {power && (
+                <>
+                  <MaterialResourceTable
+                    materialComponents={state.materialResourcesUsed}
+                    powerId={powerId ?? -1}
+                  ></MaterialResourceTable>
 
-              <EffectTable
-                effects={state.effectBlueprints}
-                powerId={powerId ?? -1}
-              ></EffectTable>
+                  <EffectTable
+                    effects={state.effectBlueprints}
+                    powerId={powerId ?? -1}
+                  ></EffectTable>
+                </>
+              )}
             </Row1InColumn2>
             <Row2InColumn2>
               <FormRowVertical
@@ -752,7 +777,14 @@ export default function PowerForm({ powerId }: { powerId: number }) {
           </Column2>
         </Row2>
       </Grid>
-      <Button onClick={() => updatePower(state)}>Update</Button>
+      {actualPowerId && (
+        <Button onClick={() => updatePower(state)}>Update</Button>
+      )}
+      {!actualPowerId && (
+        <Button onClick={() => createPower(state)}>
+          Save to unlock more configuration options
+        </Button>
+      )}
     </>
   );
 }
@@ -804,3 +836,8 @@ const Row2InColumn2 = styled.div`
   grid-template-columns: auto auto auto auto;
   grid-template-rows: auto auto auto;
 `;
+
+PowerForm.defaultProps = {
+  onCreate: (_id: number) => {},
+  onUpdate: (_id: number) => {},
+};

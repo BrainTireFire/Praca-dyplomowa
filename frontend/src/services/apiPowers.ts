@@ -30,7 +30,7 @@ export async function getPower(powerId: number): Promise<Power> {
   return response;
 }
 
-export async function postPower(powerDto: Power): Promise<void> {
+export async function postPower(powerDto: Power): Promise<number> {
   console.log(powerDto);
   const options: RequestInit = {
     method: "POST",
@@ -39,8 +39,8 @@ export async function postPower(powerDto: Power): Promise<void> {
     },
     body: JSON.stringify(powerDto),
   };
-  await customFetch(`${BASE_URL}/api/power`, options);
-  return;
+
+  return await customFetch(`${BASE_URL}/api/power`, options);
 }
 
 export async function updatePower(powerDto: Power): Promise<void> {

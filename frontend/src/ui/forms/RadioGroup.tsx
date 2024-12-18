@@ -23,6 +23,7 @@ export default function RadioGroup({
   label,
   currentValue,
   customStyles,
+  disabled,
 }: {
   values: ValueSet[];
   onChange: (param: string) => void;
@@ -30,6 +31,7 @@ export default function RadioGroup({
   label: string;
   currentValue: string;
   customStyles?: ReturnType<typeof css>;
+  disabled: boolean;
 }) {
   return (
     <RadioGroupContainer customStyles={customStyles}>
@@ -37,6 +39,7 @@ export default function RadioGroup({
       {values.map((value) => (
         <FormRowLabelRight label={value.label} key={value.value}>
           <Input
+            disabled={disabled}
             type="radio"
             id={value.value}
             name={name}
@@ -48,3 +51,7 @@ export default function RadioGroup({
     </RadioGroupContainer>
   );
 }
+
+RadioGroup.defaultProps = {
+  disabled: false,
+};

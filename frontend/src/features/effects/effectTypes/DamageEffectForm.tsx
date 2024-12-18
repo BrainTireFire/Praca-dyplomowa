@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer } from "react";
+import { useCallback, useContext, useEffect, useReducer } from "react";
 import Box from "../../../ui/containers/Box";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import RadioGroup from "../../../ui/forms/RadioGroup";
@@ -8,6 +8,9 @@ import {
   DiceSetExtendedDefaultValue,
   DiceSetForm,
 } from "../DiceSetForm";
+import { ValueEffect } from "../valueEffect";
+import { rollMoment, rollMomentDropdown } from "../rollMoment";
+import { EffectContext } from "../contexts/BlueprintOrInstanceContext";
 
 const damageTypes = [
   "acid",
@@ -46,19 +49,19 @@ const effectTypes = ["DamageDealt", "RerollLowerThan", "DamageTaken"] as const;
 type effectType = (typeof effectTypes)[number];
 type damageType = (typeof damageTypes)[number];
 
-export type Effect = {
+export type Effect = ValueEffect & {
   effectType: { damageEffect: effectType; damageEffect_DamageType: damageType };
-  value: DiceSetExtended;
 };
 
 type Action = {
-  type: "setEffectType" | "setDamageType" | "setValue";
-  payload: effectType | damageType | DiceSetExtended;
+  type: "setEffectType" | "setDamageType" | "setValue" | "setRollMoment";
+  payload: effectType | damageType | DiceSetExtended | string | null;
 };
 
 export const initialState: Effect = {
   effectType: { damageEffect: "DamageDealt", damageEffect_DamageType: "acid" },
   value: DiceSetExtendedDefaultValue,
+  rollMoment: "OnCast",
 };
 
 const effectReducer = (state: Effect, action: Action): Effect => {
@@ -85,6 +88,9 @@ const effectReducer = (state: Effect, action: Action): Effect => {
     case "setValue":
       newState = { ...state, value: action.payload as DiceSetExtended };
       break;
+    case "setRollMoment":
+      newState = { ...state, rollMoment: action.payload as rollMoment };
+      break;
     default:
       newState = state;
       break;
@@ -100,6 +106,7 @@ export default function DamageEffectForm({
   onChange: (updatedState: Effect) => void;
   effect: Effect;
 }) {
+  const effectContext = useContext(EffectContext);
   const [state, dispatch] = useReducer(effectReducer, effect);
   useEffect(() => {
     onChange(state);
@@ -132,6 +139,17 @@ export default function DamageEffectForm({
           valuesList={damageTypesDropdown}
         ></Dropdown>
       </FormRowVertical>
+      {effectContext.effect === "Blueprint" && (
+        <FormRowVertical label="Dice roll moment">
+          <Dropdown
+            valuesList={rollMomentDropdown}
+            chosenValue={state.rollMoment}
+            setChosenValue={(e) =>
+              dispatch({ type: "setRollMoment", payload: e })
+            }
+          ></Dropdown>
+        </FormRowVertical>
+      )}
       <FormRowVertical label="Value">
         <DiceSetForm
           onChange={handleValueFormStateUpdate}

@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import FormRowVertical from "../../ui/forms/FormRowVertical";
 import Input from "../../ui/forms/Input";
 import { abilitiesDropdown, ability } from "../effects/abilities";
@@ -37,6 +37,7 @@ import { useUpdatePower } from "./hooks/useUpdatePower";
 import Button from "../../ui/interactive/Button";
 import { usePower } from "./hooks/usePower";
 import MaterialResourceTable from "./tables/MaterialResourceTable";
+import { useCreatePower } from "./hooks/useCreatePower";
 
 // Action types
 export enum PowerActionTypes {
@@ -327,7 +328,16 @@ export const initialState: Power = {
   effectBlueprints: [],
 };
 
-export default function PowerForm({ powerId }: { powerId: number }) {
+export default function PowerForm({
+  powerId,
+  onCreate,
+  onUpdate,
+}: {
+  powerId: number | null;
+  onCreate: (id: number) => void;
+  onUpdate: (id: number) => void;
+}) {
+  const [actualPowerId, setActualPowerId] = useState(powerId);
   const {
     isLoading: isLoadingPower,
     power,
@@ -344,6 +354,12 @@ export default function PowerForm({ powerId }: { powerId: number }) {
     }
   }, [power]);
   const { updatePower, isPending } = useUpdatePower(() => {});
+  const { createPower, isPending: isPendingCreate } = useCreatePower(
+    (id: number) => {
+      setActualPowerId(id);
+      onCreate(id);
+    }
+  );
   console.log(state);
 
   const {
@@ -367,7 +383,12 @@ export default function PowerForm({ powerId }: { powerId: number }) {
         return { value: x.id.toString(), label: x.name };
       })
     : [];
-  if (isLoadingImmaterialResources || isPending || isLoadingPower) {
+  if (
+    isLoadingImmaterialResources ||
+    isPending ||
+    isPendingCreate ||
+    isLoadingPower
+  ) {
     return <Spinner></Spinner>;
   }
   if (errorImmaterialResources) return <>Error</>;
@@ -502,19 +523,23 @@ export default function PowerForm({ powerId }: { powerId: number }) {
           </Column1>
           <Column2>
             <Row1InColumn2>
-              <EffectTable
+              {/* <EffectTable
                 effects={state.effectBlueprints}
                 powerId={powerId ?? -1}
-              ></EffectTable>
-              <MaterialResourceTable
-                materialComponents={state.materialResourcesUsed}
-                powerId={powerId ?? -1}
-              ></MaterialResourceTable>
+              ></EffectTable> */}
+              {power && (
+                <>
+                  <MaterialResourceTable
+                    materialComponents={state.materialResourcesUsed}
+                    powerId={powerId ?? -1}
+                  ></MaterialResourceTable>
 
-              <EffectTable
-                effects={state.effectBlueprints}
-                powerId={powerId ?? -1}
-              ></EffectTable>
+                  <EffectTable
+                    effects={state.effectBlueprints}
+                    powerId={powerId ?? -1}
+                  ></EffectTable>
+                </>
+              )}
             </Row1InColumn2>
             <Row2InColumn2>
               <FormRowVertical
@@ -579,6 +604,10 @@ export default function PowerForm({ powerId }: { powerId: number }) {
                 `}
               >
                 <Input
+                  disabled={
+                    state.powerType === "Attack" ||
+                    state.powerType === "AuraCreator"
+                  }
                   value={state.areaSize}
                   type="number"
                   onChange={(e) =>
@@ -597,6 +626,10 @@ export default function PowerForm({ powerId }: { powerId: number }) {
                 `}
               >
                 <Dropdown
+                  disabled={
+                    state.powerType === "Attack" ||
+                    state.powerType === "AuraCreator"
+                  }
                   valuesList={[
                     ...areaShapeOptions,
                     { value: null, label: "Not applicable" },
@@ -618,6 +651,7 @@ export default function PowerForm({ powerId }: { powerId: number }) {
                 `}
               >
                 <Input
+                  disabled={state.powerType !== "AuraCreator"}
                   value={state.auraSize}
                   type="number"
                   onChange={(e) =>
@@ -636,6 +670,7 @@ export default function PowerForm({ powerId }: { powerId: number }) {
                 `}
               >
                 <Input
+                  disabled={state.powerType !== "Saveable"}
                   value={state.difficultyClass}
                   type="number"
                   onChange={(e) =>
@@ -654,6 +689,7 @@ export default function PowerForm({ powerId }: { powerId: number }) {
                 `}
               >
                 <Dropdown
+                  disabled={state.powerType !== "Saveable"}
                   valuesList={[
                     ...abilitiesDropdown,
                     { value: null, label: "Not applicable" },
@@ -667,6 +703,40 @@ export default function PowerForm({ powerId }: { powerId: number }) {
                   chosenValue={state.savingThrowAbility}
                 ></Dropdown>
               </FormRowVertical>
+              <RadioGroup
+                disabled={state.powerType !== "Saveable"}
+                values={savingThrowBehaviourOptions}
+                onChange={(x) => {
+                  dispatch({
+                    type: PowerActionTypes.UPDATE_SAVING_THROW_BEHAVIOUR,
+                    payload: x as SavingThrowBehaviour,
+                  });
+                }}
+                name="savingThrowBehaviour"
+                label="Saving throw behaviour"
+                currentValue={state.savingThrowBehaviour}
+                customStyles={css`
+                  grid-column: 4;
+                  grid-row: 1;
+                `}
+              ></RadioGroup>
+              <RadioGroup
+                disabled={state.powerType !== "Saveable"}
+                values={savingThrowRollOptions}
+                onChange={(x) => {
+                  dispatch({
+                    type: PowerActionTypes.UPDATE_SAVING_THROW_ROLL,
+                    payload: x as SavingThrowRoll,
+                  });
+                }}
+                name="savingThrowBehaviour"
+                label="Saving throw roll moment"
+                currentValue={state.savingThrowRoll}
+                customStyles={css`
+                  grid-column: 4;
+                  grid-row: 2;
+                `}
+              ></RadioGroup>
               <FormRowLabelRight
                 label="Concentration"
                 customStyles={css`
@@ -685,56 +755,6 @@ export default function PowerForm({ powerId }: { powerId: number }) {
                   }
                 ></Input>
               </FormRowLabelRight>
-              <RadioGroup
-                values={savingThrowBehaviourOptions}
-                onChange={(x) => {
-                  dispatch({
-                    type: PowerActionTypes.UPDATE_SAVING_THROW_BEHAVIOUR,
-                    payload: x as SavingThrowBehaviour,
-                  });
-                }}
-                name="savingThrowBehaviour"
-                label="Saving throw behaviour"
-                currentValue={state.savingThrowBehaviour}
-                customStyles={css`
-                  grid-column: 4;
-                  grid-row: 1;
-                `}
-              ></RadioGroup>
-              {/* <FormRowLabelRight
-              label="Saving throw retaken every turn"
-              customStyles={css`
-                grid-column: 4;
-                grid-row: 2;
-              `}
-            >
-              <Input
-                type="checkbox"
-                checked={state.savingThrowRoll}
-                onChange={(x) =>
-                  dispatch({
-                    type: PowerActionTypes.UPDATE_SAVING_THROW_ROLL,
-                    payload: x.target.checked,
-                  })
-                }
-              ></Input>
-            </FormRowLabelRight> */}
-              <RadioGroup
-                values={savingThrowRollOptions}
-                onChange={(x) => {
-                  dispatch({
-                    type: PowerActionTypes.UPDATE_SAVING_THROW_ROLL,
-                    payload: x as SavingThrowRoll,
-                  });
-                }}
-                name="savingThrowBehaviour"
-                label="Saving throw roll moment"
-                currentValue={state.savingThrowRoll}
-                customStyles={css`
-                  grid-column: 4;
-                  grid-row: 2;
-                `}
-              ></RadioGroup>
               <FormRowVertical
                 label="Effect duration"
                 customStyles={css`
@@ -757,7 +777,14 @@ export default function PowerForm({ powerId }: { powerId: number }) {
           </Column2>
         </Row2>
       </Grid>
-      <Button onClick={() => updatePower(state)}>Update</Button>
+      {actualPowerId && (
+        <Button onClick={() => updatePower(state)}>Update</Button>
+      )}
+      {!actualPowerId && (
+        <Button onClick={() => createPower(state)}>
+          Save to unlock more configuration options
+        </Button>
+      )}
     </>
   );
 }
@@ -809,3 +836,8 @@ const Row2InColumn2 = styled.div`
   grid-template-columns: auto auto auto auto;
   grid-template-rows: auto auto auto;
 `;
+
+PowerForm.defaultProps = {
+  onCreate: (_id: number) => {},
+  onUpdate: (_id: number) => {},
+};

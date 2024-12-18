@@ -24,5 +24,9 @@ namespace pracadyplomowa.Repository
             .Include(p => p.R_UsesImmaterialResource)
             .FirstAsync();
         }
+
+        public Task<List<Power>> GetAllByIds(List<int> Ids){
+            return _context.Powers.Where(i => Ids.Contains(i.Id)).ToListAsync();
+        }
     }
 }

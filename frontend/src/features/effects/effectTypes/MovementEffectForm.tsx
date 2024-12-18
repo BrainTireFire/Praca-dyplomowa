@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer } from "react";
+import { useCallback, useContext, useEffect, useReducer } from "react";
 import Box from "../../../ui/containers/Box";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import RadioGroup from "../../../ui/forms/RadioGroup";
@@ -8,6 +8,9 @@ import {
   DiceSetForm,
 } from "../DiceSetForm";
 import { ValueEffect } from "../valueEffect";
+import Dropdown from "../../../ui/forms/Dropdown";
+import { rollMoment, rollMomentDropdown } from "../rollMoment";
+import { EffectContext } from "../contexts/BlueprintOrInstanceContext";
 
 export type Effect = ValueEffect & {
   effectType: {
@@ -16,7 +19,7 @@ export type Effect = ValueEffect & {
 };
 
 type Action = {
-  type: "setEffectType" | "setValue";
+  type: "setEffectType" | "setValue" | "setRollMoment";
   payload: any;
 };
 
@@ -40,6 +43,9 @@ const effectReducer = (state: Effect, action: Action): Effect => {
     case "setValue":
       newState = { ...state, value: action.payload };
       break;
+    case "setRollMoment":
+      newState = { ...state, rollMoment: action.payload as rollMoment };
+      break;
     default:
       newState = state;
       break;
@@ -55,6 +61,7 @@ export default function MovementEffectForm({
   onChange: (updatedState: Effect) => void;
   effect: Effect;
 }) {
+  const effectContext = useContext(EffectContext);
   const [state, dispatch] = useReducer(effectReducer, effect);
 
   useEffect(() => {
@@ -77,6 +84,17 @@ export default function MovementEffectForm({
         onChange={(x) => dispatch({ type: "setEffectType", payload: x })}
         currentValue={state.effectType.movementEffect}
       ></RadioGroup>
+      {effectContext.effect === "Blueprint" && (
+        <FormRowVertical label="Dice roll moment">
+          <Dropdown
+            valuesList={rollMomentDropdown}
+            chosenValue={state.rollMoment}
+            setChosenValue={(e) =>
+              dispatch({ type: "setRollMoment", payload: e })
+            }
+          ></Dropdown>
+        </FormRowVertical>
+      )}
       <FormRowVertical label="Value">
         <DiceSetForm
           onChange={handleValueFormStateUpdate}

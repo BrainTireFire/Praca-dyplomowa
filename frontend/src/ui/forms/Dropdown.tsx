@@ -31,15 +31,19 @@ function Dropdown({
   valuesList,
   chosenValue,
   setChosenValue,
+  disabled,
 }: {
   valuesList: readonly { value: string | null; label: string }[];
   chosenValue: string | null;
   setChosenValue: (value: string | null) => void;
+  disabled: boolean;
 }) {
   let nullElement = valuesList.find((element) => element.value === null);
+  console.log(chosenValue);
   return (
     <StyledRow>
       <Select
+        disabled={disabled}
         onChange={(e) =>
           setChosenValue(e.target.value === "null" ? null : e.target.value)
         }
@@ -63,3 +67,7 @@ function Dropdown({
 }
 
 export default Dropdown;
+
+Dropdown.defaultProps = {
+  disabled: false,
+};

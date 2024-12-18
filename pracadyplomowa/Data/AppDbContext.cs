@@ -56,7 +56,6 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         public DbSet<Tool> Tools { get; set; }
         public DbSet<Weapon> Weapons { get; set; }
         public DbSet<MeleeWeapon> MeleeWeapons { get; set; }
-        public DbSet<MeleeThrowableWeapon> MeleeThrowableWeapons { get; set; }
         public DbSet<RangedWeapon> RangedWeapons { get; set; }
 
         // Powers

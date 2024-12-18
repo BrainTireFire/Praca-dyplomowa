@@ -13,14 +13,14 @@ using pracadyplomowa.Repository.Item;
 namespace pracadyplomowa.Controllers
 {
     [Authorize]
-    public class EffectController: BaseApiController
+    public class EffectBlueprintController: BaseApiController
     {
         private const int MAX_CLASS_LEVEL = 20;
         private readonly IItemFamilyRepository _itemFamilyRepository;
         private readonly IEffectBlueprintRepository _effectBlueprintRepository;
         private readonly IMapper _mapper;
 
-        public EffectController(IItemFamilyRepository itemFamilyRepository, IEffectBlueprintRepository effectBlueprintRepository, IMapper mapper)
+        public EffectBlueprintController(IItemFamilyRepository itemFamilyRepository, IEffectBlueprintRepository effectBlueprintRepository, IMapper mapper)
         {
             _itemFamilyRepository = itemFamilyRepository;
             _effectBlueprintRepository = effectBlueprintRepository;
@@ -39,7 +39,7 @@ namespace pracadyplomowa.Controllers
             return Ok(itemFamiliesDto);
         }
 
-        [HttpGet("blueprint/{effectId}")]
+        [HttpGet("{effectId}")]
         public async Task<ActionResult<EffectBlueprintFormDto>> GetEffectBlueprint(int effectId)
         {
             var effectBlueprint = _effectBlueprintRepository.GetById(effectId);
@@ -53,7 +53,7 @@ namespace pracadyplomowa.Controllers
 
 
 
-        [HttpPatch("blueprint")]
+        [HttpPatch]
         public async Task<ActionResult> UpdateEffectBlueprint([FromBody] EffectBlueprintFormDto effectDto)
         {
             var id = effectDto.Id;
@@ -86,7 +86,7 @@ namespace pracadyplomowa.Controllers
             }
         }
 
-        [HttpDelete("blueprint/{effectId}")]
+        [HttpDelete("{effectId}")]
         public async Task<ActionResult> DeleteEffectBlueprint([FromRoute] int effectId)
         {
             _effectBlueprintRepository.Delete(effectId);

@@ -46,22 +46,23 @@ namespace pracadyplomowa.Models.Entities.Items
         public string Description { get; set; } = null!;
         public bool IsSpellFocus { get; set; }
         public bool OccupiesAllSlots { get; set;} // if false then can be placed in any of listed slots, if true then occupies all of them at once
+        public CoinSack Price { get; set; }
 
         //Relationship
-        public virtual ICollection<EquipmentSlot> R_ItemIsEquippableInSlots { get; set; } = [];
+        public virtual List<EquipmentSlot> R_ItemIsEquippableInSlots { get; set; } = [];
         public virtual ItemFamily R_ItemInItemsFamily { get; set; } = null!;
         public int R_ItemInItemsFamilyId { get; set; }
         public virtual Backpack? R_BackpackHasItem { get; set; }
         public int? R_BackpackHasItemId { get; set; }
         public virtual EquipData? R_EquipData { get; set; }
 
-        public virtual ICollection<ImmaterialResourceInstance> R_ItemGrantsResources { get; set; } = [];
+        public virtual List<ImmaterialResourceInstance> R_ItemGrantsResources { get; set; } = [];
         public virtual List<EffectInstance> R_AffectedBy { get; set; } = [];
         // public virtual ICollection<EffectGroup> R_EffectGroupFromItem { get; set; } = [];
         public virtual List<EffectInstance> R_EffectsOnEquip { get; set; } = [];
         public virtual ICollection<ShopItem> R_ItemInShops { get; set; } = [];
         // public virtual ICollection<EffectBlueprint> R_ItemCreateEffectsOnEquip { get; set; } = [];
-        public virtual ICollection<Power> R_EquipItemGrantsAccessToPower { get; set; } = [];
+        public virtual List<Power> R_EquipItemGrantsAccessToPower { get; set; } = [];
 
         public void Unequip(Character character){
             character.R_EquippedItems.RemoveAll(ed => ed.R_Character == character && ed.R_Item == this);

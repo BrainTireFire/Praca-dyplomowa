@@ -13,22 +13,26 @@ namespace pracadyplomowa.Models.Entities.Items
     {
         protected Weapon() : base(){
         }
-        protected Weapon(string name, string description, ItemFamily itemFamily, int weight, DamageType damageType, DiceSet damageValue) : base(name, description, itemFamily, weight)
+        protected Weapon(string name, string description, ItemFamily itemFamily, int weight, DamageType damageType, DiceSet damageValue, int range) : base(name, description, itemFamily, weight)
         {
             this.DamageValue = damageValue;
             this.DamageType = damageType;
+            this.Range = range;
         }
 
         public Weapon(Weapon weapon) : base(weapon){
             WeaponWeight = weapon.WeaponWeight;
             DamageType = weapon.DamageType;
             DamageValue = new DiceSet(weapon.DamageValue);
+            Range = weapon.Range;
             R_PowersCastedOnHit = [.. weapon.R_PowersCastedOnHit];
         }
 
         public WeaponWeight WeaponWeight { get; set; }
         public DamageType DamageType { get; set; }
-        public DiceSet DamageValue { get; set; } = null!;
+        public DiceSet DamageValue { get; set; } = new DiceSet();
+        public int DamageValueId { get; set; }
+        public int Range { get; set; } // for ranged or thrown weapons
         
         //Relationship
         public virtual ICollection<Power> R_PowersCastedOnHit { get; set; } = [];

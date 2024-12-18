@@ -6,6 +6,6 @@ export const RollMomentLabelMap = {
   OnResolve: "On resolve",
 } as const;
 
-export const skillsDropdown = rollMoments.map((x) => {
+export const rollMomentDropdown = rollMoments.map((x) => {
   return { value: x, label: RollMomentLabelMap[x] };
 });

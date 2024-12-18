@@ -12,6 +12,25 @@ namespace pracadyplomowa.Repository.Item
         {
         }
 
+        public async Task<Models.Entities.Items.Item> GetByIdWithSlots(int id)
+        {
+            return await  _context.Items
+            .Where(i => i.Id == id)
+            .Include(i => i.R_ItemIsEquippableInSlots)
+            .FirstAsync();
+        }
+
+        public async Task<Models.Entities.Items.Item> GetByIdWithSlotsPowersEffectsResources(int id)
+        {
+            return await  _context.Items
+            .Where(i => i.Id == id)
+            .Include(i => i.R_ItemIsEquippableInSlots)
+            .Include(i => i.R_EquipItemGrantsAccessToPower)
+            .Include(i => i.R_ItemGrantsResources)
+            .Include(i => i.R_EffectsOnEquip)
+            .FirstAsync();
+        }
+
         public async Task<Models.Entities.Items.Item> GetByName(string name)
         {
             return await _context.Items.Where(i => i.Name == name).FirstAsync();

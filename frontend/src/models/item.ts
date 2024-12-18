@@ -9,3 +9,8 @@ export type Item = {
   equippableInSlots: Slot[];
   equipped: boolean;
 };
+
+export type ItemListItem = {
+  id: number;
+  name: string;
+};

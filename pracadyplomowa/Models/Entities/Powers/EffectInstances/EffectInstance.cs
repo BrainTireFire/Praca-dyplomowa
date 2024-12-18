@@ -59,7 +59,7 @@ namespace pracadyplomowa.Models.Entities.Powers
                 if(R_OwnedByGroup != null) return R_OwnedByGroup.Name;
                 else if(R_GrantedThrough != null) return R_GrantedThrough.R_ChoiceGroup.Name;
                 else if(R_GrantedByEquippingItem != null) return R_GrantedByEquippingItem.Name;
-                else throw new UnreachableException();
+                else return "Custom";
             }
         }
 

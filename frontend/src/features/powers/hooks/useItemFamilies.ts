@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getItemFamilies } from "../../../services/apiEffects";
+import { getItemFamilies } from "../../../services/apiEffectBlueprints";
 
 export function useItemFamilies() {
   const {

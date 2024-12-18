@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer } from "react";
+import { useCallback, useContext, useEffect, useReducer } from "react";
 import Box from "../../../ui/containers/Box";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import RadioGroup from "../../../ui/forms/RadioGroup";
@@ -7,21 +7,24 @@ import {
   DiceSetExtendedDefaultValue,
   DiceSetForm,
 } from "../DiceSetForm";
+import { ValueEffect } from "../valueEffect";
+import Dropdown from "../../../ui/forms/Dropdown";
+import { rollMoment, rollMomentDropdown } from "../rollMoment";
+import { EffectContext } from "../contexts/BlueprintOrInstanceContext";
 
 const hitpointEffects = ["TemporaryHitpoints", "HitpointMaximumBonus"] as const;
 
 type hitpointEffect = (typeof hitpointEffects)[number];
 
-export type Effect = {
+export type Effect = ValueEffect & {
   effectType: {
     hitpointEffect: hitpointEffect;
   };
-  value: DiceSetExtended;
 };
 
 type Action = {
-  type: "setEffectType" | "setValue";
-  payload: hitpointEffect | DiceSetExtended;
+  type: "setEffectType" | "setValue" | "setRollMoment";
+  payload: hitpointEffect | DiceSetExtended | string | null;
 };
 
 export const initialState: Effect = {
@@ -29,6 +32,7 @@ export const initialState: Effect = {
     hitpointEffect: "TemporaryHitpoints",
   },
   value: DiceSetExtendedDefaultValue,
+  rollMoment: "OnCast",
 };
 
 const effectReducer = (state: Effect, action: Action): Effect => {
@@ -46,6 +50,9 @@ const effectReducer = (state: Effect, action: Action): Effect => {
     case "setValue":
       newState = { ...state, value: action.payload as DiceSetExtended };
       break;
+    case "setRollMoment":
+      newState = { ...state, rollMoment: action.payload as rollMoment };
+      break;
     default:
       newState = state;
       break;
@@ -61,6 +68,7 @@ export default function HitpointEffectForm({
   onChange: (updatedState: Effect) => void;
   effect: Effect;
 }) {
+  const effectContext = useContext(EffectContext);
   const [state, dispatch] = useReducer(effectReducer, effect);
 
   useEffect(() => {
@@ -85,6 +93,17 @@ export default function HitpointEffectForm({
         }
         currentValue={state.effectType.hitpointEffect}
       ></RadioGroup>
+      {effectContext.effect === "Blueprint" && (
+        <FormRowVertical label="Dice roll moment">
+          <Dropdown
+            valuesList={rollMomentDropdown}
+            chosenValue={state.rollMoment}
+            setChosenValue={(e) =>
+              dispatch({ type: "setRollMoment", payload: e })
+            }
+          ></Dropdown>
+        </FormRowVertical>
+      )}
       <FormRowVertical label="Value">
         <DiceSetForm
           onChange={handleValueFormStateUpdate}

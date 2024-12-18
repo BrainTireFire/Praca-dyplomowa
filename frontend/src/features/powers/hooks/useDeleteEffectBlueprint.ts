@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { deleteEffectBlueprint as deleteEffectBlueprintApi } from "../../../services/apiEffects";
+import { deleteEffectBlueprint as deleteEffectBlueprintApi } from "../../../services/apiEffectBlueprints";
 
 export function useDeleteEffectBlueprint(
   onSuccess: () => void,

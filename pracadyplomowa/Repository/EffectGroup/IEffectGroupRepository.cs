@@ -6,8 +6,7 @@ using pracadyplomowa.Models.Entities.Powers;
 
 namespace pracadyplomowa.Repository
 {
-    public interface IEffectInstanceRepository: IBaseRepository<EffectInstance>
+    public interface IEffectGroupRepository: IBaseRepository<EffectGroup>
     {
-        public Task<EffectInstance> GetByIdWithGroup(int id);
     }
 }

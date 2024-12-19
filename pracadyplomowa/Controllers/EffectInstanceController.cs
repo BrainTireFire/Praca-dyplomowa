@@ -18,12 +18,14 @@ namespace pracadyplomowa.Controllers
         private const int MAX_CLASS_LEVEL = 20;
         private readonly IItemFamilyRepository _itemFamilyRepository;
         private readonly IEffectInstanceRepository _effectInstanceRepository;
+        private readonly IEffectGroupRepository _effectGroupRepository;
         private readonly IMapper _mapper;
 
-        public EffectInstanceController(IItemFamilyRepository itemFamilyRepository, IEffectInstanceRepository effectInstanceRepository, IMapper mapper)
+        public EffectInstanceController(IItemFamilyRepository itemFamilyRepository, IEffectInstanceRepository effectInstanceRepository, IEffectGroupRepository effectGroupRepository, IMapper mapper)
         {
             _itemFamilyRepository = itemFamilyRepository;
             _effectInstanceRepository = effectInstanceRepository;
+            _effectGroupRepository = effectGroupRepository;
             _mapper = mapper;
         }
 
@@ -42,7 +44,7 @@ namespace pracadyplomowa.Controllers
         [HttpGet("{effectId}")]
         public async Task<ActionResult<EffectBlueprintFormDto>> GetEffectInstance(int effectId)
         {
-            var effectInstance = _effectInstanceRepository.GetById(effectId);
+            var effectInstance = await _effectInstanceRepository.GetByIdWithGroup(effectId);
 
             var effectBlueprintDtos = _mapper.Map<EffectBlueprintFormDto>(effectInstance);
 
@@ -69,6 +71,12 @@ namespace pracadyplomowa.Controllers
                     effectInstance.R_GrantedThroughId = effectInstanceOriginal.R_GrantedThroughId;
                     effectInstance.R_TargetedCharacterId = effectInstanceOriginal.R_TargetedCharacterId;
                     effectInstance.R_OwnedByGroupId = effectInstanceOriginal.R_OwnedByGroupId;
+                    if(effectInstance.R_OwnedByGroupId != null){
+                        effectInstance.R_OwnedByGroup = _effectGroupRepository.GetById((int)effectInstance.R_OwnedByGroupId);
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+                        effectInstance.R_OwnedByGroup.DurationLeft = effectDto.DurationLeft;
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+                    }
                     effectInstance.R_TargetedItemId = effectInstanceOriginal.R_TargetedItemId;
 
                     // _effectBlueprintRepository.DetachEntity(effectBlueprintOriginal);

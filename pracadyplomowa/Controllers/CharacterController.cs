@@ -398,6 +398,24 @@ namespace pracadyplomowa.Controllers
         public async Task<ActionResult> AddNewEffectInstance([FromBody] EffectBlueprintFormDto effectDto, [FromRoute] int characterId)
         {
             var effectInstance = _mapper.Map<EffectInstance>(effectDto);
+
+            effectInstance.R_TargetedCharacterId = characterId;
+
+            _effectInstanceRepository.Add(effectInstance);
+            await _effectInstanceRepository.SaveChanges();
+            return Ok(effectInstance.Id);
+        }
+
+        [HttpPost("{characterId}/temporaryEffects")]
+        public async Task<ActionResult> AddNewTemporaryEffectInstance([FromBody] EffectBlueprintFormDto effectDto, [FromRoute] int characterId)
+        {
+            var effectInstance = _mapper.Map<EffectInstance>(effectDto);
+            
+            effectInstance.R_OwnedByGroup = new EffectGroup(){
+                DurationLeft = effectDto.DurationLeft,
+                Name = "Custom"
+            };
+                
             effectInstance.R_TargetedCharacterId = characterId;
 
             _effectInstanceRepository.Add(effectInstance);

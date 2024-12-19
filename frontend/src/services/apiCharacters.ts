@@ -223,6 +223,25 @@ export async function addConstantEffectInstance(
   );
 }
 
+export async function addTemporaryEffectInstance(
+  effectBlueprintDto: EffectBlueprint,
+  characterId: number
+): Promise<number> {
+  console.log(effectBlueprintDto);
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(effectBlueprintDto),
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/character/${characterId}/temporaryEffects`,
+    options
+  );
+}
+
 export type ChoiceGroup = {
   id: number;
   name: string;

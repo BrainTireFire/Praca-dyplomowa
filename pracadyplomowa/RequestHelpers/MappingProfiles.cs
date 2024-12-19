@@ -829,7 +829,8 @@ public class MappingProfiles : Profile
                 src is AttackPerAttackActionEffectInstance ? "attacksPerAction" :
                 src is StatusEffectInstance ? "statusEffect" :
                 src is MovementCostEffectInstance ? "movementCost" : "UNREACHABLE")
-            );
+            )
+            .ForMember(dest => dest.DurationLeft, opt => {opt.PreCondition( src => src.R_OwnedByGroup != null); opt.MapFrom(src => src.R_OwnedByGroup.DurationLeft);});
 
         // CreateMap<DiceSet, ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto>()
         //     .ConvertUsing<DiceSetToDtoConverter>();

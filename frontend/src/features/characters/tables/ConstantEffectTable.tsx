@@ -19,10 +19,6 @@ export default function ConstantEffectTable({
   effects: Effect[];
 }) {
   const { characterId } = useContext(CharacterIdContext);
-  const { createConstantEffectInstance } = useCreateConstantEffectInstance(
-    () => {},
-    characterId as number
-  );
   return (
     <Menus>
       <Table

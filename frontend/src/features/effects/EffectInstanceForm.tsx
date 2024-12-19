@@ -163,6 +163,7 @@ const EffectTypeToInitialStateMap = new Map<
 
 export type EffectBlueprint = {
   id: number | null;
+  durationLeft: number;
   name: string;
   description: string;
   resourceLevel: number;
@@ -179,6 +180,7 @@ type Action = {
     | "setName"
     | "setDescription"
     | "setResourceLevel"
+    | "setDurationLeft"
     | "setSavingThrowSuccess"
     | "setEffectType"
     | "setEffectTypeBody"
@@ -188,6 +190,7 @@ type Action = {
 
 export const initialState: EffectBlueprint = {
   id: null,
+  durationLeft: 0,
   name: "New effect",
   description: "Effect description",
   resourceLevel: 1,
@@ -210,6 +213,9 @@ const effectReducer = (
       break;
     case "setDescription":
       newState = { ...state, description: action.payload };
+      break;
+    case "setDurationLeft":
+      newState = { ...state, durationLeft: action.payload };
       break;
     case "setResourceLevel":
       newState = { ...state, resourceLevel: action.payload };
@@ -242,8 +248,10 @@ const effectReducer = (
 
 export default function EffectInstanceForm({
   effectId,
+  isConstant,
 }: {
   effectId: number | null;
+  isConstant: boolean;
 }) {
   const [actualEffectId, setActualEffectId] = useState(effectId);
   const { objectId, objectType } = useContext(EffectParentObjectIdContext);
@@ -260,7 +268,8 @@ export default function EffectInstanceForm({
     useCreateEffectInstance(
       (id: number) => setActualEffectId(id),
       objectId as number,
-      objectType
+      objectType,
+      isConstant
     );
   const [state, dispatch] = useReducer(effectReducer, initialState);
   const [resetHappened, setResetHappened] = useState(false);
@@ -325,6 +334,21 @@ export default function EffectInstanceForm({
                 }
               ></TextArea>
             </FormRowVertical>
+            {!isConstant && (
+              <FormRowVertical label="Duration">
+                <Input
+                  value={state.durationLeft}
+                  type="number"
+                  min={1}
+                  onChange={(x) =>
+                    dispatch({
+                      type: "setDurationLeft",
+                      payload: Number(x.target.value),
+                    })
+                  }
+                ></Input>
+              </FormRowVertical>
+            )}
           </Div1>
           <Div2>
             <RadioGroup
@@ -488,6 +512,10 @@ export default function EffectInstanceForm({
     </EffectContext.Provider>
   );
 }
+
+EffectInstanceForm.defaultProps = {
+  isConstant: true,
+};
 
 const Container = styled.div`
   display: grid;

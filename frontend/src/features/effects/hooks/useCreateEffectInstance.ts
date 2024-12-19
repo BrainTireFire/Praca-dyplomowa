@@ -1,22 +1,28 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { EffectBlueprint } from "../../effects/EffectBlueprintForm";
-import { addEffectInstance } from "../../../services/apiItems";
+import { addEffectInstance as addItemEffectInstance } from "../../../services/apiItems";
 import { EffectParentObjectIdContextTypeObjectType } from "../../../context/EffectParentObjectIdContext";
-import { addConstantEffectInstance } from "../../../services/apiCharacters";
+import {
+  addConstantEffectInstance,
+  addTemporaryEffectInstance,
+} from "../../../services/apiCharacters";
 
 export function useCreateEffectInstance(
   onSuccess: (id: number) => void,
   objectId: number,
-  objectType: EffectParentObjectIdContextTypeObjectType
+  objectType: EffectParentObjectIdContextTypeObjectType,
+  isConstant: boolean
 ) {
   const queryKey = objectType === "Item" ? "item" : "character";
   const queryClient = useQueryClient();
   const { mutate: createEffectInstance, isPending } = useMutation({
     mutationFn: (effectInstance: EffectBlueprint) =>
       objectType === "Item"
-        ? addEffectInstance(effectInstance, objectId)
-        : addConstantEffectInstance(effectInstance, objectId),
+        ? addItemEffectInstance(effectInstance, objectId)
+        : isConstant
+        ? addConstantEffectInstance(effectInstance, objectId)
+        : addTemporaryEffectInstance(effectInstance, objectId),
     onSuccess: (id: number) => {
       queryClient.invalidateQueries({ queryKey: [queryKey, objectId] });
       // Explicitly refetch the query after invalidation

@@ -12,7 +12,6 @@ import CharacterDetailBox from "./CharacterDetailBox";
 import { Campaign } from "../../models/campaign";
 import { removeCampaign } from "../../services/apiCampaigns";
 import ConfirmDelete from "../../ui/containers/ConfirmDelete";
-import CryptoJS from "crypto-js";
 
 const Container = styled.div`
   display: grid;
@@ -36,15 +35,16 @@ const HeaderButtons = styled.div`
   /* margin-bottom: 1rem; */
 `;
 
+const encode = (number: number): string => {
+  let base64 = btoa(number.toString() + "zoNK");
+  base64 = base64.split("").reverse().join("");
+  return base64;
+};
+
 export default function CampaignInstance() {
   const { isLoading, campaign } = useCampaign();
   const navigate = useNavigate();
   const { t } = useTranslation();
-
-  // function hashNumber(number: number): string {
-  //   const hash = CryptoJS.SHA256(number.toString());
-  //   return hash.toString(CryptoJS.enc.Hex); // Convert to hex string
-  // }
 
   if (isLoading) {
     return <Spinner />;
@@ -128,7 +128,9 @@ export default function CampaignInstance() {
         }}
       >
         <Heading as="h2">Link for invite to the campaign</Heading>
-        <InputCopyToClipboard valueDefault={`localhost:5173/join/${id}`} />
+        <InputCopyToClipboard
+          valueDefault={`localhost:5173/join/${encode(id)}`}
+        />
       </div>
       <Line size="percantage" />
       <Modal>

@@ -245,5 +245,24 @@ namespace pracadyplomowa.Repository
             .FirstAsync();
             return character;
         }
+
+        public Task<Character> GetByIdWithPreparedPowers(int Id)
+        {
+            var character = _context.Characters
+            .Where(c => c.Id == Id)
+            .Include(c => c.R_PowersPrepared)
+            .FirstAsync();
+            return character;
+        }
+
+        public Task<Character> GetByIdWithPowersToPrepare(int Id)
+        {
+            var character = _context.Characters
+            .Where(c => c.Id == Id)
+            .Include(c => c.R_UsedChoiceGroups)
+            .ThenInclude(c => c.R_PowersToPrepareGranted)
+            .FirstAsync();
+            return character;
+        }
     }
 }

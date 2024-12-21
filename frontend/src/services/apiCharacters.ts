@@ -189,6 +189,42 @@ export async function getCharacterPowers(
   return response;
 }
 
+export async function getCharacterPowersPrepared(
+  characterId: number
+): Promise<PowerListItem[]> {
+  const response = await customFetch(
+    `${BASE_URL}/api/character/${characterId}/powersPrepared`
+  );
+
+  console.log(response);
+
+  return response;
+}
+
+export async function getCharacterPowersToPrepare(
+  characterId: number
+): Promise<PowerListItem[]> {
+  const response = await customFetch(
+    `${BASE_URL}/api/character/${characterId}/powersToPrepare`
+  );
+
+  console.log(response);
+
+  return response;
+}
+
+export async function getCharacterMaxPowersToPrepare(
+  characterId: number
+): Promise<PowerListItem[]> {
+  const response = await customFetch(
+    `${BASE_URL}/api/character/${characterId}/maxPowersToPrepare`
+  );
+
+  console.log(response);
+
+  return response;
+}
+
 export async function updateCharacterKnownPowers(
   characterId: number,
   powers: PowerListItem[]
@@ -201,6 +237,24 @@ export async function updateCharacterKnownPowers(
     body: JSON.stringify(powers),
   };
   await customFetch(`${BASE_URL}/api/character/${characterId}/powers`, options);
+  return;
+}
+
+export async function updateCharacterPreparedPowers(
+  characterId: number,
+  powers: PowerListItem[]
+): Promise<void> {
+  const options: RequestInit = {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(powers),
+  };
+  await customFetch(
+    `${BASE_URL}/api/character/${characterId}/powersPrepared`,
+    options
+  );
   return;
 }
 

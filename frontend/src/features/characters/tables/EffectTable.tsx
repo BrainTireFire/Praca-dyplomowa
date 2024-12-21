@@ -1,18 +1,11 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import Menus from "../../../ui/containers/Menus";
 import Table from "../../../ui/containers/Table";
-import styled from "styled-components";
 import Modal from "../../../ui/containers/Modal";
-import {
-  HiArrowDownOnSquare,
-  HiArrowUpOnSquare,
-  HiEye,
-  HiTrash,
-} from "react-icons/hi2";
+import { HiEye, HiTrash } from "react-icons/hi2";
 import { Effect } from "../../../models/effect";
 import { Cell } from "../../../ui/containers/Cell";
 import { EffectParentObjectIdContext } from "../../../context/EffectParentObjectIdContext";
-import { deleteEffectInstance } from "../../../services/apiEffectInstances";
 import ConfirmDelete from "../../../ui/containers/ConfirmDelete";
 import { CharacterIdContext } from "../contexts/CharacterIdContext";
 import { useDeleteConstantEffectInstance } from "../hooks/useDeleteConstantEffectInstance";

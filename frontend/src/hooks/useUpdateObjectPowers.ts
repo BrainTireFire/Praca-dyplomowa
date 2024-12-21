@@ -1,20 +1,25 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { updateItemPowers } from "../services/apiItems";
-import { updateCharacterKnownPowers } from "../services/apiCharacters";
+import {
+  updateCharacterKnownPowers,
+  updateCharacterPreparedPowers,
+} from "../services/apiCharacters";
 import { Slot } from "../models/slot";
 
 export function useUpdateObjectPowers(
   onSuccess: () => void,
   objectId: number,
-  objectType: "Item" | "Character"
+  objectType: "Item" | "Character" | "CharacterPrepared"
 ) {
   const queryClient = useQueryClient();
   const { mutate: updateObjectPowers, isPending } = useMutation({
     mutationFn: (slots: Slot[]) =>
       objectType === "Item"
         ? updateItemPowers(objectId, slots)
-        : updateCharacterKnownPowers(objectId, slots),
+        : objectType === "Character"
+        ? updateCharacterKnownPowers(objectId, slots)
+        : updateCharacterPreparedPowers(objectId, slots),
     onSuccess: () => {
       if (objectType === "Item") {
         queryClient.invalidateQueries({ queryKey: ["itemPowerList"] });
@@ -24,6 +29,15 @@ export function useUpdateObjectPowers(
       if (objectType === "Character") {
         queryClient.invalidateQueries({ queryKey: ["characterPowerList"] });
         queryClient.refetchQueries({ queryKey: ["characterPowerList"] });
+        queryClient.invalidateQueries({ queryKey: ["character", objectId] });
+      }
+      if (objectType === "CharacterPrepared") {
+        queryClient.invalidateQueries({
+          queryKey: ["characterPreparedPowerList"],
+        });
+        queryClient.refetchQueries({
+          queryKey: ["characterPreparedPowerList"],
+        });
         queryClient.invalidateQueries({ queryKey: ["character", objectId] });
       }
 

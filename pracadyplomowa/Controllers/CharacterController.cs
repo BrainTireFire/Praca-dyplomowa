@@ -381,8 +381,28 @@ namespace pracadyplomowa.Controllers
             return Ok(powers);
         }
 
+        [HttpGet("{characterId}/powersPrepared")]
+        public async Task<ActionResult<List<SlotDto>>> GetCharacterPreparedPowers(int characterId){ // returns list of powers which do not have source
+            var character = await _characterRepository.GetByIdWithPreparedPowers(characterId);
+            if(character == null){
+                return NotFound("character with this Id does not exist");
+            }
+            var powers = _mapper.Map<List<PowerCompactDto>>(character.R_PowersPrepared);
+            return Ok(powers);
+        }
+
+        [HttpGet("{characterId}/powersToPrepare")]
+        public async Task<ActionResult<List<SlotDto>>> GetCharacterPowersToPrepare(int characterId){ // returns list of powers which do not have source
+            var character = await _characterRepository.GetByIdWithPowersToPrepare(characterId);
+            if(character == null){
+                return NotFound("character with this Id does not exist");
+            }
+            var powers = _mapper.Map<List<PowerCompactDto>>(character.R_UsedChoiceGroups.SelectMany(ucg => ucg.R_PowersToPrepareGranted).ToList());
+            return Ok(powers);
+        }
+
         [HttpPatch("{characterId}/powers")]
-        public async Task<ActionResult<List<SlotDto>>> SetItemPowers(int characterId, [FromBody] List<PowerCompactDto> powerDtos){
+        public async Task<ActionResult<List<SlotDto>>> SetCharacterPowers(int characterId, [FromBody] List<PowerCompactDto> powerDtos){
             var character = await _characterRepository.GetByIdWithKnownPowers(characterId);
             if(character == null){
                 return NotFound("character with this Id does not exist");
@@ -390,6 +410,19 @@ namespace pracadyplomowa.Controllers
             var powers = _powerRepository.GetAllByIds(powerDtos.Select(x => x.Id).ToList());
             character.R_PowersKnown.Clear();
             character.R_PowersKnown.AddRange(await powers);
+            await _powerRepository.SaveChanges();
+            return Ok();
+        }
+
+        [HttpPatch("{characterId}/powersPrepared")]
+        public async Task<ActionResult<List<SlotDto>>> SetCharacterPowersPrepared(int characterId, [FromBody] List<PowerCompactDto> powerDtos){
+            var character = await _characterRepository.GetByIdWithPreparedPowers(characterId);
+            if(character == null){
+                return NotFound("character with this Id does not exist");
+            }
+            var powers = _powerRepository.GetAllByIds(powerDtos.Select(x => x.Id).ToList());
+            character.R_PowersPrepared.Clear();
+            character.R_PowersPrepared.AddRange(await powers);
             await _powerRepository.SaveChanges();
             return Ok();
         }

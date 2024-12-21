@@ -18,7 +18,7 @@ export function ClassPowersToPrepareTabs() {
   console.log(powersToPrepare);
   return (
     <>
-      <TabList activeTabIndex={1}>
+      <TabList activeTabIndex={0}>
         {powersToPrepare?.map((x) => (
           <TabItem label={x.className} key={x.classId}>
             <PreparedPowerSelectionForm

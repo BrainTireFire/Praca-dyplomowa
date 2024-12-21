@@ -148,7 +148,7 @@ export function PreparedPowerSelectionForm({
       <Column3>
         {!isLoadingPowersPrepared && (
           <ReusableTable
-            mainHeader="Selected slots"
+            mainHeader="Selected powers"
             tableRowsColomns={{ Name: "name" }}
             data={
               powersPreparedLocal?.map((power, index) => {

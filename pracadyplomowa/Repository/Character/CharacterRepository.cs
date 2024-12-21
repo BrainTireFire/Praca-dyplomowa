@@ -113,9 +113,11 @@ namespace pracadyplomowa.Repository
                 .ThenInclude(p => p.R_UsesImmaterialResource)
 
             .Include(c => c.R_PowersPrepared)
-                .ThenInclude(p => p.R_EffectBlueprints)
+                .ThenInclude(ps => ps.R_PreparedPowers)
+                    .ThenInclude(p => p.R_EffectBlueprints)
             .Include(c => c.R_PowersPrepared)
-                .ThenInclude(p => p.R_UsesImmaterialResource)
+                .ThenInclude(ps => ps.R_PreparedPowers)
+                    .ThenInclude(p => p.R_UsesImmaterialResource)
 
             .Include(c => c.R_AffectedBy)
                 .ThenInclude(eg => eg.R_OwnedByGroup)
@@ -250,7 +252,15 @@ namespace pracadyplomowa.Repository
         {
             var character = _context.Characters
             .Where(c => c.Id == Id)
+            .Include(c => c.R_CharacterHasLevelsInClass)
+                .ThenInclude(c => c.R_Class)
+                    .ThenInclude(c => c.MaximumPreparedSpellsFormula)
+            .Include(c => c.R_AffectedBy)
+            .Include(c => c.R_EquippedItems)
+                .ThenInclude(c => c.R_Item)
+                    .ThenInclude(c => c.R_EffectsOnEquip)
             .Include(c => c.R_PowersPrepared)
+                .ThenInclude(ps => ps.R_PreparedPowers)
             .FirstAsync();
             return character;
         }
@@ -259,8 +269,19 @@ namespace pracadyplomowa.Repository
         {
             var character = _context.Characters
             .Where(c => c.Id == Id)
+            .Include(c => c.R_CharacterHasLevelsInClass)
+                .ThenInclude(c => c.R_Class)
+                    .ThenInclude(c => c.MaximumPreparedSpellsFormula)
+            .Include(c => c.R_AffectedBy)
+            .Include(c => c.R_EquippedItems)
+                .ThenInclude(c => c.R_Item)
+                    .ThenInclude(c => c.R_EffectsOnEquip)
             .Include(c => c.R_UsedChoiceGroups)
-            .ThenInclude(c => c.R_PowersToPrepareGranted)
+                .ThenInclude(c => c.R_PowersToPrepareGranted)
+            .Include(c => c.R_UsedChoiceGroups)
+                .ThenInclude(c => c.R_ChoiceGroup)
+                    .ThenInclude(c => c.R_GrantedByClassLevel)
+                        .ThenInclude(c => c.R_Class)
             .FirstAsync();
             return character;
         }

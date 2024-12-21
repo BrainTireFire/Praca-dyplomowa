@@ -445,7 +445,7 @@ namespace pracadyplomowa.Models.DTOs
             public List<string?> Source { get; set;} = [];
         }
         public static List<Power> GetPreparedPowers(Character character){
-            List<Power> powers = character.R_PowersPrepared.Select(power => new Power() {
+            List<Power> powers = character.R_PowersPrepared.SelectMany(ps => ps.R_PreparedPowers).Select(power => new Power() {
                 Id = power.Id,
                 Name = power.Name,
                 Source = power.GetSourceNames(character.Id)

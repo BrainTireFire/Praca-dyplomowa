@@ -114,6 +114,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         public DbSet<LanguageEffectInstance> LanguageEffectInstances { get; set; }
         public DbSet<ChoiceGroupUsage> ChoiceGroupUsages {get; set;}
         public DbSet<Language> Languages {get; set;}
+        public DbSet<PowerSelection> PowerSelections { get; set; }
         
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -158,7 +159,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
 
                 builder.Entity<Character>()
                         .HasMany(c => c.R_PowersPrepared)
-                        .WithMany(c => c.R_CharacterPreparedPowers);
+                        .WithOne(c => c.R_Character);
 
                 builder.Entity<Character>()
                         .HasOne(c => c.R_SpawnedByPower)

@@ -10,16 +10,14 @@ import { Slot } from "../models/slot";
 export function useUpdateObjectPowers(
   onSuccess: () => void,
   objectId: number,
-  objectType: "Item" | "Character" | "CharacterPrepared"
+  objectType: "Item" | "Character"
 ) {
   const queryClient = useQueryClient();
   const { mutate: updateObjectPowers, isPending } = useMutation({
     mutationFn: (slots: Slot[]) =>
       objectType === "Item"
         ? updateItemPowers(objectId, slots)
-        : objectType === "Character"
-        ? updateCharacterKnownPowers(objectId, slots)
-        : updateCharacterPreparedPowers(objectId, slots),
+        : updateCharacterKnownPowers(objectId, slots),
     onSuccess: () => {
       if (objectType === "Item") {
         queryClient.invalidateQueries({ queryKey: ["itemPowerList"] });
@@ -29,15 +27,6 @@ export function useUpdateObjectPowers(
       if (objectType === "Character") {
         queryClient.invalidateQueries({ queryKey: ["characterPowerList"] });
         queryClient.refetchQueries({ queryKey: ["characterPowerList"] });
-        queryClient.invalidateQueries({ queryKey: ["character", objectId] });
-      }
-      if (objectType === "CharacterPrepared") {
-        queryClient.invalidateQueries({
-          queryKey: ["characterPreparedPowerList"],
-        });
-        queryClient.refetchQueries({
-          queryKey: ["characterPreparedPowerList"],
-        });
         queryClient.invalidateQueries({ queryKey: ["character", objectId] });
       }
 

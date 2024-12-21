@@ -47,6 +47,7 @@ export const AdditionalValueTypes = [
   "TotalLevel",
   "AbilityScoreModifier",
   "SkillBonus",
+  "ProficiencyBonus",
 ] as const;
 
 export const AdditionalValueTypeLabelMap = {
@@ -54,6 +55,7 @@ export const AdditionalValueTypeLabelMap = {
   TotalLevel: "Total level",
   AbilityScoreModifier: "Ability score modifier",
   SkillBonus: "Skill bonus",
+  ProficiencyBonus: "Proficiency bonus",
 };
 type Action =
   | DiceAction

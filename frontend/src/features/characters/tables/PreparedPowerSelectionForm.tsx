@@ -1,22 +1,34 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { CharacterIdContext } from "../contexts/CharacterIdContext";
-import { useObjectPowers } from "../../../hooks/useObjectPowers";
-import { useUpdateObjectPowers } from "../../../hooks/useUpdateObjectPowers";
 import { PowerListItem } from "../../../models/power";
 import { ReusableTable } from "../../../ui/containers/ReusableTable";
 import Spinner from "../../../ui/interactive/Spinner";
 import Button from "../../../ui/interactive/Button";
 import styled from "styled-components";
+import { PowersToPrepare } from "../../../services/apiCharacters";
+import { useUpdateCharactersPowersPrepared } from "../hooks/useUpdateCharactersPowersPrepared";
+import { useCharactersPowersPreparedForClass } from "../hooks/useCharactersPowersPreparedForClass";
+import FormRowVertical from "../../../ui/forms/FormRowVertical";
+import Heading from "../../../ui/text/Heading";
 
-export function PreparedPowerSelectionForm() {
+export function PreparedPowerSelectionForm({
+  powersToPrepareContainer,
+}: {
+  powersToPrepareContainer: PowersToPrepare;
+}) {
   const { characterId } = useContext(CharacterIdContext);
-
-  const { isLoading: isLoadingPowersToPrepare, powers: powersToPrepare } =
-    useObjectPowers(characterId, "CharacterToPrepare");
+  let powersToPrepare = powersToPrepareContainer.powerList;
   const { isLoading: isLoadingPowersPrepared, powers: powersPrepared } =
-    useObjectPowers(characterId, "CharacterPrepared");
-  const { isPending, updateObjectPowers: updateItemPowers } =
-    useUpdateObjectPowers(() => {}, characterId as number, "CharacterPrepared");
+    useCharactersPowersPreparedForClass(
+      characterId,
+      powersToPrepareContainer.classId
+    );
+  const { isPending, updateCharactersChosenPowersForClass } =
+    useUpdateCharactersPowersPrepared(
+      () => {},
+      characterId as number,
+      powersToPrepareContainer.classId
+    );
 
   const [powersPreparedLocal, setPowersPreparedLocal] = useState(
     powersPrepared as PowerListItem[]
@@ -54,10 +66,15 @@ export function PreparedPowerSelectionForm() {
     setSelectedPowerIdFromToPrepare(null);
   };
 
+  let blockSave = useCallback(
+    () => powersPreparedLocal?.length > powersToPrepareContainer.numberToChoose,
+    [powersPreparedLocal?.length, powersToPrepareContainer.numberToChoose]
+  );
+
   return (
     <Grid>
       <Column1>
-        {!isLoadingPowersToPrepare && (
+        {!isLoadingPowersPrepared && (
           <ReusableTable
             mainHeader="All powers to prepare"
             tableRowsColomns={{ Name: "name" }}
@@ -71,11 +88,17 @@ export function PreparedPowerSelectionForm() {
             onSelect={handleSelectPowersToPrepare}
           ></ReusableTable>
         )}
-        {isLoadingPowersToPrepare && <Spinner />}
+        {isLoadingPowersPrepared && <Spinner />}
       </Column1>
       <Column2>
         {!isPending && (
           <>
+            {powersPreparedLocal && (
+              <Heading as="h5">
+                Selected {powersPreparedLocal.length} out of{" "}
+                {powersToPrepareContainer.numberToChoose} allowed
+              </Heading>
+            )}
             <Button
               disabled={selectedPowerIdFromToPrepare === null}
               onClick={() => {
@@ -105,9 +128,20 @@ export function PreparedPowerSelectionForm() {
             >
               {"<<"}
             </Button>
-            <Button onClick={() => updateItemPowers(powersPreparedLocal)}>
-              {"Save"}
-            </Button>
+            <FormRowVertical
+              assistiveText={
+                blockSave() ? "Maximum selection number exceeded" : undefined
+              }
+            >
+              <Button
+                disabled={blockSave()}
+                onClick={() =>
+                  updateCharactersChosenPowersForClass(powersPreparedLocal)
+                }
+              >
+                {"Save"}
+              </Button>
+            </FormRowVertical>
           </>
         )}
       </Column2>

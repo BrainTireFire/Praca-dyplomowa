@@ -39,7 +39,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         public int? R_ClassForUpcastingId {get; set;}
 
         // Relationships
-        public virtual List<Character> R_CharacterPreparedPowers { get; set; } = []; // list of selected powers out of all available from 
+        public virtual List<PowerSelection> R_CharacterPreparedPowers { get; set; } = []; // list of selected powers out of all available from 
         public virtual List<Character> R_CharacterKnownsPowers { get; set; } = []; // always available powers
         public virtual List<Item> R_ItemsGrantingPower { get; set; } = [];
         public virtual List<Weapon> R_WeaponsCastingOnHit { get; set; } = [];

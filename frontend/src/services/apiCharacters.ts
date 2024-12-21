@@ -189,6 +189,19 @@ export async function getCharacterPowers(
   return response;
 }
 
+export async function getCharacterPowersPreparedForClass(
+  characterId: number,
+  classId: number
+): Promise<PowerListItem[]> {
+  const response = await customFetch(
+    `${BASE_URL}/api/character/${characterId}/powersPrepared/class/${classId}`
+  );
+
+  console.log(response);
+
+  return response;
+}
+
 export async function getCharacterPowersPrepared(
   characterId: number
 ): Promise<PowerListItem[]> {
@@ -203,7 +216,7 @@ export async function getCharacterPowersPrepared(
 
 export async function getCharacterPowersToPrepare(
   characterId: number
-): Promise<PowerListItem[]> {
+): Promise<PowersToPrepare[]> {
   const response = await customFetch(
     `${BASE_URL}/api/character/${characterId}/powersToPrepare`
   );
@@ -212,6 +225,13 @@ export async function getCharacterPowersToPrepare(
 
   return response;
 }
+
+export type PowersToPrepare = {
+  powerList: PowerListItem[];
+  numberToChoose: number;
+  classId: number;
+  className: string;
+};
 
 export async function getCharacterMaxPowersToPrepare(
   characterId: number
@@ -242,6 +262,7 @@ export async function updateCharacterKnownPowers(
 
 export async function updateCharacterPreparedPowers(
   characterId: number,
+  classId: number,
   powers: PowerListItem[]
 ): Promise<void> {
   const options: RequestInit = {
@@ -252,7 +273,7 @@ export async function updateCharacterPreparedPowers(
     body: JSON.stringify(powers),
   };
   await customFetch(
-    `${BASE_URL}/api/character/${characterId}/powersPrepared`,
+    `${BASE_URL}/api/character/${characterId}/powersPrepared/class/${classId}`,
     options
   );
   return;

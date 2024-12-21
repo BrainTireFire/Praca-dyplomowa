@@ -3,12 +3,11 @@ import { getItemPowers } from "../services/apiItems";
 import {
   getCharacterPowers,
   getCharacterPowersPrepared,
-  getCharacterPowersToPrepare,
 } from "../services/apiCharacters";
 
 export function useObjectPowers(
   objectId: number | null,
-  objectType: "Item" | "Character" | "CharacterPrepared" | "CharacterToPrepare"
+  objectType: "Item" | "Character" | "CharacterPrepared"
 ) {
   const {
     isLoading,
@@ -20,9 +19,7 @@ export function useObjectPowers(
         ? ["itemPowerList"]
         : objectType === "Character"
         ? ["characterPowerList"]
-        : objectType === "CharacterPrepared"
-        ? ["characterPreparedPowerList"]
-        : ["characterToPreparePowerList"],
+        : ["characterPreparedPowerList"],
     queryFn: () => {
       if (objectId) {
         console.log("Load: " + objectId);
@@ -30,8 +27,6 @@ export function useObjectPowers(
         if (objectType === "Character") return getCharacterPowers(objectId);
         if (objectType === "CharacterPrepared")
           return getCharacterPowersPrepared(objectId);
-        if (objectType === "CharacterToPrepare")
-          return getCharacterPowersToPrepare(objectId);
       }
       return Promise.reject(new Error("Object ID is undefined"));
     },

@@ -382,22 +382,59 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpGet("{characterId}/powersPrepared")]
-        public async Task<ActionResult<List<SlotDto>>> GetCharacterPreparedPowers(int characterId){ // returns list of powers which do not have source
+        public async Task<ActionResult<List<SlotDto>>> GetCharacterAllPreparedPowers(int characterId){ // returns list of powers which do not have source
             var character = await _characterRepository.GetByIdWithPreparedPowers(characterId);
+            
             if(character == null){
                 return NotFound("character with this Id does not exist");
             }
-            var powers = _mapper.Map<List<PowerCompactDto>>(character.R_PowersPrepared);
+            var powers = _mapper.Map<List<PowerCompactDto>>(character.R_PowersPrepared.SelectMany(ps => ps.R_PreparedPowers).ToList());
+            return Ok(powers);
+        }
+
+        [HttpGet("{characterId}/powersPrepared/class/{classId}")]
+        public async Task<ActionResult<List<SlotDto>>> GetCharacterPreparedPowersForClass(int characterId, int classId){ // returns list of powers which do not have source
+            var character = await _characterRepository.GetByIdWithPreparedPowers(characterId);
+            
+            if(character == null){
+                return NotFound("character with this Id does not exist");
+            }
+            var powers = _mapper.Map<List<PowerCompactDto>>(character.R_PowersPrepared.Where(ps => ps.R_ClassId == classId).SelectMany(ps => ps.R_PreparedPowers).ToList());
             return Ok(powers);
         }
 
         [HttpGet("{characterId}/powersToPrepare")]
-        public async Task<ActionResult<List<SlotDto>>> GetCharacterPowersToPrepare(int characterId){ // returns list of powers which do not have source
+        public async Task<ActionResult<List<PowersToPrepareDto>>> GetCharacterPowersToPrepare(int characterId){ // returns list of powers which do not have source
             var character = await _characterRepository.GetByIdWithPowersToPrepare(characterId);
             if(character == null){
                 return NotFound("character with this Id does not exist");
             }
-            var powers = _mapper.Map<List<PowerCompactDto>>(character.R_UsedChoiceGroups.SelectMany(ucg => ucg.R_PowersToPrepareGranted).ToList());
+            var powers = character
+            .R_UsedChoiceGroups
+            .Select(ucg => ucg.R_ChoiceGroup)
+            .Select(cg => cg.R_GrantedByClassLevel)
+            .Where(cl => cl != null)
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            .Select(cl => cl.R_Class)
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            .Distinct()
+            .Select(x => new PowersToPrepareDto(){
+                PowerList = _mapper.Map<List<PowerCompactDto>>(
+                    x.R_ClassLevels
+                    .SelectMany(cl => cl.R_ChoiceGroups)
+                    .SelectMany(cg => cg.R_UsageInstances)
+                    .SelectMany(cgu => cgu.R_PowersToPrepareGranted)
+                    .ToList()
+                        .Union(x.R_ClassLevels
+                        .Select(cl => cl.R_Class)
+                        .Distinct()
+                        .SelectMany(cl => cl.R_AccessiblePowers)
+                        )
+                ),
+                numberToChoose = x.MaximumPreparedSpellsFormula.Roll(character),
+                classId = x.Id,
+                className = x.Name
+            }).ToList();
             return Ok(powers);
         }
 
@@ -414,16 +451,28 @@ namespace pracadyplomowa.Controllers
             return Ok();
         }
 
-        [HttpPatch("{characterId}/powersPrepared")]
-        public async Task<ActionResult<List<SlotDto>>> SetCharacterPowersPrepared(int characterId, [FromBody] List<PowerCompactDto> powerDtos){
+        [HttpPatch("{characterId}/powersPrepared/class/{classId}")]
+        public async Task<ActionResult<List<SlotDto>>> SetCharacterPowersPrepared(int characterId, [FromBody] List<PowerCompactDto> powerDtos, int classId){
             var character = await _characterRepository.GetByIdWithPreparedPowers(characterId);
             if(character == null){
                 return NotFound("character with this Id does not exist");
             }
+            var maxPowers = character.GetMaximumPreparedPowers(classId);
+            if(maxPowers < powerDtos.Count){
+                return BadRequest($"You cannot prepare more than {maxPowers} for class with id: {classId}");
+            }
             var powers = _powerRepository.GetAllByIds(powerDtos.Select(x => x.Id).ToList());
-            character.R_PowersPrepared.Clear();
-            character.R_PowersPrepared.AddRange(await powers);
-            await _powerRepository.SaveChanges();
+            if(character.R_PowersPrepared.Where(ps => ps.R_ClassId == classId).FirstOrDefault() == null) {
+                character.R_PowersPrepared.Add(new PowerSelection(){
+                    R_ClassId = classId,
+                    R_CharacterId = characterId
+                });
+            }
+            else{
+                character.R_PowersPrepared.Where(ps => ps.R_ClassId == classId).First().R_PreparedPowers.Clear();
+            }
+            character.R_PowersPrepared.Where(ps => ps.R_ClassId == classId).First().R_PreparedPowers.AddRange(await powers);
+            await _characterRepository.SaveChanges();
             return Ok();
         }
 

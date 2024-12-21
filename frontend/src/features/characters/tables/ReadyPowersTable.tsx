@@ -3,6 +3,7 @@ import Table from "../../../ui/containers/Table";
 import { Cell } from "../../../ui/containers/Cell";
 import { Power } from "../../../models/power";
 import { PreparedPowerSelectionForm } from "./PreparedPowerSelectionForm";
+import { ClassPowersToPrepareTabs } from "../ClassPowersToPrepareTabs";
 
 export default function ReadyPowerTable({ powers }: { powers: Power[] }) {
   return (
@@ -11,7 +12,7 @@ export default function ReadyPowerTable({ powers }: { powers: Power[] }) {
         header="Ready powers"
         button="Select"
         columns="1fr"
-        modal={<PreparedPowerSelectionForm />}
+        modal={<ClassPowersToPrepareTabs />}
       >
         <Table.Header>
           <div>Name</div>

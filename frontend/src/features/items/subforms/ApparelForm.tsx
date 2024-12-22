@@ -4,6 +4,8 @@ import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import Input from "../../../ui/forms/Input";
 import { ItemAction } from "../ItemForm";
 import { ApparelBody } from "../models/item";
+import { EditModeContext } from "../../../context/EditModeContext";
+import { useContext } from "react";
 
 export default function ApparelForm({
   body,
@@ -12,6 +14,7 @@ export default function ApparelForm({
   body: ApparelBody;
   dispatch: (value: ItemAction) => void;
 }) {
+  const { editMode } = useContext(EditModeContext);
   return (
     <Grid>
       <FormRowLabelRight
@@ -21,6 +24,7 @@ export default function ApparelForm({
         `}
       >
         <Input
+          disabled={!editMode}
           type="checkbox"
           checked={body.disadvantageOnStealth}
           onChange={(e) =>
@@ -39,6 +43,7 @@ export default function ApparelForm({
         `}
       >
         <Input
+          disabled={!editMode}
           type="number"
           value={body.minimumStrength}
           onChange={(e) =>
@@ -57,6 +62,7 @@ export default function ApparelForm({
         `}
       >
         <Input
+          disabled={!editMode}
           type="number"
           value={body.armorClass}
           onChange={(e) =>

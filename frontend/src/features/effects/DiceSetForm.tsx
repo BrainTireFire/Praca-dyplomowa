@@ -96,10 +96,12 @@ export function DiceSetForm({
   onChange,
   diceSet,
   useExtendedValues,
+  disabled,
 }: {
   onChange: (updatedState: DiceSetExtended) => void;
   diceSet: DiceSetExtended;
   useExtendedValues: Boolean;
+  disabled: boolean;
 }) {
   const [selectedAdditionalValueIndex, setSelectedAdditionalValueIndex] =
     useState<number | null>(null);
@@ -201,6 +203,7 @@ export function DiceSetForm({
           `}
         >
           <Input
+            disabled={disabled}
             type="number"
             value={state.d100}
             onChange={(e) =>
@@ -217,6 +220,7 @@ export function DiceSetForm({
           `}
         >
           <Input
+            disabled={disabled}
             type="number"
             value={state.d20}
             onChange={(e) =>
@@ -233,6 +237,7 @@ export function DiceSetForm({
           `}
         >
           <Input
+            disabled={disabled}
             type="number"
             value={state.d12}
             onChange={(e) =>
@@ -249,6 +254,7 @@ export function DiceSetForm({
           `}
         >
           <Input
+            disabled={disabled}
             type="number"
             value={state.d10}
             onChange={(e) =>
@@ -265,6 +271,7 @@ export function DiceSetForm({
           `}
         >
           <Input
+            disabled={disabled}
             type="number"
             value={state.d8}
             onChange={(e) =>
@@ -281,6 +288,7 @@ export function DiceSetForm({
           `}
         >
           <Input
+            disabled={disabled}
             type="number"
             value={state.d6}
             onChange={(e) =>
@@ -297,6 +305,7 @@ export function DiceSetForm({
           `}
         >
           <Input
+            disabled={disabled}
             type="number"
             value={state.d4}
             onChange={(e) =>
@@ -313,6 +322,7 @@ export function DiceSetForm({
           `}
         >
           <Input
+            disabled={disabled}
             type="number"
             value={state.flat}
             onChange={(e) =>
@@ -323,33 +333,37 @@ export function DiceSetForm({
       </HorizontalContainer>
       {useExtendedValues && (
         <>
-          <Button
-            onClick={() =>
-              dispatch({
-                type: "postAdditionalValue",
-                payload: { ...initialAdditionalValue },
-              })
-            }
-            customStyles={css`
-              margin: 5px;
-            `}
-          >
-            Add additional value
-          </Button>
-          <Button
-            onClick={() =>
-              dispatch({
-                type: "removeAdditionalValue",
-                index: selectedAdditionalValueIndex as number,
-              })
-            }
-            disabled={selectedAdditionalValueIndex == null}
-            customStyles={css`
-              margin: 5px;
-            `}
-          >
-            Remove selected additional value
-          </Button>
+          {!disabled && (
+            <>
+              <Button
+                onClick={() =>
+                  dispatch({
+                    type: "postAdditionalValue",
+                    payload: { ...initialAdditionalValue },
+                  })
+                }
+                customStyles={css`
+                  margin: 5px;
+                `}
+              >
+                Add additional value
+              </Button>
+              <Button
+                onClick={() =>
+                  dispatch({
+                    type: "removeAdditionalValue",
+                    index: selectedAdditionalValueIndex as number,
+                  })
+                }
+                disabled={selectedAdditionalValueIndex == null}
+                customStyles={css`
+                  margin: 5px;
+                `}
+              >
+                Remove selected additional value
+              </Button>{" "}
+            </>
+          )}
           <ReusableTable
             tableRowsColomns={{
               Type: "AdditionalValueType",
@@ -412,4 +426,5 @@ export function DiceSetForm({
 
 DiceSetForm.defaultProps = {
   useExtendedValues: true,
+  disabled: false,
 };

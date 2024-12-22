@@ -211,6 +211,15 @@ namespace pracadyplomowa.Repository
             return character;
         }
 
+        public Task<Character> GetCharacterEquipment(int id){
+            var character = _context.Characters
+            .Where(c => c.Id == id)
+            .Include(c => c.R_CharacterHasBackpack)
+                .ThenInclude(b => b.R_BackpackHasItems)
+            .FirstAsync();
+            return character;
+        }
+
         public Task<Character> GetCharacterEquipmentAndSlots(int id){
             var character = _context.Characters
             .Where(c => c.Id == id)

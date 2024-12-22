@@ -1,10 +1,10 @@
 import { createContext } from "react";
 
 export const CharacterIdContext = createContext<CharacterIdContextType>({
-  characterId: -1,
+  characterId: null,
 });
 
 export type CharacterIdContextType = {
-  characterId: number;
+  characterId: number | null;
   //   setCharacterId: (characterId: number) => void;
 };

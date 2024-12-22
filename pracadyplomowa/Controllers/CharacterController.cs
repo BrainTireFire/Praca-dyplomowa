@@ -78,8 +78,8 @@ namespace pracadyplomowa.Controllers
                 ownerId
             );
 
-            var item = (await _itemRepository.GetByNameWithEquipmentSlots("Iron longsword")).Clone();
-            var item2 = item.Clone();
+            var item = (await _itemRepository.GetByNameWithEquipmentSlots("Iron longsword")).CloneInstance();
+            var item2 = item.CloneInstance();
             character.R_CharacterHasBackpack = new Backpack()
             {
                 R_BackpackOfCharacter = character, 
@@ -332,6 +332,27 @@ namespace pracadyplomowa.Controllers
             }
             character.UnequipItem(character.R_CharacterHasBackpack.R_BackpackHasItems.Where(i => i.Id == itemId).First());
             await _characterRepository.SaveChanges();
+            return Ok();
+        }
+
+        [HttpPost("{characterId}/equipment")]
+        public async Task<ActionResult> AddItemToCharacterEquipment(int characterId, [FromBody] int itemId){
+            var character = _characterRepository.GetCharacterEquipment(characterId);
+            var item = _itemRepository.GetById(itemId);
+            if(item != null){
+                await character;
+                if(character == null){
+                    return NotFound("Character with id: ${characterId} was not found");
+                }
+                if(item.IsBlueprint){
+                    item = item.CloneInstance();
+                }
+                (await character).R_CharacterHasBackpack.R_BackpackHasItems.Add(item);
+                await _characterRepository.SaveChanges();
+            }
+            else{
+                return NotFound("Item with id: ${itemId} was not found");
+            }
             return Ok();
         }
 

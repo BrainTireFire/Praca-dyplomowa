@@ -1,4 +1,4 @@
-import { Reducer, useEffect, useReducer, useState } from "react";
+import { Reducer, useContext, useEffect, useReducer, useState } from "react";
 import Box from "../../ui/containers/Box";
 import Dropdown from "../../ui/forms/Dropdown";
 import FormRowVertical from "../../ui/forms/FormRowVertical";
@@ -27,6 +27,7 @@ import RangedWeaponForm from "./subforms/RangedWeaponForm";
 import { ItemIdContext } from "./contexts/ItemIdContext";
 import EquippableItemForm from "./subforms/EquippableItemForm";
 import { initialState } from "../effects/EffectBlueprintForm";
+import { EditModeContext } from "../../context/EditModeContext";
 
 export type ItemAction =
   | { type: "SET_ITEM"; payload: Item }
@@ -104,6 +105,7 @@ export default function ItemForm({
   itemId: number | null;
   initialFormValues: Item;
 }) {
+  const { editMode } = useContext(EditModeContext);
   const { isPending: isPendingPost, createItem } = useCreateItem(() => {});
   const { isPending: isPendingUpdate, updateItem } = useUpdateItem(() => {});
   const { isLoading, item, error } = useItem(itemId);
@@ -147,6 +149,7 @@ export default function ItemForm({
           <Row1>
             <FormRowVertical label="Name">
               <Input
+                disabled={!editMode}
                 type="text"
                 value={state.name}
                 onChange={(e) =>
@@ -160,6 +163,7 @@ export default function ItemForm({
             </FormRowVertical>
             <FormRowVertical label="Description" fillHeight={true}>
               <TextArea
+                disabled={!editMode}
                 value={state.description}
                 onChange={(e) =>
                   dispatch({
@@ -182,6 +186,7 @@ export default function ItemForm({
               `}
             >
               <Dropdown
+                disabled={!editMode}
                 valuesList={
                   itemFamilies?.map((family) => {
                     return {
@@ -206,7 +211,18 @@ export default function ItemForm({
                 grid-column: 2;
               `}
             >
-              <Input type="number" value={state.weight}></Input>
+              <Input
+                disabled={!editMode}
+                type="number"
+                value={state.weight}
+                onChange={(e) =>
+                  dispatch({
+                    type: "UPDATE_FIELD",
+                    field: "weight",
+                    value: Number(e.target.value),
+                  })
+                }
+              ></Input>
             </FormRowVertical>
             <FormRowVertical
               label="Cost"
@@ -215,6 +231,7 @@ export default function ItemForm({
               `}
             >
               <CoinPurseForm
+                disabled={!editMode}
                 value={state.price}
                 onGoldChange={(e) =>
                   dispatch({
@@ -256,19 +273,23 @@ export default function ItemForm({
                 dispatch={dispatch}
               ></RangedWeaponForm>
             )}
-            {(state.itemType === "RangedWeapon" ||
-              state.itemType === "MeleeWeapon" ||
-              state.itemType === "Apparel") && (
-              <EquippableItemForm
-                body={state.itemTypeBody as EquippableItemBody}
-              ></EquippableItemForm>
+            {itemId && (
+              <>
+                {(state.itemType === "RangedWeapon" ||
+                  state.itemType === "MeleeWeapon" ||
+                  state.itemType === "Apparel") && (
+                  <EquippableItemForm
+                    body={state.itemTypeBody as EquippableItemBody}
+                  ></EquippableItemForm>
+                )}
+              </>
             )}
           </Row3>
         </Grid>
         {itemId === null && (
           <Button
             onClick={() => createItem(state)}
-            disabled={isSavingChangesDisallowed()}
+            disabled={isSavingChangesDisallowed() || !editMode}
           >
             Save to unlock more configuration options
           </Button>

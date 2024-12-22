@@ -14,6 +14,7 @@ namespace pracadyplomowa.Repository
         public Task<Character> GetByIdWithChoiceGroups(int Id);
         public Task<Character> GetByIdWithClassLevels(int Id);
         public Task<Character> GetCharacterEquipmentAndSlots(int id);
+        public Task<Character> GetCharacterEquipment(int id);
         public Task<Character> GetByIdWithCustomResources(int Id);
         public Task<Character> GetByIdWithKnownPowers(int Id);
         public Task<Character> GetByIdWithPreparedPowers(int Id);

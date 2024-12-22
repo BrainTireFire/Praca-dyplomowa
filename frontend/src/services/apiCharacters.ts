@@ -316,6 +316,23 @@ export async function addTemporaryEffectInstance(
     options
   );
 }
+export async function addToEquipment(
+  characterId: number,
+  itemId: number
+): Promise<void> {
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(itemId),
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/character/${characterId}/equipment`,
+    options
+  );
+}
 
 export type ChoiceGroup = {
   id: number;

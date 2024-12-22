@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useContext } from "react";
 import Dropdown from "../../../ui/forms/Dropdown";
 import FormRowLabelRight from "../../../ui/forms/FormRowLabelRight";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
@@ -10,6 +10,7 @@ import { weightsDropdown } from "../enums/weight";
 import { ItemAction } from "../ItemForm";
 import { MeleeWeaponBody } from "../models/item";
 import styled, { css } from "styled-components";
+import { EditModeContext } from "../../../context/EditModeContext";
 
 export default function MeleeWeaponForm({
   body,
@@ -18,6 +19,7 @@ export default function MeleeWeaponForm({
   body: MeleeWeaponBody;
   dispatch: (value: ItemAction) => void;
 }) {
+  const { editMode } = useContext(EditModeContext);
   const handleValueFormStateUpdate = useCallback(
     (e: DiceSetExtended) => {
       dispatch({
@@ -33,6 +35,7 @@ export default function MeleeWeaponForm({
       <Row>
         <FormRowVertical label={"Damage"}>
           <DiceSetForm
+            disabled={!editMode}
             onChange={handleValueFormStateUpdate}
             diceSet={body.damage as DiceSetExtended}
             useExtendedValues={false}
@@ -40,6 +43,7 @@ export default function MeleeWeaponForm({
         </FormRowVertical>
         <FormRowVertical label="Damage type">
           <Dropdown
+            disabled={!editMode}
             valuesList={damageTypesDropdown}
             chosenValue={body.damageType}
             setChosenValue={(value) =>
@@ -56,6 +60,7 @@ export default function MeleeWeaponForm({
         <FormRowVertical label="Properties">
           <FormRowLabelRight label="Finesse">
             <Input
+              disabled={!editMode}
               type="checkbox"
               checked={body.finesse}
               onChange={(e) =>
@@ -69,6 +74,7 @@ export default function MeleeWeaponForm({
           </FormRowLabelRight>
           <FormRowLabelRight label="Reach">
             <Input
+              disabled={!editMode}
               type="checkbox"
               checked={body.reach}
               onChange={(e) =>
@@ -82,6 +88,7 @@ export default function MeleeWeaponForm({
           </FormRowLabelRight>
           <FormRowLabelRight label="Thrown">
             <Input
+              disabled={!editMode}
               type="checkbox"
               checked={body.throwable}
               onChange={(e) =>
@@ -96,7 +103,7 @@ export default function MeleeWeaponForm({
         </FormRowVertical>
         <FormRowVertical label="Throw range">
           <Input
-            disabled={!body.throwable}
+            disabled={!body.throwable || !editMode}
             type="number"
             value={body.rangeThrowable}
             onChange={(e) =>
@@ -110,6 +117,7 @@ export default function MeleeWeaponForm({
         </FormRowVertical>
         <FormRowVertical label={"Weight property"}>
           <RadioGroup
+            disabled={!editMode}
             values={weightsDropdown}
             label=""
             name="Weight"

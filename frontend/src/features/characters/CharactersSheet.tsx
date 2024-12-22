@@ -26,6 +26,7 @@ import SelectFromChoiceGroupScreen from "./SelectFromChoiceGroupScreen";
 import { CharacterIdContext } from "./contexts/CharacterIdContext";
 import { useContext } from "react";
 import EquipmentSlotScreen from "./EquipmentSlotScreen";
+import AddEquipmentScreen from "./AddEquipmentScreen";
 
 const MainGrid = styled.div`
   display: grid;
@@ -185,7 +186,7 @@ export default function CharactersSheet() {
             >
               <ClassTable
                 characterClasses={character.classes}
-                characterId={characterId}
+                characterId={characterId as number}
               ></ClassTable>
             </div>
             <div
@@ -259,6 +260,14 @@ export default function CharactersSheet() {
               style={{ gridColumnStart: 1, gridColumnEnd: 5, gridRowStart: 5 }}
             >
               <EquipmentTable equipments={character.equipment} />
+              <Modal>
+                <Modal.Open opens="AddNewItem">
+                  <Button>Add new item</Button>
+                </Modal.Open>
+                <Modal.Window name="AddNewItem">
+                  <AddEquipmentScreen></AddEquipmentScreen>
+                </Modal.Window>
+              </Modal>
             </div>
             <div
               style={{ gridColumnStart: 1, gridColumnEnd: 5, gridRowStart: 6 }}

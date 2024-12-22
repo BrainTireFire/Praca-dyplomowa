@@ -3,17 +3,16 @@ import ItemForm from "../../features/items/ItemForm";
 import { ReusableTable } from "../../ui/containers/ReusableTable";
 import Button from "../../ui/interactive/Button";
 import Spinner from "../../ui/interactive/Spinner";
-import { useItems } from "./hooks/useItems";
 import { useContext, useState } from "react";
 import Modal from "../../ui/containers/Modal";
-import CreateNewItemForm from "./CreateNewItemForm";
 import { EditModeContext } from "../../context/EditModeContext";
 import { CharacterIdContext } from "../../features/characters/contexts/CharacterIdContext";
+import { useItems } from "../../pages/items/hooks/useItems";
+import { useAddItemToEquipment } from "./hooks/useAddItemToEquipment";
 
-export default function Items() {
-  const editMode = useContext(EditModeContext);
+export default function AddEquipmentScreen() {
   const { isLoading, items, error } = useItems();
-
+  const { characterId } = useContext(CharacterIdContext);
   const [selectedItemId, setSelectedItemId] = useState<null | number>(null);
   // const { createItem, isPending: isPendingCreation } = useCreateItem(() => {});
   const handleSelect = (row: any) => {
@@ -26,7 +25,12 @@ export default function Items() {
     console.log(selectedItemId);
   };
 
-  if (isLoading) {
+  const { addToEquipment, isPending: isPendingAdd } = useAddItemToEquipment(
+    () => {},
+    characterId as number
+  );
+
+  if (isLoading || isPendingAdd) {
     return <Spinner></Spinner>;
   }
   return (
@@ -49,20 +53,19 @@ export default function Items() {
           isSelectable={true}
           onSelect={handleSelect}
         ></ReusableTable>
-        {editMode && (
-          <Modal>
-            <Modal.Open opens="TableAction">
-              <Button>Create new</Button>
-            </Modal.Open>
-            <Modal.Window name="TableAction">
-              <CreateNewItemForm></CreateNewItemForm>
-            </Modal.Window>
-          </Modal>
-        )}
+
+        <Button
+          disabled={!selectedItemId}
+          onClick={() => addToEquipment(selectedItemId as number)}
+        >
+          Add to character
+        </Button>
       </Column1>
       <Column2>
         {selectedItemId && (
-          <ItemForm itemId={selectedItemId} key={selectedItemId}></ItemForm>
+          <EditModeContext.Provider value={{ editMode: false }}>
+            <ItemForm itemId={selectedItemId} key={selectedItemId}></ItemForm>
+          </EditModeContext.Provider>
         )}
       </Column2>
     </Container>
@@ -72,6 +75,7 @@ export default function Items() {
 const Container = styled.div`
   display: grid;
   grid-template-columns: 1fr 2fr;
+  width: 90vw;
 `;
 
 const Column1 = styled.div`

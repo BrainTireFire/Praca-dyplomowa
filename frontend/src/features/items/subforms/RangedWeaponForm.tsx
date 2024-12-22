@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useContext } from "react";
 import Dropdown from "../../../ui/forms/Dropdown";
 import FormRowLabelRight from "../../../ui/forms/FormRowLabelRight";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
@@ -10,6 +10,7 @@ import { weightsDropdown } from "../enums/weight";
 import { ItemAction } from "../ItemForm";
 import { MeleeWeaponBody, RangedWeaponBody } from "../models/item";
 import styled from "styled-components";
+import { EditModeContext } from "../../../context/EditModeContext";
 
 export default function RangedWeaponForm({
   body,
@@ -18,6 +19,7 @@ export default function RangedWeaponForm({
   body: RangedWeaponBody;
   dispatch: (value: ItemAction) => void;
 }) {
+  const { editMode } = useContext(EditModeContext);
   const handleValueFormStateUpdate = useCallback(
     (e: DiceSetExtended) => {
       dispatch({
@@ -32,6 +34,7 @@ export default function RangedWeaponForm({
     <Row>
       <FormRowVertical label="Damage">
         <DiceSetForm
+          disabled={!editMode}
           onChange={handleValueFormStateUpdate}
           diceSet={body.damage as DiceSetExtended}
           useExtendedValues={false}
@@ -39,6 +42,7 @@ export default function RangedWeaponForm({
       </FormRowVertical>
       <FormRowVertical label="Damage type">
         <Dropdown
+          disabled={!editMode}
           valuesList={damageTypesDropdown}
           chosenValue={body.damageType}
           setChosenValue={(value) =>
@@ -52,6 +56,7 @@ export default function RangedWeaponForm({
       </FormRowVertical>
       <FormRowVertical label="Range">
         <Input
+          disabled={!editMode}
           type="number"
           value={body.range}
           onChange={(value) =>
@@ -65,6 +70,7 @@ export default function RangedWeaponForm({
       </FormRowVertical>
       <FormRowLabelRight label="Requires reloading">
         <Input
+          disabled={!editMode}
           type="checkbox"
           checked={body.loaded}
           onChange={(e) =>

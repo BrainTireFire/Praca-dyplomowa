@@ -41,6 +41,7 @@ namespace pracadyplomowa.Models.Entities.Items
             R_EquipItemGrantsAccessToPower = [.. item.R_EquipItemGrantsAccessToPower];
         }
 
+        public bool IsBlueprint { get; set; } = false;
         public string Name { get; set; } = null!;
         public int Weight { get; set; }
         public string Description { get; set; } = null!;
@@ -70,6 +71,9 @@ namespace pracadyplomowa.Models.Entities.Items
         }
 // powersAlwaysAvailable.Intersect(this.R_PowersAlwaysAvailable).Count() == powersAlwaysAvailable.Count
         public void Equip(Character character, EquipmentSlot slot){
+            if(this.IsBlueprint){
+                throw new EquippingException("Cannot equip a blueprint");
+            }
             if(this.R_ItemIsEquippableInSlots.Where(s => s == slot).Any()){
                 if(this.R_ItemIsEquippableInSlots.Intersect(character.R_CharacterBelongsToRace.R_EquipmentSlots).Count() == this.R_ItemIsEquippableInSlots.Count){
                     if(!this.OccupiesAllSlots){
@@ -111,6 +115,12 @@ namespace pracadyplomowa.Models.Entities.Items
 
         public virtual Item Clone(){
             return new Item(this);
+        }
+
+        public virtual Item CloneInstance(){
+            var x = this.Clone();
+            x.IsBlueprint = false;
+            return x;
         }
 
         public class EquippingException(string message) : Exception(message);

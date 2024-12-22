@@ -38,6 +38,26 @@ namespace pracadyplomowa.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.AddColumn<string>(
+                name: "Description",
+                table: "Boards",
+                type: "TEXT",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "SizeX",
+                table: "Boards",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "SizeY",
+                table: "Boards",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: 0);
+
             migrationBuilder.CreateIndex(
                 name: "IX_EquipDataEquipmentSlot_UsagesId",
                 table: "EquipDataEquipmentSlot",

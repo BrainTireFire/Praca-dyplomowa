@@ -25,7 +25,7 @@ const Overlay = styled.div`
   height: 100vh;
   /* background-color: var(--color-button-primary); */
   backdrop-filter: blur(4px);
-  z-index: 1000;
+  z-index: 1000; // lower than in Menus component
   transition: all 0.5s;
 `;
 
@@ -87,7 +87,7 @@ function Window({
   children: React.ReactNode;
 }) {
   const { openName, close } = useContext(ModalContext);
-  const ref = useOutsideClick(close);
+  // const ref = useOutsideClick(close);
 
   if (name !== openName) {
     return null;
@@ -95,7 +95,8 @@ function Window({
 
   return createPortal(
     <Overlay>
-      <StyledModal ref={ref}>
+      {/* <StyledModal ref={ref}> // commented out to disable closing the modal when clicking outside of it as it broke nested modals*/}
+      <StyledModal>
         <Button onClick={close}>
           <HiXMark />
         </Button>

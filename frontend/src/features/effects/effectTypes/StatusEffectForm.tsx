@@ -57,7 +57,7 @@ export default function StatusEffectForm({
     <Box>
       <FormRowVertical label="Status effect">
         <Dropdown
-          chosenValue={state.statusEffect}
+          chosenValue={state.effectType.statusEffect}
           setChosenValue={(e) =>
             dispatch({ type: "setStatusEffect", payload: e as statusEffect })
           }

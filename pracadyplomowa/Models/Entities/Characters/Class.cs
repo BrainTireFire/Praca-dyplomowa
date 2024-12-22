@@ -13,11 +13,12 @@ namespace pracadyplomowa.Models.Entities.Characters
         //Properties
         public string Name { get; set; } = name;
         // public string? MaximumPreparedSpellsFormula { get; set; }
-        public DiceSet? MaximumPreparedSpellsFormula { get; set; } = 0;
+        public DiceSet MaximumPreparedSpellsFormula { get; set; } = 0;
         public Ability? SpellcastingAbility { get; set; }
 
         //Relationships
         public List<Power> R_AccessiblePowers { get; set; } = [];
+        public List<PowerSelection> R_PowerSelections { get; set; } = [];
         public List<ClassLevel> R_ClassLevels { get; set; } = [];
 
         public List<Power> R_UsedForUpcastingOfPowers {get; set;} = [];

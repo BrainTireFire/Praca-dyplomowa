@@ -113,9 +113,11 @@ namespace pracadyplomowa.Repository
                 .ThenInclude(p => p.R_UsesImmaterialResource)
 
             .Include(c => c.R_PowersPrepared)
-                .ThenInclude(p => p.R_EffectBlueprints)
+                .ThenInclude(ps => ps.R_PreparedPowers)
+                    .ThenInclude(p => p.R_EffectBlueprints)
             .Include(c => c.R_PowersPrepared)
-                .ThenInclude(p => p.R_UsesImmaterialResource)
+                .ThenInclude(ps => ps.R_PreparedPowers)
+                    .ThenInclude(p => p.R_UsesImmaterialResource)
 
             .Include(c => c.R_AffectedBy)
                 .ThenInclude(eg => eg.R_OwnedByGroup)
@@ -143,6 +145,9 @@ namespace pracadyplomowa.Repository
             .Include(c => c.R_EquippedItems)
                 .ThenInclude(ed => ed.R_Item)
                     .ThenInclude(b => b.R_ItemIsEquippableInSlots)
+
+            .Include(c => c.R_ImmaterialResourceInstances)
+                .ThenInclude(iri => iri.R_Blueprint)
 
             .AsSplitQuery() // IMPORTANT !!!!! https://learn.microsoft.com/en-us/ef/core/querying/single-split-queries
             .FirstAsync();
@@ -206,6 +211,15 @@ namespace pracadyplomowa.Repository
             return character;
         }
 
+        public Task<Character> GetCharacterEquipment(int id){
+            var character = _context.Characters
+            .Where(c => c.Id == id)
+            .Include(c => c.R_CharacterHasBackpack)
+                .ThenInclude(b => b.R_BackpackHasItems)
+            .FirstAsync();
+            return character;
+        }
+
         public Task<Character> GetCharacterEquipmentAndSlots(int id){
             var character = _context.Characters
             .Where(c => c.Id == id)
@@ -220,6 +234,63 @@ namespace pracadyplomowa.Repository
                     .ThenInclude(i => i.R_ItemInItemsFamily)
             .Include(c => c.R_CharacterBelongsToRace)
                 .ThenInclude(r => r.R_EquipmentSlots)
+            .FirstAsync();
+            return character;
+        }
+
+        public Task<Character> GetByIdWithCustomResources(int Id)
+        {
+            var character = _context.Characters
+            .Where(c => c.Id == Id)
+            .Include(c => c.R_ImmaterialResourceInstances)
+                .ThenInclude(iri => iri.R_Blueprint)
+            .FirstAsync();
+            return character;
+        }
+
+        public Task<Character> GetByIdWithKnownPowers(int Id)
+        {
+            var character = _context.Characters
+            .Where(c => c.Id == Id)
+            .Include(c => c.R_PowersKnown)
+            .FirstAsync();
+            return character;
+        }
+
+        public Task<Character> GetByIdWithPreparedPowers(int Id)
+        {
+            var character = _context.Characters
+            .Where(c => c.Id == Id)
+            .Include(c => c.R_CharacterHasLevelsInClass)
+                .ThenInclude(c => c.R_Class)
+                    .ThenInclude(c => c.MaximumPreparedSpellsFormula)
+            .Include(c => c.R_AffectedBy)
+            .Include(c => c.R_EquippedItems)
+                .ThenInclude(c => c.R_Item)
+                    .ThenInclude(c => c.R_EffectsOnEquip)
+            .Include(c => c.R_PowersPrepared)
+                .ThenInclude(ps => ps.R_PreparedPowers)
+            .FirstAsync();
+            return character;
+        }
+
+        public Task<Character> GetByIdWithPowersToPrepare(int Id)
+        {
+            var character = _context.Characters
+            .Where(c => c.Id == Id)
+            .Include(c => c.R_CharacterHasLevelsInClass)
+                .ThenInclude(c => c.R_Class)
+                    .ThenInclude(c => c.MaximumPreparedSpellsFormula)
+            .Include(c => c.R_AffectedBy)
+            .Include(c => c.R_EquippedItems)
+                .ThenInclude(c => c.R_Item)
+                    .ThenInclude(c => c.R_EffectsOnEquip)
+            .Include(c => c.R_UsedChoiceGroups)
+                .ThenInclude(c => c.R_PowersToPrepareGranted)
+            .Include(c => c.R_UsedChoiceGroups)
+                .ThenInclude(c => c.R_ChoiceGroup)
+                    .ThenInclude(c => c.R_GrantedByClassLevel)
+                        .ThenInclude(c => c.R_Class)
             .FirstAsync();
             return character;
         }

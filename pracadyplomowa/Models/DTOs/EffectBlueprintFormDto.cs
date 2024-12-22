@@ -41,6 +41,7 @@ namespace pracadyplomowa.Models.DTOs
         public int? Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public int DurationLeft { get; set; }
         public int ResourceLevel { get; set; } // use this effect if Level value matches value selected by 
         public int ResourceAmount { get; set;}
         public bool SavingThrowSuccess { get; set; }

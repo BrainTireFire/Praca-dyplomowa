@@ -454,6 +454,8 @@ public class Seed
 
             features.R_Effects.AddRange([extraAttack]);
             features.R_PowersAlwaysAvailable.AddRange([secondWind, actionSurge]);
+            features.R_PowersToPrepare.Add(secondWind);
+            features.R_PowersToPrepare.Add(actionSurge);
             features.R_Resources.AddRange([secondWindResourceAmount]);
 
             fighterClass.R_ClassLevels.Where(cl => cl.Level == 1).First().R_ChoiceGroups.AddRange(
@@ -535,6 +537,12 @@ public class Seed
             wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel4);
             wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel5);
             wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel6);
+            wizardFeatures.R_PowersToPrepare.Add(arcaneRecoveryLevel1);
+            wizardFeatures.R_PowersToPrepare.Add(arcaneRecoveryLevel2);
+            wizardFeatures.R_PowersToPrepare.Add(arcaneRecoveryLevel3);
+            wizardFeatures.R_PowersToPrepare.Add(arcaneRecoveryLevel4);
+            wizardFeatures.R_PowersToPrepare.Add(arcaneRecoveryLevel5);
+            wizardFeatures.R_PowersToPrepare.Add(arcaneRecoveryLevel6);
 
             ImmaterialResourceBlueprint spellSlot = new()
             {

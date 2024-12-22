@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { EffectBlueprint } from "../EffectBlueprintForm";
-import { updateEffectBlueprint as updateEffectBlueprintApi } from "../../../services/apiEffects";
+import { updateEffectBlueprint as updateEffectBlueprintApi } from "../../../services/apiEffectBlueprints";
 
 export function useUpdateEffectBlueprint(
   onSuccess: () => void,

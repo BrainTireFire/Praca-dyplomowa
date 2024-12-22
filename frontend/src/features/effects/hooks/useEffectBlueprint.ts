@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getEffectBlueprint } from "../../../services/apiEffects";
+import { getEffectBlueprint } from "../../../services/apiEffectBlueprints";
 
 export function useEffectBlueprint(effectId: number | null) {
   const {

@@ -90,6 +90,8 @@ import { useEffectBlueprint } from "./hooks/useEffectBlueprint";
 import { useUpdateEffectBlueprint } from "./hooks/useUpdateEffectBlueprint";
 import { PowerIdContext } from "../powers/contexts/PowerIdContext";
 import { ValueEffect } from "./valueEffect";
+import { EffectContext } from "./contexts/BlueprintOrInstanceContext";
+import { useCreateEffectBlueprint } from "./hooks/useCreateEffectBlueprint";
 
 const effectTypes = [
   "movementEffect",
@@ -238,15 +240,22 @@ const effectReducer = (
 export default function EffectBlueprintForm({
   effectId,
 }: {
-  effectId: number;
+  effectId: number | null;
 }) {
+  const [actualEffectId, setActualEffectId] = useState(effectId);
   const { powerId } = useContext(PowerIdContext);
-  const { isLoading, effectBlueprint, error } = useEffectBlueprint(effectId);
+  const { isLoading, effectBlueprint, error } =
+    useEffectBlueprint(actualEffectId);
   const { isPending, updateEffectBlueprint } = useUpdateEffectBlueprint(
     () => {},
-    effectId,
+    effectBlueprint?.id as number,
     powerId
   );
+  const { isPending: isPendingCreate, createEffectBlueprint } =
+    useCreateEffectBlueprint(
+      (id: number) => setActualEffectId(id),
+      powerId as number
+    );
   const [state, dispatch] = useReducer(effectReducer, initialState);
   const [resetHappened, setResetHappened] = useState(false);
   // Update local state when data is fetched
@@ -277,7 +286,12 @@ export default function EffectBlueprintForm({
       ) || false
     );
   };
-  if (isLoading || isPending || !resetHappened) {
+  if (
+    isLoading ||
+    isPending ||
+    isPendingCreate ||
+    (!resetHappened && effectId)
+  ) {
     return <Spinner></Spinner>;
   }
   if (error) {
@@ -285,7 +299,7 @@ export default function EffectBlueprintForm({
     return <>Error</>;
   }
   return (
-    <>
+    <EffectContext.Provider value={{ effect: "Blueprint" }}>
       <ScrollContainer>
         <Container>
           <Div1>
@@ -473,13 +487,23 @@ export default function EffectBlueprintForm({
           </Div3>
         </Container>
       </ScrollContainer>
-      <Button
-        onClick={() => updateEffectBlueprint(state)}
-        disabled={disableUpdateButton()}
-      >
-        Update
-      </Button>
-    </>
+      {effectBlueprint && (
+        <Button
+          onClick={() => updateEffectBlueprint(state)}
+          disabled={disableUpdateButton()}
+        >
+          Update
+        </Button>
+      )}
+      {!effectBlueprint && (
+        <Button
+          onClick={() => createEffectBlueprint(state)}
+          disabled={disableUpdateButton()}
+        >
+          Save
+        </Button>
+      )}
+    </EffectContext.Provider>
   );
 }
 

@@ -49,9 +49,12 @@ builder.Services.AddScoped<IBoardRepository, BoardRepository>();
 builder.Services.AddScoped<IFieldRepository, FieldRepository>();
 builder.Services.AddScoped<IPowerRepository, PowerRepository>();
 builder.Services.AddScoped<IEffectBlueprintRepository, EffectBlueprintRepository>();
+builder.Services.AddScoped<IEffectInstanceRepository, EffectInstanceRepository>();
+builder.Services.AddScoped<IEffectGroupRepository, EffectGroupRepository>();
 builder.Services.AddScoped<IItemFamilyRepository, ItemFamilyRepository>();
 builder.Services.AddScoped<IImmaterialResourceBlueprintRepository, ImmaterialResourceBlueprintRepository>();
 builder.Services.AddScoped<IItemCostRequirementRepository, ItemCostRequirementRepository>();
+builder.Services.AddScoped<IEquipmentSlotRepository, EquipmentSlotRepository>();
 
 builder.Services.AddScoped<IAuthorizationHandler, OwnershipHandler>();
 // builder.Services.AddHttpContextAccessor();

@@ -10,6 +10,7 @@ import { useCreatePower } from "./hooks/useCreatePower";
 
 export default function Powers() {
   const { isLoading, powers, error } = usePowers();
+  const [openNewPowerForm, setOpenNewPowerForm] = useState(false);
 
   const [selectedPowerId, setSelectedPowerId] = useState<null | number>(null);
   const { createPower, isPending: isPendingCreation } = useCreatePower(
@@ -22,6 +23,7 @@ export default function Powers() {
     console.log(selectedPower);
 
     setSelectedPowerId(selectedPower ? selectedPower.id : null);
+    setOpenNewPowerForm(false);
     console.log(selectedPowerId);
   };
 
@@ -51,7 +53,8 @@ export default function Powers() {
         ></ReusableTable>
         <Button
           onClick={() => {
-            createPower(initialState);
+            setOpenNewPowerForm(true);
+            setSelectedPowerId(null);
           }}
         >
           Create new
@@ -62,6 +65,16 @@ export default function Powers() {
           <PowerForm
             powerId={selectedPowerId}
             key={selectedPowerId}
+          ></PowerForm>
+        )}
+        {openNewPowerForm && (
+          <PowerForm
+            powerId={null}
+            key={"x"}
+            onCreate={(id) => {
+              setOpenNewPowerForm(false);
+              setSelectedPowerId(id);
+            }}
           ></PowerForm>
         )}
       </Column2>

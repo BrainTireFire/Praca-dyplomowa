@@ -43,7 +43,7 @@ namespace pracadyplomowa.Models.Entities.Characters
         public virtual List<ClassLevel> R_CharacterHasLevelsInClass { get; set; } = [];
         public virtual List<Aura> R_AuraCenteredAtCharacter { get; set; } = [];
         public virtual List<EffectInstance> R_AffectedBy { get; set; } = [];
-        public virtual List<Power> R_PowersPrepared { get; set; } = [];
+        public virtual List<PowerSelection> R_PowersPrepared { get; set; } = [];
         public virtual List<Power> R_PowersKnown { get; set; } = [];
         public virtual Power? R_SpawnedByPower { get; set; }
         public int? R_SpawnedByPowerId { get; set; }
@@ -537,6 +537,8 @@ namespace pracadyplomowa.Models.Entities.Characters
                     .Distinct()
                     .SelectMany(item => item.R_ItemGrantsResources)
                 )
+                .Union(this.R_ImmaterialResourceInstances
+                )
                 .ToList();
             }
         }
@@ -545,6 +547,16 @@ namespace pracadyplomowa.Models.Entities.Characters
         public IEnumerable<EffectInstance> AffectedByApprovedEffects {
             get {
                 return this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances);
+            }
+        }
+
+        public int GetMaximumPreparedPowers(int classId){
+            var maximum = this.R_CharacterHasLevelsInClass.Select(x => x.R_Class).Distinct().Where(c => c.Id == classId).Select(x => x.MaximumPreparedSpellsFormula).FirstOrDefault()?.Roll(this) ?? 0;
+            if(maximum < 0) {
+                return 0;
+            }
+            else {
+                return maximum;
             }
         }
 

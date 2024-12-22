@@ -102,6 +102,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                 TotalLevel = 1,
                 AbilityScoreModifier = 2,
                 SkillBonus = 3,
+                ProficiencyBonus = 4,
             }
             public AdditionalValueType additionalValueType { get; set; }
             public Class? R_LevelsInClass { get; set; }
@@ -126,6 +127,10 @@ namespace pracadyplomowa.Models.Entities.Characters
                 else if(additionalValueType == AdditionalValueType.SkillBonus)
                 {
                     return roller.SkillValue((Skill)Skill);
+                }
+                else if(additionalValueType == AdditionalValueType.ProficiencyBonus)
+                {
+                    return roller.ProficiencyBonus;
                 }
                 else throw new UnreachableException();
             }

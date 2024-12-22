@@ -75,7 +75,7 @@ namespace pracadyplomowa.Controllers
 
             _powerRepository.Add(power);
             await _powerRepository.SaveChanges();
-            return Ok(_mapper.Map<PowerFormDto>(power));
+            return Ok(power.Id);
         }
 
         
@@ -97,7 +97,7 @@ namespace pracadyplomowa.Controllers
 
             _effectBlueprintRepository.Add(effectBlueprint);
             await _effectBlueprintRepository.SaveChanges();
-            return Ok(_mapper.Map<EffectBlueprintFormDto>(effectBlueprint));
+            return Ok(effectBlueprint.Id);
         }
 
         

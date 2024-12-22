@@ -4,17 +4,19 @@ import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
 
 export async function getItemFamilies(): Promise<ItemFamily[]> {
-  const response = await customFetch(`${BASE_URL}/api/effect/itemFamilies`);
+  const response = await customFetch(
+    `${BASE_URL}/api/effectInstance/itemFamilies`
+  );
 
   console.log(response);
 
   return response;
 }
-export async function getEffectBlueprint(
+export async function getEffectInstance(
   effectId: number
 ): Promise<EffectBlueprint> {
   const response = await customFetch(
-    `${BASE_URL}/api/effect/blueprint/${effectId}`
+    `${BASE_URL}/api/effectInstance/${effectId}`
   );
 
   console.log(response);
@@ -22,7 +24,7 @@ export async function getEffectBlueprint(
   return response;
 }
 
-export async function updateEffectBlueprint(
+export async function updateEffectInstance(
   effectBlueprintDto: EffectBlueprint
 ): Promise<void> {
   console.log(effectBlueprintDto);
@@ -33,11 +35,11 @@ export async function updateEffectBlueprint(
     },
     body: JSON.stringify(effectBlueprintDto),
   };
-  await customFetch(`${BASE_URL}/api/effect/blueprint`, options);
+  await customFetch(`${BASE_URL}/api/effectInstance`, options);
   return;
 }
 
-export async function deleteEffectBlueprint(id: number): Promise<void> {
+export async function deleteEffectInstance(id: number): Promise<void> {
   console.log(id);
   const options: RequestInit = {
     method: "DELETE",
@@ -45,6 +47,6 @@ export async function deleteEffectBlueprint(id: number): Promise<void> {
       "Content-Type": "application/json",
     },
   };
-  await customFetch(`${BASE_URL}/api/effect/blueprint/${id}`, options);
+  await customFetch(`${BASE_URL}/api/effectInstance/${id}`, options);
   return;
 }

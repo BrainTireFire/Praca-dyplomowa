@@ -1,5 +1,5 @@
 import { ability } from "../../effects/abilities";
-import { CoinPurse } from "../../items/coinPurse";
+import { CoinPurse } from "../../items/models/coinPurse";
 import { EffectBlueprintListItem } from "./effectBlueprint";
 
 export type Power = {
@@ -69,19 +69,19 @@ export const castableByOptions = (
 export type PowerType =
   | "Attack"
   | "Saveable"
-  | "MinionSpawner_1_of"
-  | "MinionSpawner_multiple"
+  // | "MinionSpawner_1_of"
+  // | "MinionSpawner_multiple"
   | "AuraCreator"
-  | "PassiveEffect"
-  | "Polymorphism";
+  | "PassiveEffect";
+// | "Polymorphism"
 export const PowerTypeLabels: { [key in PowerType]: string } = {
   Attack: "Attack",
   Saveable: "Saveable",
-  MinionSpawner_1_of: "Minion Spawner (1 of)",
-  MinionSpawner_multiple: "Minion Spawner (Multiple)",
+  // MinionSpawner_1_of: "Minion Spawner (1 of)",
+  // MinionSpawner_multiple: "Minion Spawner (Multiple)",
   AuraCreator: "Aura Creator",
   PassiveEffect: "Passive Effect",
-  Polymorphism: "Polymorphism",
+  // Polymorphism: "Polymorphism",
 };
 
 export const powerTypeOptions = (

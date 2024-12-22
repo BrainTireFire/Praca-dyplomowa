@@ -1,24 +1,34 @@
-import React from "react";
+import { useContext } from "react";
 import Menus from "../../../ui/containers/Menus";
 import Table from "../../../ui/containers/Table";
-import styled from "styled-components";
 import Modal from "../../../ui/containers/Modal";
-import {
-  HiArrowDownOnSquare,
-  HiArrowUpOnSquare,
-  HiEye,
-  HiTrash,
-} from "react-icons/hi2";
+import { HiEye, HiTrash } from "react-icons/hi2";
 import { Effect } from "../../../models/effect";
 import { Cell } from "../../../ui/containers/Cell";
+import { EffectParentObjectIdContext } from "../../../context/EffectParentObjectIdContext";
+import ConfirmDelete from "../../../ui/containers/ConfirmDelete";
+import { CharacterIdContext } from "../contexts/CharacterIdContext";
+import { useDeleteConstantEffectInstance } from "../hooks/useDeleteConstantEffectInstance";
+import EffectInstanceForm from "../../effects/EffectInstanceForm";
 
 export default function EffectTable({ effects }: { effects: Effect[] }) {
+  const { characterId } = useContext(CharacterIdContext);
   return (
     <Menus>
       <Table
         header="Temporary effects"
         button="Add new"
         columns="1fr 1fr 1fr 1fr 0.01rem"
+        modal={
+          <EffectParentObjectIdContext.Provider
+            value={{ objectId: characterId, objectType: "CharacterConstant" }}
+          >
+            <EffectInstanceForm
+              effectId={null}
+              isConstant={false}
+            ></EffectInstanceForm>
+          </EffectParentObjectIdContext.Provider>
+        }
       >
         <Table.Header>
           <div>Name</div>
@@ -39,6 +49,11 @@ export default function EffectTable({ effects }: { effects: Effect[] }) {
 }
 
 function EffectRow({ effect }: { effect: Effect }) {
+  const { characterId } = useContext(CharacterIdContext);
+  const { deleteEffectInstance, isPending } = useDeleteConstantEffectInstance(
+    () => {},
+    characterId as number
+  );
   return (
     <Table.Row>
       <Cell>{effect.name}</Cell>
@@ -52,37 +67,36 @@ function EffectRow({ effect }: { effect: Effect }) {
         <Menus.Menu>
           <Menus.Toggle id={effect.id} />
           <Menus.List id={effect.id}>
-            <Menus.Button icon={<HiEye />} onClick={() => alert("Test")}>
-              Test 1
-            </Menus.Button>
-
-            <Menus.Button
-              icon={<HiArrowDownOnSquare />}
-              onClick={() => alert("Test")}
-            >
-              Test 2
-            </Menus.Button>
-
-            <Menus.Button
-              icon={<HiArrowUpOnSquare />}
-              onClick={() => alert("Test")}
-            >
-              Test 3
-            </Menus.Button>
-
+            <Modal.Open opens="open">
+              <Menus.Button icon={<HiEye />} onClick={() => {}}>
+                Open
+              </Menus.Button>
+            </Modal.Open>
             <Modal.Open opens="delete">
-              <Menus.Button icon={<HiTrash />}>Test 4</Menus.Button>
+              <Menus.Button icon={<HiTrash />} onClick={() => {}}>
+                Delete
+              </Menus.Button>
             </Modal.Open>
           </Menus.List>
         </Menus.Menu>
         <Modal.Window name="delete">
-          {/* <ConfirmDelete
-            resourceName="equipment"
-            disabled={isDeleting}
+          <ConfirmDelete
+            resourceName="effect instance"
+            disabled={isPending}
             onConfirm={() => {
-              deleteBooking(bookingId);
+              deleteEffectInstance(effect.id);
             }}
-          /> */}
+          />
+        </Modal.Window>
+        <Modal.Window name="open">
+          <EffectParentObjectIdContext.Provider
+            value={{ objectId: characterId, objectType: "CharacterConstant" }}
+          >
+            <EffectInstanceForm
+              effectId={effect.id}
+              isConstant={false}
+            ></EffectInstanceForm>
+          </EffectParentObjectIdContext.Provider>
         </Modal.Window>
       </Modal>
     </Table.Row>

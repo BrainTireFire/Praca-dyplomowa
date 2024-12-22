@@ -40,7 +40,8 @@ export default function EffectTable({
           header="Effects"
           button="Add new"
           columns="1fr 1fr 1fr 0.01rem"
-          buttonOnClick={() => createEffectBlueprint(initialState)}
+          // buttonOnClick={() => createEffectBlueprint(initialState)}
+          modal={<EffectBlueprintForm effectId={null}></EffectBlueprintForm>}
         >
           <Table.Header>
             <div>Saved</div>

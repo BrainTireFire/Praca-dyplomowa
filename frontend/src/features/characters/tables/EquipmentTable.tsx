@@ -35,7 +35,7 @@ export default function EquipmentTable({ equipments }: { equipments: Item[] }) {
     <Menus>
       <Table
         header="Equipment"
-        button="Add new"
+        button="Open equipping screen"
         modal={<EquipmentSlotScreen onCloseModal={() => {}} />}
         columns="1fr 1fr 1fr 1fr 3.2rem"
       >

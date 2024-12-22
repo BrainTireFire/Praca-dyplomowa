@@ -12,7 +12,7 @@ import {
 import { Cell } from "../../../ui/containers/Cell";
 import RadioButton from "../../../ui/containers/RadioButton";
 import { EffectBlueprint } from "../../effects/EffectBlueprintForm";
-import { coinPursePrint } from "../../items/coinPurse";
+import { coinPursePrint } from "../../items/models/coinPurse";
 import { ImmaterialResource, MaterialComponent } from "../models/power";
 import MaterialComponentForm from "../MaterialComponentForm";
 import { PowerIdContext } from "../contexts/PowerIdContext";

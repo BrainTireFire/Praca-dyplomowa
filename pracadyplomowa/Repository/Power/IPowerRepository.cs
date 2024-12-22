@@ -9,5 +9,7 @@ namespace pracadyplomowa.Repository
     public interface IPowerRepository: IBaseRepository<Power>
     {
         public Task<Power> GetByIdWithEffectBlueprintsAndMaterialResources(int Id);
+
+        public Task<List<Power>> GetAllByIds(List<int> Ids);
     }
 }

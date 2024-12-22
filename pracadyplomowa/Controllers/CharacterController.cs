@@ -27,13 +27,15 @@ using static pracadyplomowa.Models.Entities.Characters.ChoiceGroup;
 namespace pracadyplomowa.Controllers
 {
     [Authorize]
-    public class CharacterController(ICharacterRepository characterRepository, IClassRepository classRepository, IRaceRepository raceRepository, IItemRepository itemRepository, IMapper mapper) : BaseApiController
+    public class CharacterController(ICharacterRepository characterRepository, IClassRepository classRepository, IRaceRepository raceRepository, IItemRepository itemRepository, IPowerRepository powerRepository, IEffectInstanceRepository effectInstanceRepository, IMapper mapper) : BaseApiController
     {
 
         private readonly ICharacterRepository _characterRepository = characterRepository;
         private readonly IClassRepository _classRepository = classRepository;
         private readonly IRaceRepository _raceRepository = raceRepository;
         private readonly IItemRepository _itemRepository = itemRepository;
+        private readonly IPowerRepository _powerRepository = powerRepository;
+        private readonly IEffectInstanceRepository _effectInstanceRepository = effectInstanceRepository;
         private readonly IMapper _mapper = mapper;
 
         [HttpGet("mycharacters")]
@@ -76,8 +78,8 @@ namespace pracadyplomowa.Controllers
                 ownerId
             );
 
-            var item = (await _itemRepository.GetByNameWithEquipmentSlots("Iron longsword")).Clone();
-            var item2 = item.Clone();
+            var item = (await _itemRepository.GetByNameWithEquipmentSlots("Iron longsword")).CloneInstance();
+            var item2 = item.CloneInstance();
             character.R_CharacterHasBackpack = new Backpack()
             {
                 R_BackpackOfCharacter = character, 
@@ -331,6 +333,197 @@ namespace pracadyplomowa.Controllers
             character.UnequipItem(character.R_CharacterHasBackpack.R_BackpackHasItems.Where(i => i.Id == itemId).First());
             await _characterRepository.SaveChanges();
             return Ok();
+        }
+
+        [HttpPost("{characterId}/equipment")]
+        public async Task<ActionResult> AddItemToCharacterEquipment(int characterId, [FromBody] int itemId){
+            var character = _characterRepository.GetCharacterEquipment(characterId);
+            var item = _itemRepository.GetById(itemId);
+            if(item != null){
+                await character;
+                if(character == null){
+                    return NotFound("Character with id: ${characterId} was not found");
+                }
+                if(item.IsBlueprint){
+                    item = item.CloneInstance();
+                }
+                (await character).R_CharacterHasBackpack.R_BackpackHasItems.Add(item);
+                await _characterRepository.SaveChanges();
+            }
+            else{
+                return NotFound("Item with id: ${itemId} was not found");
+            }
+            return Ok();
+        }
+
+        [HttpGet("{characterId}/resources")]
+        public async Task<ActionResult<List<SlotDto>>> GetCharacterResources(int characterId){
+            var character = await _characterRepository.GetByIdWithCustomResources(characterId);
+            if(character == null){
+                return NotFound("Character with this Id does not exist");
+            }
+            var resources = character.R_ImmaterialResourceInstances.GroupBy(r => new {r.R_BlueprintId, r.R_Blueprint.Name, r.Level}).Select(g => new ImmaterialResourceAmountDto(){
+                BlueprintId = g.Key.R_BlueprintId,
+                Name = g.Key.Name,
+                Level = g.Key.Level,
+                Count = g.Count()
+            }).ToList();
+            return Ok(resources);
+        }
+
+        [HttpPatch("{characterId}/resources")]
+        public async Task<ActionResult<List<SlotDto>>> SetCharacterResources(int characterId, [FromBody] List<ImmaterialResourceAmountDto> resourceDtos){
+            var character = await _characterRepository.GetByIdWithCustomResources(characterId);
+            if(character == null){
+                return NotFound("Character with this Id does not exist");
+            }
+            // var resourceBlueprints = await _immaterialResourceBlueprintRepository.GetAllByIds(resourceDtos.Select(x => x.BlueprintId).ToList());
+            character.R_ImmaterialResourceInstances.Clear();
+            var resourceInstances = resourceDtos
+                .SelectMany(dto => 
+                    Enumerable.Range(0, dto.Count).Select(_ => new ImmaterialResourceInstance 
+                    { 
+                        R_BlueprintId = dto.BlueprintId, 
+                        Level = dto.Level 
+                    })
+                ).ToList();
+            character.R_ImmaterialResourceInstances.AddRange(resourceInstances);
+            await _itemRepository.SaveChanges();
+            return Ok();
+        }
+
+        [HttpGet("{characterId}/powers")]
+        public async Task<ActionResult<List<SlotDto>>> GetCharacterCustomSourceKnownPowers(int characterId){ // returns list of powers which do not have source
+            var character = await _characterRepository.GetByIdWithKnownPowers(characterId);
+            if(character == null){
+                return NotFound("character with this Id does not exist");
+            }
+            var powers = _mapper.Map<List<PowerCompactDto>>(character.R_PowersKnown);
+            return Ok(powers);
+        }
+
+        [HttpGet("{characterId}/powersPrepared")]
+        public async Task<ActionResult<List<SlotDto>>> GetCharacterAllPreparedPowers(int characterId){ // returns list of powers which do not have source
+            var character = await _characterRepository.GetByIdWithPreparedPowers(characterId);
+            
+            if(character == null){
+                return NotFound("character with this Id does not exist");
+            }
+            var powers = _mapper.Map<List<PowerCompactDto>>(character.R_PowersPrepared.SelectMany(ps => ps.R_PreparedPowers).ToList());
+            return Ok(powers);
+        }
+
+        [HttpGet("{characterId}/powersPrepared/class/{classId}")]
+        public async Task<ActionResult<List<SlotDto>>> GetCharacterPreparedPowersForClass(int characterId, int classId){ // returns list of powers which do not have source
+            var character = await _characterRepository.GetByIdWithPreparedPowers(characterId);
+            
+            if(character == null){
+                return NotFound("character with this Id does not exist");
+            }
+            var powers = _mapper.Map<List<PowerCompactDto>>(character.R_PowersPrepared.Where(ps => ps.R_ClassId == classId).SelectMany(ps => ps.R_PreparedPowers).ToList());
+            return Ok(powers);
+        }
+
+        [HttpGet("{characterId}/powersToPrepare")]
+        public async Task<ActionResult<List<PowersToPrepareDto>>> GetCharacterPowersToPrepare(int characterId){ // returns list of powers which do not have source
+            var character = await _characterRepository.GetByIdWithPowersToPrepare(characterId);
+            if(character == null){
+                return NotFound("character with this Id does not exist");
+            }
+            var powers = character
+            .R_UsedChoiceGroups
+            .Select(ucg => ucg.R_ChoiceGroup)
+            .Select(cg => cg.R_GrantedByClassLevel)
+            .Where(cl => cl != null)
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            .Select(cl => cl.R_Class)
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            .Distinct()
+            .Select(x => new PowersToPrepareDto(){
+                PowerList = _mapper.Map<List<PowerCompactDto>>(
+                    x.R_ClassLevels
+                    .SelectMany(cl => cl.R_ChoiceGroups)
+                    .SelectMany(cg => cg.R_UsageInstances)
+                    .SelectMany(cgu => cgu.R_PowersToPrepareGranted)
+                    .ToList()
+                        .Union(x.R_ClassLevels
+                        .Select(cl => cl.R_Class)
+                        .Distinct()
+                        .SelectMany(cl => cl.R_AccessiblePowers)
+                        )
+                ),
+                numberToChoose = x.MaximumPreparedSpellsFormula.Roll(character),
+                classId = x.Id,
+                className = x.Name
+            }).ToList();
+            return Ok(powers);
+        }
+
+        [HttpPatch("{characterId}/powers")]
+        public async Task<ActionResult<List<SlotDto>>> SetCharacterPowers(int characterId, [FromBody] List<PowerCompactDto> powerDtos){
+            var character = await _characterRepository.GetByIdWithKnownPowers(characterId);
+            if(character == null){
+                return NotFound("character with this Id does not exist");
+            }
+            var powers = _powerRepository.GetAllByIds(powerDtos.Select(x => x.Id).ToList());
+            character.R_PowersKnown.Clear();
+            character.R_PowersKnown.AddRange(await powers);
+            await _powerRepository.SaveChanges();
+            return Ok();
+        }
+
+        [HttpPatch("{characterId}/powersPrepared/class/{classId}")]
+        public async Task<ActionResult<List<SlotDto>>> SetCharacterPowersPrepared(int characterId, [FromBody] List<PowerCompactDto> powerDtos, int classId){
+            var character = await _characterRepository.GetByIdWithPreparedPowers(characterId);
+            if(character == null){
+                return NotFound("character with this Id does not exist");
+            }
+            var maxPowers = character.GetMaximumPreparedPowers(classId);
+            if(maxPowers < powerDtos.Count){
+                return BadRequest($"You cannot prepare more than {maxPowers} for class with id: {classId}");
+            }
+            var powers = _powerRepository.GetAllByIds(powerDtos.Select(x => x.Id).ToList());
+            if(character.R_PowersPrepared.Where(ps => ps.R_ClassId == classId).FirstOrDefault() == null) {
+                character.R_PowersPrepared.Add(new PowerSelection(){
+                    R_ClassId = classId,
+                    R_CharacterId = characterId
+                });
+            }
+            else{
+                character.R_PowersPrepared.Where(ps => ps.R_ClassId == classId).First().R_PreparedPowers.Clear();
+            }
+            character.R_PowersPrepared.Where(ps => ps.R_ClassId == classId).First().R_PreparedPowers.AddRange(await powers);
+            await _characterRepository.SaveChanges();
+            return Ok();
+        }
+
+        [HttpPost("{characterId}/constantEffects")]
+        public async Task<ActionResult> AddNewEffectInstance([FromBody] EffectBlueprintFormDto effectDto, [FromRoute] int characterId)
+        {
+            var effectInstance = _mapper.Map<EffectInstance>(effectDto);
+
+            effectInstance.R_TargetedCharacterId = characterId;
+
+            _effectInstanceRepository.Add(effectInstance);
+            await _effectInstanceRepository.SaveChanges();
+            return Ok(effectInstance.Id);
+        }
+
+        [HttpPost("{characterId}/temporaryEffects")]
+        public async Task<ActionResult> AddNewTemporaryEffectInstance([FromBody] EffectBlueprintFormDto effectDto, [FromRoute] int characterId)
+        {
+            var effectInstance = _mapper.Map<EffectInstance>(effectDto);
+            
+            effectInstance.R_OwnedByGroup = new EffectGroup(){
+                DurationLeft = effectDto.DurationLeft,
+                Name = "Custom"
+            };
+                
+            effectInstance.R_TargetedCharacterId = characterId;
+
+            _effectInstanceRepository.Add(effectInstance);
+            await _effectInstanceRepository.SaveChanges();
+            return Ok(effectInstance.Id);
         }
     }
 }

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getEquipmentAndSlots } from "../../../services/apiCharacters";
 
-export function useEquipmentSlots(characterId: number) {
+export function useEquipmentSlots(characterId: number | null) {
   const {
     isLoading,
     data: equipmentAndSlots,

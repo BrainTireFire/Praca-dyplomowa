@@ -551,7 +551,7 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
 
         public int GetMaximumPreparedPowers(int classId){
-            var maximum = this.R_CharacterHasLevelsInClass.Select(x => x.R_Class).Distinct().Select(x => x.MaximumPreparedSpellsFormula).FirstOrDefault()?.Roll(this) ?? 0;
+            var maximum = this.R_CharacterHasLevelsInClass.Select(x => x.R_Class).Distinct().Where(c => c.Id == classId).Select(x => x.MaximumPreparedSpellsFormula).FirstOrDefault()?.Roll(this) ?? 0;
             if(maximum < 0) {
                 return 0;
             }

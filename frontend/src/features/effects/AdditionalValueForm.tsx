@@ -59,7 +59,7 @@ export function AdditionalValueForm({
       </Heading>
       <FormRowVertical label={"Type"}>
         <Dropdown
-          disabled={editMode}
+          disabled={!editMode}
           valuesList={AdditionalValueTypes.map((item) => {
             return {
               value: item,
@@ -74,7 +74,7 @@ export function AdditionalValueForm({
       </FormRowVertical>
       <FormRowVertical label={"Class"}>
         <Dropdown
-          disabled={editMode}
+          disabled={!editMode}
           valuesList={
             classes
               ? classes.map((item) => {
@@ -91,7 +91,7 @@ export function AdditionalValueForm({
       </FormRowVertical>
       <FormRowVertical label={"Ability"}>
         <Dropdown
-          disabled={editMode}
+          disabled={!editMode}
           valuesList={abilitiesDropdown}
           setChosenValue={(e) => updateAbility(e as (typeof abilities)[number])}
           chosenValue={localValue.ability}
@@ -99,7 +99,7 @@ export function AdditionalValueForm({
       </FormRowVertical>
       <FormRowVertical label={"Skill"}>
         <Dropdown
-          disabled={editMode}
+          disabled={!editMode}
           valuesList={skillsDropdown}
           setChosenValue={(e) => updateSkill(e as (typeof skills)[number])}
           chosenValue={localValue.skill}

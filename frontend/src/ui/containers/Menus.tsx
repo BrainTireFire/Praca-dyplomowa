@@ -33,7 +33,7 @@ const StyledToggle = styled.button`
 
 const StyledList = styled.ul`
   position: fixed;
-
+  z-index: 1001; // set higher than in Modal component
   background-color: var(--color-button-primary);
   box-shadow: var(--shadow-md);
   border-radius: var(--border-radius-md);

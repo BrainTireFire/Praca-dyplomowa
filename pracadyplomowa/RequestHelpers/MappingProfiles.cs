@@ -653,8 +653,8 @@ public class MappingProfiles : Profile
                 WeightProperty = src.WeaponWeight,
                 Reach = src.Reach,
                 Finesse = src.Finesse,
-                Throwable = src.Thrown,
-                RangeThrowable = src.Range,
+                Thrown = src.Thrown,
+                RangeThrown = src.Range,
                 EffectsOnWearer = src.R_EffectsOnEquip.Select(effect => new MeleeWeaponFormDto.Body.EffectBlueprintDto(){
                         Id = effect.Id,
                         Name = effect.Name
@@ -699,7 +699,9 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.DamageType, opt => opt.MapFrom(src => src.ItemTypeBody.DamageType))
             .ForMember(dest => dest.WeaponWeight, opt => opt.MapFrom(src => src.ItemTypeBody.WeightProperty))
             .ForMember(dest => dest.Reach, opt => opt.MapFrom(src => src.ItemTypeBody.Reach))
-            .ForMember(dest => dest.Finesse, opt => opt.MapFrom(src => src.ItemTypeBody.Finesse));
+            .ForMember(dest => dest.Finesse, opt => opt.MapFrom(src => src.ItemTypeBody.Finesse))
+            .ForMember(dest => dest.Thrown, opt => opt.MapFrom(src => src.ItemTypeBody.Thrown))
+            .ForMember(dest => dest.Range, opt => opt.MapFrom(src => src.ItemTypeBody.RangeThrown));
 
 
         CreateMap<RangedWeapon, RangedWeaponFormDto>()

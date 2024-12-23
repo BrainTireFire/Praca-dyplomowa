@@ -100,8 +100,8 @@ namespace pracadyplomowa.Models.DTOs
         public new class Body : WeaponFormDto.Body {
             public bool Reach {get; set;}
             public bool Finesse {get; set;}
-            public bool Throwable { get; set;}
-            public int RangeThrowable {get; set;}
+            public bool Thrown { get; set;}
+            public int RangeThrown {get; set;}
             public bool Versatile { get; set; }
             public DiceSetFormDto VersatileDamage { get; set;}
         }

@@ -13,6 +13,7 @@ import styled from "styled-components";
 import { ValueEffect } from "../valueEffect";
 import { rollMoment, rollMomentDropdown } from "../rollMoment";
 import { EffectContext } from "../contexts/BlueprintOrInstanceContext";
+import { EditModeContext } from "../../../context/EditModeContext";
 
 export type Effect = ValueEffect & {
   effectType: {
@@ -81,10 +82,13 @@ export default function SkillEffectForm({
   const handleValueFormStateUpdate = useCallback((e: DiceSetExtended) => {
     dispatch({ type: "setValue", payload: e });
   }, []);
+  const { editMode } = useContext(EditModeContext);
+  const disableUpdate = !editMode;
   return (
     <Container>
       <Div1>
         <RadioGroup
+          disabled={disableUpdate}
           values={[
             { label: "Bonus", value: "bonus" },
             { label: "Advantage", value: "advantage" },
@@ -99,6 +103,7 @@ export default function SkillEffectForm({
       <Div2>
         <FormRowVertical label="Skill">
           <Dropdown
+            disabled={disableUpdate}
             chosenValue={state.effectType.skillEffect_Skill}
             setChosenValue={(e) => dispatch({ type: "setSkill", payload: e })}
             valuesList={skillsDropdown}
@@ -109,6 +114,7 @@ export default function SkillEffectForm({
         {effectContext.effect === "Blueprint" && (
           <FormRowVertical label="Dice roll moment">
             <Dropdown
+              disabled={disableUpdate}
               valuesList={rollMomentDropdown}
               chosenValue={state.rollMoment}
               setChosenValue={(e) =>
@@ -119,6 +125,7 @@ export default function SkillEffectForm({
         )}
         <FormRowVertical label="Value">
           <DiceSetForm
+            disabled={disableUpdate}
             onChange={handleValueFormStateUpdate}
             diceSet={effect.value}
           ></DiceSetForm>

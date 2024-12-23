@@ -8,5 +8,9 @@ namespace pracadyplomowa.Models.Entities
                 public ObjectWithOwner()
                 {
                 }
+
+                public virtual bool HasEditAccess(int userId){
+                        return false;
+                }
         }
 }

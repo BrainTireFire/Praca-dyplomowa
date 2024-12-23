@@ -1,8 +1,9 @@
-import { useEffect, useReducer } from "react";
+import { useContext, useEffect, useReducer } from "react";
 import Box from "../../../ui/containers/Box";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import Dropdown from "../../../ui/forms/Dropdown";
 import { statusEffect, statusEffectDropdown } from "../statusEffects";
+import { EditModeContext } from "../../../context/EditModeContext";
 
 export type Effect = {
   effectType: {
@@ -53,10 +54,13 @@ export default function StatusEffectForm({
     onChange(state);
   }, [state, onChange]);
 
+  const { editMode } = useContext(EditModeContext);
+  const disableUpdate = !editMode;
   return (
     <Box>
       <FormRowVertical label="Status effect">
         <Dropdown
+          disabled={disableUpdate}
           chosenValue={state.effectType.statusEffect}
           setChosenValue={(e) =>
             dispatch({ type: "setStatusEffect", payload: e as statusEffect })

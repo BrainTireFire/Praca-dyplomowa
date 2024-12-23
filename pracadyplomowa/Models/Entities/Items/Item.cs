@@ -123,6 +123,18 @@ namespace pracadyplomowa.Models.Entities.Items
             return x;
         }
 
+        public override bool HasEditAccess(int userId)
+        {
+            if (!this.IsBlueprint && 
+                this.R_BackpackHasItemId != null && 
+                this.R_BackpackHasItem?.R_BackpackOfCharacter?.R_Campaign != null &&
+                this.R_BackpackHasItem.R_BackpackOfCharacter.R_Campaign.R_OwnerId == userId)
+            {
+                return true;
+            }
+            return this.R_OwnerId == userId;
+        }
+
         public class EquippingException(string message) : Exception(message);
     }
 }

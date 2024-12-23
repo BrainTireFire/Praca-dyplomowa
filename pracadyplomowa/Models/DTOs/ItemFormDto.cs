@@ -14,6 +14,8 @@ namespace pracadyplomowa.Models.DTOs
         public int Weight {get; set;}
         public CoinPurseDto Price {get; set;}
         public int ItemFamilyId {get; set;}
+        public bool Editable {get; set;} = false;
+        public int OwnerId {get; set;}
         public enum ItemTypeEnum {
             MundaneItem,
             Tool,

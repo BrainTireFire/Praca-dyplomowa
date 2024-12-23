@@ -11,6 +11,7 @@ import { ValueEffect } from "../valueEffect";
 import Dropdown from "../../../ui/forms/Dropdown";
 import { rollMoment, rollMomentDropdown } from "../rollMoment";
 import { EffectContext } from "../contexts/BlueprintOrInstanceContext";
+import { EditModeContext } from "../../../context/EditModeContext";
 
 export type Effect = ValueEffect & {
   effectType: {
@@ -100,9 +101,12 @@ export default function AttackRollEffectForm({
   const handleValueFormStateUpdate = useCallback((e: DiceSetExtended) => {
     dispatch({ type: "setValue", payload: e });
   }, []);
+  const { editMode } = useContext(EditModeContext);
+  const disableUpdate = !editMode;
   return (
     <Box>
       <RadioGroup
+        disabled={disableUpdate}
         values={[
           { label: "Melee", value: "melee" },
           { label: "Ranged", value: "ranged" },
@@ -113,6 +117,7 @@ export default function AttackRollEffectForm({
         currentValue={state.effectType.attackRollEffect_Range}
       ></RadioGroup>
       <RadioGroup
+        disabled={disableUpdate}
         values={[
           { label: "Weapon", value: "weapon" },
           { label: "Spell", value: "spell" },
@@ -123,6 +128,7 @@ export default function AttackRollEffectForm({
         currentValue={state.effectType.attackRollEffect_Source}
       ></RadioGroup>
       <RadioGroup
+        disabled={disableUpdate}
         values={[
           { label: "Bonus", value: "bonus" },
           { label: "Reroll lower than", value: "rerollLowerThan" },
@@ -135,6 +141,7 @@ export default function AttackRollEffectForm({
       {effectContext.effect === "Blueprint" && (
         <FormRowVertical label="Dice roll moment">
           <Dropdown
+            disabled={disableUpdate}
             valuesList={rollMomentDropdown}
             chosenValue={state.rollMoment}
             setChosenValue={(e) =>
@@ -145,6 +152,7 @@ export default function AttackRollEffectForm({
       )}
       <FormRowVertical label="Value">
         <DiceSetForm
+          disabled={disableUpdate}
           onChange={handleValueFormStateUpdate}
           diceSet={effect.value}
         ></DiceSetForm>

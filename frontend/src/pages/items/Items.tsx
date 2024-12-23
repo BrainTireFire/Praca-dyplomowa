@@ -35,6 +35,7 @@ export default function Items() {
         <ReusableTable
           tableRowsColomns={{
             Name: "Name",
+            Owner: "OwnerName",
           }}
           data={
             items
@@ -42,6 +43,7 @@ export default function Items() {
                   return {
                     id: index,
                     Name: item.name,
+                    OwnerName: item.ownerName,
                   };
                 })
               : []

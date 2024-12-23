@@ -1,9 +1,10 @@
-import { useEffect, useReducer } from "react";
+import { useContext, useEffect, useReducer } from "react";
 import Box from "../../../ui/containers/Box";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import RadioGroup from "../../../ui/forms/RadioGroup";
 import Dropdown from "../../../ui/forms/Dropdown";
 import { damageType, damageTypesDropdown } from "../damageTypes";
+import { EditModeContext } from "../../../context/EditModeContext";
 
 export type Effect = {
   effectType: {
@@ -66,9 +67,12 @@ export default function ResistanceEffectForm({
   useEffect(() => {
     onChange(state);
   }, [state, onChange]);
+  const { editMode } = useContext(EditModeContext);
+  const disableUpdate = !editMode;
   return (
     <Box>
       <RadioGroup
+        disabled={disableUpdate}
         values={[
           { label: "Resistance", value: "Resistance" },
           { label: "Immunity", value: "Immunity" },
@@ -83,6 +87,7 @@ export default function ResistanceEffectForm({
       ></RadioGroup>
       <FormRowVertical label="Damage type">
         <Dropdown
+          disabled={disableUpdate}
           chosenValue={state.effectType.resistanceEffect_DamageType}
           setChosenValue={(e) =>
             dispatch({ type: "setDamageType", payload: e })

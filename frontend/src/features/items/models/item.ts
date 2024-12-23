@@ -14,7 +14,7 @@ export type Item = {
   id: number | null;
   name: string;
   description: string;
-
+  editable: boolean;
   weight: number;
   price: CoinPurse;
   itemType: ItemType;
@@ -128,4 +128,5 @@ export const itemInitialValue: Item = {
   itemType: "Apparel",
   itemFamilyId: null,
   itemTypeBody: apparelBodyInitialValue,
+  editable: true,
 };

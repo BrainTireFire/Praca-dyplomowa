@@ -45,6 +45,7 @@ namespace pracadyplomowa.Repository.Item
         {
             var query = _context.Items
                     .Where(c => c.R_OwnerId == OwnerId || c.R_OwnerId == null)
+                    .Include(c => c.R_Owner)
                     .AsQueryable();
 
             // Filtering
@@ -53,6 +54,15 @@ namespace pracadyplomowa.Repository.Item
                 c.IsBlueprint);
 
             return await PagedList<Models.Entities.Items.Item>.CreateAsync(query, 1, 10000000); //TODO do something smarter
+        }
+
+        public Dictionary<int, Models.Entities.Items.Item> GetItemsForEditabilityAnalysis(List<int> ids){
+            return _context.Items
+            .Where(i => ids.Contains(i.Id))
+            .Include(i => i.R_BackpackHasItem)
+            .ThenInclude(b => b.R_BackpackOfCharacter)
+            .ThenInclude(c => c.R_Campaign)
+            .ToDictionary(i => i.Id, i => i);
         }
     }
 }

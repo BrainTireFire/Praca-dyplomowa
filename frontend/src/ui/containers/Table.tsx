@@ -1,8 +1,8 @@
 import { ReactElement, useContext } from "react";
-import { createContext } from "react";
 import styled from "styled-components";
 import Button from "../interactive/Button";
 import Modal from "./Modal";
+import { EditModeContext } from "../../context/EditModeContext";
 
 const StyledTableContainer = styled.div`
   border: 1px solid var(--color-border);
@@ -154,6 +154,7 @@ function Table({
   modal,
   buttonOnClick,
 }: TableProps) {
+  const { editMode } = useContext(EditModeContext);
   return (
     <StyledTableContainer role="table">
       {header && (
@@ -162,13 +163,15 @@ function Table({
           {modal && (
             <Modal>
               <Modal.Open opens="TableAction">
-                <TableButton>{button}</TableButton>
+                <TableButton disabled={!editMode}>{button}</TableButton>
               </Modal.Open>
               <Modal.Window name="TableAction">{modal}</Modal.Window>
             </Modal>
           )}
           {!modal && (
-            <TableButton onClick={buttonOnClick}>{button}</TableButton>
+            <TableButton disabled={!editMode} onClick={buttonOnClick}>
+              {button}
+            </TableButton>
           )}
         </StyledHeaderWithButton>
       )}

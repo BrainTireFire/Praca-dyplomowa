@@ -92,6 +92,7 @@ import { PowerIdContext } from "../powers/contexts/PowerIdContext";
 import { ValueEffect } from "./valueEffect";
 import { EffectContext } from "./contexts/BlueprintOrInstanceContext";
 import { useCreateEffectBlueprint } from "./hooks/useCreateEffectBlueprint";
+import { EditModeContext } from "../../context/EditModeContext";
 
 const effectTypes = [
   "movementEffect",
@@ -242,6 +243,7 @@ export default function EffectBlueprintForm({
 }: {
   effectId: number | null;
 }) {
+  const { editMode } = useContext(EditModeContext);
   const [actualEffectId, setActualEffectId] = useState(effectId);
   const { powerId } = useContext(PowerIdContext);
   const { isLoading, effectBlueprint, error } =
@@ -298,6 +300,7 @@ export default function EffectBlueprintForm({
     console.log(error);
     return <>Error</>;
   }
+  let disableForm = !editMode;
   return (
     <EffectContext.Provider value={{ effect: "Blueprint" }}>
       <ScrollContainer>
@@ -305,6 +308,7 @@ export default function EffectBlueprintForm({
           <Div1>
             <FormRowVertical label="Name">
               <Input
+                disabled={disableForm}
                 value={state.name}
                 onChange={(x) =>
                   dispatch({ type: "setName", payload: x.target.value })
@@ -313,6 +317,7 @@ export default function EffectBlueprintForm({
             </FormRowVertical>
             <FormRowVertical label="Description">
               <TextArea
+                disabled={disableForm}
                 value={state.description}
                 onChange={(x) =>
                   dispatch({ type: "setDescription", payload: x.target.value })
@@ -321,6 +326,7 @@ export default function EffectBlueprintForm({
             </FormRowVertical>
             <FormRowVertical label="Level of immaterial resource used">
               <Input
+                disabled={disableForm}
                 type="number"
                 value={state.resourceLevel}
                 onChange={(x) =>
@@ -333,6 +339,7 @@ export default function EffectBlueprintForm({
             </FormRowVertical>
             <FormRowLabelRight label="Successful saving throw">
               <Input
+                disabled={disableForm}
                 type="checkbox"
                 checked={state.savingThrowSuccess}
                 onChange={(x) =>
@@ -346,6 +353,7 @@ export default function EffectBlueprintForm({
           </Div1>
           <Div2>
             <RadioGroup
+              disabled={disableForm}
               values={[
                 { value: "movementEffect", label: "Movement effect" },
                 { value: "savingThrow", label: "Saving throw" },
@@ -490,7 +498,7 @@ export default function EffectBlueprintForm({
       {effectBlueprint && (
         <Button
           onClick={() => updateEffectBlueprint(state)}
-          disabled={disableUpdateButton()}
+          disabled={disableUpdateButton() || disableForm}
         >
           Update
         </Button>
@@ -498,7 +506,7 @@ export default function EffectBlueprintForm({
       {!effectBlueprint && (
         <Button
           onClick={() => createEffectBlueprint(state)}
-          disabled={disableUpdateButton()}
+          disabled={disableUpdateButton() || disableForm}
         >
           Save
         </Button>

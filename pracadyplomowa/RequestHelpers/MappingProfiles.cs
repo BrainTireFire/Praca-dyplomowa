@@ -28,7 +28,8 @@ public class MappingProfiles : Profile
         CreateMap<ImmaterialResourceBlueprintDto, ImmaterialResourceBlueprint>();
         CreateMap<PowerCompactDto, Power>();
         CreateMap<Power, PowerCompactDto>();
-        CreateMap<Item, ItemListElementDto>();
+        CreateMap<Item, ItemListElementDto>()
+        .ForMember(dest => dest.OwnerName, opt => opt.MapFrom(src => src.R_Owner.UserName));
         CreateMap<Models.Entities.Campaign.Board, BoardSummaryDto>()
             .ForMember(
                 dest => dest.Fields,
@@ -579,7 +580,8 @@ public class MappingProfiles : Profile
 
 //--------------ITEMS---------------------------
         CreateMap<Item, ItemFormDto>()
-        .ForMember(dest => dest.ItemFamilyId, opt => opt.MapFrom(src => src.R_ItemInItemsFamilyId));
+        .ForMember(dest => dest.ItemFamilyId, opt => opt.MapFrom(src => src.R_ItemInItemsFamilyId))
+        .ForMember(dest => dest.OwnerId, opt => opt.MapFrom(src => src.R_OwnerId));
         CreateMap<ItemFormDto, Item>()
         .ForMember(dest => dest.R_ItemInItemsFamilyId, opt => opt.MapFrom(src => src.ItemFamilyId));
 

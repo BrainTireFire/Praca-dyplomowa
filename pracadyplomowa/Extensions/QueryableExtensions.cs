@@ -32,6 +32,33 @@ namespace pracadyplomowa
 
             return query;
         }
+        public static IQueryable<T> ApplyBooleanFilter<T>(
+            this IQueryable<T> query,
+            bool? filterValue,
+            Expression<Func<T, bool>> propertySelector,
+            bool exactMatch = false,
+            bool caseInsensitive = true
+        )
+        {
+            if (filterValue != null)
+            {
+                var parameter = propertySelector.Parameters[0];
+                var property = propertySelector.Body as MemberExpression;
+
+                if (property == null)
+                {
+                    throw new ArgumentException("Invalid property selector expression", nameof(propertySelector));
+                }
+
+                var propertyAccess = property;
+                var filterExpression = BuildBooleanFilterExpression(propertyAccess, (bool)filterValue);
+
+                var lambda = Expression.Lambda<Func<T, bool>>(filterExpression, parameter);
+                query = query.Where(lambda);
+            }
+
+            return query;
+        }
 
         private static Expression BuildFilterExpression(MemberExpression propertyAccess, string filterValue, bool exactMatch, bool caseInsensitive)
         {
@@ -54,6 +81,11 @@ namespace pracadyplomowa
             }
 
             return filterExpression;
+        }
+
+        private static Expression BuildBooleanFilterExpression(MemberExpression propertyAccess, bool filterValue)
+        {
+            return Expression.Equal(propertyAccess, Expression.Constant(filterValue));
         }
     }
 }

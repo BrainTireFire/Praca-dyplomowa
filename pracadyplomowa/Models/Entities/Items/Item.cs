@@ -41,7 +41,7 @@ namespace pracadyplomowa.Models.Entities.Items
             R_EquipItemGrantsAccessToPower = [.. item.R_EquipItemGrantsAccessToPower];
         }
 
-        public bool IsBlueprint { get; set; } = false;
+        public bool IsBlueprint { get; set; } = true;
         public string Name { get; set; } = null!;
         public int Weight { get; set; }
         public string Description { get; set; } = null!;

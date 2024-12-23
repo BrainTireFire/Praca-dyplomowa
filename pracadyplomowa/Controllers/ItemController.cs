@@ -37,9 +37,9 @@ namespace pracadyplomowa.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult<List<ItemListElementDto>>> GetItems()
+        public async Task<ActionResult<List<ItemListElementDto>>> GetItems([FromQuery] ItemParams itemParams)
         {
-            var items = await _itemRepository.GetAll();
+            var items = await _itemRepository.GetOwnedItems(User.GetUserId(), itemParams);
 
 
             List<ItemListElementDto> itemDtos = _mapper.Map<List<ItemListElementDto>>(items);
@@ -61,6 +61,7 @@ namespace pracadyplomowa.Controllers
         [HttpPost("meleeWeapon")]
         public async Task<ActionResult<int>> PostMeleeWeapon(MeleeWeaponFormDto meleeWeaponDto){
             var item = _mapper.Map<MeleeWeapon>(meleeWeaponDto);
+            item.R_OwnerId = User.GetUserId();
             _itemRepository.Add(item);
             await _itemRepository.SaveChanges();
             return Ok(item.Id);

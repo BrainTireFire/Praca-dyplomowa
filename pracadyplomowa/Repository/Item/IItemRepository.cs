@@ -11,5 +11,6 @@ namespace pracadyplomowa.Repository.Item
         public Task<Models.Entities.Items.Item> GetByNameWithEquipmentSlots(string name);
         public Task<Models.Entities.Items.Item> GetByIdWithSlots(int id);
         public Task<Models.Entities.Items.Item> GetByIdWithSlotsPowersEffectsResources(int id);
+        public Task<PagedList<Models.Entities.Items.Item>> GetOwnedItems(int OwnerId, ItemParams itemParams);
     }
 }

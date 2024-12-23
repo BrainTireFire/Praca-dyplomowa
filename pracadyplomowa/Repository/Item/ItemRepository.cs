@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using pracadyplomowa.Models.Entities.Items;
 
 namespace pracadyplomowa.Repository.Item
 {
@@ -38,6 +39,20 @@ namespace pracadyplomowa.Repository.Item
         public async Task<Models.Entities.Items.Item> GetByNameWithEquipmentSlots(string name)
         {
             return await _context.Items.Where(i => i.Name == name).Include(i => i.R_ItemIsEquippableInSlots).FirstAsync();
+        }
+
+        public async Task<PagedList<Models.Entities.Items.Item>> GetOwnedItems(int OwnerId, ItemParams itemParams)
+        {
+            var query = _context.Items
+                    .Where(c => c.R_OwnerId == OwnerId || c.R_OwnerId == null)
+                    .AsQueryable();
+
+            // Filtering
+            if(itemParams.IsBlueprint != null)
+            query = query.ApplyBooleanFilter(itemParams.IsBlueprint, c =>
+                c.IsBlueprint);
+
+            return await PagedList<Models.Entities.Items.Item>.CreateAsync(query, 1, 10000000); //TODO do something smarter
         }
     }
 }

@@ -14,4 +14,6 @@ export type EffectParentObjectIdContextType = {
 export type EffectParentObjectIdContextTypeObjectType =
   | "Item"
   | "CharacterConstant"
-  | "CharacterTemporary";
+  | "CharacterTemporary"
+  | "FieldConstant"
+  | "FieldTemporary";

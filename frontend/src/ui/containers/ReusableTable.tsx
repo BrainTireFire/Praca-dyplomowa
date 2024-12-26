@@ -1,10 +1,26 @@
 import { useEffect, useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { FaSort } from "react-icons/fa";
 
-const TableContainer = styled.div`
+type ReusableTableProps = {
+  tableRowsColomns: { [key: string]: string };
+  mainHeader?: string;
+  data: { id: string | number; [key: string]: any }[];
+  // selected?: number | null;
+  onSelect?: React.Dispatch<React.SetStateAction<any>>;
+  isSelectable?: boolean;
+  isSearching?: boolean;
+  customTableContainer?: ReturnType<typeof css>;
+  customHeader?: ReturnType<typeof css>;
+};
+
+const TableContainer = styled.div<{
+  customTableContainer?: ReturnType<typeof css>;
+}>`
   margin: 20px;
   border: 1px solid var(--color-border);
+
+  ${({ customTableContainer }) => customTableContainer && customTableContainer}
 `;
 
 const StyledTable = styled.table`
@@ -13,7 +29,7 @@ const StyledTable = styled.table`
   display: block;
 `;
 
-const TableHeader = styled.th`
+const TableHeader = styled.th<{ customHeader?: ReturnType<typeof css> }>`
   background-color: var(--color-main-background);
   padding: 10px;
   text-align: left;
@@ -24,6 +40,8 @@ const TableHeader = styled.th`
   &:hover {
     color: var(--color-button-primary);
   }
+
+  ${({ customHeader }) => customHeader && customHeader}
 `;
 
 const TableHeaderLabel = styled.th`
@@ -108,16 +126,6 @@ const FilterInput = styled.input`
   border-radius: 4px;
 `;
 
-type ReusableTableProps = {
-  tableRowsColomns: { [key: string]: string };
-  mainHeader?: string;
-  data: { id: string | number; [key: string]: any }[];
-  // selected?: number | null;
-  onSelect?: React.Dispatch<React.SetStateAction<any>>;
-  isSelectable?: boolean;
-  isSearching?: boolean;
-};
-
 export const ReusableTable = ({
   tableRowsColomns,
   mainHeader,
@@ -125,6 +133,8 @@ export const ReusableTable = ({
   onSelect,
   isSelectable,
   isSearching,
+  customTableContainer,
+  customHeader,
 }: ReusableTableProps) => {
   const [sortConfig, setSortConfig] = useState<{
     key: string;
@@ -176,7 +186,7 @@ export const ReusableTable = ({
 
   return (
     <>
-      <TableContainer>
+      <TableContainer customTableContainer={customTableContainer}>
         <StyledTable>
           {mainHeader && (
             <TableHead>
@@ -187,7 +197,11 @@ export const ReusableTable = ({
           <TableHead>
             <TableRowHead>
               {headers.map((header, index) => (
-                <TableHeader key={index} onClick={() => handleSort(index)}>
+                <TableHeader
+                  key={index}
+                  onClick={() => handleSort(index)}
+                  customHeader={customHeader}
+                >
                   {header}
                   <SortIcon>
                     <FaSort />

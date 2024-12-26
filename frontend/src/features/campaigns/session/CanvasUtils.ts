@@ -195,3 +195,36 @@ export const fillSelectedBox = (
 
   ctx.restore();
 };
+
+export const drawTextName = (
+  ctx: CanvasRenderingContext2D,
+  selectedField: { positionX: number; positionY: number },
+  text: string,
+  columns: number,
+  rows: number
+) => {
+  if (!ctx || !selectedField) return;
+
+  // Calculate square size from the provided columns and rows
+  const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
+
+  ctx.save();
+  ctx.fillStyle = "black"; // Text color
+  ctx.font = "12px Poppins"; // Font size and style
+
+  // Measure the width of the text
+  const textWidth = ctx.measureText(text).width;
+
+  // Position the text above the selected field (center horizontally)
+  const textX =
+    selectedField.positionX * squareSize + squareSize / 2 - textWidth / 2; // Center horizontally
+  const textY = selectedField.positionY * squareSize + squareSize / 2 - 5; // Center vertically
+
+  // Debug: Log the calculated positions
+  console.log(`Text X: ${textX}, Text Y: ${textY}`);
+
+  // Draw the text on the canvas
+  ctx.fillText(text, textX, textY);
+
+  ctx.restore();
+};

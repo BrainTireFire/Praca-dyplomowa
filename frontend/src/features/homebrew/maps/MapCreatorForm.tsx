@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import Input from "../../../ui/forms/Input";
 import Button from "../../../ui/interactive/Button";
 import ColorPicker from "react-pick-color";
@@ -11,6 +11,10 @@ import { useCreateBoard } from "./useCreateBoard";
 import { BoardCreateDto } from "../../../models/map/BoardDto";
 import { useUpdateBoard } from "./useUpdateBoard";
 import { BoardUpdateDto } from "../../../models/map/BoardUpdate";
+import { ReusableTable } from "../../../ui/containers/ReusableTable";
+import Modal from "../../../ui/containers/Modal";
+import EffectInstanceForm from "../../effects/EffectInstanceForm";
+import { EffectParentObjectIdContext } from "../../../context/EffectParentObjectIdContext";
 
 const Label = styled.label`
   font-weight: bold;
@@ -117,6 +121,12 @@ type MapFormProps = {
   fieldMovementCost: string;
   fieldCoverLevel: string;
   description: string;
+};
+
+const TABLE_COLUMNS = {
+  Name: "name",
+  Duration: "duration",
+  Source: "source",
 };
 
 export default function MapCreatorForm({ state, onSubmit }: any) {
@@ -301,25 +311,40 @@ export default function MapCreatorForm({ state, onSubmit }: any) {
 
           {/* Field Effects */}
           <Label>Field Effects:</Label>
-          <Button size="small" variation="primary">
-            New effect
-          </Button>
+          <Modal>
+            <Modal.Open opens="mapCreateNewEffect">
+              <Button size="small" variation="primary">
+                New effect
+              </Button>
+            </Modal.Open>
+            <Modal.Window name="mapCreateNewEffect">
+              <EffectParentObjectIdContext.Provider
+                value={{
+                  objectId: selectedBox.x + selectedBox.y,
+                  objectType: "FieldTemporary",
+                }}
+              >
+                <EffectInstanceForm effectId={null}></EffectInstanceForm>
+              </EffectParentObjectIdContext.Provider>
+            </Modal.Window>
+          </Modal>
+
           <FieldContainerStyled>
             <FieldSet>
-              <Table>
-                <thead>
-                  <tr>
-                    <TableHeader>Name</TableHeader>
-                    <TableHeader>Source</TableHeader>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <TableCell>Text</TableCell>
-                    <TableCell>Text</TableCell>
-                  </tr>
-                </tbody>
-              </Table>
+              <ReusableTable
+                tableRowsColomns={TABLE_COLUMNS}
+                data={[{ name: "test", duration: "test", source: "test" }]}
+                customTableContainer={css`
+                  margin: 1px;
+                `}
+                customHeader={css`
+                  padding: 0.5px;
+                `}
+                // isSelectable={true}
+                // onSelect={setSelectedMap}
+                //isSearching={true}
+                //mainHeader="Maps"
+              />
             </FieldSet>
           </FieldContainerStyled>
 

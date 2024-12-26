@@ -10,6 +10,7 @@ import {
   drawCustomCursor,
   drawSelectedBox,
   fillSelectedBox,
+  drawTextName,
 } from "../../campaigns/session/CanvasUtils";
 import { Coordinate } from "../../../models/session/Coordinate";
 
@@ -48,8 +49,12 @@ export default function MapBoard({
     drawGrid(ctx, width, height, board.sizeX, board.sizeY);
 
     if (fields) {
-      fields.forEach((field: any) => {
+      fields.forEach((field) => {
         fillSelectedBox(ctx, field, board.sizeX, board.sizeY, field.color);
+
+        if (field.memberName) {
+          drawTextName(ctx, field, field.memberName, board.sizeX, board.sizeY);
+        }
       });
     }
 

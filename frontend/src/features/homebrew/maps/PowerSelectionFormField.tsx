@@ -1,15 +1,23 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { ParentObjectIdContext } from "../../context/ParentObjectIdContext";
 import { usePowers } from "../../../pages/powers/hooks/usePowers";
 import { ReusableTable } from "../../../ui/containers/ReusableTable";
 import Spinner from "../../../ui/interactive/Spinner";
 import Button from "../../../ui/interactive/Button";
+import { PowerListItem } from "../../../models/power";
 
-export function PowerSelectionFormField() {
+export function PowerSelectionFormField({
+  onSelectPower,
+  selectedPowers: itemPowersLocal,
+}: {
+  onSelectPower: React.Dispatch<React.SetStateAction<any>>;
+  selectedPowers: PowerListItem[];
+}) {
   const { isLoading: isLoadingAllPowers, powers: allPowers } = usePowers({
     CastableBy: "Terrain",
   });
+  //   const [itemPowersLocal, setItemPowersLocal] =
+  //     useState<PowerListItem[]>(selectedPowers);
 
   const [selectedPowerIdFromAll, setSelectedPowerIdFromAll] = useState<
     number | null
@@ -20,7 +28,8 @@ export function PowerSelectionFormField() {
 
   const allPowersWithoutLocal = allPowers
     ? allPowers.filter(
-        (power) => !allPowers?.find((itemPower) => itemPower.id === power.id)
+        (power) =>
+          !itemPowersLocal.find((itemPower) => itemPower.id === power.id)
       )
     : [];
 
@@ -38,6 +47,10 @@ export function PowerSelectionFormField() {
     setSelectedPowerIdFromAll(null);
   };
 
+  const handleSave = () => {
+    onSelectPower(itemPowersLocal);
+  };
+
   return (
     <Grid>
       <Column1>
@@ -45,12 +58,14 @@ export function PowerSelectionFormField() {
           <ReusableTable
             mainHeader="All possible slots"
             tableRowsColomns={{ Name: "name" }}
-            data={allPowersWithoutLocal.map((power, index) => {
-              return {
-                id: index,
-                name: power.name,
-              };
-            })}
+            data={
+              allPowersWithoutLocal?.map((power, index) => {
+                return {
+                  id: index,
+                  name: power.name,
+                };
+              }) ?? []
+            }
             isSelectable={true}
             onSelect={handleSelectAllPowers}
           ></ReusableTable>
@@ -62,6 +77,12 @@ export function PowerSelectionFormField() {
           <Button
             disabled={selectedPowerIdFromAll === null}
             onClick={() => {
+              onSelectPower((prev) => [
+                ...prev,
+                allPowers?.find(
+                  (power) => power.id === selectedPowerIdFromAll
+                ) as PowerListItem,
+              ]);
               setSelectedPowerIdFromAll(null);
             }}
           >
@@ -70,23 +91,15 @@ export function PowerSelectionFormField() {
           <Button
             disabled={selectedPowerIdFromItem === null}
             onClick={() => {
-              //   setItemPowersLocal(() => {
-              //     return (itemPowersLocal as PowerListItem[]).filter(
-              //       (slot) => slot.id !== selectedPowerIdFromItem
-              //     );
-              //   });
+              onSelectPower((prev) =>
+                prev.filter((slot) => slot.id !== selectedPowerIdFromItem)
+              );
               setSelectedPowerIdFromItem(null);
             }}
           >
             {"<<"}
           </Button>
-          <Button
-            onClick={() => {
-              alert("ELO");
-            }}
-          >
-            {"Save"}
-          </Button>
+          <Button onClick={handleSave}>{"Save"}</Button>
         </>
       </Column2>
       <Column3>
@@ -94,7 +107,7 @@ export function PowerSelectionFormField() {
           mainHeader="Selected slots"
           tableRowsColomns={{ Name: "name" }}
           data={
-            allPowers?.map((power, index) => {
+            itemPowersLocal?.map((power, index) => {
               return {
                 id: index,
                 name: power.name,

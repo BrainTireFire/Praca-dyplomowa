@@ -127,14 +127,14 @@ type MapFormProps = {
 };
 
 const TABLE_COLUMNS = {
+  Id: "id",
   Name: "name",
-  Duration: "duration",
-  Source: "source",
 };
 
 export default function MapCreatorForm({ state, onSubmit }: any) {
   const colorPickerPopover = useRef();
   const [isColorPickerVisible, setIsColorPickerVisible] = useState(false);
+  const [selectedPowers, setSelectedPowers] = useState<PowerListItem[]>([]);
   const [colorValue, setColorValue] = useState("#fff");
   const {
     register,
@@ -321,7 +321,10 @@ export default function MapCreatorForm({ state, onSubmit }: any) {
               </Button>
             </Modal.Open>
             <Modal.Window name="mapCreateNewPowerField">
-              <PowerSelectionFormField />
+              <PowerSelectionFormField
+                onSelectPower={setSelectedPowers}
+                selectedPowers={selectedPowers}
+              />
             </Modal.Window>
           </Modal>
 
@@ -329,7 +332,7 @@ export default function MapCreatorForm({ state, onSubmit }: any) {
             <FieldSet>
               <ReusableTable
                 tableRowsColomns={TABLE_COLUMNS}
-                data={[{ name: "test", duration: "test", source: "test" }]}
+                data={selectedPowers}
                 customTableContainer={css`
                   margin: 1px;
                 `}

@@ -92,7 +92,10 @@ namespace pracadyplomowa.Controllers
             );
 
             var item = (await _itemRepository.GetByNameWithEquipmentSlots("Iron longsword")).CloneInstance();
+            item.R_OwnerId = User.GetUserId();
             var item2 = item.CloneInstance();
+            item2.R_OwnerId = User.GetUserId();
+
             character.R_CharacterHasBackpack = new Backpack()
             {
                 R_BackpackOfCharacter = character, 

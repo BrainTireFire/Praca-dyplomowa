@@ -90,11 +90,11 @@ export default function MeleeWeaponForm({
             <Input
               disabled={!editMode}
               type="checkbox"
-              checked={body.throwable}
+              checked={body.thrown}
               onChange={(e) =>
                 dispatch({
                   type: "UPDATE_MELEE_WEAPON_BODY",
-                  field: "throwable",
+                  field: "thrown",
                   value: e.target.checked,
                 })
               }
@@ -103,13 +103,13 @@ export default function MeleeWeaponForm({
         </FormRowVertical>
         <FormRowVertical label="Throw range">
           <Input
-            disabled={!body.throwable || !editMode}
+            disabled={!body.thrown || !editMode}
             type="number"
-            value={body.rangeThrowable}
+            value={body.rangeThrown}
             onChange={(e) =>
               dispatch({
                 type: "UPDATE_MELEE_WEAPON_BODY",
-                field: "rangeThrowable",
+                field: "rangeThrown",
                 value: e.target.value,
               })
             }

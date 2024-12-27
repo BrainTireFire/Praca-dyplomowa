@@ -13,6 +13,7 @@ import { statusEffect } from "../statusEffects";
 import { ValueEffect } from "../valueEffect";
 import { rollMoment, rollMomentDropdown } from "../rollMoment";
 import { EffectContext } from "../contexts/BlueprintOrInstanceContext";
+import { EditModeContext } from "../../../context/EditModeContext";
 
 export type Effect = ValueEffect & {
   effectType: {
@@ -94,9 +95,12 @@ export default function SavingThrowEffectForm({
   const handleValueFormStateUpdate = useCallback((e: DiceSetExtended) => {
     dispatch({ type: "setValue", payload: e });
   }, []);
+  const { editMode } = useContext(EditModeContext);
+  const disableUpdate = !editMode;
   return (
     <Box>
       <RadioGroup
+        disabled={disableUpdate}
         values={[
           { label: "Bonus", value: "Bonus" },
           { label: "Advantage", value: "Advantage" },
@@ -110,6 +114,7 @@ export default function SavingThrowEffectForm({
       ></RadioGroup>
       <FormRowVertical label="Value">
         <DiceSetForm
+          disabled={disableUpdate}
           onChange={handleValueFormStateUpdate}
           diceSet={effect.value}
         ></DiceSetForm>
@@ -117,6 +122,7 @@ export default function SavingThrowEffectForm({
       {effectContext.effect === "Blueprint" && (
         <FormRowVertical label="Dice roll moment">
           <Dropdown
+            disabled={disableUpdate}
             valuesList={rollMomentDropdown}
             chosenValue={state.rollMoment}
             setChosenValue={(e) =>
@@ -127,6 +133,7 @@ export default function SavingThrowEffectForm({
       )}
       <FormRowVertical label="Ability">
         <Dropdown
+          disabled={disableUpdate}
           chosenValue={state.effectType.savingThrowEffect_Ability}
           setChosenValue={(e) => dispatch({ type: "setAbility", payload: e })}
           valuesList={abilitiesDropdown}

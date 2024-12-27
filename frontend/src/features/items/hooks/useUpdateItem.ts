@@ -15,7 +15,7 @@ export function useUpdateItem(onSuccess: () => void) {
     },
     onError: (error) => {
       console.error(error);
-      toast.error("Item update failed");
+      toast.error(error.message);
     },
   });
 

@@ -1,9 +1,10 @@
-import { useEffect, useReducer } from "react";
+import { useContext, useEffect, useReducer } from "react";
 import Box from "../../../ui/containers/Box";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import Dropdown from "../../../ui/forms/Dropdown";
 
 import { movementCost, movementCostsDropdown } from "../movementCosts";
+import { EditModeContext } from "../../../context/EditModeContext";
 
 export type Effect = {
   effectType: {
@@ -54,10 +55,13 @@ export default function MovementCostEffectForm({
     onChange(state);
   }, [state, onChange]);
 
+  const { editMode } = useContext(EditModeContext);
+  const disableUpdate = !editMode;
   return (
     <Box>
       <FormRowVertical label="Movement cost">
         <Dropdown
+          disabled={disableUpdate}
           chosenValue={state.effectType.movementCostEffect}
           setChosenValue={(e) =>
             dispatch({ type: "setMovementCost", payload: e as movementCost })

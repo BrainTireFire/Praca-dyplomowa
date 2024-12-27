@@ -12,7 +12,7 @@ import { CharacterIdContext } from "../../features/characters/contexts/Character
 
 export default function Items() {
   const editMode = useContext(EditModeContext);
-  const { isLoading, items, error } = useItems();
+  const { isLoading, items, error } = useItems("blueprint");
 
   const [selectedItemId, setSelectedItemId] = useState<null | number>(null);
   // const { createItem, isPending: isPendingCreation } = useCreateItem(() => {});
@@ -35,6 +35,7 @@ export default function Items() {
         <ReusableTable
           tableRowsColomns={{
             Name: "Name",
+            Owner: "OwnerName",
           }}
           data={
             items
@@ -42,6 +43,7 @@ export default function Items() {
                   return {
                     id: index,
                     Name: item.name,
+                    OwnerName: item.ownerName,
                   };
                 })
               : []

@@ -11,7 +11,7 @@ import { useItems } from "../../pages/items/hooks/useItems";
 import { useAddItemToEquipment } from "./hooks/useAddItemToEquipment";
 
 export default function AddEquipmentScreen() {
-  const { isLoading, items, error } = useItems();
+  const { isLoading, items, error } = useItems("blueprint");
   const { characterId } = useContext(CharacterIdContext);
   const [selectedItemId, setSelectedItemId] = useState<null | number>(null);
   // const { createItem, isPending: isPendingCreation } = useCreateItem(() => {});

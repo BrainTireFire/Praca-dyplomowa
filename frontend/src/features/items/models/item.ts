@@ -14,7 +14,7 @@ export type Item = {
   id: number | null;
   name: string;
   description: string;
-
+  editable: boolean;
   weight: number;
   price: CoinPurse;
   itemType: ItemType;
@@ -75,8 +75,8 @@ type WeaponBody = EquippableItemBody & {
 export type MeleeWeaponBody = WeaponBody & {
   reach: boolean;
   finesse: boolean;
-  throwable: false;
-  rangeThrowable: number;
+  thrown: false;
+  rangeThrown: number;
   versatile: boolean;
   versatileDamage: DiceSet;
 };
@@ -96,8 +96,8 @@ export const meleeWeaponBodyInitialValue: MeleeWeaponBody = {
   reach: false,
   finesse: false,
   occupiesAllSlots: false,
-  throwable: false,
-  rangeThrowable: 10,
+  thrown: false,
+  rangeThrown: 10,
 };
 
 export type RangedWeaponBody = WeaponBody & { range: number; loaded: boolean };
@@ -128,4 +128,5 @@ export const itemInitialValue: Item = {
   itemType: "Apparel",
   itemFamilyId: null,
   itemTypeBody: apparelBodyInitialValue,
+  editable: true,
 };

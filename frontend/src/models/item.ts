@@ -13,4 +13,5 @@ export type Item = {
 export type ItemListItem = {
   id: number;
   name: string;
+  ownerName: string;
 };

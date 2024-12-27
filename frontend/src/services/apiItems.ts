@@ -7,8 +7,19 @@ import { Slot } from "../models/slot";
 import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
 
-export async function getItems(): Promise<ItemListItem[]> {
-  const response = await customFetch(`${BASE_URL}/api/item/`);
+export async function getItems(
+  blueprintOrInstance: "blueprint" | "instance" | null
+): Promise<ItemListItem[]> {
+  let response;
+  if (blueprintOrInstance === null) {
+    response = await customFetch(`${BASE_URL}/api/item/`);
+  }
+  if (blueprintOrInstance === "blueprint") {
+    response = await customFetch(`${BASE_URL}/api/item?IsBlueprint=true`);
+  }
+  if (blueprintOrInstance === "instance") {
+    response = await customFetch(`${BASE_URL}/api/item?IsBlueprint=false`);
+  }
 
   console.log(response);
 

@@ -42,7 +42,20 @@ namespace pracadyplomowa.Controllers
         public async Task<ActionResult<CharacterSummaryDto>> GetCharacters([FromQuery] CharacterParams characterParams)
         {
             var userId = User.GetUserId();
-            var characters = await _characterRepository.GetCharacterSummaries(userId, characterParams);
+            var isNpc = false;
+            var characters = await _characterRepository.GetCharacterSummaries(userId, isNpc, characterParams);
+
+            Response.AddPaginationHeader(characters);
+
+            return Ok(characters);
+        }
+        
+        [HttpGet("npcCharacters")]
+        public async Task<ActionResult<CharacterSummaryDto>> GetNpcCharacters([FromQuery] CharacterParams characterParams)
+        {
+            var userId = User.GetUserId();
+            var isNpc = true;
+            var characters = await _characterRepository.GetCharacterSummaries(userId, isNpc,  characterParams);
 
             Response.AddPaginationHeader(characters);
 

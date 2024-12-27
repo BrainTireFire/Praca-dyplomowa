@@ -17,10 +17,11 @@ namespace pracadyplomowa.Repository
         {
         }
 
-        public async Task<PagedList<CharacterSummaryDto>> GetCharacterSummaries(int OwnerId, CharacterParams characterParams)
+        public async Task<PagedList<CharacterSummaryDto>> GetCharacterSummaries(int OwnerId, bool isNpc, CharacterParams characterParams)
         {
             var query = _context.Characters
                     .Where(c => c.R_OwnerId == OwnerId)
+                    .Where(c => c.IsNpc == isNpc)
                     .Include(c => c.R_CharacterBelongsToRace)
                     .Include(c => c.R_CharacterHasLevelsInClass)
                     .ThenInclude(cl => cl.R_Class)
@@ -43,6 +44,7 @@ namespace pracadyplomowa.Repository
 
             var charactersSumaries = query.Select(c => new CharacterSummaryDto(
                 c.Id,
+                c.IsNpc,
                 c.Name,
                 c.Description,
                 c.R_CharacterBelongsToRace.Name,

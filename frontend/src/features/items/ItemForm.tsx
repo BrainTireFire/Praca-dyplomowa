@@ -13,7 +13,6 @@ import {
   Item,
   itemInitialValue,
   MeleeWeaponBody,
-  meleeWeaponBodyInitialValue,
   RangedWeaponBody,
 } from "./models/item";
 import { useItemFamilies } from "./hooks/useItemFamilies";
@@ -26,7 +25,6 @@ import { useUpdateItem } from "./hooks/useUpdateItem";
 import RangedWeaponForm from "./subforms/RangedWeaponForm";
 import { ItemIdContext } from "./contexts/ItemIdContext";
 import EquippableItemForm from "./subforms/EquippableItemForm";
-import { initialState } from "../effects/EffectBlueprintForm";
 import { EditModeContext } from "../../context/EditModeContext";
 
 export type ItemAction =
@@ -131,6 +129,8 @@ export default function ItemForm({
   const isSavingChangesDisallowed = () => {
     return state.itemFamilyId === null;
   };
+  const disableUpdate = !editMode || !state.editable;
+
   if (
     isPendingPost ||
     isPendingUpdate ||
@@ -140,164 +140,175 @@ export default function ItemForm({
   if (error || errorItemFamilies) return <>Error</>;
   return (
     <>
-      <ItemIdContext.Provider
-        value={{
-          itemId: itemId,
-        }}
-      >
-        <Grid>
-          <Row1>
-            <FormRowVertical label="Name">
-              <Input
-                disabled={!editMode}
-                type="text"
-                value={state.name}
-                onChange={(e) =>
-                  dispatch({
-                    type: "UPDATE_FIELD",
-                    field: "name",
-                    value: e.target.value,
-                  })
-                }
-              ></Input>
-            </FormRowVertical>
-            <FormRowVertical label="Description" fillHeight={true}>
-              <TextArea
-                disabled={!editMode}
-                value={state.description}
-                onChange={(e) =>
-                  dispatch({
-                    type: "UPDATE_FIELD",
-                    field: "description",
-                    value: e.target.value,
-                  })
-                }
+      <EditModeContext.Provider value={{ editMode: !disableUpdate }}>
+        <ItemIdContext.Provider
+          value={{
+            itemId: itemId,
+          }}
+        >
+          <Grid>
+            <Row1>
+              <FormRowVertical label="Name">
+                <Input
+                  disabled={disableUpdate}
+                  type="text"
+                  value={state.name}
+                  onChange={(e) =>
+                    dispatch({
+                      type: "UPDATE_FIELD",
+                      field: "name",
+                      value: e.target.value,
+                    })
+                  }
+                ></Input>
+              </FormRowVertical>
+              <FormRowVertical label="Description" fillHeight={true}>
+                <TextArea
+                  disabled={disableUpdate}
+                  value={state.description}
+                  onChange={(e) =>
+                    dispatch({
+                      type: "UPDATE_FIELD",
+                      field: "description",
+                      value: e.target.value,
+                    })
+                  }
+                  customStyles={css`
+                    width: auto;
+                  `}
+                ></TextArea>
+              </FormRowVertical>
+            </Row1>
+            <Row2>
+              <FormRowVertical
+                label="Item family"
                 customStyles={css`
-                  width: auto;
+                  grid-column: 1;
                 `}
-              ></TextArea>
-            </FormRowVertical>
-          </Row1>
-          <Row2>
-            <FormRowVertical
-              label="Item family"
-              customStyles={css`
-                grid-column: 1;
-              `}
+              >
+                <Dropdown
+                  disabled={disableUpdate}
+                  valuesList={
+                    itemFamilies?.map((family) => {
+                      return {
+                        label: family.name,
+                        value: family.id.toString(),
+                      };
+                    }) ?? []
+                  }
+                  chosenValue={state.itemFamilyId?.toString() ?? null}
+                  setChosenValue={(value) =>
+                    dispatch({
+                      type: "UPDATE_FIELD",
+                      field: "itemFamilyId",
+                      value: Number(value),
+                    })
+                  }
+                ></Dropdown>
+              </FormRowVertical>
+              <FormRowVertical
+                label="Weight"
+                customStyles={css`
+                  grid-column: 2;
+                `}
+              >
+                <Input
+                  disabled={disableUpdate}
+                  type="number"
+                  value={state.weight}
+                  onChange={(e) =>
+                    dispatch({
+                      type: "UPDATE_FIELD",
+                      field: "weight",
+                      value: Number(e.target.value),
+                    })
+                  }
+                ></Input>
+              </FormRowVertical>
+              <FormRowVertical
+                label="Cost"
+                customStyles={css`
+                  grid-column: 3;
+                `}
+              >
+                <CoinPurseForm
+                  disabled={disableUpdate}
+                  value={state.price}
+                  onGoldChange={(e) =>
+                    dispatch({
+                      type: "UPDATE_GOLD",
+                      value: Number(e.target.value),
+                    })
+                  }
+                  onSilverChange={(e) =>
+                    dispatch({
+                      type: "UPDATE_SILVER",
+                      value: Number(e.target.value),
+                    })
+                  }
+                  onCopperChange={(e) =>
+                    dispatch({
+                      type: "UPDATE_COPPER",
+                      value: Number(e.target.value),
+                    })
+                  }
+                ></CoinPurseForm>
+              </FormRowVertical>
+            </Row2>
+            <Row3>
+              {state.itemType === "Apparel" && (
+                <ApparelForm
+                  body={state.itemTypeBody as ApparelBody}
+                  dispatch={dispatch}
+                ></ApparelForm>
+              )}
+              {state.itemType === "MeleeWeapon" && (
+                <MeleeWeaponForm
+                  body={state.itemTypeBody as MeleeWeaponBody}
+                  dispatch={dispatch}
+                ></MeleeWeaponForm>
+              )}
+              {state.itemType === "RangedWeapon" && (
+                <RangedWeaponForm
+                  body={state.itemTypeBody as RangedWeaponBody}
+                  dispatch={dispatch}
+                ></RangedWeaponForm>
+              )}
+              {itemId && (
+                <>
+                  {(state.itemType === "RangedWeapon" ||
+                    state.itemType === "MeleeWeapon" ||
+                    state.itemType === "Apparel") && (
+                    <EquippableItemForm
+                      body={state.itemTypeBody as EquippableItemBody}
+                    ></EquippableItemForm>
+                  )}
+                </>
+              )}
+            </Row3>
+          </Grid>
+          {itemId === null && (
+            <Button
+              onClick={() => createItem(state)}
+              disabled={isSavingChangesDisallowed() || disableUpdate}
             >
-              <Dropdown
-                disabled={!editMode}
-                valuesList={
-                  itemFamilies?.map((family) => {
-                    return {
-                      label: family.name,
-                      value: family.id.toString(),
-                    };
-                  }) ?? []
-                }
-                chosenValue={state.itemFamilyId?.toString() ?? null}
-                setChosenValue={(value) =>
-                  dispatch({
-                    type: "UPDATE_FIELD",
-                    field: "itemFamilyId",
-                    value: Number(value),
-                  })
-                }
-              ></Dropdown>
-            </FormRowVertical>
+              Save to unlock more configuration options
+            </Button>
+          )}
+          {itemId !== null && (
             <FormRowVertical
-              label="Weight"
-              customStyles={css`
-                grid-column: 2;
-              `}
+              error={disableUpdate ? "You cannot edit this object" : undefined}
             >
-              <Input
-                disabled={!editMode}
-                type="number"
-                value={state.weight}
-                onChange={(e) =>
-                  dispatch({
-                    type: "UPDATE_FIELD",
-                    field: "weight",
-                    value: Number(e.target.value),
-                  })
-                }
-              ></Input>
+              <Button
+                onClick={() => updateItem(state)}
+                disabled={disableUpdate}
+              >
+                Update
+              </Button>
             </FormRowVertical>
-            <FormRowVertical
-              label="Cost"
-              customStyles={css`
-                grid-column: 3;
-              `}
-            >
-              <CoinPurseForm
-                disabled={!editMode}
-                value={state.price}
-                onGoldChange={(e) =>
-                  dispatch({
-                    type: "UPDATE_GOLD",
-                    value: Number(e.target.value),
-                  })
-                }
-                onSilverChange={(e) =>
-                  dispatch({
-                    type: "UPDATE_SILVER",
-                    value: Number(e.target.value),
-                  })
-                }
-                onCopperChange={(e) =>
-                  dispatch({
-                    type: "UPDATE_COPPER",
-                    value: Number(e.target.value),
-                  })
-                }
-              ></CoinPurseForm>
-            </FormRowVertical>
-          </Row2>
-          <Row3>
-            {state.itemType === "Apparel" && (
-              <ApparelForm
-                body={state.itemTypeBody as ApparelBody}
-                dispatch={dispatch}
-              ></ApparelForm>
-            )}
-            {state.itemType === "MeleeWeapon" && (
-              <MeleeWeaponForm
-                body={state.itemTypeBody as MeleeWeaponBody}
-                dispatch={dispatch}
-              ></MeleeWeaponForm>
-            )}
-            {state.itemType === "RangedWeapon" && (
-              <RangedWeaponForm
-                body={state.itemTypeBody as RangedWeaponBody}
-                dispatch={dispatch}
-              ></RangedWeaponForm>
-            )}
-            {itemId && (
-              <>
-                {(state.itemType === "RangedWeapon" ||
-                  state.itemType === "MeleeWeapon" ||
-                  state.itemType === "Apparel") && (
-                  <EquippableItemForm
-                    body={state.itemTypeBody as EquippableItemBody}
-                  ></EquippableItemForm>
-                )}
-              </>
-            )}
-          </Row3>
-        </Grid>
-        {itemId === null && (
-          <Button
-            onClick={() => createItem(state)}
-            disabled={isSavingChangesDisallowed() || !editMode}
-          >
-            Save to unlock more configuration options
-          </Button>
-        )}
-        {itemId !== null && (
-          <Button onClick={() => updateItem(state)}>Update</Button>
-        )}
-      </ItemIdContext.Provider>
+          )}
+        </ItemIdContext.Provider>
+      </EditModeContext.Provider>
     </>
   );
 }

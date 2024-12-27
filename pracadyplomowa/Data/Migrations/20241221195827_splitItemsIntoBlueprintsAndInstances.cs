@@ -15,7 +15,7 @@ namespace pracadyplomowa.Data.Migrations
                 table: "Items",
                 type: "INTEGER",
                 nullable: false,
-                defaultValue: false);
+                defaultValue: true);
         }
 
         /// <inheritdoc />

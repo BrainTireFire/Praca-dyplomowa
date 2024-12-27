@@ -3,16 +3,14 @@ import Table from "../../../ui/containers/Table";
 import Modal from "../../../ui/containers/Modal";
 import { HiEye, HiTrash } from "react-icons/hi2";
 import { Cell } from "../../../ui/containers/Cell";
-import { initialState } from "../../effects/EffectBlueprintForm";
-import Spinner from "../../../ui/interactive/Spinner";
 import ConfirmDelete from "../../../ui/containers/ConfirmDelete";
 import { useContext } from "react";
 import { ItemIdContext } from "../contexts/ItemIdContext";
-import { useCreateEffectInstance } from "../hooks/useCreateEffectInstance";
 import { useDeleteEffectInstance } from "../hooks/useDeleteEffectInstance";
 import { EffectBlueprintListItem } from "../models/effectBlueprint";
 import EffectInstanceForm from "../../effects/EffectInstanceForm";
 import { EffectParentObjectIdContext } from "../../../context/EffectParentObjectIdContext";
+import { EditModeContext } from "../../../context/EditModeContext";
 
 export default function EffectTable({
   effects,
@@ -20,11 +18,6 @@ export default function EffectTable({
   effects: EffectBlueprintListItem[];
 }) {
   const { itemId } = useContext(ItemIdContext);
-  const { createEffectInstance, isPending } = useCreateEffectInstance(() => {},
-  itemId as number);
-  if (isPending) {
-    return <Spinner></Spinner>;
-  }
   return (
     <Menus>
       <Table
@@ -57,6 +50,7 @@ export default function EffectTable({
 
 function EffectRow({ effect }: { effect: EffectBlueprintListItem }) {
   const { itemId } = useContext(ItemIdContext);
+  const { editMode } = useContext(EditModeContext);
   const { deleteEffectInstance, isPending } = useDeleteEffectInstance(() => {},
   itemId as number);
   return (
@@ -72,11 +66,13 @@ function EffectRow({ effect }: { effect: EffectBlueprintListItem }) {
                 Open
               </Menus.Button>
             </Modal.Open>
-            <Modal.Open opens="delete">
-              <Menus.Button icon={<HiTrash />} onClick={() => {}}>
-                Delete
-              </Menus.Button>
-            </Modal.Open>
+            {editMode && (
+              <Modal.Open opens="delete">
+                <Menus.Button icon={<HiTrash />} onClick={() => {}}>
+                  Delete
+                </Menus.Button>
+              </Modal.Open>
+            )}
           </Menus.List>
         </Menus.Menu>
         <Modal.Window name="delete">

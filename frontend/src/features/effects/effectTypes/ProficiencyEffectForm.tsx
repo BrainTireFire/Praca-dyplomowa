@@ -1,10 +1,11 @@
-import { useEffect, useReducer } from "react";
+import { useContext, useEffect, useReducer } from "react";
 import Box from "../../../ui/containers/Box";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import RadioGroup from "../../../ui/forms/RadioGroup";
 import Dropdown from "../../../ui/forms/Dropdown";
 import { useItemFamilies } from "../hooks/useItemFamilies";
 import Spinner from "../../../ui/interactive/Spinner";
+import { EditModeContext } from "../../../context/EditModeContext";
 
 const proficiencyEffects = ["ItemType", "SpecificItemFamily"] as const;
 
@@ -100,11 +101,14 @@ export default function ProficiencyEffectForm({
         return { value: x.id.toString(), label: x.name };
       })
     : [];
+  const { editMode } = useContext(EditModeContext);
+  const disableUpdate = !editMode;
   if (isLoading) return <Spinner />;
   if (error) return <>Error</>;
   return (
     <Box>
       <RadioGroup
+        disabled={disableUpdate}
         values={[
           { label: "Item type", value: "ItemType" },
           { label: "Specific item family", value: "SpecificItemFamily" },
@@ -120,7 +124,9 @@ export default function ProficiencyEffectForm({
         currentValue={state.effectType.proficiencyEffect}
       ></RadioGroup>
       <RadioGroup
-        disabled={state.effectType.proficiencyEffect !== "ItemType"}
+        disabled={
+          state.effectType.proficiencyEffect !== "ItemType" || disableUpdate
+        }
         values={[
           { label: "Item", value: "Item" },
           { label: "Tool", value: "Tool" },
@@ -144,7 +150,10 @@ export default function ProficiencyEffectForm({
       ></RadioGroup>
       <FormRowVertical label="Item family">
         <Dropdown
-          disabled={state.effectType.proficiencyEffect !== "SpecificItemFamily"}
+          disabled={
+            state.effectType.proficiencyEffect !== "SpecificItemFamily" ||
+            disableUpdate
+          }
           chosenValue={state.grantsProficiencyInItemFamilyId?.toString() ?? ""}
           setChosenValue={(e) =>
             dispatch({ type: "setItemFamily", payload: Number(e) })

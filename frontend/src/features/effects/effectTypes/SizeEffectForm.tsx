@@ -12,6 +12,7 @@ import Dropdown from "../../../ui/forms/Dropdown";
 import { ValueEffect } from "../valueEffect";
 import { rollMoment, rollMomentDropdown } from "../rollMoment";
 import { EffectContext } from "../contexts/BlueprintOrInstanceContext";
+import { EditModeContext } from "../../../context/EditModeContext";
 
 const sizeEffects = ["Bonus", "Change"] as const;
 
@@ -101,9 +102,12 @@ export default function SizeEffectForm({
     dispatch({ type: "setValue", payload: e });
   }, []);
 
+  const { editMode } = useContext(EditModeContext);
+  const disableUpdate = !editMode;
   return (
     <Box>
       <RadioGroup
+        disabled={disableUpdate}
         values={[
           { label: "Bonus", value: "Bonus" },
           { label: "Change", value: "Change" },
@@ -118,6 +122,7 @@ export default function SizeEffectForm({
       {effectContext.effect === "Blueprint" && (
         <FormRowVertical label="Dice roll moment">
           <Dropdown
+            disabled={disableUpdate}
             valuesList={rollMomentDropdown}
             chosenValue={state.rollMoment}
             setChosenValue={(e) =>
@@ -128,12 +133,14 @@ export default function SizeEffectForm({
       )}
       <FormRowVertical label="Value">
         <DiceSetForm
+          disabled={disableUpdate}
           onChange={handleValueFormStateUpdate}
           diceSet={effect.value}
         ></DiceSetForm>
       </FormRowVertical>
       <FormRowVertical label="Size to set">
         <Dropdown
+          disabled={disableUpdate}
           setChosenValue={(x) =>
             dispatch({ type: "setSize", payload: x as size })
           }

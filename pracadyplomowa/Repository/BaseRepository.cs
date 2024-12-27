@@ -38,7 +38,7 @@ namespace pracadyplomowa.Repository
             return _context.Set<T>().Select(a=>a).ToListAsync();
         }
 
-        public T? GetById(int id)
+        public virtual T? GetById(int id)
         {
             return _context.Set<T>().Find(id);
         }

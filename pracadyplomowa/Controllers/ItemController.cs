@@ -10,36 +10,35 @@ using pracadyplomowa.Models.Entities.Items;
 using pracadyplomowa.Models.Entities.Powers;
 using pracadyplomowa.Repository;
 using pracadyplomowa.Repository.Item;
+using pracadyplomowa.Services.Item;
 
 namespace pracadyplomowa.Controllers
 {
     [Authorize]
-    public class ItemController: BaseApiController
+    public class ItemController
+    (IImmaterialResourceBlueprintRepository immaterialResourceBlueprintRepository, 
+    IEffectBlueprintRepository effectBlueprintRepository, 
+    IEffectInstanceRepository effectInstanceRepository, 
+    IPowerRepository powerRepository, 
+    IItemRepository itemRepository, 
+    IEquipmentSlotRepository equipmentSlotRepository, 
+    IMapper mapper,
+    IItemService itemService
+    ) : BaseApiController
     {
-        private readonly IImmaterialResourceBlueprintRepository _immaterialResourceBlueprintRepository;
-        private readonly IEffectBlueprintRepository _effectBlueprintRepository;
-        private readonly IEffectInstanceRepository _effectInstanceRepository;
-        private readonly IPowerRepository _powerRepository;
-        private readonly IItemRepository _itemRepository;
-        private readonly IEquipmentSlotRepository _equipmentSlotRepository;
-        private readonly IMapper _mapper;
-
-        public ItemController(IImmaterialResourceBlueprintRepository immaterialResourceBlueprintRepository, IEffectBlueprintRepository effectBlueprintRepository, IEffectInstanceRepository effectInstanceRepository, IPowerRepository powerRepository, IItemRepository itemRepository, IEquipmentSlotRepository equipmentSlotRepository, IMapper mapper)
-        {
-            _immaterialResourceBlueprintRepository = immaterialResourceBlueprintRepository;
-            _powerRepository = powerRepository;
-            _effectBlueprintRepository = effectBlueprintRepository;
-            _effectInstanceRepository = effectInstanceRepository;
-            _itemRepository = itemRepository;
-            _equipmentSlotRepository = equipmentSlotRepository;
-            _mapper = mapper;
-        }
-
+        private readonly IImmaterialResourceBlueprintRepository _immaterialResourceBlueprintRepository = immaterialResourceBlueprintRepository;
+        private readonly IEffectBlueprintRepository _effectBlueprintRepository = effectBlueprintRepository;
+        private readonly IEffectInstanceRepository _effectInstanceRepository = effectInstanceRepository;
+        private readonly IPowerRepository _powerRepository = powerRepository;
+        private readonly IItemRepository _itemRepository = itemRepository;
+        private readonly IEquipmentSlotRepository _equipmentSlotRepository = equipmentSlotRepository;
+        private readonly IMapper _mapper = mapper;
+        private readonly IItemService _itemService = itemService;
 
         [HttpGet]
-        public async Task<ActionResult<List<ItemListElementDto>>> GetItems()
+        public async Task<ActionResult<List<ItemListElementDto>>> GetItems([FromQuery] ItemParams itemParams)
         {
-            var items = await _itemRepository.GetAll();
+            var items = await _itemRepository.GetOwnedItems(User.GetUserId(), itemParams);
 
 
             List<ItemListElementDto> itemDtos = _mapper.Map<List<ItemListElementDto>>(items);
@@ -54,13 +53,15 @@ namespace pracadyplomowa.Controllers
             if(item == null){
                 return NotFound(itemId);
             }
-            var itemDto = _mapper.Map<ItemFormDto>(item);
+            _itemRepository.GetItemsForEditabilityAnalysis([itemId]);
+            var itemDto = _mapper.Map<Item, ItemFormDto>(item, opt => opt.AfterMap((src, dest) => dest.Editable = src.HasEditAccess(User.GetUserId())));
             return Ok(itemDto);
         }
 
         [HttpPost("meleeWeapon")]
         public async Task<ActionResult<int>> PostMeleeWeapon(MeleeWeaponFormDto meleeWeaponDto){
             var item = _mapper.Map<MeleeWeapon>(meleeWeaponDto);
+            item.R_OwnerId = User.GetUserId();
             _itemRepository.Add(item);
             await _itemRepository.SaveChanges();
             return Ok(item.Id);
@@ -71,6 +72,12 @@ namespace pracadyplomowa.Controllers
             if(meleeWeaponDto.Id == null){
                 return BadRequest("Id is required for update");
             }
+
+            var itemId = (int)meleeWeaponDto.Id;
+            if(!_itemService.CheckExistenceAndEditAccess(itemId, User.GetUserId(), out var actionResult)){
+                return actionResult;
+            }
+
             var itemLoaded = (MeleeWeapon)await _itemRepository.GetByIdWithSlotsPowersEffectsResources((int)meleeWeaponDto.Id);
             var item = _mapper.Map(meleeWeaponDto, itemLoaded);
             _itemRepository.Update(itemLoaded);
@@ -81,6 +88,7 @@ namespace pracadyplomowa.Controllers
         [HttpPost("rangedWeapon")]
         public async Task<ActionResult<int>> PostRangedWeapon(RangedWeaponFormDto rangedWeaponDto){
             var item = _mapper.Map<RangedWeapon>(rangedWeaponDto);
+            item.R_OwnerId = User.GetUserId();
             _itemRepository.Add(item);
             await _itemRepository.SaveChanges();
             return Ok(item.Id);
@@ -88,7 +96,17 @@ namespace pracadyplomowa.Controllers
 
         [HttpPatch("rangedWeapon")]
         public async Task<ActionResult<int>> UpdateRangedWeapon(RangedWeaponFormDto rangedWeaponDto){
-            var item = _mapper.Map<RangedWeapon>(rangedWeaponDto);
+            if(rangedWeaponDto.Id == null){
+                return BadRequest("Id is required for update");
+            }
+
+            var itemId = (int)rangedWeaponDto.Id;
+            if(!_itemService.CheckExistenceAndEditAccess(itemId, User.GetUserId(), out var actionResult)){
+                return actionResult;
+            }
+
+            var itemLoaded = (MeleeWeapon)await _itemRepository.GetByIdWithSlotsPowersEffectsResources((int)rangedWeaponDto.Id);
+            var item = _mapper.Map(rangedWeaponDto, itemLoaded);
             _itemRepository.Update(item);
             await _itemRepository.SaveChanges();
             return Ok(item.Id);
@@ -97,6 +115,7 @@ namespace pracadyplomowa.Controllers
         [HttpPost("apparel")]
         public async Task<ActionResult<int>> PostApparel(ApparelFormDto apparelDto){
             var item = _mapper.Map<Apparel>(apparelDto);
+            item.R_OwnerId = User.GetUserId();
             _itemRepository.Add(item);
             await _itemRepository.SaveChanges();
             return Ok(item.Id);
@@ -104,7 +123,17 @@ namespace pracadyplomowa.Controllers
 
         [HttpPatch("apparel")]
         public async Task<ActionResult<int>> UpdateApparel(ApparelFormDto apparelDto){
-            var item = _mapper.Map<Apparel>(apparelDto);
+            if(apparelDto.Id == null){
+                return BadRequest("Id is required for update");
+            }
+
+            var itemId = (int)apparelDto.Id;
+            if(!_itemService.CheckExistenceAndEditAccess(itemId, User.GetUserId(), out var actionResult)){
+                return actionResult;
+            }
+
+            var itemLoaded = (MeleeWeapon)await _itemRepository.GetByIdWithSlotsPowersEffectsResources((int)apparelDto.Id);
+            var item = _mapper.Map(apparelDto, itemLoaded);
             _itemRepository.Update(item);
             await _itemRepository.SaveChanges();
             return Ok(item.Id);

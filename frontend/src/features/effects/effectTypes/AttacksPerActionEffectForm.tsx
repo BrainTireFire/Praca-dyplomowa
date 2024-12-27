@@ -11,6 +11,7 @@ import { ValueEffect } from "../valueEffect";
 import Dropdown from "../../../ui/forms/Dropdown";
 import { rollMoment, rollMomentDropdown } from "../rollMoment";
 import { EffectContext } from "../contexts/BlueprintOrInstanceContext";
+import { EditModeContext } from "../../../context/EditModeContext";
 
 const effectTypes = ["AttacksTotal", "AdditionalAttacks"] as const;
 
@@ -75,9 +76,12 @@ export default function AttacksPerActionEffectForm({
     dispatch({ type: "setValue", payload: e });
   }, []);
 
+  const { editMode } = useContext(EditModeContext);
+  const disableUpdate = !editMode;
   return (
     <Box>
       <RadioGroup
+        disabled={disableUpdate}
         values={[
           { label: "Attacks total", value: "AttacksTotal" },
           { label: "Additional attacks", value: "AdditionalAttacks" },
@@ -92,6 +96,7 @@ export default function AttacksPerActionEffectForm({
       {effectContext.effect === "Blueprint" && (
         <FormRowVertical label="Dice roll moment">
           <Dropdown
+            disabled={disableUpdate}
             valuesList={rollMomentDropdown}
             chosenValue={state.rollMoment}
             setChosenValue={(e) =>
@@ -102,6 +107,7 @@ export default function AttacksPerActionEffectForm({
       )}
       <FormRowVertical label="Value">
         <DiceSetForm
+          disabled={disableUpdate}
           onChange={handleValueFormStateUpdate}
           diceSet={effect.value}
         ></DiceSetForm>

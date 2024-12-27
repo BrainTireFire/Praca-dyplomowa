@@ -41,7 +41,7 @@ namespace pracadyplomowa.Models.Entities.Items
             R_EquipItemGrantsAccessToPower = [.. item.R_EquipItemGrantsAccessToPower];
         }
 
-        public bool IsBlueprint { get; set; } = false;
+        public bool IsBlueprint { get; set; } = true;
         public string Name { get; set; } = null!;
         public int Weight { get; set; }
         public string Description { get; set; } = null!;
@@ -121,6 +121,18 @@ namespace pracadyplomowa.Models.Entities.Items
             var x = this.Clone();
             x.IsBlueprint = false;
             return x;
+        }
+
+        public override bool HasEditAccess(int userId)
+        {
+            if (!this.IsBlueprint && 
+                this.R_BackpackHasItemId != null && 
+                this.R_BackpackHasItem?.R_BackpackOfCharacter?.R_Campaign != null &&
+                this.R_BackpackHasItem.R_BackpackOfCharacter.R_Campaign.R_OwnerId == userId)
+            {
+                return true;
+            }
+            return this.R_OwnerId == userId;
         }
 
         public class EquippingException(string message) : Exception(message);

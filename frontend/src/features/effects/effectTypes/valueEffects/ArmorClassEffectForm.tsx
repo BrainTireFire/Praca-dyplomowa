@@ -10,6 +10,7 @@ import { ValueEffect } from "../../valueEffect";
 import Dropdown from "../../../../ui/forms/Dropdown";
 import { rollMomentDropdown } from "../../rollMoment";
 import { EffectContext } from "../../contexts/BlueprintOrInstanceContext";
+import { EditModeContext } from "../../../../context/EditModeContext";
 
 export type Effect = ValueEffect;
 
@@ -56,11 +57,14 @@ export default function ArmorClassEffectForm({
   const handleValueFormStateUpdate = useCallback((e: DiceSetExtended) => {
     dispatch({ type: "setValue", payload: e });
   }, []);
+  const { editMode } = useContext(EditModeContext);
+  const disableUpdate = !editMode;
   return (
     <Box>
       {effectContext.effect === "Blueprint" && (
         <FormRowVertical label="Dice roll moment">
           <Dropdown
+            disabled={disableUpdate}
             valuesList={rollMomentDropdown}
             chosenValue={state.rollMoment}
             setChosenValue={(e) =>
@@ -71,6 +75,7 @@ export default function ArmorClassEffectForm({
       )}
       <FormRowVertical label="Value">
         <DiceSetForm
+          disabled={disableUpdate}
           onChange={handleValueFormStateUpdate}
           diceSet={effect.value}
         ></DiceSetForm>

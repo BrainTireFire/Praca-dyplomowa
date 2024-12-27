@@ -6,7 +6,6 @@ import {
   useState,
 } from "react";
 import Box from "../../ui/containers/Box";
-import FormRowLabelRight from "../../ui/forms/FormRowLabelRight";
 import FormRowVertical from "../../ui/forms/FormRowVertical";
 import Input from "../../ui/forms/Input";
 import RadioGroup from "../../ui/forms/RadioGroup";
@@ -86,15 +85,13 @@ import MovementCostEffectForm, {
 import styled from "styled-components";
 import Button from "../../ui/interactive/Button";
 import Spinner from "../../ui/interactive/Spinner";
-import { useEffectBlueprint } from "./hooks/useEffectBlueprint";
-import { useUpdateEffectBlueprint } from "./hooks/useUpdateEffectBlueprint";
-import { PowerIdContext } from "../powers/contexts/PowerIdContext";
 import { ValueEffect } from "./valueEffect";
 import { useEffectInstance } from "./hooks/useEffectInstance";
 import { useUpdateEffectInstance } from "./hooks/useUpdateEffectInstance";
 import { EffectContext } from "./contexts/BlueprintOrInstanceContext";
 import { EffectParentObjectIdContext } from "../../context/EffectParentObjectIdContext";
 import { useCreateEffectInstance } from "./hooks/useCreateEffectInstance";
+import { EditModeContext } from "../../context/EditModeContext";
 
 const effectTypes = [
   "movementEffect",
@@ -253,6 +250,7 @@ export default function EffectInstanceForm({
   effectId: number | null;
   isConstant: boolean;
 }) {
+  const { editMode } = useContext(EditModeContext);
   const [actualEffectId, setActualEffectId] = useState(effectId);
   const { objectId, objectType } = useContext(EffectParentObjectIdContext);
   const { isLoading, effectInstance, error } =
@@ -313,6 +311,7 @@ export default function EffectInstanceForm({
     console.log(error);
     return <>Error</>;
   }
+  let disableForm = !editMode;
   return (
     <EffectContext.Provider value={{ effect: "Instance" }}>
       <ScrollContainer>
@@ -320,6 +319,7 @@ export default function EffectInstanceForm({
           <Div1>
             <FormRowVertical label="Name">
               <Input
+                disabled={disableForm}
                 value={state.name}
                 onChange={(x) =>
                   dispatch({ type: "setName", payload: x.target.value })
@@ -328,6 +328,7 @@ export default function EffectInstanceForm({
             </FormRowVertical>
             <FormRowVertical label="Description">
               <TextArea
+                disabled={disableForm}
                 value={state.description}
                 onChange={(x) =>
                   dispatch({ type: "setDescription", payload: x.target.value })
@@ -337,6 +338,7 @@ export default function EffectInstanceForm({
             {!isConstant && (
               <FormRowVertical label="Duration">
                 <Input
+                  disabled={disableForm}
                   value={state.durationLeft}
                   type="number"
                   min={1}
@@ -352,6 +354,7 @@ export default function EffectInstanceForm({
           </Div1>
           <Div2>
             <RadioGroup
+              disabled={disableForm}
               values={[
                 { value: "movementEffect", label: "Movement effect" },
                 { value: "savingThrow", label: "Saving throw" },
@@ -496,7 +499,7 @@ export default function EffectInstanceForm({
       {effectInstance && (
         <Button
           onClick={() => updateEffectInstance(state)}
-          disabled={disableUpdateButton()}
+          disabled={disableUpdateButton() || disableForm}
         >
           Update
         </Button>
@@ -504,7 +507,7 @@ export default function EffectInstanceForm({
       {!effectInstance && (
         <Button
           onClick={() => createEffectInstance(state)}
-          disabled={disableUpdateButton()}
+          disabled={disableUpdateButton() || disableForm}
         >
           Save
         </Button>

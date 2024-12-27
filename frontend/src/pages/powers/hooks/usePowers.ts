@@ -1,14 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { getPowers } from "../../../services/apiPowers";
 
-export function usePowers() {
+export function usePowers(params?: Record<string, string | number | boolean>) {
   const {
     isLoading,
     data: powers,
     error,
   } = useQuery({
     queryKey: ["powerList"],
-    queryFn: getPowers,
+    queryFn: () => getPowers(params),
   });
 
   return { isLoading, powers, error };

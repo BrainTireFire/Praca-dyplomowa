@@ -4,6 +4,7 @@ import { ImmaterialResourceBlueprint } from "../models/immaterialResourceBluepri
 import { PowerListItem } from "../models/power";
 import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
+import queryString from "query-string";
 
 export async function getImmaterialResourceBlueprints(): Promise<
   ImmaterialResourceBlueprint[]
@@ -17,11 +18,15 @@ export async function getImmaterialResourceBlueprints(): Promise<
   return response;
 }
 
-export async function getPowers(): Promise<PowerListItem[]> {
-  const response = await customFetch(`${BASE_URL}/api/power/`);
-
-  console.log(response);
-
+export async function getPowers(
+  params?: Record<string, string | number | boolean>
+): Promise<PowerListItem[]> {
+  const queryParams = queryString.stringify(params || {}, {
+    skipNull: true,
+    skipEmptyString: true,
+  });
+  const url = `${BASE_URL}/api/power/${queryParams ? `?${queryParams}` : ""}`;
+  const response = await customFetch(url);
   return response;
 }
 

@@ -15,6 +15,9 @@ import { ReusableTable } from "../../../ui/containers/ReusableTable";
 import Modal from "../../../ui/containers/Modal";
 import EffectInstanceForm from "../../effects/EffectInstanceForm";
 import { EffectParentObjectIdContext } from "../../../context/EffectParentObjectIdContext";
+import { ParentObjectIdContext } from "../../../context/ParentObjectIdContext";
+import { PowerSelectionForm } from "../../powers/PowerSelectionForm";
+import { PowerSelectionFormField } from "./PowerSelectionFormField";
 
 const Label = styled.label`
   font-weight: bold;
@@ -309,23 +312,16 @@ export default function MapCreatorForm({ state, onSubmit }: any) {
             )}
           </FieldContainerStyled>
 
-          {/* Field Effects */}
-          <Label>Field Effects:</Label>
+          {/* Field Powers */}
+          <Label>Field Powers:</Label>
           <Modal>
-            <Modal.Open opens="mapCreateNewEffect">
+            <Modal.Open opens="mapCreateNewPowerField">
               <Button size="small" variation="primary">
-                New effect
+                New Power
               </Button>
             </Modal.Open>
-            <Modal.Window name="mapCreateNewEffect">
-              <EffectParentObjectIdContext.Provider
-                value={{
-                  objectId: selectedBox.x + selectedBox.y,
-                  objectType: "FieldTemporary",
-                }}
-              >
-                <EffectInstanceForm effectId={null}></EffectInstanceForm>
-              </EffectParentObjectIdContext.Provider>
+            <Modal.Window name="mapCreateNewPowerField">
+              <PowerSelectionFormField />
             </Modal.Window>
           </Modal>
 

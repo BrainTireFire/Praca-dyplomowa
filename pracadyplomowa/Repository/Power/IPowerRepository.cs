@@ -11,5 +11,6 @@ namespace pracadyplomowa.Repository
         public Task<Power> GetByIdWithEffectBlueprintsAndMaterialResources(int Id);
 
         public Task<List<Power>> GetAllByIds(List<int> Ids);
+        public Task<PagedList<Power>> GetAllPowersWithParams(PowerParams powerParams);
     }
 }

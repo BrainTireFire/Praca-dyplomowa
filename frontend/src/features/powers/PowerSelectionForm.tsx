@@ -12,7 +12,9 @@ import { ParentObjectIdContext } from "../../context/ParentObjectIdContext";
 export function PowerSelectionForm() {
   const { objectId, objectType } = useContext(ParentObjectIdContext);
 
-  const { isLoading: isLoadingAllPowers, powers: allPowers } = usePowers();
+  const { isLoading: isLoadingAllPowers, powers: allPowers } = usePowers({
+    CastableBy: "Character",
+  });
   const { isLoading: isLoadingItemPowers, powers: itemPowers } =
     useObjectPowers(objectId, objectType);
   const { isPending, updateObjectPowers: updateItemPowers } =

@@ -44,14 +44,11 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<PowerCompactDto>>> GetPowers()
+        public async Task<ActionResult<List<PowerCompactDto>>> GetPowers([FromQuery] PowerParams powerParams)
         {
-            var powers = await _powerRepository.GetAll();
-
-
+            var powers = await _powerRepository.GetAllPowersWithParams(powerParams);
             List<PowerCompactDto> powerDtos = _mapper.Map<List<PowerCompactDto>>(powers);
-
-
+            Response.AddPaginationHeader(powers);
             return Ok(powerDtos);
         }
 

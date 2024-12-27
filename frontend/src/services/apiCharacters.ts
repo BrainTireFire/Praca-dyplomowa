@@ -16,7 +16,11 @@ import { customFetchJSON } from "./customFetchJSON";
 export async function getCharacters(): Promise<CharacterItem[]> {
   const response = await customFetch(`${BASE_URL}/api/character/mycharacters`);
 
-  console.log(response);
+  return response;
+}
+
+export async function getNpcCharacters(): Promise<CharacterItem[]> {
+  const response = await customFetch(`${BASE_URL}/api/character/npcCharacters`);
 
   return response;
 }

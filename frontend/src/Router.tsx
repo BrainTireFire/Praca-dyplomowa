@@ -28,6 +28,7 @@ import CampaignJoin from "./features/campaigns/CampaignJoin";
 import Encounter from "./pages/campaign/encounter/Encounter";
 import Items from "./pages/items/Items";
 import Powers from "./pages/powers/Powers";
+import NpcCharacter from "./pages/NpcCharacter";
 
 export default function Router() {
   return (
@@ -51,8 +52,12 @@ export default function Router() {
             element={<CustomizeShop />}
           />
           <Route path="campaigns/session/:groupName" element={<MainBoard />} />
-          <Route path="campaigns/encounter" element={<Encounter />} />
+          <Route
+            path="campaigns/:campaignId/encounter"
+            element={<Encounter />}
+          />
           <Route path="characters" element={<Characters />} />
+          <Route path="npc" element={<NpcCharacter />} />
           <Route path="items" element={<Items />} />
           <Route path="powers" element={<Powers />} />
           <Route path="homebrew" element={<Homebrew />} />

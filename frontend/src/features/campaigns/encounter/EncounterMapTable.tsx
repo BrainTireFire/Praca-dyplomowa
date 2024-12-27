@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Spinner from "../../../ui/interactive/Spinner";
 import { ReusableTable } from "../../../ui/containers/ReusableTable";
 import { useMaps } from "./useMaps";
@@ -16,9 +16,16 @@ const TABLE_COLUMNS = {
   "Create at": "test",
 };
 
-export default function EncounterMapTable() {
+export default function EncounterMapTable({ onSelect }) {
   const { isLoading, maps } = useMaps();
   const [selectedMap, setSelectedMap] = useState(null);
+
+  useEffect(() => {
+    if (selectedMap) {
+      const selectedMapFull = maps?.find((map) => map.id === selectedMap.id);
+      onSelect(selectedMapFull);
+    }
+  }, [selectedMap, onSelect]);
 
   if (isLoading) {
     return <Spinner />;

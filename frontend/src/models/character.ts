@@ -20,6 +20,7 @@ export type CharacterItem = {
   description: string;
   class: string;
   race: string;
+  isNpc: boolean;
 };
 
 export type Character = {
@@ -60,6 +61,7 @@ export type Character = {
   resources: Resource[];
   choiceGroups: ChoiceGroup[];
   proficiencyBonus: number;
+  isNpc: boolean;
 };
 
 export type CharacterInsertDto = {
@@ -72,4 +74,5 @@ export type CharacterInsertDto = {
   intelligence: number;
   wisdom: number;
   charisma: number;
+  isNpc: boolean;
 };

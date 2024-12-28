@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Spinner from "../../../ui/interactive/Spinner";
 import { ReusableTable } from "../../../ui/containers/ReusableTable";
-import { useMaps } from "./useMaps";
+import { useMaps } from "../hooks/useMaps";
 import styled from "styled-components";
 
 const Container = styled.div`

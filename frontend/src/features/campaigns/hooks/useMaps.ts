@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getBoards } from "../,./../../../services/apiBoard";
+import { getBoards } from "../../../services/apiBoard";
 
 export function useMaps() {
   const {

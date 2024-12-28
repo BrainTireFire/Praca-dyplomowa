@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import Heading from "../../../ui/text/Heading";
+import { useState } from "react";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import { useForm } from "react-hook-form";
 import Input from "../../../ui/forms/Input";
@@ -11,6 +10,7 @@ import EncounterNPCTable from "./EncounterNPCTable";
 import EncounterMapCreaterLayout from "./EncounterMapCreaterLayout";
 import { useCampaign } from "../hooks/useCampaign";
 import Spinner from "../../../ui/interactive/Spinner";
+import { CharacterItem } from "../../../models/character";
 
 const GridStyled = styled.div`
   display: grid;
@@ -46,10 +46,8 @@ const GridButtonStyled = styled.div`
 
 export default function EncounterForm() {
   const { isLoading, campaign } = useCampaign();
-  const [toggleMap, setToggleMap] = useState(false);
   const [selectedMap, setSelectedMap] = useState(null);
-  const { register, formState, handleSubmit, reset } = useForm<any>();
-  const { errors } = formState;
+  const [selectedNpcs, setSelectedNpcs] = useState<CharacterItem[]>([]);
 
   if (isLoading) {
     return <Spinner />;
@@ -59,51 +57,42 @@ export default function EncounterForm() {
     return <div></div>;
   }
 
-  function onSubmit() {
-    setToggleMap(!toggleMap);
-  }
-
   return (
     <>
-      {toggleMap === true && (
-        <EncounterMapCreaterLayout
-          boardData={selectedMap}
-          campaign={campaign}
-        />
-      )}
-      {toggleMap === false && (
-        <Form onSubmit={handleSubmit(onSubmit)}>
-          <GridStyled>
-            <GridInputStyled>
-              <FormRowVertical
-                label={"Name"}
-                // error={errors?.username?.message}
-              >
-                <Input
-                  type="text"
-                  id="username"
-                  placeholder={"Please write name of the encounter"}
-                />
-              </FormRowVertical>
-            </GridInputStyled>
+      <GridStyled>
+        <GridInputStyled>
+          <FormRowVertical
+            label={"Name"}
+            // error={errors?.username?.message}
+          >
+            <Input
+              type="text"
+              id="username"
+              placeholder={"Please write name of the encounter"}
+            />
+          </FormRowVertical>
+        </GridInputStyled>
 
-            <TableContainerStyled>
-              <TableStyled>
-                <EncounterMapTable onSelect={setSelectedMap} />
-              </TableStyled>
-              <TableStyled>
-                <EncounterNPCTable />
-              </TableStyled>
-            </TableContainerStyled>
+        <TableContainerStyled>
+          <TableStyled>
+            <EncounterMapTable onSelect={setSelectedMap} />
+          </TableStyled>
+          <TableStyled>
+            <EncounterNPCTable
+              chosenNpcs={selectedNpcs}
+              onConfirm={(selectedCharacters: CharacterItem[]) =>
+                setSelectedNpcs(selectedCharacters)
+              }
+            />
+          </TableStyled>
+        </TableContainerStyled>
 
-            <GridButtonStyled>
-              <Button size="large" variation="primary">
-                Create Encounter
-              </Button>
-            </GridButtonStyled>
-          </GridStyled>
-        </Form>
-      )}
+        <GridButtonStyled>
+          <Button size="large" variation="primary">
+            Create Encounter
+          </Button>
+        </GridButtonStyled>
+      </GridStyled>
     </>
   );
 }

@@ -8,45 +8,38 @@ using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Repository;
 using pracadyplomowa.Repository.Board;
 using pracadyplomowa.Repository.Encounter;
+using pracadyplomowa.Repository.UnitOfWork;
 
 namespace pracadyplomowa.Services.Encounter;
 
 public class EncounterService : IEncounterService
 {
-    private readonly IEncounterRepository _encounterRepository;
-    private readonly IBoardRepository _boardRepository;
-    private readonly ICampaignRepository _campaignRepository;
-    private readonly ICharacterRepository _characterRepository;
+    
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IAccountRepository _accountRepository;
     private readonly IMapper _mapper;
     
     public EncounterService(
-        IEncounterRepository encounterRepository, 
-        IBoardRepository boardRepository, 
-        ICampaignRepository campaignRepository,
-        ICharacterRepository characterRepository,
+        IUnitOfWork unitOfWork,
         IAccountRepository accountRepository,
         IMapper mapper
    )
     {
-        _encounterRepository = encounterRepository;
-        _boardRepository = boardRepository;
-        _campaignRepository = campaignRepository;
-        _characterRepository = characterRepository;
+        _unitOfWork = unitOfWork;
         _accountRepository = accountRepository;
         _mapper = mapper;
     }
     
     public async Task<PagedList<EncounterShortDto>> GetEncountersAsync(int ownedId, EncounterParams encounterParams)
     {
-        var encounters = await _encounterRepository.GetEncounters(ownedId, encounterParams);
+        var encounters = await _unitOfWork.EncounterRepository.GetEncounters(ownedId, encounterParams);
         var encounterSummary = _mapper.MapPagedList<Models.Entities.Campaign.Encounter, EncounterShortDto>(encounters);
         return encounterSummary;
     }
 
     public async Task<EncounterSummaryDto> GetEncounterAsync(int encounterId)
     {
-        var encounter = await _encounterRepository.GetEncounterSummary(encounterId);
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId);
         var encounterSummary = _mapper.Map<EncounterSummaryDto>(encounter);
         return encounterSummary;
     }
@@ -58,13 +51,13 @@ public class EncounterService : IEncounterService
         
         try
         {
-            var board = _boardRepository.GetById(createEncounterDto.BoardId);
+            var board = _unitOfWork.BoardRepository.GetById(createEncounterDto.BoardId);
             if (board == null)
             {
                 return new NotFoundObjectResult(new ApiResponse(400, "Board with Id " + createEncounterDto.BoardId + " does not exist"));
             }
         
-            var campaign = _campaignRepository.GetById(createEncounterDto.CampaignId);
+            var campaign = _unitOfWork.CampaignRepository.GetById(createEncounterDto.CampaignId);
             if (campaign == null)
             {
                 return new NotFoundObjectResult(new ApiResponse(400, $"Campaign with Id {createEncounterDto.CampaignId} does not exist"));
@@ -80,7 +73,7 @@ public class EncounterService : IEncounterService
         
             foreach (var characterId in createEncounterDto.CharactersIds)
             {
-                var character = _characterRepository.GetById(characterId);
+                var character = _unitOfWork.CharacterRepository.GetById(characterId);
                 if (character == null)
                 {
                     return new NotFoundObjectResult(new ApiResponse(400, "Character with Id " + characterId + " does not exist"));
@@ -101,8 +94,8 @@ public class EncounterService : IEncounterService
                 encounter.AddParticipance(character);
             }
             
-            _encounterRepository.Add(encounter);
-            await _encounterRepository.SaveChanges();
+            _unitOfWork.EncounterRepository.Add(encounter);
+            await _unitOfWork.SaveChangesAsync();
             
             // transactionScope.Complete();
 

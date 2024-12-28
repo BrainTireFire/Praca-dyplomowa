@@ -19,5 +19,6 @@ namespace pracadyplomowa.Repository
         public Task<Character> GetByIdWithKnownPowers(int Id);
         public Task<Character> GetByIdWithPreparedPowers(int Id);
         public Task<Character> GetByIdWithPowersToPrepare(int Id);
+        public Dictionary<int, Character> GetCharactersForAccessAnalysis(List<int> ids);
     }
 }

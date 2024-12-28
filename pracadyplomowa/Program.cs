@@ -19,6 +19,7 @@ using pracadyplomowa.Token.Services;
 using System.Text.Json.Serialization;
 using pracadyplomowa.RequestHelpers;
 using pracadyplomowa.Services.Item;
+using pracadyplomowa.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +42,7 @@ builder.Services.AddSignalR();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IBoardService, BoardService>();
 builder.Services.AddScoped<IItemService, ItemService>();
+builder.Services.AddScoped<ICharacterService, CharacterService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<ICharacterRepository, CharacterRepository>();
 builder.Services.AddScoped<IClassRepository, ClassRepository>();

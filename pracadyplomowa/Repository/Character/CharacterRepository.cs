@@ -296,5 +296,12 @@ namespace pracadyplomowa.Repository
             .FirstAsync();
             return character;
         }
+
+        public Dictionary<int, Character> GetCharactersForAccessAnalysis(List<int> ids){
+            return _context.Characters
+            .Where(i => ids.Contains(i.Id))
+            .Include(c => c.R_Campaign)
+            .ToDictionary(i => i.Id, i => i);
+        }
     }
 }

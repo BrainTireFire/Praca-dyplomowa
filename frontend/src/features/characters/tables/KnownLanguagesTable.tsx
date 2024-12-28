@@ -11,11 +11,7 @@ export default function KnownLanguagesTable({
 }) {
   return (
     <Menus>
-      <Table
-        header="Known languages"
-        button="Choices available"
-        columns="1fr 3.2rem"
-      >
+      <Table header="Known languages" columns="1fr 3.2rem">
         <Table.Body
           data={languages}
           render={(language) => (

@@ -62,6 +62,7 @@ export type Character = {
   choiceGroups: ChoiceGroup[];
   proficiencyBonus: number;
   isNpc: boolean;
+  accessLevels: CharacterAccessLevels[];
 };
 
 export type CharacterInsertDto = {
@@ -76,3 +77,18 @@ export type CharacterInsertDto = {
   charisma: number;
   isNpc: boolean;
 };
+
+const CharacterAccessLevelsValues = [
+  "EditDescriptiveFields",
+  "EditEquipmentInBackpack",
+  "EditEquippingItems",
+  "EditLevelingUp",
+  "EditEffects",
+  "EditResources",
+  "EditPowersKnown",
+  "EditSpellbook",
+  "Read",
+] as const;
+
+export type CharacterAccessLevels =
+  (typeof CharacterAccessLevelsValues)[number];

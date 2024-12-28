@@ -46,6 +46,7 @@ namespace pracadyplomowa.Models.DTOs
         public List<Resource> Resources { get; set; } = null!;
         public List<ChoiceGroup> ChoiceGroups {get; set;} = null!;
         public int ProficiencyBonus { get; set; }
+        public List<Character.AccessLevels> AccessLevels {get; set;} = [];
 
         public CharacterFullDto(Character character){
             Id = character.Id;

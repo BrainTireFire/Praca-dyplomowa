@@ -1,19 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using pracadyplomowa.Repository.Item;
+using pracadyplomowa.Repository.UnitOfWork;
 
 namespace pracadyplomowa.Services.Item
 {
-    public class ItemService(IItemRepository itemRepository) : IItemService
+    public class ItemService(IUnitOfWork unitOfWork) : IItemService
     {
-        private readonly IItemRepository _itemRepository = itemRepository;
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         public bool CheckExistenceAndEditAccess(int itemId, int userId, out ActionResult errorResult){
-            if(!_itemRepository.GetItemsForEditabilityAnalysis([itemId]).TryGetValue(itemId, out var itemToAnalyze)){ 
+            if(!_unitOfWork.ItemRepository.GetItemsForEditabilityAnalysis([itemId]).TryGetValue(itemId, out var itemToAnalyze)){ 
                 errorResult = new NotFoundObjectResult("Item with specified Id was not found");
                 return false;
             }

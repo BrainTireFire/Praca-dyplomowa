@@ -1,15 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
 using pracadyplomowa.Models.Entities.Characters;
-using pracadyplomowa.Repository;
+using pracadyplomowa.Repository.UnitOfWork;
 
 namespace pracadyplomowa.Services
 {
-    public class CharacterService(ICharacterRepository characterRepository) : ICharacterService
+    public class CharacterService(IUnitOfWork unitOfWork) : ICharacterService
     {
-        private readonly ICharacterRepository _characterRepository = characterRepository;
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         public bool CheckExistenceAndReadEditAccess(int characterId, int userId, List<Character.AccessLevels> requiredAccessLevels, out ActionResult errorResult, out List<Character.AccessLevels> grantedAccessLevels){
-            if(!_characterRepository.GetCharactersForAccessAnalysis([characterId]).TryGetValue(characterId, out var characterToAnalyze)){ 
+            if(!_unitOfWork.CharacterRepository.GetCharactersForAccessAnalysis([characterId]).TryGetValue(characterId, out var characterToAnalyze)){ 
                 grantedAccessLevels = [];
                 errorResult = new NotFoundObjectResult("Character with specified Id was not found");
                 return false;

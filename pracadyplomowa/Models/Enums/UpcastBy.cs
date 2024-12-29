@@ -4,6 +4,7 @@ namespace pracadyplomowa.Models.Enums
     {
         ResourceLevel,
         CharacterLevel,
-        ClassLevel
+        ClassLevel,
+        NotUpcasted
     }
 }

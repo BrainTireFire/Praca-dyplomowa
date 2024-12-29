@@ -17,6 +17,7 @@ export type Power = {
   areaSize: number;
   areaShape: AreaShape;
   auraSize: number;
+  overrideCastersDC: boolean;
   difficultyClass: number;
   savingThrowAbility: ability | null;
   requiresConcentration: boolean;
@@ -26,7 +27,7 @@ export type Power = {
   somaticComponent: boolean;
   duration: number;
   upcastBy: UpcastBy;
-  classForUpcasting: CharacterClass | null;
+  classForUpcasting: number | null;
   immaterialResourceUsed: ImmaterialResource | null;
   materialResourcesUsed: MaterialComponent[];
   effectBlueprints: EffectBlueprintListItem[];
@@ -160,11 +161,16 @@ export const savingThrowRollOptions = (
   label: SavingThrowRollLabels[key],
 }));
 
-export type UpcastBy = "ResourceLevel" | "CharacterLevel" | "ClassLevel";
+export type UpcastBy =
+  | "ResourceLevel"
+  | "CharacterLevel"
+  | "ClassLevel"
+  | "NotUpcasted";
 export const UpcastByLabels: { [key in UpcastBy]: string } = {
-  ResourceLevel: "Resource Level",
-  CharacterLevel: "Character Level",
-  ClassLevel: "Class Level",
+  ResourceLevel: "Resource level",
+  CharacterLevel: "Character level",
+  ClassLevel: "Class level",
+  NotUpcasted: "Not upcasted",
 };
 export const upcastByOptions = (Object.keys(UpcastByLabels) as UpcastBy[]).map(
   (key) => ({

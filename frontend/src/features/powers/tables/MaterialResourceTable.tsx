@@ -34,7 +34,7 @@ export default function MatierialResourceTable({
     >
       <Menus>
         <Table
-          header="Material resources"
+          header="Material components"
           button="Add new"
           columns="1fr 1fr 0.01rem"
           modal={

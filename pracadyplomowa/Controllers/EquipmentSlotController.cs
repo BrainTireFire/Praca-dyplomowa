@@ -6,22 +6,19 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using pracadyplomowa.Models.DTOs;
-using pracadyplomowa.Models.Entities.Items;
-using pracadyplomowa.Models.Entities.Powers;
-using pracadyplomowa.Repository;
-using pracadyplomowa.Repository.Item;
+using pracadyplomowa.Repository.UnitOfWork;
 
 namespace pracadyplomowa.Controllers
 {
     [Authorize]
     public class EquipmentSlotController: BaseApiController
     {
-        private readonly IEquipmentSlotRepository _equipmentSlotRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public EquipmentSlotController(IEquipmentSlotRepository equipmentSlotRepository, IMapper mapper)
+        public EquipmentSlotController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _equipmentSlotRepository = equipmentSlotRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -29,11 +26,8 @@ namespace pracadyplomowa.Controllers
         [HttpGet]
         public async Task<ActionResult<List<ItemListElementDto>>> GetSlots()
         {
-            var slots = await _equipmentSlotRepository.GetAll();
-
-
+            var slots = await _unitOfWork.EquipmentSlotRepository.GetAll();
             List<SlotDto> slotDtos = _mapper.Map<List<SlotDto>>(slots);
-
 
             return Ok(slotDtos);
         }

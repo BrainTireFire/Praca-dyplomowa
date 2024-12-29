@@ -7,40 +7,39 @@ using pracadyplomowa.Models.Entities.Campaign;
 using pracadyplomowa.Models.Enums;
 using pracadyplomowa.Repository.Board;
 using pracadyplomowa.Repository.Field;
+using pracadyplomowa.Repository.UnitOfWork;
 
 namespace pracadyplomowa.Services.Board;
 
 public class BoardService : IBoardService
 {
-    private readonly IBoardRepository _boardRepository;
-    private readonly IFieldRepository _fieldRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private const string COLOR_DEFAULT = "#1F2421";
     private const string FIELD_COVER_LEVEL_DEFAULT = "NoCover";
     private const string FIELD_MOVEMENT_COST_DEFAULT = "Low";
 
-    public BoardService(IBoardRepository boardRepository, IFieldRepository fieldRepository, IMapper mapper)
+    public BoardService(IUnitOfWork unitOfWork, IMapper mapper)
     {
-        _boardRepository = boardRepository;
-        _fieldRepository = fieldRepository;
+        _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
     
     public async Task<PagedList<BoardSummaryDto>> GetBoardsAsync(int ownerId, BoardParams boardParams)
     {
-        var boards = await _boardRepository.GetBoardSummaries(ownerId, boardParams);
+        var boards = await _unitOfWork.BoardRepository.GetBoardSummaries(ownerId, boardParams);
         return boards;
     }
     
     public async Task<PagedList<BoardShortDto>> GetBoardsShortAsync(int ownerId, BoardParams boardParams)
     {
-        var boards = await _boardRepository.GetBoardsShort(ownerId, boardParams);
+        var boards = await _unitOfWork.BoardRepository.GetBoardsShort(ownerId, boardParams);
         return boards;
     }
     
     public async Task<ActionResult<BoardSummaryDto>> GetBoardAsync(int boardId, int ownerId)
     {
-        var board = await _boardRepository.GetBoardFullAsync(boardId, ownerId);
+        var board = await _unitOfWork.BoardRepository.GetBoardFullAsync(boardId, ownerId);
         if (board == null)
         {
             return new NotFoundObjectResult(new ApiResponse(404, $"Board not found with id {boardId}"));
@@ -76,14 +75,14 @@ public class BoardService : IBoardService
         
         AddMissingFieldsToBoard(board, fields);
 
-        _boardRepository.Add(board);
-        await _boardRepository.SaveChanges();
+        _unitOfWork.BoardRepository.Add(board);
+        await _unitOfWork.SaveChangesAsync();
         return new CreatedResult(string.Empty, null);
     }
 
     public async Task<ActionResult> RemoveBoardAsync(int boardId, int ownerId)
     {
-        var board = _boardRepository.GetById(boardId);
+        var board = _unitOfWork.BoardRepository.GetById(boardId);
         if (board == null)
         {
             return new NotFoundObjectResult(new ApiResponse(404, $"Board not found with id {boardId}"));
@@ -96,18 +95,18 @@ public class BoardService : IBoardService
         
         foreach (var field in board.R_ConsistsOfFields)
         {
-            _fieldRepository.Delete(field.Id);
+            _unitOfWork.FieldRepository.Delete(field.Id);
         }
         
-        _boardRepository.Delete(board.Id);
+        _unitOfWork.BoardRepository.Delete(board.Id);
         
-        await _boardRepository.SaveChanges();
+        await _unitOfWork.SaveChangesAsync();
         return new NoContentResult();
     }
     
     public async Task<ActionResult?> UpdateBoardAsync(int boardId, BoardUpdateDto boardUpdateDto, int ownerId)
     {
-        var board = _boardRepository.GetById(boardId);
+        var board = _unitOfWork.BoardRepository.GetById(boardId);
         if (board == null)
         {
             return new NotFoundObjectResult(new ApiResponse(404, $"Board not found with id {boardId}"));
@@ -132,8 +131,8 @@ public class BoardService : IBoardService
             AddMissingFieldsToBoard(board, fields);
         }
         
-        _boardRepository.Update(board);
-        await _boardRepository.SaveChanges();
+        _unitOfWork.BoardRepository.Update(board);
+        await _unitOfWork.SaveChangesAsync();
 
         return null;
     }
@@ -180,13 +179,13 @@ public class BoardService : IBoardService
                     fieldToUpdate.Description);
                 
                 
-                _fieldRepository.Add(newField);
+                _unitOfWork.FieldRepository.Add(newField);
                 board.AddField(newField);
-                _boardRepository.Update(board);
+                _unitOfWork.BoardRepository.Update(board);
             }
             else
             {
-                var field = _fieldRepository.GetById(fieldToUpdate.Id);
+                var field = _unitOfWork.FieldRepository.GetById(fieldToUpdate.Id);
                 if (field == null)
                 {
                     return new NotFoundObjectResult(new ApiResponse(404,
@@ -200,11 +199,11 @@ public class BoardService : IBoardService
                 }
 
                 UpdateFieldProperties(field, fieldToUpdate);
-                _fieldRepository.Update(field);
+                _unitOfWork.FieldRepository.Update(field);
             }
         }
 
-        await _fieldRepository.SaveChanges();
+        await _unitOfWork.SaveChangesAsync();
         return null;
     }
     

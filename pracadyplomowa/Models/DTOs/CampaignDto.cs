@@ -12,6 +12,7 @@ namespace pracadyplomowa.Models.DTOs
         public string Name { get; set; }
         public string Description { get; set; } = null!;
         public List<CharacterSummaryDto> Members { get; set; } = null!;
+        
         public CampaignDto(Campaign campaign)
         {
             Id = campaign.Id;

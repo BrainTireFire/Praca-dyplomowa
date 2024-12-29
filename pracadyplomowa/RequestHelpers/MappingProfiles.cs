@@ -3,6 +3,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.SignalR;
 using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.DTOs.Board;
+using pracadyplomowa.Models.DTOs.Encounter;
 using pracadyplomowa.Models.DTOs.Map.Field;
 using pracadyplomowa.Models.Entities.Campaign;
 using pracadyplomowa.Models.Entities.Characters;
@@ -37,12 +38,65 @@ public class MappingProfiles : Profile
                     src => src.R_ConsistsOfFields
                 )
             );
+        
+        //BOARD FIELD
         CreateMap<Models.Entities.Campaign.Board, BoardShortDto>();
         CreateMap<BoardCreateDto, Models.Entities.Campaign.Board>();
         CreateMap<FieldDto, Field>();
         CreateMap<Field, FieldDto>();
         CreateMap<FieldUpdateDto, Field>();
         CreateMap<BoardUpdateDto, Models.Entities.Campaign.Board>();
+
+        //ENCOUNTER
+        CreateMap<Encounter, EncounterShortDto>()
+            .ForMember(
+                dest => dest.Campaign,
+                opt => opt.MapFrom(
+                    src => src.R_Campaign
+                )
+            )
+            .ForMember(
+                dest => dest.Board,
+                opt => opt.MapFrom(
+                    src => src.R_Board
+                )
+            );
+        CreateMap<Encounter, EncounterSummaryDto>()
+            .ForMember(
+                dest => dest.Campaign,
+                opt => opt.MapFrom(
+                    src => src.R_Campaign
+                )
+            )
+            .ForMember(
+                dest => dest.Board,
+                opt => opt.MapFrom(
+                    src => src.R_Board
+                )
+            )
+            .ForMember(
+                dest => dest.Participances,
+                opt => opt.MapFrom(
+                    src => src.R_Participances
+                )
+            );
+        CreateMap<Campaign, CampaignDto>()
+            .ConstructUsing(campaign => new CampaignDto(campaign));
+        CreateMap<Character, ParticipanceCharacterSummaryDto>();
+        CreateMap<ParticipanceData, ParticipanceDataDto>()
+            .ForMember(
+                dest => dest.Character,
+                opt => opt.MapFrom(
+                    src => src.R_Character
+                )
+            )
+            .ForMember(
+                dest => dest.OccupiedFields,
+                opt => opt.MapFrom(
+                    src => src.R_OccupiedFields
+                )
+            );
+        
         CreateMap<ItemCostRequirement, ItemCostRequirementDto>()
             .ForMember(
                 dest => dest.Worth, opt => opt.MapFrom(src => new CoinPurseDto(){

@@ -30,7 +30,7 @@ namespace pracadyplomowa.Models.DTOs
         [Required]
         [MaxLength(50)]
         public string Race { get; set; } = race;
-
+        
         public CharacterSummaryDto(Character character) :
             this(character.Id, character.IsNpc, character.Name, character.Description, character.R_CharacterBelongsToRace.Name, character.R_CharacterHasLevelsInClass.First().R_Class.Name)
         {

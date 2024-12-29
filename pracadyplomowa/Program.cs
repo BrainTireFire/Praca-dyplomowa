@@ -17,7 +17,10 @@ using pracadyplomowa.Repository.Field;
 using pracadyplomowa.Services.Board;
 using pracadyplomowa.Token.Services;
 using System.Text.Json.Serialization;
+using pracadyplomowa.Repository.Encounter;
+using pracadyplomowa.Repository.UnitOfWork;
 using pracadyplomowa.RequestHelpers;
+using pracadyplomowa.Services.Encounter;
 using pracadyplomowa.Services.Item;
 using pracadyplomowa.Services;
 
@@ -41,8 +44,11 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddSignalR();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IBoardService, BoardService>();
+builder.Services.AddScoped<IEncounterService, EncounterService>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<ICharacterService, CharacterService>();
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<ICharacterRepository, CharacterRepository>();
 builder.Services.AddScoped<IClassRepository, ClassRepository>();
@@ -59,6 +65,8 @@ builder.Services.AddScoped<IItemFamilyRepository, ItemFamilyRepository>();
 builder.Services.AddScoped<IImmaterialResourceBlueprintRepository, ImmaterialResourceBlueprintRepository>();
 builder.Services.AddScoped<IItemCostRequirementRepository, ItemCostRequirementRepository>();
 builder.Services.AddScoped<IEquipmentSlotRepository, EquipmentSlotRepository>();
+builder.Services.AddScoped<IEncounterRepository, EncounterRepository>();
+builder.Services.AddScoped<IParticipanceDataRepository, ParticipanceDataRepository>();
 
 builder.Services.AddScoped<IAuthorizationHandler, OwnershipHandler>();
 // builder.Services.AddHttpContextAccessor();

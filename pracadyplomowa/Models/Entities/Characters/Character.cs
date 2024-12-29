@@ -573,5 +573,64 @@ namespace pracadyplomowa.Models.Entities.Characters
         public void UnequipItem(Item item){
             item.Unequip(this);
         }
+
+        public bool HasAccess(int userId, out List<AccessLevels> accessLevels)
+        {
+            accessLevels = [];
+            if (
+                this.R_Campaign != null &&
+                this.R_Campaign.R_OwnerId == userId)
+            {
+                accessLevels = [
+                    AccessLevels.Read,
+                    AccessLevels.EditDescriptiveFields, 
+                    AccessLevels.EditEquipmentInBackpack, 
+                    AccessLevels.EditEquippingItems, 
+                    AccessLevels.EditLevelingUp, 
+                    AccessLevels.EditEffects, 
+                    AccessLevels.EditResources, 
+                    AccessLevels.EditPowersKnown, 
+                    AccessLevels.EditSpellbook, 
+                ];
+            }
+            else if(
+                this.R_Campaign != null &&
+                this.R_OwnerId == userId
+            ){
+                accessLevels = [
+                    AccessLevels.Read,
+                    AccessLevels.EditDescriptiveFields, 
+                    AccessLevels.EditEquippingItems, 
+                    AccessLevels.EditLevelingUp, 
+                    AccessLevels.EditSpellbook, 
+                ];
+            }
+            else if(this.R_OwnerId == userId){
+                accessLevels = [
+                    AccessLevels.Read,
+                    AccessLevels.EditDescriptiveFields, 
+                    AccessLevels.EditEquipmentInBackpack, 
+                    AccessLevels.EditEquippingItems, 
+                    AccessLevels.EditLevelingUp, 
+                    AccessLevels.EditEffects, 
+                    AccessLevels.EditResources, 
+                    AccessLevels.EditPowersKnown, 
+                    AccessLevels.EditSpellbook, 
+                ];
+            }
+            return accessLevels.Count > 0;
+        }
+
+        public enum AccessLevels{
+            EditDescriptiveFields,
+            EditEquipmentInBackpack,
+            EditEquippingItems,
+            EditLevelingUp,
+            EditEffects,
+            EditResources,
+            EditPowersKnown,
+            EditSpellbook,
+            Read
+        }
     }
 }

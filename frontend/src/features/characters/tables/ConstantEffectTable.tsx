@@ -12,6 +12,7 @@ import EffectInstanceForm from "../../effects/EffectInstanceForm";
 import { useCreateConstantEffectInstance } from "../hooks/useCreateConstantEffectInstance";
 import { initialState } from "../../effects/EffectBlueprintForm";
 import { EffectParentObjectIdContext } from "../../../context/EffectParentObjectIdContext";
+import { EditModeContext } from "../../../context/EditModeContext";
 
 export default function ConstantEffectTable({
   effects,
@@ -54,6 +55,7 @@ export default function ConstantEffectTable({
 
 function ConstantEffectRow({ effect }: { effect: Effect }) {
   const { characterId } = useContext(CharacterIdContext);
+  const { editMode } = useContext(EditModeContext);
   const { deleteEffectInstance, isPending } = useDeleteConstantEffectInstance(
     () => {},
     characterId as number
@@ -73,11 +75,13 @@ function ConstantEffectRow({ effect }: { effect: Effect }) {
                 Open
               </Menus.Button>
             </Modal.Open>
-            <Modal.Open opens="delete">
-              <Menus.Button icon={<HiTrash />} onClick={() => {}}>
-                Delete
-              </Menus.Button>
-            </Modal.Open>
+            {editMode && (
+              <Modal.Open opens="delete">
+                <Menus.Button icon={<HiTrash />} onClick={() => {}}>
+                  Delete
+                </Menus.Button>
+              </Modal.Open>
+            )}
           </Menus.List>
         </Menus.Menu>
         <Modal.Window name="delete">

@@ -27,6 +27,7 @@ import { CharacterIdContext } from "./contexts/CharacterIdContext";
 import { useContext } from "react";
 import EquipmentSlotScreen from "./EquipmentSlotScreen";
 import AddEquipmentScreen from "./AddEquipmentScreen";
+import { EditModeContext } from "../../context/EditModeContext";
 
 const MainGrid = styled.div`
   display: grid;
@@ -73,6 +74,7 @@ const MainGridColumn3 = styled.div`
 
 export default function CharactersSheet() {
   const { characterId } = useContext(CharacterIdContext);
+  const { editMode } = useContext(EditModeContext);
   const { isLoading, isError, error, character } = useCharacter(characterId);
 
   console.log(characterId);
@@ -84,6 +86,23 @@ export default function CharactersSheet() {
     return `${error}`;
   }
 
+  let disableForm = !editMode;
+  let EditDescriptiveFieldsPermission =
+    character?.accessLevels.includes("EditDescriptiveFields") ?? false;
+  let EditEffectsPermission =
+    character?.accessLevels.includes("EditEffects") ?? false;
+  let EditEquipmentInBackpackPermission =
+    character?.accessLevels.includes("EditEquipmentInBackpack") ?? false;
+  let EditEquippingItemsPermission =
+    character?.accessLevels.includes("EditEquippingItems") ?? false;
+  let EditLevelingUpPermission =
+    character?.accessLevels.includes("EditLevelingUp") ?? false;
+  let EditPowersKnownPermission =
+    character?.accessLevels.includes("EditPowersKnown") ?? false;
+  let EditResourcesPermission =
+    character?.accessLevels.includes("EditResources") ?? false;
+  let EditSpellbookPermission =
+    character?.accessLevels.includes("EditSpellbook") ?? false;
   return (
     <Box
       radius="tiny"
@@ -98,6 +117,7 @@ export default function CharactersSheet() {
             <div style={{ gridColumnStart: 1, gridColumnEnd: 3 }}>
               <FormRowVertical label="Name">
                 <Input
+                  disabled={disableForm || !EditDescriptiveFieldsPermission}
                   size="small"
                   customStyles={css`
                     text-transform: uppercase;
@@ -116,7 +136,10 @@ export default function CharactersSheet() {
               }}
             >
               <FormRowVertical label="Description" fillHeight={true}>
-                <TextArea value={character.description}></TextArea>
+                <TextArea
+                  disabled={disableForm || !EditDescriptiveFieldsPermission}
+                  value={character.description}
+                ></TextArea>
               </FormRowVertical>
             </div>
             <div style={{ gridColumnStart: 3, gridRowStart: 1, gridRowEnd: 4 }}>
@@ -184,10 +207,14 @@ export default function CharactersSheet() {
                 gridRowEnd: 3,
               }}
             >
-              <ClassTable
-                characterClasses={character.classes}
-                characterId={characterId as number}
-              ></ClassTable>
+              <EditModeContext.Provider
+                value={{ editMode: editMode && EditLevelingUpPermission }}
+              >
+                <ClassTable
+                  characterClasses={character.classes}
+                  characterId={characterId as number}
+                ></ClassTable>
+              </EditModeContext.Provider>
             </div>
             <div
               style={{
@@ -197,17 +224,19 @@ export default function CharactersSheet() {
                 gridRowEnd: 3,
               }}
             >
-              <Modal>
-                <Modal.Open opens="DevelopCharacter">
-                  <Button variation="primary">Develop character</Button>
-                </Modal.Open>
-                <Modal.Window name="DevelopCharacter">
-                  <SelectFromChoiceGroupScreen
-                    characterId={character.id}
-                    onCloseModal={() => {}}
-                  ></SelectFromChoiceGroupScreen>
-                </Modal.Window>
-              </Modal>
+              {editMode && EditLevelingUpPermission && (
+                <Modal>
+                  <Modal.Open opens="DevelopCharacter">
+                    <Button variation="primary">Develop character</Button>
+                  </Modal.Open>
+                  <Modal.Window name="DevelopCharacter">
+                    <SelectFromChoiceGroupScreen
+                      characterId={character.id}
+                      onCloseModal={() => {}}
+                    ></SelectFromChoiceGroupScreen>
+                  </Modal.Window>
+                </Modal>
+              )}
             </div>
             <div style={{ gridColumnStart: 3, gridColumnEnd: 5 }}>
               <DisplayBox label="Race">
@@ -259,34 +288,60 @@ export default function CharactersSheet() {
             <div
               style={{ gridColumnStart: 1, gridColumnEnd: 5, gridRowStart: 5 }}
             >
-              <EquipmentTable equipments={character.equipment} />
-              <Modal>
-                <Modal.Open opens="AddNewItem">
-                  <Button>Add new item</Button>
-                </Modal.Open>
-                <Modal.Window name="AddNewItem">
-                  <AddEquipmentScreen></AddEquipmentScreen>
-                </Modal.Window>
-              </Modal>
+              <EditModeContext.Provider
+                value={{ editMode: editMode && EditEquippingItemsPermission }}
+              >
+                <EquipmentTable equipments={character.equipment} />
+              </EditModeContext.Provider>
+              {editMode && EditEquipmentInBackpackPermission && (
+                <Modal>
+                  <Modal.Open opens="AddNewItem">
+                    <Button>Add new item</Button>
+                  </Modal.Open>
+                  <Modal.Window name="AddNewItem">
+                    <AddEquipmentScreen></AddEquipmentScreen>
+                  </Modal.Window>
+                </Modal>
+              )}
             </div>
             <div
               style={{ gridColumnStart: 1, gridColumnEnd: 5, gridRowStart: 6 }}
             >
-              <ReadyPowerTable powers={character.preparedPowers} />
+              <EditModeContext.Provider
+                value={{ editMode: editMode && EditSpellbookPermission }}
+              >
+                <ReadyPowerTable powers={character.preparedPowers} />
+              </EditModeContext.Provider>
             </div>
           </MainGridColumn2>
           <MainGridColumn3>
             <div style={{ gridColumnStart: 1, gridRowStart: 1 }}>
-              <ConstantEffectTable effects={character.constantEffects} />
+              <EditModeContext.Provider
+                value={{ editMode: editMode && EditEffectsPermission }}
+              >
+                <ConstantEffectTable effects={character.constantEffects} />
+              </EditModeContext.Provider>
             </div>
             <div style={{ gridColumnStart: 1, gridRowStart: 2 }}>
-              <EffectTable effects={character.effects} />
+              <EditModeContext.Provider
+                value={{ editMode: editMode && EditEffectsPermission }}
+              >
+                <EffectTable effects={character.effects} />
+              </EditModeContext.Provider>
             </div>
             <div style={{ gridColumnStart: 1, gridRowStart: 3 }}>
-              <ResourceTable resources={character.resources} />
+              <EditModeContext.Provider
+                value={{ editMode: editMode && EditResourcesPermission }}
+              >
+                <ResourceTable resources={character.resources} />
+              </EditModeContext.Provider>
             </div>
             <div style={{ gridColumnStart: 1, gridRowStart: 4 }}>
-              <PowersTable powers={character.knownPowers} />
+              <EditModeContext.Provider
+                value={{ editMode: editMode && EditPowersKnownPermission }}
+              >
+                <PowersTable powers={character.knownPowers} />
+              </EditModeContext.Provider>
             </div>
           </MainGridColumn3>
         </MainGrid>

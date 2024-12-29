@@ -123,7 +123,7 @@ namespace pracadyplomowa.Models.Entities.Items
             return x;
         }
 
-        public override bool HasEditAccess(int userId)
+        public bool HasEditAccess(int userId)
         {
             if (!this.IsBlueprint && 
                 this.R_BackpackHasItemId != null && 

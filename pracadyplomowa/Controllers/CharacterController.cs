@@ -22,16 +22,18 @@ using pracadyplomowa.Repository;
 using pracadyplomowa.Repository.Class;
 using pracadyplomowa.Repository.Item;
 using pracadyplomowa.Repository.Race;
+using pracadyplomowa.Services;
 using pracadyplomowa.Repository.UnitOfWork;
 using static pracadyplomowa.Models.Entities.Characters.ChoiceGroup;
 
 namespace pracadyplomowa.Controllers
 {
     [Authorize]
-    public class CharacterController(IUnitOfWork unitOfWork, IMapper mapper) : BaseApiController
+    public class CharacterController(IUnitOfWork unitOfWork, IMapper mapper, ICharacterService characterService) : BaseApiController
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMapper _mapper = mapper;
+        private readonly ICharacterService _characterService = characterService;
 
         [HttpGet("mycharacters")]
         public async Task<ActionResult<CharacterSummaryDto>> GetCharacters([FromQuery] CharacterParams characterParams)
@@ -123,14 +125,15 @@ namespace pracadyplomowa.Controllers
         [HttpGet("{characterId}")]
         public async Task<ActionResult> GetCharacter(int characterId)
         {
-            var character = _unitOfWork.CharacterRepository.GetById(characterId);
-            if (character == null)
-            {
-                return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not exist"));
+            if(!_characterService.CheckExistenceAndReadEditAccess(characterId, User.GetUserId(), [Character.AccessLevels.Read], out var errorResult, out var grantedAccessLevels)){
+                return errorResult;
             }
-            character = await _unitOfWork.CharacterRepository.GetByIdWithAll(characterId);
+            var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(characterId);
 
-            var characterDto = new CharacterFullDto(character);
+            var characterDto = new CharacterFullDto(character)
+            {
+                AccessLevels = grantedAccessLevels
+            };
             return Ok(characterDto);
         }
 

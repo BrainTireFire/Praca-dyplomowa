@@ -160,7 +160,7 @@ function Table({
       {header && (
         <StyledHeaderWithButton>
           <TableHeader>{header}</TableHeader>
-          {modal && (
+          {modal && button && (
             <Modal>
               <Modal.Open opens="TableAction">
                 <TableButton disabled={!editMode}>{button}</TableButton>
@@ -168,7 +168,7 @@ function Table({
               <Modal.Window name="TableAction">{modal}</Modal.Window>
             </Modal>
           )}
-          {!modal && (
+          {!modal && button && (
             <TableButton disabled={!editMode} onClick={buttonOnClick}>
               {button}
             </TableButton>

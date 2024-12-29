@@ -22,6 +22,7 @@ using pracadyplomowa.Repository.UnitOfWork;
 using pracadyplomowa.RequestHelpers;
 using pracadyplomowa.Services.Encounter;
 using pracadyplomowa.Services.Item;
+using pracadyplomowa.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +46,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IBoardService, BoardService>();
 builder.Services.AddScoped<IEncounterService, EncounterService>();
 builder.Services.AddScoped<IItemService, ItemService>();
+builder.Services.AddScoped<ICharacterService, CharacterService>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();

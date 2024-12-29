@@ -7,10 +7,11 @@ import Form from "../../../ui/forms/Form";
 import styled from "styled-components";
 import EncounterMapTable from "./EncounterMapTable";
 import EncounterNPCTable from "./EncounterNPCTable";
-import EncounterMapCreaterLayout from "./EncounterMapCreaterLayout";
 import { useCampaign } from "../hooks/useCampaign";
 import Spinner from "../../../ui/interactive/Spinner";
 import { CharacterItem } from "../../../models/character";
+import { Board } from "../../../models/map/Board";
+import { useCreateEncounter } from "../hooks/useCreateEncounter";
 
 const GridStyled = styled.div`
   display: grid;
@@ -44,10 +45,20 @@ const GridButtonStyled = styled.div`
   align-items: center;
 `;
 
+type EncounterFormProps = {
+  name: string;
+};
+
 export default function EncounterForm() {
   const { isLoading, campaign } = useCampaign();
-  const [selectedMap, setSelectedMap] = useState(null);
+  const { createEncounter, isPending } = useCreateEncounter();
+  const [selectedMap, setSelectedMap] = useState<Board | null>(null);
   const [selectedNpcs, setSelectedNpcs] = useState<CharacterItem[]>([]);
+  const { register, formState, handleSubmit, reset } =
+    useForm<EncounterFormProps>();
+  const { errors } = formState;
+
+  const isFormValid = selectedMap !== null && selectedNpcs.length > 0;
 
   if (isLoading) {
     return <Spinner />;
@@ -57,18 +68,39 @@ export default function EncounterForm() {
     return <div></div>;
   }
 
+  function onSubmit({ name }: EncounterFormProps) {
+    if (selectedMap && selectedNpcs && name && campaign) {
+      createEncounter(
+        {
+          name: name,
+          boardId: selectedMap.id,
+          campaignId: campaign.id,
+          charactersIds: selectedNpcs.map((npc) => npc.id),
+        },
+        {
+          onSettled: () => {
+            reset();
+            setSelectedMap(null);
+            setSelectedNpcs([]);
+          },
+        }
+      );
+    }
+  }
+
   return (
-    <>
+    <Form onSubmit={handleSubmit(onSubmit)}>
       <GridStyled>
         <GridInputStyled>
-          <FormRowVertical
-            label={"Name"}
-            // error={errors?.username?.message}
-          >
+          <FormRowVertical label={"Name"} error={errors?.name?.message}>
             <Input
               type="text"
               id="username"
               placeholder={"Please write name of the encounter"}
+              {...register("name", {
+                required: "Name is required",
+              })}
+              disabled={isPending}
             />
           </FormRowVertical>
         </GridInputStyled>
@@ -88,11 +120,11 @@ export default function EncounterForm() {
         </TableContainerStyled>
 
         <GridButtonStyled>
-          <Button size="large" variation="primary">
+          <Button size="large" variation="primary" disabled={!isFormValid}>
             Create Encounter
           </Button>
         </GridButtonStyled>
       </GridStyled>
-    </>
+    </Form>
   );
 }

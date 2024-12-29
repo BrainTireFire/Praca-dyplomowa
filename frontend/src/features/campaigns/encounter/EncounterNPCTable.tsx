@@ -50,7 +50,14 @@ export default function EncounterNPCTable({
         <StyledTitle>Selected NPCs</StyledTitle>
         <Modal>
           <Modal.Open opens="selection">
-            <Button onClick={() => {}}>Change selection</Button>
+            <Button
+              type="button"
+              onClick={(event) => {
+                event.preventDefault();
+              }}
+            >
+              Change selection
+            </Button>
           </Modal.Open>
           <Modal.Window name="selection">
             <NPCSelectionForm

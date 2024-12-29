@@ -10,31 +10,26 @@ using pracadyplomowa.Models.Entities.Items;
 using pracadyplomowa.Models.Entities.Powers;
 using pracadyplomowa.Repository;
 using pracadyplomowa.Repository.Item;
+using pracadyplomowa.Repository.UnitOfWork;
 
 namespace pracadyplomowa.Controllers
 {
     [Authorize]
     public class PowerController: BaseApiController
     {
-        private readonly IImmaterialResourceBlueprintRepository _immaterialResourceBlueprintRepository;
-        private readonly IEffectBlueprintRepository _effectBlueprintRepository;
-        private readonly IPowerRepository _powerRepository;
-        private readonly IItemCostRequirementRepository _itemCostRequirementRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public PowerController(IImmaterialResourceBlueprintRepository immaterialResourceBlueprintRepository, IEffectBlueprintRepository effectBlueprintRepository, IPowerRepository powerRepository, IItemCostRequirementRepository itemCostRequirementRepository, IMapper mapper)
+        public PowerController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _immaterialResourceBlueprintRepository = immaterialResourceBlueprintRepository;
-            _powerRepository = powerRepository;
-            _effectBlueprintRepository = effectBlueprintRepository;
-            _itemCostRequirementRepository = itemCostRequirementRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
         [HttpGet("immaterialResourceBlueprints")]
         public async Task<ActionResult<List<ImmaterialResourceBlueprintDto>>> GetImmaterialResourceBlueprints()
         {
-            var immaterialResourceBlueprints = await _immaterialResourceBlueprintRepository.GetAll();
+            var immaterialResourceBlueprints = await _unitOfWork.ImmaterialResourceBlueprintRepository.GetAll();
 
 
             List<ImmaterialResourceBlueprintDto> immaterialResourceBlueprintDtos = _mapper.Map<List<ImmaterialResourceBlueprintDto>>(immaterialResourceBlueprints);
@@ -46,7 +41,7 @@ namespace pracadyplomowa.Controllers
         [HttpGet]
         public async Task<ActionResult<List<PowerCompactDto>>> GetPowers([FromQuery] PowerParams powerParams)
         {
-            var powers = await _powerRepository.GetAllPowersWithParams(powerParams);
+            var powers = await _unitOfWork.PowerRepository.GetAllPowersWithParams(powerParams);
             List<PowerCompactDto> powerDtos = _mapper.Map<List<PowerCompactDto>>(powers);
             Response.AddPaginationHeader(powers);
             return Ok(powerDtos);
@@ -55,7 +50,7 @@ namespace pracadyplomowa.Controllers
         [HttpGet("{powerId}")]
         public async Task<ActionResult<PowerFormDto>> GetPower(int powerId)
         {
-            var power = await _powerRepository.GetByIdWithEffectBlueprintsAndMaterialResources(powerId);
+            var power = await _unitOfWork.PowerRepository.GetByIdWithEffectBlueprintsAndMaterialResources(powerId);
 
 
             var powerDto = _mapper.Map<PowerFormDto>(power);
@@ -70,8 +65,8 @@ namespace pracadyplomowa.Controllers
             var power = _mapper.Map<Power>(powerDto);
             power.R_OwnerId = User.GetUserId();
 
-            _powerRepository.Add(power);
-            await _powerRepository.SaveChanges();
+            _unitOfWork.PowerRepository.Add(power);
+            await _unitOfWork.SaveChangesAsync();
             return Ok(power.Id);
         }
 
@@ -80,8 +75,8 @@ namespace pracadyplomowa.Controllers
         public async Task<ActionResult> UpdatePower(PowerFormDto powerDto)
         {
             var power = _mapper.Map<Power>(powerDto);
-            _powerRepository.Update(power);
-            await _powerRepository.SaveChanges();
+            _unitOfWork.PowerRepository.Update(power);
+            await _unitOfWork.SaveChangesAsync();
             return Ok(_mapper.Map<PowerFormDto>(power));
         }
 
@@ -92,8 +87,8 @@ namespace pracadyplomowa.Controllers
             var effectBlueprint = _mapper.Map<EffectBlueprint>(effectDto);
             effectBlueprint.R_PowerId = powerId;
 
-            _effectBlueprintRepository.Add(effectBlueprint);
-            await _effectBlueprintRepository.SaveChanges();
+            _unitOfWork.EffectBlueprintRepository.Add(effectBlueprint);
+            await _unitOfWork.SaveChangesAsync();
             return Ok(effectBlueprint.Id);
         }
 
@@ -110,8 +105,8 @@ namespace pracadyplomowa.Controllers
                 CopperPieces = materialComponentDto.Worth.CopperPieces
             };
 
-            _itemCostRequirementRepository.Add(materialComponent);
-            await _itemCostRequirementRepository.SaveChanges();
+            _unitOfWork.ItemCostRequirementRepository.Add(materialComponent);
+            await _unitOfWork.SaveChangesAsync();
             return Ok();
         }
         [HttpPatch("{powerId}/materialComponents")]
@@ -127,16 +122,16 @@ namespace pracadyplomowa.Controllers
                 CopperPieces = materialComponentDto.Worth.CopperPieces
             };
 
-            _itemCostRequirementRepository.Update(materialComponent);
-            await _itemCostRequirementRepository.SaveChanges();
+            _unitOfWork.ItemCostRequirementRepository.Update(materialComponent);
+            await _unitOfWork.SaveChangesAsync();
             return Ok();
         }
 
         [HttpDelete("materialComponent/{componentId}")]
         public async Task<ActionResult> DeleteEffectBlueprint([FromRoute] int componentId)
         {
-            _itemCostRequirementRepository.Delete(componentId);
-            await _itemCostRequirementRepository.SaveChanges();
+            _unitOfWork.ItemCostRequirementRepository.Delete(componentId);
+            await _unitOfWork.SaveChangesAsync();
             return Ok("Resource deleted");
         }
 

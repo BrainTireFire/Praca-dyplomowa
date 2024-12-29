@@ -11,7 +11,6 @@ import { PowerListItem } from "../models/power";
 import { Slot } from "../models/slot";
 import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
-import { customFetchJSON } from "./customFetchJSON";
 
 export async function getCharacters(): Promise<CharacterItem[]> {
   const response = await customFetch(`${BASE_URL}/api/character/mycharacters`);

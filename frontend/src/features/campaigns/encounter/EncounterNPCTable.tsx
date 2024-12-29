@@ -1,9 +1,9 @@
-import { useState } from "react";
-import Spinner from "../../../ui/interactive/Spinner";
 import { ReusableTable } from "../../../ui/containers/ReusableTable";
-import { useMaps } from "./useMaps";
 import styled from "styled-components";
 import Button from "../../../ui/interactive/Button";
+import Modal from "../../../ui/containers/Modal";
+import { NPCSelectionForm } from "./NPCSelectionForm";
+import { CharacterItem } from "../../../models/character";
 
 const Container = styled.div`
   display: flex;
@@ -26,40 +26,51 @@ const StyledTitle = styled.div`
 
 const TABLE_COLUMNS = {
   Name: "name",
-  Size: "size",
-  Description: "description",
+  Race: "race",
+  // HP: "health",
+  // AC: "armorClass",
+  // STR: "strength",
+  // DEX: "dexterity",
+  // CON: "constitution",
+  // INT: "intelligence",
+  // WIS: "wisdom",
+  // CHA: "charisma",
 };
 
-export default function EncounterNPCTable() {
-  const { isLoading, maps } = useMaps();
-
-  if (isLoading) {
-    return <Spinner />;
-  }
-
-  if (!maps || maps.length === 0) {
-    return <div>No maps available.</div>;
-  }
-
-  const formattedMaps = maps.map((map) => ({
-    id: map.id,
-    name: map.name,
-    size: `${map.sizeX} x ${map.sizeY}`,
-    description: map.description,
-  }));
-
+export default function EncounterNPCTable({
+  chosenNpcs,
+  onConfirm,
+}: {
+  chosenNpcs: CharacterItem[];
+  onConfirm: (selectedCharacters: CharacterItem[]) => void;
+}) {
   return (
     <Container>
       <StyledHeader>
-        <StyledTitle>Pick a NCP</StyledTitle>
-        <Button> Add NPC </Button>
+        <StyledTitle>Selected NPCs</StyledTitle>
+        <Modal>
+          <Modal.Open opens="selection">
+            <Button
+              type="button"
+              onClick={(event) => {
+                event.preventDefault();
+              }}
+            >
+              Change selection
+            </Button>
+          </Modal.Open>
+          <Modal.Window name="selection">
+            <NPCSelectionForm
+              initialNpcList={chosenNpcs}
+              onConfirm={onConfirm}
+            ></NPCSelectionForm>
+          </Modal.Window>
+        </Modal>
       </StyledHeader>
       <ReusableTable
         tableRowsColomns={TABLE_COLUMNS}
-        data={formattedMaps}
-        isSelectable={true}
-        //isSearching={true}
-        //mainHeader="Maps"
+        data={chosenNpcs}
+        isSelectable={false}
       />
     </Container>
   );

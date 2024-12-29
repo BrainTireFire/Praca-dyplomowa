@@ -10,25 +10,26 @@ using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Models.Enums;
 using pracadyplomowa.Repository.Item;
 using pracadyplomowa.Repository.Race;
+using pracadyplomowa.Repository.UnitOfWork;
 
 namespace pracadyplomowa.Controllers
 {
     [Authorize]
     public class ImmaterialResourceBlueprintController: BaseApiController
     {
-        private readonly IImmaterialResourceBlueprintRepository _resourceRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public ImmaterialResourceBlueprintController(IImmaterialResourceBlueprintRepository resourceRepository, IMapper mapper)
+        public ImmaterialResourceBlueprintController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _resourceRepository = resourceRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<ActionResult<ImmaterialResourceBlueprintDto>> GetAll()
         {
-            var resources = await _resourceRepository.GetAll();
+            var resources = await _unitOfWork.ImmaterialResourceBlueprintRepository.GetAll();
             List<ImmaterialResourceBlueprintDto> resourceDTOs = _mapper.Map<List<ImmaterialResourceBlueprintDto>>(resources);
             
             return Ok(resourceDTOs);

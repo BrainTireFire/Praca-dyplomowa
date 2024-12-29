@@ -22,6 +22,7 @@ public class PowerFormDto
     public int? AreaSize { get; set; }
     public AreaShape AreaShape { get; set; }
     public int? AuraSize { get; set; }
+    public bool OverrideCastersDC { get; set; } = false;
     public int? DifficultyClass { get; set; }
     public Ability? SavingThrow { get; set; }
     public bool RequiresConcentration { get; set; }
@@ -31,7 +32,7 @@ public class PowerFormDto
     public bool SomaticComponent { get; set; }
     public int Duration { get; set; }
     public UpcastBy UpcastBy { get; set; }
-    public ClassDTO? ClassForUpcasting { get; set; }
+    public int? ClassForUpcasting { get; set; }
     public ImmaterialResourceBlueprintDto? ImmaterialResourceUsed { get; set; }
     public List<ItemCostRequirementDto> MaterialResourcesUsed { get; set; } = [];
     public List<EffectBlueprintDto> EffectBlueprints { get; set; } = [];

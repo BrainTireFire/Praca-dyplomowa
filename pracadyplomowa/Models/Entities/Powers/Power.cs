@@ -26,6 +26,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         public int? AreaSize { get; set; }
         public AreaShape? AreaShape { get; set; }
         public int? AuraSize { get; set; }
+        public bool OverrideCastersDC { get; set; } = false;
         public int? DifficultyClass { get; set; }
         public Ability? SavingThrow { get; set; }
         public bool RequiresConcentration { get; set; }

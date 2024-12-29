@@ -124,7 +124,7 @@ public class MappingProfiles : Profile
         CreateMap<Power, PowerFormDto>()
             .ForMember(
                 dest => dest.ClassForUpcasting, 
-                opt => opt.MapFrom(src => src.R_ClassForUpcasting)
+                opt => opt.MapFrom(src => src.R_ClassForUpcastingId)
             )
             .ForMember(
                 dest => dest.ImmaterialResourceUsed, 
@@ -141,7 +141,7 @@ public class MappingProfiles : Profile
         CreateMap<PowerFormDto, Power>()
             .ForMember(
                 dest => dest.R_ClassForUpcastingId,
-                opt => opt.MapFrom(src => src.ClassForUpcasting != null ? src.ClassForUpcasting.Id : (int?)null) // Explicitly cast to nullable
+                opt => opt.MapFrom(src => src.ClassForUpcasting) // Explicitly cast to nullable
             )
             .ForMember(
                 dest => dest.R_UsesImmaterialResourceId,

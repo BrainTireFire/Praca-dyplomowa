@@ -23,6 +23,7 @@ import {
   TargetType,
   targetTypeOptions,
   UpcastBy,
+  upcastByOptions,
 } from "./models/power";
 import Dropdown from "../../ui/forms/Dropdown";
 import { useImmaterialResourceBlueprints } from "./hooks/useImmaterialResourceBlueprints";
@@ -38,6 +39,8 @@ import Button from "../../ui/interactive/Button";
 import { usePower } from "./hooks/usePower";
 import MaterialResourceTable from "./tables/MaterialResourceTable";
 import { useCreatePower } from "./hooks/useCreatePower";
+import Heading from "../../ui/text/Heading";
+import { useClasses } from "../characters/hooks/useClass";
 
 // Action types
 export enum PowerActionTypes {
@@ -55,6 +58,7 @@ export enum PowerActionTypes {
   UPDATE_AREA_SHAPE = "UPDATE_AREA_SHAPE",
   UPDATE_AURA_SIZE = "UPDATE_AURA_SIZE",
   UPDATE_DIFFICULTY_CLASS = "UPDATE_DIFFICULTY_CLASS",
+  UPDATE_OVERRIDE_CHARACTER_DC = "UPDATE_OVERRIDE_CHARACTER_DC",
   UPDATE_SAVING_THROW_ABILITY = "UPDATE_SAVING_THROW_ABILITY",
   UPDATE_REQUIRES_CONCENTRATION = "UPDATE_REQUIRES_CONCENTRATION",
   UPDATE_SAVING_THROW_BEHAVIOUR = "UPDATE_SAVING_THROW_BEHAVIOUR",
@@ -141,6 +145,11 @@ interface UpdateDifficultyClassAction {
   payload: number;
 }
 
+interface UpdateOverrideCharacterDCAction {
+  type: PowerActionTypes.UPDATE_OVERRIDE_CHARACTER_DC;
+  payload: boolean;
+}
+
 interface UpdateSavingThrowAbilityAction {
   type: PowerActionTypes.UPDATE_SAVING_THROW_ABILITY;
   payload: ability;
@@ -183,7 +192,7 @@ interface UpdateUpcastByAction {
 
 interface UpdateClassForUpcastingAction {
   type: PowerActionTypes.UPDATE_CLASS_FOR_UPCASTING;
-  payload: CharacterClass;
+  payload: number | null;
 }
 
 interface UpdateImmaterialResourceUsedAction {
@@ -223,6 +232,7 @@ type PowerAction =
   | UpdateAreaShapeAction
   | UpdateAuraSizeAction
   | UpdateDifficultyClassAction
+  | UpdateOverrideCharacterDCAction
   | UpdateSavingThrowAbilityAction
   | UpdateRequiresConcentrationAction
   | UpdateSavingThrowBehaviourAction
@@ -250,7 +260,19 @@ const powerReducer = (state: Power, action: PowerAction): Power => {
     case PowerActionTypes.UPDATE_CASTABLE_BY:
       return { ...state, castableBy: action.payload };
     case PowerActionTypes.UPDATE_POWER_TYPE:
-      return { ...state, powerType: action.payload };
+      if (action.payload === "Saveable") {
+        return {
+          ...state,
+          powerType: action.payload,
+          savingThrowAbility: "STRENGTH",
+        };
+      } else {
+        return {
+          ...state,
+          powerType: action.payload,
+          savingThrowAbility: null,
+        };
+      }
     case PowerActionTypes.UPDATE_TARGET_TYPE:
       return { ...state, targetType: action.payload };
     case PowerActionTypes.UPDATE_RANGE:
@@ -262,9 +284,26 @@ const powerReducer = (state: Power, action: PowerAction): Power => {
     case PowerActionTypes.UPDATE_AREA_SIZE:
       return { ...state, areaSize: action.payload };
     case PowerActionTypes.UPDATE_AREA_SHAPE:
+      if (action.payload === "None") {
+        return { ...state, areaShape: action.payload, areaSize: 0 };
+      }
       return { ...state, areaShape: action.payload };
     case PowerActionTypes.UPDATE_AURA_SIZE:
       return { ...state, auraSize: action.payload };
+    case PowerActionTypes.UPDATE_OVERRIDE_CHARACTER_DC:
+      if (action.payload) {
+        return {
+          ...state,
+          difficultyClass: 10,
+          overrideCastersDC: true,
+        };
+      } else {
+        return {
+          ...state,
+          difficultyClass: 0,
+          overrideCastersDC: false,
+        };
+      }
     case PowerActionTypes.UPDATE_DIFFICULTY_CLASS:
       return { ...state, difficultyClass: action.payload };
     case PowerActionTypes.UPDATE_SAVING_THROW_ABILITY:
@@ -282,7 +321,15 @@ const powerReducer = (state: Power, action: PowerAction): Power => {
     case PowerActionTypes.UPDATE_DURATION:
       return { ...state, duration: action.payload };
     case PowerActionTypes.UPDATE_UPCAST_BY:
-      return { ...state, upcastBy: action.payload };
+      let classForUpcasting = state.classForUpcasting;
+      if (action.payload !== "ClassLevel") {
+        classForUpcasting = null;
+      }
+      return {
+        ...state,
+        upcastBy: action.payload,
+        classForUpcasting: classForUpcasting,
+      };
     case PowerActionTypes.UPDATE_CLASS_FOR_UPCASTING:
       return { ...state, classForUpcasting: action.payload };
     case PowerActionTypes.UPDATE_IMMATERIAL_RESOURCE_USED:
@@ -326,6 +373,7 @@ export const initialState: Power = {
   immaterialResourceUsed: null,
   materialResourcesUsed: [],
   effectBlueprints: [],
+  overrideCastersDC: false,
 };
 
 export default function PowerForm({
@@ -372,6 +420,11 @@ export default function PowerForm({
   //   materialComponents: materialResources,
   //   error: errorMaterialResources,
   // } = useMaterialComponents(powerId);
+  const {
+    isLoading: isLoadingClasses,
+    classes,
+    error: errorClasses,
+  } = useClasses();
 
   const localImmaterialResourceBlueprints = immaterialResourceBlueprints?.map(
     (x) => {
@@ -391,7 +444,16 @@ export default function PowerForm({
   ) {
     return <Spinner></Spinner>;
   }
-  if (errorImmaterialResources) return <>Error</>;
+  if (errorImmaterialResources || errorClasses) return <>Error</>;
+  let classForUpcastingError =
+    state.upcastBy === "ClassLevel" && state.classForUpcasting === null
+      ? "Select value!"
+      : undefined;
+  let resourceForUpcastingError =
+    state.upcastBy === "ResourceLevel" && state.immaterialResourceUsed === null
+      ? "Select value!"
+      : undefined;
+  let lockSaveButton = !!classForUpcastingError || !!resourceForUpcastingError;
   return (
     <>
       <Grid>
@@ -430,9 +492,15 @@ export default function PowerForm({
               chosenValue={state.requiredActionType}
             ></Dropdown>
           </FormRowVertical>
-          <FormRowVertical label="Immaterial resource used">
+          <FormRowVertical
+            label="Immaterial resource used"
+            error={resourceForUpcastingError}
+          >
             <Dropdown
-              valuesList={immaterialResourceBlueprintsDropdown}
+              valuesList={[
+                ...immaterialResourceBlueprintsDropdown,
+                { value: null, label: "None" },
+              ]}
               setChosenValue={(e) =>
                 dispatch({
                   type: PowerActionTypes.UPDATE_IMMATERIAL_RESOURCE_USED,
@@ -540,6 +608,43 @@ export default function PowerForm({
                   ></EffectTable>
                 </>
               )}
+              <RadioGroup
+                values={upcastByOptions}
+                onChange={(x) => {
+                  dispatch({
+                    type: PowerActionTypes.UPDATE_UPCAST_BY,
+                    payload: x as UpcastBy,
+                  });
+                }}
+                name="upcastBy"
+                label="Upcasted by"
+                currentValue={state.upcastBy}
+              ></RadioGroup>
+              <FormRowVertical
+                label={"Class for upcasting"}
+                error={classForUpcastingError}
+              >
+                <Dropdown
+                  disabled={state.upcastBy !== "ClassLevel"}
+                  valuesList={
+                    classes
+                      ? classes.map((item) => {
+                          return {
+                            value: item.id.toString(),
+                            label: item.name,
+                          };
+                        })
+                      : []
+                  }
+                  setChosenValue={(value) =>
+                    dispatch({
+                      type: PowerActionTypes.UPDATE_CLASS_FOR_UPCASTING,
+                      payload: Number(value) ?? null,
+                    })
+                  }
+                  chosenValue={state.classForUpcasting?.toString() ?? null}
+                ></Dropdown>
+              </FormRowVertical>
             </Row1InColumn2>
             <Row2InColumn2>
               <FormRowVertical
@@ -606,7 +711,8 @@ export default function PowerForm({
                 <Input
                   disabled={
                     state.powerType === "Attack" ||
-                    state.powerType === "AuraCreator"
+                    state.powerType === "AuraCreator" ||
+                    state.areaShape === "None"
                   }
                   value={state.areaSize}
                   type="number"
@@ -630,10 +736,7 @@ export default function PowerForm({
                     state.powerType === "Attack" ||
                     state.powerType === "AuraCreator"
                   }
-                  valuesList={[
-                    ...areaShapeOptions,
-                    { value: null, label: "Not applicable" },
-                  ]}
+                  valuesList={[...areaShapeOptions]}
                   setChosenValue={(e) =>
                     dispatch({
                       type: PowerActionTypes.UPDATE_AREA_SHAPE,
@@ -662,47 +765,62 @@ export default function PowerForm({
                   }
                 ></Input>
               </FormRowVertical>
-              <FormRowVertical
-                label="Difficulty class"
+              <SettingGroupContainer
                 customStyles={css`
                   grid-column: 3;
-                  grid-row: 1;
+                  grid-row: 1/3;
                 `}
               >
-                <Input
-                  disabled={state.powerType !== "Saveable"}
-                  value={state.difficultyClass}
-                  type="number"
-                  onChange={(e) =>
-                    dispatch({
-                      type: PowerActionTypes.UPDATE_DIFFICULTY_CLASS,
-                      payload: Number(e.target.value),
-                    })
-                  }
-                ></Input>
-              </FormRowVertical>
-              <FormRowVertical
-                label="Saving throw"
-                customStyles={css`
-                  grid-column: 3;
-                  grid-row: 2;
-                `}
-              >
-                <Dropdown
-                  disabled={state.powerType !== "Saveable"}
-                  valuesList={[
-                    ...abilitiesDropdown,
-                    { value: null, label: "Not applicable" },
-                  ]}
-                  setChosenValue={(e) =>
-                    dispatch({
-                      type: PowerActionTypes.UPDATE_SAVING_THROW_ABILITY,
-                      payload: e as ability,
-                    })
-                  }
-                  chosenValue={state.savingThrowAbility}
-                ></Dropdown>
-              </FormRowVertical>
+                <Heading as="h3">Saving throw settings</Heading>
+                <FormRowLabelRight label="Override casters DC">
+                  <Input
+                    type="checkbox"
+                    disabled={state.powerType !== "Saveable"}
+                    checked={state.overrideCastersDC}
+                    onChange={(e) =>
+                      dispatch({
+                        type: PowerActionTypes.UPDATE_OVERRIDE_CHARACTER_DC,
+                        payload: e.target.checked,
+                      })
+                    }
+                  ></Input>
+                </FormRowLabelRight>
+                <FormRowVertical label="Overriding value">
+                  <Input
+                    disabled={
+                      state.powerType !== "Saveable" || !state.overrideCastersDC
+                    }
+                    value={state.difficultyClass}
+                    type="number"
+                    onChange={(e) =>
+                      dispatch({
+                        type: PowerActionTypes.UPDATE_DIFFICULTY_CLASS,
+                        payload: Number(e.target.value),
+                      })
+                    }
+                  ></Input>
+                </FormRowVertical>
+                <FormRowVertical
+                  label="Saving throw"
+                  customStyles={css`
+                    grid-column: 3;
+                    grid-row: 2;
+                  `}
+                >
+                  <Dropdown
+                    disabled={state.powerType !== "Saveable"}
+                    valuesList={[...abilitiesDropdown]}
+                    setChosenValue={(e) =>
+                      dispatch({
+                        type: PowerActionTypes.UPDATE_SAVING_THROW_ABILITY,
+                        payload: e as ability,
+                      })
+                    }
+                    chosenValue={state.savingThrowAbility}
+                  ></Dropdown>
+                </FormRowVertical>
+              </SettingGroupContainer>
+
               <RadioGroup
                 disabled={state.powerType !== "Saveable"}
                 values={savingThrowBehaviourOptions}
@@ -778,10 +896,12 @@ export default function PowerForm({
         </Row2>
       </Grid>
       {actualPowerId && (
-        <Button onClick={() => updatePower(state)}>Update</Button>
+        <Button onClick={() => updatePower(state)} disabled={lockSaveButton}>
+          Update
+        </Button>
       )}
       {!actualPowerId && (
-        <Button onClick={() => createPower(state)}>
+        <Button onClick={() => createPower(state)} disabled={lockSaveButton}>
           Save to unlock more configuration options
         </Button>
       )}
@@ -841,3 +961,10 @@ PowerForm.defaultProps = {
   onCreate: (_id: number) => {},
   onUpdate: (_id: number) => {},
 };
+
+const SettingGroupContainer = styled(Box)`
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  ${(props) => props.customStyles}
+`;

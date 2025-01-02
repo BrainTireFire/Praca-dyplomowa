@@ -70,7 +70,10 @@ export default function CampaignInstance() {
               </Modal.Window>
             </Modal> */}
           <Button size="large">{t("campaignInstance.longRest")}</Button>
-          <Button size="large" onClick={() => navigate(`/campaigns/session/1`)}>
+          <Button
+            size="large"
+            onClick={() => navigate(`/campaigns/${id}/createSession`)}
+          >
             {t("campaignInstance.session")}
           </Button>
           <Button size="large" onClick={() => navigate("shops")}>

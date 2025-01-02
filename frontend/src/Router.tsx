@@ -51,7 +51,10 @@ export default function Router() {
             path="campaigns/:campaignId/shops/:shopId"
             element={<CustomizeShop />}
           />
-          <Route path="campaigns/session/:groupName" element={<MainBoard />} />
+          <Route
+            path="campaigns/:campaignId/createSession"
+            element={<MainBoard />}
+          />
           <Route
             path="campaigns/:campaignId/encounter"
             element={<Encounter />}

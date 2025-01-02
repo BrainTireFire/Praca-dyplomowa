@@ -7,7 +7,7 @@ import {
   getColorForUser,
   drawGrid,
   highlightBox,
-  drawCustomCursor,
+  drawFieldBoxWithText,
   drawSelectedBox,
   fillSelectedBox,
   drawTextName,
@@ -49,11 +49,12 @@ export default function MapBoard({
     drawGrid(ctx, width, height, board.sizeX, board.sizeY);
 
     if (fields) {
-      fields.forEach((field) => {
-        fillSelectedBox(ctx, field, board.sizeX, board.sizeY, field.color);
+      console.log(fields);
 
+      fields.forEach((field) => {
+        fillSelectedBox(ctx, field, board.sizeX, board.sizeY);
         if (field.memberName) {
-          drawTextName(ctx, field, field.memberName, board.sizeX, board.sizeY);
+          drawTextName(ctx, field, board.sizeX, board.sizeY);
         }
       });
     }

@@ -161,36 +161,101 @@ export const drawSelectedBoxes = (
   ctx.restore();
 };
 
-export const fillSelectedBox = (
+export const drawFieldBoxWithText = (
   ctx: CanvasRenderingContext2D,
-  selectedBox: { positionX: number; positionY: number } | null,
+  field: {
+    positionX: number;
+    positionY: number;
+    color: string;
+    memberName?: string;
+  },
   columns: number,
-  rows: number,
-  color: string
+  rows: number
 ) => {
-  if (!selectedBox) return;
+  if (!ctx || !field) {
+    return;
+  }
 
   const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
 
   ctx.save();
 
   // Fill the box with the provided color
-  ctx.fillStyle = color;
+
+  ctx.fillStyle = field.color;
   ctx.fillRect(
-    selectedBox.positionX * squareSize, // X position of the selected square
-    selectedBox.positionY * squareSize, // Y position of the selected square
-    squareSize, // Width of the square
-    squareSize // Height of the square
+    field.positionX * squareSize, // X position of the field
+    field.positionY * squareSize, // Y position of the field
+    squareSize, // Width of the field
+    squareSize // Height of the field
   );
 
-  // Now, apply the stroke (border)
+  // Apply the border (stroke)
   ctx.strokeStyle = getCssVariable("--color-border");
   ctx.lineWidth = 1; // Set the width of the border
   ctx.strokeRect(
-    selectedBox.positionX * squareSize, // X position of the selected square
-    selectedBox.positionY * squareSize, // Y position of the selected square
-    squareSize, // Width of the square
-    squareSize // Height of the square
+    field.positionX * squareSize, // X position of the field
+    field.positionY * squareSize, // Y position of the field
+    squareSize, // Width of the field
+    squareSize // Height of the field
+  );
+
+  // Draw the text if `memberName` is provided
+  if (field.memberName) {
+    ctx.fillStyle = "white"; // Text color
+    ctx.font = "12px Poppins"; // Font size and style
+
+    // Measure the width of the text
+    const textWidth = ctx.measureText(field.memberName).width;
+
+    // Position the text in the center of the field
+    const textX = field.positionX * squareSize + squareSize / 2 - textWidth / 2; // Center horizontally
+    const textY = field.positionY * squareSize + squareSize / 2 + 4; // Center vertically
+
+    // Draw the text
+    ctx.fillText(field.memberName, textX, textY);
+  }
+
+  ctx.restore();
+};
+
+export const fillSelectedBox = (
+  ctx: CanvasRenderingContext2D,
+  field: {
+    positionX: number;
+    positionY: number;
+    color: string;
+    memberName?: string;
+  },
+  columns: number,
+  rows: number
+) => {
+  if (!ctx || !field) {
+    return;
+  }
+
+  const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
+
+  ctx.save();
+
+  // Fill the box with the provided color
+
+  ctx.fillStyle = field.color;
+  ctx.fillRect(
+    field.positionX * squareSize, // X position of the field
+    field.positionY * squareSize, // Y position of the field
+    squareSize, // Width of the field
+    squareSize // Height of the field
+  );
+
+  // Apply the border (stroke)
+  ctx.strokeStyle = getCssVariable("--color-border");
+  ctx.lineWidth = 1; // Set the width of the border
+  ctx.strokeRect(
+    field.positionX * squareSize, // X position of the field
+    field.positionY * squareSize, // Y position of the field
+    squareSize, // Width of the field
+    squareSize // Height of the field
   );
 
   ctx.restore();
@@ -198,33 +263,74 @@ export const fillSelectedBox = (
 
 export const drawTextName = (
   ctx: CanvasRenderingContext2D,
-  selectedField: { positionX: number; positionY: number },
-  text: string,
+  field: {
+    positionX: number;
+    positionY: number;
+    color: string;
+    memberName?: string;
+    avatarUrl?: string;
+  },
   columns: number,
   rows: number
 ) => {
-  if (!ctx || !selectedField) return;
+  if (!ctx || !field) {
+    return;
+  }
 
   // Calculate square size from the provided columns and rows
   const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
 
   ctx.save();
-  ctx.fillStyle = "black"; // Text color
-  ctx.font = "12px Poppins"; // Font size and style
 
-  // Measure the width of the text
-  const textWidth = ctx.measureText(text).width;
+  if (field.avatarUrl) {
+    const avatarSize = 50; // Larger avatar size
+    const avatarX =
+      field.positionX * squareSize + squareSize / 2 - avatarSize / 2; // Center avatar horizontally
+    const avatarY =
+      field.positionY * squareSize + squareSize / 2 - avatarSize / 1.4; // Position avatar above the text
 
-  // Position the text above the selected field (center horizontally)
-  const textX =
-    selectedField.positionX * squareSize + squareSize / 2 - textWidth / 2; // Center horizontally
-  const textY = selectedField.positionY * squareSize + squareSize / 2 - 5; // Center vertically
+    const avatarImage = new Image();
+    avatarImage.src = field.avatarUrl; // Load the image URL
 
-  // Debug: Log the calculated positions
-  console.log(`Text X: ${textX}, Text Y: ${textY}`);
+    // Once the image is loaded, draw it on the canvas
+    avatarImage.onload = () => {
+      // Save the current drawing context
+      ctx.save();
 
-  // Draw the text on the canvas
-  ctx.fillText(text, textX, textY);
+      // Create a circular clip path for the avatar
+      ctx.beginPath();
+      ctx.arc(
+        avatarX + avatarSize / 2,
+        avatarY + avatarSize / 2,
+        avatarSize / 2,
+        0,
+        Math.PI * 2
+      );
+      ctx.clip();
+
+      // Draw the image within the circular area
+      ctx.drawImage(avatarImage, avatarX, avatarY, avatarSize, avatarSize);
+
+      // Restore the previous drawing context
+      ctx.restore();
+    };
+  }
+
+  // Draw the text below the avatar
+  if (field.memberName) {
+    ctx.fillStyle = "white"; // Text color
+    ctx.font = "12px Poppins"; // Font size and style
+
+    // Measure the width of the text
+    const textWidth = ctx.measureText(field.memberName).width;
+
+    // Position the text below the avatar
+    const textX = field.positionX * squareSize + squareSize / 2 - textWidth / 2; // Center horizontally
+    const textY = field.positionY * squareSize + squareSize / 2 + 30; // Position text below avatar (adjusted)
+
+    // Draw the text
+    ctx.fillText(field.memberName, textX, textY);
+  }
 
   ctx.restore();
 };

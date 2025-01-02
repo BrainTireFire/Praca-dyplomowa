@@ -36,6 +36,7 @@ const GlobalStyles = createGlobalStyle`
   --color-input-disable-background: #b2b6b4;
 
   --color-navbar: #1D1D1D;
+  --color-navbar-hover: #222222;
   --color-navbar-border: #1D1D1D;
 
   --color-button-green: #49A078;

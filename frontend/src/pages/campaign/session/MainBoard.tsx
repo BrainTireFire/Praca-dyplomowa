@@ -1,19 +1,13 @@
 import React from "react";
 import styled from "styled-components";
-import SessionLayout from "../../../features/campaigns/session/SessionLayout";
+import EncounterLayout from "../../../features/campaigns/session/EncounterLayout";
 
-const Container = styled.div`
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  grid-template-rows: auto 1fr;
-  gap: 10px;
-  height: 100vh;
-`;
+const Container = styled.div``;
 
 export default function MainBoard() {
   return (
     <Container>
-      <SessionLayout />
+      <EncounterLayout />
     </Container>
   );
 }

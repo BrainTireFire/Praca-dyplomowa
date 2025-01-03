@@ -1176,6 +1176,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             return true;
         }
 
+        [NotMapped]
         public List<ImmaterialResourceInstance> AllImmaterialResourceInstances{
             get {
                 List<ImmaterialResourceInstance> immaterialResourceInstances = [];

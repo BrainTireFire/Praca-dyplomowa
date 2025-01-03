@@ -1095,12 +1095,28 @@ namespace pracadyplomowa.Models.Entities.Characters
             return damage;
         }
 
-        public bool ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap){
-            EffectGroup effectGroup = new();
+        [NotMapped]
+        public int Level {
+            get {
+                return this.R_CharacterHasLevelsInClass.Count;
+            }
+        }
+
+        public int GetLevelInClass(int classId){
+            return this.R_CharacterHasLevelsInClass.Where(c => c.R_ClassId == classId).Count();
+        }
+
+        public bool ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel){
             // check for available immaterial resource
-            var immaterialResourceInstance = this.AllImmaterialResourceInstances.FirstOrDefault(x => x.R_BlueprintId == power.R_UsesImmaterialResourceId && !x.NeedsRefresh);
-            if(immaterialResourceInstance == null){
-                return false;
+            if(power.R_UsesImmaterialResource != null){
+                var immaterialResourceInstance = this.AllImmaterialResourceInstances.FirstOrDefault(x => x.R_BlueprintId == power.R_UsesImmaterialResourceId && !x.NeedsRefresh && x.Level == immaterialResourceLevel);
+                if(immaterialResourceInstance == null){
+                    return false;
+                }
+                else{
+                    //consume immaterial resource
+                    immaterialResourceInstance.NeedsRefresh = true;
+                }
             }
             // check whether material components present
             List<ItemCostRequirement> materialComponentsRequired = (power.R_ItemsCostRequirement?.OrderBy(req => req.Worth.GetValueInCopperPieces()).ToList()) ?? [];
@@ -1123,42 +1139,8 @@ namespace pracadyplomowa.Models.Entities.Characters
                 return false;
             }
             
-            //generate effects
-            foreach(Character target in targetsToHitSuccessMap.Keys){
-                if (targetsToHitSuccessMap.TryGetValue(target, out var outcome))
-                {
-                    foreach (EffectBlueprint effectBlueprint in power.R_EffectBlueprints)
-                    {
-                        bool shouldAdd = false;
-
-                        if (power.PowerType == PowerType.Attack && outcome == HitType.Hit || outcome == HitType.CriticalHit)
-                        {
-                            shouldAdd = true;
-                        }
-                        else if (power.PowerType == PowerType.Saveable)
-                        {
-                            if ((outcome == HitType.Hit || outcome == HitType.CriticalHit) && !effectBlueprint.Saved)
-                            {
-                                shouldAdd = true;
-                            }
-                            else if ((outcome == HitType.Hit || outcome == HitType.CriticalHit) && effectBlueprint.Saved && power.SavingThrowBehaviour == SavingThrowBehaviour.Modifies)
-                            {
-                                shouldAdd = true;
-                            }
-                        }
-
-                        if (shouldAdd)
-                        {
-                            var effectInstance = effectBlueprint.Generate(this, target);
-                            if(outcome == HitType.CriticalHit && effectInstance is DamageEffectInstance damageEffectInstance){
-                                damageEffectInstance.CriticalHit = true;
-                            }
-                            effectGroup.AddEffectOnCharacter(effectInstance);
-                        }
-                    }
-                }
-            }
             //configure effect group
+            EffectGroup effectGroup = new();
             effectGroup.DurationLeft = power.Duration;
             effectGroup.IsConstant = false;
             if(power.PowerType == PowerType.Saveable && power.SavingThrowRoll == Enums.SavingThrowRoll.RetakenEveryTurn){
@@ -1169,9 +1151,45 @@ namespace pracadyplomowa.Models.Entities.Characters
             if(power.RequiresConcentration){
                 effectGroup.R_ConcentratedOnByCharacter = this;
             }
-            //consume immaterial resource
-            if(immaterialResourceInstance != null){
-                immaterialResourceInstance.NeedsRefresh = true;
+            //generate effects
+            foreach(Character target in targetsToHitSuccessMap.Keys){
+                if (targetsToHitSuccessMap.TryGetValue(target, out var outcome))
+                {
+                    foreach (EffectBlueprint effectBlueprint in power.R_EffectBlueprints)
+                    {
+                        bool shouldAdd = false;
+                        if(power.UpcastBy == UpcastBy.NotUpcasted
+                        || (power.UpcastBy == UpcastBy.ResourceLevel && immaterialResourceLevel == effectBlueprint.Level)
+                        || (power.UpcastBy == UpcastBy.CharacterLevel && this.Level >= effectBlueprint.Level)
+                        || (power.UpcastBy == UpcastBy.ClassLevel && this.GetLevelInClass((int)power.R_ClassForUpcastingId) >= effectBlueprint.Level)
+                        ){
+                            if (power.PowerType == PowerType.Attack && outcome == HitType.Hit || outcome == HitType.CriticalHit)
+                            {
+                                shouldAdd = true;
+                            }
+                            else if (power.PowerType == PowerType.Saveable)
+                            {
+                                if ((outcome == HitType.Hit || outcome == HitType.CriticalHit) && !effectBlueprint.Saved)
+                                {
+                                    shouldAdd = true;
+                                }
+                                else if ((outcome == HitType.Hit || outcome == HitType.CriticalHit) && effectBlueprint.Saved && power.SavingThrowBehaviour == SavingThrowBehaviour.Modifies)
+                                {
+                                    shouldAdd = true;
+                                }
+                            }
+
+                            if (shouldAdd)
+                            {
+                                var effectInstance = effectBlueprint.Generate(this, target);
+                                if(outcome == HitType.CriticalHit && effectInstance is DamageEffectInstance damageEffectInstance){
+                                    damageEffectInstance.CriticalHit = true;
+                                }
+                                effectGroup.AddEffectOnCharacter(effectInstance);
+                            }
+                        }
+                    }
+                }
             }
             return true;
         }

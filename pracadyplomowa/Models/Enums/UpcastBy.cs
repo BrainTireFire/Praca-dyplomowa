@@ -2,9 +2,9 @@ namespace pracadyplomowa.Models.Enums
 {
     public enum UpcastBy
     {
-        ResourceLevel,
-        CharacterLevel,
-        ClassLevel,
-        NotUpcasted
+        NotUpcasted = 0,
+        ResourceLevel = 1,
+        CharacterLevel = 2,
+        ClassLevel = 3,
     }
 }

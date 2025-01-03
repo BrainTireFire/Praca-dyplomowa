@@ -104,7 +104,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
             return hitMap;
         }
 
-        public bool ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap)
+        public bool ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel)
         {
             EffectGroup effectGroup = new();
             

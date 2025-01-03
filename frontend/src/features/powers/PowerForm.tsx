@@ -274,7 +274,21 @@ const powerReducer = (state: Power, action: PowerAction): Power => {
     case PowerActionTypes.UPDATE_IS_MAGIC:
       return { ...state, isMagic: action.payload };
     case PowerActionTypes.UPDATE_CASTABLE_BY:
-      return { ...state, castableBy: action.payload };
+      let immaterialResourceUsed = state.immaterialResourceUsed;
+      let upcastBy = state.upcastBy;
+      let targetType = state.targetType;
+      if (action.payload !== "Character") {
+        immaterialResourceUsed = null;
+        upcastBy = "NotUpcasted";
+        targetType = "Character";
+      }
+      return {
+        ...state,
+        castableBy: action.payload,
+        immaterialResourceUsed: immaterialResourceUsed,
+        upcastBy: upcastBy,
+        targetType: targetType,
+      };
     case PowerActionTypes.UPDATE_POWER_TYPE:
       if (action.payload === "Saveable") {
         return {
@@ -470,7 +484,9 @@ export default function PowerForm({
       ? "Select value!"
       : undefined;
   let resourceForUpcastingError =
-    state.upcastBy === "ResourceLevel" && state.immaterialResourceUsed === null
+    state.upcastBy === "ResourceLevel" &&
+    state.immaterialResourceUsed === null &&
+    state.castableBy === "Character"
       ? "Select value!"
       : undefined;
   let lockSaveButton = !!classForUpcastingError || !!resourceForUpcastingError;
@@ -517,6 +533,7 @@ export default function PowerForm({
             error={resourceForUpcastingError}
           >
             <Dropdown
+              disabled={state.castableBy !== "Character"}
               valuesList={[
                 ...immaterialResourceBlueprintsDropdown,
                 { value: null, label: "None" },
@@ -619,6 +636,7 @@ export default function PowerForm({
               name="targetType"
               label="Target type"
               currentValue={state.targetType}
+              disabled={state.castableBy !== "Character"}
             ></RadioGroup>
           </Column1>
           <Column2>
@@ -651,6 +669,7 @@ export default function PowerForm({
                 name="upcastBy"
                 label="Upcasted by"
                 currentValue={state.upcastBy}
+                disabled={state.castableBy !== "Character"}
               ></RadioGroup>
               <FormRowVertical
                 label={"Class for upcasting"}

@@ -11,7 +11,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
     {
         private MagicEffectInstance() : base("EF", 0){}
         public MagicEffectInstance(string name, DiceSet diceSet) : base(name, diceSet){}
-        public MagicEffectInstance(MagicEffectBlueprint magicEffectBlueprint, Character roller, Character target) : base(magicEffectBlueprint, roller, target){
+        public MagicEffectInstance(MagicEffectBlueprint magicEffectBlueprint, Character? roller, Character target) : base(magicEffectBlueprint, roller, target){
         }
         public MagicEffectInstance(MagicEffectInstance effectInstance) : base(effectInstance){
         }

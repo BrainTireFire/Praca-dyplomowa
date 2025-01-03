@@ -8,9 +8,11 @@ export type Power = {
   description: string;
   requiredActionType: ActionType;
   isImplemented: boolean;
+  isMagic: boolean;
   castableBy: CastableBy;
   powerType: PowerType;
   targetType: TargetType;
+  isRanged: boolean;
   range: number;
   maxTargets: number;
   maxTargetsToExclude: number;

@@ -13,9 +13,11 @@ public class PowerFormDto
     public string Description { get; set; } = "";
     public ActionType RequiredActionType { get; set; }
     public bool IsImplemented { get; set; }
+    public bool IsMagic { get; set; }
     public CastableBy CastableBy { get; set; }
     public PowerType PowerType { get; set; }
     public TargetType TargetType { get; set; }
+    public bool IsRanged { get; set; }
     public int? Range { get; set; }
     public int MaxTargets { get; set; }
     public int MaxTargetsToExclude { get; set; }

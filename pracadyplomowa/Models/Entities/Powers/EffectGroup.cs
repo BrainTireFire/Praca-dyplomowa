@@ -13,10 +13,9 @@ namespace pracadyplomowa.Models.Entities.Powers
     {
 
         public bool IsConstant { get; set; }
-        public int DurationLeft { get; set; }
-        public int DifficultyClassToBreak { get; set; }
-        public Ability SavingThrow { get; set; }
-        public bool SavingThrowRetakenEveryTurn { get; set; }
+        public int? DurationLeft { get; set; }
+        public int? DifficultyClassToBreak { get; set; }
+        public Ability? SavingThrow { get; set; }
         public string Name {get; set;} = null!;
 
         //Relationships
@@ -36,6 +35,9 @@ namespace pracadyplomowa.Models.Entities.Powers
         public int? R_GeneratesAuraId { get; set; }
         public virtual ICollection<Field> R_EffectOnField { get; set; } = [];
 
-        
+        public void AddEffectOnCharacter(EffectInstance effectInstance){
+            this.R_OwnedEffects.Add(effectInstance);
+            effectInstance.R_OwnedByGroup = this;
+        }
     }
 }

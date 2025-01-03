@@ -12,7 +12,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
     {
         private MagicEffectBlueprint(): this("EF", 0, 0){}
         //methods
-        public override EffectInstance Generate(Character roller, Character target){
+        public override EffectInstance Generate(Character? roller, Character target){
             return new MagicEffectInstance(this, roller, target);
         }
     }

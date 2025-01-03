@@ -39,7 +39,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         //constructors
         private EffectBlueprint() : this("EF"){}
         //methods
-        public abstract EffectInstance Generate(Character roller, Character target); //roller added to parameter list as it will be used by overriding methods
+        public abstract EffectInstance Generate(Character? roller, Character target); //roller added to parameter list as it will be used by overriding methods
         //     return new EffectInstance(this, target);
         // }
     }

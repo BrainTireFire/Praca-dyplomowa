@@ -13,7 +13,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
         private SizeEffectBlueprint() : this("EF"){}
         public SizeEffectType SizeEffectType{ get; set; } = new SizeEffectType();
         //methods
-        public override EffectInstance Generate(Character roller, Character target){
+        public override EffectInstance Generate(Character? roller, Character target){
             return new SizeEffectInstance(this, roller, target);
         }
     }

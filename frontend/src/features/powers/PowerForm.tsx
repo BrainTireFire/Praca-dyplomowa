@@ -48,6 +48,8 @@ export enum PowerActionTypes {
   UPDATE_DESCRIPTION = "UPDATE_DESCRIPTION",
   UPDATE_ACTION_TYPE = "UPDATE_ACTION_TYPE",
   UPDATE_IS_IMPLEMENTED = "UPDATE_IS_IMPLEMENTED",
+  UPDATE_IS_MAGIC = "UPDATE_IS_MAGIC",
+  UPDATE_IS_RANGED = "UPDATE_IS_RANGED",
   UPDATE_CASTABLE_BY = "UPDATE_CASTABLE_BY",
   UPDATE_POWER_TYPE = "UPDATE_POWER_TYPE",
   UPDATE_TARGET_TYPE = "UPDATE_TARGET_TYPE",
@@ -180,6 +182,16 @@ interface UpdateSomaticComponentAction {
   payload: boolean;
 }
 
+interface UpdateIsMagic {
+  type: PowerActionTypes.UPDATE_IS_MAGIC;
+  payload: boolean;
+}
+
+interface UpdateIsRanged {
+  type: PowerActionTypes.UPDATE_IS_RANGED;
+  payload: boolean;
+}
+
 interface UpdateDurationAction {
   type: PowerActionTypes.UPDATE_DURATION;
   payload: number;
@@ -244,7 +256,9 @@ type PowerAction =
   | UpdateClassForUpcastingAction
   | UpdateImmaterialResourceUsedAction
   | UpdateMaterialResourcesUsedAction
-  | UpdateEffectBlueprintsAction;
+  | UpdateEffectBlueprintsAction
+  | UpdateIsMagic
+  | UpdateIsRanged;
 
 const powerReducer = (state: Power, action: PowerAction): Power => {
   console.log(action);
@@ -257,6 +271,8 @@ const powerReducer = (state: Power, action: PowerAction): Power => {
       return { ...state, requiredActionType: action.payload };
     case PowerActionTypes.UPDATE_IS_IMPLEMENTED:
       return { ...state, isImplemented: action.payload };
+    case PowerActionTypes.UPDATE_IS_MAGIC:
+      return { ...state, isMagic: action.payload };
     case PowerActionTypes.UPDATE_CASTABLE_BY:
       return { ...state, castableBy: action.payload };
     case PowerActionTypes.UPDATE_POWER_TYPE:
@@ -275,6 +291,8 @@ const powerReducer = (state: Power, action: PowerAction): Power => {
       }
     case PowerActionTypes.UPDATE_TARGET_TYPE:
       return { ...state, targetType: action.payload };
+    case PowerActionTypes.UPDATE_IS_RANGED:
+      return { ...state, isRanged: action.payload };
     case PowerActionTypes.UPDATE_RANGE:
       return { ...state, range: action.payload };
     case PowerActionTypes.UPDATE_MAX_TARGETS:
@@ -351,9 +369,11 @@ export const initialState: Power = {
   description: "Power description",
   requiredActionType: "Action",
   isImplemented: false,
+  isMagic: true,
   castableBy: "Character",
   powerType: "Attack",
   targetType: "Character",
+  isRanged: true,
   range: 0,
   maxTargets: 0,
   maxTargetsToExclude: 0,
@@ -543,10 +563,22 @@ export default function PowerForm({
             <FormRowLabelRight label="Is implemented">
               <Input
                 type="checkbox"
-                checked={state.somaticComponent}
+                checked={state.isImplemented}
                 onChange={(x) =>
                   dispatch({
                     type: PowerActionTypes.UPDATE_IS_IMPLEMENTED,
+                    payload: x.target.checked,
+                  })
+                }
+              ></Input>
+            </FormRowLabelRight>
+            <FormRowLabelRight label="Is magic">
+              <Input
+                type="checkbox"
+                checked={state.isMagic}
+                onChange={(x) =>
+                  dispatch({
+                    type: PowerActionTypes.UPDATE_IS_MAGIC,
                     payload: x.target.checked,
                   })
                 }
@@ -647,24 +679,39 @@ export default function PowerForm({
               </FormRowVertical>
             </Row1InColumn2>
             <Row2InColumn2>
-              <FormRowVertical
-                label="Range"
+              <SettingGroupContainer
                 customStyles={css`
                   grid-column: 1;
                   grid-row: 1;
                 `}
               >
-                <Input
-                  value={state.range}
-                  type="number"
-                  onChange={(e) =>
-                    dispatch({
-                      type: PowerActionTypes.UPDATE_RANGE,
-                      payload: Number(e.target.value),
-                    })
-                  }
-                ></Input>
-              </FormRowVertical>
+                <Heading as="h3">Range settings</Heading>
+                <FormRowLabelRight label="Is ranged">
+                  <Input
+                    type="checkbox"
+                    checked={state.isRanged}
+                    onChange={(x) =>
+                      dispatch({
+                        type: PowerActionTypes.UPDATE_IS_RANGED,
+                        payload: x.target.checked,
+                      })
+                    }
+                  ></Input>
+                </FormRowLabelRight>
+                <FormRowVertical label="Range">
+                  <Input
+                    disabled={!state.isRanged}
+                    value={state.range}
+                    type="number"
+                    onChange={(e) =>
+                      dispatch({
+                        type: PowerActionTypes.UPDATE_RANGE,
+                        payload: Number(e.target.value),
+                      })
+                    }
+                  ></Input>
+                </FormRowVertical>
+              </SettingGroupContainer>
               <FormRowVertical
                 label="Max targets"
                 customStyles={css`

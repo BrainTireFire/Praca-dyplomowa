@@ -28,8 +28,8 @@ namespace pracadyplomowa.Models.Entities.Powers
 
         public virtual ICollection<EffectInstance> R_OwnedEffects { get; set; } = [];
 
-        public virtual Aura? R_OriginatesFromAura { get; set; }
-        public int? R_OriginatesFromAuraId { get; set; }
+        // public virtual Aura? R_OriginatesFromAura { get; set; }
+        // public int? R_OriginatesFromAuraId { get; set; }
 
         public virtual Aura? R_GeneratesAura { get; set; }
         public int? R_GeneratesAuraId { get; set; }
@@ -38,6 +38,18 @@ namespace pracadyplomowa.Models.Entities.Powers
         public void AddEffectOnCharacter(EffectInstance effectInstance){
             this.R_OwnedEffects.Add(effectInstance);
             effectInstance.R_OwnedByGroup = this;
+        }
+
+        public void GenerateAura(Character centeredAt, List<EffectBlueprint> effectBlueprints, int size){
+            var aura = new Aura
+                    {
+                        R_CenteredAtCharacter = centeredAt,
+                        R_EffectsOnCharactersInRange = effectBlueprints,
+                        Size = size
+                        
+                    };
+            this.R_GeneratesAura = aura;
+            aura.R_GeneratedBy = this;
         }
     }
 }

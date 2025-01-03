@@ -1151,44 +1151,53 @@ namespace pracadyplomowa.Models.Entities.Characters
             if(power.RequiresConcentration){
                 effectGroup.R_ConcentratedOnByCharacter = this;
             }
-            //generate effects
+            List<EffectInstance> generatedEffects = [];
             foreach(Character target in targetsToHitSuccessMap.Keys){
-                if (targetsToHitSuccessMap.TryGetValue(target, out var outcome))
-                {
-                    foreach (EffectBlueprint effectBlueprint in power.R_EffectBlueprints)
+                if(power.PowerType != PowerType.AuraCreator){
+                    //generate effects
+                    if (targetsToHitSuccessMap.TryGetValue(target, out var outcome))
                     {
-                        bool shouldAdd = false;
-                        if(power.UpcastBy == UpcastBy.NotUpcasted
-                        || (power.UpcastBy == UpcastBy.ResourceLevel && immaterialResourceLevel == effectBlueprint.Level)
-                        || (power.UpcastBy == UpcastBy.CharacterLevel && this.Level >= effectBlueprint.Level)
-                        || (power.UpcastBy == UpcastBy.ClassLevel && this.GetLevelInClass((int)power.R_ClassForUpcastingId) >= effectBlueprint.Level)
-                        ){
-                            if (power.PowerType == PowerType.Attack && outcome == HitType.Hit || outcome == HitType.CriticalHit)
-                            {
-                                shouldAdd = true;
-                            }
-                            else if (power.PowerType == PowerType.Saveable)
-                            {
-                                if ((outcome == HitType.Hit || outcome == HitType.CriticalHit) && !effectBlueprint.Saved)
+                        foreach (EffectBlueprint effectBlueprint in power.R_EffectBlueprints)
+                        {
+                            bool shouldAdd = false;
+                            if(power.UpcastBy == UpcastBy.NotUpcasted
+                            || (power.UpcastBy == UpcastBy.ResourceLevel && immaterialResourceLevel == effectBlueprint.Level)
+                            || (power.UpcastBy == UpcastBy.CharacterLevel && this.Level >= effectBlueprint.Level)
+                            || (power.UpcastBy == UpcastBy.ClassLevel && this.GetLevelInClass((int)power.R_ClassForUpcastingId) >= effectBlueprint.Level)
+                            ){
+                                if (power.PowerType == PowerType.Attack && outcome == HitType.Hit || outcome == HitType.CriticalHit)
                                 {
                                     shouldAdd = true;
                                 }
-                                else if ((outcome == HitType.Hit || outcome == HitType.CriticalHit) && effectBlueprint.Saved && power.SavingThrowBehaviour == SavingThrowBehaviour.Modifies)
+                                else if (power.PowerType == PowerType.Saveable)
                                 {
-                                    shouldAdd = true;
+                                    if ((outcome == HitType.Hit || outcome == HitType.CriticalHit) && !effectBlueprint.Saved)
+                                    {
+                                        shouldAdd = true;
+                                    }
+                                    else if ((outcome == HitType.Hit || outcome == HitType.CriticalHit) && effectBlueprint.Saved && power.SavingThrowBehaviour == SavingThrowBehaviour.Modifies)
+                                    {
+                                        shouldAdd = true;
+                                    }
                                 }
-                            }
 
-                            if (shouldAdd)
-                            {
-                                var effectInstance = effectBlueprint.Generate(this, target);
-                                if(outcome == HitType.CriticalHit && effectInstance is DamageEffectInstance damageEffectInstance){
-                                    damageEffectInstance.CriticalHit = true;
+                                if (shouldAdd)
+                                {
+                                    var effectInstance = effectBlueprint.Generate(this, target);
+                                    if(outcome == HitType.CriticalHit && effectInstance is DamageEffectInstance damageEffectInstance){
+                                        damageEffectInstance.CriticalHit = true;
+                                    }
+                                    generatedEffects.Add(effectInstance);
                                 }
-                                effectGroup.AddEffectOnCharacter(effectInstance);
                             }
                         }
                     }
+                }
+                else{
+                    effectGroup.GenerateAura(target, power.R_EffectBlueprints, (int)power.AuraSize!);
+                }
+                foreach(var effect in generatedEffects){
+                    effectGroup.AddEffectOnCharacter(effect);
                 }
             }
             return true;

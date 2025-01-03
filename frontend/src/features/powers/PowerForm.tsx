@@ -277,10 +277,22 @@ const powerReducer = (state: Power, action: PowerAction): Power => {
       let immaterialResourceUsed = state.immaterialResourceUsed;
       let upcastBy = state.upcastBy;
       let targetType = state.targetType;
+      let powerType = state.powerType;
+      let isRanged = state.isRanged;
+      let range = state.range;
+      let requiresConcentration = state.requiresConcentration;
+      let overrideCastersDC = state.overrideCastersDC;
       if (action.payload !== "Character") {
         immaterialResourceUsed = null;
         upcastBy = "NotUpcasted";
         targetType = "Character";
+        powerType = "Saveable";
+        range = 0;
+        isRanged = false;
+        requiresConcentration = false;
+      }
+      if (action.payload === "Terrain") {
+        overrideCastersDC = true;
       }
       return {
         ...state,
@@ -288,21 +300,35 @@ const powerReducer = (state: Power, action: PowerAction): Power => {
         immaterialResourceUsed: immaterialResourceUsed,
         upcastBy: upcastBy,
         targetType: targetType,
+        powerType: powerType,
+        range: range,
+        isRanged: isRanged,
+        requiresConcentration: requiresConcentration,
+        overrideCastersDC: overrideCastersDC,
       };
     case PowerActionTypes.UPDATE_POWER_TYPE:
-      if (action.payload === "Saveable") {
-        return {
-          ...state,
-          powerType: action.payload,
-          savingThrowAbility: "STRENGTH",
-        };
+      let savingThrowAbility = state.savingThrowAbility;
+      let targetType2 = state.targetType;
+      let savingThrowBehaviour = state.savingThrowBehaviour;
+      let savingThrowRollMoment = state.savingThrowRoll;
+      if (action.payload === "Saveable" || action.payload === "AuraCreator") {
+        savingThrowAbility = "STRENGTH";
+        savingThrowBehaviour = "Breaks";
+        savingThrowRollMoment = "TakenOnce";
       } else {
-        return {
-          ...state,
-          powerType: action.payload,
-          savingThrowAbility: null,
-        };
+        savingThrowAbility = null;
       }
+      if (action.payload === "AuraCreator") {
+        targetType2 = "Caster";
+      }
+      return {
+        ...state,
+        powerType: action.payload,
+        savingThrowAbility: savingThrowAbility,
+        targetType: targetType2,
+        savingThrowBehaviour: savingThrowBehaviour,
+        savingThrowRoll: savingThrowRollMoment,
+      };
     case PowerActionTypes.UPDATE_TARGET_TYPE:
       return { ...state, targetType: action.payload };
     case PowerActionTypes.UPDATE_IS_RANGED:
@@ -402,7 +428,7 @@ export const initialState: Power = {
   verbalComponent: false,
   somaticComponent: false,
   duration: 0,
-  upcastBy: "ResourceLevel",
+  upcastBy: "NotUpcasted",
   classForUpcasting: null,
   immaterialResourceUsed: null,
   materialResourcesUsed: [],
@@ -614,7 +640,11 @@ export default function PowerForm({
               currentValue={state.castableBy}
             ></RadioGroup>
             <RadioGroup
-              values={powerTypeOptions}
+              values={powerTypeOptions.filter(
+                (option) =>
+                  state.castableBy === "Character" ||
+                  option.value !== "AuraCreator"
+              )}
               onChange={(x) => {
                 dispatch({
                   type: PowerActionTypes.UPDATE_POWER_TYPE,
@@ -626,7 +656,10 @@ export default function PowerForm({
               currentValue={state.powerType}
             ></RadioGroup>
             <RadioGroup
-              values={targetTypeOptions}
+              values={targetTypeOptions.filter(
+                (option) =>
+                  state.powerType !== "AuraCreator" || option.value === "Caster"
+              )}
               onChange={(x) => {
                 dispatch({
                   type: PowerActionTypes.UPDATE_TARGET_TYPE,
@@ -707,6 +740,10 @@ export default function PowerForm({
                 <Heading as="h3">Range settings</Heading>
                 <FormRowLabelRight label="Is ranged">
                   <Input
+                    disabled={
+                      state.castableBy !== "Character" ||
+                      state.powerType === "AuraCreator"
+                    }
                     type="checkbox"
                     checked={state.isRanged}
                     onChange={(x) =>
@@ -719,7 +756,11 @@ export default function PowerForm({
                 </FormRowLabelRight>
                 <FormRowVertical label="Range">
                   <Input
-                    disabled={!state.isRanged}
+                    disabled={
+                      !state.isRanged ||
+                      state.castableBy !== "Character" ||
+                      state.powerType === "AuraCreator"
+                    }
                     value={state.range}
                     type="number"
                     onChange={(e) =>
@@ -739,6 +780,7 @@ export default function PowerForm({
                 `}
               >
                 <Input
+                  disabled={state.powerType === "AuraCreator"}
                   value={state.maxTargets}
                   type="number"
                   onChange={(e) =>
@@ -757,6 +799,7 @@ export default function PowerForm({
                 `}
               >
                 <Input
+                  disabled={state.powerType === "AuraCreator"}
                   value={state.maxTargetsToExclude}
                   type="number"
                   onChange={(e) =>
@@ -841,7 +884,11 @@ export default function PowerForm({
                 <FormRowLabelRight label="Override casters DC">
                   <Input
                     type="checkbox"
-                    disabled={state.powerType !== "Saveable"}
+                    disabled={
+                      (state.powerType !== "Saveable" &&
+                        state.powerType !== "AuraCreator") ||
+                      state.castableBy === "Terrain"
+                    }
                     checked={state.overrideCastersDC}
                     onChange={(e) =>
                       dispatch({
@@ -854,7 +901,9 @@ export default function PowerForm({
                 <FormRowVertical label="Overriding value">
                   <Input
                     disabled={
-                      state.powerType !== "Saveable" || !state.overrideCastersDC
+                      (state.powerType !== "Saveable" &&
+                        state.powerType !== "AuraCreator") ||
+                      !state.overrideCastersDC
                     }
                     value={state.difficultyClass}
                     type="number"
@@ -874,7 +923,10 @@ export default function PowerForm({
                   `}
                 >
                   <Dropdown
-                    disabled={state.powerType !== "Saveable"}
+                    disabled={
+                      state.powerType !== "Saveable" &&
+                      state.powerType !== "AuraCreator"
+                    }
                     valuesList={[...abilitiesDropdown]}
                     setChosenValue={(e) =>
                       dispatch({
@@ -888,7 +940,10 @@ export default function PowerForm({
               </SettingGroupContainer>
 
               <RadioGroup
-                disabled={state.powerType !== "Saveable"}
+                disabled={
+                  state.powerType !== "Saveable" &&
+                  state.powerType !== "AuraCreator"
+                }
                 values={savingThrowBehaviourOptions}
                 onChange={(x) => {
                   dispatch({
@@ -929,6 +984,7 @@ export default function PowerForm({
                 `}
               >
                 <Input
+                  disabled={state.castableBy !== "Character"}
                   type="checkbox"
                   checked={state.requiresConcentration}
                   onChange={(x) =>

@@ -12,7 +12,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
         public MovementCostEffectType MovementCostEffectType{ get; set; } = new MovementCostEffectType();
         private MovementCostEffectBlueprint(): this("EF"){}
         //methods
-        public override EffectInstance Generate(Character roller, Character target){
+        public override EffectInstance Generate(Character? roller, Character target){
             return new MovementCostEffectInstance(this, target);
         }
     }

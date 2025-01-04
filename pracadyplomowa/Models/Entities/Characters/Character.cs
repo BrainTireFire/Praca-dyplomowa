@@ -1,10 +1,14 @@
 
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
+using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Expressions;
 using pracadyplomowa.Data.Migrations;
+using pracadyplomowa.Models.ComplexTypes.Effects;
 using pracadyplomowa.Models.Entities.Campaign;
+using pracadyplomowa.Models.Entities.Interfaces;
 using pracadyplomowa.Models.Entities.Items;
 using pracadyplomowa.Models.Entities.Powers;
 using pracadyplomowa.Models.Entities.Powers.EffectBlueprints;
@@ -15,13 +19,25 @@ using pracadyplomowa.Utility;
 
 namespace pracadyplomowa.Models.Entities.Characters
 {
-    public class Character : ObjectWithOwner
+    public class Character : ObjectWithOwner, ICaster
     {
 
         //Properties
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
-        public int Hitpoints { get; set; }
+        private int _Hitpoints;
+        public int Hitpoints { 
+            get {
+                return _Hitpoints;
+            }
+            set {
+                if(value > MaxHealth) {
+                    _Hitpoints = MaxHealth;}
+                else{
+                    _Hitpoints = value;
+                }
+            }
+        }
         public bool IsNpc { get; set; } = false;
         public DiceSet UsedHitDice { get; set; } = new DiceSet();
 
@@ -175,20 +191,30 @@ namespace pracadyplomowa.Models.Entities.Characters
             }
         }
 
+        // [NotMapped]
+        // public int TemporaryHitpoints {
+        //     get => this.AffectedByApprovedEffects.OfType<HitpointEffectInstance>().Where(hei => 
+        //             hei.EffectType.HitpointEffect == HitpointEffect.TemporaryHitpoints
+        //         ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet);
+        // }
         [NotMapped]
+        private int _TemporaryHitpoints;
         public int TemporaryHitpoints {
-            get => this.AffectedByApprovedEffects.OfType<HitpointEffectInstance>().Where(hei => 
-                    hei.EffectType.HitpointEffect == HitpointEffect.TemporaryHitpoints
-                ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet);
+            get {
+                return _TemporaryHitpoints;
+            }
+            set {
+                _TemporaryHitpoints = value;
+                if(_TemporaryHitpoints < 0){
+                    _TemporaryHitpoints = 0;
+                }
+            }
         }
 
         [NotMapped]
         public int ProficiencyBonus {
             get => this.R_CharacterHasLevelsInClass.Count / 5 + 2;
         }
-
-        [NotMapped]
-        public List<EffectInstance> ApprovedConditionalEffectInstances {get; set;} = [];
 
         public int AbilityValue(Ability ability){
             return this.AffectedByApprovedEffects.OfType<AbilityEffectInstance>().Where(aei => 
@@ -544,9 +570,63 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
 
         [NotMapped]
-        public IEnumerable<EffectInstance> AffectedByApprovedEffects {
+        public List<EffectInstance> AffectedByApprovedEffects {
             get {
-                return this.R_AffectedBy.Where(x => x.Conditional == false).Union(this.ApprovedConditionalEffectInstances);
+                return this.AllEffects.Where(x => x.Conditional == false || x.ConditionalApproved).ToList();
+            }
+        }
+
+        [NotMapped]
+        public List<Power> AllPowers => R_PowersKnown.Union(this.R_PowersPrepared.SelectMany(x => x.R_PreparedPowers)).Union(this.R_EquippedItems.Select(x => x.R_Item).Distinct().SelectMany(x => x.R_EquipItemGrantsAccessToPower)).ToList();
+        
+        [NotMapped]
+        public List<EffectInstance> AllEffects => R_AffectedBy
+        .Union(this.R_UsedChoiceGroups.SelectMany(cg => cg.R_EffectsGranted))
+        .Union(this.R_EquippedItems.SelectMany(ed => ed.R_Item.R_EffectsOnEquip))
+            // .Where(effect => effect is not SavingThrowEffectInstance || (effect is SavingThrowEffectInstance instance && instance.EffectType.SavingThrowEffect_Condition == null))
+        .ToList();
+
+        private bool HasCondition(Condition condition){
+            return this.AffectedByApprovedEffects
+                    .OfType<StatusEffectInstance>()
+                    .Where(z => z.EffectType.StatusEffect == condition)
+                    .Any();
+        }
+
+        [NotMapped]
+        public bool IsBlinded {
+            get {
+                return HasCondition(Condition.Blinded);
+            }
+        }
+        [NotMapped]
+        public bool IsParalyzed {
+            get {
+                return HasCondition(Condition.Paralyzed);
+            }
+        }
+        [NotMapped]
+        public bool IsRestrained {
+            get {
+                return HasCondition(Condition.Restrained);
+            }
+        }
+        [NotMapped]
+        public bool IsStunned {
+            get {
+                return HasCondition(Condition.Stunned);
+            }
+        }
+        [NotMapped]
+        public bool IsUnconscious {
+            get {
+                return HasCondition(Condition.Unconscious);
+            }
+        }
+        [NotMapped]
+        public bool IsInvisible {
+            get {
+                return HasCondition(Condition.Invisible);
             }
         }
 
@@ -631,6 +711,520 @@ namespace pracadyplomowa.Models.Entities.Characters
             EditPowersKnown,
             EditSpellbook,
             Read
+        }
+
+        public int DifficultyClass(Power power){
+            return 8 + PowerCastBonus(power);
+        }
+
+        private int PowerCastBonus(Power power){ // attack roll bonus or to be used with +8 as difficulty class
+            // Power power = this.AllPowers.First(p => p.Id == powerId);
+            if(power.OverrideCastersDC && power.DifficultyClass != null){
+                return (int)power.DifficultyClass;
+            }
+            List<Class> classes = power.R_AlwaysAvailableThroughChoiceGroupUsage
+            .Where(cgu => cgu.R_ChoiceGroup.R_GrantedByClassLevel != null)
+            .Select(cgu =>
+    #pragma warning disable CS8602 // Dereference of a possibly null reference.
+                cgu.R_ChoiceGroup.R_GrantedByClassLevel
+    #pragma warning restore CS8602 // Dereference of a possibly null reference.
+                .R_Class
+            )
+            .Union(
+                power.R_ToPrepareThroughChoiceGroupUsage
+                .Where(cgu => cgu.R_ChoiceGroup.R_GrantedByClassLevel != null)
+                .Select(cgu =>
+        #pragma warning disable CS8602 // Dereference of a possibly null reference.
+                    cgu.R_ChoiceGroup.R_GrantedByClassLevel
+        #pragma warning restore CS8602 // Dereference of a possibly null reference.
+                    .R_Class
+                )
+            ).Distinct().ToList();
+            if(classes.Count != 0){
+                classes = this.R_CharacterHasLevelsInClass.Select(x => x.R_Class).Distinct().ToList();
+            }
+            return classes.Aggregate( 0, (max, next) => {
+                int difficultyClass;
+                if(next.SpellcastingAbility == null){
+                    difficultyClass = 0;
+                }
+                difficultyClass = AbilityModifier((int)next.SpellcastingAbility) + ProficiencyBonus;
+                return difficultyClass > max ? difficultyClass : max;
+            }) + ProficiencyBonus;
+            
+        }
+
+        public DiceSet AttackBonusDiceSet(AttackRollEffect_Range range, AttackRollEffect_Source source){
+            return this.AffectedByApprovedEffects.OfType<AttackRollEffectInstance>()
+            .Where(effect => effect.EffectType.AttackRollEffect_Range == range && effect.EffectType.AttackRollEffect_Source == source && effect.EffectType.AttackRollEffect_Type == AttackRollEffect_Type.Bonus)
+            .Select(effect => effect.DiceSet)
+            .Aggregate(new DiceSet(), (sum, next) => sum += next).getPersonalizedSet(this);
+        }
+
+        private int PowerAttackRoll(Encounter encounter, Character target, Power power){
+            var range = power.IsRanged ? AttackRollEffect_Range.Ranged : AttackRollEffect_Range.Melee;
+            var source = power.IsMagic ? AttackRollEffect_Source.Spell : AttackRollEffect_Source.Weapon;
+            List<DiceSet.Dice> bonusRollResults = AttackBonusDiceSet(range, source).RollPrototype(false, false, null);
+
+            //check for rerolls
+            bool rerollEffectPresent = RerollOnAttackRoll(source, range, out int rerollLowerThan);
+            //check for advantage
+            bool advantage = AdvantageOnAttackRoll(encounter, target, source, range);
+            //check for disadvantage
+            bool disadvantage = DisadvantageOnAttackRoll(encounter, target, range);
+
+            DiceSet.Dice baseRollResult = new DiceSet(){d20 = 1}.RollPrototype(advantage, disadvantage, rerollLowerThan).First();
+
+            return bonusRollResults.Concat([baseRollResult]).Aggregate(0, (sum, current) => sum + current.result) + PowerCastBonus(power);
+        }
+
+        public int SavingThrowRoll(Ability ability){
+            DiceSet bonusDiceSet = this.AffectedByApprovedEffects.OfType<SavingThrowEffectInstance>()
+             .Where(effect => 
+                effect.EffectType.SavingThrowEffect_Ability == ability && effect.EffectType.SavingThrowEffect == SavingThrowEffect.Bonus
+             ).Select(effect => effect.DiceSet)
+            .Aggregate(new DiceSet(), (sum, next) => sum += next).getPersonalizedSet(this);
+
+            DiceSet baseDiceSet = new DiceSet(){d20 = 1};
+
+            List<DiceSet.Dice> bonusRollResults = bonusDiceSet.RollPrototype(false, false, null);
+            
+            //check for rerolls
+            List<SavingThrowEffectInstance> rerollEffectList = this.AffectedByApprovedEffects
+                                                                    .OfType<SavingThrowEffectInstance>()
+                                                                    .Where(x => x.EffectType.SavingThrowEffect == SavingThrowEffect.RerollLowerThan && x.EffectType.SavingThrowEffect_Ability == ability)
+                                                                    .ToList();
+            bool rerollEffectPresent = rerollEffectList.Count != 0;
+            int? rerollLowerThan = null;
+            if(rerollEffectPresent){
+                rerollLowerThan = rerollEffectList.Aggregate(0, (maximum, current) => current.DiceSet.flat > maximum ? current.DiceSet.flat : maximum);
+            }
+            //check for advantage
+            List<SavingThrowEffectInstance> advantageEffectList = this.AffectedByApprovedEffects
+                                                                        .OfType<SavingThrowEffectInstance>()
+                                                                        .Where(x => x.EffectType.SavingThrowEffect == SavingThrowEffect.Advantage && x.EffectType.SavingThrowEffect_Ability == ability)
+                                                                        .ToList();
+            bool advantageEffectPresent = advantageEffectList.Count != 0;
+            //check for proficiency
+            List<SavingThrowEffectInstance> proficiencyEffectList = this.AffectedByApprovedEffects
+                                                                        .OfType<SavingThrowEffectInstance>()
+                                                                        .Where(x => x.EffectType.SavingThrowEffect == SavingThrowEffect.Proficiency && x.EffectType.SavingThrowEffect_Ability == ability)
+                                                                        .ToList();
+            bool proficiencyEffectPresent = advantageEffectList.Count != 0;
+
+            DiceSet.Dice baseRollResult = new DiceSet(){d20 = 1}.RollPrototype(advantageEffectPresent, false, rerollLowerThan).First();
+
+            return bonusRollResults.Concat([baseRollResult]).Aggregate(0, (sum, current) => sum + current.result) + (proficiencyEffectPresent ? ProficiencyBonus : 0);
+        }
+
+        public Dictionary<int, HitType> CheckIfPowerHitSuccessfull(Encounter encounter, Power power, List<Character> targets){
+            //retrieve data
+            Dictionary<int, HitType> hitMap = [];
+
+            foreach(var targetedCharacter in targets){
+                if(power.PowerType == PowerType.Attack){
+                    int roll = this.PowerAttackRoll(encounter, targetedCharacter, power);
+                    HitType outcome = HitType.Miss;
+                    if(roll == 1){
+                        outcome = HitType.CriticalMiss;
+                    }
+                    if(roll == 20){
+                        outcome = HitType.CriticalHit;
+                    }
+                    if(roll >= targetedCharacter.ArmorClass){
+                        outcome = HitType.Hit;
+                    }
+                    hitMap.Add(
+                        targetedCharacter.Id,
+                        outcome
+                    );
+                }
+                else if(power.PowerType == PowerType.Saveable){
+                    int roll = targetedCharacter.SavingThrowRoll((Ability)power.SavingThrow);
+                    HitType outcome = HitType.Miss;
+                    if(roll <= this.DifficultyClass(power) && roll != 20){
+                        outcome = HitType.Hit;
+                    }
+                    hitMap.Add(
+                        targetedCharacter.Id,
+                        outcome
+                    );
+                }
+                else
+                {
+                    hitMap.Add(
+                        targetedCharacter.Id,
+                        HitType.Hit
+                    );
+                }
+            }
+            return hitMap;
+        }
+
+        public bool CheckIfUnarmedHitSuccessfull(Encounter encounter, Character target, out bool criticalHit){
+            //check for rerolls
+            bool rerollEffectPresent = RerollOnAttackRoll(AttackRollEffect_Source.Weapon, AttackRollEffect_Range.Melee, out int rerollLowerThan);
+
+            //check for advantage
+            bool advantage = AdvantageOnAttackRoll(encounter, target, AttackRollEffect_Source.Weapon, AttackRollEffect_Range.Melee);
+
+            //check for disadvantage
+            bool disadvantage = DisadvantageOnAttackRoll(encounter, target, AttackRollEffect_Range.Melee);
+
+            //roll the dice
+            List<DiceSet.Dice> bonusRollResults = this.AttackBonusDiceSet(AttackRollEffect_Range.Melee, AttackRollEffect_Source.Weapon).RollPrototype(false, false, null);
+            DiceSet.Dice baseRollResult = new DiceSet(){d20 = 1}.RollPrototype(advantage, disadvantage, rerollLowerThan).First();
+
+            //check for hit
+            if(baseRollResult.result == 20){
+                criticalHit = true;
+                return true;
+            }
+            else{
+                criticalHit = false;
+                return bonusRollResults.Concat([baseRollResult]).Aggregate(0, (sum, current) => sum + current.result) >= target.ArmorClass;
+            }
+        }
+        public bool CheckIfWeaponHitSuccessfull(Encounter encounter, Weapon weapon, Character target, AttackRollEffect_Range attacksRange, out bool criticalHit){
+            if(weapon is MeleeWeapon meleeWeapon && !meleeWeapon.Thrown && attacksRange == AttackRollEffect_Range.Ranged){
+                criticalHit = false;
+                return false;
+            }
+            //check for rerolls
+            bool rerollEffectPresent = RerollOnAttackRoll(AttackRollEffect_Source.Weapon, attacksRange, out int rerollLowerThan);
+
+            //check for advantage
+            bool advantage = AdvantageOnAttackRoll(encounter, target, AttackRollEffect_Source.Weapon, attacksRange);
+
+            //check for disadvantage
+            bool disadvantage = DisadvantageOnAttackRoll(encounter, target, attacksRange);
+
+            //roll the dice
+            List<DiceSet.Dice> bonusRollResults = weapon.GetTotalAttackBonus().RollPrototype(false, false, null);
+            DiceSet.Dice baseRollResult = new DiceSet(){d20 = 1}.RollPrototype(advantage, disadvantage, rerollLowerThan).First();
+
+            //check for hit
+            if(baseRollResult.result == 20){
+                criticalHit = true;
+                return true;
+            }
+            else{
+                criticalHit = false;
+                return bonusRollResults.Concat([baseRollResult]).Aggregate(0, (sum, current) => sum + current.result) >= target.ArmorClass;
+            }
+        }
+
+        public bool RerollOnAttackRoll(AttackRollEffect_Source source, AttackRollEffect_Range range, out int rerollLowerThan){
+            List<AttackRollEffectInstance> rerollEffectList = this.AffectedByApprovedEffects
+                                                                    .OfType<AttackRollEffectInstance>()
+                                                                    .Where(x => x.EffectType.AttackRollEffect_Type == AttackRollEffect_Type.RerollLowerThan
+                                                                    && x.EffectType.AttackRollEffect_Source == source
+                                                                    && x.EffectType.AttackRollEffect_Range == range)
+                                                                    .ToList();
+            bool rerollEffectPresent = rerollEffectList.Count != 0;
+            rerollLowerThan = 0;
+            if(rerollEffectPresent){
+                rerollLowerThan = rerollEffectList.Aggregate(0, (maximum, current) => current.DiceSet.flat > maximum ? current.DiceSet.flat : maximum);
+            }
+            return rerollEffectPresent;
+        }
+
+        public bool AdvantageOnAttackRoll(Encounter encounter, Character target, AttackRollEffect_Source source, AttackRollEffect_Range range){
+            bool attackerHasEffectGrantingAdvantage = this.AffectedByApprovedEffects
+                                                                        .OfType<AttackRollEffectInstance>()
+                                                                        .Where(x => x.EffectType.AttackRollEffect_Type == AttackRollEffect_Type.Advantage && x.EffectType.AttackRollEffect_Source == source && x.EffectType.AttackRollEffect_Range == range)
+                                                                        .Any();
+            bool targetHasConditionGrantingAdvantage = target.AffectedByApprovedEffects
+                                                                        .OfType<StatusEffectInstance>()
+                                                                        .Where(z => new List<Condition>(){
+                                                                            Condition.Blinded,
+                                                                            Condition.Paralyzed,
+                                                                            Condition.Restrained,
+                                                                            Condition.Stunned,
+                                                                            Condition.Unconscious
+                                                                        }.Contains(z.EffectType.StatusEffect))
+                                                                        .Any();
+            bool attackerHasConditionGrantingAdvantage = target.AffectedByApprovedEffects
+                                                                        .OfType<StatusEffectInstance>()
+                                                                        .Where(z => new List<Condition>(){
+                                                                            Condition.Invisible,
+                                                                        }.Contains(z.EffectType.StatusEffect))
+                                                                        .Any();
+            //prone analysis
+            bool isTargetProne = target.AffectedByApprovedEffects
+                                        .OfType<StatusEffectInstance>()
+                                        .Where(z => new List<Condition>(){
+                                            Condition.Prone,
+                                        }.Contains(z.EffectType.StatusEffect))
+                                        .Any();
+                                        
+            var characterParticipanceData = encounter.R_Participances.First(z => z.R_CharacterId == this.Id);
+            var targetParticipanceData = encounter.R_Participances.First(z => z.R_CharacterId == target.Id);
+            bool isTargetAdjacentToAttacker = characterParticipanceData.IsAdjacentToParticipant(targetParticipanceData);
+
+            return attackerHasEffectGrantingAdvantage || targetHasConditionGrantingAdvantage || attackerHasConditionGrantingAdvantage || (isTargetProne && isTargetAdjacentToAttacker);
+        }
+
+        public bool DisadvantageOnAttackRoll(Encounter encounter, Character target, AttackRollEffect_Range range){
+            bool attackerHasConditionImposingDisadvantage = this.AffectedByApprovedEffects
+                                                                        .OfType<StatusEffectInstance>()
+                                                                        .Where(z => new List<Condition>(){
+                                                                            Condition.Blinded,
+                                                                            Condition.Restrained,
+                                                                        }.Contains(z.EffectType.StatusEffect))
+                                                                        .Any();
+            bool targetHasConditionImposingDisadvantage = target.AffectedByApprovedEffects
+                                                                        .OfType<StatusEffectInstance>()
+                                                                        .Where(z => new List<Condition>(){
+                                                                            Condition.Invisible,
+                                                                        }.Contains(z.EffectType.StatusEffect))
+                                                                        .Any();
+
+            //prone analysis
+            bool isTargetProne = target.AffectedByApprovedEffects
+                                        .OfType<StatusEffectInstance>()
+                                        .Where(z => new List<Condition>(){
+                                            Condition.Prone,
+                                        }.Contains(z.EffectType.StatusEffect))
+                                        .Any();
+                                        
+            var characterParticipanceData = encounter.R_Participances.First(z => z.R_CharacterId == this.Id);
+            var targetParticipanceData = encounter.R_Participances.First(z => z.R_CharacterId == target.Id);
+            bool isTargetAdjacentToAttacker = characterParticipanceData.IsAdjacentToParticipant(targetParticipanceData);
+
+            return attackerHasConditionImposingDisadvantage
+                || targetHasConditionImposingDisadvantage
+                || (isTargetProne && !isTargetAdjacentToAttacker)
+                || (range == AttackRollEffect_Range.Ranged && isTargetAdjacentToAttacker);
+        }
+
+        public void GetExtraWeaponDamage(out DiceSet extraWeaponDamage){
+            //check for extra weapon damage from character
+            List<DamageEffectInstance> extraWeaponDamageEffectList = this.AffectedByApprovedEffects
+                                                                    .OfType<DamageEffectInstance>()
+                                                                    .Where(x => x.EffectType.DamageEffect == DamageEffect.ExtraWeaponDamage)
+                                                                    .ToList();
+            extraWeaponDamage = extraWeaponDamageEffectList.Aggregate(new DiceSet(), (sum, current) => sum + current.DiceSet.getPersonalizedSet(this));
+        }
+
+        public void GetAdditionalDamageOnWeaponStrike(out Dictionary<DamageType, DiceSet> damageTypeToDiceSetMap){
+            //check for additional damage from character
+            Dictionary<DamageType, List<DamageEffectInstance>> extraDamageEffectMap = AffectedByApprovedEffects
+                                                                    .OfType<DamageEffectInstance>()
+                                                                    .Where(x => x.EffectType.DamageEffect == DamageEffect.DamageDealt)
+                                                                    .GroupBy(effectInstance => (DamageType)effectInstance.EffectType.DamageEffect_DamageType)
+                                                                    .ToDictionary(g => g.Key, g => g.ToList());
+            damageTypeToDiceSetMap = extraDamageEffectMap.ToDictionary(element => element.Key, element => element.Value.Aggregate(new DiceSet(), (sum, current) => sum + current.DiceSet.getPersonalizedSet(this)));
+        }
+
+        public WeaponHitResult ApplyWeaponHitEffects(Encounter encounter, Weapon weapon, Character target, bool criticalHit){
+            //get weapon damage
+            var weaponBaseDamage = weapon.GetBaseEquippedDamageDiceSet();
+            var weaponEffectDamage = weapon.GetEffectsEquippedDamageDiceSet();
+
+            //check for rerolls
+            List<DamageEffectInstance> rerollEffectList = this.AffectedByApprovedEffects
+                                                                    .OfType<DamageEffectInstance>()
+                                                                    .Where(x => x.EffectType.DamageEffect == DamageEffect.RerollLowerThan)
+                                                                    .ToList();
+            bool rerollEffectPresent = rerollEffectList.Count != 0;
+            int? rerollLowerThan = null;
+            if(rerollEffectPresent){
+                rerollLowerThan = rerollEffectList.Aggregate(0, (maximum, current) => current.DiceSet.flat > maximum ? current.DiceSet.flat : maximum);
+            }
+            //roll the dice
+            List<DiceSet.Dice> baseWeaponDamageRollResult = weaponBaseDamage.RollPrototype(false, false, rerollLowerThan);
+            Dictionary<DamageType, List<DiceSet.Dice>> weaponEffectDamageRollResults = weaponEffectDamage.ToDictionary(element => element.Key, element => element.Value.RollPrototype(false, false, null));
+            if(criticalHit){
+                baseWeaponDamageRollResult.ForEach(die => die.result = die.result *= 2);
+                weaponEffectDamageRollResults.Values.ToList().ForEach(list => list.ForEach( die => die.result = die.result *= 2));
+            }
+
+            //calculate total damage of weapon type from weapon and wielder modifiers
+            int totalWeaponDamage = baseWeaponDamageRollResult.Aggregate(0, (sum, current) => sum + current.result);
+
+            //calculate total damage coming from effects applied to weapon and wielder
+            Dictionary<DamageType, int> totalEffectDamage = weaponEffectDamageRollResults.ToDictionary(g => g.Key, g => g.Value.Aggregate(0, (sum, current) => sum + current.result));
+
+            //check for targets damage resistance and apply damage
+            var weaponHitResult = new WeaponHitResult();
+            weaponHitResult.DamageTaken.Add(weapon.DamageType, target.TakeDamage(totalWeaponDamage, weapon.DamageType));
+            foreach(var pair in totalEffectDamage){
+                weaponHitResult.DamageTaken.Add(pair.Key, target.TakeDamage(pair.Value, pair.Key));
+            }
+            foreach (var power in weapon.R_PowersCastedOnHit){
+                weapon.CheckIfPowerHitSuccessfull(encounter, power, [target]).TryGetValue(target.Id, out HitType outcome);
+                weaponHitResult.PowerIdToHitStatus.Add(power.Id, outcome);
+            }
+            return weaponHitResult;
+        }
+
+        public class WeaponHitResult {
+            public Dictionary<DamageType, int> DamageTaken {get; set;} = [];
+            public Dictionary<int, HitType> PowerIdToHitStatus {get; set;} = [];
+        }
+
+        public int TakeDamage(int damage, DamageType damageType){ // returns damage actually taken after resistance/vulnerability analysis
+            //check for targets damage resistance
+            List<ResistanceEffectInstance> resistanceEffectInstances = this.AffectedByApprovedEffects
+                                                                        .OfType<ResistanceEffectInstance>()
+                                                                        .Where(x => x.EffectType.ResistanceEffect_DamageType == damageType && x.EffectType.ResistanceEffect == ResistanceEffect.Resistance)
+                                                                        .ToList();
+            bool resistanceEffectPresent = resistanceEffectInstances.Count != 0;
+
+            //check for vulnerability to damage
+            List<ResistanceEffectInstance> vulnerabilityEffectInstances = this.AffectedByApprovedEffects
+                                                                        .OfType<ResistanceEffectInstance>()
+                                                                        .Where(x => x.EffectType.ResistanceEffect_DamageType == damageType && x.EffectType.ResistanceEffect == ResistanceEffect.Vulnerability)
+                                                                        .ToList();
+            bool vulnerabilityEffectPresent = vulnerabilityEffectInstances.Count != 0;
+            
+            //check for immunity to damage
+            List<ResistanceEffectInstance> immunityEffectInstances = this.AffectedByApprovedEffects
+                                                                        .OfType<ResistanceEffectInstance>()
+                                                                        .Where(x => x.EffectType.ResistanceEffect_DamageType == damageType && x.EffectType.ResistanceEffect == ResistanceEffect.Immunity)
+                                                                        .ToList();
+            bool immunityEffectPresent = immunityEffectInstances.Count != 0;
+
+            if(immunityEffectPresent){
+                return 0;
+            }
+            if(resistanceEffectPresent){
+                damage /= 2;
+            }
+            if(vulnerabilityEffectPresent){
+                damage *= 2;
+            }
+
+            int reducedDamage = damage - this.TemporaryHitpoints;
+            if(reducedDamage < 0){
+                reducedDamage = 0;
+            }
+            this.TemporaryHitpoints -= damage;
+            this.Hitpoints -= reducedDamage;
+            
+            return damage;
+        }
+
+        [NotMapped]
+        public int Level {
+            get {
+                return this.R_CharacterHasLevelsInClass.Count;
+            }
+        }
+
+        public int GetLevelInClass(int classId){
+            return this.R_CharacterHasLevelsInClass.Where(c => c.R_ClassId == classId).Count();
+        }
+
+        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel){
+            // check for available immaterial resource
+            if(power.R_UsesImmaterialResource != null){
+                var immaterialResourceInstance = this.AllImmaterialResourceInstances.FirstOrDefault(x => x.R_Blueprint == power.R_UsesImmaterialResource && !x.NeedsRefresh && x.Level == immaterialResourceLevel);
+                if(immaterialResourceInstance == null){
+                    return Outcome.ImmaterialResourceUnavailable;
+                }
+                else{
+                    //consume immaterial resource
+                    immaterialResourceInstance.NeedsRefresh = true;
+                }
+            }
+            // check whether material components present
+            List<ItemCostRequirement> materialComponentsRequired = (power.R_ItemsCostRequirement?.OrderBy(req => req.Worth.GetValueInCopperPieces()).ToList()) ?? [];
+            HashSet<Item> itemsSetAside = [];
+            bool allMaterialComponentsFound = true;
+            foreach(var requirement in materialComponentsRequired){
+                var materialComponentFound = this.R_CharacterHasBackpack.R_BackpackHasItems.OrderBy(item => item.Price.GetValueInCopperPieces()).FirstOrDefault(
+                    item => 
+                    requirement.R_ItemFamilyId == item.R_ItemInItemsFamilyId
+                    && requirement.Worth <= item.Price
+                    && !itemsSetAside.Contains(item));
+                if(materialComponentFound == null){
+                    allMaterialComponentsFound = false;
+                }
+                else{
+                    itemsSetAside.Add(materialComponentFound);
+                }
+            }
+            if(!allMaterialComponentsFound){
+                return Outcome.InsufficientMaterialComponents;
+            }
+            
+            //configure effect group
+            EffectGroup effectGroup = new();
+            effectGroup.DurationLeft = power.Duration;
+            effectGroup.IsConstant = false;
+            if(power.PowerType == PowerType.Saveable && power.SavingThrowRoll == Enums.SavingThrowRoll.RetakenEveryTurn){
+                effectGroup.DifficultyClassToBreak = DifficultyClass(power);
+                effectGroup.SavingThrow = (Ability)power.SavingThrow;
+            }
+            effectGroup.Name = power.Name;
+            if(power.RequiresConcentration){
+                effectGroup.R_ConcentratedOnByCharacter = this;
+            }
+            List<EffectInstance> generatedEffects = [];
+            foreach(Character target in targetsToHitSuccessMap.Keys){
+                if(power.PowerType != PowerType.AuraCreator){
+                    //generate effects
+                    if (targetsToHitSuccessMap.TryGetValue(target, out var outcome))
+                    {
+                        foreach (EffectBlueprint effectBlueprint in power.R_EffectBlueprints)
+                        {
+                            bool shouldAdd = false;
+                            if(power.UpcastBy == UpcastBy.NotUpcasted
+                            || (power.UpcastBy == UpcastBy.ResourceLevel && immaterialResourceLevel >= effectBlueprint.Level)
+                            || (power.UpcastBy == UpcastBy.CharacterLevel && this.Level >= effectBlueprint.Level)
+                            || (power.UpcastBy == UpcastBy.ClassLevel && this.GetLevelInClass((int)power.R_ClassForUpcastingId) >= effectBlueprint.Level)
+                            ){
+                                if (power.PowerType == PowerType.Attack && outcome == HitType.Hit || outcome == HitType.CriticalHit)
+                                {
+                                    shouldAdd = true;
+                                }
+                                else if (power.PowerType == PowerType.Saveable)
+                                {
+                                    if ((outcome == HitType.Hit || outcome == HitType.CriticalHit) && !effectBlueprint.Saved)
+                                    {
+                                        shouldAdd = true;
+                                    }
+                                    else if ((outcome == HitType.Miss || outcome == HitType.CriticalMiss) && effectBlueprint.Saved && power.SavingThrowBehaviour == SavingThrowBehaviour.Modifies)
+                                    {
+                                        shouldAdd = true;
+                                    }
+                                }
+
+                                if (shouldAdd)
+                                {
+                                    var effectInstance = effectBlueprint.Generate(this, target);
+                                    if(outcome == HitType.CriticalHit && effectInstance is DamageEffectInstance damageEffectInstance){
+                                        damageEffectInstance.CriticalHit = true;
+                                    }
+                                    generatedEffects.Add(effectInstance);
+                                }
+                            }
+                        }
+                    }
+                }
+                else{
+                    effectGroup.GenerateAura(target, power.R_EffectBlueprints, (int)power.AuraSize!);
+                }
+                foreach(var effect in generatedEffects){
+                    effectGroup.AddEffectOnCharacter(effect);
+                }
+            }
+            return Outcome.Success;
+        }
+
+        [NotMapped]
+        public List<ImmaterialResourceInstance> AllImmaterialResourceInstances{
+            get {
+                List<ImmaterialResourceInstance> immaterialResourceInstances = [];
+                immaterialResourceInstances.AddRange(this.R_ImmaterialResourceInstances);
+                foreach(var item in this.R_EquippedItems.Select(x => x.R_Item)){
+                    immaterialResourceInstances.AddRange(item.R_ItemGrantsResources);
+                }
+                immaterialResourceInstances.Reverse();
+                return immaterialResourceInstances;
+            }
         }
     }
 }

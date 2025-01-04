@@ -252,11 +252,11 @@ public class Seed
             darkvisionGroup.R_Effects.Add(darkvision);
 
             ChoiceGroup feyAncestry = new("Fey Ancestry");
-            SavingThrowEffectBlueprint feyAncestryA = new("Fey Ancestry A", 0, RollMoment.OnCast, SavingThrowEffect.Advantage, null, Condition.Charmed, null)
+            SavingThrowEffectBlueprint feyAncestryA = new("Fey Ancestry A", 0, RollMoment.OnCast, SavingThrowEffect.Advantage, null)
             {
                 Conditional = true
             };
-            SavingThrowEffectBlueprint feyAncestryB = new("Fey Ancestry B", 0, RollMoment.OnCast, SavingThrowEffect.AlwaysSucceed, null, Condition.Unconscious, AttackNature.Magical)
+            SavingThrowEffectBlueprint feyAncestryB = new("Fey Ancestry B", 0, RollMoment.OnCast, SavingThrowEffect.AlwaysSucceed, null)
             {
                 Conditional = true
             };
@@ -310,7 +310,7 @@ public class Seed
             darkvisionGroup.R_Effects.Add(darkvision);
 
             ChoiceGroup dwarvenResilience = new("Dwarven Resilience");
-            SavingThrowEffectBlueprint dwarvenResilienceA = new("Dwarven Resilience A", 0, RollMoment.OnCast, SavingThrowEffect.Advantage, null, Condition.Poisoned, null);
+            SavingThrowEffectBlueprint dwarvenResilienceA = new("Dwarven Resilience A", 0, RollMoment.OnCast, SavingThrowEffect.Advantage, null);
             ResistanceEffectBlueprint dwarvenResilienceB = new("Dwarven Resilience B", ResistanceEffect.Resistance, DamageType.poison);
             dwarvenResilience.R_Effects.Add(dwarvenResilienceA);
             dwarvenResilience.R_Effects.Add(dwarvenResilienceB);
@@ -376,8 +376,8 @@ public class Seed
             fighterClass.R_ClassLevels.Where(cl => cl.Level == 1).First().HitPoints = 10;
 
             ChoiceGroup savingThrowProficiency = new("Fighter saving throw proficiency");
-            savingThrowProficiency.R_Effects.Add(new SavingThrowEffectBlueprint("Constitution saving throw proficiency", 0, RollMoment.OnCast, SavingThrowEffect.Proficiency, Ability.CONSTITUTION, null, null));
-            savingThrowProficiency.R_Effects.Add(new SavingThrowEffectBlueprint("Strength saving throw proficiency", 0, RollMoment.OnCast, SavingThrowEffect.Proficiency, Ability.STRENGTH, null, null));
+            savingThrowProficiency.R_Effects.Add(new SavingThrowEffectBlueprint("Constitution saving throw proficiency", 0, RollMoment.OnCast, SavingThrowEffect.Proficiency, Ability.CONSTITUTION));
+            savingThrowProficiency.R_Effects.Add(new SavingThrowEffectBlueprint("Strength saving throw proficiency", 0, RollMoment.OnCast, SavingThrowEffect.Proficiency, Ability.STRENGTH));
             
 
             ChoiceGroup armorProficiency = new("Fighter armor proficiency");
@@ -406,7 +406,7 @@ public class Seed
             ChoiceGroup fightingStyle = new("Fighting style");
             fightingStyle.R_Effects.Add(new AttackRollEffectBlueprint("Archery", 2, RollMoment.OnCast, AttackRollEffect_Type.Bonus, AttackRollEffect_Source.Weapon, AttackRollEffect_Range.Ranged){Description = "You gain a +2 bonus to attack rolls you make with ranged weapons."});
             fightingStyle.R_Effects.Add(new ArmorClassEffectBlueprint("Defense", 1, RollMoment.OnCast){Conditional = true, Description = "While you are wearing armor, you gain a +1 bonus to AC."});
-            fightingStyle.R_Effects.Add(new AttackRollEffectBlueprint("Dueling", 1, RollMoment.OnCast, AttackRollEffect_Type.Bonus, AttackRollEffect_Source.Weapon, AttackRollEffect_Range.Melee){Conditional = true, Description = @"When you are wielding a melee weapon in one hand and 
+            fightingStyle.R_Effects.Add(new DamageEffectBlueprint("Dueling", 1, RollMoment.OnCast){Conditional = true, Description = @"When you are wielding a melee weapon in one hand and 
                                                                                                                         no other weapons, you gain a +2 bonus to damage rolls 
                                                                                                                         with that weapon."});
             fightingStyle.R_Effects.Add(new AttackRollEffectBlueprint("Great Weapon Fighting", 3, RollMoment.OnCast, AttackRollEffect_Type.RerollLowerThan, AttackRollEffect_Source.Weapon, AttackRollEffect_Range.Melee){
@@ -491,8 +491,8 @@ public class Seed
             wizardClass.SpellcastingAbility = Ability.INTELLIGENCE;
 
             ChoiceGroup wizardSavingThrowProficiency = new("Wizard saving throw proficiency");
-            wizardSavingThrowProficiency.R_Effects.Add(new SavingThrowEffectBlueprint("Intelligence saving throw proficiency", 0, RollMoment.OnCast, SavingThrowEffect.Proficiency, Ability.INTELLIGENCE, null, null));
-            wizardSavingThrowProficiency.R_Effects.Add(new SavingThrowEffectBlueprint("Wisdom saving throw proficiency", 0, RollMoment.OnCast, SavingThrowEffect.Proficiency, Ability.WISDOM, null, null));
+            wizardSavingThrowProficiency.R_Effects.Add(new SavingThrowEffectBlueprint("Intelligence saving throw proficiency", 0, RollMoment.OnCast, SavingThrowEffect.Proficiency, Ability.INTELLIGENCE));
+            wizardSavingThrowProficiency.R_Effects.Add(new SavingThrowEffectBlueprint("Wisdom saving throw proficiency", 0, RollMoment.OnCast, SavingThrowEffect.Proficiency, Ability.WISDOM));
 
             
             ChoiceGroup wizardSkillProficiency = new("Wizard skill proficiency");
@@ -603,8 +603,8 @@ public class Seed
             rogueWeaponProficiency.R_Effects.Add(CreateProficiencyEffectBlueprint(context, "Shortsword"));
 
             ChoiceGroup rogueSavingThrowProficiency = new("Rogue saving throw proficiency");
-            rogueSavingThrowProficiency.R_Effects.Add(new SavingThrowEffectBlueprint("Intelligence saving throw proficiency", 0, RollMoment.OnCast, SavingThrowEffect.Proficiency, Ability.INTELLIGENCE, null, null));
-            rogueSavingThrowProficiency.R_Effects.Add(new SavingThrowEffectBlueprint("Dexterity saving throw proficiency", 0, RollMoment.OnCast, SavingThrowEffect.Proficiency, Ability.DEXTERITY, null, null));
+            rogueSavingThrowProficiency.R_Effects.Add(new SavingThrowEffectBlueprint("Intelligence saving throw proficiency", 0, RollMoment.OnCast, SavingThrowEffect.Proficiency, Ability.INTELLIGENCE));
+            rogueSavingThrowProficiency.R_Effects.Add(new SavingThrowEffectBlueprint("Dexterity saving throw proficiency", 0, RollMoment.OnCast, SavingThrowEffect.Proficiency, Ability.DEXTERITY));
 
             ChoiceGroup rogueSkillProficiency = new("Rogue skill proficiency");
             rogueSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Acrobatics", 0, RollMoment.OnCast, SkillEffect.Proficiency, Skill.Acrobatics));
@@ -676,7 +676,7 @@ public class Seed
             DummyEffectBlueprint evasion = new("Evasion"){IsImplemented = false};
             DummyEffectBlueprint reliableTalent = new("Reliable talent"){IsImplemented = false};
             DummyEffectBlueprint blindsense = new("Blindsense"){IsImplemented = false};
-            SavingThrowEffectBlueprint slipperyMind = new("Slippery mind", 0, RollMoment.OnCast, SavingThrowEffect.Proficiency, Ability.WISDOM, null, null);
+            SavingThrowEffectBlueprint slipperyMind = new("Slippery mind", 0, RollMoment.OnCast, SavingThrowEffect.Proficiency, Ability.WISDOM);
             DummyEffectBlueprint elusive = new("Slippery mind"){IsImplemented = false};
             DummyEffectBlueprint strokeOfLuck = new("Stroke of luck"){IsImplemented = false};
             ImmaterialResourceBlueprint strokeOfLuckCharge = new()
@@ -720,13 +720,7 @@ public class Seed
             Level = 0,
             ResourceAmount = level
         };
-        SavingThrowEffectBlueprint testEffect = new SavingThrowEffectBlueprint("test", 1, RollMoment.OnCast, SavingThrowEffect.Bonus, Ability.STRENGTH, Condition.Deafened, AttackNature.Physical)
-        {
-            Level = 0,
-            ResourceAmount = level,
-        };
         arcaneRecoveryLevel.R_EffectBlueprints.Add(arcaneRecoveryEffect);
-        arcaneRecoveryLevel.R_EffectBlueprints.Add(testEffect);
         return arcaneRecoveryLevel;
     }
 }

@@ -13,7 +13,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
         public HitpointEffectType HitpointEffectType{ get; set; } = new HitpointEffectType();
         private HitpointEffectBlueprint(): this("EF", 0, 0){}
         //methods
-        public override EffectInstance Generate(Character roller, Character target){
+        public override EffectInstance Generate(Character? roller, Character target){
             return new HitpointEffectInstance(this, roller, target);
         }
     }

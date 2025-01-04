@@ -11,7 +11,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectInstances
     {
         private ArmorClassEffectInstance() : base("EF", 0){}
         public ArmorClassEffectInstance(string name) : base(name, 0){}
-        public ArmorClassEffectInstance(ArmorClassEffectBlueprint actionEffectBlueprint, Character roller, Character target) : base(actionEffectBlueprint, roller, target){
+        public ArmorClassEffectInstance(ArmorClassEffectBlueprint actionEffectBlueprint, Character? roller, Character target) : base(actionEffectBlueprint, roller, target){
             
         }
         public ArmorClassEffectInstance(ArmorClassEffectInstance effectInstance) : base(effectInstance){

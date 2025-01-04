@@ -12,7 +12,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
         private StatusEffectBlueprint() : this("EF"){}
         public StatusEffectType StatusEffectType{ get; set; } = new StatusEffectType();
         //methods
-        public override EffectInstance Generate(Character roller, Character target){
+        public override EffectInstance Generate(Character? roller, Character target){
             return new StatusEffectInstance(this, target);
         }
     }

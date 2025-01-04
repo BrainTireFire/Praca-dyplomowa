@@ -13,7 +13,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
     {
         private HealingEffectBlueprint(): this("EF", 0, 0){}
         //methods
-        public override EffectInstance Generate(Character roller, Character target){
+        public override EffectInstance Generate(Character? roller, Character target){
             return new HealingEffectInstance(this, roller, target);
         }
     }

@@ -19,7 +19,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
             AttackPerAttackActionEffectType.AttackPerActionEffect = effectType;
         }
         //methods
-        public override EffectInstance Generate(Character roller, Character target){
+        public override EffectInstance Generate(Character? roller, Character target){
             return new AttackPerAttackActionEffectInstance(this, roller, target);
         }
     }

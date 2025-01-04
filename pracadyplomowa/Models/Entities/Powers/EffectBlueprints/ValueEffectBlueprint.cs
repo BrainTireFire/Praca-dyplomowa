@@ -14,7 +14,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
         public DiceSet DiceSet {get; set;} = value;
         public int DiceSetId {get; set;} = value.Id;
 
-        // public abstract EffectInstance Generate(Character roller, Character target);
+        // public abstract EffectInstance Generate(Character? roller, Character target);
         // //     return new ValueEffectInstance(this, roller, target);
         // // }
     }

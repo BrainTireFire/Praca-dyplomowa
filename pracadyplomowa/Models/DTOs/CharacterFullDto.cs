@@ -346,8 +346,8 @@ namespace pracadyplomowa.Models.DTOs
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
                 Main = w.R_EquipData.R_Slots.Select(s => s.Type).Contains(SlotType.MainHand),
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
-                Damage = new DiceSet(w.GetDamageDiceSet()),
-                AttackBonus = new DiceSet(w.GetAttackBonus()),
+                Damage = new DiceSet(w.GetBaseEquippedDamageDiceSet()),
+                AttackBonus = new DiceSet(w.GetBaseEquippedAttackBonus()),
                 DamageType = (int)w.DamageType,
                 Range = w is IRangedWeapon weapon ? weapon.Range : null,
                 Reach = w is MeleeWeapon meleeWeapon ? (meleeWeapon.Reach ? 10 : 5) : null,

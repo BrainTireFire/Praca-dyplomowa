@@ -9,7 +9,7 @@ public class MovementEffectInstance : ValueEffectInstance
     public MovementEffectType EffectType { get; set; } = new MovementEffectType();
     private MovementEffectInstance() : base("EF", 0){}
     public MovementEffectInstance(string name) : base(name, 0){}
-    public MovementEffectInstance(MovementEffectBlueprint movementEffectBlueprint, Character roller, Character target) : base(movementEffectBlueprint, roller, target){
+    public MovementEffectInstance(MovementEffectBlueprint movementEffectBlueprint, Character? roller, Character target) : base(movementEffectBlueprint, roller, target){
     }
     public MovementEffectInstance(MovementEffectInstance effectInstance) : base(effectInstance){
         EffectType  = effectInstance.EffectType;

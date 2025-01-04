@@ -2,17 +2,20 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using pracadyplomowa;
 
 #nullable disable
 
-namespace pracadyplomowa.Migrations
+namespace pracadyplomowa.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250103110609_PowerAndWeaponAttackChanges")]
+    partial class PowerAndWeaponAttackChanges
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
@@ -962,6 +965,9 @@ namespace pracadyplomowa.Migrations
                     b.Property<int?>("R_GeneratesAuraId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("R_OriginatesFromAuraId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int?>("SavingThrow")
                         .HasColumnType("INTEGER");
 
@@ -969,6 +975,8 @@ namespace pracadyplomowa.Migrations
 
                     b.HasIndex("R_GeneratesAuraId")
                         .IsUnique();
+
+                    b.HasIndex("R_OriginatesFromAuraId");
 
                     b.ToTable("EffectGroups");
                 });
@@ -1486,7 +1494,7 @@ namespace pracadyplomowa.Migrations
                     b.Property<int>("TargetType")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("UpcastBy")
+                    b.Property<int?>("UpcastBy")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("VerbalComponent")
@@ -2540,7 +2548,13 @@ namespace pracadyplomowa.Migrations
                         .WithOne("R_GeneratedBy")
                         .HasForeignKey("pracadyplomowa.Models.Entities.Powers.EffectGroup", "R_GeneratesAuraId");
 
+                    b.HasOne("pracadyplomowa.Models.Entities.Powers.Aura", "R_OriginatesFromAura")
+                        .WithMany("R_OwnedEffectGroups")
+                        .HasForeignKey("R_OriginatesFromAuraId");
+
                     b.Navigation("R_GeneratesAura");
+
+                    b.Navigation("R_OriginatesFromAura");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectInstance", b =>
@@ -3729,6 +3743,8 @@ namespace pracadyplomowa.Migrations
 
                     b.Navigation("R_GeneratedBy")
                         .IsRequired();
+
+                    b.Navigation("R_OwnedEffectGroups");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectGroup", b =>

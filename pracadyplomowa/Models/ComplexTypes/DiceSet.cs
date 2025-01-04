@@ -181,7 +181,9 @@ namespace pracadyplomowa.Models.Entities.Characters
             public int size;
             public int result;
             public int Roll(){
-                result = rnd.Next(1, size);
+                if(size != 0){
+                    result = rnd.Next(1, size);
+                }
                 return result;
             }
         }
@@ -209,6 +211,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             for(int i = 0; i < this.d4; i++){
                 diceSet.Add(new Dice(){size = 4});
             }
+            diceSet.Add(new Dice(){size = 0, result = this.flat});
             foreach(Dice dice in diceSet){
                 var result1 = dice.Roll();
                 if(rerollLowerThan != null && result1 < rerollLowerThan){

@@ -78,7 +78,7 @@ namespace pracadyplomowa.Models.Entities.Items
             DiceSet wieldersExtraWeaponDamage = 0;
             Wielder?.GetExtraWeaponDamage(out wieldersExtraWeaponDamage);
             damageDiceSet += wieldersExtraWeaponDamage + (Wielder != null && IsWielderProficient() ? Wielder.ProficiencyBonus : 0);
-            return damageDiceSet.getPersonalizedSet(Wielder);
+            return damageDiceSet.getPersonalizedSet(Wielder) + GetAbilityBonus();
         }
 
         public virtual Dictionary<DamageType, DiceSet> GetEffectsUnequippedDamageDiceSet(){
@@ -118,28 +118,20 @@ namespace pracadyplomowa.Models.Entities.Items
             return result;
         }
 
-        // public virtual DiceSet GetAttackBonus(){
-        //     if(Wielder == null){
-        //         return 0;
-        //     }
-        //     else{
-        //         return IsWielderProficient() ? Wielder.ProficiencyBonus : 0;
-        //     }
-        // }
+        protected abstract int GetAbilityBonus();
 
         public virtual DiceSet GetBaseUnequippedAttackBonus(){
-            return 0;
+            MagicEffectInstance? magicEffect = R_AffectedBy
+                                                                        .OfType<MagicEffectInstance>()
+                                                                        .OrderBy(x => x.DiceSet.flat)
+                                                                        .LastOrDefault();
+            return magicEffect?.DiceSet.flat ?? 0;
         }
 
         public abstract DiceSet GetBaseEquippedAttackBonus();
 
         protected virtual DiceSet GetBaseEquippedAttackBonus_Base(Enums.EffectOptions.AttackRollEffect_Range range){
-            return GetBaseUnequippedAttackBonus() + (Wielder?.AffectedByApprovedEffects.OfType<AttackRollEffectInstance>()
-                .Where(ei => ei.EffectType.AttackRollEffect_Type == Enums.EffectOptions.AttackRollEffect_Type.Bonus 
-                && ei.EffectType.AttackRollEffect_Source == Enums.EffectOptions.AttackRollEffect_Source.Weapon 
-                && ei.EffectType.AttackRollEffect_Range == range)
-                .Select(ei => ei.DiceSet.getPersonalizedSet(Wielder))
-                .Aggregate(new DiceSet(), (accumulator, value) => accumulator + value) ?? 0) + (Wielder != null && IsWielderProficient() ? Wielder.ProficiencyBonus : 0);
+            return GetBaseUnequippedAttackBonus() + (Wielder != null && IsWielderProficient() ? Wielder.ProficiencyBonus : 0) + GetAbilityBonus();
         }
 
         public abstract DiceSet GetEffectRelatedUnequippedAttackBonus();
@@ -153,11 +145,6 @@ namespace pracadyplomowa.Models.Entities.Items
                 && ei.EffectType.AttackRollEffect_Range == range)
                 .Select(ei => ei.DiceSet.getPersonalizedSet(null))
                 .Aggregate(new DiceSet(), (accumulator, value) => accumulator + value);
-            MagicEffectInstance? magicEffect = R_AffectedBy
-                                                                        .OfType<MagicEffectInstance>()
-                                                                        .OrderBy(x => x.DiceSet.flat)
-                                                                        .LastOrDefault();
-            attackRollEffectDiceSet += magicEffect?.DiceSet.flat ?? 0;
             return attackRollEffectDiceSet;
         }
 
@@ -191,7 +178,7 @@ namespace pracadyplomowa.Models.Entities.Items
             return hitMap;
         }
 
-        public bool ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel)
+        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel)
         {
             EffectGroup effectGroup = new();
             
@@ -238,7 +225,7 @@ namespace pracadyplomowa.Models.Entities.Items
                 effectGroup.SavingThrow = (Ability)power.SavingThrow;
             }
             effectGroup.Name = power.Name;
-            return true;
+            return Outcome.Success;
         }
     }
 }

@@ -104,7 +104,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
             return hitMap;
         }
 
-        public bool ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel)
+        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel)
         {
             EffectGroup effectGroup = new();
             
@@ -151,7 +151,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
                 effectGroup.SavingThrow = (Ability)power.SavingThrow;
             }
             effectGroup.Name = power.Name;
-            return true;
+            return Outcome.Success;
         }
     }
 }

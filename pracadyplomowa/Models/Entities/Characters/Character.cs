@@ -197,7 +197,19 @@ namespace pracadyplomowa.Models.Entities.Characters
         //             hei.EffectType.HitpointEffect == HitpointEffect.TemporaryHitpoints
         //         ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet);
         // }
-        public int TemporaryHitpoints {get; set;}
+        [NotMapped]
+        private int _TemporaryHitpoints;
+        public int TemporaryHitpoints {
+            get {
+                return _TemporaryHitpoints;
+            }
+            set {
+                _TemporaryHitpoints = value;
+                if(_TemporaryHitpoints < 0){
+                    _TemporaryHitpoints = 0;
+                }
+            }
+        }
 
         [NotMapped]
         public int ProficiencyBonus {
@@ -1084,14 +1096,13 @@ namespace pracadyplomowa.Models.Entities.Characters
                 damage *= 2;
             }
 
-            if(damage > this.TemporaryHitpoints){
-                this.TemporaryHitpoints -= damage;
+            int reducedDamage = damage - this.TemporaryHitpoints;
+            if(reducedDamage < 0){
+                reducedDamage = 0;
             }
-            else{
-                int reducedDamage = damage - this.TemporaryHitpoints;
-                this.TemporaryHitpoints = 0;
-                this.Hitpoints -= reducedDamage;
-            }
+            this.TemporaryHitpoints -= damage;
+            this.Hitpoints -= reducedDamage;
+            
             return damage;
         }
 
@@ -1106,12 +1117,12 @@ namespace pracadyplomowa.Models.Entities.Characters
             return this.R_CharacterHasLevelsInClass.Where(c => c.R_ClassId == classId).Count();
         }
 
-        public bool ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel){
+        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel){
             // check for available immaterial resource
             if(power.R_UsesImmaterialResource != null){
-                var immaterialResourceInstance = this.AllImmaterialResourceInstances.FirstOrDefault(x => x.R_BlueprintId == power.R_UsesImmaterialResourceId && !x.NeedsRefresh && x.Level == immaterialResourceLevel);
+                var immaterialResourceInstance = this.AllImmaterialResourceInstances.FirstOrDefault(x => x.R_Blueprint == power.R_UsesImmaterialResource && !x.NeedsRefresh && x.Level == immaterialResourceLevel);
                 if(immaterialResourceInstance == null){
-                    return false;
+                    return Outcome.ImmaterialResourceUnavailable;
                 }
                 else{
                     //consume immaterial resource
@@ -1136,7 +1147,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                 }
             }
             if(!allMaterialComponentsFound){
-                return false;
+                return Outcome.InsufficientMaterialComponents;
             }
             
             //configure effect group
@@ -1161,7 +1172,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                         {
                             bool shouldAdd = false;
                             if(power.UpcastBy == UpcastBy.NotUpcasted
-                            || (power.UpcastBy == UpcastBy.ResourceLevel && immaterialResourceLevel == effectBlueprint.Level)
+                            || (power.UpcastBy == UpcastBy.ResourceLevel && immaterialResourceLevel >= effectBlueprint.Level)
                             || (power.UpcastBy == UpcastBy.CharacterLevel && this.Level >= effectBlueprint.Level)
                             || (power.UpcastBy == UpcastBy.ClassLevel && this.GetLevelInClass((int)power.R_ClassForUpcastingId) >= effectBlueprint.Level)
                             ){
@@ -1175,7 +1186,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                                     {
                                         shouldAdd = true;
                                     }
-                                    else if ((outcome == HitType.Hit || outcome == HitType.CriticalHit) && effectBlueprint.Saved && power.SavingThrowBehaviour == SavingThrowBehaviour.Modifies)
+                                    else if ((outcome == HitType.Miss || outcome == HitType.CriticalMiss) && effectBlueprint.Saved && power.SavingThrowBehaviour == SavingThrowBehaviour.Modifies)
                                     {
                                         shouldAdd = true;
                                     }
@@ -1200,7 +1211,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                     effectGroup.AddEffectOnCharacter(effect);
                 }
             }
-            return true;
+            return Outcome.Success;
         }
 
         [NotMapped]

@@ -42,39 +42,23 @@ namespace pracadyplomowa.Models.Entities.Items
         public bool Versatile { get; set;}
         public DiceSet VersatileDamageValue { get; set; } = new DiceSet();
         public int VersatileDamageValueId { get; set; }
-
-        public override DiceSet GetBaseEquippedDamageDiceSet(){ //TODO change this method so it returns different values if equipped in two hands for versatile weapons
-            if(this.Versatile && this.R_EquipData != null && this.R_EquipData.R_Slots.Intersect(this.R_ItemIsEquippableInSlots).Count() == this.R_ItemIsEquippableInSlots.Count){
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-                return VersatileDamageValue.getPersonalizedSet(Wielder);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-            }
-            return DamageValue.getPersonalizedSet(Wielder);
+        protected override int GetAbilityBonus(){
+            return R_EquipData != null && R_EquipData.R_Slots.Select(s => s.Type).Contains(Enums.SlotType.MainHand) ? (Finesse ? (Wielder.StrengthModifier > Wielder.DexterityModifier ? Wielder.StrengthModifier : Wielder.DexterityModifier) : Wielder.StrengthModifier) : 0;
         }
 
-        // public override DiceSet GetAttackBonus()
-        // {
-        //     DiceSet baseBonus = base.GetAttackBonus();
-        //     DiceSet itemAffectedByBonus = GetEffectRelatedUnequippedAttackBonus(Enums.EffectOptions.AttackRollEffect_Range.Melee);
-        //     if(Wielder == null){
-        //     return baseBonus + itemAffectedByBonus;
-        //     }
-        //     else{
-        //         DiceSet wielderAffectedBy = Wielder.AffectedByApprovedEffects
-        //         .OfType<AttackRollEffectInstance>()
-        //         .Where(ei => ei.EffectType.AttackRollEffect_Type == Enums.EffectOptions.AttackRollEffect_Type.Bonus 
-        //         && ei.EffectType.AttackRollEffect_Source == Enums.EffectOptions.AttackRollEffect_Source.Weapon 
-        //         && ei.EffectType.AttackRollEffect_Range == Enums.EffectOptions.AttackRollEffect_Range.Melee)
-        //         .Select(ei => ei.DiceSet.getPersonalizedSet(Wielder))
-        //         .Aggregate(new DiceSet(), (accumulator, value) => accumulator + value);
-        //         int abilityBonus = R_EquipData != null && R_EquipData.R_Slots.Select(s => s.Type).Contains(Enums.SlotType.MainHand) ? (Finesse ? (Wielder.StrengthModifier > Wielder.DexterityModifier ? Wielder.StrengthModifier : Wielder.DexterityModifier) : Wielder.StrengthModifier) : 0;
-        //         return baseBonus + itemAffectedByBonus + wielderAffectedBy + abilityBonus;
-        //     }
-        // }
+        public override DiceSet GetBaseEquippedDamageDiceSet(){ //TODO change this method so it returns different values if equipped in two hands for versatile weapons
+            var diceSet = base.GetBaseEquippedDamageDiceSet();
+            if(this.Versatile && this.R_EquipData != null && this.R_EquipData.R_Slots.Intersect(this.R_ItemIsEquippableInSlots).Count() == this.R_ItemIsEquippableInSlots.Count){
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+                diceSet -= DamageValue.getPersonalizedSet(Wielder);
+                diceSet += VersatileDamageValue.getPersonalizedSet(Wielder);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            }
+            return diceSet;
+        }
 
         public override DiceSet GetBaseEquippedAttackBonus(){
-            int abilityBonus = R_EquipData != null && R_EquipData.R_Slots.Select(s => s.Type).Contains(Enums.SlotType.MainHand) ? (Finesse ? (Wielder.StrengthModifier > Wielder.DexterityModifier ? Wielder.StrengthModifier : Wielder.DexterityModifier) : Wielder.StrengthModifier) : 0;
-            return GetBaseEquippedAttackBonus_Base(Enums.EffectOptions.AttackRollEffect_Range.Melee) + abilityBonus;
+            return GetBaseEquippedAttackBonus_Base(Enums.EffectOptions.AttackRollEffect_Range.Melee);
         }
         public override DiceSet GetEffectRelatedUnequippedAttackBonus(){
             return GetEffectRelatedUnequippedAttackBonus_Base(Enums.EffectOptions.AttackRollEffect_Range.Melee);

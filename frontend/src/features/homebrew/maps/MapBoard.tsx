@@ -49,8 +49,6 @@ export default function MapBoard({
     drawGrid(ctx, width, height, board.sizeX, board.sizeY);
 
     if (fields) {
-      console.log(fields);
-
       fields.forEach((field) => {
         fillSelectedBox(ctx, field, board.sizeX, board.sizeY);
         if (field.memberName) {

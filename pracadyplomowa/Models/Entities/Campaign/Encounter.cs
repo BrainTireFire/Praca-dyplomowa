@@ -18,7 +18,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
         public int R_BoardId { get; set; }
         public virtual ICollection<ParticipanceData> R_Participances { get; set; } = [];
         
-        public void AddParticipance(Character character)
+        public ParticipanceData AddParticipance(Character character)
         {
             var participanceData = new ParticipanceData
             {
@@ -26,7 +26,12 @@ namespace pracadyplomowa.Models.Entities.Campaign
                 R_Encounter = this
             };
             
-            R_Participances.Add(participanceData);
+            if (!R_Participances.Any(pd => pd.R_Character.Id == participanceData.R_Character.Id && pd.R_Encounter.Id == participanceData.R_Encounter.Id))
+            {
+                R_Participances.Add(participanceData);
+            }
+            
+            return participanceData;
         }
     }
 }

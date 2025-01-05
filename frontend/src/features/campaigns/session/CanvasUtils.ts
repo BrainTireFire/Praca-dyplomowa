@@ -280,10 +280,12 @@ export const drawTextName = (
   // Calculate square size from the provided columns and rows
   const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
 
+  // Dynamically calculate avatar size as a fraction of square size
+  const avatarSize = squareSize * 0.6; // 60% of the square size
+
   ctx.save();
 
   if (field.avatarUrl) {
-    const avatarSize = 50; // Larger avatar size
     const avatarX =
       field.positionX * squareSize + squareSize / 2 - avatarSize / 2; // Center avatar horizontally
     const avatarY =
@@ -319,14 +321,15 @@ export const drawTextName = (
   // Draw the text below the avatar
   if (field.memberName) {
     ctx.fillStyle = "white"; // Text color
-    ctx.font = "12px Poppins"; // Font size and style
+    ctx.font = `${squareSize * 0.2}px Poppins`; // Adjust font size based on square size
 
     // Measure the width of the text
     const textWidth = ctx.measureText(field.memberName).width;
 
     // Position the text below the avatar
     const textX = field.positionX * squareSize + squareSize / 2 - textWidth / 2; // Center horizontally
-    const textY = field.positionY * squareSize + squareSize / 2 + 30; // Position text below avatar (adjusted)
+    const textY =
+      field.positionY * squareSize + squareSize / 2 + avatarSize / 1.5; // Position text below avatar
 
     // Draw the text
     ctx.fillText(field.memberName, textX, textY);

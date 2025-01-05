@@ -53,5 +53,37 @@ namespace pracadyplomowa.Models.Entities.Campaign
         {
             R_Board = board ?? throw new ArgumentNullException(nameof(board));
         }
+        
+        public void UpdateParticipanceData(ParticipanceData newParticipanceData)
+        {
+            if (newParticipanceData == null)
+            {
+                throw new ArgumentNullException(nameof(newParticipanceData), "ParticipanceData cannot be null.");
+            }
+
+            // Remove this field from the old participance, if any
+            if (R_OccupiedBy != null)
+            {
+                // Remove the field from all old participance's occupied fields
+                foreach (var field in R_OccupiedBy.R_OccupiedFields.ToList())
+                {
+                    field.R_OccupiedBy = null;  // Clear the reference to this field in the old participance
+                }
+
+                // Optionally, clear all occupied fields (depending on how you want to manage them)
+                R_OccupiedBy.R_OccupiedFields.Clear();
+            }
+
+            // Assign the new participance
+            R_OccupiedBy = newParticipanceData;
+            R_OccupiedById = newParticipanceData.Id;
+
+            // Add this field to the new participance if not already in the list
+            if (!newParticipanceData.R_OccupiedFields.Contains(this))
+            {
+                newParticipanceData.R_OccupiedFields.Add(this);
+            }
+        }
+
     }
 }

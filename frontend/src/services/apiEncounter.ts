@@ -1,5 +1,6 @@
 import { Encounter } from "../models/encounter/Encounter";
 import { EncounterCreateDto } from "../models/encounter/EncounterCreateDto";
+import { EncounterUpdateDto } from "../models/encounter/EncounterUpdateDto";
 import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
 
@@ -21,6 +22,32 @@ export async function createEncounter(
     options
   );
   return data;
+}
+
+export async function updatePlaceEncounter(
+  encounterId: number,
+  encounterUpdateDto: EncounterUpdateDto[]
+): Promise<null> {
+  const options: RequestInit = {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      FieldsToUpdate: encounterUpdateDto,
+    }),
+  };
+
+  console.log({
+    FieldsToUpdate: encounterUpdateDto,
+  });
+
+  await customFetch(
+    `${BASE_URL}/api/encounter/placeEncounter/${encounterId}`,
+    options
+  );
+
+  return null;
 }
 
 export async function getEncounters(): Promise<Encounter[]> {

@@ -106,4 +106,78 @@ public class EncounterService : IEncounterService
             return new BadRequestObjectResult(new ApiResponse(400, e.Message));
         }
     }
+
+    public async Task<ActionResult> UpdateEncounterAsync(int ownerId, int encounterId, UpdateEncounterDto updateEncounterDto)
+    {
+        try
+        {
+            var encounter = _unitOfWork.EncounterRepository.GetById(encounterId);
+            
+            if (encounter == null)
+            {
+                return new NotFoundObjectResult(new ApiResponse(400, "Encounter with Id " + encounterId + " does not exist"));
+            }
+            
+            // if (encounter.R_Owner.Id != ownerId)
+            // {
+            //     return new UnauthorizedObjectResult(new ApiResponse(401, "You are not the owner of this encounter"));
+            // }
+            
+            foreach (var fieldUpdate in updateEncounterDto.FieldsToUpdate)
+            {
+                if (fieldUpdate.ParticipanceDataId == null)
+                {
+                    // Add new participant (participance data)
+                    var character = _unitOfWork.CharacterRepository.GetById(fieldUpdate.CharacterId);
+                    if (character == null)
+                    {
+                        return new NotFoundObjectResult(new ApiResponse(400, "Character with Id " + fieldUpdate.CharacterId + " does not exist"));
+                    }
+
+                    var newParticipance = encounter.AddParticipance(character);
+
+                    var field = _unitOfWork.FieldRepository.GetById(fieldUpdate.FieldId);
+                    if (field == null)
+                    {
+                        return new NotFoundObjectResult(new ApiResponse(400, $"Field with Id {fieldUpdate.FieldId} does not exist"));
+                    }
+
+                    field.UpdateParticipanceData(newParticipance);
+                }
+                else
+                {
+                    // Update existing participance and field
+                    var participanceData = _unitOfWork.ParticipanceDataRepository.GetById(fieldUpdate.ParticipanceDataId.Value);
+                    if (participanceData == null)
+                    {
+                        return new NotFoundObjectResult(new ApiResponse(400, "ParticipanceData with Id " + fieldUpdate.ParticipanceDataId.Value + " does not exist"));
+                    }
+
+                    var character = _unitOfWork.CharacterRepository.GetById(fieldUpdate.CharacterId);
+                    if (character == null)
+                    {
+                        return new NotFoundObjectResult(new ApiResponse(400, "Character with Id " + fieldUpdate.CharacterId + " does not exist"));
+                    }
+
+                    participanceData.UpdateCharacter(character);
+
+                    var field = _unitOfWork.FieldRepository.GetById(fieldUpdate.FieldId);
+                    if (field == null)
+                    {
+                        return new NotFoundObjectResult(new ApiResponse(400, $"Field with Id {fieldUpdate.FieldId} does not exist"));
+                    }
+
+                    field.UpdateParticipanceData(participanceData);
+                }
+            }
+            
+            await _unitOfWork.SaveChangesAsync();
+
+            return new NoContentResult();
+        }
+        catch (Exception e)
+        {
+            return new BadRequestObjectResult(new ApiResponse(400, e.Message));
+        }
+    }
 }

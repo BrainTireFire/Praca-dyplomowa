@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 export function useDeleteBoard() {
   const queryClient = useQueryClient();
 
-  const { isLoading: isDeleting, mutate: deleteBoard } = useMutation({
+  const { isPending: isDeleting, mutate: deleteBoard } = useMutation({
     mutationFn: deleteBoardApi,
     onSuccess: () => {
       toast.success("Board successfully deleted");

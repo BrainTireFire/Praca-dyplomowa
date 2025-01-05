@@ -8,6 +8,7 @@ import { CharacterItem } from "../../../models/character";
 import { Coordinate } from "../../../models/session/Coordinate";
 import Heading from "../../../ui/text/Heading";
 import Button from "../../../ui/interactive/Button";
+import { useUpdatePlaceEncounter } from "../hooks/useUpdatePlaceEncounter";
 
 const Container = styled.div`
   padding-top: 20px;
@@ -87,6 +88,7 @@ export default function EncounterMapCreaterLayout({ encounterId, onToggle }) {
   const { isLoading, encounter } = useEncounter(encounterId);
   const [selectedBox, setSelectedBox] = useState<Coordinate>({});
   const [fields, setFields] = useState<Field[]>([]);
+  const { updatePlaceEncounter, isUpdating } = useUpdatePlaceEncounter();
 
   useEffect(() => {
     if (encounter?.board) {
@@ -153,12 +155,49 @@ export default function EncounterMapCreaterLayout({ encounterId, onToggle }) {
     return <div>There are no encounter</div>;
   }
 
+  const handleSubmit = () => {
+    const fieldsToUpdate = getFieldsToUpdate();
+    console.log("encounter.id:", encounter.id);
+    console.log("fieldsToUpdate:", fieldsToUpdate);
+    updatePlaceEncounter({
+      encounterId: encounter.id,
+      encounterUpdateDto: fieldsToUpdate,
+    });
+  };
+
+  const getFieldsToUpdate = () => {
+    // Filter fields where memberName exists
+    const fieldsToUpdate = fields
+      .filter((field) => field.memberName)
+      .map((field) => {
+        // Find the character in participances or campaign members
+        const matchedParticipance = encounter.participances.find(
+          (participance) => participance.character.name === field.memberName
+        );
+        const matchedMember = encounter.campaign.members.find(
+          (member) => member.name === field.memberName
+        );
+
+        const characterId = matchedParticipance
+          ? matchedParticipance.character.id
+          : matchedMember?.id || null;
+
+        return {
+          fieldId: field.id,
+          characterId,
+          participanceDataId: matchedParticipance?.id || null,
+        };
+      });
+
+    return fieldsToUpdate;
+  };
+
   return (
     <Container>
       <HeaderStyled>
         <Button onClick={() => onToggle(false)}>Back</Button>
         <Heading as="h2">Create encounter map</Heading>
-        <Button>Save</Button>
+        <Button onClick={handleSubmit}>Save</Button>
       </HeaderStyled>
       <MainGrid>
         <GridContainer>
@@ -183,14 +222,17 @@ export default function EncounterMapCreaterLayout({ encounterId, onToggle }) {
           </FieldContainerStyled>
           <FieldContainerStyled>
             <Label>Npc</Label>
-            {encounter.participances.map((participance) => (
-              <FieldSet
-                key={participance.id}
-                onClick={() => handleMemberClick(participance.character)}
-              >
-                {participance.character.name}
-              </FieldSet>
-            ))}
+            {encounter.participances.map(
+              (participance) =>
+                participance.character.isNpc && (
+                  <FieldSet
+                    key={participance.id}
+                    onClick={() => handleMemberClick(participance.character)}
+                  >
+                    {participance.character.name}
+                  </FieldSet>
+                )
+            )}
           </FieldContainerStyled>
         </LeftPanel>
       </MainGrid>

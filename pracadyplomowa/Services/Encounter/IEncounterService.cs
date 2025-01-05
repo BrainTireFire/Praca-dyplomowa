@@ -8,4 +8,5 @@ public interface IEncounterService
     Task<PagedList<EncounterShortDto>> GetEncountersAsync(int ownedId, EncounterParams encounterParams);
     Task<EncounterSummaryDto> GetEncounterAsync(int encounterId);
     Task<ActionResult> CreateEncounterAsync(int ownerId, CreateEncounterDto createEncounterDto);
+    Task<ActionResult> UpdateEncounterAsync(int ownerId, int encounterId, UpdateEncounterDto updateEncounterDto);
 }

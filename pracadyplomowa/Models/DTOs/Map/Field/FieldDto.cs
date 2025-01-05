@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using pracadyplomowa.Models.DTOs.Encounter;
 using pracadyplomowa.Models.Enums;
 
 namespace pracadyplomowa.Models.DTOs.Map.Field;
@@ -27,4 +28,6 @@ public class FieldDto
     
     [Required (ErrorMessage = "FieldMovementCost is required")]
     public string FieldMovementCost { get; set; }
+    
+    // public ParticipanceDataDto? OccupiedBy { get; set; } 
 }

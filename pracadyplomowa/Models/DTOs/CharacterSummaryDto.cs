@@ -34,7 +34,7 @@ namespace pracadyplomowa.Models.DTOs
         public int? CampaignId { get; set; } = campaignId;
 
         public CharacterSummaryDto(Character character) :
-            this(character.Id,character.IsNpc, character.Name, character.Description, character.R_CharacterBelongsToRace.Name, character.R_CharacterHasLevelsInClass.First().R_Class.Name, character.R_CampaignId)
+            this(character.Id, character.IsNpc, character.Name, character.Description, character.R_CharacterBelongsToRace.Name, character.R_CharacterHasLevelsInClass.First().R_Class.Name, character.R_CampaignId)
         {
 
         }

@@ -12,17 +12,17 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
     public class SavingThrowEffectBlueprint : ValueEffectBlueprint
     {
         private SavingThrowEffectBlueprint() : this("EF", 0, 0, 0){}
-        public SavingThrowEffectBlueprint(string name, DiceSet value, RollMoment rollMoment, SavingThrowEffect effect, Ability? ability, Condition? condition, AttackNature? nature) : this(name, value, rollMoment, effect){
+        public SavingThrowEffectBlueprint(string name, DiceSet value, RollMoment rollMoment, SavingThrowEffect effect, Ability? ability) : this(name, value, rollMoment, effect){
             SavingThrowEffectType.SavingThrowEffect_Ability = ability;
-            SavingThrowEffectType.SavingThrowEffect_Condition = condition;
-            SavingThrowEffectType.SavingThrowEffect_Nature = nature;
+            // SavingThrowEffectType.SavingThrowEffect_Condition = condition;
+            // SavingThrowEffectType.SavingThrowEffect_Nature = nature;
         }
         public SavingThrowEffectBlueprint(string name, DiceSet value, RollMoment rollMoment, SavingThrowEffect effect) : base(name, value,rollMoment){
             SavingThrowEffectType.SavingThrowEffect = effect;
         }
         public SavingThrowEffectType SavingThrowEffectType{ get; set; } = new SavingThrowEffectType();
         //methods
-        public override EffectInstance Generate(Character roller, Character target){
+        public override EffectInstance Generate(Character? roller, Character target){
             return new SavingThrowEffectInstance(this, roller, target);
         }
     }

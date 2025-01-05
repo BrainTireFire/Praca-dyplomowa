@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import Input from "../../../ui/forms/Input";
 import Button from "../../../ui/interactive/Button";
 import ColorPicker from "react-pick-color";
@@ -11,6 +11,13 @@ import { useCreateBoard } from "./useCreateBoard";
 import { BoardCreateDto } from "../../../models/map/BoardDto";
 import { useUpdateBoard } from "./useUpdateBoard";
 import { BoardUpdateDto } from "../../../models/map/BoardUpdate";
+import { ReusableTable } from "../../../ui/containers/ReusableTable";
+import Modal from "../../../ui/containers/Modal";
+import EffectInstanceForm from "../../effects/EffectInstanceForm";
+import { EffectParentObjectIdContext } from "../../../context/EffectParentObjectIdContext";
+import { ParentObjectIdContext } from "../../../context/ParentObjectIdContext";
+import { PowerSelectionForm } from "../../powers/PowerSelectionForm";
+import { PowerSelectionFormField } from "./PowerSelectionFormField";
 
 const Label = styled.label`
   font-weight: bold;
@@ -119,9 +126,15 @@ type MapFormProps = {
   description: string;
 };
 
+const TABLE_COLUMNS = {
+  Id: "id",
+  Name: "name",
+};
+
 export default function MapCreatorForm({ state, onSubmit }: any) {
   const colorPickerPopover = useRef();
   const [isColorPickerVisible, setIsColorPickerVisible] = useState(false);
+  const [selectedPowers, setSelectedPowers] = useState<PowerListItem[]>([]);
   const [colorValue, setColorValue] = useState("#fff");
   const {
     register,
@@ -299,27 +312,38 @@ export default function MapCreatorForm({ state, onSubmit }: any) {
             )}
           </FieldContainerStyled>
 
-          {/* Field Effects */}
-          <Label>Field Effects:</Label>
-          <Button size="small" variation="primary">
-            New effect
-          </Button>
+          {/* Field Powers */}
+          <Label>Field Powers:</Label>
+          <Modal>
+            <Modal.Open opens="mapCreateNewPowerField">
+              <Button size="small" variation="primary">
+                New Power
+              </Button>
+            </Modal.Open>
+            <Modal.Window name="mapCreateNewPowerField">
+              <PowerSelectionFormField
+                onSelectPower={setSelectedPowers}
+                selectedPowers={selectedPowers}
+              />
+            </Modal.Window>
+          </Modal>
+
           <FieldContainerStyled>
             <FieldSet>
-              <Table>
-                <thead>
-                  <tr>
-                    <TableHeader>Name</TableHeader>
-                    <TableHeader>Source</TableHeader>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <TableCell>Text</TableCell>
-                    <TableCell>Text</TableCell>
-                  </tr>
-                </tbody>
-              </Table>
+              <ReusableTable
+                tableRowsColomns={TABLE_COLUMNS}
+                data={selectedPowers}
+                customTableContainer={css`
+                  margin: 1px;
+                `}
+                customHeader={css`
+                  padding: 0.5px;
+                `}
+                // isSelectable={true}
+                // onSelect={setSelectedMap}
+                //isSearching={true}
+                //mainHeader="Maps"
+              />
             </FieldSet>
           </FieldContainerStyled>
 

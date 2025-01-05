@@ -3,14 +3,15 @@ using pracadyplomowa.Errors;
 using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.Entities.Campaign;
 using pracadyplomowa.Repository;
+using pracadyplomowa.Repository.UnitOfWork;
 
 namespace pracadyplomowa.Controllers
 {
 
-    public class CampaignController(ICampaignRepository campaignRepository, ICharacterRepository characterRepository) : BaseApiController
+    public class CampaignController(IUnitOfWork unitOfWork) : BaseApiController
     {
-        private readonly ICampaignRepository _campaignRepository = campaignRepository;
-        private readonly ICharacterRepository _characterRepository = characterRepository;
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        
         [HttpPost]
         public async Task<ActionResult> CreateCampaign(CampaignInsertDto campaignInsertDto)
         {
@@ -22,15 +23,15 @@ namespace pracadyplomowa.Controllers
             var userId = User.GetUserId();
             campaign.R_OwnerId = userId;
 
-            _campaignRepository.Add(campaign);
-            await _campaignRepository.SaveChanges();
+            _unitOfWork.CampaignRepository.Add(campaign);
+            await _unitOfWork.SaveChangesAsync();
             return Created();
         }
 
         [HttpGet]
         public async Task<ActionResult<List<CampaignDto>>> GetCampaigns()
         {
-            List<Campaign> campaigns = await _campaignRepository.GetCampaigns(User.GetUserId());
+            List<Campaign> campaigns = await _unitOfWork.CampaignRepository.GetCampaigns(User.GetUserId());
 
             List<CampaignDto> campaignsDto = campaigns.Select(c => new CampaignDto(c)).ToList();
 
@@ -40,7 +41,7 @@ namespace pracadyplomowa.Controllers
         [HttpGet("{campaignId}")]
         public async Task<ActionResult<CampaignDto>> GetCampaign(int campaignId)
         {
-            var campaign = await _campaignRepository.GetCampaign(campaignId);
+            var campaign = await _unitOfWork.CampaignRepository.GetCampaign(campaignId);
 
             if (campaign == null)
             {
@@ -55,8 +56,8 @@ namespace pracadyplomowa.Controllers
         [HttpPost("addCharacterToCampaign/{campaignId}/{characterId}")]
         public ActionResult AddCharacterToCampaign(int campaignId, int characterId)
         {
-            var campaign = _campaignRepository.GetById(campaignId);
-            var character = _characterRepository.GetById(characterId);
+            var campaign = _unitOfWork.CampaignRepository.GetById(campaignId);
+            var character = _unitOfWork.CharacterRepository.GetById(characterId);
 
 
             if (campaign == null || character == null)
@@ -66,7 +67,7 @@ namespace pracadyplomowa.Controllers
 
             campaign.R_CampaignHasCharacters.Add(character);
 
-            _campaignRepository.SaveChanges();
+            _unitOfWork.SaveChangesAsync();
             return Ok();
         }
 

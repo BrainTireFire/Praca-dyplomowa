@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer } from "react";
+import { useCallback, useContext, useEffect, useReducer } from "react";
 import Box from "../../../ui/containers/Box";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import RadioGroup from "../../../ui/forms/RadioGroup";
@@ -9,35 +9,52 @@ import {
   DiceSetExtendedDefaultValue,
   DiceSetForm,
 } from "../DiceSetForm";
+import { ValueEffect } from "../valueEffect";
+import { rollMomentDropdown } from "../rollMoment";
+import { EffectContext } from "../contexts/BlueprintOrInstanceContext";
+import { EditModeContext } from "../../../context/EditModeContext";
 
-export type Effect = {
-  effectType: "bonus" | "rerollLowerThan" | "advantage";
-  value: DiceSetExtended;
-  ability: (typeof abilities)[number];
+export type Effect = ValueEffect & {
+  effectType: {
+    abilityEffect: "Bonus" | "RerollLowerThan" | "Advantage";
+    abilityEffect_Ability: (typeof abilities)[number];
+  };
 };
 
 type Action = {
-  type: "setEffectType" | "setValue" | "setAbility";
+  type: "setEffectType" | "setValue" | "setAbility" | "setRollMoment";
   payload: any;
 };
 
 export const initialState: Effect = {
-  effectType: "bonus",
+  effectType: { abilityEffect: "Bonus", abilityEffect_Ability: "STRENGTH" },
   value: DiceSetExtendedDefaultValue,
-  ability: "strength",
+  rollMoment: "OnCast",
 };
 
 const effectReducer = (state: Effect, action: Action): Effect => {
   let newState: Effect;
   switch (action.type) {
     case "setEffectType":
-      newState = { ...state, effectType: action.payload };
+      newState = {
+        ...state,
+        effectType: { ...state.effectType, abilityEffect: action.payload },
+      };
       break;
     case "setValue":
       newState = { ...state, value: action.payload };
       break;
+    case "setRollMoment":
+      newState = { ...state, rollMoment: action.payload };
+      break;
     case "setAbility":
-      newState = { ...state, ability: action.payload };
+      newState = {
+        ...state,
+        effectType: {
+          ...state.effectType,
+          abilityEffect_Ability: action.payload,
+        },
+      };
       break;
     default:
       newState = state;
@@ -54,6 +71,9 @@ export default function AbilityEffectForm({
   onChange: (updatedState: Effect) => void;
   effect: Effect;
 }) {
+  const { editMode } = useContext(EditModeContext);
+  const disableUpdate = !editMode;
+  const effectContext = useContext(EffectContext);
   const [state, dispatch] = useReducer(effectReducer, effect);
   useEffect(() => {
     onChange(state);
@@ -65,22 +85,40 @@ export default function AbilityEffectForm({
   return (
     <Box>
       <RadioGroup
+        disabled={disableUpdate}
         values={[
-          { label: "Bonus", value: "bonus" },
-          { label: "Advantage", value: "advantage" },
-          { label: "Reroll lower than", value: "rerollLowerThan" },
+          { label: "Bonus", value: "Bonus" },
+          { label: "Advantage", value: "Advantage" },
+          { label: "Reroll lower than", value: "RerollLowerThan" },
         ]}
         label="Ability effect"
         name="abilityEffect"
         onChange={(x) => dispatch({ type: "setEffectType", payload: x })}
-        currentValue={state.effectType}
+        currentValue={state.effectType.abilityEffect}
       ></RadioGroup>
+      {effectContext.effect === "Blueprint" && (
+        <FormRowVertical label="Dice roll moment">
+          <Dropdown
+            disabled={disableUpdate}
+            valuesList={rollMomentDropdown}
+            chosenValue={state.rollMoment}
+            setChosenValue={(e) =>
+              dispatch({ type: "setRollMoment", payload: e })
+            }
+          ></Dropdown>
+        </FormRowVertical>
+      )}
       <FormRowVertical label="Value">
-        <DiceSetForm onChange={handleValueFormStateUpdate}></DiceSetForm>
+        <DiceSetForm
+          disabled={disableUpdate}
+          onChange={handleValueFormStateUpdate}
+          diceSet={effect.value}
+        ></DiceSetForm>
       </FormRowVertical>
       <FormRowVertical label="Ability">
         <Dropdown
-          chosenValue={state.ability}
+          disabled={disableUpdate}
+          chosenValue={state.effectType.abilityEffect_Ability}
           setChosenValue={(e) => dispatch({ type: "setAbility", payload: e })}
           valuesList={abilitiesDropdown}
         ></Dropdown>

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using pracadyplomowa.Models.Entities.Items;
+using pracadyplomowa.Models.Entities.Powers;
 using pracadyplomowa.Models.Entities.Powers.EffectBlueprints;
 using pracadyplomowa.Models.Enums;
 
@@ -36,6 +37,8 @@ namespace pracadyplomowa.Models.Entities.Characters
             this.flat = diceSet.flat;
             this.additionalValues = diceSet.additionalValues.Select(x => new AdditionalValue(x)).ToList();
         }
+        public ValueEffectBlueprint? R_ValueEffectBlueprint { get; set; }
+        public int? R_ValueEffectBlueprintId { get; set; }
         public int d20 { get; set; }
         public int d12 { get; set; }
         public int d10 { get; set; }
@@ -99,12 +102,13 @@ namespace pracadyplomowa.Models.Entities.Characters
                 TotalLevel = 1,
                 AbilityScoreModifier = 2,
                 SkillBonus = 3,
+                ProficiencyBonus = 4,
             }
-            public AdditionalValueType additionalValueType;
+            public AdditionalValueType additionalValueType { get; set; }
             public Class? R_LevelsInClass { get; set; }
             public int? R_LevelsInClassId { get; set; }
-            public Ability Ability { get; set; }
-            public Skill Skill { get; set; }
+            public Ability? Ability {get; set;}
+            public Skill? Skill {get; set;}
 
             public int ReturnValue(Character roller)
             {
@@ -116,13 +120,17 @@ namespace pracadyplomowa.Models.Entities.Characters
                 {
                     return roller.R_CharacterHasLevelsInClass.Count;
                 }
-                else if (additionalValueType == AdditionalValueType.AbilityScoreModifier)
+                else if(additionalValueType == AdditionalValueType.AbilityScoreModifier)
                 {
-                    return Character.AbilityModifier(roller.AbilityValue(Ability));
+                    return Character.AbilityModifier(roller.AbilityValue((Ability)Ability));
                 }
-                else if (additionalValueType == AdditionalValueType.SkillBonus)
+                else if(additionalValueType == AdditionalValueType.SkillBonus)
                 {
-                    return roller.SkillValue(Skill);
+                    return roller.SkillValue((Skill)Skill);
+                }
+                else if(additionalValueType == AdditionalValueType.ProficiencyBonus)
+                {
+                    return roller.ProficiencyBonus;
                 }
                 else throw new UnreachableException();
             }
@@ -149,19 +157,97 @@ namespace pracadyplomowa.Models.Entities.Characters
             }
         }
 
-        public int Roll(Character roller)
+        public int Roll(Character? roller)
         {
-            int[] arr = Roll();
+            int[] arr = RollSeparate();
             int result = 0;
             foreach (var val in arr)
             {
                 result += val;
             }
-            result += ResolveAdditionalValues(roller);
+            if(roller != null){
+                result += ResolveAdditionalValues(roller);
+            }
             return result;
         }
 
-        public int[] Roll()
+        public class DiceRollResult {
+            public int size;
+            public int result;
+        }
+
+        public class Dice {
+            private readonly Random rnd = new();
+            public int size;
+            public int result;
+            public int Roll(){
+                if(size != 0){
+                    result = rnd.Next(1, size);
+                }
+                return result;
+            }
+        }
+
+        public List<Dice> RollPrototype(bool advantage, bool disadvantage, int? rerollLowerThan){ //returns map where keys are dice size
+            List<Dice> diceSet = [];
+            for(int i = 0; i < this.d100; i++){
+                diceSet.Add(new Dice(){size = 100});
+            }
+            for(int i = 0; i < this.d20; i++){
+                diceSet.Add(new Dice(){size = 20});
+            }
+            for(int i = 0; i < this.d12; i++){
+                diceSet.Add(new Dice(){size = 12});
+            }
+            for(int i = 0; i < this.d10; i++){
+                diceSet.Add(new Dice(){size = 10});
+            }
+            for(int i = 0; i < this.d8; i++){
+                diceSet.Add(new Dice(){size = 8});
+            }
+            for(int i = 0; i < this.d6; i++){
+                diceSet.Add(new Dice(){size = 6});
+            }
+            for(int i = 0; i < this.d4; i++){
+                diceSet.Add(new Dice(){size = 4});
+            }
+            diceSet.Add(new Dice(){size = 0, result = this.flat});
+            foreach(Dice dice in diceSet){
+                var result1 = dice.Roll();
+                if(rerollLowerThan != null && result1 < rerollLowerThan){
+                    dice.Roll();
+                }
+                if(advantage || disadvantage){
+                    var result2 = dice.Roll();
+                    if(advantage && !disadvantage && result1 > result2){
+                        dice.result = result1;
+                    }
+                    if(disadvantage && !advantage && result1 < result2){
+                        dice.result = result1;
+                    }
+                }
+            }
+            return diceSet;
+        }
+
+        public List<Dice> RollPrototype(Character roller, bool advantage, bool disadvantage, int? rerollLowerThan){ //returns map where keys are dice size
+            List<Dice> diceRollResults = RollPrototype(advantage, disadvantage, rerollLowerThan);
+            diceRollResults.Add(new Dice() {size = 0, result = this.ResolveAdditionalValues(roller)});
+            return diceRollResults;
+        }
+
+        // public int Roll()
+        // {
+        //     int[] arr = RollSeparate();
+        //     int result = 0;
+        //     foreach (var val in arr)
+        //     {
+        //         result += val;
+        //     }
+        //     return result;
+        // }
+
+        public int[] RollSeparate()
         {
             Random rnd = new();
             int[] result = new int[8];

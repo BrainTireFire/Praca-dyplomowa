@@ -1,19 +1,25 @@
+import { EffectBlueprint } from "../features/effects/EffectBlueprintForm";
 import {
   CharacterItem,
   Character,
   CharacterInsertDto,
 } from "../models/character";
 import { DiceSet } from "../models/diceset";
+import { ImmaterialResourceAmount } from "../models/immaterialResourceAmount";
 import { ItemFamily } from "../models/itemfamily";
+import { PowerListItem } from "../models/power";
 import { Slot } from "../models/slot";
 import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
-import { customFetchJSON } from "./customFetchJSON";
 
 export async function getCharacters(): Promise<CharacterItem[]> {
   const response = await customFetch(`${BASE_URL}/api/character/mycharacters`);
 
-  console.log(response);
+  return response;
+}
+
+export async function getNpcCharacters(): Promise<CharacterItem[]> {
+  const response = await customFetch(`${BASE_URL}/api/character/npcCharacters`);
 
   return response;
 }
@@ -140,6 +146,193 @@ export async function unequipItemInSlot(
   };
   await customFetch(
     `${BASE_URL}/api/character/${characterId}/equipmentSlots/${slotId}/unequip/${itemId}`,
+    options
+  );
+}
+
+export async function updateItemResources(
+  characterId: number,
+  resources: ImmaterialResourceAmount[]
+): Promise<void> {
+  const options: RequestInit = {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(resources),
+  };
+  await customFetch(
+    `${BASE_URL}/api/character/${characterId}/resources`,
+    options
+  );
+  return;
+}
+
+export async function getCharacterResources(
+  characterId: number
+): Promise<ImmaterialResourceAmount[]> {
+  const response = await customFetch(
+    `${BASE_URL}/api/character/${characterId}/resources`
+  );
+
+  console.log(response);
+
+  return response;
+}
+
+export async function getCharacterPowers(
+  characterId: number
+): Promise<PowerListItem[]> {
+  const response = await customFetch(
+    `${BASE_URL}/api/character/${characterId}/powers`
+  );
+
+  console.log(response);
+
+  return response;
+}
+
+export async function getCharacterPowersPreparedForClass(
+  characterId: number,
+  classId: number
+): Promise<PowerListItem[]> {
+  const response = await customFetch(
+    `${BASE_URL}/api/character/${characterId}/powersPrepared/class/${classId}`
+  );
+
+  console.log(response);
+
+  return response;
+}
+
+export async function getCharacterPowersPrepared(
+  characterId: number
+): Promise<PowerListItem[]> {
+  const response = await customFetch(
+    `${BASE_URL}/api/character/${characterId}/powersPrepared`
+  );
+
+  console.log(response);
+
+  return response;
+}
+
+export async function getCharacterPowersToPrepare(
+  characterId: number
+): Promise<PowersToPrepare[]> {
+  const response = await customFetch(
+    `${BASE_URL}/api/character/${characterId}/powersToPrepare`
+  );
+
+  console.log(response);
+
+  return response;
+}
+
+export type PowersToPrepare = {
+  powerList: PowerListItem[];
+  numberToChoose: number;
+  classId: number;
+  className: string;
+};
+
+export async function getCharacterMaxPowersToPrepare(
+  characterId: number
+): Promise<PowerListItem[]> {
+  const response = await customFetch(
+    `${BASE_URL}/api/character/${characterId}/maxPowersToPrepare`
+  );
+
+  console.log(response);
+
+  return response;
+}
+
+export async function updateCharacterKnownPowers(
+  characterId: number,
+  powers: PowerListItem[]
+): Promise<void> {
+  const options: RequestInit = {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(powers),
+  };
+  await customFetch(`${BASE_URL}/api/character/${characterId}/powers`, options);
+  return;
+}
+
+export async function updateCharacterPreparedPowers(
+  characterId: number,
+  classId: number,
+  powers: PowerListItem[]
+): Promise<void> {
+  const options: RequestInit = {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(powers),
+  };
+  await customFetch(
+    `${BASE_URL}/api/character/${characterId}/powersPrepared/class/${classId}`,
+    options
+  );
+  return;
+}
+
+export async function addConstantEffectInstance(
+  effectBlueprintDto: EffectBlueprint,
+  characterId: number
+): Promise<number> {
+  console.log(effectBlueprintDto);
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(effectBlueprintDto),
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/character/${characterId}/constantEffects`,
+    options
+  );
+}
+
+export async function addTemporaryEffectInstance(
+  effectBlueprintDto: EffectBlueprint,
+  characterId: number
+): Promise<number> {
+  console.log(effectBlueprintDto);
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(effectBlueprintDto),
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/character/${characterId}/temporaryEffects`,
+    options
+  );
+}
+export async function addToEquipment(
+  characterId: number,
+  itemId: number
+): Promise<void> {
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(itemId),
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/character/${characterId}/equipment`,
     options
   );
 }

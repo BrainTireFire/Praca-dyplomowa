@@ -17,10 +17,11 @@ namespace pracadyplomowa.Repository
         {
         }
 
-        public async Task<PagedList<CharacterSummaryDto>> GetCharacterSummaries(int OwnerId, CharacterParams characterParams)
+        public async Task<PagedList<CharacterSummaryDto>> GetCharacterSummaries(int OwnerId, bool isNpc, CharacterParams characterParams)
         {
             var query = _context.Characters
                     .Where(c => c.R_OwnerId == OwnerId)
+                    .Where(c => c.IsNpc == isNpc)
                     .Include(c => c.R_CharacterBelongsToRace)
                     .Include(c => c.R_CharacterHasLevelsInClass)
                     .ThenInclude(cl => cl.R_Class)
@@ -44,6 +45,7 @@ namespace pracadyplomowa.Repository
 
             var charactersSumaries = query.Select(c => new CharacterSummaryDto(
                 c.Id,
+                c.IsNpc,
                 c.Name,
                 c.Description,
                 c.R_CharacterBelongsToRace.Name,
@@ -115,9 +117,11 @@ namespace pracadyplomowa.Repository
                 .ThenInclude(p => p.R_UsesImmaterialResource)
 
             .Include(c => c.R_PowersPrepared)
-                .ThenInclude(p => p.R_EffectBlueprints)
+                .ThenInclude(ps => ps.R_PreparedPowers)
+                    .ThenInclude(p => p.R_EffectBlueprints)
             .Include(c => c.R_PowersPrepared)
-                .ThenInclude(p => p.R_UsesImmaterialResource)
+                .ThenInclude(ps => ps.R_PreparedPowers)
+                    .ThenInclude(p => p.R_UsesImmaterialResource)
 
             .Include(c => c.R_AffectedBy)
                 .ThenInclude(eg => eg.R_OwnedByGroup)
@@ -145,6 +149,9 @@ namespace pracadyplomowa.Repository
             .Include(c => c.R_EquippedItems)
                 .ThenInclude(ed => ed.R_Item)
                     .ThenInclude(b => b.R_ItemIsEquippableInSlots)
+
+            .Include(c => c.R_ImmaterialResourceInstances)
+                .ThenInclude(iri => iri.R_Blueprint)
 
             .AsSplitQuery() // IMPORTANT !!!!! https://learn.microsoft.com/en-us/ef/core/querying/single-split-queries
             .FirstAsync();
@@ -208,8 +215,16 @@ namespace pracadyplomowa.Repository
             return character;
         }
 
-        public Task<Character> GetCharacterEquipmentAndSlots(int id)
-        {
+        public Task<Character> GetCharacterEquipment(int id){
+            var character = _context.Characters
+            .Where(c => c.Id == id)
+            .Include(c => c.R_CharacterHasBackpack)
+                .ThenInclude(b => b.R_BackpackHasItems)
+            .FirstAsync();
+            return character;
+        }
+
+        public Task<Character> GetCharacterEquipmentAndSlots(int id){
             var character = _context.Characters
             .Where(c => c.Id == id)
             .Include(c => c.R_CharacterHasBackpack)
@@ -225,6 +240,70 @@ namespace pracadyplomowa.Repository
                 .ThenInclude(r => r.R_EquipmentSlots)
             .FirstAsync();
             return character;
+        }
+
+        public Task<Character> GetByIdWithCustomResources(int Id)
+        {
+            var character = _context.Characters
+            .Where(c => c.Id == Id)
+            .Include(c => c.R_ImmaterialResourceInstances)
+                .ThenInclude(iri => iri.R_Blueprint)
+            .FirstAsync();
+            return character;
+        }
+
+        public Task<Character> GetByIdWithKnownPowers(int Id)
+        {
+            var character = _context.Characters
+            .Where(c => c.Id == Id)
+            .Include(c => c.R_PowersKnown)
+            .FirstAsync();
+            return character;
+        }
+
+        public Task<Character> GetByIdWithPreparedPowers(int Id)
+        {
+            var character = _context.Characters
+            .Where(c => c.Id == Id)
+            .Include(c => c.R_CharacterHasLevelsInClass)
+                .ThenInclude(c => c.R_Class)
+                    .ThenInclude(c => c.MaximumPreparedSpellsFormula)
+            .Include(c => c.R_AffectedBy)
+            .Include(c => c.R_EquippedItems)
+                .ThenInclude(c => c.R_Item)
+                    .ThenInclude(c => c.R_EffectsOnEquip)
+            .Include(c => c.R_PowersPrepared)
+                .ThenInclude(ps => ps.R_PreparedPowers)
+            .FirstAsync();
+            return character;
+        }
+
+        public Task<Character> GetByIdWithPowersToPrepare(int Id)
+        {
+            var character = _context.Characters
+            .Where(c => c.Id == Id)
+            .Include(c => c.R_CharacterHasLevelsInClass)
+                .ThenInclude(c => c.R_Class)
+                    .ThenInclude(c => c.MaximumPreparedSpellsFormula)
+            .Include(c => c.R_AffectedBy)
+            .Include(c => c.R_EquippedItems)
+                .ThenInclude(c => c.R_Item)
+                    .ThenInclude(c => c.R_EffectsOnEquip)
+            .Include(c => c.R_UsedChoiceGroups)
+                .ThenInclude(c => c.R_PowersToPrepareGranted)
+            .Include(c => c.R_UsedChoiceGroups)
+                .ThenInclude(c => c.R_ChoiceGroup)
+                    .ThenInclude(c => c.R_GrantedByClassLevel)
+                        .ThenInclude(c => c.R_Class)
+            .FirstAsync();
+            return character;
+        }
+
+        public Dictionary<int, Character> GetCharactersForAccessAnalysis(List<int> ids){
+            return _context.Characters
+            .Where(i => ids.Contains(i.Id))
+            .Include(c => c.R_Campaign)
+            .ToDictionary(i => i.Id, i => i);
         }
     }
 }

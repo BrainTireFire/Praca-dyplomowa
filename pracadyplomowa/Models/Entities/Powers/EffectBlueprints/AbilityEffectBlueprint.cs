@@ -13,7 +13,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
         public AbilityEffectType AbilityEffectType{ get; set; } = new AbilityEffectType();
         private AbilityEffectBlueprint() : this("EF", 0, 0){}
 
-        public override EffectInstance Generate(Character roller, Character target){
+        public override EffectInstance Generate(Character? roller, Character target){
             return new AbilityEffectInstance(this, roller, target);
         }
     }

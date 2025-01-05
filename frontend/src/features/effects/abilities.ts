@@ -1,19 +1,21 @@
 export const abilities = [
-  "strength",
-  "dexterity",
-  "constitution",
-  "intelligence",
-  "wisdom",
-  "charisma",
+  "STRENGTH",
+  "DEXTERITY",
+  "CONSTITUTION",
+  "INTELLIGENCE",
+  "WISDOM",
+  "CHARISMA",
 ] as const;
 
+export type ability = (typeof abilities)[number];
+
 export const AbilitiesLabelMap = {
-  strength: "Strength",
-  dexterity: "Dexterity",
-  constitution: "Constitution",
-  intelligence: "Intelligence",
-  wisdom: "Wisdom",
-  charisma: "Charisma",
+  STRENGTH: "Strength",
+  DEXTERITY: "Dexterity",
+  CONSTITUTION: "Constitution",
+  INTELLIGENCE: "Intelligence",
+  WISDOM: "Wisdom",
+  CHARISMA: "Charisma",
 } as const;
 
 export const abilitiesDropdown = abilities.map((x) => {

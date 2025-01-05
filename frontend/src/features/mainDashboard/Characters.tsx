@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import Heading from "../../ui/text/Heading";
 import Button from "../../ui/interactive/Button";
+import { useNavigate } from "react-router-dom";
 
 const StyledElementBox = styled.div`
   display: grid;
@@ -11,13 +12,18 @@ const StyledElementBox = styled.div`
 `;
 
 export default function Characters() {
+  const navigate = useNavigate();
   return (
     <>
       <Heading as="h4" align="left">
         Characters
       </Heading>
       <StyledElementBox>
-        <Button size="large" variation="primary">
+        <Button
+          size="large"
+          variation="primary"
+          onClick={() => navigate(`/characters`)}
+        >
           My playable characters
         </Button>
         <Button size="large" variation="secondary">
@@ -25,7 +31,11 @@ export default function Characters() {
         </Button>
       </StyledElementBox>
       <StyledElementBox>
-        <Button size="large" variation="primary">
+        <Button
+          size="large"
+          variation="primary"
+          onClick={() => navigate(`/npc`)}
+        >
           My non-playable characters
         </Button>
         <Button size="large" variation="secondary">

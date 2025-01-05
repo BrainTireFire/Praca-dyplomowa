@@ -26,31 +26,26 @@ export default function Homebrew() {
         Homebrew
       </Heading>
       <StyledElementBox>
-        <Button size="large" variation="primary">
+        <Button
+          size="large"
+          variation="primary"
+          onClick={() => navigate(`/items`)}
+        >
           My custom items
-        </Button>
-        <Button size="large" variation="secondary">
-          New Item
         </Button>
       </StyledElementBox>
       <StyledElementBox>
-        <Button size="large" variation="primary">
-          My custom powers
-        </Button>
         <Button
           size="large"
-          variation="secondary"
-          onClick={() => navigate(`/homebrew/createPower`)}
+          variation="primary"
+          onClick={() => navigate(`/powers`)}
         >
-          New Power
+          My custom powers
         </Button>
       </StyledElementBox>
       <StyledElementBox>
         <Button size="large" variation="primary">
           My custom item families
-        </Button>
-        <Button size="large" variation="secondary">
-          New item family
         </Button>
       </StyledElementBox>
       <StyledElementBoxWithSpace>

@@ -17,7 +17,6 @@ namespace pracadyplomowa.Models.Entities.Powers
         public int Level { get; set; } // use this effect if Level value matches value selected by 
         public int ResourceAmount { get; set;}
         public bool Saved { get; set; }
-        public EffectType EffectType { get; set; }
         public bool Conditional { get; set; } = false;
         public bool IsImplemented { get; set; } = true;
         public bool HasNoEffectInCombat { get; set; } = false;
@@ -40,7 +39,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         //constructors
         private EffectBlueprint() : this("EF"){}
         //methods
-        public abstract EffectInstance Generate(Character roller, Character target); //roller added to parameter list as it will be used by overriding methods
+        public abstract EffectInstance Generate(Character? roller, Character target); //roller added to parameter list as it will be used by overriding methods
         //     return new EffectInstance(this, target);
         // }
     }

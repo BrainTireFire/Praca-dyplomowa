@@ -35,8 +35,8 @@ namespace pracadyplomowa.Models.Entities.Powers
         public virtual Character? R_Character { get; set; }
         public int? R_CharacterId { get; set; }
 
-        public virtual ChoiceGroupUsage R_ChoiceGroupUsage { get; set; } = null!;
-        public virtual int R_ChoiceGroupUsageId { get; set; }
+        public virtual ChoiceGroupUsage? R_ChoiceGroupUsage { get; set; } = null!;
+        public virtual int? R_ChoiceGroupUsageId { get; set; }
 
         [NotMapped]
         public string Source {

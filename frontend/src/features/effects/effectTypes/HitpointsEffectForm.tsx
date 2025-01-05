@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer } from "react";
+import { useCallback, useContext, useEffect, useReducer } from "react";
 import Box from "../../../ui/containers/Box";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import RadioGroup from "../../../ui/forms/RadioGroup";
@@ -7,34 +7,52 @@ import {
   DiceSetExtendedDefaultValue,
   DiceSetForm,
 } from "../DiceSetForm";
+import { ValueEffect } from "../valueEffect";
+import Dropdown from "../../../ui/forms/Dropdown";
+import { rollMoment, rollMomentDropdown } from "../rollMoment";
+import { EffectContext } from "../contexts/BlueprintOrInstanceContext";
+import { EditModeContext } from "../../../context/EditModeContext";
 
-const effectTypes = ["temporaryHitpoints", "hitpointMaximumBonus"] as const;
+const hitpointEffects = ["TemporaryHitpoints", "HitpointMaximumBonus"] as const;
 
-type effectType = (typeof effectTypes)[number];
+type hitpointEffect = (typeof hitpointEffects)[number];
 
-export type Effect = {
-  effectType: effectType;
-  value: DiceSetExtended;
+export type Effect = ValueEffect & {
+  effectType: {
+    hitpointEffect: hitpointEffect;
+  };
 };
 
 type Action = {
-  type: "setEffectType" | "setValue";
-  payload: effectType | DiceSetExtended;
+  type: "setEffectType" | "setValue" | "setRollMoment";
+  payload: hitpointEffect | DiceSetExtended | string | null;
 };
 
 export const initialState: Effect = {
-  effectType: "temporaryHitpoints",
+  effectType: {
+    hitpointEffect: "TemporaryHitpoints",
+  },
   value: DiceSetExtendedDefaultValue,
+  rollMoment: "OnCast",
 };
 
 const effectReducer = (state: Effect, action: Action): Effect => {
   let newState: Effect;
   switch (action.type) {
     case "setEffectType":
-      newState = { ...state, effectType: action.payload as effectType };
+      newState = {
+        ...state,
+        effectType: {
+          ...state.effectType,
+          hitpointEffect: action.payload as hitpointEffect,
+        },
+      };
       break;
     case "setValue":
       newState = { ...state, value: action.payload as DiceSetExtended };
+      break;
+    case "setRollMoment":
+      newState = { ...state, rollMoment: action.payload as rollMoment };
       break;
     default:
       newState = state;
@@ -51,6 +69,7 @@ export default function HitpointEffectForm({
   onChange: (updatedState: Effect) => void;
   effect: Effect;
 }) {
+  const effectContext = useContext(EffectContext);
   const [state, dispatch] = useReducer(effectReducer, effect);
 
   useEffect(() => {
@@ -61,22 +80,41 @@ export default function HitpointEffectForm({
     dispatch({ type: "setValue", payload: e });
   }, []);
 
+  const { editMode } = useContext(EditModeContext);
+  const disableUpdate = !editMode;
   return (
     <Box>
       <RadioGroup
+        disabled={disableUpdate}
         values={[
-          { label: "Temporary hitpoints", value: "temporaryHitpoints" },
-          { label: "Hitpoint maximum bonus", value: "hitpointMaximumBonus" },
+          { label: "Temporary hitpoints", value: "TemporaryHitpoints" },
+          { label: "Hitpoint maximum bonus", value: "HitpointMaximumBonus" },
         ]}
         label="Hitpoint effect"
         name="hitpointEffect"
         onChange={(x) =>
-          dispatch({ type: "setEffectType", payload: x as effectType })
+          dispatch({ type: "setEffectType", payload: x as hitpointEffect })
         }
-        currentValue={state.effectType}
+        currentValue={state.effectType.hitpointEffect}
       ></RadioGroup>
+      {effectContext.effect === "Blueprint" && (
+        <FormRowVertical label="Dice roll moment">
+          <Dropdown
+            disabled={disableUpdate}
+            valuesList={rollMomentDropdown}
+            chosenValue={state.rollMoment}
+            setChosenValue={(e) =>
+              dispatch({ type: "setRollMoment", payload: e })
+            }
+          ></Dropdown>
+        </FormRowVertical>
+      )}
       <FormRowVertical label="Value">
-        <DiceSetForm onChange={handleValueFormStateUpdate}></DiceSetForm>
+        <DiceSetForm
+          disabled={disableUpdate}
+          onChange={handleValueFormStateUpdate}
+          diceSet={effect.value}
+        ></DiceSetForm>
       </FormRowVertical>
     </Box>
   );

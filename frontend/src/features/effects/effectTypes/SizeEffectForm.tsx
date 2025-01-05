@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer } from "react";
+import { useCallback, useContext, useEffect, useReducer } from "react";
 import Box from "../../../ui/containers/Box";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import RadioGroup from "../../../ui/forms/RadioGroup";
@@ -9,21 +9,26 @@ import {
 } from "../DiceSetForm";
 import { size, sizesDropdown } from "../sizes";
 import Dropdown from "../../../ui/forms/Dropdown";
+import { ValueEffect } from "../valueEffect";
+import { rollMoment, rollMomentDropdown } from "../rollMoment";
+import { EffectContext } from "../contexts/BlueprintOrInstanceContext";
+import { EditModeContext } from "../../../context/EditModeContext";
 
-const effectTypes = ["bonus", "change"] as const;
+const sizeEffects = ["Bonus", "Change"] as const;
 
-type effectType = (typeof effectTypes)[number];
+type sizeEffect = (typeof sizeEffects)[number];
 
-export type Effect = {
-  effectType: effectType;
-  value: DiceSetExtended;
-  sizeToSet: size;
+export type Effect = ValueEffect & {
+  effectType: {
+    sizeEffect: sizeEffect;
+    sizeEffect_SizeToSet: size;
+  };
 };
 
-type Action = EffectAction | ValueAction | SizeAction;
+type Action = EffectAction | ValueAction | SizeAction | RollMomentAction;
 type EffectAction = {
   type: "setEffectType";
-  payload: effectType;
+  payload: sizeEffect;
 };
 type ValueAction = {
   type: "setValue";
@@ -33,24 +38,43 @@ type SizeAction = {
   type: "setSize";
   payload: size;
 };
+type RollMomentAction = {
+  type: "setRollMoment";
+  payload: string | null;
+};
 
 export const initialState: Effect = {
-  effectType: "bonus",
+  effectType: { sizeEffect: "Bonus", sizeEffect_SizeToSet: "Medium" },
   value: DiceSetExtendedDefaultValue,
-  sizeToSet: "medium",
+  rollMoment: "OnResolve",
 };
 
 const effectReducer = (state: Effect, action: Action): Effect => {
   let newState: Effect;
   switch (action.type) {
     case "setEffectType":
-      newState = { ...state, effectType: action.payload as effectType };
+      newState = {
+        ...state,
+        effectType: {
+          ...state.effectType,
+          sizeEffect: action.payload as sizeEffect,
+        },
+      };
       break;
     case "setValue":
       newState = { ...state, value: action.payload as DiceSetExtended };
       break;
+    case "setRollMoment":
+      newState = { ...state, rollMoment: action.payload as rollMoment };
+      break;
     case "setSize":
-      newState = { ...state, sizeToSet: action.payload as size };
+      newState = {
+        ...state,
+        effectType: {
+          ...state.effectType,
+          sizeEffect_SizeToSet: action.payload as size,
+        },
+      };
       break;
     default:
       newState = state;
@@ -67,6 +91,7 @@ export default function SizeEffectForm({
   onChange: (updatedState: Effect) => void;
   effect: Effect;
 }) {
+  const effectContext = useContext(EffectContext);
   const [state, dispatch] = useReducer(effectReducer, effect);
 
   useEffect(() => {
@@ -77,29 +102,49 @@ export default function SizeEffectForm({
     dispatch({ type: "setValue", payload: e });
   }, []);
 
+  const { editMode } = useContext(EditModeContext);
+  const disableUpdate = !editMode;
   return (
     <Box>
       <RadioGroup
+        disabled={disableUpdate}
         values={[
-          { label: "Bonus", value: "bonus" },
-          { label: "Change", value: "change" },
+          { label: "Bonus", value: "Bonus" },
+          { label: "Change", value: "Change" },
         ]}
         label="Size effect"
         name="sizeEffect"
         onChange={(x) =>
-          dispatch({ type: "setEffectType", payload: x as effectType })
+          dispatch({ type: "setEffectType", payload: x as sizeEffect })
         }
-        currentValue={state.effectType}
+        currentValue={state.effectType.sizeEffect}
       ></RadioGroup>
+      {effectContext.effect === "Blueprint" && (
+        <FormRowVertical label="Dice roll moment">
+          <Dropdown
+            disabled={disableUpdate}
+            valuesList={rollMomentDropdown}
+            chosenValue={state.rollMoment}
+            setChosenValue={(e) =>
+              dispatch({ type: "setRollMoment", payload: e })
+            }
+          ></Dropdown>
+        </FormRowVertical>
+      )}
       <FormRowVertical label="Value">
-        <DiceSetForm onChange={handleValueFormStateUpdate}></DiceSetForm>
+        <DiceSetForm
+          disabled={disableUpdate}
+          onChange={handleValueFormStateUpdate}
+          diceSet={effect.value}
+        ></DiceSetForm>
       </FormRowVertical>
       <FormRowVertical label="Size to set">
         <Dropdown
+          disabled={disableUpdate}
           setChosenValue={(x) =>
             dispatch({ type: "setSize", payload: x as size })
           }
-          chosenValue={state.sizeToSet}
+          chosenValue={state.effectType.sizeEffect_SizeToSet}
           valuesList={sizesDropdown}
         ></Dropdown>
       </FormRowVertical>

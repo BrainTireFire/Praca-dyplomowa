@@ -56,7 +56,6 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         public DbSet<Tool> Tools { get; set; }
         public DbSet<Weapon> Weapons { get; set; }
         public DbSet<MeleeWeapon> MeleeWeapons { get; set; }
-        public DbSet<MeleeThrowableWeapon> MeleeThrowableWeapons { get; set; }
         public DbSet<RangedWeapon> RangedWeapons { get; set; }
 
         // Powers
@@ -115,6 +114,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         public DbSet<LanguageEffectInstance> LanguageEffectInstances { get; set; }
         public DbSet<ChoiceGroupUsage> ChoiceGroupUsages {get; set;}
         public DbSet<Language> Languages {get; set;}
+        public DbSet<PowerSelection> PowerSelections { get; set; }
         
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -159,7 +159,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
 
                 builder.Entity<Character>()
                         .HasMany(c => c.R_PowersPrepared)
-                        .WithMany(c => c.R_CharacterPreparedPowers);
+                        .WithOne(c => c.R_Character);
 
                 builder.Entity<Character>()
                         .HasOne(c => c.R_SpawnedByPower)
@@ -189,11 +189,11 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .HasForeignKey<EffectGroup>(c => c.R_GeneratesAuraId)
                         .IsRequired(false);
 
-                builder.Entity<EffectGroup>()
-                        .HasOne(c => c.R_OriginatesFromAura)
-                        .WithMany(c => c.R_OwnedEffectGroups)
-                        .HasForeignKey(c => c.R_OriginatesFromAuraId)
-                        .IsRequired(false);
+                // builder.Entity<EffectGroup>()
+                //         .HasOne(c => c.R_OriginatesFromAura)
+                //         .WithMany(c => c.R_OwnedEffectGroups)
+                //         .HasForeignKey(c => c.R_OriginatesFromAuraId)
+                //         .IsRequired(false);
 
                 // builder.Entity<EffectGroup>()
                 //         .HasOne(c => c.R_ItemAffectedBy)
@@ -234,7 +234,16 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                 builder.Entity<Item>().UseTptMappingStrategy();
                 builder.Entity<EffectBlueprint>().UseTphMappingStrategy();
                 builder.Entity<EffectInstance>().UseTphMappingStrategy();
+                builder.Entity<ValueEffectBlueprint>()
+                        .HasOne(veb => veb.DiceSet)
+                        .WithOne(ds => ds.R_ValueEffectBlueprint)
+                        .HasForeignKey<DiceSet>(ds => ds.R_ValueEffectBlueprintId)
+                        .OnDelete(DeleteBehavior.Cascade);
+                        
                 builder.Entity<ValueEffectInstance>().Navigation(e=>e.DiceSet).AutoInclude();
+                builder.Entity<ValueEffectBlueprint>().Navigation(e=>e.DiceSet).AutoInclude();
+                builder.Entity<DiceSet>().Navigation(e=>e.additionalValues).AutoInclude();
+                builder.Entity<DiceSet.AdditionalValue>().Navigation(e=>e.R_LevelsInClass).AutoInclude();
                 builder.Entity<LanguageEffectBlueprint>().Navigation(e=>e.R_Language).AutoInclude();
                 builder.Entity<LanguageEffectBlueprint>()
                         .HasOne(lei => lei.R_Language)

@@ -11,6 +11,8 @@ import Spinner from "../../ui/interactive/Spinner";
 import { abilities, abilitiesDropdown } from "./abilities";
 import { skills, skillsDropdown } from "./skills";
 import Heading from "../../ui/text/Heading";
+import { useContext } from "react";
+import { EditModeContext } from "../../context/EditModeContext";
 
 export function AdditionalValueForm({
   value,
@@ -19,6 +21,7 @@ export function AdditionalValueForm({
   value: AdditionalValue;
   onChange: (x: AdditionalValue) => void;
 }) {
+  const { editMode } = useContext(EditModeContext);
   const {
     isLoading: isLoadingClasses,
     classes,
@@ -26,22 +29,22 @@ export function AdditionalValueForm({
   } = useClasses();
   let localValue = { ...value };
   const updateType = (type: (typeof AdditionalValueTypes)[number]) => {
-    localValue.AdditionalValueType = type;
+    localValue.additionalValueType = type;
     onChange(localValue);
   };
   const updateClass = (classId: number) => {
-    localValue.LevelsInClassId = classId;
-    localValue.ClassName = classes
+    localValue.levelsInClassId = classId;
+    localValue.className = classes
       ? classes.filter((x) => x.id === classId)[0].name
       : "error";
     onChange(localValue);
   };
   const updateAbility = (ability: (typeof abilities)[number]) => {
-    localValue.Ability = ability;
+    localValue.ability = ability;
     onChange(localValue);
   };
   const updateSkill = (skill: (typeof skills)[number]) => {
-    localValue.Skill = skill;
+    localValue.skill = skill;
     onChange(localValue);
   };
   if (errorClasses) {
@@ -56,6 +59,7 @@ export function AdditionalValueForm({
       </Heading>
       <FormRowVertical label={"Type"}>
         <Dropdown
+          disabled={!editMode}
           valuesList={AdditionalValueTypes.map((item) => {
             return {
               value: item,
@@ -65,11 +69,12 @@ export function AdditionalValueForm({
           setChosenValue={(e) =>
             updateType(e as (typeof AdditionalValueTypes)[number])
           }
-          chosenValue={localValue.AdditionalValueType}
+          chosenValue={localValue.additionalValueType}
         ></Dropdown>
       </FormRowVertical>
       <FormRowVertical label={"Class"}>
         <Dropdown
+          disabled={!editMode}
           valuesList={
             classes
               ? classes.map((item) => {
@@ -81,21 +86,23 @@ export function AdditionalValueForm({
               : []
           }
           setChosenValue={(e) => updateClass(Number(e))}
-          chosenValue={localValue.LevelsInClassId.toString()}
+          chosenValue={localValue.levelsInClassId?.toString() ?? null}
         ></Dropdown>
       </FormRowVertical>
       <FormRowVertical label={"Ability"}>
         <Dropdown
+          disabled={!editMode}
           valuesList={abilitiesDropdown}
           setChosenValue={(e) => updateAbility(e as (typeof abilities)[number])}
-          chosenValue={localValue.AdditionalValueType}
+          chosenValue={localValue.ability}
         ></Dropdown>
       </FormRowVertical>
       <FormRowVertical label={"Skill"}>
         <Dropdown
+          disabled={!editMode}
           valuesList={skillsDropdown}
           setChosenValue={(e) => updateSkill(e as (typeof skills)[number])}
-          chosenValue={localValue.AdditionalValueType}
+          chosenValue={localValue.skill}
         ></Dropdown>
       </FormRowVertical>
     </Box>

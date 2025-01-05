@@ -4,6 +4,7 @@ namespace pracadyplomowa.Models.Enums.EffectOptions
     {
         DamageDealt,
         RerollLowerThan,
-        DamageTaken
+        DamageTaken,
+        ExtraWeaponDamage
     }
 }

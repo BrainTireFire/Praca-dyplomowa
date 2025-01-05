@@ -23,7 +23,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
             Description = description;
         }
         //methods
-        public override EffectInstance Generate(Character roller, Character target){
+        public override EffectInstance Generate(Character? roller, Character target){
             return new LanguageEffectInstance(this, target);
         }
     }

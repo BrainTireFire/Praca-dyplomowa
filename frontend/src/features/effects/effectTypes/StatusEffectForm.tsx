@@ -1,11 +1,14 @@
-import { useEffect, useReducer } from "react";
+import { useContext, useEffect, useReducer } from "react";
 import Box from "../../../ui/containers/Box";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import Dropdown from "../../../ui/forms/Dropdown";
 import { statusEffect, statusEffectDropdown } from "../statusEffects";
+import { EditModeContext } from "../../../context/EditModeContext";
 
 export type Effect = {
-  statusEffect: statusEffect;
+  effectType: {
+    statusEffect: statusEffect;
+  };
 };
 
 type Action = {
@@ -14,14 +17,22 @@ type Action = {
 };
 
 export const initialState: Effect = {
-  statusEffect: "blinded",
+  effectType: {
+    statusEffect: "Blinded",
+  },
 };
 
 const effectReducer = (state: Effect, action: Action): Effect => {
   let newState: Effect;
   switch (action.type) {
     case "setStatusEffect":
-      newState = { ...state, statusEffect: action.payload as statusEffect };
+      newState = {
+        ...state,
+        effectType: {
+          ...state.effectType,
+          statusEffect: action.payload as statusEffect,
+        },
+      };
       break;
     default:
       newState = state;
@@ -43,11 +54,14 @@ export default function StatusEffectForm({
     onChange(state);
   }, [state, onChange]);
 
+  const { editMode } = useContext(EditModeContext);
+  const disableUpdate = !editMode;
   return (
     <Box>
       <FormRowVertical label="Status effect">
         <Dropdown
-          chosenValue={state.statusEffect}
+          disabled={disableUpdate}
+          chosenValue={state.effectType.statusEffect}
           setChosenValue={(e) =>
             dispatch({ type: "setStatusEffect", payload: e as statusEffect })
           }

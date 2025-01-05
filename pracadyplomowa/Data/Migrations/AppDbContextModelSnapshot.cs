@@ -62,21 +62,6 @@ namespace pracadyplomowa.Migrations
                     b.ToTable("CharacterPower");
                 });
 
-            modelBuilder.Entity("CharacterPower1", b =>
-                {
-                    b.Property<int>("R_CharacterPreparedPowersId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("R_PowersPreparedId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("R_CharacterPreparedPowersId", "R_PowersPreparedId");
-
-                    b.HasIndex("R_PowersPreparedId");
-
-                    b.ToTable("CharacterPower1");
-                });
-
             modelBuilder.Entity("ChoiceGroupEffectBlueprint", b =>
                 {
                     b.Property<int>("R_ChoiceGroupsId")
@@ -341,6 +326,21 @@ namespace pracadyplomowa.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("PowerPowerSelection", b =>
+                {
+                    b.Property<int>("R_CharacterPreparedPowersId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("R_PreparedPowersId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("R_CharacterPreparedPowersId", "R_PreparedPowersId");
+
+                    b.HasIndex("R_PreparedPowersId");
+
+                    b.ToTable("PowerPowerSelection");
+                });
+
             modelBuilder.Entity("PowerWeapon", b =>
                 {
                     b.Property<int>("R_PowersCastedOnHitId")
@@ -565,7 +565,7 @@ namespace pracadyplomowa.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("MaximumPreparedSpellsFormulaId")
+                    b.Property<int>("MaximumPreparedSpellsFormulaId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -615,6 +615,9 @@ namespace pracadyplomowa.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("R_ValueEffectBlueprintId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("d10")
                         .HasColumnType("INTEGER");
 
@@ -641,6 +644,9 @@ namespace pracadyplomowa.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("R_ValueEffectBlueprintId")
+                        .IsUnique();
+
                     b.ToTable("DiceSet");
                 });
 
@@ -650,7 +656,7 @@ namespace pracadyplomowa.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Ability")
+                    b.Property<int?>("Ability")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("DiceSetId")
@@ -659,7 +665,10 @@ namespace pracadyplomowa.Migrations
                     b.Property<int?>("R_LevelsInClassId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Skill")
+                    b.Property<int?>("Skill")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("additionalValueType")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -675,9 +684,6 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsEquipped")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("R_CharacterId")
@@ -712,6 +718,27 @@ namespace pracadyplomowa.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("EquipmentSlots");
+                });
+
+            modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.PowerSelection", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("R_CharacterId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("R_ClassId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("R_CharacterId");
+
+                    b.HasIndex("R_ClassId");
+
+                    b.ToTable("PowerSelections");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.Race", b =>
@@ -775,9 +802,6 @@ namespace pracadyplomowa.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("R_ItemFamilyId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Value")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -865,9 +889,6 @@ namespace pracadyplomowa.Migrations
                         .HasMaxLength(55)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("EffectType")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("HasNoEffectInCombat")
                         .HasColumnType("INTEGER");
 
@@ -922,10 +943,10 @@ namespace pracadyplomowa.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("DifficultyClassToBreak")
+                    b.Property<int?>("DifficultyClassToBreak")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("DurationLeft")
+                    b.Property<int?>("DurationLeft")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsConstant")
@@ -941,21 +962,13 @@ namespace pracadyplomowa.Migrations
                     b.Property<int?>("R_GeneratesAuraId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("R_OriginatesFromAuraId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SavingThrow")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("SavingThrowRetakenEveryTurn")
+                    b.Property<int?>("SavingThrow")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.HasIndex("R_GeneratesAuraId")
                         .IsUnique();
-
-                    b.HasIndex("R_OriginatesFromAuraId");
 
                     b.ToTable("EffectGroups");
                 });
@@ -1090,7 +1103,7 @@ namespace pracadyplomowa.Migrations
                     b.Property<int?>("R_CharacterId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("R_ChoiceGroupUsageId")
+                    b.Property<int?>("R_ChoiceGroupUsageId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("R_ItemId")
@@ -1316,6 +1329,9 @@ namespace pracadyplomowa.Migrations
                     b.Property<int>("SucceededDeathSavingThrows")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("TemporaryHitpoints")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("UsedHitDiceId")
                         .HasColumnType("INTEGER");
 
@@ -1359,6 +1375,9 @@ namespace pracadyplomowa.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsBlueprint")
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsSpellFocus")
                         .HasColumnType("INTEGER");
@@ -1415,6 +1434,12 @@ namespace pracadyplomowa.Migrations
                     b.Property<bool>("IsImplemented")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsMagic")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsRanged")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("MaxTargets")
                         .HasColumnType("INTEGER");
 
@@ -1424,6 +1449,9 @@ namespace pracadyplomowa.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("OverrideCastersDC")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("PowerType")
                         .HasColumnType("INTEGER");
@@ -1458,13 +1486,7 @@ namespace pracadyplomowa.Migrations
                     b.Property<int>("TargetType")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("UpcastByCharacterLevel")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("UpcastByClassLevel")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("UpcastByResourceLevel")
+                    b.Property<int>("UpcastBy")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("VerbalComponent")
@@ -1514,9 +1536,6 @@ namespace pracadyplomowa.Migrations
                 {
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.EffectBlueprint");
 
-                    b.Property<int>("ItemType")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int?>("R_GrantsProficiencyInItemFamilyId")
                         .HasColumnType("INTEGER");
 
@@ -1530,13 +1549,6 @@ namespace pracadyplomowa.Migrations
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.EffectBlueprint");
 
                     b.HasDiscriminator().HasValue("ResistanceEffectBlueprint");
-                });
-
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectBlueprints.SizeEffectBlueprint", b =>
-                {
-                    b.HasBaseType("pracadyplomowa.Models.Entities.Powers.EffectBlueprint");
-
-                    b.HasDiscriminator().HasValue("SizeEffectBlueprint");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectBlueprints.StatusEffectBlueprint", b =>
@@ -1555,8 +1567,6 @@ namespace pracadyplomowa.Migrations
 
                     b.Property<int>("RollMoment")
                         .HasColumnType("INTEGER");
-
-                    b.HasIndex("DiceSetId");
 
                     b.HasDiscriminator().HasValue("ValueEffectBlueprint");
                 });
@@ -1598,9 +1608,6 @@ namespace pracadyplomowa.Migrations
                 {
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.EffectInstance");
 
-                    b.Property<int>("ItemType")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int?>("R_GrantsProficiencyInItemFamilyId")
                         .HasColumnType("INTEGER");
 
@@ -1614,13 +1621,6 @@ namespace pracadyplomowa.Migrations
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.EffectInstance");
 
                     b.HasDiscriminator().HasValue("ResistanceEffectInstance");
-                });
-
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.SizeEffectInstance", b =>
-                {
-                    b.HasBaseType("pracadyplomowa.Models.Entities.Powers.EffectInstance");
-
-                    b.HasDiscriminator().HasValue("SizeEffectInstance");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.StatusEffectInstance", b =>
@@ -1637,7 +1637,12 @@ namespace pracadyplomowa.Migrations
                     b.Property<int>("DiceSetId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("RollerId")
+                        .HasColumnType("INTEGER");
+
                     b.HasIndex("DiceSetId");
+
+                    b.HasIndex("RollerId");
 
                     b.HasDiscriminator().HasValue("ValueEffectInstance");
                 });
@@ -1673,6 +1678,9 @@ namespace pracadyplomowa.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("DamageValueId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Range")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("WeaponWeight")
@@ -1767,6 +1775,13 @@ namespace pracadyplomowa.Migrations
                     b.HasDiscriminator().HasValue("SavingThrowEffectBlueprint");
                 });
 
+            modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectBlueprints.SizeEffectBlueprint", b =>
+                {
+                    b.HasBaseType("pracadyplomowa.Models.Entities.Powers.EffectBlueprints.ValueEffectBlueprint");
+
+                    b.HasDiscriminator().HasValue("SizeEffectBlueprint");
+                });
+
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectBlueprints.SkillEffectBlueprint", b =>
                 {
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.EffectBlueprints.ValueEffectBlueprint");
@@ -1806,6 +1821,9 @@ namespace pracadyplomowa.Migrations
                 {
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.ValueEffectInstance");
 
+                    b.Property<bool>("CriticalHit")
+                        .HasColumnType("INTEGER");
+
                     b.HasDiscriminator().HasValue("DamageEffectInstance");
                 });
 
@@ -1844,6 +1862,13 @@ namespace pracadyplomowa.Migrations
                     b.HasDiscriminator().HasValue("SavingThrowEffectInstance");
                 });
 
+            modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.SizeEffectInstance", b =>
+                {
+                    b.HasBaseType("pracadyplomowa.Models.Entities.Powers.ValueEffectInstance");
+
+                    b.HasDiscriminator().HasValue("SizeEffectInstance");
+                });
+
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.SkillEffectInstance", b =>
                 {
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.ValueEffectInstance");
@@ -1861,7 +1886,13 @@ namespace pracadyplomowa.Migrations
                     b.Property<bool>("Reach")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("VersatileDamageValueId")
+                    b.Property<bool>("Thrown")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Versatile")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("VersatileDamageValueId")
                         .HasColumnType("INTEGER");
 
                     b.HasIndex("VersatileDamageValueId");
@@ -1873,23 +1904,13 @@ namespace pracadyplomowa.Migrations
                 {
                     b.HasBaseType("pracadyplomowa.Models.Entities.Items.Weapon");
 
-                    b.Property<bool>("LoadedRange")
+                    b.Property<bool>("IsReloaded")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Range")
+                    b.Property<bool>("Loaded")
                         .HasColumnType("INTEGER");
 
                     b.ToTable("RangedWeapons");
-                });
-
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.MeleeThrowableWeapon", b =>
-                {
-                    b.HasBaseType("pracadyplomowa.Models.Entities.Items.MeleeWeapon");
-
-                    b.Property<int>("Range")
-                        .HasColumnType("INTEGER");
-
-                    b.ToTable("MeleeThrowableWeapons");
                 });
 
             modelBuilder.Entity("CampaignUser", b =>
@@ -1933,21 +1954,6 @@ namespace pracadyplomowa.Migrations
                     b.HasOne("pracadyplomowa.Models.Entities.Powers.Power", null)
                         .WithMany()
                         .HasForeignKey("R_PowersKnownId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("CharacterPower1", b =>
-                {
-                    b.HasOne("pracadyplomowa.Models.Entities.Characters.Character", null)
-                        .WithMany()
-                        .HasForeignKey("R_CharacterPreparedPowersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("pracadyplomowa.Models.Entities.Powers.Power", null)
-                        .WithMany()
-                        .HasForeignKey("R_PowersPreparedId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -2168,6 +2174,21 @@ namespace pracadyplomowa.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("PowerPowerSelection", b =>
+                {
+                    b.HasOne("pracadyplomowa.Models.Entities.Characters.PowerSelection", null)
+                        .WithMany()
+                        .HasForeignKey("R_CharacterPreparedPowersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("pracadyplomowa.Models.Entities.Powers.Power", null)
+                        .WithMany()
+                        .HasForeignKey("R_PreparedPowersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("PowerWeapon", b =>
                 {
                     b.HasOne("pracadyplomowa.Models.Entities.Powers.Power", null)
@@ -2323,7 +2344,9 @@ namespace pracadyplomowa.Migrations
                 {
                     b.HasOne("pracadyplomowa.Models.Entities.Characters.DiceSet", "MaximumPreparedSpellsFormula")
                         .WithMany()
-                        .HasForeignKey("MaximumPreparedSpellsFormulaId");
+                        .HasForeignKey("MaximumPreparedSpellsFormulaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("MaximumPreparedSpellsFormula");
                 });
@@ -2345,6 +2368,16 @@ namespace pracadyplomowa.Migrations
                     b.Navigation("HitDie");
 
                     b.Navigation("R_Class");
+                });
+
+            modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.DiceSet", b =>
+                {
+                    b.HasOne("pracadyplomowa.Models.Entities.Powers.EffectBlueprints.ValueEffectBlueprint", "R_ValueEffectBlueprint")
+                        .WithOne("DiceSet")
+                        .HasForeignKey("pracadyplomowa.Models.Entities.Characters.DiceSet", "R_ValueEffectBlueprintId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("R_ValueEffectBlueprint");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.DiceSet+AdditionalValue", b =>
@@ -2379,6 +2412,25 @@ namespace pracadyplomowa.Migrations
                     b.Navigation("R_Item");
                 });
 
+            modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.PowerSelection", b =>
+                {
+                    b.HasOne("pracadyplomowa.Models.Entities.Characters.Character", "R_Character")
+                        .WithMany("R_PowersPrepared")
+                        .HasForeignKey("R_CharacterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("pracadyplomowa.Models.Entities.Characters.Class", "R_Class")
+                        .WithMany("R_PowerSelections")
+                        .HasForeignKey("R_ClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("R_Character");
+
+                    b.Navigation("R_Class");
+                });
+
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.RaceLevel", b =>
                 {
                     b.HasOne("pracadyplomowa.Models.Entities.Characters.Race", "R_Race")
@@ -2404,9 +2456,34 @@ namespace pracadyplomowa.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.OwnsOne("pracadyplomowa.Models.Entities.Items.CoinSack", "Worth", b1 =>
+                        {
+                            b1.Property<int>("ItemCostRequirementId")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("CopperPieces")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("GoldPieces")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("SilverPieces")
+                                .HasColumnType("INTEGER");
+
+                            b1.HasKey("ItemCostRequirementId");
+
+                            b1.ToTable("ItemCostRequirements");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ItemCostRequirementId");
+                        });
+
                     b.Navigation("R_ItemFamily");
 
                     b.Navigation("R_Power");
+
+                    b.Navigation("Worth")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.ObjectWithOwner", b =>
@@ -2463,13 +2540,7 @@ namespace pracadyplomowa.Migrations
                         .WithOne("R_GeneratedBy")
                         .HasForeignKey("pracadyplomowa.Models.Entities.Powers.EffectGroup", "R_GeneratesAuraId");
 
-                    b.HasOne("pracadyplomowa.Models.Entities.Powers.Aura", "R_OriginatesFromAura")
-                        .WithMany("R_OwnedEffectGroups")
-                        .HasForeignKey("R_OriginatesFromAuraId");
-
                     b.Navigation("R_GeneratesAura");
-
-                    b.Navigation("R_OriginatesFromAura");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectInstance", b =>
@@ -2542,9 +2613,7 @@ namespace pracadyplomowa.Migrations
 
                     b.HasOne("pracadyplomowa.Models.Entities.Characters.ChoiceGroupUsage", "R_ChoiceGroupUsage")
                         .WithMany("R_ResourcesGranted")
-                        .HasForeignKey("R_ChoiceGroupUsageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("R_ChoiceGroupUsageId");
 
                     b.HasOne("pracadyplomowa.Models.Entities.Items.Item", "R_Item")
                         .WithMany("R_ItemGrantsResources")
@@ -2701,6 +2770,31 @@ namespace pracadyplomowa.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.OwnsOne("pracadyplomowa.Models.Entities.Items.CoinSack", "Price", b1 =>
+                        {
+                            b1.Property<int>("ItemId")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("CopperPieces")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("GoldPieces")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("SilverPieces")
+                                .HasColumnType("INTEGER");
+
+                            b1.HasKey("ItemId");
+
+                            b1.ToTable("Items");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ItemId");
+                        });
+
+                    b.Navigation("Price")
+                        .IsRequired();
+
                     b.Navigation("R_BackpackHasItem");
 
                     b.Navigation("R_ItemInItemsFamily");
@@ -2761,7 +2855,7 @@ namespace pracadyplomowa.Migrations
                             b1.Property<int>("MovementCostEffectBlueprintId")
                                 .HasColumnType("INTEGER");
 
-                            b1.Property<int>("MovementCost_Multiplier")
+                            b1.Property<int>("MovementCostEffect")
                                 .HasColumnType("INTEGER");
 
                             b1.HasKey("MovementCostEffectBlueprintId");
@@ -2781,6 +2875,28 @@ namespace pracadyplomowa.Migrations
                     b.HasOne("pracadyplomowa.Models.Entities.Items.ItemFamily", "R_GrantsProficiencyInItemFamily")
                         .WithMany("R_ProficiencyGrantedByEffectBlueprint")
                         .HasForeignKey("R_GrantsProficiencyInItemFamilyId");
+
+                    b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.ProficiencyEffectType", "ProficiencyEffectType", b1 =>
+                        {
+                            b1.Property<int>("ProficiencyEffectBlueprintId")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("ItemType")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("ProficiencyEffect")
+                                .HasColumnType("INTEGER");
+
+                            b1.HasKey("ProficiencyEffectBlueprintId");
+
+                            b1.ToTable("EffectBlueprints");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ProficiencyEffectBlueprintId");
+                        });
+
+                    b.Navigation("ProficiencyEffectType")
+                        .IsRequired();
 
                     b.Navigation("R_GrantsProficiencyInItemFamily");
                 });
@@ -2810,34 +2926,6 @@ namespace pracadyplomowa.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectBlueprints.SizeEffectBlueprint", b =>
-                {
-                    b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.SizeEffectType", "SizeEffectType", b1 =>
-                        {
-                            b1.Property<int>("SizeEffectBlueprintId")
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("SizeBonus")
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("SizeEffect")
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("SizeEffect_SizeToSet")
-                                .HasColumnType("INTEGER");
-
-                            b1.HasKey("SizeEffectBlueprintId");
-
-                            b1.ToTable("EffectBlueprints");
-
-                            b1.WithOwner()
-                                .HasForeignKey("SizeEffectBlueprintId");
-                        });
-
-                    b.Navigation("SizeEffectType")
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectBlueprints.StatusEffectBlueprint", b =>
                 {
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.StatusEffectType", "StatusEffectType", b1 =>
@@ -2858,17 +2946,6 @@ namespace pracadyplomowa.Migrations
 
                     b.Navigation("StatusEffectType")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectBlueprints.ValueEffectBlueprint", b =>
-                {
-                    b.HasOne("pracadyplomowa.Models.Entities.Characters.DiceSet", "DiceSet")
-                        .WithMany()
-                        .HasForeignKey("DiceSetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("DiceSet");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectBlueprints.LanguageEffectInstance", b =>
@@ -2905,7 +2982,7 @@ namespace pracadyplomowa.Migrations
                             b1.Property<int>("MovementCostEffectInstanceId")
                                 .HasColumnType("INTEGER");
 
-                            b1.Property<int>("MovementCost_Multiplier")
+                            b1.Property<int>("MovementCostEffect")
                                 .HasColumnType("INTEGER");
 
                             b1.HasKey("MovementCostEffectInstanceId");
@@ -2925,6 +3002,28 @@ namespace pracadyplomowa.Migrations
                     b.HasOne("pracadyplomowa.Models.Entities.Items.ItemFamily", "R_GrantsProficiencyInItemFamily")
                         .WithMany()
                         .HasForeignKey("R_GrantsProficiencyInItemFamilyId");
+
+                    b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.ProficiencyEffectType", "ProficiencyEffectType", b1 =>
+                        {
+                            b1.Property<int>("ProficiencyEffectInstanceId")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("ItemType")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("ProficiencyEffect")
+                                .HasColumnType("INTEGER");
+
+                            b1.HasKey("ProficiencyEffectInstanceId");
+
+                            b1.ToTable("EffectInstances");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ProficiencyEffectInstanceId");
+                        });
+
+                    b.Navigation("ProficiencyEffectType")
+                        .IsRequired();
 
                     b.Navigation("R_GrantsProficiencyInItemFamily");
                 });
@@ -2948,34 +3047,6 @@ namespace pracadyplomowa.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("ResistanceEffectInstanceId");
-                        });
-
-                    b.Navigation("EffectType")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.SizeEffectInstance", b =>
-                {
-                    b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.SizeEffectType", "EffectType", b1 =>
-                        {
-                            b1.Property<int>("SizeEffectInstanceId")
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("SizeBonus")
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("SizeEffect")
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<int>("SizeEffect_SizeToSet")
-                                .HasColumnType("INTEGER");
-
-                            b1.HasKey("SizeEffectInstanceId");
-
-                            b1.ToTable("EffectInstances");
-
-                            b1.WithOwner()
-                                .HasForeignKey("SizeEffectInstanceId");
                         });
 
                     b.Navigation("EffectType")
@@ -3012,7 +3083,13 @@ namespace pracadyplomowa.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("pracadyplomowa.Models.Entities.Characters.Character", "Roller")
+                        .WithMany()
+                        .HasForeignKey("RollerId");
+
                     b.Navigation("DiceSet");
+
+                    b.Navigation("Roller");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.Apparel", b =>
@@ -3157,7 +3234,7 @@ namespace pracadyplomowa.Migrations
                             b1.Property<int>("DamageEffect")
                                 .HasColumnType("INTEGER");
 
-                            b1.Property<int>("DamageEffect_DamageType")
+                            b1.Property<int?>("DamageEffect_DamageType")
                                 .HasColumnType("INTEGER");
 
                             b1.HasKey("DamageEffectBlueprintId");
@@ -3244,6 +3321,31 @@ namespace pracadyplomowa.Migrations
                         });
 
                     b.Navigation("SavingThrowEffectType")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectBlueprints.SizeEffectBlueprint", b =>
+                {
+                    b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.SizeEffectType", "SizeEffectType", b1 =>
+                        {
+                            b1.Property<int>("SizeEffectBlueprintId")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("SizeEffect")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("SizeEffect_SizeToSet")
+                                .HasColumnType("INTEGER");
+
+                            b1.HasKey("SizeEffectBlueprintId");
+
+                            b1.ToTable("EffectBlueprints");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SizeEffectBlueprintId");
+                        });
+
+                    b.Navigation("SizeEffectType")
                         .IsRequired();
                 });
 
@@ -3379,7 +3481,7 @@ namespace pracadyplomowa.Migrations
                             b1.Property<int>("DamageEffect")
                                 .HasColumnType("INTEGER");
 
-                            b1.Property<int>("DamageEffect_DamageType")
+                            b1.Property<int?>("DamageEffect_DamageType")
                                 .HasColumnType("INTEGER");
 
                             b1.HasKey("DamageEffectInstanceId");
@@ -3469,6 +3571,31 @@ namespace pracadyplomowa.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.SizeEffectInstance", b =>
+                {
+                    b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.SizeEffectType", "EffectType", b1 =>
+                        {
+                            b1.Property<int>("SizeEffectInstanceId")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("SizeEffect")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("SizeEffect_SizeToSet")
+                                .HasColumnType("INTEGER");
+
+                            b1.HasKey("SizeEffectInstanceId");
+
+                            b1.ToTable("EffectInstances");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SizeEffectInstanceId");
+                        });
+
+                    b.Navigation("EffectType")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.SkillEffectInstance", b =>
                 {
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.SkillEffectType", "EffectType", b1 =>
@@ -3504,7 +3631,9 @@ namespace pracadyplomowa.Migrations
 
                     b.HasOne("pracadyplomowa.Models.Entities.Characters.DiceSet", "VersatileDamageValue")
                         .WithMany()
-                        .HasForeignKey("VersatileDamageValueId");
+                        .HasForeignKey("VersatileDamageValueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("VersatileDamageValue");
                 });
@@ -3514,15 +3643,6 @@ namespace pracadyplomowa.Migrations
                     b.HasOne("pracadyplomowa.Models.Entities.Items.Weapon", null)
                         .WithOne()
                         .HasForeignKey("pracadyplomowa.Models.Entities.Items.RangedWeapon", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.MeleeThrowableWeapon", b =>
-                {
-                    b.HasOne("pracadyplomowa.Models.Entities.Items.MeleeWeapon", null)
-                        .WithOne()
-                        .HasForeignKey("pracadyplomowa.Models.Entities.Items.MeleeThrowableWeapon", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -3554,6 +3674,8 @@ namespace pracadyplomowa.Migrations
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.Class", b =>
                 {
                     b.Navigation("R_ClassLevels");
+
+                    b.Navigation("R_PowerSelections");
 
                     b.Navigation("R_UsedForUpcastingOfPowers");
                 });
@@ -3607,8 +3729,6 @@ namespace pracadyplomowa.Migrations
 
                     b.Navigation("R_GeneratedBy")
                         .IsRequired();
-
-                    b.Navigation("R_OwnedEffectGroups");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectGroup", b =>
@@ -3676,6 +3796,8 @@ namespace pracadyplomowa.Migrations
 
                     b.Navigation("R_ImmaterialResourceInstances");
 
+                    b.Navigation("R_PowersPrepared");
+
                     b.Navigation("R_UsedChoiceGroups");
                 });
 
@@ -3706,6 +3828,12 @@ namespace pracadyplomowa.Migrations
                     b.Navigation("R_ItemsCostRequirement");
 
                     b.Navigation("R_SpawnedCharacters");
+                });
+
+            modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectBlueprints.ValueEffectBlueprint", b =>
+                {
+                    b.Navigation("DiceSet")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

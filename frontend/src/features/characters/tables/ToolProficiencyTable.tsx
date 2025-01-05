@@ -11,11 +11,7 @@ export default function ToolProficiencyTable({
 }) {
   return (
     <Menus>
-      <Table
-        header="Tool proficiency"
-        button="Choices available"
-        columns="1fr 3.2rem"
-      >
+      <Table header="Tool proficiency" columns="1fr 3.2rem">
         <Table.Body
           data={toolFamilies}
           render={(tool) => <ProficiencyRow key={tool.id} item={tool} />}

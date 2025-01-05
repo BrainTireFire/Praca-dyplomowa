@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useCallback, useReducer } from "react";
 import Box from "../../ui/containers/Box";
 import FormRow from "../../ui/forms/FormRow";
 import Input from "../../ui/forms/Input";
@@ -10,17 +10,18 @@ import Spinner from "../../ui/interactive/Spinner";
 import { CharacterInsertDto } from "../../models/character";
 import { useCreateCharacter } from "./hooks/useCreateCharacter";
 import toast from "react-hot-toast";
+import FormRowVertical from "../../ui/forms/FormRowVertical";
 
-const initialState = {
+const initialState: CharacterInsertDto = {
   name: "",
-  startingClassId: 0,
-  raceId: 0,
-  strength: 0,
-  dexterity: 0,
-  constitution: 0,
-  intelligence: 0,
-  wisdom: 0,
-  charisma: 0,
+  startingClassId: null,
+  raceId: null,
+  strength: 1,
+  dexterity: 1,
+  constitution: 1,
+  intelligence: 1,
+  wisdom: 1,
+  charisma: 1,
 };
 
 type NumericActions = {
@@ -83,6 +84,7 @@ const characterReducer = (
   console.log(newState);
   return newState;
 };
+const abilityErrorMessage = "Value must be in range of 1-20";
 
 function NewCharacter({ onCloseModal }) {
   const [state, dispatch] = useReducer(characterReducer, initialState);
@@ -105,16 +107,44 @@ function NewCharacter({ onCloseModal }) {
   //derived state
   const raceList = races
     ? races.map((race) => ({
-        value: race.id,
+        value: race.id.toString(),
         label: race.name,
       }))
     : [];
   const classList = classes
     ? classes.map((characterClass) => ({
-        value: characterClass.id,
+        value: characterClass.id.toString(),
         label: characterClass.name,
       }))
     : [];
+  const isInBounds = useCallback(
+    (ability: number) => ability <= 0 || ability > 20,
+    []
+  );
+  const disableSave = useCallback(() => {
+    return (
+      !state.name ||
+      !state.raceId ||
+      !state.startingClassId ||
+      isInBounds(state.charisma) ||
+      isInBounds(state.wisdom) ||
+      isInBounds(state.intelligence) ||
+      isInBounds(state.constitution) ||
+      isInBounds(state.dexterity) ||
+      isInBounds(state.strength)
+    );
+  }, [
+    isInBounds,
+    state.charisma,
+    state.constitution,
+    state.dexterity,
+    state.intelligence,
+    state.name,
+    state.raceId,
+    state.startingClassId,
+    state.strength,
+    state.wisdom,
+  ]);
 
   if (errorRaces || errorClasses) {
     return "Error";
@@ -125,7 +155,10 @@ function NewCharacter({ onCloseModal }) {
   return (
     <>
       <Box>
-        <FormRow label="Character name">
+        <FormRow
+          label="Character name"
+          error={!state.name ? "Fill name" : undefined}
+        >
           <Input
             value={state.name}
             onChange={(e) =>
@@ -133,79 +166,125 @@ function NewCharacter({ onCloseModal }) {
             }
           ></Input>
         </FormRow>
-        <FormRow label="Starting class">
+        <FormRow
+          label="Starting class"
+          error={!state.startingClassId ? "Select class" : undefined}
+        >
           <Dropdown
-            chosenValue={state.startingClassId.toString()}
+            chosenValue={state.startingClassId?.toString() || null}
             setChosenValue={(e) =>
               dispatch({ type: "setClass", value: Number(e) })
             }
             valuesList={classList}
           ></Dropdown>
         </FormRow>
-        <FormRow label="Race">
+        <FormRow label="Race" error={!state.raceId ? "Select race" : undefined}>
           <Dropdown
-            chosenValue={state.raceId.toString()}
+            chosenValue={state.raceId?.toString() || null}
             setChosenValue={(e) =>
               dispatch({ type: "setRace", value: Number(e) })
             }
             valuesList={raceList}
           ></Dropdown>
         </FormRow>
-        <FormRow label="Strength">
+        <FormRow
+          label="Strength"
+          error={isInBounds(state.strength) ? abilityErrorMessage : undefined}
+        >
           <Input
             type="number"
+            min={1}
+            max={20}
             value={state.strength}
             onChange={(e) =>
               dispatch({ type: "setStr", value: Number(e.target.value) })
             }
           ></Input>
         </FormRow>
-        <FormRow label="Dexterity">
+        <FormRow
+          label="Dexterity"
+          error={isInBounds(state.dexterity) ? abilityErrorMessage : undefined}
+        >
           <Input
             type="number"
+            min={1}
+            max={20}
             value={state.dexterity}
             onChange={(e) =>
               dispatch({ type: "setDex", value: Number(e.target.value) })
             }
           ></Input>
         </FormRow>
-        <FormRow label="Constitution">
+        <FormRow
+          label="Constitution"
+          error={
+            isInBounds(state.constitution) ? abilityErrorMessage : undefined
+          }
+        >
           <Input
             type="number"
+            min={1}
+            max={20}
             value={state.constitution}
             onChange={(e) =>
               dispatch({ type: "setCon", value: Number(e.target.value) })
             }
           ></Input>
         </FormRow>
-        <FormRow label="Intelligence">
+        <FormRow
+          label="Intelligence"
+          error={
+            isInBounds(state.intelligence) ? abilityErrorMessage : undefined
+          }
+        >
           <Input
             type="number"
+            min={1}
+            max={20}
             value={state.intelligence}
             onChange={(e) =>
               dispatch({ type: "setInt", value: Number(e.target.value) })
             }
           ></Input>
         </FormRow>
-        <FormRow label="Wisdom">
+        <FormRow
+          label="Wisdom"
+          error={isInBounds(state.wisdom) ? abilityErrorMessage : undefined}
+        >
           <Input
             type="number"
+            min={1}
+            max={20}
             value={state.wisdom}
             onChange={(e) =>
               dispatch({ type: "setWis", value: Number(e.target.value) })
             }
           ></Input>
         </FormRow>
-        <FormRow label="Charisma">
+        <FormRow
+          label="Charisma"
+          error={isInBounds(state.charisma) ? abilityErrorMessage : undefined}
+        >
           <Input
             type="number"
+            min={1}
+            max={20}
             value={state.charisma}
             onChange={(e) =>
               dispatch({ type: "setCha", value: Number(e.target.value) })
             }
           ></Input>
         </FormRow>
-        <Button onClick={() => createCharacter(state)}>Create character</Button>
+        <FormRowVertical
+          error={disableSave() ? "Fill above form before saving" : undefined}
+        >
+          <Button
+            disabled={disableSave()}
+            onClick={() => createCharacter(state)}
+          >
+            Create character
+          </Button>
+        </FormRowVertical>
       </Box>
     </>
   );

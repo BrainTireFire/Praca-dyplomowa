@@ -20,5 +20,8 @@ namespace pracadyplomowa.Repository
         public T? GetById(int id);
 
         public Task<int> SaveChanges();
+
+        public void DetachEntity(T entity);
+        public void ClearTracker();
     }
 }

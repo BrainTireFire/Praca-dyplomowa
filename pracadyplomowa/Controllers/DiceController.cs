@@ -12,7 +12,7 @@ namespace pracadyplomowa.Controllers
         public ActionResult<DiceRollDto> RollDice(DiceRollDto input)
         {
             DiceSet diceSet = new DiceSet(input);
-            DiceRollDto results = new DiceRollDto(diceSet.Roll());
+            DiceRollDto results = new DiceRollDto(diceSet.RollSeparate());
             return Ok(results);
         }
     }

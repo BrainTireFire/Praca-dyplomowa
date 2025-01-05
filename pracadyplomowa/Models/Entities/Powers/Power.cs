@@ -16,16 +16,18 @@ namespace pracadyplomowa.Models.Entities.Powers
         public string Description { get; set; } = "";
         public ActionType RequiredActionType { get; set; } = requiredActionType;
         public bool IsImplemented { get; set; } = true;
+        public bool IsMagic { get; set;} = true;
         public CastableBy CastableBy { get; set; } = castableBy;
         public PowerType PowerType { get; set; } = powerType;
         public TargetType TargetType { get; set; } = targetType;
-
+        public bool IsRanged { get; set; } = false;
         public int? Range { get; set; }
         public int MaxTargets { get; set; } = 1;
         public int MaxTargetsToExclude { get; set; }
         public int? AreaSize { get; set; }
         public AreaShape? AreaShape { get; set; }
         public int? AuraSize { get; set; }
+        public bool OverrideCastersDC { get; set; } = false;
         public int? DifficultyClass { get; set; }
         public Ability? SavingThrow { get; set; }
         public bool RequiresConcentration { get; set; }
@@ -34,14 +36,12 @@ namespace pracadyplomowa.Models.Entities.Powers
         public bool VerbalComponent { get; set; }
         public bool SomaticComponent { get; set; }
         public int Duration {get; set;} = 1;
-        public bool UpcastByResourceLevel {get; set;} = true;
-        public bool UpcastByCharacterLevel {get; set;} = false;
-        public bool UpcastByClassLevel {get; set;} = false;
+        public UpcastBy UpcastBy {get; set;} = UpcastBy.NotUpcasted;
         public Class? R_ClassForUpcasting {get; set;}
         public int? R_ClassForUpcastingId {get; set;}
 
         // Relationships
-        public virtual List<Character> R_CharacterPreparedPowers { get; set; } = []; // list of selected powers out of all available from 
+        public virtual List<PowerSelection> R_CharacterPreparedPowers { get; set; } = []; // list of selected powers out of all available from 
         public virtual List<Character> R_CharacterKnownsPowers { get; set; } = []; // always available powers
         public virtual List<Item> R_ItemsGrantingPower { get; set; } = [];
         public virtual List<Weapon> R_WeaponsCastingOnHit { get; set; } = [];
@@ -70,5 +70,6 @@ namespace pracadyplomowa.Models.Entities.Powers
             if(source == null) return [];
             return source;
         }
+
     }
 }

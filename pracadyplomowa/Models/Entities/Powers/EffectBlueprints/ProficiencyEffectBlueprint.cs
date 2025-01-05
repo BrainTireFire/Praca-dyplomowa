@@ -21,14 +21,15 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 #pragma warning disable CS8604 // Possible null reference argument.
         public ProficiencyEffectBlueprint(ItemType itemType) : base(Enum.GetName(itemType) + " proficiency"){
 #pragma warning restore CS8604 // Possible null reference argument.
-            ItemType = itemType;
+            ProficiencyEffectType.ProficiencyEffect = ProficiencyEffect.ItemType;
+            ProficiencyEffectType.ItemType = itemType;
         }
 
         public virtual ItemFamily? R_GrantsProficiencyInItemFamily { get; set; }
         public int? R_GrantsProficiencyInItemFamilyId { get; set; }
-        public ItemType ItemType { get; set;}
+        public ProficiencyEffectType ProficiencyEffectType { get; set; } = new ProficiencyEffectType();
         //methods
-        public override EffectInstance Generate(Character roller, Character target){
+        public override EffectInstance Generate(Character? roller, Character target){
             return new ProficiencyEffectInstance(this, target);
         }
     }

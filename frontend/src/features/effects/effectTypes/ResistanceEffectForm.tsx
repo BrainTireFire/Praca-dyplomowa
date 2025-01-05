@@ -1,49 +1,21 @@
-import { useEffect, useReducer } from "react";
+import { useContext, useEffect, useReducer } from "react";
 import Box from "../../../ui/containers/Box";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import RadioGroup from "../../../ui/forms/RadioGroup";
 import Dropdown from "../../../ui/forms/Dropdown";
-
-const damageTypes = [
-  "acid",
-  "bludgeoning",
-  "cold",
-  "fire",
-  "force",
-  "lightning",
-  "necrotic",
-  "piercing",
-  "poison",
-  "psychic",
-  "radiant",
-  "slashing",
-  "thunder",
-] as const;
-
-const damageTypesDropdown = [
-  { value: "acid", label: "Acid" },
-  { value: "bludgeoning", label: "Bludgeoning" },
-  { value: "cold", label: "Cold" },
-  { value: "fire", label: "Fire" },
-  { value: "force", label: "Force" },
-  { value: "lightning", label: "Lightning" },
-  { value: "necrotic", label: "Necrotic" },
-  { value: "piercing", label: "Piercing" },
-  { value: "poison", label: "Poison" },
-  { value: "psychic", label: "Psychic" },
-  { value: "radiant", label: "Radiant" },
-  { value: "slashing", label: "Slashing" },
-  { value: "thunder", label: "Thunder" },
-];
+import { damageType, damageTypesDropdown } from "../damageTypes";
+import { EditModeContext } from "../../../context/EditModeContext";
 
 export type Effect = {
-  effectType:
-    | "resistance"
-    | "immunity"
-    | "vulnerability"
-    | "advantage"
-    | "disadvantage";
-  damageType: (typeof damageTypes)[number];
+  effectType: {
+    resistanceEffect:
+      | "Resistance"
+      | "Immunity"
+      | "Vulnerability"
+      | "Advantage"
+      | "Disadvantage";
+    resistanceEffect_DamageType: damageType;
+  };
 };
 
 type Action = {
@@ -52,18 +24,29 @@ type Action = {
 };
 
 export const initialState: Effect = {
-  effectType: "resistance",
-  damageType: "acid",
+  effectType: {
+    resistanceEffect: "Resistance",
+    resistanceEffect_DamageType: "acid",
+  },
 };
 
 const effectReducer = (state: Effect, action: Action): Effect => {
   let newState: Effect;
   switch (action.type) {
     case "setEffectType":
-      newState = { ...state, effectType: action.payload };
+      newState = {
+        ...state,
+        effectType: { ...state.effectType, resistanceEffect: action.payload },
+      };
       break;
     case "setDamageType":
-      newState = { ...state, damageType: action.payload };
+      newState = {
+        ...state,
+        effectType: {
+          ...state.effectType,
+          resistanceEffect_DamageType: action.payload,
+        },
+      };
       break;
     default:
       newState = state;
@@ -84,24 +67,28 @@ export default function ResistanceEffectForm({
   useEffect(() => {
     onChange(state);
   }, [state, onChange]);
+  const { editMode } = useContext(EditModeContext);
+  const disableUpdate = !editMode;
   return (
     <Box>
       <RadioGroup
+        disabled={disableUpdate}
         values={[
-          { label: "Resistance", value: "resistance" },
-          { label: "Immunity", value: "immunity" },
-          { label: "Vulnerability", value: "vulnerability" },
-          { label: "Advantage", value: "advantage" },
-          { label: "Disadvantage", value: "disadvantage" },
+          { label: "Resistance", value: "Resistance" },
+          { label: "Immunity", value: "Immunity" },
+          { label: "Vulnerability", value: "Vulnerability" },
+          { label: "Advantage", value: "Advantage" },
+          { label: "Disadvantage", value: "Disadvantage" },
         ]}
         label="Resistance effect"
         name="resistanceEffect"
         onChange={(x) => dispatch({ type: "setEffectType", payload: x })}
-        currentValue={state.effectType}
+        currentValue={state.effectType.resistanceEffect}
       ></RadioGroup>
       <FormRowVertical label="Damage type">
         <Dropdown
-          chosenValue={state.damageType}
+          disabled={disableUpdate}
+          chosenValue={state.effectType.resistanceEffect_DamageType}
           setChosenValue={(e) =>
             dispatch({ type: "setDamageType", payload: e })
           }

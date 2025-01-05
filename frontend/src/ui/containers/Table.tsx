@@ -1,8 +1,8 @@
 import { ReactElement, useContext } from "react";
-import { createContext } from "react";
 import styled from "styled-components";
 import Button from "../interactive/Button";
 import Modal from "./Modal";
+import { EditModeContext } from "../../context/EditModeContext";
 
 const StyledTableContainer = styled.div`
   border: 1px solid var(--color-border);
@@ -131,6 +131,7 @@ type TableProps = {
   columns: string;
   children: React.ReactNode;
   modal?: ReactElement;
+  buttonOnClick?: () => void;
 };
 type CommonTableProps = {
   columns: string;
@@ -145,18 +146,33 @@ type RowProps = {
   children: React.ReactNode;
 };
 
-function Table({ header, columns, children, button, modal }: TableProps) {
+function Table({
+  header,
+  columns,
+  children,
+  button,
+  modal,
+  buttonOnClick,
+}: TableProps) {
+  const { editMode } = useContext(EditModeContext);
   return (
     <StyledTableContainer role="table">
       {header && (
         <StyledHeaderWithButton>
           <TableHeader>{header}</TableHeader>
-          <Modal>
-            <Modal.Open opens="TableAction">
-              <TableButton>{button}</TableButton>
-            </Modal.Open>
-            <Modal.Window name="TableAction">{modal}</Modal.Window>
-          </Modal>
+          {modal && button && (
+            <Modal>
+              <Modal.Open opens="TableAction">
+                <TableButton disabled={!editMode}>{button}</TableButton>
+              </Modal.Open>
+              <Modal.Window name="TableAction">{modal}</Modal.Window>
+            </Modal>
+          )}
+          {!modal && button && (
+            <TableButton disabled={!editMode} onClick={buttonOnClick}>
+              {button}
+            </TableButton>
+          )}
         </StyledHeaderWithButton>
       )}
       <CommonTable columns={columns}>{children}</CommonTable>

@@ -21,6 +21,7 @@ export type CharacterItem = {
   class: string;
   race: string;
   campaignId: number;
+  isNpc: boolean;
 };
 
 export type Character = {
@@ -61,16 +62,34 @@ export type Character = {
   resources: Resource[];
   choiceGroups: ChoiceGroup[];
   proficiencyBonus: number;
+  isNpc: boolean;
+  accessLevels: CharacterAccessLevels[];
 };
 
 export type CharacterInsertDto = {
   name: string;
-  raceId: number;
-  startingClassId: number;
+  raceId: number | null;
+  startingClassId: number | null;
   strength: number;
   dexterity: number;
   constitution: number;
   intelligence: number;
   wisdom: number;
   charisma: number;
+  isNpc: boolean;
 };
+
+const CharacterAccessLevelsValues = [
+  "EditDescriptiveFields",
+  "EditEquipmentInBackpack",
+  "EditEquippingItems",
+  "EditLevelingUp",
+  "EditEffects",
+  "EditResources",
+  "EditPowersKnown",
+  "EditSpellbook",
+  "Read",
+] as const;
+
+export type CharacterAccessLevels =
+  (typeof CharacterAccessLevelsValues)[number];

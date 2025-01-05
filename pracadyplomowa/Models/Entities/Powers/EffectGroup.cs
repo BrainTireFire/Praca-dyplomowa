@@ -13,10 +13,9 @@ namespace pracadyplomowa.Models.Entities.Powers
     {
 
         public bool IsConstant { get; set; }
-        public int DurationLeft { get; set; }
-        public int DifficultyClassToBreak { get; set; }
-        public Ability SavingThrow { get; set; }
-        public bool SavingThrowRetakenEveryTurn { get; set; }
+        public int? DurationLeft { get; set; }
+        public int? DifficultyClassToBreak { get; set; }
+        public Ability? SavingThrow { get; set; }
         public string Name {get; set;} = null!;
 
         //Relationships
@@ -29,13 +28,28 @@ namespace pracadyplomowa.Models.Entities.Powers
 
         public virtual ICollection<EffectInstance> R_OwnedEffects { get; set; } = [];
 
-        public virtual Aura? R_OriginatesFromAura { get; set; }
-        public int? R_OriginatesFromAuraId { get; set; }
+        // public virtual Aura? R_OriginatesFromAura { get; set; }
+        // public int? R_OriginatesFromAuraId { get; set; }
 
         public virtual Aura? R_GeneratesAura { get; set; }
         public int? R_GeneratesAuraId { get; set; }
         public virtual ICollection<Field> R_EffectOnField { get; set; } = [];
 
-        
+        public void AddEffectOnCharacter(EffectInstance effectInstance){
+            this.R_OwnedEffects.Add(effectInstance);
+            effectInstance.R_OwnedByGroup = this;
+        }
+
+        public void GenerateAura(Character centeredAt, List<EffectBlueprint> effectBlueprints, int size){
+            var aura = new Aura
+                    {
+                        R_CenteredAtCharacter = centeredAt,
+                        R_EffectsOnCharactersInRange = effectBlueprints,
+                        Size = size
+                        
+                    };
+            this.R_GeneratesAura = aura;
+            aura.R_GeneratedBy = this;
+        }
     }
 }

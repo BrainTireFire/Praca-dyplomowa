@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer } from "react";
+import { useCallback, useContext, useEffect, useReducer } from "react";
 import Box from "../../../ui/containers/Box";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import RadioGroup from "../../../ui/forms/RadioGroup";
@@ -8,6 +8,10 @@ import {
   DiceSetExtendedDefaultValue,
   DiceSetForm,
 } from "../DiceSetForm";
+import { ValueEffect } from "../valueEffect";
+import { rollMoment, rollMomentDropdown } from "../rollMoment";
+import { EffectContext } from "../contexts/BlueprintOrInstanceContext";
+import { EditModeContext } from "../../../context/EditModeContext";
 
 const damageTypes = [
   "acid",
@@ -41,39 +45,52 @@ const damageTypesDropdown = [
   { value: "thunder", label: "Thunder" },
 ];
 
-const effectTypes = ["damageDealt", "rerollLowerThan", "damageTaken"] as const;
+const effectTypes = ["DamageDealt", "RerollLowerThan", "DamageTaken"] as const;
 
 type effectType = (typeof effectTypes)[number];
 type damageType = (typeof damageTypes)[number];
 
-export type Effect = {
-  effectType: effectType;
-  damageType: damageType;
-  value: DiceSetExtended;
+export type Effect = ValueEffect & {
+  effectType: { damageEffect: effectType; damageEffect_DamageType: damageType };
 };
 
 type Action = {
-  type: "setEffectType" | "setDamageType" | "setValue";
-  payload: effectType | damageType | DiceSetExtended;
+  type: "setEffectType" | "setDamageType" | "setValue" | "setRollMoment";
+  payload: effectType | damageType | DiceSetExtended | string | null;
 };
 
 export const initialState: Effect = {
-  effectType: "damageDealt",
-  damageType: "acid",
+  effectType: { damageEffect: "DamageDealt", damageEffect_DamageType: "acid" },
   value: DiceSetExtendedDefaultValue,
+  rollMoment: "OnCast",
 };
 
 const effectReducer = (state: Effect, action: Action): Effect => {
   let newState: Effect;
   switch (action.type) {
     case "setEffectType":
-      newState = { ...state, effectType: action.payload as effectType };
+      newState = {
+        ...state,
+        effectType: {
+          ...state.effectType,
+          damageEffect: action.payload as effectType,
+        },
+      };
       break;
     case "setDamageType":
-      newState = { ...state, damageType: action.payload as damageType };
+      newState = {
+        ...state,
+        effectType: {
+          ...state.effectType,
+          damageEffect_DamageType: action.payload as damageType,
+        },
+      };
       break;
     case "setValue":
       newState = { ...state, value: action.payload as DiceSetExtended };
+      break;
+    case "setRollMoment":
+      newState = { ...state, rollMoment: action.payload as rollMoment };
       break;
     default:
       newState = state;
@@ -90,6 +107,7 @@ export default function DamageEffectForm({
   onChange: (updatedState: Effect) => void;
   effect: Effect;
 }) {
+  const effectContext = useContext(EffectContext);
   const [state, dispatch] = useReducer(effectReducer, effect);
   useEffect(() => {
     onChange(state);
@@ -98,32 +116,52 @@ export default function DamageEffectForm({
   const handleValueFormStateUpdate = useCallback((e: DiceSetExtended) => {
     dispatch({ type: "setValue", payload: e });
   }, []);
+  const { editMode } = useContext(EditModeContext);
+  const disableUpdate = !editMode;
   return (
     <Box>
       <RadioGroup
+        disabled={disableUpdate}
         values={[
-          { label: "Damage dealt", value: "damageDealt" },
-          { label: "Reroll lower than", value: "rerollLowerThan" },
-          { label: "Damage taken", value: "damageTaken" },
+          { label: "Damage dealt", value: "DamageDealt" },
+          { label: "Reroll lower than", value: "RerollLowerThan" },
+          { label: "Damage taken", value: "DamageTaken" },
         ]}
         label="Damage effect"
         name="damageEffect"
         onChange={(x) =>
           dispatch({ type: "setEffectType", payload: x as effectType })
         }
-        currentValue={state.effectType}
+        currentValue={state.effectType.damageEffect}
       ></RadioGroup>
       <FormRowVertical label="Damage type">
         <Dropdown
-          chosenValue={state.damageType}
+          disabled={disableUpdate}
+          chosenValue={state.effectType.damageEffect_DamageType}
           setChosenValue={(e) =>
             dispatch({ type: "setDamageType", payload: e as damageType })
           }
           valuesList={damageTypesDropdown}
         ></Dropdown>
       </FormRowVertical>
+      {effectContext.effect === "Blueprint" && (
+        <FormRowVertical label="Dice roll moment">
+          <Dropdown
+            disabled={disableUpdate}
+            valuesList={rollMomentDropdown}
+            chosenValue={state.rollMoment}
+            setChosenValue={(e) =>
+              dispatch({ type: "setRollMoment", payload: e })
+            }
+          ></Dropdown>
+        </FormRowVertical>
+      )}
       <FormRowVertical label="Value">
-        <DiceSetForm onChange={handleValueFormStateUpdate}></DiceSetForm>
+        <DiceSetForm
+          disabled={disableUpdate}
+          onChange={handleValueFormStateUpdate}
+          diceSet={effect.value}
+        ></DiceSetForm>
       </FormRowVertical>
     </Box>
   );

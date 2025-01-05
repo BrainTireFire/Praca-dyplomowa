@@ -1,10 +1,11 @@
-export const movementCosts = ["high", "impassable"] as const;
+export const movementCosts = ["Normal", "High", "Impassable"] as const;
 
 export type movementCost = (typeof movementCosts)[number];
 
 export const MovementCostLabelMap = {
-  high: "High",
-  impassable: "Impassable",
+  Normal: "Normal",
+  High: "High",
+  Impassable: "Impassable",
 } as const;
 
 export const movementCostsDropdown = movementCosts.map((x) => {

@@ -46,6 +46,7 @@ namespace pracadyplomowa.Models.DTOs
         public List<Resource> Resources { get; set; } = null!;
         public List<ChoiceGroup> ChoiceGroups {get; set;} = null!;
         public int ProficiencyBonus { get; set; }
+        public List<Character.AccessLevels> AccessLevels {get; set;} = [];
 
         public CharacterFullDto(Character character){
             Id = character.Id;
@@ -345,8 +346,8 @@ namespace pracadyplomowa.Models.DTOs
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
                 Main = w.R_EquipData.R_Slots.Select(s => s.Type).Contains(SlotType.MainHand),
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
-                Damage = new DiceSet(w.GetDamageDiceSet()),
-                AttackBonus = new DiceSet(w.GetAttackBonus()),
+                Damage = new DiceSet(w.GetBaseEquippedDamageDiceSet()),
+                AttackBonus = new DiceSet(w.GetBaseEquippedAttackBonus()),
                 DamageType = (int)w.DamageType,
                 Range = w is IRangedWeapon weapon ? weapon.Range : null,
                 Reach = w is MeleeWeapon meleeWeapon ? (meleeWeapon.Reach ? 10 : 5) : null,
@@ -445,7 +446,7 @@ namespace pracadyplomowa.Models.DTOs
             public List<string?> Source { get; set;} = [];
         }
         public static List<Power> GetPreparedPowers(Character character){
-            List<Power> powers = character.R_PowersPrepared.Select(power => new Power() {
+            List<Power> powers = character.R_PowersPrepared.SelectMany(ps => ps.R_PreparedPowers).Select(power => new Power() {
                 Id = power.Id,
                 Name = power.Name,
                 Source = power.GetSourceNames(character.Id)

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer } from "react";
+import { useCallback, useContext, useEffect, useReducer } from "react";
 import Box from "../../../ui/containers/Box";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import RadioGroup from "../../../ui/forms/RadioGroup";
@@ -7,34 +7,48 @@ import {
   DiceSetExtendedDefaultValue,
   DiceSetForm,
 } from "../DiceSetForm";
+import { ValueEffect } from "../valueEffect";
+import Dropdown from "../../../ui/forms/Dropdown";
+import { rollMoment, rollMomentDropdown } from "../rollMoment";
+import { EffectContext } from "../contexts/BlueprintOrInstanceContext";
+import { EditModeContext } from "../../../context/EditModeContext";
 
-const effectTypes = ["action", "bonusAction", "reaction"] as const;
+const effectTypes = ["Action", "BonusAction", "Reaction"] as const;
 
 type effectType = (typeof effectTypes)[number];
 
-export type Effect = {
-  effectType: effectType;
-  value: DiceSetExtended;
+export type Effect = ValueEffect & {
+  effectType: { actionEffect: effectType };
 };
 
 type Action = {
-  type: "setEffectType" | "setValue";
-  payload: effectType | DiceSetExtended;
+  type: "setEffectType" | "setValue" | "setRollMoment";
+  payload: effectType | DiceSetExtended | rollMoment | null;
 };
 
 export const initialState: Effect = {
-  effectType: "action",
+  effectType: { actionEffect: effectTypes[0] },
   value: DiceSetExtendedDefaultValue,
+  rollMoment: "OnCast",
 };
 
 const effectReducer = (state: Effect, action: Action): Effect => {
   let newState: Effect;
   switch (action.type) {
     case "setEffectType":
-      newState = { ...state, effectType: action.payload as effectType };
+      newState = {
+        ...state,
+        effectType: {
+          ...state.effectType,
+          actionEffect: action.payload as effectType,
+        },
+      };
       break;
     case "setValue":
       newState = { ...state, value: action.payload as DiceSetExtended };
+      break;
+    case "setRollMoment":
+      newState = { ...state, rollMoment: action.payload as rollMoment };
       break;
     default:
       newState = state;
@@ -51,6 +65,7 @@ export default function ActionEffectForm({
   onChange: (updatedState: Effect) => void;
   effect: Effect;
 }) {
+  const effectContext = useContext(EffectContext);
   const [state, dispatch] = useReducer(effectReducer, effect);
 
   useEffect(() => {
@@ -60,24 +75,43 @@ export default function ActionEffectForm({
   const handleValueFormStateUpdate = useCallback((e: DiceSetExtended) => {
     dispatch({ type: "setValue", payload: e });
   }, []);
+  const { editMode } = useContext(EditModeContext);
+  const disableUpdate = !editMode;
 
   return (
     <Box>
       <RadioGroup
+        disabled={disableUpdate}
         values={[
-          { label: "Action", value: "action" },
-          { label: "Bonus action", value: "bonusAction" },
-          { label: "Reaction", value: "reaction" },
+          { label: "Action", value: "Action" },
+          { label: "Bonus action", value: "BonusAction" },
+          { label: "Reaction", value: "Reaction" },
         ]}
         label="Action effect"
         name="actionEffect"
         onChange={(x) =>
           dispatch({ type: "setEffectType", payload: x as effectType })
         }
-        currentValue={state.effectType}
+        currentValue={state.effectType.actionEffect}
       ></RadioGroup>
+      {effectContext.effect === "Blueprint" && (
+        <FormRowVertical label="Dice roll moment">
+          <Dropdown
+            disabled={disableUpdate}
+            valuesList={rollMomentDropdown}
+            chosenValue={state.rollMoment}
+            setChosenValue={(e) =>
+              dispatch({ type: "setRollMoment", payload: e as rollMoment })
+            }
+          ></Dropdown>
+        </FormRowVertical>
+      )}
       <FormRowVertical label="Value">
-        <DiceSetForm onChange={handleValueFormStateUpdate}></DiceSetForm>
+        <DiceSetForm
+          disabled={disableUpdate}
+          onChange={handleValueFormStateUpdate}
+          diceSet={effect.value}
+        ></DiceSetForm>
       </FormRowVertical>
     </Box>
   );

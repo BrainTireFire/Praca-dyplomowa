@@ -38,7 +38,7 @@ namespace pracadyplomowa.Repository
             return _context.Set<T>().Select(a=>a).ToListAsync();
         }
 
-        public T? GetById(int id)
+        public virtual T? GetById(int id)
         {
             return _context.Set<T>().Find(id);
         }
@@ -46,6 +46,17 @@ namespace pracadyplomowa.Repository
         public Task<int> SaveChanges()
         {
             return  _context.SaveChangesAsync();
+        }
+
+
+        public void DetachEntity(T entity)
+        {
+            _context.Entry(entity).State = EntityState.Detached;
+        }
+
+        public void ClearTracker()
+        {
+            _context.ChangeTracker.Clear();
         }
     }
 }

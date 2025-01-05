@@ -13,12 +13,10 @@ namespace pracadyplomowa.Controllers;
 [Authorize]
 public class BoardController : BaseApiController
 {
-    private readonly IBoardRepository _boardRepository;
     private readonly IBoardService _boardService;
 
-    public BoardController(IBoardRepository boardRepository, IBoardService boardService)
+    public BoardController(IBoardService boardService)
     {
-        _boardRepository = boardRepository;
         _boardService = boardService;
     }
 

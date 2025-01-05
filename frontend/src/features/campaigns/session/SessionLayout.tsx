@@ -81,7 +81,7 @@ const ChatForm = styled.form`
   }
 `;
 
-export default function SessionLayout() {
+export default function SessionLayout({ encounter }: any) {
   const { groupName } = useParams();
 
   //TODO REACT QUERY OR STATE MANAGEMENT
@@ -161,7 +161,11 @@ export default function SessionLayout() {
   return (
     <>
       <GridContainer>
-        <VirtualBoard connection={connection} groupName={groupName} />
+        <VirtualBoard
+          encounter={encounter}
+          connection={connection}
+          groupName={groupName}
+        />
       </GridContainer>
       <RightPanel>
         <ChatContentMessage>

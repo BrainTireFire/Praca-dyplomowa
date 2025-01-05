@@ -13,7 +13,13 @@ public class EncounterRepository : BaseRepository<Models.Entities.Campaign.Encou
         var query = _context.Encounters
             .Where(e => e.R_OwnerId == ownerId)
             .Include(e => e.R_Campaign)
+                .ThenInclude(c => c.R_CampaignHasCharacters)
             .Include(e => e.R_Board)
+            .Include(e => e.R_Participances)
+                .ThenInclude(p => p.R_Character)
+            .Include(e => e.R_Participances)
+                .ThenInclude(p => p.R_OccupiedFields)
+            .AsSplitQuery()
             .AsQueryable();
 
         // Sorting
@@ -36,6 +42,7 @@ public class EncounterRepository : BaseRepository<Models.Entities.Campaign.Encou
         var encounter = _context.Encounters
             .Where(e => e.Id == encounterId)
             .Include(e => e.R_Campaign)
+                .ThenInclude(c => c.R_CampaignHasCharacters)
             .Include(e => e.R_Board)
                 .ThenInclude(b => b.R_ConsistsOfFields)
             .Include(e => e.R_Participances)

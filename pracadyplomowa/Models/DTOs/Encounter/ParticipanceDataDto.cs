@@ -5,6 +5,7 @@ namespace pracadyplomowa.Models.DTOs.Encounter;
 
 public record ParticipanceDataDto
 {
+    public int Id { get; set; }
     public int InitiativeOrder { get; set; }
     public bool IsSurprised { get; set; }
     public int NumberOfActionsTaken { get; set; }

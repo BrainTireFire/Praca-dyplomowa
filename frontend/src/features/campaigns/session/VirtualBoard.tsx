@@ -10,6 +10,8 @@ import {
   highlightBox,
   drawCustomCursor,
   drawSelectedBox,
+  fillSelectedBox,
+  drawTextName,
 } from "./CanvasUtils";
 import { VirtualBoardProps } from "./../../../models/session/VirtualBoardProps";
 import { Coordinate } from "../../../models/session/Coordinate";
@@ -39,6 +41,7 @@ type CursorInfo = {
 };
 
 export default function VirtualBoard({
+  encounter,
   connection,
   groupName,
 }: VirtualBoardProps) {
@@ -57,7 +60,6 @@ export default function VirtualBoard({
     id: "",
   });
   const [selectedBox, setSelectedBox] = useState<Coordinate | null>(null);
-
   const [translatePos, setTranslatePos] = useState<Coordinate>({ x: 0, y: 0 });
 
   const drawCanvas = useCallback(() => {
@@ -70,6 +72,47 @@ export default function VirtualBoard({
 
     ctx.clearRect(0, 0, width, height);
     drawGrid(ctx, width, height, 16, 9);
+
+    if (encounter.board.fields) {
+      encounter.board.fields.forEach((field) => {
+        fillSelectedBox(
+          ctx,
+          field,
+          encounter.board.sizeX,
+          encounter.board.sizeY
+        );
+
+        const matchingParticipance = encounter.participances.find(
+          (participance) =>
+            participance.occupiedFields.some(
+              (occupiedField) =>
+                occupiedField.id === field.id &&
+                occupiedField.positionX === field.positionX &&
+                occupiedField.positionY === field.positionY &&
+                occupiedField.positionZ === field.positionZ
+            )
+        );
+
+        if (matchingParticipance) {
+          field.memberName = matchingParticipance.character.name;
+
+          if (matchingParticipance.character.isNpc) {
+            field.avatarUrl =
+              "https://pbs.twimg.com/profile_images/1810521561352617985/ornocKLB_400x400.jpg";
+          } else {
+            field.avatarUrl =
+              "https://i1.sndcdn.com/avatars-000012078220-stfi4o-t1080x1080.jpg";
+          }
+
+          drawTextName(
+            ctx,
+            field,
+            encounter.board.sizeX,
+            encounter.board.sizeY
+          );
+        }
+      });
+    }
 
     Object.keys(selectedBoxes).forEach((connectionId) => {
       const box = selectedBoxes[connectionId];
@@ -147,7 +190,7 @@ export default function VirtualBoard({
 
     // Adjust the offset here
     const offsetX = -120; // Offset to the right
-    const offsetY = -100; // Offset downwards
+    const offsetY = -100; // Offset downwards\
 
     setSelectedBox({ x: gridX, y: gridY });
     setContextMenu({

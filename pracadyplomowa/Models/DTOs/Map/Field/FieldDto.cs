@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using pracadyplomowa.Models.DTOs.Encounter;
 using pracadyplomowa.Models.Enums;
 
 namespace pracadyplomowa.Models.DTOs.Map.Field;

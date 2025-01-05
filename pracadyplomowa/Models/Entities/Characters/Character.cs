@@ -157,6 +157,20 @@ namespace pracadyplomowa.Models.Entities.Characters
 
             this.R_OwnerId = ownerId;
         }
+        
+        public void AddParticipanceData(ParticipanceData participanceData)
+        {
+            if (participanceData == null)
+            {
+                throw new ArgumentNullException(nameof(participanceData), "ParticipanceData cannot be null.");
+            }
+
+            if (!R_CharactersParticipatesInEncounters.Contains(participanceData))
+            {
+                R_CharactersParticipatesInEncounters.Add(participanceData);
+                participanceData.UpdateCharacter(this); // Ensure the relationship is bidirectional
+            }
+        }
 
         protected void GenerateChoiceGroupUsage(){
             List<ChoiceGroup> fullChoiceGroups = this.R_CharacterHasLevelsInClass.SelectMany(cl => cl.R_ChoiceGroups).Union(

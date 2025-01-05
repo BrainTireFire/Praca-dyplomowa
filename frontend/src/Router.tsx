@@ -29,6 +29,7 @@ import Encounter from "./pages/campaign/encounter/Encounter";
 import Items from "./pages/items/Items";
 import Powers from "./pages/powers/Powers";
 import NpcCharacter from "./pages/NpcCharacter";
+import MainSession from "./pages/campaign/session/MainSession";
 
 export default function Router() {
   return (
@@ -51,7 +52,14 @@ export default function Router() {
             path="campaigns/:campaignId/shops/:shopId"
             element={<CustomizeShop />}
           />
-          <Route path="campaigns/session/:groupName" element={<MainBoard />} />
+          <Route
+            path="campaigns/:campaignId/createSession"
+            element={<MainBoard />}
+          />
+          <Route
+            path="campaigns/:campaignId/session/:groupName"
+            element={<MainSession />}
+          />
           <Route
             path="campaigns/:campaignId/encounter"
             element={<Encounter />}

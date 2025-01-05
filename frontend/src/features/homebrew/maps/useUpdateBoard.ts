@@ -9,7 +9,7 @@ export function useUpdateBoard() {
   const { boardId } = useParams<{ boardId: string }>();
   const numberboardId = Number(boardId);
 
-  const { mutate: updateBoard, isLoading: isUpdating } = useMutation({
+  const { mutate: updateBoard, isPending: isUpdating } = useMutation({
     mutationFn: (updateData: BoardUpdateDto) =>
       updateBoardApi(numberboardId, updateData),
     onSuccess: (board) => {

@@ -44,4 +44,13 @@ public class EncounterController : BaseApiController
         return result;
     }
     
+    [HttpPut("placeEncounter/{encounterId}")]
+    public async Task<ActionResult> UpdateEncounter(int encounterId, [FromBody] UpdateEncounterDto updateEncounterDto)
+    {
+        var ownerId = User.GetUserId();
+        var result = await _encounterService.UpdateEncounterAsync(ownerId, encounterId, updateEncounterDto);
+
+        return result;
+    }
+    
 }

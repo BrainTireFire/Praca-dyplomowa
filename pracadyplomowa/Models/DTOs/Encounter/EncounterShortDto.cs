@@ -13,8 +13,10 @@ public record EncounterShortDto
     public string Name { get; init; }
     
     [Required]
-    public CampaignDto Campaign { get; init; }
+    public EncounterCampaignDto Campaign { get; init; }
     
     [Required]
     public BoardSummaryDto Board { get; init; }
+
+    [Required] public ICollection<ParticipanceDataDto> Participances { get; init; }
 }

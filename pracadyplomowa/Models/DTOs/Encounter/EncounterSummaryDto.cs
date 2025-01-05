@@ -13,7 +13,7 @@ public record EncounterSummaryDto
     public string Name { get; init; }
     
     [Required]
-    public CampaignDto Campaign { get; init; }
+    public EncounterCampaignDto Campaign { get; init; }
     
     [Required]
     public BoardSummaryDto Board { get; init; }

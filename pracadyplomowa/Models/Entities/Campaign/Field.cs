@@ -17,7 +17,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
         public int PositionZ { get; set; }
         public string Color { get; set; } = null!;
         public string? Description { get; set; }
-        public FieldCoverType FieldCoverLevel{ get; set; }
+        public FieldCoverType FieldCoverLevel { get; set; }
         public FieldMovementCostType FieldMovementCost { get; set; }
 
 
@@ -28,16 +28,16 @@ namespace pracadyplomowa.Models.Entities.Campaign
         public virtual ParticipanceData? R_OccupiedBy { get; set; }
         public int? R_OccupiedById { get; set; }
         public virtual ICollection<EffectGroup> R_EffectGroupOnField { get; set; } = [];
-        
+
         public Field() { }
-        
+
         public Field(int positionX, int positionY, int positionZ, string color, string fieldCoverLevelStr, string fieldMovementCostStr, string? description = null)
         {
             PositionX = positionX;
             PositionY = positionY;
             PositionZ = positionZ;
             Color = color ?? throw new ArgumentNullException(nameof(color));
-            
+
             if (!Enum.TryParse(fieldCoverLevelStr, true, out FieldCoverType fieldCoverLevel))
             {
                 throw new ArgumentException($"Invalid field cover level: {fieldCoverLevelStr}");
@@ -50,6 +50,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
             FieldMovementCost = fieldMovementCost;
             Description = description;
         }
+        
         public Field(int positionX, int positionY, int positionZ, string color, string fieldCoverLevelStr, string fieldMovementCostStr, List<Power> powers, string? description = null) : this(positionX, positionY, positionZ, color, fieldCoverLevelStr, fieldMovementCostStr, description)
         {
             powers.ForEach(power => this.R_CasterPowers.Add(power));
@@ -60,25 +61,64 @@ namespace pracadyplomowa.Models.Entities.Campaign
             R_Board = board ?? throw new ArgumentNullException(nameof(board));
         }
 
-        public bool IsAdjacentToField(Field field){
+        public void UpdateParticipanceData(ParticipanceData newParticipanceData)
+        {
+            if (newParticipanceData == null)
+            {
+                throw new ArgumentNullException(nameof(newParticipanceData), "ParticipanceData cannot be null.");
+            }
+
+            // Remove this field from the old participance, if any
+            if (R_OccupiedBy != null)
+            {
+                // Remove the field from all old participance's occupied fields
+                foreach (var field in R_OccupiedBy.R_OccupiedFields.ToList())
+                {
+                    field.R_OccupiedBy = null;  // Clear the reference to this field in the old participance
+                }
+
+                // Optionally, clear all occupied fields (depending on how you want to manage them)
+                R_OccupiedBy.R_OccupiedFields.Clear();
+            }
+
+            // Assign the new participance
+            R_OccupiedBy = newParticipanceData;
+            R_OccupiedById = newParticipanceData.Id;
+
+            // Add this field to the new participance if not already in the list
+            if (!newParticipanceData.R_OccupiedFields.Contains(this))
+            {
+                newParticipanceData.R_OccupiedFields.Add(this);
+            }
+        }
+
+
+        public bool IsAdjacentToField(Field field)
+        {
             return Math.Abs(field.PositionX - this.PositionX) <= 1 || Math.Abs(field.PositionY - this.PositionY) <= 1;
         }
 
-        public Dictionary<int, HitType> CheckIfPowerHitSuccessfull(Encounter encounter, Power power, List<Character> targets){
+        public Dictionary<int, HitType> CheckIfPowerHitSuccessfull(Encounter encounter, Power power, List<Character> targets)
+        {
             //retrieve data
             Dictionary<int, HitType> hitMap = [];
 
-            foreach(var targetedCharacter in targets){
-                if(power.PowerType == PowerType.Attack){
-                    int roll = new DiceSet(){d20 = 1}.RollPrototype(false, false, null).First().result;
+            foreach (var targetedCharacter in targets)
+            {
+                if (power.PowerType == PowerType.Attack)
+                {
+                    int roll = new DiceSet() { d20 = 1 }.RollPrototype(false, false, null).First().result;
                     HitType outcome = HitType.Miss;
-                    if(roll == 1){
+                    if (roll == 1)
+                    {
                         outcome = HitType.CriticalMiss;
                     }
-                    if(roll == 20){
+                    if (roll == 20)
+                    {
                         outcome = HitType.CriticalHit;
                     }
-                    if(roll >= targetedCharacter.ArmorClass){
+                    if (roll >= targetedCharacter.ArmorClass)
+                    {
                         outcome = HitType.Hit;
                     }
                     hitMap.Add(
@@ -86,10 +126,12 @@ namespace pracadyplomowa.Models.Entities.Campaign
                         outcome
                     );
                 }
-                else if(power.PowerType == PowerType.Saveable && power.OverrideCastersDC){
+                else if (power.PowerType == PowerType.Saveable && power.OverrideCastersDC)
+                {
                     int roll = targetedCharacter.SavingThrowRoll((Ability)power.SavingThrow);
                     HitType outcome = HitType.Miss;
-                    if(roll <= power.DifficultyClass && roll != 20){
+                    if (roll <= power.DifficultyClass && roll != 20)
+                    {
                         outcome = HitType.Hit;
                     }
                     hitMap.Add(
@@ -111,9 +153,10 @@ namespace pracadyplomowa.Models.Entities.Campaign
         public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel)
         {
             EffectGroup effectGroup = new();
-            
+
             //generate effects
-            foreach(Character target in targetsToHitSuccessMap.Keys){
+            foreach (Character target in targetsToHitSuccessMap.Keys)
+            {
                 if (targetsToHitSuccessMap.TryGetValue(target, out var outcome))
                 {
                     foreach (EffectBlueprint effectBlueprint in power.R_EffectBlueprints)
@@ -139,7 +182,8 @@ namespace pracadyplomowa.Models.Entities.Campaign
                         if (shouldAdd)
                         {
                             var effectInstance = effectBlueprint.Generate(null, target);
-                            if(outcome == HitType.CriticalHit && effectInstance is DamageEffectInstance damageEffectInstance){
+                            if (outcome == HitType.CriticalHit && effectInstance is DamageEffectInstance damageEffectInstance)
+                            {
                                 damageEffectInstance.CriticalHit = true;
                             }
                             effectGroup.AddEffectOnCharacter(effectInstance);
@@ -150,7 +194,8 @@ namespace pracadyplomowa.Models.Entities.Campaign
             //configure effect group
             effectGroup.DurationLeft = power.Duration;
             effectGroup.IsConstant = false;
-            if(power.PowerType == PowerType.Saveable && power.SavingThrowRoll == Enums.SavingThrowRoll.RetakenEveryTurn){
+            if (power.PowerType == PowerType.Saveable && power.SavingThrowRoll == Enums.SavingThrowRoll.RetakenEveryTurn)
+            {
                 effectGroup.DifficultyClassToBreak = power.DifficultyClass;
                 effectGroup.SavingThrow = (Ability)power.SavingThrow;
             }

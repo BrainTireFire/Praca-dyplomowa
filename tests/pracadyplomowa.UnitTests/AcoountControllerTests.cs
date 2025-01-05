@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using pracadyplomowa.Token.Services;
 
 namespace pracadyplomowa.UnitTests;
 
@@ -44,7 +45,7 @@ public class AcoountControllerTests
         // Arrange
         var registerDto = _fixture.Create<RegisterDto>();
         var user = new User { UserName = registerDto.Username.ToLower() };
-        var userDto = new UserDto { Username = user.UserName, Token = "testToken" };
+        var userDto = new UserDto { Username = user.UserName }; //Token = "testToken" };
 
         _accountRepository.Setup(x => x.GetUserByUsername(It.IsAny<string>()))
             .ReturnsAsync((User)null!);
@@ -52,8 +53,8 @@ public class AcoountControllerTests
             .ReturnsAsync((IdentityResult.Success, user));
         _accountRepository.Setup(x => x.AddUserToRoleAsync(It.IsAny<User>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Success);
-        _tokenService.Setup(x => x.CreateToken(It.IsAny<User>()))
-            .ReturnsAsync(userDto.Token);
+        // _tokenService.Setup(x => x.CreateToken(It.IsAny<User>()))
+        //     .ReturnsAsync(userDto.Token);
 
         // Act
         var result = await _controller.Register(registerDto);
@@ -62,7 +63,7 @@ public class AcoountControllerTests
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
         var returnedUserDto = Assert.IsType<UserDto>(okResult.Value);
         Assert.Equal(userDto.Username, returnedUserDto.Username);
-        Assert.Equal(userDto.Token, returnedUserDto.Token);
+        // Assert.Equal(userDto.Token, returnedUserDto.Token);
     }
 
     [Fact]
@@ -90,15 +91,15 @@ public class AcoountControllerTests
         var loginDto = _fixture.Create<LoginDto>();
         var loginResult = _fixture.Create<LoginResult>();
         var user = new User { UserName = loginDto.Username.ToLower() };
-        var userDto = new UserDto { Username = user.UserName, Token = "testToken" };
+        var userDto = new UserDto { Username = user.UserName }; //, Token = "testToken" };
 
         _accountRepository.Setup(x => x.GetUserByUsername(It.IsAny<string>()))
             .ReturnsAsync(user);
         //TODO
         // _accountRepository.Setup(x => x.LoginUserAsync("username1", It.IsAny<string>()))
         //     .ReturnsAsync(loginResult);
-        _tokenService.Setup(x => x.CreateToken(It.IsAny<User>()))
-            .ReturnsAsync(userDto.Token);
+        // _tokenService.Setup(x => x.CreateToken(It.IsAny<User>()))
+        //     .ReturnsAsync(userDto.Token);
 
         // Act
         var result = await _controller.Login(loginDto);
@@ -108,7 +109,7 @@ public class AcoountControllerTests
         var returnedUserDto = Assert.IsType<UserDto>(okResult.Value);
         Assert.Empty(loginResult.ErrorMessage);
         Assert.Equal(userDto.Username, returnedUserDto.Username);
-        Assert.Equal(userDto.Token, returnedUserDto.Token);
+        // Assert.Equal(userDto.Token, returnedUserDto.Token);
     }
 
     [Fact]

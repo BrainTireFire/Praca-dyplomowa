@@ -64,6 +64,12 @@ public class MappingProfiles : Profile
                 opt => opt.MapFrom(
                     src => src.R_Board
                 )
+            )
+            .ForMember(
+                dest => dest.Participances,
+                opt => opt.MapFrom(
+                    src => src.R_Participances
+                )
             );
         CreateMap<Encounter, EncounterSummaryDto>()
             .ForMember(
@@ -84,8 +90,13 @@ public class MappingProfiles : Profile
                     src => src.R_Participances
                 )
             );
-        CreateMap<Campaign, CampaignDto>()
-            .ConstructUsing(campaign => new CampaignDto(campaign));
+        CreateMap<Campaign, EncounterCampaignDto>()
+            .ForMember(
+                dest => dest.Members,
+                opt => opt.MapFrom(
+                    src => src.R_CampaignHasCharacters
+                )
+            );
         CreateMap<Character, ParticipanceCharacterSummaryDto>();
         CreateMap<ParticipanceData, ParticipanceDataDto>()
             .ForMember(

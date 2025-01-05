@@ -45,6 +45,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
             {
                 newCharacter.R_CharactersParticipatesInEncounters.Add(this);
             }
+        }
 
         public bool IsAdjacentToParticipant(ParticipanceData participance)
         {

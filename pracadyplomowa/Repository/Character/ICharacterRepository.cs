@@ -7,7 +7,7 @@ using pracadyplomowa.Models.Entities.Characters;
 
 namespace pracadyplomowa.Repository
 {
-    public interface ICharacterRepository : IBaseRepository<Character>
+    public interface ICharacterRepository: IBaseRepository<Character>
     {
         public Task<PagedList<CharacterSummaryDto>> GetCharacterSummaries(int OwnerId, bool isNpc, CharacterParams characterParams);
         public Task<Character> GetByIdWithAll(int Id);

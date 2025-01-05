@@ -60,7 +60,6 @@ export default function VirtualBoard({
     id: "",
   });
   const [selectedBox, setSelectedBox] = useState<Coordinate | null>(null);
-
   const [translatePos, setTranslatePos] = useState<Coordinate>({ x: 0, y: 0 });
 
   const drawCanvas = useCallback(() => {
@@ -115,14 +114,6 @@ export default function VirtualBoard({
       });
     }
 
-    // if (selectedBox) {
-    //   drawSelectedBox(
-    //     ctx,
-    //     selectedBox,
-    //     encounter.board.sizeX,
-    //     encounter.board.sizeY
-    //   );
-    // }
     Object.keys(selectedBoxes).forEach((connectionId) => {
       const box = selectedBoxes[connectionId];
       const color = getColorForUser(connectionId);

@@ -2,6 +2,7 @@ import styled from "styled-components";
 import SessionLayout from "../../../features/campaigns/session/SessionLayout";
 import { useEncounter } from "../../../features/campaigns/hooks/useEncounter";
 import Spinner from "../../../ui/interactive/Spinner";
+import { useParams } from "react-router-dom";
 
 const Container = styled.div`
   display: grid;
@@ -12,7 +13,8 @@ const Container = styled.div`
 `;
 
 export default function MainSession() {
-  const { isLoading, encounter } = useEncounter(89);
+  const { groupName } = useParams<{ groupName: string }>();
+  const { isLoading, encounter } = useEncounter(Number(groupName));
 
   if (isLoading) {
     return <Spinner />;

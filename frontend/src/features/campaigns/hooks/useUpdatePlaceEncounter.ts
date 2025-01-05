@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { EncounterUpdateDto } from "../../../models/encounter/EncounterUpdateDto";
 import { useNavigate, useParams } from "react-router-dom";
 
-export function useUpdatePlaceEncounter() {
+export function useUpdatePlaceEncounter(id: number) {
   const { campaignId } = useParams<{ campaignId: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -22,7 +22,7 @@ export function useUpdatePlaceEncounter() {
     onSuccess: () => {
       toast.success("Encounter updated");
       queryClient.invalidateQueries({ queryKey: ["encounters"] });
-      navigate("/campaigns/" + campaignId + `/session/208`);
+      navigate("/campaigns/" + campaignId + `/session/${id}`);
     },
     onError: (error) => {
       toast.error("Encounter update failed");

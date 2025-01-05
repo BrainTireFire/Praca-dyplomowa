@@ -88,7 +88,8 @@ export default function EncounterMapCreaterLayout({ encounterId, onToggle }) {
   const { isLoading, encounter } = useEncounter(encounterId);
   const [selectedBox, setSelectedBox] = useState<Coordinate>({});
   const [fields, setFields] = useState<Field[]>([]);
-  const { updatePlaceEncounter, isUpdating } = useUpdatePlaceEncounter();
+  const { updatePlaceEncounter, isUpdating } =
+    useUpdatePlaceEncounter(encounterId);
 
   useEffect(() => {
     if (encounter?.board) {

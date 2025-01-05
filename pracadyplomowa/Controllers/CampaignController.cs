@@ -11,7 +11,7 @@ namespace pracadyplomowa.Controllers
     public class CampaignController(IUnitOfWork unitOfWork) : BaseApiController
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
-        
+
         [HttpPost]
         public async Task<ActionResult> CreateCampaign(CampaignInsertDto campaignInsertDto)
         {
@@ -72,27 +72,27 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpDelete("removeCharacterFromCampaign/{characterId}")]
-        public ActionResult removeCharacterFromCampaign(int characterId)
+        public async Task<ActionResult> removeCharacterFromCampaign(int characterId)
         {
-            var character = _characterRepository.GetById(characterId);
+            var character = _unitOfWork.CharacterRepository.GetById(characterId);
             if (character == null)
                 return BadRequest(new ApiResponse(400, "A Character with given id - does not exist"));
 
-            var campaign = _campaignRepository.GetById(character.R_CampaignId.GetValueOrDefault());
+            var campaign = _unitOfWork.CampaignRepository.GetById(character.R_CampaignId.GetValueOrDefault());
 
             if (campaign == null)
                 return BadRequest(new ApiResponse(400, "This Character doesn't belong to any Campaign"));
 
             campaign.R_CampaignHasCharacters.Remove(character);
 
-            _campaignRepository.SaveChanges();
+            await _unitOfWork.SaveChangesAsync();
             return Ok();
         }
 
         [HttpDelete("{campaignId}")]
-        public ActionResult RemoveCampaign(int campaignId)
+        public async Task<ActionResult> RemoveCampaign(int campaignId)
         {
-            _campaignRepository.RemoveCampaign(campaignId);
+            await _unitOfWork.CampaignRepository.RemoveCampaign(campaignId);
 
             return Ok();
         }

@@ -1,12 +1,12 @@
 import Heading from "../../ui/text/Heading";
 import Box from "../../ui/containers/Box";
 import styled from "styled-components";
-import { useCampaign } from "./hooks/useCampaign";
+import { useCampaign } from "../../features/campaigns/hooks/useCampaign";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Spinner from "../../ui/interactive/Spinner";
-import CharacterItemBox from "../characters/CharacterItemBox";
-import { useCharacters } from "../characters/hooks/useCharacters";
+import CharacterItemBox from "../../features/characters/CharacterItemBox";
+import { useCharacters } from "../../features/characters/hooks/useCharacters";
 import { addCharacterToCampaign } from "../../services/apiCampaigns";
 
 const Container = styled.div`
@@ -38,6 +38,11 @@ function CampaignJoin() {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
+  const filteredCharacters = characters?.filter(
+    // Filter out those Characters that are already assigned to a Campaign
+    (character) => !character.campaignId
+  );
+
   if (!campaign) {
     return <Spinner />;
   }
@@ -58,7 +63,6 @@ function CampaignJoin() {
   return (
     <Container>
       <Box variation="squaredLarge">
-        {}
         <BoxContent>
           <Heading as="h1">Looks like you want to join to a campaign</Heading>
           <Heading as="h1" color="textColor">
@@ -66,8 +70,8 @@ function CampaignJoin() {
           </Heading>
           <Heading as="h2">Pick a character</Heading>
           <CharacterListLayout>
-            {characters && characters?.length > 0 ? (
-              characters?.map((character) => (
+            {filteredCharacters && filteredCharacters?.length > 0 ? (
+              filteredCharacters?.map((character) => (
                 <CharacterItemBox
                   key={character.id}
                   character={character}
@@ -77,7 +81,7 @@ function CampaignJoin() {
               ))
             ) : (
               <Heading as="h1" color="textColor">
-                No characters available.
+                No characters eligible for joining.
               </Heading>
             )}
           </CharacterListLayout>

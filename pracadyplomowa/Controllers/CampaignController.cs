@@ -62,12 +62,38 @@ namespace pracadyplomowa.Controllers
 
             if (campaign == null || character == null)
             {
-                return BadRequest(new ApiResponse(400, "campaign or character with given id - does not exist"));
+                return BadRequest(new ApiResponse(400, "Campaign or Character with given id - does not exist"));
             }
 
             campaign.R_CampaignHasCharacters.Add(character);
 
             _unitOfWork.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpDelete("removeCharacterFromCampaign/{characterId}")]
+        public ActionResult removeCharacterFromCampaign(int characterId)
+        {
+            var character = _characterRepository.GetById(characterId);
+            if (character == null)
+                return BadRequest(new ApiResponse(400, "A Character with given id - does not exist"));
+
+            var campaign = _campaignRepository.GetById(character.R_CampaignId.GetValueOrDefault());
+
+            if (campaign == null)
+                return BadRequest(new ApiResponse(400, "This Character doesn't belong to any Campaign"));
+
+            campaign.R_CampaignHasCharacters.Remove(character);
+
+            _campaignRepository.SaveChanges();
+            return Ok();
+        }
+
+        [HttpDelete("{campaignId}")]
+        public ActionResult RemoveCampaign(int campaignId)
+        {
+            _campaignRepository.RemoveCampaign(campaignId);
+
             return Ok();
         }
     }

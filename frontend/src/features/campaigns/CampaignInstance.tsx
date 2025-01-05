@@ -10,6 +10,8 @@ import { useCampaign } from "./hooks/useCampaign";
 import Spinner from "../../ui/interactive/Spinner";
 import CharacterDetailBox from "./CharacterDetailBox";
 import { Campaign } from "../../models/campaign";
+import { removeCampaign } from "../../services/apiCampaigns";
+import ConfirmDelete from "../../ui/containers/ConfirmDelete";
 
 const Container = styled.div`
   display: grid;
@@ -33,10 +35,17 @@ const HeaderButtons = styled.div`
   /* margin-bottom: 1rem; */
 `;
 
+const encode = (number: number): string => {
+  let base64 = btoa(number.toString() + "zoNK");
+  base64 = base64.split("").reverse().join("");
+  return base64;
+};
+
 export default function CampaignInstance() {
   const { isLoading, campaign } = useCampaign();
   const navigate = useNavigate();
   const { t } = useTranslation();
+
   if (isLoading) {
     return <Spinner />;
   }
@@ -46,6 +55,11 @@ export default function CampaignInstance() {
   }
 
   const { id, name, description, members }: Campaign = campaign;
+
+  const handleRemove = async () => {
+    await removeCampaign(campaign.id);
+    navigate("/campaigns");
+  };
 
   return (
     <Container>
@@ -61,14 +75,14 @@ export default function CampaignInstance() {
                 <GiveXP membersList={members} />
               </Modal.Window> */}
           </Modal>
-          {/* <Modal>
-              <Modal.Open opens="ShortRestModal">
-                <Button size="large">{t("campaignInstance.shortRest")}</Button>
-              </Modal.Open>
-              <Modal.Window name="ShortRestModal">
+          <Modal>
+            <Modal.Open opens="ShortRestModal">
+              <Button size="large">{t("campaignInstance.shortRest")}</Button>
+            </Modal.Open>
+            {/*    <Modal.Window name="ShortRestModal">
                 <ShortRest membersList={members} />
-              </Modal.Window>
-            </Modal> */}
+              </Modal.Window>*/}
+          </Modal>
           <Button size="large">{t("campaignInstance.longRest")}</Button>
           <Button size="large" onClick={() => navigate(`/campaigns/session/1`)}>
             {t("campaignInstance.session")}
@@ -117,10 +131,24 @@ export default function CampaignInstance() {
         }}
       >
         <Heading as="h2">Link for invite to the campaign</Heading>
-        <InputCopyToClipboard valueDefault={`localhost:5173/join/${id}`} />
+        <InputCopyToClipboard
+          valueDefault={`localhost:5173/join/${encode(id)}`}
+        />
       </div>
       <Line size="percantage" />
-      <Button size="large">{t("campaignInstance.remove")}</Button>
+      <Modal>
+        <Modal.Open opens="ConfirmDelete">
+          <Button size="large" onClick={handleRemove}>
+            {t("campaignInstance.remove")}
+          </Button>
+        </Modal.Open>
+        <Modal.Window name="ConfirmDelete">
+          <ConfirmDelete
+            resourceName={name + " campaign"}
+            onConfirm={handleRemove}
+          />
+        </Modal.Window>
+      </Modal>
     </Container>
   );
 }

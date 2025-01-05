@@ -50,7 +50,7 @@ export default function ShortRest({ membersList }) {
         }}
       >
         <Heading as="h2" style={{ gridColumn: "2/3", marginBottom: "15px" }}>
-          Pick strength dice
+          Pick hit dice
         </Heading>
         <Button style={{ gridColumn: "2/3" }}>Send notification</Button>
       </div>

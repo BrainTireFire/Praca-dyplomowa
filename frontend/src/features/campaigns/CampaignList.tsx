@@ -2,11 +2,14 @@ import styled from "styled-components";
 import CampaignItemBox from "./CampaignItemBox";
 import { useCampaigns } from "./hooks/useCampaigns";
 import Spinner from "../../ui/interactive/Spinner";
+import { Campaign } from "../../models/campaign";
 
 const CampaignListLayout = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 1rem;
+  padding-left: 1.5vw;
+  padding-right: 1.5vw;
 `;
 
 export default function CampaignList() {

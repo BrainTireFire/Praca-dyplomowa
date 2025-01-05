@@ -50,6 +50,10 @@ namespace pracadyplomowa.Models.Entities.Campaign
             FieldMovementCost = fieldMovementCost;
             Description = description;
         }
+        public Field(int positionX, int positionY, int positionZ, string color, string fieldCoverLevelStr, string fieldMovementCostStr, List<Power> powers, string? description = null) : this(positionX, positionY, positionZ, color, fieldCoverLevelStr, fieldMovementCostStr, description)
+        {
+            powers.ForEach(power => this.R_CasterPowers.Add(power));
+        }
         
         public void AssignToBoard(Board board)
         {

@@ -13,7 +13,11 @@ export function PowerSelectionFormField({
   onSelectPower: React.Dispatch<React.SetStateAction<any>>;
   selectedPowers: PowerListItem[];
 }) {
-  const { isLoading: isLoadingAllPowers, powers: allPowers } = usePowers({
+  const {
+    isLoading: isLoadingAllPowers,
+    powers: allPowers,
+    error: allPowersLoadingError,
+  } = usePowers({
     CastableBy: "Terrain",
   });
   //   const [itemPowersLocal, setItemPowersLocal] =
@@ -47,10 +51,6 @@ export function PowerSelectionFormField({
     setSelectedPowerIdFromAll(null);
   };
 
-  const handleSave = () => {
-    onSelectPower(itemPowersLocal);
-  };
-
   return (
     <Grid>
       <Column1>
@@ -77,8 +77,8 @@ export function PowerSelectionFormField({
           <Button
             disabled={selectedPowerIdFromAll === null}
             onClick={() => {
-              onSelectPower((prev) => [
-                ...prev,
+              onSelectPower([
+                ...itemPowersLocal,
                 allPowers?.find(
                   (power) => power.id === selectedPowerIdFromAll
                 ) as PowerListItem,
@@ -91,15 +91,16 @@ export function PowerSelectionFormField({
           <Button
             disabled={selectedPowerIdFromItem === null}
             onClick={() => {
-              onSelectPower((prev) =>
-                prev.filter((slot) => slot.id !== selectedPowerIdFromItem)
+              onSelectPower(
+                itemPowersLocal.filter(
+                  (slot) => slot.id !== selectedPowerIdFromItem
+                )
               );
               setSelectedPowerIdFromItem(null);
             }}
           >
             {"<<"}
           </Button>
-          <Button onClick={handleSave}>{"Save"}</Button>
         </>
       </Column2>
       <Column3>

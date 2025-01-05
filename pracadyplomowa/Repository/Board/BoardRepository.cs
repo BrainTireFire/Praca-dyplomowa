@@ -65,6 +65,7 @@ public class BoardRepository: BaseRepository<Models.Entities.Campaign.Board>, IB
     {
         return _context.Boards
             .Include(b => b.R_ConsistsOfFields)
+            .ThenInclude(f => f.R_CasterPowers)
             .FirstOrDefaultAsync(b => b.Id == boardId && b.R_OwnerId == ownerId);
     }
 }

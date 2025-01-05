@@ -4,6 +4,7 @@ using pracadyplomowa.Errors;
 using pracadyplomowa.Models.DTOs.Board;
 using pracadyplomowa.Models.DTOs.Map.Field;
 using pracadyplomowa.Models.Entities.Campaign;
+using pracadyplomowa.Models.Entities.Powers;
 using pracadyplomowa.Models.Enums;
 using pracadyplomowa.Repository.Board;
 using pracadyplomowa.Repository.Field;
@@ -58,6 +59,8 @@ public class BoardService : IBoardService
     public async Task<ActionResult> CreateBoardAsync(int ownerId, BoardCreateDto boardCreateDto)
     {
         var board = new Models.Entities.Campaign.Board(ownerId, boardCreateDto.Name, boardCreateDto.SizeX, boardCreateDto.SizeY, boardCreateDto.Description);
+        Dictionary<int, Power> powers = (await _unitOfWork.PowerRepository.GetAllByIds(boardCreateDto.Fields.SelectMany(f => f.Powers).Select(power => power.Id).ToList())).ToDictionary(power => power.Id, power => power);
+        
         var fields = boardCreateDto.Fields.Select(field => new Field(
             field.PositionX,
             field.PositionY,
@@ -65,7 +68,9 @@ public class BoardService : IBoardService
             field.Color,
             field.FieldCoverLevel,
             field.FieldMovementCost,
-            field.Description)
+            powers.Where(x => field.Powers.Select(p => p.Id).Contains(x.Key)).Select(k => k.Value).ToList(),
+            field.Description
+        )
         ).ToList();
 
         foreach (var field in fields)
@@ -165,6 +170,7 @@ public class BoardService : IBoardService
 
     private async Task<ActionResult?> UpdateFieldsAsync(int boardId, Models.Entities.Campaign.Board board, ICollection<FieldUpdateDto> fieldsToUpdate)
     {
+        Dictionary<int, Power> powers = (await _unitOfWork.PowerRepository.GetAllByIds(fieldsToUpdate.SelectMany(f => f.Powers).Select(power => power.Id).ToList())).ToDictionary(power => power.Id, power => power);
         foreach (var fieldToUpdate in fieldsToUpdate)
         {
             if (fieldToUpdate.Id == null || fieldToUpdate.Id == 0)
@@ -176,6 +182,7 @@ public class BoardService : IBoardService
                     fieldToUpdate.Color,
                     fieldToUpdate.FieldCoverLevel,
                     fieldToUpdate.FieldMovementCost,
+                    powers.Where(x => fieldToUpdate.Powers.Select(p => p.Id).Contains(x.Key)).Select(k => k.Value).ToList(),
                     fieldToUpdate.Description);
                 
                 
@@ -185,7 +192,7 @@ public class BoardService : IBoardService
             }
             else
             {
-                var field = _unitOfWork.FieldRepository.GetById(fieldToUpdate.Id);
+                var field = await _unitOfWork.FieldRepository.GetByIdWithPowers(fieldToUpdate.Id);
                 if (field == null)
                 {
                     return new NotFoundObjectResult(new ApiResponse(404,
@@ -198,7 +205,7 @@ public class BoardService : IBoardService
                         $"Field with id {fieldToUpdate.Id} does not belong to board with id {boardId}"));
                 }
 
-                UpdateFieldProperties(field, fieldToUpdate);
+                UpdateFieldProperties(field, fieldToUpdate, powers);
                 _unitOfWork.FieldRepository.Update(field);
             }
         }
@@ -207,7 +214,7 @@ public class BoardService : IBoardService
         return null;
     }
     
-    private void UpdateFieldProperties(Field field, FieldUpdateDto fieldToUpdate)
+    private void UpdateFieldProperties(Field field, FieldUpdateDto fieldToUpdate, Dictionary<int, Power> powers)
     {
         if (!string.IsNullOrEmpty(fieldToUpdate.Color))
         {
@@ -254,6 +261,8 @@ public class BoardService : IBoardService
         {
             field.PositionZ = (int)fieldToUpdate.PositionZ;
         }
+        field.R_CasterPowers.Clear();
+        powers.Where(keyValuePair => fieldToUpdate.Powers.Select(p => p.Id).Contains(keyValuePair.Key)).Select(keyValuePair => keyValuePair.Value).ToList().ForEach(field.R_CasterPowers.Add);
     }
     
     private void UpdateBoardProperties(Models.Entities.Campaign.Board board, BoardUpdateDto boardUpdateDto)

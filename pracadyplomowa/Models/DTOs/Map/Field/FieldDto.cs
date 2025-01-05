@@ -29,5 +29,6 @@ public class FieldDto
     [Required (ErrorMessage = "FieldMovementCost is required")]
     public string FieldMovementCost { get; set; }
     
-    // public ParticipanceDataDto? OccupiedBy { get; set; } 
+    [Required]
+    public ICollection<PowerCompactDto> Powers { get; set; } = [];
 }

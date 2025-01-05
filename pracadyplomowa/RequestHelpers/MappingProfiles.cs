@@ -109,13 +109,13 @@ public class MappingProfiles : Profile
             );
         
         CreateMap<ItemCostRequirement, ItemCostRequirementDto>()
-            .ForMember(
-                dest => dest.Worth, opt => opt.MapFrom(src => new CoinPurseDto(){
-                    GoldPieces = src.GoldPieces,
-                    SilverPieces = src.SilverPieces,
-                    CopperPieces = src.CopperPieces
-                })
-            )
+            // .ForMember(
+            //     dest => dest.Worth, opt => opt.MapFrom(src => new CoinPurseDto(){
+            //         GoldPieces = src.Price.GoldPieces,
+            //         SilverPieces = src.Price.SilverPieces,
+            //         CopperPieces = src.Price.CopperPieces
+            //     })
+            // )
             .ForMember(
                 dest => dest.Name, opt => opt.MapFrom(src => src.R_ItemFamily.Name)
             )

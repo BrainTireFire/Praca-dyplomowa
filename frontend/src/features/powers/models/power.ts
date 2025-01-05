@@ -8,9 +8,11 @@ export type Power = {
   description: string;
   requiredActionType: ActionType;
   isImplemented: boolean;
+  isMagic: boolean;
   castableBy: CastableBy;
   powerType: PowerType;
   targetType: TargetType;
+  isRanged: boolean;
   range: number;
   maxTargets: number;
   maxTargetsToExclude: number;
@@ -80,8 +82,8 @@ export const PowerTypeLabels: { [key in PowerType]: string } = {
   Saveable: "Saveable",
   // MinionSpawner_1_of: "Minion Spawner (1 of)",
   // MinionSpawner_multiple: "Minion Spawner (Multiple)",
-  AuraCreator: "Aura Creator",
   PassiveEffect: "Passive Effect",
+  AuraCreator: "Aura Creator",
   // Polymorphism: "Polymorphism",
 };
 

@@ -1,10 +1,14 @@
-import React from "react";
 import Box from "../../ui/containers/Box";
 import Heading from "../../ui/text/Heading";
 import ButtonGroup from "../../ui/interactive/ButtonGroup";
 import Button from "../../ui/interactive/Button";
 import styled, { css } from "styled-components";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { Campaign } from "../../models/campaign";
+import Modal from "../../ui/containers/Modal";
+import { useTranslation } from "react-i18next";
+import ConfirmDelete from "../../ui/containers/ConfirmDelete";
+import { removeCampaign } from "../../services/apiCampaigns";
 
 const BoxCustomStyles = css`
   display: grid;
@@ -15,13 +19,20 @@ const StyledElementBox = styled.div`
   text-align: center;
 `;
 
-export default function CampaignItemBox({ campaign }) {
+export default function CampaignItemBox({ campaign }: { campaign: Campaign }) {
   const navigate = useNavigate();
+
+  const handleRemove = async () => {
+    await removeCampaign(campaign.id);
+    navigate(0);
+  };
 
   return (
     <Box radius="tiny" customStyles={BoxCustomStyles}>
-      <Heading as="h4">{campaign.name}</Heading>
-      <StyledElementBox>{campaign.player}</StyledElementBox>
+      <Heading as="h1">{campaign.name}</Heading>
+      <StyledElementBox>
+        {campaign.gameMaster?.name ?? "GameMaster"}
+      </StyledElementBox>
       <StyledElementBox>{campaign.description}</StyledElementBox>
       <div>
         <ButtonGroup justify="center">
@@ -32,12 +43,19 @@ export default function CampaignItemBox({ campaign }) {
           >
             View
           </Button>
-          <Button variation="primary" size="large">
-            Edit
-          </Button>
-          <Button variation="primary" size="large">
-            Remove
-          </Button>
+          <Modal>
+            <Modal.Open opens="ConfirmDelete">
+              <Button size="large" onClick={handleRemove}>
+                Remove
+              </Button>
+            </Modal.Open>
+            <Modal.Window name="ConfirmDelete">
+              <ConfirmDelete
+                resourceName={campaign.name + " campaign"}
+                onConfirm={handleRemove}
+              />
+            </Modal.Window>
+          </Modal>
         </ButtonGroup>
       </div>
     </Box>

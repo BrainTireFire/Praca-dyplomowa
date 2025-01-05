@@ -7,6 +7,7 @@ namespace pracadyplomowa.Models.Entities.Powers;
 public abstract class ValueEffectInstance : EffectInstance
 {
     public DiceSet DiceSet { get; set; }
+    public Character? Roller { get; set; }
 
     private ValueEffectInstance() : base("EF"){
         DiceSet = new DiceSet();
@@ -14,12 +15,13 @@ public abstract class ValueEffectInstance : EffectInstance
     public ValueEffectInstance(string name, DiceSet diceSet) : base(name){
         DiceSet = diceSet;
     }
-    public ValueEffectInstance(ValueEffectBlueprint blueprint, Character roller, Character target) : base(blueprint, target){
+    public ValueEffectInstance(ValueEffectBlueprint blueprint, Character? roller, Character target) : base(blueprint, target){
         if(blueprint.RollMoment == Enums.RollMoment.OnCast){
             DiceSet = blueprint.DiceSet.Roll(roller);
         }
         else if(blueprint.RollMoment == Enums.RollMoment.OnResolve){
             DiceSet = blueprint.DiceSet;
+            Roller = roller;
         }
         else{
             throw new UnreachableException();

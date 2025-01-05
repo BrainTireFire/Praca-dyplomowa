@@ -29,7 +29,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
         public int? R_GrantsProficiencyInItemFamilyId { get; set; }
         public ProficiencyEffectType ProficiencyEffectType { get; set; } = new ProficiencyEffectType();
         //methods
-        public override EffectInstance Generate(Character roller, Character target){
+        public override EffectInstance Generate(Character? roller, Character target){
             return new ProficiencyEffectInstance(this, target);
         }
     }

@@ -25,6 +25,7 @@ namespace pracadyplomowa.Repository
                     .Include(c => c.R_CharacterBelongsToRace)
                     .Include(c => c.R_CharacterHasLevelsInClass)
                     .ThenInclude(cl => cl.R_Class)
+                    .Include(c => c.R_Campaign)
                     .AsQueryable();
 
             // Filtering
@@ -48,7 +49,8 @@ namespace pracadyplomowa.Repository
                 c.Name,
                 c.Description,
                 c.R_CharacterBelongsToRace.Name,
-                c.R_CharacterHasLevelsInClass.First().R_Class.Name
+                c.R_CharacterHasLevelsInClass.First().R_Class.Name,
+                c.R_CampaignId
             ));
 
             return await PagedList<CharacterSummaryDto>.CreateAsync(charactersSumaries, characterParams.PageNumber, characterParams.PageSize);

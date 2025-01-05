@@ -100,9 +100,11 @@ namespace pracadyplomowa.Controllers
             {
                 R_ItemFamilyId = materialComponentDto.ItemFamilyId,
                 PowerId = powerId,
-                GoldPieces = materialComponentDto.Worth.GoldPieces,
-                SilverPieces = materialComponentDto.Worth.SilverPieces,
-                CopperPieces = materialComponentDto.Worth.CopperPieces
+                Worth = new CoinSack(){
+                    GoldPieces = materialComponentDto.Worth.GoldPieces,
+                    SilverPieces = materialComponentDto.Worth.SilverPieces,
+                    CopperPieces = materialComponentDto.Worth.CopperPieces
+                }
             };
 
             _unitOfWork.ItemCostRequirementRepository.Add(materialComponent);
@@ -117,9 +119,11 @@ namespace pracadyplomowa.Controllers
                 Id = materialComponentDto.Id,
                 R_ItemFamilyId = materialComponentDto.ItemFamilyId,
                 PowerId = powerId,
-                GoldPieces = materialComponentDto.Worth.GoldPieces,
-                SilverPieces = materialComponentDto.Worth.SilverPieces,
-                CopperPieces = materialComponentDto.Worth.CopperPieces
+                Worth = new CoinSack(){
+                    GoldPieces = materialComponentDto.Worth.GoldPieces,
+                    SilverPieces = materialComponentDto.Worth.SilverPieces,
+                    CopperPieces = materialComponentDto.Worth.CopperPieces
+                }
             };
 
             _unitOfWork.ItemCostRequirementRepository.Update(materialComponent);

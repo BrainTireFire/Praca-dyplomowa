@@ -10,7 +10,7 @@ public class SkillEffectInstance : ValueEffectInstance
     public SkillEffectType EffectType { get; set; } = new SkillEffectType();
     private SkillEffectInstance() : base("EF", 0){}
     public SkillEffectInstance(string name) : base(name, 0){}
-    public SkillEffectInstance(SkillEffectBlueprint skillEffectBlueprint, Character roller, Character target) : base(skillEffectBlueprint, roller, target){
+    public SkillEffectInstance(SkillEffectBlueprint skillEffectBlueprint, Character? roller, Character target) : base(skillEffectBlueprint, roller, target){
         EffectType = skillEffectBlueprint.SkillEffectType;
         if(EffectType.SkillEffect == SkillEffect.UpgradeToExpertise && !target.SkillProficiency(EffectType.SkillEffect_Skill)){
             throw new ExpertiseException("Invalid expertise selection");

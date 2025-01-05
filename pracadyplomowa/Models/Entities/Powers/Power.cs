@@ -16,10 +16,11 @@ namespace pracadyplomowa.Models.Entities.Powers
         public string Description { get; set; } = "";
         public ActionType RequiredActionType { get; set; } = requiredActionType;
         public bool IsImplemented { get; set; } = true;
+        public bool IsMagic { get; set;} = true;
         public CastableBy CastableBy { get; set; } = castableBy;
         public PowerType PowerType { get; set; } = powerType;
         public TargetType TargetType { get; set; } = targetType;
-
+        public bool IsRanged { get; set; } = false;
         public int? Range { get; set; }
         public int MaxTargets { get; set; } = 1;
         public int MaxTargetsToExclude { get; set; }
@@ -35,7 +36,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         public bool VerbalComponent { get; set; }
         public bool SomaticComponent { get; set; }
         public int Duration {get; set;} = 1;
-        public UpcastBy? UpcastBy {get; set;}
+        public UpcastBy UpcastBy {get; set;} = UpcastBy.NotUpcasted;
         public Class? R_ClassForUpcasting {get; set;}
         public int? R_ClassForUpcastingId {get; set;}
 
@@ -69,5 +70,6 @@ namespace pracadyplomowa.Models.Entities.Powers
             if(source == null) return [];
             return source;
         }
+
     }
 }

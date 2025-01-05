@@ -11,15 +11,9 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  padding-top: 15px;
   gap: 20px;
   align-items: center;
-`;
-
-const CampaignHeader = styled.div`
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  width: 100%;
 `;
 
 export default function Campagins() {
@@ -28,24 +22,20 @@ export default function Campagins() {
   return (
     <>
       <Container>
-        <Heading as="h4">{t("campaigns.heading")}</Heading>
+        <Heading as="h1">{t("campaigns.heading")}</Heading>
         <Line size="percantage" bold="large" />
-        <CampaignHeader>
-          <Heading as="h2" align="left">
-            {t("campaigns.header")}
-          </Heading>
-          <Modal>
-            <Modal.Open opens="CreateCampaign">
-              <Button size="large">{t("campaigns.create.text")}</Button>
-            </Modal.Open>
-            <Modal.Window name="CreateCampaign">
-              <CreateCampaign />
-            </Modal.Window>
-          </Modal>
-        </CampaignHeader>
-        <Line size="percantage" />
       </Container>
       <CampaignList />
+      <Container>
+        <Modal>
+          <Modal.Open opens="CreateCampaign">
+            <Button size="large">{t("campaigns.create.text")}</Button>
+          </Modal.Open>
+          <Modal.Window name="CreateCampaign">
+            <CreateCampaign />
+          </Modal.Window>
+        </Modal>
+      </Container>
     </>
   );
 }

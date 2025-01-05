@@ -8,6 +8,6 @@ namespace pracadyplomowa.Repository
     {
         public Task<List<Campaign>> GetCampaigns(int OwnerId);
         public Task<Campaign> GetCampaign(int campaignId);
-        // public void AddCharacter(int campaignId, int characterId);
+        public Task RemoveCampaign(int campaignId);
     }
 }

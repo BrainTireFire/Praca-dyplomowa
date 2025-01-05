@@ -19,7 +19,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
             ResistanceEffectType.ResistanceEffect_DamageType = damageType;
         }
         //methods
-        public override EffectInstance Generate(Character roller, Character target){
+        public override EffectInstance Generate(Character? roller, Character target){
             return new ResistanceEffectInstance(this, target);
         }
     }

@@ -19,14 +19,14 @@ public interface IUnitOfWork
     IEffectBlueprintRepository EffectBlueprintRepository { get; }
     IEffectGroupRepository EffectGroupRepository { get; }
     IEffectInstanceRepository EffectInstanceRepository { get; }
-    IEquipmentSlotRepository  EquipmentSlotRepository { get; }
+    IEquipmentSlotRepository EquipmentSlotRepository { get; }
     IImmaterialResourceBlueprintRepository ImmaterialResourceBlueprintRepository { get; }
     IItemRepository ItemRepository { get; }
     IItemCostRequirementRepository ItemCostRequirementRepository { get; }
     IItemFamilyRepository ItemFamilyRepository { get; }
     IPowerRepository PowerRepository { get; }
     IRaceRepository RaceRepository { get; }
-    
+
     Task<int> SaveChangesAsync();
     bool HasChanges();
 }

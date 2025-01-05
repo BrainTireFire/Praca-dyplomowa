@@ -19,7 +19,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
             AttackRollEffectType.AttackRollEffect_Range = effectRange;
         }
         //methods
-        public override EffectInstance Generate(Character roller, Character target){
+        public override EffectInstance Generate(Character? roller, Character target){
             return new AttackRollEffectInstance(this, roller, target);
         }
 

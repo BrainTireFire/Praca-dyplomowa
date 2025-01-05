@@ -189,11 +189,11 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .HasForeignKey<EffectGroup>(c => c.R_GeneratesAuraId)
                         .IsRequired(false);
 
-                builder.Entity<EffectGroup>()
-                        .HasOne(c => c.R_OriginatesFromAura)
-                        .WithMany(c => c.R_OwnedEffectGroups)
-                        .HasForeignKey(c => c.R_OriginatesFromAuraId)
-                        .IsRequired(false);
+                // builder.Entity<EffectGroup>()
+                //         .HasOne(c => c.R_OriginatesFromAura)
+                //         .WithMany(c => c.R_OwnedEffectGroups)
+                //         .HasForeignKey(c => c.R_OriginatesFromAuraId)
+                //         .IsRequired(false);
 
                 // builder.Entity<EffectGroup>()
                 //         .HasOne(c => c.R_ItemAffectedBy)

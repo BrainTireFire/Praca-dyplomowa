@@ -38,6 +38,8 @@ namespace pracadyplomowa.Models.Entities.Powers
         public string Name { get; set; }
         public string Description { get; set; } = "";
         public bool Conditional { get; set; }
+        [NotMapped]
+        public bool ConditionalApproved { get; set; } = false;
         public bool IsImplemented { get; set; }
         public bool HasNoEffectInCombat { get; set; } = false;
         
@@ -64,5 +66,9 @@ namespace pracadyplomowa.Models.Entities.Powers
         }
 
         public abstract EffectInstance Clone();
+
+        public virtual void Resolve(){
+            
+        }
     }
 }

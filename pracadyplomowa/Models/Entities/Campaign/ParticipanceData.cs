@@ -22,7 +22,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
         public virtual ICollection<Field> R_OccupiedFields { get; set; } = [];
         public virtual Character R_Character { get; set; } = null!;
         public int R_CharacterId { get; set; }
-        
+
         public void UpdateCharacter(Character newCharacter)
         {
             if (newCharacter == null)
@@ -45,6 +45,20 @@ namespace pracadyplomowa.Models.Entities.Campaign
             {
                 newCharacter.R_CharactersParticipatesInEncounters.Add(this);
             }
+
+        public bool IsAdjacentToParticipant(ParticipanceData participance)
+        {
+            foreach (var field in R_OccupiedFields)
+            {
+                foreach (var otherField in participance.R_OccupiedFields)
+                {
+                    if (field.IsAdjacentToField(otherField))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 }

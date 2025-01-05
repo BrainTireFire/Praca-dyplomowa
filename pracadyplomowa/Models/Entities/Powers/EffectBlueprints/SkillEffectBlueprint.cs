@@ -19,7 +19,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
             SkillEffectType.SkillEffect_Skill = skill;
         }
         //methods
-        public override EffectInstance Generate(Character roller, Character target){
+        public override EffectInstance Generate(Character? roller, Character target){
             return new SkillEffectInstance(this, roller, target);
         }
     }

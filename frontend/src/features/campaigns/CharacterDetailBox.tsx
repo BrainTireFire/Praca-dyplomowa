@@ -5,6 +5,7 @@ import ButtonGroup from "../../ui/interactive/ButtonGroup";
 import Button from "../../ui/interactive/Button";
 import styled, { css } from "styled-components";
 import { CharacterItem } from "../../models/character";
+import { removeCharacterFromCampaign } from "../../services/apiCampaigns";
 
 const BoxCustomStyles = css`
   display: grid;
@@ -14,7 +15,16 @@ const BoxCustomStyles = css`
   text-align: center;
 `;
 
-export default function CharacterDetailBox({ children }) {
+export default function CharacterDetailBox({
+  children,
+}: {
+  children: CharacterItem;
+}) {
+  const handleClick = async () => {
+    await removeCharacterFromCampaign(children.id);
+    window.location.reload();
+  };
+
   return (
     <Box customStyles={BoxCustomStyles} style={{ borderRadius: "10px" }}>
       <div style={{ gridColumn: "1/3" }}>
@@ -26,11 +36,13 @@ export default function CharacterDetailBox({ children }) {
         {/* <p>Rest: {rest ? "true" : "false"}</p> */}
       </div>
       <div style={{ gridColumn: "1/3", gridRow: "2/3" }}>
+        {/* TODO: Implement View button !*/}
         <ButtonGroup justify="center">
           <Button variation="primary" size="large">
+            {" "}
             View
           </Button>
-          <Button variation="primary" size="large">
+          <Button variation="primary" size="large" onClick={handleClick}>
             Kick
           </Button>
         </ButtonGroup>

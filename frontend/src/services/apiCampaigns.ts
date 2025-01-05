@@ -38,6 +38,13 @@ export async function postCampaign(
   await customFetch(`${BASE_URL}/api/campaign`, options);
 }
 
+export async function removeCampaign(campaignId: number) {
+  const options: RequestInit = {
+    method: "DELETE",
+  };
+  await customFetch(`${BASE_URL}/api/campaign/${campaignId}`, options);
+}
+
 export async function addCharacterToCampaign(
   campaignId: number,
   characterId: number
@@ -52,6 +59,19 @@ export async function addCharacterToCampaign(
   // Return the result of customFetch (e.g., to inspect status or response body)
   return await customFetch(
     `${BASE_URL}/api/campaign/addCharacterToCampaign/${campaignId}/${characterId}`,
+    options
+  );
+}
+
+export async function removeCharacterFromCampaign(
+  characterId: number
+): Promise<Response> {
+  const options: RequestInit = {
+    method: "DELETE",
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/campaign/removeCharacterFromCampaign/${characterId}`,
     options
   );
 }

@@ -17,7 +17,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
                                 your ability modifier to the damage of the second attack.";
         }
         //methods
-        public override EffectInstance Generate(Character roller, Character target){
+        public override EffectInstance Generate(Character? roller, Character target){
             return new OffHandAttackEffectInstance(this, target);
         }
     }

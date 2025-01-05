@@ -9,7 +9,7 @@ public class SizeEffectInstance : ValueEffectInstance
     public SizeEffectType EffectType { get; set; } = new SizeEffectType();
     private SizeEffectInstance() : base("EF", 0){}
     public SizeEffectInstance(string name) : base(name, 0){}
-    public SizeEffectInstance(SizeEffectBlueprint sizeEffectBlueprint, Character roller, Character target) : base(sizeEffectBlueprint, roller, target){
+    public SizeEffectInstance(SizeEffectBlueprint sizeEffectBlueprint, Character? roller, Character target) : base(sizeEffectBlueprint, roller, target){
         EffectType = sizeEffectBlueprint.SizeEffectType;
     }
     public SizeEffectInstance(SizeEffectInstance effectInstance) : base(effectInstance){

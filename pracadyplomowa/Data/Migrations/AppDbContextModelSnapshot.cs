@@ -798,19 +798,10 @@ namespace pracadyplomowa.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("CopperPieces")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("GoldPieces")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("PowerId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("R_ItemFamilyId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SilverPieces")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -952,10 +943,10 @@ namespace pracadyplomowa.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("DifficultyClassToBreak")
+                    b.Property<int?>("DifficultyClassToBreak")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("DurationLeft")
+                    b.Property<int?>("DurationLeft")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsConstant")
@@ -971,21 +962,13 @@ namespace pracadyplomowa.Migrations
                     b.Property<int?>("R_GeneratesAuraId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("R_OriginatesFromAuraId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SavingThrow")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("SavingThrowRetakenEveryTurn")
+                    b.Property<int?>("SavingThrow")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.HasIndex("R_GeneratesAuraId")
                         .IsUnique();
-
-                    b.HasIndex("R_OriginatesFromAuraId");
 
                     b.ToTable("EffectGroups");
                 });
@@ -1346,6 +1329,9 @@ namespace pracadyplomowa.Migrations
                     b.Property<int>("SucceededDeathSavingThrows")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("TemporaryHitpoints")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("UsedHitDiceId")
                         .HasColumnType("INTEGER");
 
@@ -1448,6 +1434,12 @@ namespace pracadyplomowa.Migrations
                     b.Property<bool>("IsImplemented")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsMagic")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsRanged")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("MaxTargets")
                         .HasColumnType("INTEGER");
 
@@ -1494,7 +1486,7 @@ namespace pracadyplomowa.Migrations
                     b.Property<int>("TargetType")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("UpcastBy")
+                    b.Property<int>("UpcastBy")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("VerbalComponent")
@@ -1645,7 +1637,12 @@ namespace pracadyplomowa.Migrations
                     b.Property<int>("DiceSetId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("RollerId")
+                        .HasColumnType("INTEGER");
+
                     b.HasIndex("DiceSetId");
+
+                    b.HasIndex("RollerId");
 
                     b.HasDiscriminator().HasValue("ValueEffectInstance");
                 });
@@ -1823,6 +1820,9 @@ namespace pracadyplomowa.Migrations
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.DamageEffectInstance", b =>
                 {
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.ValueEffectInstance");
+
+                    b.Property<bool>("CriticalHit")
+                        .HasColumnType("INTEGER");
 
                     b.HasDiscriminator().HasValue("DamageEffectInstance");
                 });
@@ -2456,9 +2456,34 @@ namespace pracadyplomowa.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.OwnsOne("pracadyplomowa.Models.Entities.Items.CoinSack", "Worth", b1 =>
+                        {
+                            b1.Property<int>("ItemCostRequirementId")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("CopperPieces")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("GoldPieces")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("SilverPieces")
+                                .HasColumnType("INTEGER");
+
+                            b1.HasKey("ItemCostRequirementId");
+
+                            b1.ToTable("ItemCostRequirements");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ItemCostRequirementId");
+                        });
+
                     b.Navigation("R_ItemFamily");
 
                     b.Navigation("R_Power");
+
+                    b.Navigation("Worth")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.ObjectWithOwner", b =>
@@ -2515,13 +2540,7 @@ namespace pracadyplomowa.Migrations
                         .WithOne("R_GeneratedBy")
                         .HasForeignKey("pracadyplomowa.Models.Entities.Powers.EffectGroup", "R_GeneratesAuraId");
 
-                    b.HasOne("pracadyplomowa.Models.Entities.Powers.Aura", "R_OriginatesFromAura")
-                        .WithMany("R_OwnedEffectGroups")
-                        .HasForeignKey("R_OriginatesFromAuraId");
-
                     b.Navigation("R_GeneratesAura");
-
-                    b.Navigation("R_OriginatesFromAura");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectInstance", b =>
@@ -3064,7 +3083,13 @@ namespace pracadyplomowa.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("pracadyplomowa.Models.Entities.Characters.Character", "Roller")
+                        .WithMany()
+                        .HasForeignKey("RollerId");
+
                     b.Navigation("DiceSet");
+
+                    b.Navigation("Roller");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.Apparel", b =>
@@ -3209,7 +3234,7 @@ namespace pracadyplomowa.Migrations
                             b1.Property<int>("DamageEffect")
                                 .HasColumnType("INTEGER");
 
-                            b1.Property<int>("DamageEffect_DamageType")
+                            b1.Property<int?>("DamageEffect_DamageType")
                                 .HasColumnType("INTEGER");
 
                             b1.HasKey("DamageEffectBlueprintId");
@@ -3456,7 +3481,7 @@ namespace pracadyplomowa.Migrations
                             b1.Property<int>("DamageEffect")
                                 .HasColumnType("INTEGER");
 
-                            b1.Property<int>("DamageEffect_DamageType")
+                            b1.Property<int?>("DamageEffect_DamageType")
                                 .HasColumnType("INTEGER");
 
                             b1.HasKey("DamageEffectInstanceId");
@@ -3704,8 +3729,6 @@ namespace pracadyplomowa.Migrations
 
                     b.Navigation("R_GeneratedBy")
                         .IsRequired();
-
-                    b.Navigation("R_OwnedEffectGroups");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectGroup", b =>

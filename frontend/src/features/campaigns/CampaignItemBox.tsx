@@ -24,7 +24,7 @@ export default function CampaignItemBox({ campaign }: { campaign: Campaign }) {
 
   const handleRemove = async () => {
     await removeCampaign(campaign.id);
-    navigate("/campaigns");
+    navigate(0);
   };
 
   return (

@@ -43,7 +43,11 @@ public class MappingProfiles : Profile
         CreateMap<Models.Entities.Campaign.Board, BoardShortDto>();
         CreateMap<BoardCreateDto, Models.Entities.Campaign.Board>();
         CreateMap<FieldDto, Field>();
-        CreateMap<Field, FieldDto>();
+        CreateMap<Field, FieldDto>()
+            .ForMember(
+                dest => dest.Powers,
+                opt => opt.MapFrom(src => src.R_CasterPowers)
+            );
         CreateMap<FieldUpdateDto, Field>();
         CreateMap<BoardUpdateDto, Models.Entities.Campaign.Board>();
 

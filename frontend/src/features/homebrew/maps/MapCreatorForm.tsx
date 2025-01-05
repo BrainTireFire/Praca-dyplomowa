@@ -18,6 +18,7 @@ import { EffectParentObjectIdContext } from "../../../context/EffectParentObject
 import { ParentObjectIdContext } from "../../../context/ParentObjectIdContext";
 import { PowerSelectionForm } from "../../powers/PowerSelectionForm";
 import { PowerSelectionFormField } from "./PowerSelectionFormField";
+import { PowerListItem } from "../../../models/power";
 
 const Label = styled.label`
   font-weight: bold;
@@ -124,6 +125,7 @@ type MapFormProps = {
   fieldMovementCost: string;
   fieldCoverLevel: string;
   description: string;
+  powers: PowerListItem[];
 };
 
 const TABLE_COLUMNS = {
@@ -134,7 +136,6 @@ const TABLE_COLUMNS = {
 export default function MapCreatorForm({ state, onSubmit }: any) {
   const colorPickerPopover = useRef();
   const [isColorPickerVisible, setIsColorPickerVisible] = useState(false);
-  const [selectedPowers, setSelectedPowers] = useState<PowerListItem[]>([]);
   const [colorValue, setColorValue] = useState("#fff");
   const {
     register,
@@ -161,6 +162,7 @@ export default function MapCreatorForm({ state, onSubmit }: any) {
       setValue("fieldEffects", field.fieldEffects);
       setValue("fieldMovementCost", field.fieldMovementCost);
       setValue("fieldCoverLevel", field.fieldCoverLevel);
+      setValue("powers", field.powers);
       setColorValue(field.color);
     }
   }, [fields, selectedBox, setValue]);
@@ -174,6 +176,10 @@ export default function MapCreatorForm({ state, onSubmit }: any) {
   const onColorChange = (color: any) => {
     setColorValue(color.hex);
     setValue("color", color.hex);
+  };
+
+  const onPowerChange = (powers: PowerListItem[]) => {
+    setValue("powers", powers);
   };
 
   const toggleColorPicker = (e: any) => {
@@ -316,33 +322,47 @@ export default function MapCreatorForm({ state, onSubmit }: any) {
           <Label>Field Powers:</Label>
           <Modal>
             <Modal.Open opens="mapCreateNewPowerField">
-              <Button size="small" variation="primary">
+              <Button size="small" variation="primary" type="button">
                 New Power
               </Button>
             </Modal.Open>
             <Modal.Window name="mapCreateNewPowerField">
-              <PowerSelectionFormField
-                onSelectPower={setSelectedPowers}
-                selectedPowers={selectedPowers}
+              <Controller
+                name="powers"
+                control={control}
+                defaultValue={[]}
+                render={({ field }) => (
+                  <PowerSelectionFormField
+                    onSelectPower={onPowerChange}
+                    selectedPowers={field.value}
+                  />
+                )}
               />
             </Modal.Window>
           </Modal>
 
           <FieldContainerStyled>
             <FieldSet>
-              <ReusableTable
-                tableRowsColomns={TABLE_COLUMNS}
-                data={selectedPowers}
-                customTableContainer={css`
-                  margin: 1px;
-                `}
-                customHeader={css`
-                  padding: 0.5px;
-                `}
-                // isSelectable={true}
-                // onSelect={setSelectedMap}
-                //isSearching={true}
-                //mainHeader="Maps"
+              <Controller
+                name="powers"
+                control={control}
+                defaultValue={[]}
+                render={({ field }) => (
+                  <ReusableTable
+                    tableRowsColomns={TABLE_COLUMNS}
+                    data={field.value}
+                    customTableContainer={css`
+                      margin: 1px;
+                    `}
+                    customHeader={css`
+                      padding: 0.5px;
+                    `}
+                    // isSelectable={true}
+                    // onSelect={setSelectedMap}
+                    //isSearching={true}
+                    //mainHeader="Maps"
+                  />
+                )}
               />
             </FieldSet>
           </FieldContainerStyled>

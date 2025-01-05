@@ -1,3 +1,5 @@
+import { PowerListItem } from "../power";
+
 export type Board = {
   id: number;
   name: string;
@@ -16,6 +18,7 @@ export type Field = {
   description: string;
   fieldCoverLevel: string;
   fieldMovementCost: string;
+  powers: PowerListItem[];
 };
 
 export type BoardShort = {

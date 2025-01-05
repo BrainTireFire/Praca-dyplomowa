@@ -1,3 +1,5 @@
+import { PowerListItem } from "../power";
+
 export type BoardUpdateDto = {
   name: string;
   description: string;
@@ -15,4 +17,5 @@ export type FieldUpdateDto = {
   description: string;
   fieldCoverLevel: string;
   fieldMovementCost: string;
+  powers: PowerListItem[];
 };

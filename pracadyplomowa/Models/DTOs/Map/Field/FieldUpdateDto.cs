@@ -24,4 +24,7 @@ public class FieldUpdateDto
     
     //[EnumDataType(typeof(FieldMovementCostType), ErrorMessage = "Invalid movement cost specified.")]
     public string? FieldMovementCost { get; set; }
+
+    [Required]
+    public ICollection<PowerCompactDto> Powers { get; set; } = null!;
 }

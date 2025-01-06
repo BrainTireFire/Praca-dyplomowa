@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import Navbar from "./bars/Navbar";
 import Sidebar from "./bars/Sidebar";
+import Button from "../interactive/Button";
+import { HiXMark } from "react-icons/hi2";
+import { SidebarOverlay } from "../../features/campaigns/sidebarOverlayComponents/SidebarOverlay";
 
 const StyledAppLayout = styled.div`
   display: grid;
@@ -37,15 +40,35 @@ const Container = styled.div`
 `;
 
 export default function AppLayout() {
+  const [activeComponent, setActiveComponent] = useState<string | null>(null);
+  const [isClosing, setIsClosing] = useState(false);
+  const handleOpen = (component: string | null) => {
+    setIsClosing(false);
+    setActiveComponent(component);
+  };
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => setActiveComponent(null), 300); // Matches the animation duration
+  };
+
   return (
     <StyledAppLayout>
       <Navbar />
-      <Sidebar />
+      <Sidebar setActiveComponent={handleOpen} />
       <Main>
         <Container>
           <Outlet />
         </Container>
       </Main>
+      {/* Overlay Component */}
+      {activeComponent && (
+        <SidebarOverlay
+          isClosing={isClosing}
+          handleClose={handleClose}
+          activeComponent={activeComponent}
+        ></SidebarOverlay>
+      )}
     </StyledAppLayout>
   );
 }

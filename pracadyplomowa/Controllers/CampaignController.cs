@@ -2,15 +2,17 @@ using Microsoft.AspNetCore.Mvc;
 using pracadyplomowa.Errors;
 using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.Entities.Campaign;
-using pracadyplomowa.Repository;
+using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Repository.UnitOfWork;
+using pracadyplomowa.Services;
 
 namespace pracadyplomowa.Controllers
 {
 
-    public class CampaignController(IUnitOfWork unitOfWork) : BaseApiController
+    public class CampaignController(IUnitOfWork unitOfWork, ICharacterService characterService) : BaseApiController
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly ICharacterService _characterService = characterService;
 
         [HttpPost]
         public async Task<ActionResult<int>> CreateCampaign(CampaignInsertDto campaignInsertDto)
@@ -96,6 +98,33 @@ namespace pracadyplomowa.Controllers
             await _unitOfWork.CampaignRepository.RemoveCampaign(campaignId);
 
             return Ok();
+        }
+
+        
+
+        [HttpGet("{campaignId}/myCharacter")]
+        public async Task<ActionResult> GetCharacter(int campaignId)
+        {   
+            var campaign = await _unitOfWork.CampaignRepository.GetCampaign(campaignId);
+            if (campaign == null)
+            {
+                return BadRequest(new ApiResponse(400, "Campaign with given id - does not exist"));
+            }
+            var userId = User.GetUserId();
+            var character = campaign.R_CampaignHasCharacters.FirstOrDefault(character => character.R_OwnerId == userId);
+            if(character == null){
+                return BadRequest(new ApiResponse(400, "Campaign with given id - does not contain your character"));
+            }
+            if(!_characterService.CheckExistenceAndReadEditAccess(character.Id, userId, [Character.AccessLevels.Read], out var errorResult, out var grantedAccessLevels)){
+                return errorResult;
+            }
+            character = await _unitOfWork.CharacterRepository.GetByIdWithAll(character.Id);
+
+            var characterDto = new CharacterFullDto(character)
+            {
+                AccessLevels = grantedAccessLevels
+            };
+            return Ok(characterDto);
         }
     }
 }

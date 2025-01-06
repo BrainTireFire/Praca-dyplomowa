@@ -8,7 +8,8 @@ import { Campaign } from "../../models/campaign";
 import Modal from "../../ui/containers/Modal";
 import { useTranslation } from "react-i18next";
 import ConfirmDelete from "../../ui/containers/ConfirmDelete";
-import { removeCampaign } from "../../services/apiCampaigns";
+import useRemoveCampaign from "./hooks/useRemoveCampaign";
+import Spinner from "../../ui/interactive/Spinner";
 
 const BoxCustomStyles = css`
   display: grid;
@@ -21,11 +22,11 @@ const StyledElementBox = styled.div`
 
 export default function CampaignItemBox({ campaign }: { campaign: Campaign }) {
   const navigate = useNavigate();
+  const { removeCampaign, isPending } = useRemoveCampaign();
 
-  const handleRemove = async () => {
-    await removeCampaign(campaign.id);
-    navigate(0);
-  };
+  if (isPending) {
+    return <Spinner />;
+  }
 
   return (
     <Box radius="tiny" customStyles={BoxCustomStyles}>
@@ -45,14 +46,12 @@ export default function CampaignItemBox({ campaign }: { campaign: Campaign }) {
           </Button>
           <Modal>
             <Modal.Open opens="ConfirmDelete">
-              <Button size="large" onClick={handleRemove}>
-                Remove
-              </Button>
+              <Button size="large">Remove</Button>
             </Modal.Open>
             <Modal.Window name="ConfirmDelete">
               <ConfirmDelete
                 resourceName={campaign.name + " campaign"}
-                onConfirm={handleRemove}
+                onConfirm={() => removeCampaign(campaign.id)}
               />
             </Modal.Window>
           </Modal>

@@ -10,7 +10,7 @@ import { useCampaign } from "./hooks/useCampaign";
 import Spinner from "../../ui/interactive/Spinner";
 import CharacterDetailBox from "./CharacterDetailBox";
 import { Campaign } from "../../models/campaign";
-import { removeCampaign } from "../../services/apiCampaigns";
+import useRemoveCampaign from "./hooks/useRemoveCampaign";
 import ConfirmDelete from "../../ui/containers/ConfirmDelete";
 
 const Container = styled.div`
@@ -43,10 +43,11 @@ const encode = (number: number): string => {
 
 export default function CampaignInstance() {
   const { isLoading, campaign } = useCampaign();
+  const { removeCampaign, isPending } = useRemoveCampaign();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  if (isLoading) {
+  if (isLoading || isPending) {
     return <Spinner />;
   }
 
@@ -55,11 +56,6 @@ export default function CampaignInstance() {
   }
 
   const { id, name, description, members }: Campaign = campaign;
-
-  const handleRemove = async () => {
-    await removeCampaign(campaign.id);
-    navigate("/campaigns");
-  };
 
   return (
     <Container>
@@ -141,14 +137,12 @@ export default function CampaignInstance() {
       <Line size="percantage" />
       <Modal>
         <Modal.Open opens="ConfirmDelete">
-          <Button size="large" onClick={handleRemove}>
-            {t("campaignInstance.remove")}
-          </Button>
+          <Button size="large">{t("campaignInstance.remove")}</Button>
         </Modal.Open>
         <Modal.Window name="ConfirmDelete">
           <ConfirmDelete
             resourceName={name + " campaign"}
-            onConfirm={handleRemove}
+            onConfirm={() => removeCampaign(campaign.id)}
           />
         </Modal.Window>
       </Modal>

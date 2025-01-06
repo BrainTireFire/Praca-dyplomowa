@@ -3,8 +3,8 @@
     {
       "previewLimit": 50,
       "driver": "SQLite",
-      "database": "${workspaceFolder:Praca-dyplomowa-1}/pracadyplomowa/identity.db",
-      "name": "Test"
+      "name": "SQLite",
+      "database": "${workspaceFolder:Praca-dyplomowa}/pracadyplomowa/identity.db"
     }
   ],
   "FSharp.suggestGitignore": false

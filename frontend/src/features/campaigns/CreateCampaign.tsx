@@ -18,7 +18,6 @@ const Container = styled.div`
 `;
 
 function CreateCampaign() {
-  const navigate = useNavigate();
   const [campaign, setCampaign] = useState({
     name: "",
     description: "",
@@ -39,11 +38,6 @@ function CreateCampaign() {
     }));
   };
 
-  const handleClick = () => {
-    createCampaign(campaign);
-    navigate(0);
-  };
-
   return (
     <Container>
       <Heading as="h1">Name</Heading>
@@ -61,7 +55,7 @@ function CreateCampaign() {
         value={campaign.description}
         onChange={handleChange}
       ></TextArea>
-      <Button size="large" onClick={handleClick}>
+      <Button size="large" onClick={() => createCampaign(campaign)}>
         Create
       </Button>
     </Container>

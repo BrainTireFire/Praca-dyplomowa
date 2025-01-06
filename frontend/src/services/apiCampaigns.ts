@@ -27,7 +27,7 @@ export async function getCampaign(campaignId: number): Promise<Campaign> {
 
 export async function postCampaign(
   campaignDto: CampaignInsertDto
-): Promise<void> {
+): Promise<number> {
   const options: RequestInit = {
     method: "POST",
     headers: {
@@ -35,10 +35,11 @@ export async function postCampaign(
     },
     body: JSON.stringify(campaignDto),
   };
-  await customFetch(`${BASE_URL}/api/campaign`, options);
+  const data = await customFetch(`${BASE_URL}/api/campaign`, options);
+  return Number(data);
 }
 
-export async function removeCampaign(campaignId: number) {
+export async function removeCampaign(campaignId: number): Promise<void> {
   const options: RequestInit = {
     method: "DELETE",
   };
@@ -56,7 +57,6 @@ export async function addCharacterToCampaign(
     },
   };
 
-  // Return the result of customFetch (e.g., to inspect status or response body)
   return await customFetch(
     `${BASE_URL}/api/campaign/addCharacterToCampaign/${campaignId}/${characterId}`,
     options

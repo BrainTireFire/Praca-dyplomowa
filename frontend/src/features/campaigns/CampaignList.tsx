@@ -3,6 +3,7 @@ import CampaignItemBox from "./CampaignItemBox";
 import { useCampaigns } from "./hooks/useCampaigns";
 import Spinner from "../../ui/interactive/Spinner";
 import { Campaign } from "../../models/campaign";
+import Heading from "../../ui/text/Heading";
 
 const CampaignListLayout = styled.div`
   display: grid;
@@ -20,7 +21,7 @@ export default function CampaignList() {
   }
 
   if (!campaigns || campaigns.length === 0) {
-    return <div>No campaigns available.</div>;
+    return <Heading as="h1">No campaigns available.</Heading>;
   }
 
   return (

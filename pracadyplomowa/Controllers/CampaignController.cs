@@ -13,7 +13,7 @@ namespace pracadyplomowa.Controllers
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         [HttpPost]
-        public async Task<ActionResult> CreateCampaign(CampaignInsertDto campaignInsertDto)
+        public async Task<ActionResult<int>> CreateCampaign(CampaignInsertDto campaignInsertDto)
         {
             var campaign = new Campaign
             {
@@ -24,8 +24,9 @@ namespace pracadyplomowa.Controllers
             campaign.R_OwnerId = userId;
 
             _unitOfWork.CampaignRepository.Add(campaign);
+
             await _unitOfWork.SaveChangesAsync();
-            return Created();
+            return Ok(campaign.Id);
         }
 
         [HttpGet]
@@ -54,7 +55,7 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpPost("addCharacterToCampaign/{campaignId}/{characterId}")]
-        public ActionResult AddCharacterToCampaign(int campaignId, int characterId)
+        public async Task<ActionResult> AddCharacterToCampaign(int campaignId, int characterId)
         {
             var campaign = _unitOfWork.CampaignRepository.GetById(campaignId);
             var character = _unitOfWork.CharacterRepository.GetById(characterId);
@@ -67,7 +68,7 @@ namespace pracadyplomowa.Controllers
 
             campaign.R_CampaignHasCharacters.Add(character);
 
-            _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
             return Ok();
         }
 

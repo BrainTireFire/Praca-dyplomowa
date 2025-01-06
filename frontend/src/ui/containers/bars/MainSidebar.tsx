@@ -60,6 +60,7 @@ function MainSidebar({
   setActiveComponent: (name: string | null) => void;
 }) {
   const { campaignId } = useParams<{ campaignId: string }>();
+  const { groupName } = useParams<{ groupName: string }>();
   console.log(campaignId);
   return (
     <>
@@ -82,18 +83,22 @@ function MainSidebar({
                   <AiOutlineThunderbolt />
                 </IconContainer>
               </li>
+            </>
+          )}
+          {groupName && (
+            <>
               <li>
-                <IconContainer>
+                <IconContainer onClick={() => setActiveComponent("Component4")}>
                   <PiClock />
                 </IconContainer>
               </li>
-              {/* <li>
-                <IconContainer>
-                  <MdBackpack />
-                </IconContainer>
-              </li> */}
             </>
           )}
+          {/* <li>
+            <IconContainer>
+              <MdBackpack />
+            </IconContainer>
+          </li> */}
           <li>
             <Modal>
               <Modal.Open opens="BatchRollModal">

@@ -8,6 +8,7 @@ import { CharacterMiniSheet } from "./CharacterMiniSheet";
 import { Character } from "../../../models/character";
 import { EquipmentSheet } from "./EquipmentSheet";
 import { SpellSheet } from "./SpellSheet";
+import { InitiativeQueue } from "./InitiativeQueue";
 
 // Keyframes for the sliding animation
 const slideIn = keyframes`
@@ -89,6 +90,9 @@ export function SidebarOverlay({
             )}
             {activeComponent === "Component3" && (
               <SpellSheet character={character as Character}></SpellSheet>
+            )}
+            {activeComponent === "Component4" && (
+              <InitiativeQueue></InitiativeQueue>
             )}
           </OverlayContent>
         </>

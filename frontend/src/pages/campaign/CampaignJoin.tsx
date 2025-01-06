@@ -8,6 +8,7 @@ import Spinner from "../../ui/interactive/Spinner";
 import CharacterItemBox from "../../features/characters/CharacterItemBox";
 import { useCharacters } from "../../features/characters/hooks/useCharacters";
 import { addCharacterToCampaign } from "../../services/apiCampaigns";
+import useCampaignJoin from "../../features/campaigns/hooks/useCampaignJoin";
 
 const Container = styled.div`
   display: flex;
@@ -35,7 +36,7 @@ const CharacterListLayout = styled.div`
 function CampaignJoin() {
   const { campaign } = useCampaign();
   const { isLoading, characters, error } = useCharacters();
-  const navigate = useNavigate();
+  const { joinCampaign, isPending } = useCampaignJoin();
   const { t } = useTranslation();
 
   const filteredCharacters = characters?.filter(
@@ -47,18 +48,13 @@ function CampaignJoin() {
     return <Spinner />;
   }
 
-  if (isLoading) {
+  if (isLoading || isPending) {
     return <Spinner />;
   }
 
   if (error) {
     return <>{`${error}`}</>;
   }
-
-  const handleChangeCharacter = async (chosenCharacterId: number) => {
-    await addCharacterToCampaign(campaign.id, chosenCharacterId);
-    navigate(`/campaigns/${campaign.id}`);
-  };
 
   return (
     <Container>
@@ -75,7 +71,12 @@ function CampaignJoin() {
                 <CharacterItemBox
                   key={character.id}
                   character={character}
-                  onClick={handleChangeCharacter}
+                  onClick={(chosenCharacterId: number) =>
+                    joinCampaign({
+                      campaignId: campaign.id,
+                      characterId: chosenCharacterId,
+                    })
+                  }
                   showButtons={false}
                 />
               ))

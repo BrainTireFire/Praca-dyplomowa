@@ -5,7 +5,6 @@ import ButtonGroup from "../../ui/interactive/ButtonGroup";
 import Button from "../../ui/interactive/Button";
 import styled, { css } from "styled-components";
 import { CharacterItem } from "../../models/character";
-import { removeCharacterFromCampaign } from "../../services/apiCampaigns";
 
 const BoxCustomStyles = css`
   display: grid;
@@ -17,14 +16,11 @@ const BoxCustomStyles = css`
 
 export default function CharacterDetailBox({
   children,
+  handleKickCharacter,
 }: {
   children: CharacterItem;
+  handleKickCharacter: Function;
 }) {
-  const handleClick = async () => {
-    await removeCharacterFromCampaign(children.id);
-    window.location.reload();
-  };
-
   return (
     <Box customStyles={BoxCustomStyles} style={{ borderRadius: "10px" }}>
       <div style={{ gridColumn: "1/3" }}>
@@ -42,7 +38,11 @@ export default function CharacterDetailBox({
             {" "}
             View
           </Button>
-          <Button variation="primary" size="large" onClick={handleClick}>
+          <Button
+            variation="primary"
+            size="large"
+            onClick={() => handleKickCharacter(children.id)}
+          >
             Kick
           </Button>
         </ButtonGroup>

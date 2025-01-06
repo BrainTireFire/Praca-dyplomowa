@@ -49,7 +49,7 @@ export async function removeCampaign(campaignId: number): Promise<void> {
 export async function addCharacterToCampaign(
   campaignId: number,
   characterId: number
-): Promise<Response> {
+): Promise<number> {
   const options: RequestInit = {
     method: "POST",
     headers: {
@@ -57,10 +57,12 @@ export async function addCharacterToCampaign(
     },
   };
 
-  return await customFetch(
+  const data = await customFetch(
     `${BASE_URL}/api/campaign/addCharacterToCampaign/${campaignId}/${characterId}`,
     options
   );
+
+  return Number(data);
 }
 
 export async function removeCharacterFromCampaign(

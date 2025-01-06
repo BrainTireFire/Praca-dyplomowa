@@ -69,7 +69,7 @@ namespace pracadyplomowa.Controllers
             campaign.R_CampaignHasCharacters.Add(character);
 
             await _unitOfWork.SaveChangesAsync();
-            return Ok();
+            return Ok(campaignId);
         }
 
         [HttpDelete("removeCharacterFromCampaign/{characterId}")]

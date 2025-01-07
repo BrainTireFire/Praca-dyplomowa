@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { PiSwordDuotone, PiClock } from "react-icons/pi";
 import { AiOutlineThunderbolt } from "react-icons/ai";
@@ -54,36 +54,51 @@ const BottomContainer = styled.nav`
   margin-top: auto;
 `;
 
-function MainSidebar() {
+function MainSidebar({
+  setActiveComponent,
+}: {
+  setActiveComponent: (name: string | null) => void;
+}) {
+  const { campaignId } = useParams<{ campaignId: string }>();
+  const { groupName } = useParams<{ groupName: string }>();
+  console.log(campaignId);
   return (
     <>
       <nav>
         <NavList>
-          <li>
-            <IconContainer>
-              <FaRegAddressBook />
-            </IconContainer>
-          </li>
-          <li>
-            <IconContainer>
-              <PiSwordDuotone />
-            </IconContainer>
-          </li>
-          <li>
-            <IconContainer>
-              <PiClock />
-            </IconContainer>
-          </li>
-          <li>
-            <IconContainer>
-              <AiOutlineThunderbolt />
-            </IconContainer>
-          </li>
-          <li>
+          {campaignId && (
+            <>
+              <li>
+                <IconContainer onClick={() => setActiveComponent("Component1")}>
+                  <FaRegAddressBook />
+                </IconContainer>
+              </li>
+              <li>
+                <IconContainer onClick={() => setActiveComponent("Component2")}>
+                  <PiSwordDuotone />
+                </IconContainer>
+              </li>
+              <li>
+                <IconContainer onClick={() => setActiveComponent("Component3")}>
+                  <AiOutlineThunderbolt />
+                </IconContainer>
+              </li>
+            </>
+          )}
+          {groupName && (
+            <>
+              <li>
+                <IconContainer onClick={() => setActiveComponent("Component4")}>
+                  <PiClock />
+                </IconContainer>
+              </li>
+            </>
+          )}
+          {/* <li>
             <IconContainer>
               <MdBackpack />
             </IconContainer>
-          </li>
+          </li> */}
           <li>
             <Modal>
               <Modal.Open opens="BatchRollModal">

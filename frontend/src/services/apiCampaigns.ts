@@ -1,4 +1,5 @@
 import { Campaign, CampaignInsertDto } from "../models/campaign";
+import { Character } from "../models/character";
 import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
 
@@ -74,4 +75,16 @@ export async function removeCharacterFromCampaign(
     `${BASE_URL}/api/campaign/removeCharacterFromCampaign/${characterId}`,
     options
   );
+}
+
+export async function getMyCharacter(campaignId: number): Promise<Character> {
+  const options: RequestInit = {
+    method: "GET",
+  };
+  const response = await customFetch(
+    `${BASE_URL}/api/campaign/${campaignId}/myCharacter`,
+    options
+  );
+
+  return response;
 }

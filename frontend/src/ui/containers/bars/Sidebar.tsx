@@ -12,12 +12,17 @@ const StyledSidebar = styled.aside`
   flex-direction: column;
   gap: 3.2rem;
   border-right: 1px solid var(--color-navbar-border);
+  z-index: 1001;
 `;
 
-function Sidebar() {
+function Sidebar({
+  setActiveComponent,
+}: {
+  setActiveComponent: (name: string | null) => void;
+}) {
   return (
     <StyledSidebar>
-      <MainSidebar />
+      <MainSidebar setActiveComponent={setActiveComponent} />
     </StyledSidebar>
   );
 }

@@ -113,7 +113,7 @@ namespace pracadyplomowa.Controllers
             var userId = User.GetUserId();
             var character = campaign.R_CampaignHasCharacters.FirstOrDefault(character => character.R_OwnerId == userId);
             if(character == null){
-                return BadRequest(new ApiResponse(400, "Campaign with given id - does not contain your character"));
+                return BadRequest(new ApiResponse(400, "You do not have a player character in this campaign"));
             }
             if(!_characterService.CheckExistenceAndReadEditAccess(character.Id, userId, [Character.AccessLevels.Read], out var errorResult, out var grantedAccessLevels)){
                 return errorResult;

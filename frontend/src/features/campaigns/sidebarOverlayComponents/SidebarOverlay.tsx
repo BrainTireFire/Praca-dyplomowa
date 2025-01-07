@@ -67,9 +67,9 @@ export function SidebarOverlay({
   activeComponent: string;
 }) {
   const { isLoading, character, isError, error } = useMyCharacter();
-  if (!isLoading && !character) {
-    handleClose();
-  }
+  // if (!isLoading && !character) {
+  //   handleClose();
+  // }
   return (
     <Overlay isClosing={isClosing}>
       <Button onClick={handleClose}>
@@ -78,18 +78,29 @@ export function SidebarOverlay({
       {!isLoading && (
         <>
           <OverlayContent>
-            {activeComponent === "Component1" && (
-              <CharacterMiniSheet
-                character={character as Character}
-              ></CharacterMiniSheet>
+            {character && (
+              <>
+                {activeComponent === "Component1" && (
+                  <CharacterMiniSheet
+                    character={character as Character}
+                  ></CharacterMiniSheet>
+                )}
+                {activeComponent === "Component2" && (
+                  <EquipmentSheet
+                    character={character as Character}
+                  ></EquipmentSheet>
+                )}
+                {activeComponent === "Component3" && (
+                  <SpellSheet character={character as Character}></SpellSheet>
+                )}
+              </>
             )}
-            {activeComponent === "Component2" && (
-              <EquipmentSheet
-                character={character as Character}
-              ></EquipmentSheet>
-            )}
-            {activeComponent === "Component3" && (
-              <SpellSheet character={character as Character}></SpellSheet>
+            {isError && (
+              <>
+                {error?.message
+                  ? JSON.parse(error?.message as string).message
+                  : "Error"}
+              </>
             )}
             {activeComponent === "Component4" && (
               <InitiativeQueue></InitiativeQueue>
@@ -98,7 +109,6 @@ export function SidebarOverlay({
         </>
       )}
       {isLoading && <Spinner></Spinner>}
-      {isError && <>Error</>}
     </Overlay>
   );
 }

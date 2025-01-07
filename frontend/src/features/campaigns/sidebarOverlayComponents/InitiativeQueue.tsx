@@ -47,25 +47,37 @@ export function InitiativeQueue() {
     <>
       {testData
         .sort((a, b) => a.placeInQueue - b.placeInQueue)
-        .map((item) => (
-          <InititativeTile item={item} key={item.id}></InititativeTile>
+        .map((item, index) => (
+          <InititativeTile
+            item={item}
+            key={item.id}
+            index={index}
+          ></InititativeTile>
         ))}
     </>
   );
 }
 
-function InititativeTile({ item }: { item: characterInitiative }) {
+function InititativeTile({
+  item,
+  index,
+}: {
+  item: characterInitiative;
+  index: number;
+}) {
   return (
     <Tile>
       <TileCell1>
         <span>Name: {item.name}</span>
         <br></br>
         <span>Controlled by: {item.playerName}</span>
+        <br></br>
+        <span>Order: {index}</span>
       </TileCell1>
       <TileCell2>
         <Button size="small">Move up</Button>
         <Button size="small">Set as active</Button>
-        <Button size="small">Move up</Button>
+        <Button size="small">Move down</Button>
       </TileCell2>
       <TileCell3>
         <Button size="small">Display character sheet</Button>

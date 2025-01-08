@@ -351,6 +351,7 @@ export type Effect = {
   id: number;
   name: string;
   description: string;
+  notAllowed: "None" | "ExpertiseWithoutProficiency";
 };
 
 export type Power = {

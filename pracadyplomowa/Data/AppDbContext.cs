@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using pracadyplomowa.Models;
 using pracadyplomowa.Models.Entities;
 using pracadyplomowa.Models.Entities.Campaign;
@@ -118,6 +119,19 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         
         protected override void OnModelCreating(ModelBuilder builder)
         {
+                foreach (var entityType in builder.Model.GetEntityTypes())
+                {
+                        foreach (var property in entityType.GetProperties())
+                        {
+                        if (property.ClrType == typeof(DateTime))
+                        {
+                                property.SetValueConverter(new ValueConverter<DateTime, DateTime>(
+                                v => v.ToUniversalTime(),
+                                v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
+                                ));
+                        }
+                        }
+                }
                 base.OnModelCreating(builder);
 
                 builder.Entity<User>()
@@ -147,11 +161,13 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .HasOne(c => c.R_ConcentratesOn)
                         .WithOne(c => c.R_ConcentratedOnByCharacter)
                         .HasForeignKey<Character>(c => c.R_ConcentratesOnId)
+                        .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired(false);
 
                 builder.Entity<Character>()
                         .HasMany(c => c.R_AffectedBy)
-                        .WithOne(c => c.R_TargetedCharacter);
+                        .WithOne(c => c.R_TargetedCharacter)
+                        .OnDelete(DeleteBehavior.Cascade);
 
                 builder.Entity<Character>()
                         .HasMany(c => c.R_PowersKnown)
@@ -159,7 +175,8 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
 
                 builder.Entity<Character>()
                         .HasMany(c => c.R_PowersPrepared)
-                        .WithOne(c => c.R_Character);
+                        .WithOne(c => c.R_Character)
+                        .OnDelete(DeleteBehavior.Cascade);
 
                 builder.Entity<Character>()
                         .HasOne(c => c.R_SpawnedByPower)
@@ -261,6 +278,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                 builder.Entity<ChoiceGroup>().HasMany(cg => cg.R_PowersToPrepare).WithMany(p => p.R_ToPrepareThroughChoiceGroups);
                 builder.Entity<ChoiceGroupUsage>().HasMany(cg => cg.R_PowersAlwaysAvailableGranted).WithMany(p => p.R_AlwaysAvailableThroughChoiceGroupUsage);
                 builder.Entity<ChoiceGroupUsage>().HasMany(cg => cg.R_PowersToPrepareGranted).WithMany(p => p.R_ToPrepareThroughChoiceGroupUsage);
+                builder.Entity<ChoiceGroupUsage>().HasMany(cg => cg.R_ResourcesGranted).WithOne(r => r.R_ChoiceGroupUsage).OnDelete(DeleteBehavior.Cascade);
                 builder.Entity<ImmaterialResourceInstance>().Navigation(i => i.R_Blueprint).AutoInclude();
                 builder.Entity<Weapon>().Navigation(i => i.DamageValue).AutoInclude();
                 builder.Entity<MeleeWeapon>().Navigation(i => i.VersatileDamageValue).AutoInclude();

@@ -27,14 +27,14 @@ using pracadyplomowa.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 
-builder.Services.AddDbContext<AppDbContext>(opt =>
-{
-    opt.UseSqlite(builder.Configuration.GetConnectionString("IdentityConnectionSQlite"));
-});
 // builder.Services.AddDbContext<AppDbContext>(opt =>
 // {
-//     opt.UseNpgsql(builder.Configuration.GetConnectionString("IdentityConnection"));
+//     opt.UseSqlite(builder.Configuration.GetConnectionString("IdentityConnectionSQlite"));
 // });
+builder.Services.AddDbContext<AppDbContext>(opt =>
+{
+    opt.UseNpgsql(builder.Configuration.GetConnectionString("IdentityConnection"));
+});
 builder.Services.AddIdentityServices(builder.Configuration);
 builder.Services.AddControllers().AddJsonOptions(options =>
     {

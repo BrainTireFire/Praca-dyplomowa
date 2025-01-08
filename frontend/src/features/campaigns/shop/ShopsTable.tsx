@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Button from "../../../ui/interactive/Button";
 import { HiXMark } from "react-icons/hi2";
+import { Shop } from "../../../models/shop";
 
 const Table = styled.table`
   width: 90%;
@@ -47,6 +48,7 @@ export default function ShopsTable({ shops }) {
             <Td>{shop.type}</Td>
             <Td>{shop.location}</Td>
             <Td>{shop.description}</Td>
+            {/* <Td>{shop.id}</Td> */}
             <Td>
               <Button
                 onClick={(e) => {

@@ -3,8 +3,11 @@ import Heading from "../../../ui/text/Heading";
 import Input from "../../../ui/forms/Input";
 import Button from "../../../ui/interactive/Button";
 import TextArea from "../../../ui/forms/TextArea";
+import { ShopInsertDto } from "../../../models/shop";
 import { useState } from "react";
-import toast from "react-hot-toast";
+import { useParams } from "react-router-dom";
+import useCreateShop from "./hooks/useCreateShop";
+import Spinner from "../../../ui/interactive/Spinner";
 
 const Container = styled.div`
   display: flex;
@@ -14,24 +17,28 @@ const Container = styled.div`
   gap: 12px;
 `;
 
-function CreateShop({ onCloseModal }) {
-  const [shop, setShop] = useState({
+function CreateShop() {
+  const { createShop, isPending } = useCreateShop();
+  const { campaignId } = useParams<{ campaignId: string }>();
+  const [shop, setShop] = useState<ShopInsertDto>({
     name: "",
     type: "",
     location: "",
     description: "",
+    campaignId: Number(campaignId),
   });
 
-  const handleChange = (e) => {
+  if (isPending) {
+    return <Spinner />;
+  }
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setShop((previous) => ({
       ...previous,
       [e.target.name]: e.target.value,
     }));
-  };
-
-  const handleClick = () => {
-    // toast.success("Shop created");
-    onCloseModal();
   };
 
   return (
@@ -67,7 +74,7 @@ function CreateShop({ onCloseModal }) {
         value={shop.description}
         onChange={handleChange}
       ></TextArea>
-      <Button size="large" onClick={handleClick}>
+      <Button size="large" onClick={() => createShop(shop)}>
         Create
       </Button>
     </Container>

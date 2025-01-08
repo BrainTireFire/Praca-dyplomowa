@@ -39,6 +39,9 @@ namespace pracadyplomowa.Models.Entities.Items
             R_AffectedBy = item.R_AffectedBy.Select(x => x.Clone()).ToList();
             R_EffectsOnEquip = item.R_EffectsOnEquip.Select(x => x.Clone()).ToList();
             R_EquipItemGrantsAccessToPower = [.. item.R_EquipItemGrantsAccessToPower];
+            Price.GoldPieces = item.Price.GoldPieces;
+            Price.SilverPieces = item.Price.SilverPieces;
+            Price.CopperPieces = item.Price.CopperPieces;
         }
 
         public bool IsBlueprint { get; set; } = true;
@@ -47,7 +50,7 @@ namespace pracadyplomowa.Models.Entities.Items
         public string Description { get; set; } = null!;
         public bool IsSpellFocus { get; set; }
         public bool OccupiesAllSlots { get; set;} // if false then can be placed in any of listed slots, if true then occupies all of them at once
-        public CoinSack Price { get; set; }
+        public CoinSack Price { get; set; } = new CoinSack();
 
         //Relationship
         public virtual List<EquipmentSlot> R_ItemIsEquippableInSlots { get; set; } = [];

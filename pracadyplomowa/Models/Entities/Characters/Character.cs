@@ -5,7 +5,6 @@ using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Expressions;
-using pracadyplomowa.Data.Migrations;
 using pracadyplomowa.Models.ComplexTypes.Effects;
 using pracadyplomowa.Models.Entities.Campaign;
 using pracadyplomowa.Models.Entities.Interfaces;

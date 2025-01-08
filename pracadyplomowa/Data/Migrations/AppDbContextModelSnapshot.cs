@@ -3,11 +3,12 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using pracadyplomowa;
 
 #nullable disable
 
-namespace pracadyplomowa.Migrations
+namespace pracadyplomowa.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     partial class AppDbContextModelSnapshot : ModelSnapshot
@@ -15,15 +16,19 @@ namespace pracadyplomowa.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
+            modelBuilder
+                .HasAnnotation("ProductVersion", "8.0.1")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("CampaignUser", b =>
                 {
                     b.Property<int>("R_UserAttendsAsPlayerToCamgainsId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_UsersAttendsCampaignsId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("R_UserAttendsAsPlayerToCamgainsId", "R_UsersAttendsCampaignsId");
 
@@ -35,10 +40,10 @@ namespace pracadyplomowa.Migrations
             modelBuilder.Entity("CharacterClassLevel", b =>
                 {
                     b.Property<int>("R_CharacterHasLevelsInClassId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_CharactersId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("R_CharacterHasLevelsInClassId", "R_CharactersId");
 
@@ -50,10 +55,10 @@ namespace pracadyplomowa.Migrations
             modelBuilder.Entity("CharacterPower", b =>
                 {
                     b.Property<int>("R_CharacterKnownsPowersId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_PowersKnownId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("R_CharacterKnownsPowersId", "R_PowersKnownId");
 
@@ -65,10 +70,10 @@ namespace pracadyplomowa.Migrations
             modelBuilder.Entity("ChoiceGroupEffectBlueprint", b =>
                 {
                     b.Property<int>("R_ChoiceGroupsId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_EffectsId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("R_ChoiceGroupsId", "R_EffectsId");
 
@@ -80,10 +85,10 @@ namespace pracadyplomowa.Migrations
             modelBuilder.Entity("ChoiceGroupPower", b =>
                 {
                     b.Property<int>("R_AlwaysAvailableThroughChoiceGroupId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_PowersAlwaysAvailableId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("R_AlwaysAvailableThroughChoiceGroupId", "R_PowersAlwaysAvailableId");
 
@@ -95,10 +100,10 @@ namespace pracadyplomowa.Migrations
             modelBuilder.Entity("ChoiceGroupPower1", b =>
                 {
                     b.Property<int>("R_PowersToPrepareId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_ToPrepareThroughChoiceGroupsId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("R_PowersToPrepareId", "R_ToPrepareThroughChoiceGroupsId");
 
@@ -110,10 +115,10 @@ namespace pracadyplomowa.Migrations
             modelBuilder.Entity("ChoiceGroupUsagePower", b =>
                 {
                     b.Property<int>("R_AlwaysAvailableThroughChoiceGroupUsageId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_PowersAlwaysAvailableGrantedId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("R_AlwaysAvailableThroughChoiceGroupUsageId", "R_PowersAlwaysAvailableGrantedId");
 
@@ -125,10 +130,10 @@ namespace pracadyplomowa.Migrations
             modelBuilder.Entity("ChoiceGroupUsagePower1", b =>
                 {
                     b.Property<int>("R_PowersToPrepareGrantedId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_ToPrepareThroughChoiceGroupUsageId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("R_PowersToPrepareGrantedId", "R_ToPrepareThroughChoiceGroupUsageId");
 
@@ -140,10 +145,10 @@ namespace pracadyplomowa.Migrations
             modelBuilder.Entity("ClassPower", b =>
                 {
                     b.Property<int>("R_AccessiblePowersId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_ClassesWithAccessId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("R_AccessiblePowersId", "R_ClassesWithAccessId");
 
@@ -155,10 +160,10 @@ namespace pracadyplomowa.Migrations
             modelBuilder.Entity("EffectGroupField", b =>
                 {
                     b.Property<int>("R_EffectGroupOnFieldId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_EffectOnFieldId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("R_EffectGroupOnFieldId", "R_EffectOnFieldId");
 
@@ -170,10 +175,10 @@ namespace pracadyplomowa.Migrations
             modelBuilder.Entity("EquipDataEquipmentSlot", b =>
                 {
                     b.Property<int>("R_SlotsId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("UsagesId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("R_SlotsId", "UsagesId");
 
@@ -185,10 +190,10 @@ namespace pracadyplomowa.Migrations
             modelBuilder.Entity("EquipmentSlotItem", b =>
                 {
                     b.Property<int>("R_ItemIsEquippableInSlotsId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_ItemsId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("R_ItemIsEquippableInSlotsId", "R_ItemsId");
 
@@ -200,10 +205,10 @@ namespace pracadyplomowa.Migrations
             modelBuilder.Entity("EquipmentSlotRace", b =>
                 {
                     b.Property<int>("R_EquipmentSlotsId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_RacesId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("R_EquipmentSlotsId", "R_RacesId");
 
@@ -215,10 +220,10 @@ namespace pracadyplomowa.Migrations
             modelBuilder.Entity("FieldPower", b =>
                 {
                     b.Property<int>("R_CasterPowersId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_FieldsCastingId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("R_CasterPowersId", "R_FieldsCastingId");
 
@@ -230,10 +235,10 @@ namespace pracadyplomowa.Migrations
             modelBuilder.Entity("ItemPower", b =>
                 {
                     b.Property<int>("R_EquipItemGrantsAccessToPowerId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_ItemsGrantingPowerId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("R_EquipItemGrantsAccessToPowerId", "R_ItemsGrantingPowerId");
 
@@ -246,16 +251,18 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -268,16 +275,18 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -289,16 +298,16 @@ namespace pracadyplomowa.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -310,16 +319,16 @@ namespace pracadyplomowa.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Value")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
@@ -329,10 +338,10 @@ namespace pracadyplomowa.Migrations
             modelBuilder.Entity("PowerPowerSelection", b =>
                 {
                     b.Property<int>("R_CharacterPreparedPowersId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_PreparedPowersId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("R_CharacterPreparedPowersId", "R_PreparedPowersId");
 
@@ -344,10 +353,10 @@ namespace pracadyplomowa.Migrations
             modelBuilder.Entity("PowerWeapon", b =>
                 {
                     b.Property<int>("R_PowersCastedOnHitId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_WeaponsCastingOnHitId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("R_PowersCastedOnHitId", "R_WeaponsCastingOnHitId");
 
@@ -360,10 +369,12 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("R_CampaignId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -376,35 +387,37 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Color")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("FieldCoverLevel")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("FieldMovementCost")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("PositionX")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("PositionY")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("PositionZ")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_BoardId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("R_OccupiedById")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -419,31 +432,33 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("DistanceTraveled")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("InitiativeOrder")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsSurprised")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<int>("NumberOfActionsTaken")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("NumberOfAttacksTaken")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("NumberOfBonusActionsTaken")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_CharacterId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_EncounterId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -458,26 +473,28 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Location")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("R_CampaignId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -490,16 +507,18 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_ItemInShopId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_ShopHasItemId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -514,20 +533,22 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("NumberToChoose")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("R_GrantedByClassLevelId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("R_GrantedByRaceLevelId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -542,13 +563,15 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("R_CharacterId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_ChoiceGroupId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -563,17 +586,19 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("MaximumPreparedSpellsFormulaId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int?>("SpellcastingAbility")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -586,19 +611,21 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("HitDieId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("HitPoints")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("Level")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_ClassId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -613,34 +640,36 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("R_ValueEffectBlueprintId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("d10")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("d100")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("d12")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("d20")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("d4")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("d6")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("d8")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("flat")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -654,22 +683,24 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("Ability")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("DiceSetId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("R_LevelsInClassId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("Skill")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("additionalValueType")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -684,13 +715,15 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("R_CharacterId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_ItemId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -706,14 +739,16 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("Type")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -724,13 +759,15 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("R_CharacterId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_ClassId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -745,17 +782,19 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("Size")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("Speed")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -766,13 +805,15 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Level")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_RaceId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -785,7 +826,9 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.HasKey("Id");
 
@@ -796,13 +839,15 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("PowerId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_ItemFamilyId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -817,14 +862,16 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ItemType")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -835,10 +882,12 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("R_OwnerId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -853,16 +902,18 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("GeneratedBy_Id")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_CenteredAtCharacterId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("Size")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -875,50 +926,52 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Conditional")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
                         .HasMaxLength(55)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(55)");
 
                     b.Property<bool>("HasNoEffectInCombat")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsImplemented")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<int>("Level")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int?>("R_CastedOnCharactersByAuraId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("R_CastedOnTilesByAuraId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("R_CreatedByEquippingId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("R_PowerId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("ResourceAmount")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("Saved")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
@@ -941,29 +994,31 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("DifficultyClassToBreak")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("DurationLeft")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsConstant")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int?>("R_ConcentratedOnByCharacterId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("R_GeneratesAuraId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("SavingThrow")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -977,47 +1032,49 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Conditional")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
                         .HasMaxLength(55)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(55)");
 
                     b.Property<bool>("HasNoEffectInCombat")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsImplemented")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<int?>("ItemFamilyId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int?>("R_GrantedByEquippingItemId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("R_GrantedThroughId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("R_OwnedByGroupId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("R_TargetedCharacterId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("R_TargetedItemId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -1044,19 +1101,21 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Count")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("Level")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_BlueprintId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_ChoiceGroupId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -1071,14 +1130,16 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("RefreshesOn")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -1089,25 +1150,27 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Level")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("NeedsRefresh")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<int>("R_BlueprintId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("R_CharacterId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("R_ChoiceGroupUsageId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("R_ItemId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -1126,19 +1189,21 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
@@ -1153,60 +1218,62 @@ namespace pracadyplomowa.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("RefreshToken")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("RefreshTokenExpiryTime")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
@@ -1223,10 +1290,10 @@ namespace pracadyplomowa.Migrations
             modelBuilder.Entity("pracadyplomowa.UserRole", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -1240,17 +1307,17 @@ namespace pracadyplomowa.Migrations
                     b.HasBaseType("pracadyplomowa.Models.Entities.ObjectWithOwner");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("SizeX")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("SizeY")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.ToTable("Boards");
                 });
@@ -1260,11 +1327,11 @@ namespace pracadyplomowa.Migrations
                     b.HasBaseType("pracadyplomowa.Models.Entities.ObjectWithOwner");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.ToTable("Campaigns");
                 });
@@ -1275,13 +1342,13 @@ namespace pracadyplomowa.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("R_BoardId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("R_CampaignId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasIndex("R_BoardId")
                         .IsUnique();
@@ -1296,47 +1363,47 @@ namespace pracadyplomowa.Migrations
                     b.HasBaseType("pracadyplomowa.Models.Entities.ObjectWithOwner");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("FailedDeathSavingThrows")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("Hitpoints")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsNpc")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int?>("R_CampaignId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_CharacterBelongsToRaceId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_CharacterHasBackpackId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("R_ConcentratesOnId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("R_SpawnedByPowerId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("SucceededDeathSavingThrows")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("TemporaryHitpoints")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("UsedHitDiceId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("UserId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasIndex("R_CampaignId");
 
@@ -1363,7 +1430,7 @@ namespace pracadyplomowa.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.ToTable("Languages");
                 });
@@ -1374,29 +1441,29 @@ namespace pracadyplomowa.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsBlueprint")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsSpellFocus")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<bool>("OccupiesAllSlots")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<int?>("R_BackpackHasItemId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("R_ItemInItemsFamilyId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("Weight")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasIndex("R_BackpackHasItemId");
 
@@ -1410,87 +1477,87 @@ namespace pracadyplomowa.Migrations
                     b.HasBaseType("pracadyplomowa.Models.Entities.ObjectWithOwner");
 
                     b.Property<int?>("AreaShape")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("AreaSize")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("AuraSize")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("CastableBy")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int?>("DifficultyClass")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("Duration")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsImplemented")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsMagic")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsRanged")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<int>("MaxTargets")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("MaxTargetsToExclude")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<bool>("OverrideCastersDC")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<int>("PowerType")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("R_ClassForUpcastingId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("R_UsesImmaterialResourceId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("Range")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("RequiredActionType")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("RequiresConcentration")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<int?>("SavingThrow")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("SavingThrowBehaviour")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("SavingThrowRoll")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("SomaticComponent")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<int>("TargetType")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("UpcastBy")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("VerbalComponent")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.HasIndex("R_ClassForUpcastingId");
 
@@ -1511,7 +1578,7 @@ namespace pracadyplomowa.Migrations
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.EffectBlueprint");
 
                     b.Property<int>("R_LanguageId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasIndex("R_LanguageId");
 
@@ -1537,7 +1604,7 @@ namespace pracadyplomowa.Migrations
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.EffectBlueprint");
 
                     b.Property<int?>("R_GrantsProficiencyInItemFamilyId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasIndex("R_GrantsProficiencyInItemFamilyId");
 
@@ -1563,10 +1630,10 @@ namespace pracadyplomowa.Migrations
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.EffectBlueprint");
 
                     b.Property<int>("DiceSetId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("RollMoment")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasDiscriminator().HasValue("ValueEffectBlueprint");
                 });
@@ -1576,7 +1643,7 @@ namespace pracadyplomowa.Migrations
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.EffectInstance");
 
                     b.Property<int>("R_LanguageId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasIndex("R_LanguageId");
 
@@ -1609,7 +1676,7 @@ namespace pracadyplomowa.Migrations
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.EffectInstance");
 
                     b.Property<int?>("R_GrantsProficiencyInItemFamilyId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasIndex("R_GrantsProficiencyInItemFamilyId");
 
@@ -1635,10 +1702,10 @@ namespace pracadyplomowa.Migrations
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.EffectInstance");
 
                     b.Property<int>("DiceSetId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int?>("RollerId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasIndex("DiceSetId");
 
@@ -1652,13 +1719,13 @@ namespace pracadyplomowa.Migrations
                     b.HasBaseType("pracadyplomowa.Models.Entities.Items.Item");
 
                     b.Property<int>("ArmorClass")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("StealthDisadvantage")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<int>("StrengthRequirement")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.ToTable("Apparels");
                 });
@@ -1675,16 +1742,16 @@ namespace pracadyplomowa.Migrations
                     b.HasBaseType("pracadyplomowa.Models.Entities.Items.Item");
 
                     b.Property<int>("DamageType")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("DamageValueId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("Range")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<int>("WeaponWeight")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasIndex("DamageValueId");
 
@@ -1822,7 +1889,7 @@ namespace pracadyplomowa.Migrations
                     b.HasBaseType("pracadyplomowa.Models.Entities.Powers.ValueEffectInstance");
 
                     b.Property<bool>("CriticalHit")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.HasDiscriminator().HasValue("DamageEffectInstance");
                 });
@@ -1881,19 +1948,19 @@ namespace pracadyplomowa.Migrations
                     b.HasBaseType("pracadyplomowa.Models.Entities.Items.Weapon");
 
                     b.Property<bool>("Finesse")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("Reach")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("Thrown")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("Versatile")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<int>("VersatileDamageValueId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasIndex("VersatileDamageValueId");
 
@@ -1905,10 +1972,10 @@ namespace pracadyplomowa.Migrations
                     b.HasBaseType("pracadyplomowa.Models.Entities.Items.Weapon");
 
                     b.Property<bool>("IsReloaded")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("Loaded")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.ToTable("RangedWeapons");
                 });
@@ -2279,16 +2346,16 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.Entities.Items.CoinSack", "Price", b1 =>
                         {
                             b1.Property<int>("ShopItemId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("CopperPieces")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("GoldPieces")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("SilverPieces")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("ShopItemId");
 
@@ -2459,16 +2526,16 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.Entities.Items.CoinSack", "Worth", b1 =>
                         {
                             b1.Property<int>("ItemCostRequirementId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("CopperPieces")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("GoldPieces")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("SilverPieces")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("ItemCostRequirementId");
 
@@ -2563,7 +2630,8 @@ namespace pracadyplomowa.Migrations
 
                     b.HasOne("pracadyplomowa.Models.Entities.Characters.Character", "R_TargetedCharacter")
                         .WithMany("R_AffectedBy")
-                        .HasForeignKey("R_TargetedCharacterId");
+                        .HasForeignKey("R_TargetedCharacterId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("pracadyplomowa.Models.Entities.Items.Item", "R_TargetedItem")
                         .WithMany("R_AffectedBy")
@@ -2613,7 +2681,8 @@ namespace pracadyplomowa.Migrations
 
                     b.HasOne("pracadyplomowa.Models.Entities.Characters.ChoiceGroupUsage", "R_ChoiceGroupUsage")
                         .WithMany("R_ResourcesGranted")
-                        .HasForeignKey("R_ChoiceGroupUsageId");
+                        .HasForeignKey("R_ChoiceGroupUsageId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("pracadyplomowa.Models.Entities.Items.Item", "R_Item")
                         .WithMany("R_ItemGrantsResources")
@@ -2714,7 +2783,8 @@ namespace pracadyplomowa.Migrations
 
                     b.HasOne("pracadyplomowa.Models.Entities.Powers.EffectGroup", "R_ConcentratesOn")
                         .WithOne("R_ConcentratedOnByCharacter")
-                        .HasForeignKey("pracadyplomowa.Models.Entities.Characters.Character", "R_ConcentratesOnId");
+                        .HasForeignKey("pracadyplomowa.Models.Entities.Characters.Character", "R_ConcentratesOnId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("pracadyplomowa.Models.Entities.Powers.Power", "R_SpawnedByPower")
                         .WithMany("R_SpawnedCharacters")
@@ -2773,16 +2843,16 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.Entities.Items.CoinSack", "Price", b1 =>
                         {
                             b1.Property<int>("ItemId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("CopperPieces")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("GoldPieces")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("SilverPieces")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("ItemId");
 
@@ -2832,7 +2902,7 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.LanguageEffectType", "LanguageEffectType", b1 =>
                         {
                             b1.Property<int>("LanguageEffectBlueprintId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("LanguageEffectBlueprintId");
 
@@ -2853,10 +2923,10 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.MovementCostEffectType", "MovementCostEffectType", b1 =>
                         {
                             b1.Property<int>("MovementCostEffectBlueprintId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("MovementCostEffect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("MovementCostEffectBlueprintId");
 
@@ -2879,13 +2949,13 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.ProficiencyEffectType", "ProficiencyEffectType", b1 =>
                         {
                             b1.Property<int>("ProficiencyEffectBlueprintId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("ItemType")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("ProficiencyEffect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("ProficiencyEffectBlueprintId");
 
@@ -2906,13 +2976,13 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.ResistanceEffectType", "ResistanceEffectType", b1 =>
                         {
                             b1.Property<int>("ResistanceEffectBlueprintId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("ResistanceEffect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("ResistanceEffect_DamageType")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("ResistanceEffectBlueprintId");
 
@@ -2931,10 +3001,10 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.StatusEffectType", "StatusEffectType", b1 =>
                         {
                             b1.Property<int>("StatusEffectBlueprintId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("StatusEffect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("StatusEffectBlueprintId");
 
@@ -2959,7 +3029,7 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.LanguageEffectType", "EffectType", b1 =>
                         {
                             b1.Property<int>("LanguageEffectInstanceId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("LanguageEffectInstanceId");
 
@@ -2980,10 +3050,10 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.MovementCostEffectType", "EffectType", b1 =>
                         {
                             b1.Property<int>("MovementCostEffectInstanceId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("MovementCostEffect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("MovementCostEffectInstanceId");
 
@@ -3006,13 +3076,13 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.ProficiencyEffectType", "ProficiencyEffectType", b1 =>
                         {
                             b1.Property<int>("ProficiencyEffectInstanceId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("ItemType")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("ProficiencyEffect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("ProficiencyEffectInstanceId");
 
@@ -3033,13 +3103,13 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.ResistanceEffectType", "EffectType", b1 =>
                         {
                             b1.Property<int>("ResistanceEffectInstanceId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("ResistanceEffect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("ResistanceEffect_DamageType")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("ResistanceEffectInstanceId");
 
@@ -3058,10 +3128,10 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.StatusEffectType", "EffectType", b1 =>
                         {
                             b1.Property<int>("StatusEffectInstanceId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("StatusEffect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("StatusEffectInstanceId");
 
@@ -3132,13 +3202,13 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.AbilityEffectType", "AbilityEffectType", b1 =>
                         {
                             b1.Property<int>("AbilityEffectBlueprintId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("AbilityEffect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("AbilityEffect_Ability")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("AbilityEffectBlueprintId");
 
@@ -3157,10 +3227,10 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.ActionEffectType", "ActionEffectType", b1 =>
                         {
                             b1.Property<int>("ActionEffectBlueprintId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("ActionEffect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("ActionEffectBlueprintId");
 
@@ -3179,10 +3249,10 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.AttackPerAttackActionEffectType", "AttackPerAttackActionEffectType", b1 =>
                         {
                             b1.Property<int>("AttackPerAttackActionEffectBlueprintId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("AttackPerActionEffect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("AttackPerAttackActionEffectBlueprintId");
 
@@ -3201,16 +3271,16 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.AttackRollEffectType", "AttackRollEffectType", b1 =>
                         {
                             b1.Property<int>("AttackRollEffectBlueprintId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("AttackRollEffect_Range")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("AttackRollEffect_Source")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("AttackRollEffect_Type")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("AttackRollEffectBlueprintId");
 
@@ -3229,13 +3299,13 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.DamageEffectType", "DamageEffectType", b1 =>
                         {
                             b1.Property<int>("DamageEffectBlueprintId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("DamageEffect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int?>("DamageEffect_DamageType")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("DamageEffectBlueprintId");
 
@@ -3254,10 +3324,10 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.HitpointEffectType", "HitpointEffectType", b1 =>
                         {
                             b1.Property<int>("HitpointEffectBlueprintId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("HitpointEffect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("HitpointEffectBlueprintId");
 
@@ -3276,10 +3346,10 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.MovementEffectType", "MovementEffectType", b1 =>
                         {
                             b1.Property<int>("MovementEffectBlueprintId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("MovementEffect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("MovementEffectBlueprintId");
 
@@ -3298,19 +3368,19 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.SavingThrowEffectType", "SavingThrowEffectType", b1 =>
                         {
                             b1.Property<int>("SavingThrowEffectBlueprintId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("SavingThrowEffect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int?>("SavingThrowEffect_Ability")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int?>("SavingThrowEffect_Condition")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int?>("SavingThrowEffect_Nature")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("SavingThrowEffectBlueprintId");
 
@@ -3329,13 +3399,13 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.SizeEffectType", "SizeEffectType", b1 =>
                         {
                             b1.Property<int>("SizeEffectBlueprintId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("SizeEffect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("SizeEffect_SizeToSet")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("SizeEffectBlueprintId");
 
@@ -3354,13 +3424,13 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.SkillEffectType", "SkillEffectType", b1 =>
                         {
                             b1.Property<int>("SkillEffectBlueprintId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("SkillEffect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("SkillEffect_Skill")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("SkillEffectBlueprintId");
 
@@ -3379,13 +3449,13 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.AbilityEffectType", "EffectType", b1 =>
                         {
                             b1.Property<int>("AbilityEffectInstanceId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("AbilityEffect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("AbilityEffect_Ability")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("AbilityEffectInstanceId");
 
@@ -3404,10 +3474,10 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.ActionEffectType", "EffectType", b1 =>
                         {
                             b1.Property<int>("ActionEffectInstanceId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("ActionEffect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("ActionEffectInstanceId");
 
@@ -3426,10 +3496,10 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.AttackPerAttackActionEffectType", "EffectType", b1 =>
                         {
                             b1.Property<int>("AttackPerAttackActionEffectInstanceId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("AttackPerActionEffect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("AttackPerAttackActionEffectInstanceId");
 
@@ -3448,16 +3518,16 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.AttackRollEffectType", "EffectType", b1 =>
                         {
                             b1.Property<int>("AttackRollEffectInstanceId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("AttackRollEffect_Range")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("AttackRollEffect_Source")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("AttackRollEffect_Type")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("AttackRollEffectInstanceId");
 
@@ -3476,13 +3546,13 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.DamageEffectType", "EffectType", b1 =>
                         {
                             b1.Property<int>("DamageEffectInstanceId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("DamageEffect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int?>("DamageEffect_DamageType")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("DamageEffectInstanceId");
 
@@ -3501,10 +3571,10 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.HitpointEffectType", "EffectType", b1 =>
                         {
                             b1.Property<int>("HitpointEffectInstanceId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("HitpointEffect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("HitpointEffectInstanceId");
 
@@ -3523,10 +3593,10 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.MovementEffectType", "EffectType", b1 =>
                         {
                             b1.Property<int>("MovementEffectInstanceId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("MovementEffect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("MovementEffectInstanceId");
 
@@ -3545,19 +3615,19 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.SavingThrowEffectType", "EffectType", b1 =>
                         {
                             b1.Property<int>("SavingThrowEffectInstanceId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("SavingThrowEffect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int?>("SavingThrowEffect_Ability")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int?>("SavingThrowEffect_Condition")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int?>("SavingThrowEffect_Nature")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("SavingThrowEffectInstanceId");
 
@@ -3576,13 +3646,13 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.SizeEffectType", "EffectType", b1 =>
                         {
                             b1.Property<int>("SizeEffectInstanceId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("SizeEffect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("SizeEffect_SizeToSet")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("SizeEffectInstanceId");
 
@@ -3601,13 +3671,13 @@ namespace pracadyplomowa.Migrations
                     b.OwnsOne("pracadyplomowa.Models.ComplexTypes.Effects.SkillEffectType", "EffectType", b1 =>
                         {
                             b1.Property<int>("SkillEffectInstanceId")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("SkillEffect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("SkillEffect_Skill")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("integer");
 
                             b1.HasKey("SkillEffectInstanceId");
 

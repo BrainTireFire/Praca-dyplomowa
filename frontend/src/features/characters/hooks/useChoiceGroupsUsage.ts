@@ -19,7 +19,7 @@ export function useChoiceGroupUsage(onSuccess: () => void) {
     },
     onError: (error) => {
       console.error(error);
-      toast.error("Choice selection failed!");
+      toast.error(error.message);
     },
   });
 

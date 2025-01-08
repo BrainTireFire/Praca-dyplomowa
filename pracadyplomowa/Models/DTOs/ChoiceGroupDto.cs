@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using pracadyplomowa.Models.Entities.Characters;
+using pracadyplomowa.Models.Entities.Powers.EffectBlueprints;
 
 namespace pracadyplomowa.Models.DTOs
 {
@@ -23,6 +24,19 @@ namespace pracadyplomowa.Models.DTOs
             public int Id { get; set; }
             public string Name { get; set; } = null!;
             public string Description { get; set; } = null!;
+            public NotAllowedReason NotAllowed {get; set;}
+
+            public enum NotAllowedReason {
+                None = 0,
+                ExpertiseWithoutProficiency = 1,
+            }
+
+            public Effect(int id, string name, string description, NotAllowedReason notAllowed){
+                Id = id;
+                Name = name;
+                Description = description;
+                NotAllowed = notAllowed;
+            }
         }
         public class Power
         {
@@ -46,19 +60,19 @@ namespace pracadyplomowa.Models.DTOs
                     .Select(used => used.R_ChoiceGroupId)
                     .Contains(choiceGroup.Id)
                     )
-                    .Select(cg => new ChoiceGroupDto(cg)).ToList();
+                    .Select(cg => new ChoiceGroupDto(cg, character)).ToList();
         }
 
-        public ChoiceGroupDto(ChoiceGroup cg){
+        public ChoiceGroupDto(ChoiceGroup cg, Character ch){
             Id = cg.Id;
             Name = cg.Name;
             NumberToChoose = cg.NumberToChoose;
-            Effects = cg.R_Effects.Select(e => new Effect()
-            {
-                Id = e.Id,
-                Name = e.Name,
-                Description = e.Description,
-            }).ToList();
+            Effects = cg.R_Effects.Select(e => new Effect(
+                e.Id,
+                e.Name,
+                e.Description,
+                e is SkillEffectBlueprint eskill && eskill.SkillEffectType.SkillEffect == Enums.EffectOptions.SkillEffect.UpgradeToExpertise && !ch.SkillProficiencyNative(eskill.SkillEffectType.SkillEffect_Skill) ? Effect.NotAllowedReason.ExpertiseWithoutProficiency : Effect.NotAllowedReason.None
+            )).ToList();
             PowersAlwaysAvailable = cg.R_PowersAlwaysAvailable.Select(e => new Power()
             {
                 Id = e.Id,

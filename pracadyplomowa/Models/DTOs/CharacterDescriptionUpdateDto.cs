@@ -9,6 +9,7 @@ namespace pracadyplomowa.Models.DTOs
     public class CharacterDescriptionUpdateDto
     {
         [Required]
+        [MaxLength(40)]
         public string Name { get; set; } = null!;
         public string Description { get; set; } = null!;
     }

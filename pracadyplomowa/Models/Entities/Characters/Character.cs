@@ -380,11 +380,22 @@ namespace pracadyplomowa.Models.Entities.Characters
             ).Any();
         }
 
+        public bool SkillProficiencyNative(Skill skill){
+            return this.NativeEffects.OfType<SkillEffectInstance>().Where(aei => 
+            aei.EffectType.SkillEffect == SkillEffect.Proficiency &&
+            aei.EffectType.SkillEffect_Skill == skill
+            ).Any();
+        }
         public bool SkillExpertise(Skill skill){
-            return this.AffectedByApprovedEffects.OfType<SkillEffectInstance>().Where(aei => 
+            bool hasUpgradeToExpertise =  this.AffectedByApprovedEffects.OfType<SkillEffectInstance>().Where(aei => 
             aei.EffectType.SkillEffect == SkillEffect.UpgradeToExpertise &&
             aei.EffectType.SkillEffect_Skill == skill
             ).Any();
+            bool hasProficiency =  this.AffectedByApprovedEffects.OfType<SkillEffectInstance>().Where(aei => 
+            aei.EffectType.SkillEffect == SkillEffect.Proficiency &&
+            aei.EffectType.SkillEffect_Skill == skill
+            ).Any();
+            return hasProficiency && hasUpgradeToExpertise;
         }
 
         [NotMapped]
@@ -596,6 +607,11 @@ namespace pracadyplomowa.Models.Entities.Characters
         public List<EffectInstance> AllEffects => R_AffectedBy
         .Union(this.R_UsedChoiceGroups.SelectMany(cg => cg.R_EffectsGranted))
         .Union(this.R_EquippedItems.SelectMany(ed => ed.R_Item.R_EffectsOnEquip))
+            // .Where(effect => effect is not SavingThrowEffectInstance || (effect is SavingThrowEffectInstance instance && instance.EffectType.SavingThrowEffect_Condition == null))
+        .ToList();
+
+        [NotMapped]
+        public List<EffectInstance> NativeEffects => this.R_UsedChoiceGroups.SelectMany(cg => cg.R_EffectsGranted)
             // .Where(effect => effect is not SavingThrowEffectInstance || (effect is SavingThrowEffectInstance instance && instance.EffectType.SavingThrowEffect_Condition == null))
         .ToList();
 

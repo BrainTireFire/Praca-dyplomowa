@@ -9,6 +9,7 @@ namespace pracadyplomowa.Services
 {
     public interface ICharacterService
     {
+        public bool CheckExistenceAndReadEditAccess(int characterId, int userId, List<Character.AccessLevels> requiredAccessLevels, out ActionResult errorResult, out List<Character.AccessLevels> grantedAccessLevels, out Character? characterToAnalyze);
         public bool CheckExistenceAndReadEditAccess(int characterId, int userId, List<Character.AccessLevels> requiredAccessLevels, out ActionResult errorResult, out List<Character.AccessLevels> grantedAccessLevels);
     }
 }

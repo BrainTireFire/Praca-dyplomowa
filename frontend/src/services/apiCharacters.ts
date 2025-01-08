@@ -46,6 +46,25 @@ export async function postCharacter(
   return;
 }
 
+export async function updateCharacter(
+  characterId: number,
+  name: string,
+  description: string
+): Promise<void> {
+  const options: RequestInit = {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name: name,
+      description: description,
+    }),
+  };
+  await customFetch(`${BASE_URL}/api/character/${characterId}`, options);
+  return;
+}
+
 export async function getCharactersChoiceGroups(
   characterId: number
 ): Promise<ChoiceGroup[]> {

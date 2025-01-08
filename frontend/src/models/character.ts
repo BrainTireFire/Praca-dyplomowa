@@ -20,7 +20,7 @@ export type CharacterItem = {
   description: string;
   class: string;
   race: string;
-  campaignId: number;
+  campaignId: number | null;
   isNpc: boolean;
 };
 

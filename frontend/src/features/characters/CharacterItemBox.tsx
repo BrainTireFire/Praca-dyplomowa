@@ -5,6 +5,8 @@ import ButtonGroup from "../../ui/interactive/ButtonGroup";
 import Button from "../../ui/interactive/Button";
 import styled from "styled-components";
 import { CharacterItem } from "../../models/character";
+import { useDeleteCharacter } from "./hooks/useDeleteCharacter";
+import { useNavigate } from "react-router-dom";
 
 const StyledElementBox = styled.div`
   text-align: center;
@@ -19,6 +21,8 @@ export default function CharacterItemBox({
   onClick: any;
   showButtons: boolean;
 }) {
+  const navigate = useNavigate();
+  const { isPending, deleteCharacter } = useDeleteCharacter(() => {});
   return (
     <Box radius="tiny" onClick={() => onClick(character.id)}>
       <Heading as="h3">{character.name}</Heading>
@@ -29,12 +33,34 @@ export default function CharacterItemBox({
       {showButtons && (
         <div>
           <ButtonGroup justify="center">
-            <Button variation="primary" size="medium">
-              Remove
-            </Button>
-            <Button variation="primary" size="medium">
-              Show campaign
-            </Button>
+            {!isPending && (
+              <>
+                <Button
+                  variation="primary"
+                  size="medium"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    deleteCharacter(character.id);
+                  }}
+                >
+                  Remove
+                </Button>
+                {character.campaignId && (
+                  <Button
+                    variation="primary"
+                    size="medium"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      navigate(`/campaigns/${character.campaignId}`);
+                    }}
+                  >
+                    Show campaign
+                  </Button>
+                )}
+              </>
+            )}
           </ButtonGroup>
         </div>
       )}

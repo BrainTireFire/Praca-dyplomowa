@@ -46,6 +46,17 @@ export async function postCharacter(
   return;
 }
 
+export async function deleteCharacter(characterId: number): Promise<void> {
+  const options: RequestInit = {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  await customFetch(`${BASE_URL}/api/character/${characterId}`, options);
+  return;
+}
+
 export async function getCharactersChoiceGroups(
   characterId: number
 ): Promise<ChoiceGroup[]> {

@@ -709,6 +709,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                     AccessLevels.EditResources, 
                     AccessLevels.EditPowersKnown, 
                     AccessLevels.EditSpellbook, 
+                    AccessLevels.Delete
                 ];
             }
             return accessLevels.Count > 0;
@@ -723,7 +724,8 @@ namespace pracadyplomowa.Models.Entities.Characters
             EditResources,
             EditPowersKnown,
             EditSpellbook,
-            Read
+            Read,
+            Delete
         }
 
         public int DifficultyClass(Power power){

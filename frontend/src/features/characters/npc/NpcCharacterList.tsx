@@ -60,6 +60,7 @@ export default function NpcCharacterList({
                 key={npcCharacter.id}
                 character={npcCharacter}
                 onClick={onNpcCharacterIdChosen}
+                showButtons={true}
               />
             ))
           ) : (

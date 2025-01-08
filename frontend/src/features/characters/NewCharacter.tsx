@@ -22,6 +22,7 @@ const initialState: CharacterInsertDto = {
   intelligence: 1,
   wisdom: 1,
   charisma: 1,
+  isNpc: false,
 };
 
 type NumericActions = {

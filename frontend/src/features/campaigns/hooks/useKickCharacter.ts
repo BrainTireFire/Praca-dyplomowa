@@ -5,15 +5,13 @@ import { useNavigate } from "react-router-dom";
 
 function useKickCharacter() {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
   const { mutate: kickCharacter, isPending } = useMutation({
     mutationFn: (characterId: number) =>
       removeCharacterFromCampaign(characterId),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["campaigns", "character"],
+        queryKey: ["campaign"],
       });
-      navigate(0);
       toast.success("Character kick successful");
     },
     onError: (err) => toast.error(err.message),

@@ -22,7 +22,9 @@ export default function CharacterItemBox({
   showButtons: boolean;
 }) {
   const navigate = useNavigate();
-  const { isPending, deleteCharacter } = useDeleteCharacter(() => {});
+  const { isPending, deleteCharacter } = useDeleteCharacter(() =>
+    onClick(null)
+  );
   return (
     <Box radius="tiny" onClick={() => onClick(character.id)}>
       <Heading as="h3">{character.name}</Heading>

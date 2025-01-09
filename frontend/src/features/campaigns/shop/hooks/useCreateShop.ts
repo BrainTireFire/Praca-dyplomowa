@@ -12,9 +12,10 @@ function useCreateShop() {
     onSuccess: (shopId: number) => {
       toast.success("Shop has been created");
       queryClient.invalidateQueries({
-        queryKey: ["campaigns", "shops"],
+        queryKey: ["shops"],
       });
       navigate(0);
+      //navigate(0);
     },
     onError: (error) => toast.error(error.message),
   });

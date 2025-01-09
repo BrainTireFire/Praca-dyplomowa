@@ -75,7 +75,7 @@ export default function Shops() {
           <Button style={{ width: "200px" }}>Create new Shop</Button>
         </Modal.Open>
         <Modal.Window name="CreateShop">
-          <CreateShop />
+          <CreateShop onCloseModal={() => {}} />
         </Modal.Window>
       </Modal>
     </Container>

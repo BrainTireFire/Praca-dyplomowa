@@ -11,7 +11,7 @@ namespace pracadyplomowa.Controllers
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         [HttpPost]
-        public async Task<ActionResult<int>> CreateCampaign(ShopInsertDto shopInsertDto)
+        public async Task<ActionResult<int>> CreateShop(ShopInsertDto shopInsertDto)
         {
             var shop = new Shop
             {

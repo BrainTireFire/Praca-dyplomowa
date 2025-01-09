@@ -9,7 +9,7 @@ export function useShops() {
     data: shops,
     error,
   } = useQuery({
-    queryKey: ["campaigns", "shops"],
+    queryKey: ["shops"],
     queryFn: () => getShops(Number(campaignId)),
   });
 

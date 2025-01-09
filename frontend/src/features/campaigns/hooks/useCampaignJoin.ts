@@ -17,7 +17,10 @@ function useCampaignJoin() {
     onSuccess: (campaignId: number) => {
       toast.success("Successfuly Joined");
       queryClient.invalidateQueries({
-        queryKey: ["campaigns", "character"],
+        queryKey: ["campaigns"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["character"],
       });
       navigate(`/campaigns/${campaignId}`);
     },

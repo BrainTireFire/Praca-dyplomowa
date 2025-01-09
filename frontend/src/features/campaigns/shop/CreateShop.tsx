@@ -4,7 +4,7 @@ import Input from "../../../ui/forms/Input";
 import Button from "../../../ui/interactive/Button";
 import TextArea from "../../../ui/forms/TextArea";
 import { ShopInsertDto } from "../../../models/shop";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useParams } from "react-router-dom";
 import useCreateShop from "./hooks/useCreateShop";
 import Spinner from "../../../ui/interactive/Spinner";
@@ -17,7 +17,7 @@ const Container = styled.div`
   gap: 12px;
 `;
 
-function CreateShop() {
+function CreateShop({ onCloseModal }: { onCloseModal: () => void }) {
   const { createShop, isPending } = useCreateShop();
   const { campaignId } = useParams<{ campaignId: string }>();
   const [shop, setShop] = useState<ShopInsertDto>({
@@ -39,6 +39,11 @@ function CreateShop() {
       ...previous,
       [e.target.name]: e.target.value,
     }));
+  };
+
+  const handleClick = () => {
+    createShop(shop);
+    onCloseModal();
   };
 
   return (
@@ -74,7 +79,7 @@ function CreateShop() {
         value={shop.description}
         onChange={handleChange}
       ></TextArea>
-      <Button size="large" onClick={() => createShop(shop)}>
+      <Button size="large" onClick={handleClick}>
         Create
       </Button>
     </Container>

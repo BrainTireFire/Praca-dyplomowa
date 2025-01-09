@@ -148,6 +148,19 @@ namespace pracadyplomowa.Controllers
             return Ok(characterDto);
         }
 
+        [HttpPatch("{characterId}")]
+        public async Task<ActionResult> UpdateCharacterDescriptionAndName(int characterId, [FromBody] CharacterDescriptionUpdateDto data)
+        {
+            if(!_characterService.CheckExistenceAndReadEditAccess(characterId, User.GetUserId(), [Character.AccessLevels.EditDescriptiveFields], out var errorResult, out var grantedAccessLevels, out var character)){
+                return errorResult;
+            }
+
+            character!.Name = data.Name;
+            character.Description = data.Description;
+            await _unitOfWork.SaveChangesAsync();
+            return Ok();
+        }
+
 
 
         [HttpGet("{characterId}/choiceGroups")]

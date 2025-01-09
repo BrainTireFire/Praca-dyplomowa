@@ -24,10 +24,11 @@ import Button from "../../ui/interactive/Button";
 import NewCharacter from "./NewCharacter";
 import SelectFromChoiceGroupScreen from "./SelectFromChoiceGroupScreen";
 import { CharacterIdContext } from "./contexts/CharacterIdContext";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import EquipmentSlotScreen from "./EquipmentSlotScreen";
 import AddEquipmentScreen from "./AddEquipmentScreen";
 import { EditModeContext } from "../../context/EditModeContext";
+import { useUpdateCharacter } from "./hooks/useUpdateCharacter";
 
 const MainGrid = styled.div`
   display: grid;
@@ -76,14 +77,29 @@ export default function CharactersSheet() {
   const { characterId } = useContext(CharacterIdContext);
   const { editMode } = useContext(EditModeContext);
   const { isLoading, isError, error, character } = useCharacter(characterId);
+  const [name, setName] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  useEffect(() => {
+    setName(character?.name ?? "");
+    setDescription(character?.description ?? "");
+  }, [character?.description, character?.name]);
+  const {
+    isPending,
+    updateCharacter,
+    isError: isErrorUpdate,
+    error: errorUpdate,
+  } = useUpdateCharacter(characterId as number, () => {});
 
   console.log(characterId);
   console.log(character);
-  if (isLoading) {
+  if (isLoading || isPending) {
     return <Spinner />;
   }
   if (isError) {
     return `${error}`;
+  }
+  if (isErrorUpdate) {
+    return `${errorUpdate}`;
   }
 
   let disableForm = !editMode;
@@ -103,6 +119,9 @@ export default function CharactersSheet() {
     character?.accessLevels.includes("EditResources") ?? false;
   let EditSpellbookPermission =
     character?.accessLevels.includes("EditSpellbook") ?? false;
+
+  const InvalidName = name.length <= 0 || name.length > 40;
+
   return (
     <Box
       radius="tiny"
@@ -115,14 +134,19 @@ export default function CharactersSheet() {
         <MainGrid>
           <MainGridColumn1>
             <div style={{ gridColumnStart: 1, gridColumnEnd: 3 }}>
-              <FormRowVertical label="Name">
+              <FormRowVertical
+                label="Name"
+                error={
+                  InvalidName
+                    ? "Name must be filled in and cannot exceed 40 signs"
+                    : undefined
+                }
+              >
                 <Input
                   disabled={disableForm || !EditDescriptiveFieldsPermission}
-                  size="small"
-                  customStyles={css`
-                    text-transform: uppercase;
-                  `}
-                  value={character.name}
+                  size="medium"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                 ></Input>
               </FormRowVertical>
             </div>
@@ -138,9 +162,25 @@ export default function CharactersSheet() {
               <FormRowVertical label="Description" fillHeight={true}>
                 <TextArea
                   disabled={disableForm || !EditDescriptiveFieldsPermission}
-                  value={character.description}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
                 ></TextArea>
               </FormRowVertical>
+              {!disableForm &&
+                EditDescriptiveFieldsPermission &&
+                !!characterId && (
+                  <Button
+                    disabled={InvalidName}
+                    onClick={() =>
+                      updateCharacter({
+                        name: name,
+                        description: description,
+                      })
+                    }
+                  >
+                    Update name and description
+                  </Button>
+                )}
             </div>
             <div style={{ gridColumnStart: 3, gridRowStart: 1, gridRowEnd: 4 }}>
               <ProficiencyBox

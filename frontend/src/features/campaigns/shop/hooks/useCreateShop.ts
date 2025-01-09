@@ -14,8 +14,6 @@ function useCreateShop() {
       queryClient.invalidateQueries({
         queryKey: ["shops"],
       });
-      navigate(0);
-      //navigate(0);
     },
     onError: (error) => toast.error(error.message),
   });

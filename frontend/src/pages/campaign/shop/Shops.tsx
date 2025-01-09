@@ -6,18 +6,20 @@ import Button from "../../../ui/interactive/Button";
 import { useState } from "react";
 import Modal from "../../../ui/containers/Modal";
 import CreateShop from "../../../features/campaigns/shop/CreateShop";
-import { useCampaign } from "../../../features/campaigns/hooks/useCampaign";
 import Spinner from "../../../ui/interactive/Spinner";
 import { useTranslation } from "react-i18next";
 import SearchForm from "../../../features/campaigns/shop/SearchForm";
 import ShopsTable from "../../../features/campaigns/shop/ShopsTable";
+import { Shop } from "../../../models/shop";
+import { useShops } from "../../../features/campaigns/shop/hooks/useShops";
 
 const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 20px;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%;
+  gap: 5%;
+  justify-items: center;
+  margin-top: 1%;
 `;
 
 const SearchFormContainer = styled.div`
@@ -27,7 +29,7 @@ const SearchFormContainer = styled.div`
 `;
 
 export default function Shops() {
-  const { isLoading, campaign } = useCampaign();
+  const { shops, isPending } = useShops();
   const { t } = useTranslation();
   const [searchInputs, setSearchInputs] = useState({
     name: "",
@@ -35,17 +37,11 @@ export default function Shops() {
     location: "",
   });
 
-  if (isLoading) {
+  if (isPending) {
     return <Spinner />;
   }
 
-  if (!campaign) {
-    return <div>{t("campaign.error.notFound")}</div>;
-  }
-
-  const { shops }: Campaign = campaign;
-
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (value.length < 3) {
       setSearchInputs((previous) => ({ ...previous, [name]: "" }));
@@ -54,11 +50,15 @@ export default function Shops() {
     setSearchInputs((previous) => ({ ...previous, [name]: value }));
   };
 
-  const filterShopsData = shops.filter((shop) => {
-    return Object.keys(searchInputs).every((key) =>
-      shop[key].toLowerCase().includes(searchInputs[key].toLowerCase())
-    );
-  });
+  const filterShopsData =
+    shops?.filter((shop) =>
+      Object.entries(searchInputs).every(([key, value]) =>
+        shop[key as keyof Shop]
+          ?.toString()
+          .toLowerCase()
+          .includes(value.toLowerCase())
+      )
+    ) || [];
 
   return (
     <Container>
@@ -75,7 +75,7 @@ export default function Shops() {
           <Button style={{ width: "200px" }}>Create new Shop</Button>
         </Modal.Open>
         <Modal.Window name="CreateShop">
-          <CreateShop />
+          <CreateShop onCloseModal={() => {}} />
         </Modal.Window>
       </Modal>
     </Container>

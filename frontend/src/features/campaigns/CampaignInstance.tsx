@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import InputCopyToClipboard from "../../ui/forms/InputCopyToClipboard";
 import Modal from "../../ui/containers/Modal";
 import { useCampaign } from "./hooks/useCampaign";
+import useKickCharacter from "./hooks/useKickCharacter";
 import Spinner from "../../ui/interactive/Spinner";
 import CharacterDetailBox from "./CharacterDetailBox";
 import { Campaign } from "../../models/campaign";
@@ -43,11 +44,12 @@ const encode = (number: number): string => {
 
 export default function CampaignInstance() {
   const { isLoading, campaign } = useCampaign();
-  const { removeCampaign, isPending } = useRemoveCampaign();
+  const { removeCampaign, isPending: isRemoving } = useRemoveCampaign();
+  const { kickCharacter, isPending: isKicking } = useKickCharacter();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  if (isLoading || isPending) {
+  if (isLoading || isRemoving || isKicking) {
     return <Spinner />;
   }
 
@@ -113,7 +115,12 @@ export default function CampaignInstance() {
       <CharacterContainer>
         {members.length > 0 ? (
           members.map((e) => (
-            <CharacterDetailBox key={e.id}>{e}</CharacterDetailBox>
+            <CharacterDetailBox
+              key={e.id}
+              handleKickCharacter={() => kickCharacter(e.id)}
+            >
+              {e}
+            </CharacterDetailBox>
           ))
         ) : (
           <Heading as="h2">There are no members in this campaign</Heading>

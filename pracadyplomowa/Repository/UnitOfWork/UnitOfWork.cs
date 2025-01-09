@@ -17,7 +17,7 @@ public class UnitOfWork : IUnitOfWork
         _mapper = mapper;
         _context = context;
     }
-    
+
     public IBoardRepository BoardRepository => new BoardRepository(_context, _mapper);
     public ICampaignRepository CampaignRepository => new CampaignRepository(_context);
     public ICharacterRepository CharacterRepository => new CharacterRepository(_context);
@@ -36,6 +36,7 @@ public class UnitOfWork : IUnitOfWork
     public IItemFamilyRepository ItemFamilyRepository => new ItemFamilyRepository(_context);
     public IPowerRepository PowerRepository => new PowerRepository(_context);
     public IRaceRepository RaceRepository => new RaceRepository(_context);
+    public IShopRepository ShopRepository => new ShopRepository(_context);
 
     public async Task<int> SaveChangesAsync()
     {

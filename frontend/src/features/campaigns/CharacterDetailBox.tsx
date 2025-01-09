@@ -5,7 +5,9 @@ import ButtonGroup from "../../ui/interactive/ButtonGroup";
 import Button from "../../ui/interactive/Button";
 import styled, { css } from "styled-components";
 import { CharacterItem } from "../../models/character";
-import { removeCharacterFromCampaign } from "../../services/apiCampaigns";
+import Modal from "../../ui/containers/Modal";
+import { CharacterIdContext } from "../characters/contexts/CharacterIdContext";
+import CharactersSheet from "../characters/CharactersSheet";
 
 const BoxCustomStyles = css`
   display: grid;
@@ -17,14 +19,11 @@ const BoxCustomStyles = css`
 
 export default function CharacterDetailBox({
   children,
+  handleKickCharacter,
 }: {
   children: CharacterItem;
+  handleKickCharacter: Function;
 }) {
-  const handleClick = async () => {
-    await removeCharacterFromCampaign(children.id);
-    window.location.reload();
-  };
-
   return (
     <Box customStyles={BoxCustomStyles} style={{ borderRadius: "10px" }}>
       <div style={{ gridColumn: "1/3" }}>
@@ -38,11 +37,23 @@ export default function CharacterDetailBox({
       <div style={{ gridColumn: "1/3", gridRow: "2/3" }}>
         {/* TODO: Implement View button !*/}
         <ButtonGroup justify="center">
-          <Button variation="primary" size="large">
-            {" "}
-            View
-          </Button>
-          <Button variation="primary" size="large" onClick={handleClick}>
+          <Modal>
+            <Modal.Open opens="CharactersSheet">
+              <Button variation="primary" size="large">
+                View
+              </Button>
+            </Modal.Open>
+            <Modal.Window name="CharactersSheet">
+              <CharacterIdContext.Provider value={{ characterId: children.id }}>
+                <CharactersSheet />
+              </CharacterIdContext.Provider>
+            </Modal.Window>
+          </Modal>
+          <Button
+            variation="primary"
+            size="large"
+            onClick={() => handleKickCharacter(children.id)}
+          >
             Kick
           </Button>
         </ButtonGroup>

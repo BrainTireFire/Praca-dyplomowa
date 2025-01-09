@@ -26,7 +26,7 @@ public interface IUnitOfWork
     IItemFamilyRepository ItemFamilyRepository { get; }
     IPowerRepository PowerRepository { get; }
     IRaceRepository RaceRepository { get; }
-
+    IShopRepository ShopRepository { get; }
     Task<int> SaveChangesAsync();
     bool HasChanges();
 }

@@ -122,9 +122,12 @@ function NewCharacter({ onCloseModal }) {
     (ability: number) => ability <= 0 || ability > 20,
     []
   );
+
+  const InvalidName =
+    !state.name || state.name.length <= 0 || state.name.length > 40;
   const disableSave = useCallback(() => {
     return (
-      !state.name ||
+      InvalidName ||
       !state.raceId ||
       !state.startingClassId ||
       isInBounds(state.charisma) ||
@@ -140,7 +143,7 @@ function NewCharacter({ onCloseModal }) {
     state.constitution,
     state.dexterity,
     state.intelligence,
-    state.name,
+    InvalidName,
     state.raceId,
     state.startingClassId,
     state.strength,
@@ -153,12 +156,17 @@ function NewCharacter({ onCloseModal }) {
   if (isLoadingRaces || isLoadingClasses || isPending) {
     return <Spinner />;
   }
+
   return (
     <>
       <Box>
         <FormRow
           label="Character name"
-          error={!state.name ? "Fill name" : undefined}
+          error={
+            InvalidName
+              ? "Name must be filled in and cannot exceed 40 signs"
+              : undefined
+          }
         >
           <Input
             value={state.name}

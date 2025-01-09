@@ -8,8 +8,8 @@ namespace pracadyplomowa.Services
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-        public bool CheckExistenceAndReadEditAccess(int characterId, int userId, List<Character.AccessLevels> requiredAccessLevels, out ActionResult errorResult, out List<Character.AccessLevels> grantedAccessLevels){
-            if(!_unitOfWork.CharacterRepository.GetCharactersForAccessAnalysis([characterId]).TryGetValue(characterId, out var characterToAnalyze)){ 
+        public bool CheckExistenceAndReadEditAccess(int characterId, int userId, List<Character.AccessLevels> requiredAccessLevels, out ActionResult errorResult, out List<Character.AccessLevels> grantedAccessLevels, out Character? characterToAnalyze){
+            if(!_unitOfWork.CharacterRepository.GetCharactersForAccessAnalysis([characterId]).TryGetValue(characterId, out characterToAnalyze)){ 
                 grantedAccessLevels = [];
                 errorResult = new NotFoundObjectResult("Character with specified Id was not found");
                 return false;
@@ -22,6 +22,10 @@ namespace pracadyplomowa.Services
                 errorResult = new OkObjectResult("Operation allowed");
                 return true;
             }
+        }
+
+        public bool CheckExistenceAndReadEditAccess(int characterId, int userId, List<Character.AccessLevels> requiredAccessLevels, out ActionResult errorResult, out List<Character.AccessLevels> grantedAccessLevels){
+            return CheckExistenceAndReadEditAccess(characterId, userId, requiredAccessLevels, out errorResult, out grantedAccessLevels, out var character);
         }
     }
 }

@@ -380,11 +380,22 @@ namespace pracadyplomowa.Models.Entities.Characters
             ).Any();
         }
 
+        public bool SkillProficiencyNative(Skill skill){
+            return this.NativeEffects.OfType<SkillEffectInstance>().Where(aei => 
+            aei.EffectType.SkillEffect == SkillEffect.Proficiency &&
+            aei.EffectType.SkillEffect_Skill == skill
+            ).Any();
+        }
         public bool SkillExpertise(Skill skill){
-            return this.AffectedByApprovedEffects.OfType<SkillEffectInstance>().Where(aei => 
+            bool hasUpgradeToExpertise =  this.AffectedByApprovedEffects.OfType<SkillEffectInstance>().Where(aei => 
             aei.EffectType.SkillEffect == SkillEffect.UpgradeToExpertise &&
             aei.EffectType.SkillEffect_Skill == skill
             ).Any();
+            bool hasProficiency =  this.AffectedByApprovedEffects.OfType<SkillEffectInstance>().Where(aei => 
+            aei.EffectType.SkillEffect == SkillEffect.Proficiency &&
+            aei.EffectType.SkillEffect_Skill == skill
+            ).Any();
+            return hasProficiency && hasUpgradeToExpertise;
         }
 
         [NotMapped]
@@ -599,6 +610,11 @@ namespace pracadyplomowa.Models.Entities.Characters
             // .Where(effect => effect is not SavingThrowEffectInstance || (effect is SavingThrowEffectInstance instance && instance.EffectType.SavingThrowEffect_Condition == null))
         .ToList();
 
+        [NotMapped]
+        public List<EffectInstance> NativeEffects => this.R_UsedChoiceGroups.SelectMany(cg => cg.R_EffectsGranted)
+            // .Where(effect => effect is not SavingThrowEffectInstance || (effect is SavingThrowEffectInstance instance && instance.EffectType.SavingThrowEffect_Condition == null))
+        .ToList();
+
         private bool HasCondition(Condition condition){
             return this.AffectedByApprovedEffects
                     .OfType<StatusEffectInstance>()
@@ -709,6 +725,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                     AccessLevels.EditResources, 
                     AccessLevels.EditPowersKnown, 
                     AccessLevels.EditSpellbook, 
+                    AccessLevels.Delete
                 ];
             }
             return accessLevels.Count > 0;
@@ -723,7 +740,8 @@ namespace pracadyplomowa.Models.Entities.Characters
             EditResources,
             EditPowersKnown,
             EditSpellbook,
-            Read
+            Read,
+            Delete
         }
 
         public int DifficultyClass(Power power){

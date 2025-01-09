@@ -25,6 +25,7 @@ using pracadyplomowa.Repository.Race;
 using pracadyplomowa.Services;
 using pracadyplomowa.Repository.UnitOfWork;
 using static pracadyplomowa.Models.Entities.Characters.ChoiceGroup;
+using static pracadyplomowa.Models.Entities.Powers.SkillEffectInstance;
 
 namespace pracadyplomowa.Controllers
 {
@@ -57,6 +58,16 @@ namespace pracadyplomowa.Controllers
             Response.AddPaginationHeader(characters);
 
             return Ok(characters);
+        }
+
+        [HttpDelete("{characterId}")]
+        public async Task<ActionResult> DeleteCharacter(int characterId){
+            if(!_characterService.CheckExistenceAndReadEditAccess(characterId, User.GetUserId(), [Character.AccessLevels.Read], out var errorResult, out var grantedAccessLevels)){
+                return errorResult;
+            }
+            _unitOfWork.CharacterRepository.Delete(characterId);
+            await _unitOfWork.SaveChangesAsync();
+            return Ok();
         }
 
         [HttpPost]
@@ -212,7 +223,12 @@ namespace pracadyplomowa.Controllers
                     var totalPicks = selectedEffects.Count + selectedPowersAlwaysAvailable.Count + selectedPowersToPrepare.Count + selectedResources.Count;
                     if (totalPicks != 0 && totalPicks == choiceGroup.NumberToChoose)
                     {
-                        choiceGroup.Generate(character, selectedEffects, selectedPowersAlwaysAvailable, selectedPowersToPrepare, selectedResources);
+                        try{
+                            choiceGroup.Generate(character, selectedEffects, selectedPowersAlwaysAvailable, selectedPowersToPrepare, selectedResources);
+                        }
+                        catch(ExpertiseException ex){
+                            return BadRequest(new ApiResponse(400, ex.Message));
+                        }
                     }
                     else if (totalPicks != 0 && totalPicks != choiceGroup.NumberToChoose)
                     {
@@ -261,7 +277,7 @@ namespace pracadyplomowa.Controllers
                 ClassId = cl.R_ClassId,
                 Name = cl.R_Class.Name,
                 Level = cl.Level,
-                ChoiceGroups = cl.R_ChoiceGroups.Select(cg => new ChoiceGroupDto(cg)),
+                ChoiceGroups = cl.R_ChoiceGroups.Select(cg => new ChoiceGroupDto(cg, character)),
                 HitDice = cl.HitDie,
                 HitPoints = cl.HitPoints,
             }).ToList();

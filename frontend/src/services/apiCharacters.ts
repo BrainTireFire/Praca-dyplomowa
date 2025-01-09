@@ -46,6 +46,17 @@ export async function postCharacter(
   return;
 }
 
+export async function deleteCharacter(characterId: number): Promise<void> {
+  const options: RequestInit = {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  await customFetch(`${BASE_URL}/api/character/${characterId}`, options);
+  return;
+}
+
 export async function updateCharacter(
   characterId: number,
   name: string,
@@ -370,6 +381,7 @@ export type Effect = {
   id: number;
   name: string;
   description: string;
+  notAllowed: "None" | "ExpertiseWithoutProficiency";
 };
 
 export type Power = {

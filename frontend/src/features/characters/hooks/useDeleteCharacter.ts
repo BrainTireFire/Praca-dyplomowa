@@ -8,6 +8,7 @@ export function useDeleteCharacter(onSuccess: () => void) {
     mutationFn: (characterId: number) => deleteCharacterApi(characterId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["characters"] });
+      queryClient.invalidateQueries({ queryKey: ["npcCharacters"] });
       onSuccess();
     },
     onError: (error) => {

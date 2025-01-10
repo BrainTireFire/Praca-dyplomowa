@@ -87,7 +87,7 @@ const characterReducer = (
 };
 const abilityErrorMessage = "Value must be in range of 1-20";
 
-function NewCharacter({ onCloseModal }) {
+function NewCharacter({ onCloseModal }: { onCloseModal: () => void }) {
   const [state, dispatch] = useReducer(characterReducer, initialState);
 
   //query
@@ -300,3 +300,7 @@ function NewCharacter({ onCloseModal }) {
 }
 
 export default NewCharacter;
+
+NewCharacter.defaultProps = {
+  onCloseModal: () => {},
+};

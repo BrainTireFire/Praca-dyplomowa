@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import Menus from "../../../ui/containers/Menus";
 import Table from "../../../ui/containers/Table";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { ItemIdContext } from "../contexts/ItemIdContext";
 import { ReusableTable } from "../../../ui/containers/ReusableTable";
 import { useSlots } from "../hooks/useSlots";
@@ -105,6 +105,9 @@ function SlotSelectionForm() {
             })}
             isSelectable={true}
             onSelect={handleSelectAllSlots}
+            customTableContainer={css`
+              height: 100%;
+            `}
           ></ReusableTable>
         )}
         {isLoadingAllSlots && <Spinner />}
@@ -162,6 +165,9 @@ function SlotSelectionForm() {
             }
             isSelectable={true}
             onSelect={handleSelectItemSlots}
+            customTableContainer={css`
+              height: 100%;
+            `}
           ></ReusableTable>
         )}
         {isLoadingItemSlots && <Spinner />}
@@ -174,6 +180,7 @@ const Grid = styled.div`
   display: grid;
   grid-template-columns: auto auto auto;
   grid-column-gap: 10px;
+  height: 70vh;
 `;
 
 const Column1 = styled.div`

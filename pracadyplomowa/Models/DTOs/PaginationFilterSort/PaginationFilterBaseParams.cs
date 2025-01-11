@@ -2,9 +2,9 @@
 
 public class PaginationFilterBaseParams
 {
-    private const int MaxPageSize = 69;
+    private const int MaxPageSize = 999999999;
     public int PageNumber { get; set; } = 1; 
-    private int _pageSize = 10;
+    private int _pageSize = 999999999;
 
     public int PageSize
     {

@@ -17,16 +17,19 @@ type ReusableTableProps = {
 const TableContainer = styled.div<{
   customTableContainer?: ReturnType<typeof css>;
 }>`
-  margin: 20px;
-  border: 1px solid var(--color-border);
-
-  ${({ customTableContainer }) => customTableContainer && customTableContainer}
+  padding: 10px;
+  overflow-y: hidden;
+  ${({ customTableContainer }) => customTableContainer && customTableContainer};
 `;
 
 const StyledTable = styled.table`
   width: 100%;
   border-collapse: collapse;
-  display: block;
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+  height: 100%;
+  border: 1px solid var(--color-border);
 `;
 
 const TableHeader = styled.th<{ customHeader?: ReturnType<typeof css> }>`
@@ -49,6 +52,8 @@ const TableHeaderLabel = styled.th`
   padding: 10px;
   text-align: left;
   border-bottom: 2px solid var(--color-border);
+  width: 100%;
+  display: table;
 `;
 
 const SortIcon = styled.span`
@@ -82,8 +87,8 @@ const TableRowHead = styled.tr`
 `;
 
 const TableBody = styled.tbody`
-  display: block;
-  max-height: 300px;
+  display: flex;
+  flex-direction: column;
   overflow-y: auto;
 
   scrollbar-color: var(--color-button-primary) var(--color-main-background);
@@ -110,7 +115,6 @@ const TableCell = styled.td`
 
 const TableFooter = styled.tfoot`
   background-color: var(--color-main-background);
-  padding: 10px;
 `;
 
 const FooterRow = styled.tr`

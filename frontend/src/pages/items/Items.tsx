@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import ItemForm from "../../features/items/ItemForm";
 import { ReusableTable } from "../../ui/containers/ReusableTable";
 import Button from "../../ui/interactive/Button";
@@ -50,11 +50,21 @@ export default function Items() {
           }
           isSelectable={true}
           onSelect={handleSelect}
+          isSearching={true}
+          customTableContainer={css`
+            height: 95%;
+          `}
         ></ReusableTable>
         {editMode && (
           <Modal>
             <Modal.Open opens="TableAction">
-              <Button>Create new</Button>
+              <Button
+                customStyles={css`
+                  height: 5%;
+                `}
+              >
+                Create new
+              </Button>
             </Modal.Open>
             <Modal.Window name="TableAction">
               <CreateNewItemForm></CreateNewItemForm>
@@ -72,15 +82,22 @@ export default function Items() {
 }
 
 const Container = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 2fr;
+  display: flex;
+  flex-direction: row;
+  max-height: 100%;
+  height: 100%;
+  column-gap: 10px;
 `;
 
 const Column1 = styled.div`
-  grid-column: 1;
+  max-height: 100%;
+  height: 100%;
+  max-width: 40%;
+  display: flex;
+  flex-direction: column;
 `;
 const Column2 = styled.div`
-  grid-column: 2;
-  overflow-y: auto;
   max-height: 100%;
+  height: 100%;
+  max-width: 60%;
 `;

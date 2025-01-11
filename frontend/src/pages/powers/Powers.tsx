@@ -9,7 +9,7 @@ import Button from "../../ui/interactive/Button";
 import { useCreatePower } from "./hooks/useCreatePower";
 
 export default function Powers() {
-  const { isLoading, powers, error } = usePowers();
+  const { isLoading, powers, error } = usePowers({ pageSize: 99999999 });
   const [openNewPowerForm, setOpenNewPowerForm] = useState(false);
 
   const [selectedPowerId, setSelectedPowerId] = useState<null | number>(null);
@@ -37,6 +37,7 @@ export default function Powers() {
         <ReusableTable
           tableRowsColomns={{
             Name: "Name",
+            Description: "Description",
           }}
           data={
             powers
@@ -44,18 +45,26 @@ export default function Powers() {
                   return {
                     id: index,
                     Name: power.name,
+                    Description: power.description,
                   };
                 })
               : []
           }
           isSelectable={true}
           onSelect={handleSelect}
+          isSearching={true}
+          customTableContainer={css`
+            height: 95%;
+          `}
         ></ReusableTable>
         <Button
           onClick={() => {
             setOpenNewPowerForm(true);
             setSelectedPowerId(null);
           }}
+          customStyles={css`
+            height: 5%;
+          `}
         >
           Create new
         </Button>
@@ -83,13 +92,21 @@ export default function Powers() {
 }
 
 const Container = styled.div`
-  display: grid;
-  grid-template-columns: auto 1fr;
+  display: flex;
+  flex-direction: row;
+  max-height: 100%;
+  height: 100%;
 `;
 
 const Column1 = styled.div`
-  grid-column: 1;
+  max-height: 100%;
+  height: 100%;
+  max-width: 40%;
+  display: flex;
+  flex-direction: column;
 `;
 const Column2 = styled.div`
-  grid-column: 2;
+  max-height: 100%;
+  height: 100%;
+  max-width: 60%;
 `;

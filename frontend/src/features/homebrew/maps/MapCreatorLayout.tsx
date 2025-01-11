@@ -24,13 +24,14 @@ const LeftPanel = styled.div`
   padding: 20px;
   height: 100%;
   width: 300px;
+  overflow-y: auto;
 `;
 
 const MainGrid = styled.div`
   display: grid;
   grid-template-rows: 1fr;
   grid-template-columns: 300px 1fr;
-  margin-top: 20px;
+  max-height: 100%;
 `;
 
 const initialState = {

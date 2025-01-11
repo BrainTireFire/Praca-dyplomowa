@@ -67,6 +67,9 @@ export function NPCSelectionForm({
             })}
             isSelectable={true}
             onSelect={handleSelectAllNpcs}
+            customTableContainer={css`
+              height: 100%;
+            `}
           ></ReusableTable>
         )}
         {isLoadingAllNpcs && <Spinner />}
@@ -124,6 +127,9 @@ export function NPCSelectionForm({
           }
           isSelectable={true}
           onSelect={handleSelectItemPowers}
+          customTableContainer={css`
+            height: 100%;
+          `}
         ></ReusableTable>
       </Row3>
       <SheetContainer>
@@ -142,7 +148,7 @@ export function NPCSelectionForm({
 const Grid = styled.div`
   display: grid;
   grid-template-columns: 20% 80%;
-  grid-template-rows: auto auto auto;
+  grid-template-rows: 1fr auto 1fr;
   grid-column-gap: 10px;
   width: 90vw;
   height: 90vh;

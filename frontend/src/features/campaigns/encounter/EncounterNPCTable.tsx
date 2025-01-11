@@ -1,5 +1,5 @@
 import { ReusableTable } from "../../../ui/containers/ReusableTable";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import Button from "../../../ui/interactive/Button";
 import Modal from "../../../ui/containers/Modal";
 import { NPCSelectionForm } from "./NPCSelectionForm";
@@ -9,6 +9,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 100%;
 `;
 
 const StyledHeader = styled.div`
@@ -51,6 +52,7 @@ export default function EncounterNPCTable({
         <Modal>
           <Modal.Open opens="selection">
             <Button
+              size="small"
               type="button"
               onClick={(event) => {
                 event.preventDefault();
@@ -71,6 +73,9 @@ export default function EncounterNPCTable({
         tableRowsColomns={TABLE_COLUMNS}
         data={chosenNpcs}
         isSelectable={false}
+        customTableContainer={css`
+          flex: 1;
+        `}
       />
     </Container>
   );

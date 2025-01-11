@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import ItemForm from "../../features/items/ItemForm";
 import { ReusableTable } from "../../ui/containers/ReusableTable";
 import Button from "../../ui/interactive/Button";
@@ -76,10 +76,16 @@ const Container = styled.div`
   display: grid;
   grid-template-columns: 1fr 2fr;
   width: 90vw;
+  height: 90vh;
 `;
 
 const Column1 = styled.div`
   grid-column: 1;
+  max-height: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  overflow: hidden;
 `;
 const Column2 = styled.div`
   grid-column: 2;

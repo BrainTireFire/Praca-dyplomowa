@@ -13,10 +13,6 @@ import { useUpdateBoard } from "./useUpdateBoard";
 import { BoardUpdateDto } from "../../../models/map/BoardUpdate";
 import { ReusableTable } from "../../../ui/containers/ReusableTable";
 import Modal from "../../../ui/containers/Modal";
-import EffectInstanceForm from "../../effects/EffectInstanceForm";
-import { EffectParentObjectIdContext } from "../../../context/EffectParentObjectIdContext";
-import { ParentObjectIdContext } from "../../../context/ParentObjectIdContext";
-import { PowerSelectionForm } from "../../powers/PowerSelectionForm";
 import { PowerSelectionFormField } from "./PowerSelectionFormField";
 import { PowerListItem } from "../../../models/power";
 
@@ -28,11 +24,13 @@ const Label = styled.label`
 const FieldSet = styled.div`
   position: relative;
   width: 100%;
-  margin-bottom: 15px;
+  /* margin-bottom: 15px; */
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding-bottom: 10px;
+  height: 100%;
+  overflow-y: hidden;
 `;
 
 const FieldContainerStyled = styled.div`
@@ -40,6 +38,7 @@ const FieldContainerStyled = styled.div`
   flex-direction: column;
   align-items: center;
   border-bottom: 1px solid var(--color-border);
+  overflow-y: hidden;
 `;
 
 const RadioGroup = styled.div`
@@ -47,23 +46,6 @@ const RadioGroup = styled.div`
   justify-content: space-around;
   margin-bottom: 10px;
   gap: 10px;
-`;
-
-const Table = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 10px;
-`;
-
-const TableHeader = styled.th`
-  border: 1px solid var(--color-border);
-  padding: 5px;
-  background-color: var(--color-navbar);
-`;
-
-const TableCell = styled.td`
-  border: 1px solid var(--color-border);
-  padding: 5px;
 `;
 
 const ToggleButton = styled.button<{ color: string }>`
@@ -137,17 +119,10 @@ export default function MapCreatorForm({ state, onSubmit }: any) {
   const colorPickerPopover = useRef();
   const [isColorPickerVisible, setIsColorPickerVisible] = useState(false);
   const [colorValue, setColorValue] = useState("#fff");
-  const {
-    register,
-    formState,
-    getValues,
-    handleSubmit,
-    reset,
-    control,
-    setValue,
-  } = useForm<MapFormProps>();
+  const { register, formState, handleSubmit, reset, control, setValue } =
+    useForm<MapFormProps>();
   const { selectedBox, fields } = state;
-  const { updateBoard, isUpdating } = useUpdateBoard();
+  const { updateBoard } = useUpdateBoard();
   const { createBoard, isLoading } = useCreateBoard();
 
   const setFormValues = useCallback(() => {
@@ -318,55 +293,6 @@ export default function MapCreatorForm({ state, onSubmit }: any) {
             )}
           </FieldContainerStyled>
 
-          {/* Field Powers */}
-          <Label>Field Powers:</Label>
-          <Modal>
-            <Modal.Open opens="mapCreateNewPowerField">
-              <Button size="small" variation="primary" type="button">
-                New Power
-              </Button>
-            </Modal.Open>
-            <Modal.Window name="mapCreateNewPowerField">
-              <Controller
-                name="powers"
-                control={control}
-                defaultValue={[]}
-                render={({ field }) => (
-                  <PowerSelectionFormField
-                    onSelectPower={onPowerChange}
-                    selectedPowers={field.value}
-                  />
-                )}
-              />
-            </Modal.Window>
-          </Modal>
-
-          <FieldContainerStyled>
-            <FieldSet>
-              <Controller
-                name="powers"
-                control={control}
-                defaultValue={[]}
-                render={({ field }) => (
-                  <ReusableTable
-                    tableRowsColomns={TABLE_COLUMNS}
-                    data={field.value}
-                    customTableContainer={css`
-                      margin: 1px;
-                    `}
-                    customHeader={css`
-                      padding: 0.5px;
-                    `}
-                    // isSelectable={true}
-                    // onSelect={setSelectedMap}
-                    //isSearching={true}
-                    //mainHeader="Maps"
-                  />
-                )}
-              />
-            </FieldSet>
-          </FieldContainerStyled>
-
           {/* Movement Cost */}
           <Label>Movement Cost:</Label>
           <FieldContainerStyled>
@@ -473,6 +399,57 @@ export default function MapCreatorForm({ state, onSubmit }: any) {
               {...register("description")}
               style={{ height: "100px", marginBottom: "10px" }}
             />
+          </FieldContainerStyled>
+
+          {/* Field Powers */}
+          <Label>Field Powers:</Label>
+          <Modal>
+            <Modal.Open opens="mapCreateNewPowerField">
+              <Button size="small" variation="primary" type="button">
+                New Power
+              </Button>
+            </Modal.Open>
+            <Modal.Window name="mapCreateNewPowerField">
+              <Controller
+                name="powers"
+                control={control}
+                defaultValue={[]}
+                render={({ field }) => (
+                  <PowerSelectionFormField
+                    onSelectPower={onPowerChange}
+                    selectedPowers={field.value}
+                  />
+                )}
+              />
+            </Modal.Window>
+          </Modal>
+
+          <FieldContainerStyled>
+            <FieldSet>
+              <Controller
+                name="powers"
+                control={control}
+                defaultValue={[]}
+                render={({ field }) => (
+                  <ReusableTable
+                    tableRowsColomns={TABLE_COLUMNS}
+                    data={field.value}
+                    customTableContainer={css`
+                      margin: 1px;
+                      min-height: 100px;
+                      flex: 0 1 1;
+                    `}
+                    customHeader={css`
+                      padding: 0.5px;
+                    `}
+                    // isSelectable={true}
+                    // onSelect={setSelectedMap}
+                    //isSearching={true}
+                    //mainHeader="Maps"
+                  />
+                )}
+              />
+            </FieldSet>
           </FieldContainerStyled>
 
           {/* Save Changes Button */}

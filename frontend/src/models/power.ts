@@ -7,4 +7,5 @@ export type Power = {
 export type PowerListItem = {
   id: number;
   name: string;
+  description: string;
 };

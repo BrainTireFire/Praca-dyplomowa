@@ -21,10 +21,8 @@ const LeftPanel = styled.div`
   justify-content: space-between;
   background-color: var(--color-navbar);
   border: 1px solid var(--color-border);
-  padding: 20px;
   height: 100%;
   width: 300px;
-  overflow-y: auto;
 `;
 
 const MainGrid = styled.div`

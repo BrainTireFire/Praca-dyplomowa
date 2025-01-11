@@ -22,15 +22,12 @@ const Label = styled.label`
 `;
 
 const FieldSet = styled.div`
-  position: relative;
   width: 100%;
   /* margin-bottom: 15px; */
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding-bottom: 10px;
-  height: 100%;
-  overflow-y: hidden;
 `;
 
 const FieldContainerStyled = styled.div`
@@ -38,7 +35,6 @@ const FieldContainerStyled = styled.div`
   flex-direction: column;
   align-items: center;
   border-bottom: 1px solid var(--color-border);
-  overflow-y: hidden;
 `;
 
 const RadioGroup = styled.div`
@@ -73,6 +69,12 @@ const ChatForm = styled.form`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-color: var(--color-button-primary) var(--color-main-background);
+  scrollbar-width: thin;
+  scrollbar-gutter: stable;
+  padding: 10px 0 10px 10px;
 `;
 
 const ErrorMessage = styled.p`
@@ -391,16 +393,6 @@ export default function MapCreatorForm({ state, onSubmit }: any) {
             )}
           </FieldContainerStyled>
 
-          <Label>Description:</Label>
-          <FieldContainerStyled>
-            <TextArea
-              id="description"
-              placeholder="Description"
-              {...register("description")}
-              style={{ height: "100px", marginBottom: "10px" }}
-            />
-          </FieldContainerStyled>
-
           {/* Field Powers */}
           <Label>Field Powers:</Label>
           <Modal>
@@ -424,32 +416,37 @@ export default function MapCreatorForm({ state, onSubmit }: any) {
             </Modal.Window>
           </Modal>
 
-          <FieldContainerStyled>
-            <FieldSet>
-              <Controller
-                name="powers"
-                control={control}
-                defaultValue={[]}
-                render={({ field }) => (
-                  <ReusableTable
-                    tableRowsColomns={TABLE_COLUMNS}
-                    data={field.value}
-                    customTableContainer={css`
-                      margin: 1px;
-                      min-height: 100px;
-                      flex: 0 1 1;
-                    `}
-                    customHeader={css`
-                      padding: 0.5px;
-                    `}
-                    // isSelectable={true}
-                    // onSelect={setSelectedMap}
-                    //isSearching={true}
-                    //mainHeader="Maps"
-                  />
-                )}
+          <Controller
+            name="powers"
+            control={control}
+            defaultValue={[]}
+            render={({ field }) => (
+              <ReusableTable
+                tableRowsColomns={TABLE_COLUMNS}
+                data={field.value}
+                customTableContainer={css`
+                  margin: 1px;
+                  min-height: 100px;
+                `}
+                customHeader={css`
+                  padding: 0.5px;
+                `}
+                // isSelectable={true}
+                // onSelect={setSelectedMap}
+                //isSearching={true}
+                //mainHeader="Maps"
               />
-            </FieldSet>
+            )}
+          />
+
+          <Label>Description:</Label>
+          <FieldContainerStyled>
+            <TextArea
+              id="description"
+              placeholder="Description"
+              {...register("description")}
+              style={{ height: "100px", marginBottom: "10px" }}
+            />
           </FieldContainerStyled>
 
           {/* Save Changes Button */}

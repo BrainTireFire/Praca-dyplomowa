@@ -295,6 +295,52 @@ export default function MapCreatorForm({ state, onSubmit }: any) {
             )}
           </FieldContainerStyled>
 
+          {/* Field Powers */}
+          <Label>Field Powers:</Label>
+          <Modal>
+            <Modal.Open opens="mapCreateNewPowerField">
+              <Button size="small" variation="primary" type="button">
+                New Power
+              </Button>
+            </Modal.Open>
+            <Modal.Window name="mapCreateNewPowerField">
+              <Controller
+                name="powers"
+                control={control}
+                defaultValue={[]}
+                render={({ field }) => (
+                  <PowerSelectionFormField
+                    onSelectPower={onPowerChange}
+                    selectedPowers={field.value}
+                  />
+                )}
+              />
+            </Modal.Window>
+          </Modal>
+
+          <Controller
+            name="powers"
+            control={control}
+            defaultValue={[]}
+            render={({ field }) => (
+              <ReusableTable
+                tableRowsColomns={TABLE_COLUMNS}
+                data={field.value}
+                customTableContainer={css`
+                  margin: 1px;
+                  min-height: 100px;
+                `}
+                customHeader={css`
+                  padding: 0.5px;
+                `}
+                // isSelectable={true}
+                // onSelect={setSelectedMap}
+                //isSearching={true}
+                //mainHeader="Maps"
+              />
+            )}
+          />
+
           {/* Movement Cost */}
           <Label>Movement Cost:</Label>
           <FieldContainerStyled>
@@ -392,52 +438,6 @@ export default function MapCreatorForm({ state, onSubmit }: any) {
               </ErrorMessage>
             )}
           </FieldContainerStyled>
-
-          {/* Field Powers */}
-          <Label>Field Powers:</Label>
-          <Modal>
-            <Modal.Open opens="mapCreateNewPowerField">
-              <Button size="small" variation="primary" type="button">
-                New Power
-              </Button>
-            </Modal.Open>
-            <Modal.Window name="mapCreateNewPowerField">
-              <Controller
-                name="powers"
-                control={control}
-                defaultValue={[]}
-                render={({ field }) => (
-                  <PowerSelectionFormField
-                    onSelectPower={onPowerChange}
-                    selectedPowers={field.value}
-                  />
-                )}
-              />
-            </Modal.Window>
-          </Modal>
-
-          <Controller
-            name="powers"
-            control={control}
-            defaultValue={[]}
-            render={({ field }) => (
-              <ReusableTable
-                tableRowsColomns={TABLE_COLUMNS}
-                data={field.value}
-                customTableContainer={css`
-                  margin: 1px;
-                  min-height: 100px;
-                `}
-                customHeader={css`
-                  padding: 0.5px;
-                `}
-                // isSelectable={true}
-                // onSelect={setSelectedMap}
-                //isSearching={true}
-                //mainHeader="Maps"
-              />
-            )}
-          />
 
           <Label>Description:</Label>
           <FieldContainerStyled>

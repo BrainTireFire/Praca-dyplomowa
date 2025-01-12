@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { CharacterIdContext } from "../contexts/CharacterIdContext";
 import { PowerListItem } from "../../../models/power";
-import { ReusableTable } from "../../../ui/containers/ReusableTable";
+import { ReusableTable } from "../../../ui/containers/ReusableTable2";
 import Spinner from "../../../ui/interactive/Spinner";
 import Button from "../../../ui/interactive/Button";
 import styled, { css } from "styled-components";

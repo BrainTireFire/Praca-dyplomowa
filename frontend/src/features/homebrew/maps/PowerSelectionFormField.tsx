@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import styled, { css } from "styled-components";
 import { usePowers } from "../../../pages/powers/hooks/usePowers";
-import { ReusableTable } from "../../../ui/containers/ReusableTable";
+import { ReusableTable } from "../../../ui/containers/ReusableTable2";
 import Spinner from "../../../ui/interactive/Spinner";
 import Button from "../../../ui/interactive/Button";
 import { PowerListItem } from "../../../models/power";
@@ -131,7 +131,7 @@ export function PowerSelectionFormField({
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: auto auto auto;
+  grid-template-columns: 1fr 10% 1fr;
   grid-column-gap: 10px;
   width: 80vw;
   height: 70vh;

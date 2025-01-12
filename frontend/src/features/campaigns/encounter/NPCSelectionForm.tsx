@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styled, { css } from "styled-components";
 import { useNpcs } from "../hooks/useNpcs";
-import { ReusableTable } from "../../../ui/containers/ReusableTable";
+import { ReusableTable } from "../../../ui/containers/ReusableTable2";
 import Button from "../../../ui/interactive/Button";
 import Spinner from "../../../ui/interactive/Spinner";
 import { CharacterItem } from "../../../models/character";

@@ -1,6 +1,6 @@
 import { usePowers } from "./hooks/usePowers";
 import PowerForm, { initialState } from "../../features/powers/PowerForm";
-import { ReusableTable } from "../../ui/containers/ReusableTable";
+import { ReusableTable } from "../../ui/containers/ReusableTable2";
 import Spinner from "../../ui/interactive/Spinner";
 import styled, { css } from "styled-components";
 import { useState } from "react";
@@ -101,7 +101,7 @@ const Container = styled.div`
 const Column1 = styled.div`
   max-height: 100%;
   height: 100%;
-  max-width: 40%;
+  width: 40%;
   display: flex;
   flex-direction: column;
 `;

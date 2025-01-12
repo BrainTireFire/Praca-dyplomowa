@@ -1,4 +1,4 @@
-import { ReusableTable } from "../../../ui/containers/ReusableTable";
+import { ReusableTable } from "../../../ui/containers/ReusableTable2";
 import styled, { css } from "styled-components";
 import Button from "../../../ui/interactive/Button";
 import Modal from "../../../ui/containers/Modal";

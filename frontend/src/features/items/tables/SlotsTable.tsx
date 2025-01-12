@@ -3,7 +3,7 @@ import Menus from "../../../ui/containers/Menus";
 import Table from "../../../ui/containers/Table";
 import styled, { css } from "styled-components";
 import { ItemIdContext } from "../contexts/ItemIdContext";
-import { ReusableTable } from "../../../ui/containers/ReusableTable";
+import { ReusableTable } from "../../../ui/containers/ReusableTable2";
 import { useSlots } from "../hooks/useSlots";
 import { useItemSlots } from "../hooks/useItemSlots";
 import Button from "../../../ui/interactive/Button";
@@ -178,9 +178,10 @@ function SlotSelectionForm() {
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: auto auto auto;
+  grid-template-columns: 1fr 10% 1fr;
   grid-column-gap: 10px;
   height: 70vh;
+  width: 70vw;
 `;
 
 const Column1 = styled.div`

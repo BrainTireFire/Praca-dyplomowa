@@ -1,6 +1,5 @@
 import styled, { css } from "styled-components";
 import ItemForm from "../../features/items/ItemForm";
-import { ReusableTable } from "../../ui/containers/ReusableTable";
 import Button from "../../ui/interactive/Button";
 import Spinner from "../../ui/interactive/Spinner";
 import { useItems } from "./hooks/useItems";
@@ -9,6 +8,7 @@ import Modal from "../../ui/containers/Modal";
 import CreateNewItemForm from "./CreateNewItemForm";
 import { EditModeContext } from "../../context/EditModeContext";
 import { CharacterIdContext } from "../../features/characters/contexts/CharacterIdContext";
+import { ReusableTable } from "../../ui/containers/ReusableTable2";
 
 export default function Items() {
   const editMode = useContext(EditModeContext);
@@ -92,7 +92,7 @@ const Container = styled.div`
 const Column1 = styled.div`
   max-height: 100%;
   height: 100%;
-  max-width: 40%;
+  width: 40%;
   display: flex;
   flex-direction: column;
 `;
@@ -100,4 +100,5 @@ const Column2 = styled.div`
   max-height: 100%;
   height: 100%;
   max-width: 60%;
+  width: 60%;
 `;

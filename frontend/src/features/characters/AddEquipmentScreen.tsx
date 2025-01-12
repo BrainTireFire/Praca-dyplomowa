@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
 import ItemForm from "../../features/items/ItemForm";
-import { ReusableTable } from "../../ui/containers/ReusableTable";
+import { ReusableTable } from "../../ui/containers/ReusableTable2";
 import Button from "../../ui/interactive/Button";
 import Spinner from "../../ui/interactive/Spinner";
 import { useContext, useState } from "react";
@@ -52,6 +52,7 @@ export default function AddEquipmentScreen() {
           }
           isSelectable={true}
           onSelect={handleSelect}
+          customTableContainer={css``}
         ></ReusableTable>
 
         <Button
@@ -83,8 +84,8 @@ const Column1 = styled.div`
   grid-column: 1;
   max-height: 100%;
   height: 100%;
-  display: grid;
-  grid-template-rows: 1fr auto;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 `;
 const Column2 = styled.div`

@@ -5,7 +5,7 @@ import { useObjectResources } from "../../hooks/useObjectResources";
 import { useUpdateObjectResources } from "../../hooks/useUpdateObjectResources";
 import { ImmaterialResourceAmount } from "../../models/immaterialResourceAmount";
 import { ImmaterialResourceBlueprint } from "../../models/immaterialResourceBlueprint";
-import { ReusableTable } from "../../ui/containers/ReusableTable";
+import { ReusableTable } from "../../ui/containers/ReusableTable2";
 import Spinner from "../../ui/interactive/Spinner";
 import Button from "../../ui/interactive/Button";
 import FormRowVertical from "../../ui/forms/FormRowVertical";
@@ -223,7 +223,7 @@ export function ResourceSelectionForm() {
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: 1fr 15% 1fr;
   grid-column-gap: 10px;
   width: 80vw;
   height: 70vh;

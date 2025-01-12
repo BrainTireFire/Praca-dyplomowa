@@ -11,7 +11,7 @@ import { useCreateBoard } from "./useCreateBoard";
 import { BoardCreateDto } from "../../../models/map/BoardDto";
 import { useUpdateBoard } from "./useUpdateBoard";
 import { BoardUpdateDto } from "../../../models/map/BoardUpdate";
-import { ReusableTable } from "../../../ui/containers/ReusableTable";
+import { ReusableTable } from "../../../ui/containers/ReusableTable2";
 import Modal from "../../../ui/containers/Modal";
 import { PowerSelectionFormField } from "./PowerSelectionFormField";
 import { PowerListItem } from "../../../models/power";

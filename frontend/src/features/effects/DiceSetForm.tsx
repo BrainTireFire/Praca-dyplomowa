@@ -5,7 +5,7 @@ import FormRowVertical from "../../ui/forms/FormRowVertical";
 import Input from "../../ui/forms/Input";
 import { abilities, AbilitiesLabelMap } from "./abilities";
 import { skills, SkillsLabelMap } from "./skills";
-import { ReusableTable } from "../../ui/containers/ReusableTable";
+import { ReusableTable } from "../../ui/containers/ReusableTable2";
 import styled, { css } from "styled-components";
 import { AdditionalValueForm } from "./AdditionalValueForm";
 import Button from "../../ui/interactive/Button";

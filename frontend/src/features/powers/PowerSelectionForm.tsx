@@ -3,7 +3,7 @@ import { useUpdateObjectPowers } from "../../hooks/useUpdateObjectPowers";
 import { usePowers } from "../../pages/powers/hooks/usePowers";
 import { useObjectPowers } from "../../hooks/useObjectPowers";
 import { PowerListItem } from "../../models/power";
-import { ReusableTable } from "../../ui/containers/ReusableTable";
+import { ReusableTable } from "../../ui/containers/ReusableTable2";
 import Spinner from "../../ui/interactive/Spinner";
 import Button from "../../ui/interactive/Button";
 import styled, { css } from "styled-components";
@@ -145,9 +145,9 @@ export function PowerSelectionForm() {
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: auto auto auto;
+  grid-template-columns: 1fr 10% 1fr;
   grid-column-gap: 10px;
-  width: 80vw;
+  width: 70vw;
   height: 70vh;
 `;
 

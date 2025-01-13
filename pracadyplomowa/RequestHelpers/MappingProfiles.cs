@@ -106,9 +106,9 @@ public class MappingProfiles : Profile
                 )
             )
             .ForMember(
-                dest => dest.OccupiedFields,
+                dest => dest.OccupiedField,
                 opt => opt.MapFrom(
-                    src => src.R_OccupiedFields
+                    src => src.R_OccupiedField
                 )
             );
         

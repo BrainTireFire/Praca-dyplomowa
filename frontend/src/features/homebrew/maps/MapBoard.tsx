@@ -8,6 +8,7 @@ import {
   drawGrid,
   highlightBox,
   drawFieldBoxWithText,
+  drawFieldCross,
   drawSelectedBox,
   fillSelectedBox,
   drawTextName,
@@ -53,6 +54,9 @@ export default function MapBoard({
         fillSelectedBox(ctx, field, board.sizeX, board.sizeY);
         if (field.memberName) {
           drawTextName(ctx, field, board.sizeX, board.sizeY);
+        }
+        if (field.fieldMovementCost === "Impassable") {
+          drawFieldCross(ctx, field, board.sizeX, board.sizeY);
         }
       });
     }

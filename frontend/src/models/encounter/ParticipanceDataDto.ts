@@ -10,5 +10,5 @@ export type ParticipanceDataDto = {
   numberOfAttacksTaken: number;
   distanceTraveled: number;
   character: CharacterItem;
-  occupiedFields: Field[];
+  occupiedField: Field;
 };

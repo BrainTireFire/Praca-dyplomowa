@@ -135,6 +135,15 @@ export default function EncounterMapCreaterLayout({ encounterId, onToggle }) {
     (character: CharacterItem) => {
       if (!selectedBox) return;
 
+      const field = fields.find(
+        (field) =>
+          field.positionX === selectedBox.x && field.positionY === selectedBox.y
+      );
+
+      if (!field) return;
+
+      if (field.fieldMovementCost === "Impassable") return;
+
       handleFieldUpdate({
         positionX: selectedBox.x,
         positionY: selectedBox.y,

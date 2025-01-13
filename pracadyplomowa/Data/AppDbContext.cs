@@ -205,6 +205,12 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .WithOne(c => c.R_GeneratedBy)
                         .HasForeignKey<EffectGroup>(c => c.R_GeneratesAuraId)
                         .IsRequired(false);
+                
+                builder.Entity<Field>()
+                        .HasOne(c => c.R_OccupiedBy)
+                        .WithOne(c => c.R_OccupiedField)
+                        .HasForeignKey<Field>(c => c.R_OccupiedById)
+                        .IsRequired(false);
 
                 // builder.Entity<EffectGroup>()
                 //         .HasOne(c => c.R_OriginatesFromAura)

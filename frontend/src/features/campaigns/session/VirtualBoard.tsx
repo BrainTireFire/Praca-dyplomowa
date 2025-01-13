@@ -8,15 +8,15 @@ import {
   getColorForUser,
   drawGrid,
   highlightBox,
+  drawFieldCross,
   drawCustomCursor,
   drawSelectedBox,
   fillSelectedBox,
   drawTextName,
+  drawAvatar,
 } from "./CanvasUtils";
 import { VirtualBoardProps } from "./../../../models/session/VirtualBoardProps";
 import { Coordinate } from "../../../models/session/Coordinate";
-import Menus from "../../../ui/containers/Menus";
-import Modal from "../../../ui/containers/Modal";
 import VirtualBoardMenu from "../../../ui/containers/VirtualBoardMenu";
 
 const CanvasContainer = styled.div`
@@ -62,19 +62,44 @@ export default function VirtualBoard({
   const [selectedBox, setSelectedBox] = useState<Coordinate | null>(null);
   const [translatePos, setTranslatePos] = useState<Coordinate>({ x: 0, y: 0 });
 
+  const sizeX = encounter.board.sizeX;
+  const sizeY = encounter.board.sizeY;
+
+  const drawCursors = useCallback(
+    (ctx) => {
+      Object.keys(userCursors).forEach((connectionId) => {
+        const cursor = userCursors[connectionId];
+        const cursorColor = getColorForUser(connectionId);
+
+        drawCustomCursor(
+          ctx,
+          cursor.x,
+          cursor.y,
+          cursorColor,
+          cursor.userName,
+          sizeX,
+          sizeY
+        );
+      });
+    },
+    [userCursors, sizeX, sizeY]
+  );
+
   const drawCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+
     const width = canvas.width;
     const height = canvas.height;
 
+    // Clear the canvas and redraw static elements
     ctx.clearRect(0, 0, width, height);
     drawGrid(ctx, width, height, 16, 9);
 
     if (encounter.board.fields) {
-      encounter.board.fields.forEach((field) => {
+      encounter.board.fields.forEach(async (field) => {
         fillSelectedBox(
           ctx,
           field,
@@ -82,29 +107,33 @@ export default function VirtualBoard({
           encounter.board.sizeY
         );
 
-        const matchingParticipance = encounter.participances.find(
-          (participance) =>
-            participance.occupiedFields.some(
-              (occupiedField) =>
-                occupiedField.id === field.id &&
-                occupiedField.positionX === field.positionX &&
-                occupiedField.positionY === field.positionY &&
-                occupiedField.positionZ === field.positionZ
-            )
+        const matchingParticipance = encounter.participances?.find(
+          (participance) => participance?.occupiedField?.id === field.id
         );
 
-        if (matchingParticipance) {
+        if (matchingParticipance && field.fieldMovementCost !== "Impassable") {
           field.memberName = matchingParticipance.character.name;
+          field.avatarUrl = matchingParticipance.character.isNpc
+            ? "https://pbs.twimg.com/profile_images/1810521561352617985/ornocKLB_400x400.jpg"
+            : "https://i1.sndcdn.com/avatars-000012078220-stfi4o-t1080x1080.jpg";
 
-          if (matchingParticipance.character.isNpc) {
-            field.avatarUrl =
-              "https://pbs.twimg.com/profile_images/1810521561352617985/ornocKLB_400x400.jpg";
-          } else {
-            field.avatarUrl =
-              "https://i1.sndcdn.com/avatars-000012078220-stfi4o-t1080x1080.jpg";
-          }
-
+          // Call drawAvatar and drawTextName separately, ensuring drawAvatar finishes first
+          await drawAvatar(
+            ctx,
+            field,
+            encounter.board.sizeX,
+            encounter.board.sizeY
+          );
           drawTextName(
+            ctx,
+            field,
+            encounter.board.sizeX,
+            encounter.board.sizeY
+          );
+        }
+
+        if (field.fieldMovementCost === "Impassable") {
+          drawFieldCross(
             ctx,
             field,
             encounter.board.sizeX,
@@ -119,37 +148,38 @@ export default function VirtualBoard({
       const color = getColorForUser(connectionId);
       drawSelectedBox(ctx, box, 16, 9);
     });
-
-    // Draw cursors
-    Object.keys(userCursors).forEach((connectionId) => {
-      const cursor = userCursors[connectionId];
-      const cursorColor = getColorForUser(connectionId);
-
-      drawCustomCursor(ctx, cursor.x, cursor.y, cursorColor, cursor.userName);
-    });
-  }, [selectedBoxes, userCursors]);
+  }, [selectedBoxes, encounter]);
 
   useEffect(() => {
-    drawCanvas();
-  }, [drawCanvas]);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let animationFrameId;
+
+    const render = () => {
+      drawCanvas();
+      drawCursors(ctx);
+      animationFrameId = requestAnimationFrame(render);
+    };
+
+    render();
+
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [drawCanvas, drawCursors]);
 
   const handleCanvasClick = debounce(
-    async (
-      event: React.MouseEvent<HTMLCanvasElement>,
-      columns: number,
-      rows: number
-    ) => {
+    async (event: React.MouseEvent<HTMLCanvasElement>) => {
       const canvas = canvasRef.current;
       if (!canvas || !connection || !groupName) return;
       const rect = canvas.getBoundingClientRect();
-      // const x = event.clientX - rect.left - translatePos.x;
-      // const y = event.clientY - rect.top - translatePos.y;
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
 
       const squareSize = Math.min(
-        INITIAL_WIDTH / columns,
-        INITIAL_HEIGHT / rows
+        INITIAL_WIDTH / sizeX,
+        INITIAL_HEIGHT / sizeY
       );
 
       const gridX = Math.floor(x / squareSize);
@@ -182,14 +212,16 @@ export default function VirtualBoard({
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
-    const x = event.clientX - rect.left - translatePos.x;
-    const y = event.clientY - rect.top - translatePos.y;
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
 
-    const gridX = Math.floor(x / GRID_SIZE);
-    const gridY = Math.floor(y / GRID_SIZE);
+    const squareSize = Math.min(INITIAL_WIDTH / sizeX, INITIAL_HEIGHT / sizeY);
+
+    const gridX = Math.floor(x / squareSize);
+    const gridY = Math.floor(y / squareSize);
 
     // Adjust the offset here
-    const offsetX = -120; // Offset to the right
+    const offsetX = -100; // Offset to the right
     const offsetY = -100; // Offset downwards\
 
     setSelectedBox({ x: gridX, y: gridY });
@@ -285,11 +317,16 @@ export default function VirtualBoard({
       const canvas = canvasRef.current;
       if (!canvas) return;
       const rect = canvas.getBoundingClientRect();
-      const x = event.clientX - rect.left - translatePos.x;
-      const y = event.clientY - rect.top - translatePos.y;
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
 
-      const gridX = Math.floor(x / GRID_SIZE);
-      const gridY = Math.floor(y / GRID_SIZE);
+      const squareSize = Math.min(
+        INITIAL_WIDTH / sizeX,
+        INITIAL_HEIGHT / sizeY
+      );
+
+      const gridX = Math.floor(x / squareSize);
+      const gridY = Math.floor(y / squareSize);
 
       connection.invoke("SendCursorPosition", { x: gridX, y: gridY });
     };
@@ -298,7 +335,7 @@ export default function VirtualBoard({
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
     };
-  }, [connection, groupName, translatePos]);
+  }, [connection, groupName, sizeX, sizeY]);
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
@@ -311,7 +348,7 @@ export default function VirtualBoard({
         ref={canvasRef}
         width={INITIAL_WIDTH}
         height={INITIAL_HEIGHT}
-        onClick={(event) => handleCanvasClick(event, 16, 9)}
+        onClick={(event) => handleCanvasClick(event)}
         onContextMenu={handleCanvasRightClick}
       >
         Canvas

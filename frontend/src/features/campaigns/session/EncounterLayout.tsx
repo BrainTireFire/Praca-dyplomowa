@@ -4,7 +4,7 @@ import Spinner from "../../../ui/interactive/Spinner";
 import { useEncounters } from "../hooks/useEncounters";
 import Heading from "../../../ui/text/Heading";
 import Button from "../../../ui/interactive/Button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Encounter } from "../../../models/encounter/Encounter";
 import { useNavigate } from "react-router-dom";
 import EncounterMapCreaterLayout from "./EncounterMapCreaterLayout";
@@ -206,6 +206,20 @@ export default function EncounterLayout() {
     new Map()
   );
   const { isLoading, encounters } = useEncounters();
+
+  useEffect(() => {
+    if (!isLoading && encounters && encounters.length > 0) {
+      const activeEncounter = encounters.find(
+        (encounter) => encounter.isActive
+      );
+
+      if (activeEncounter && activeEncounter.campaign?.id) {
+        navigate(
+          `/campaigns/${activeEncounter.campaign.id}/session/${activeEncounter.id}`
+        );
+      }
+    }
+  }, [encounters, isLoading, navigate]);
 
   if (isLoading) {
     return <Spinner />;

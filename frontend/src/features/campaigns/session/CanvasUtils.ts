@@ -72,38 +72,32 @@ export const drawCustomCursor = (
   x: number,
   y: number,
   color: string,
-  userName: string
+  userName: string,
+  columns: number,
+  rows: number
 ) => {
-  // Constants for cursor dimensions
-  const cursorWidth = 20;
-  const cursorHeight = 20;
+  const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
 
-  // Draw custom arrow cursor, centering on (x, y)
+  // Calculate the center position of the grid cell where the mouse is
+  const centerX = x * squareSize + squareSize / 2;
+  const centerY = y * squareSize + squareSize / 2;
+
+  // Draw custom cursor circle centered in the grid box
   ctx.save();
   ctx.fillStyle = color;
   ctx.beginPath();
-  // ctx.moveTo(x * GRID_SIZE, y * GRID_SIZE); // Tip of the arrow
-  // ctx.lineTo(x * GRID_SIZE - cursorWidth / 2, y * GRID_SIZE + cursorHeight); // Left base
-  // ctx.lineTo(x * GRID_SIZE, y * GRID_SIZE + cursorHeight / 2); // Middle base
-  // ctx.lineTo(x * GRID_SIZE + cursorWidth / 2, y * GRID_SIZE + cursorHeight); // Right base
-  ctx.arc(
-    x * GRID_SIZE + GRID_SIZE / 2,
-    y * GRID_SIZE + GRID_SIZE / 2,
-    CURSOR_SIZE,
-    0,
-    2 * Math.PI
-  );
+  ctx.arc(centerX, centerY, CURSOR_SIZE, 0, 2 * Math.PI);
   ctx.closePath();
   ctx.fill();
   ctx.restore();
 
-  // Draw user name above the cursor
+  // Draw user name above the cursor, centered
   ctx.save();
   ctx.fillStyle = color;
   ctx.font = "12px Poppins";
   const textWidth = ctx.measureText(userName).width;
-  const textX = x * GRID_SIZE + GRID_SIZE / 2 - textWidth / 2;
-  const textY = y * GRID_SIZE + GRID_SIZE / 2 - CURSOR_SIZE - 5;
+  const textX = centerX - textWidth / 2; // Center the text horizontally
+  const textY = centerY - CURSOR_SIZE - 5; // Position text just above the cursor
 
   ctx.fillText(userName, textX, textY);
   ctx.restore();
@@ -261,14 +255,95 @@ export const fillSelectedBox = (
   ctx.restore();
 };
 
+const avatarCache: { [url: string]: HTMLImageElement } = {};
+
+export const drawAvatar = async (
+  ctx: CanvasRenderingContext2D,
+  field: {
+    positionX: number;
+    positionY: number;
+    avatarUrl?: string;
+  },
+  columns: number,
+  rows: number
+) => {
+  if (!field.avatarUrl) return;
+
+  const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
+  const avatarSize = squareSize * 0.6;
+
+  const avatarX =
+    field.positionX * squareSize + squareSize / 2 - avatarSize / 2;
+  const avatarY =
+    field.positionY * squareSize + squareSize / 2 - avatarSize / 1.4;
+
+  // Check if the image is already in cache
+  let avatarImage = avatarCache[field.avatarUrl];
+
+  if (!avatarImage) {
+    // If not cached, load the image
+    avatarImage = new Image();
+    avatarImage.src = field.avatarUrl;
+
+    // Cache the image when it is loaded
+    avatarImage.onload = () => {
+      avatarCache[field.avatarUrl] = avatarImage;
+    };
+  }
+
+  // If the image is cached or has just loaded, draw it
+  if (avatarImage.complete) {
+    ctx.save();
+
+    ctx.beginPath();
+    ctx.arc(
+      avatarX + avatarSize / 2,
+      avatarY + avatarSize / 2,
+      avatarSize / 2,
+      0,
+      Math.PI * 2
+    );
+    ctx.clip();
+    ctx.drawImage(avatarImage, avatarX, avatarY, avatarSize, avatarSize);
+
+    ctx.restore();
+  }
+};
+
 export const drawTextName = (
   ctx: CanvasRenderingContext2D,
   field: {
     positionX: number;
     positionY: number;
-    color: string;
     memberName?: string;
-    avatarUrl?: string;
+  },
+  columns: number,
+  rows: number
+) => {
+  if (!field.memberName) return;
+
+  const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
+
+  ctx.fillStyle = "white";
+  ctx.font = `${squareSize * 0.2}px Poppins`;
+
+  const textWidth = ctx.measureText(field.memberName).width;
+
+  const textX = field.positionX * squareSize + squareSize / 2 - textWidth / 2;
+  const textY =
+    field.positionY * squareSize + squareSize / 2 + (squareSize * 0.6) / 1.5;
+
+  ctx.fillText(field.memberName, textX, textY);
+
+  ctx.restore();
+};
+
+export const drawFieldCross = (
+  ctx: CanvasRenderingContext2D,
+  field: {
+    positionX: number;
+    positionY: number;
+    color: string;
   },
   columns: number,
   rows: number
@@ -277,63 +352,27 @@ export const drawTextName = (
     return;
   }
 
-  // Calculate square size from the provided columns and rows
   const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
 
-  // Dynamically calculate avatar size as a fraction of square size
-  const avatarSize = squareSize * 0.6; // 60% of the square size
+  const squareX = field.positionX * squareSize;
+  const squareY = field.positionY * squareSize;
+
+  const padding = squareSize * 0.03;
 
   ctx.save();
 
-  if (field.avatarUrl) {
-    const avatarX =
-      field.positionX * squareSize + squareSize / 2 - avatarSize / 2; // Center avatar horizontally
-    const avatarY =
-      field.positionY * squareSize + squareSize / 2 - avatarSize / 1.4; // Position avatar above the text
+  ctx.strokeStyle = "red";
+  ctx.lineWidth = squareSize * 0.04;
 
-    const avatarImage = new Image();
-    avatarImage.src = field.avatarUrl; // Load the image URL
+  ctx.beginPath();
+  ctx.moveTo(squareX + padding, squareY + padding);
+  ctx.lineTo(squareX + squareSize - padding, squareY + squareSize - padding);
+  ctx.stroke();
 
-    // Once the image is loaded, draw it on the canvas
-    avatarImage.onload = () => {
-      // Save the current drawing context
-      ctx.save();
-
-      // Create a circular clip path for the avatar
-      ctx.beginPath();
-      ctx.arc(
-        avatarX + avatarSize / 2,
-        avatarY + avatarSize / 2,
-        avatarSize / 2,
-        0,
-        Math.PI * 2
-      );
-      ctx.clip();
-
-      // Draw the image within the circular area
-      ctx.drawImage(avatarImage, avatarX, avatarY, avatarSize, avatarSize);
-
-      // Restore the previous drawing context
-      ctx.restore();
-    };
-  }
-
-  // Draw the text below the avatar
-  if (field.memberName) {
-    ctx.fillStyle = "white"; // Text color
-    ctx.font = `${squareSize * 0.2}px Poppins`; // Adjust font size based on square size
-
-    // Measure the width of the text
-    const textWidth = ctx.measureText(field.memberName).width;
-
-    // Position the text below the avatar
-    const textX = field.positionX * squareSize + squareSize / 2 - textWidth / 2; // Center horizontally
-    const textY =
-      field.positionY * squareSize + squareSize / 2 + avatarSize / 1.5; // Position text below avatar
-
-    // Draw the text
-    ctx.fillText(field.memberName, textX, textY);
-  }
+  ctx.beginPath();
+  ctx.moveTo(squareX + squareSize - padding, squareY + padding);
+  ctx.lineTo(squareX + padding, squareY + squareSize - padding);
+  ctx.stroke();
 
   ctx.restore();
 };

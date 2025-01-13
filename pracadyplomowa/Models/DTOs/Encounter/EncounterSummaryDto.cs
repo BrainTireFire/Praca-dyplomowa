@@ -12,6 +12,8 @@ public record EncounterSummaryDto
     [MaxLength(50)]
     public string Name { get; init; }
     
+    public bool IsActive { get; set; }
+    
     [Required]
     public EncounterCampaignDto Campaign { get; init; }
     

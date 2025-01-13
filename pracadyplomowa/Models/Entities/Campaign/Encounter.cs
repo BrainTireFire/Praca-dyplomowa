@@ -18,6 +18,8 @@ namespace pracadyplomowa.Models.Entities.Campaign
         public int R_BoardId { get; set; }
         public virtual ICollection<ParticipanceData> R_Participances { get; set; } = [];
         
+        public bool IsActive { get; set; } = false;
+        
         public ParticipanceData AddParticipance(Character character)
         {
             var participanceData = new ParticipanceData

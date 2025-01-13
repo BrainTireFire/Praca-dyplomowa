@@ -18,7 +18,7 @@ public class EncounterRepository : BaseRepository<Models.Entities.Campaign.Encou
             .Include(e => e.R_Participances)
                 .ThenInclude(p => p.R_Character)
             .Include(e => e.R_Participances)
-                .ThenInclude(p => p.R_OccupiedFields)
+                .ThenInclude(p => p.R_OccupiedField)
             .AsSplitQuery()
             .AsQueryable();
 
@@ -48,7 +48,7 @@ public class EncounterRepository : BaseRepository<Models.Entities.Campaign.Encou
             .Include(e => e.R_Participances)
                 .ThenInclude(p => p.R_Character)
             .Include(e => e.R_Participances)
-                .ThenInclude(p => p.R_OccupiedFields)
+                .ThenInclude(p => p.R_OccupiedField)
             .AsSplitQuery()
             .FirstAsync();
         

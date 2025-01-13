@@ -19,7 +19,10 @@ namespace pracadyplomowa.Models.Entities.Campaign
         //Relationship
         public virtual Encounter R_Encounter { get; set; } = null!;
         public int R_EncounterId { get; set; }
-        public virtual ICollection<Field> R_OccupiedFields { get; set; } = [];
+        
+        public virtual Field R_OccupiedField { get; set; }
+        
+        public int R_OccupiedFieldId { get; set; }
         public virtual Character R_Character { get; set; } = null!;
         public int R_CharacterId { get; set; }
 
@@ -49,16 +52,16 @@ namespace pracadyplomowa.Models.Entities.Campaign
 
         public bool IsAdjacentToParticipant(ParticipanceData participance)
         {
-            foreach (var field in R_OccupiedFields)
-            {
-                foreach (var otherField in participance.R_OccupiedFields)
-                {
-                    if (field.IsAdjacentToField(otherField))
-                    {
-                        return true;
-                    }
-                }
-            }
+            // foreach (var field in R_OccupiedFields)
+            // {
+            //     foreach (var otherField in participance.R_OccupiedFields)
+            //     {
+            //         if (field.IsAdjacentToField(otherField))
+            //         {
+            //             return true;
+            //         }
+            //     }
+            // }
             return false;
         }
     }

@@ -115,14 +115,14 @@ namespace pracadyplomowa.UnitTests.obj.CharacterTests
                 R_CharacterId = character.Id,
                 R_Encounter = enc,
                 R_EncounterId = enc.Id,
-                R_OccupiedFields = [field1]
+                R_OccupiedField = field1
             });
             enc.R_Participances.Add(new ParticipanceData(){
                 R_Character = target,
                 R_CharacterId = target.Id,
                 R_Encounter = enc,
                 R_EncounterId = enc.Id,
-                R_OccupiedFields = [field3]
+                R_OccupiedField = field3
             });
 
             int hitpointsBefore = target.Hitpoints;

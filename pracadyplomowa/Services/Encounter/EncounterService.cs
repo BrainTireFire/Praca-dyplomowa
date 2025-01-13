@@ -5,6 +5,7 @@ using pracadyplomowa.Errors;
 using pracadyplomowa.Models.DTOs.Encounter;
 using pracadyplomowa.Models.Entities.Campaign;
 using pracadyplomowa.Models.Entities.Characters;
+using pracadyplomowa.Models.Enums;
 using pracadyplomowa.Repository;
 using pracadyplomowa.Repository.Board;
 using pracadyplomowa.Repository.Encounter;
@@ -142,6 +143,11 @@ public class EncounterService : IEncounterService
                         return new NotFoundObjectResult(new ApiResponse(400, $"Field with Id {fieldUpdate.FieldId} does not exist"));
                     }
 
+                    if (field.FieldMovementCost == FieldMovementCostType.Impassable)
+                    {
+                        return new BadRequestObjectResult(new ApiResponse(400, $"Field is impassable {field.Id}"));
+                    }
+
                     field.UpdateParticipanceData(newParticipance);
                 }
                 else
@@ -166,11 +172,17 @@ public class EncounterService : IEncounterService
                     {
                         return new NotFoundObjectResult(new ApiResponse(400, $"Field with Id {fieldUpdate.FieldId} does not exist"));
                     }
+                    
+                    if (field.FieldMovementCost == FieldMovementCostType.Impassable)
+                    {
+                        return new BadRequestObjectResult(new ApiResponse(400, $"Field is impassable {field.Id}"));
+                    }
 
                     field.UpdateParticipanceData(participanceData);
                 }
             }
             
+            encounter.IsActive = true;
             await _unitOfWork.SaveChangesAsync();
 
             return new NoContentResult();

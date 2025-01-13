@@ -13,5 +13,5 @@ public record ParticipanceDataDto
     public int NumberOfAttacksTaken { get; set; }
     public int DistanceTraveled { get; set; }
     public ParticipanceCharacterSummaryDto Character { get; set; }
-    public ICollection<FieldDto> OccupiedFields { get; set; }
+    public FieldDto OccupiedField { get; set; }
 }

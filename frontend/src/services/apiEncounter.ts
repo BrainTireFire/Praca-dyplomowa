@@ -15,8 +15,6 @@ export async function createEncounter(
     body: JSON.stringify(encounterCreateDto),
   };
 
-  console.log("encounterCreateDto", encounterCreateDto);
-
   const data: EncounterCreateDto = await customFetch(
     `${BASE_URL}/api/encounter`,
     options
@@ -34,13 +32,10 @@ export async function updatePlaceEncounter(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
+      IsActive: true,
       FieldsToUpdate: encounterUpdateDto,
     }),
   };
-
-  console.log({
-    FieldsToUpdate: encounterUpdateDto,
-  });
 
   await customFetch(
     `${BASE_URL}/api/encounter/placeEncounter/${encounterId}`,

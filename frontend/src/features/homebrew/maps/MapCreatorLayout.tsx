@@ -21,7 +21,6 @@ const LeftPanel = styled.div`
   justify-content: space-between;
   background-color: var(--color-navbar);
   border: 1px solid var(--color-border);
-  padding: 20px;
   height: 100%;
   width: 300px;
 `;
@@ -30,7 +29,7 @@ const MainGrid = styled.div`
   display: grid;
   grid-template-rows: 1fr;
   grid-template-columns: 300px 1fr;
-  margin-top: 20px;
+  max-height: 100%;
 `;
 
 const initialState = {

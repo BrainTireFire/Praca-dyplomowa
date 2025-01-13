@@ -5,12 +5,12 @@ import { useObjectResources } from "../../hooks/useObjectResources";
 import { useUpdateObjectResources } from "../../hooks/useUpdateObjectResources";
 import { ImmaterialResourceAmount } from "../../models/immaterialResourceAmount";
 import { ImmaterialResourceBlueprint } from "../../models/immaterialResourceBlueprint";
-import { ReusableTable } from "../../ui/containers/ReusableTable";
+import { ReusableTable } from "../../ui/containers/ReusableTable2";
 import Spinner from "../../ui/interactive/Spinner";
 import Button from "../../ui/interactive/Button";
 import FormRowVertical from "../../ui/forms/FormRowVertical";
 import Input from "../../ui/forms/Input";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 export function ResourceSelectionForm() {
   const { objectId, objectType } = useContext(ParentObjectIdContext);
@@ -82,6 +82,9 @@ export function ResourceSelectionForm() {
             }
             isSelectable={true}
             onSelect={handleSelectAllResources}
+            customTableContainer={css`
+              height: 100%;
+            `}
           ></ReusableTable>
         )}
         {isLoadingAllResources && <Spinner />}
@@ -207,6 +210,9 @@ export function ResourceSelectionForm() {
             }
             isSelectable={true}
             onSelect={handleSelectItemResources}
+            customTableContainer={css`
+              height: 100%;
+            `}
           ></ReusableTable>
         )}
         {isLoadingItemResources && <Spinner />}
@@ -217,13 +223,16 @@ export function ResourceSelectionForm() {
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: 1fr 15% 1fr;
   grid-column-gap: 10px;
   width: 80vw;
+  height: 70vh;
 `;
 
 const Column1 = styled.div`
   grid-column: 1/2;
+  height: 100%;
+  overflow-y: hidden;
 `;
 const Column2 = styled.div`
   grid-column: 2/3;
@@ -232,4 +241,6 @@ const Column2 = styled.div`
 `;
 const Column3 = styled.div`
   grid-column: 3/4;
+  height: 100%;
+  overflow-y: hidden;
 `;

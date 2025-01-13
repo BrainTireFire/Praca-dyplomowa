@@ -1,10 +1,10 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { CharacterIdContext } from "../contexts/CharacterIdContext";
 import { PowerListItem } from "../../../models/power";
-import { ReusableTable } from "../../../ui/containers/ReusableTable";
+import { ReusableTable } from "../../../ui/containers/ReusableTable2";
 import Spinner from "../../../ui/interactive/Spinner";
 import Button from "../../../ui/interactive/Button";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { PowersToPrepare } from "../../../services/apiCharacters";
 import { useUpdateCharactersPowersPrepared } from "../hooks/useUpdateCharactersPowersPrepared";
 import { useCharactersPowersPreparedForClass } from "../hooks/useCharactersPowersPreparedForClass";
@@ -86,6 +86,9 @@ export function PreparedPowerSelectionForm({
             })}
             isSelectable={true}
             onSelect={handleSelectPowersToPrepare}
+            customTableContainer={css`
+              height: 100%;
+            `}
           ></ReusableTable>
         )}
         {isLoadingPowersPrepared && <Spinner />}
@@ -160,6 +163,9 @@ export function PreparedPowerSelectionForm({
             }
             isSelectable={true}
             onSelect={handleSelectPreparedPowers}
+            customTableContainer={css`
+              height: 100%;
+            `}
           ></ReusableTable>
         )}
         {isLoadingPowersPrepared && <Spinner />}
@@ -172,10 +178,14 @@ const Grid = styled.div`
   display: grid;
   grid-template-columns: auto auto auto;
   grid-column-gap: 10px;
+  width: 80vw;
+  height: 70vh;
 `;
 
 const Column1 = styled.div`
   grid-column: 1/2;
+  height: 100%;
+  overflow-y: hidden;
 `;
 const Column2 = styled.div`
   grid-column: 2/3;
@@ -184,4 +194,6 @@ const Column2 = styled.div`
 `;
 const Column3 = styled.div`
   grid-column: 3/4;
+  height: 100%;
+  overflow-y: hidden;
 `;

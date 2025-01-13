@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import Spinner from "../../../ui/interactive/Spinner";
-import { ReusableTable } from "../../../ui/containers/ReusableTable";
 import { useMaps } from "../hooks/useMaps";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
+import { ReusableTable } from "../../../ui/containers/ReusableTable2";
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 100%;
 `;
 
 const TABLE_COLUMNS = {
@@ -50,6 +51,9 @@ export default function EncounterMapTable({ onSelect }) {
         data={formattedMaps}
         isSelectable={true}
         onSelect={setSelectedMap}
+        customTableContainer={css`
+          flex: 1;
+        `}
         //isSearching={true}
         //mainHeader="Maps"
       />

@@ -8,22 +8,20 @@ import EncounterForm from "../../../features/campaigns/encounter/EncounterForm";
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 20px;
   align-items: center;
-  margin-top: 20px;
+  height: 100%;
 `;
 
 export default function Encounter() {
   const { t } = useTranslation();
 
   return (
-    <>
-      <Container>
-        <Heading as="h1">{"Encounter Creator"}</Heading>
-        <Line size="large" bold="medium" />
-      </Container>
+    <Container>
+      <Heading as="h1" style={{ padding: "15px" }}>
+        {"Encounter Creator"}
+      </Heading>
+      <Line size="large" bold="medium" />
       <EncounterForm />
-    </>
+    </Container>
   );
 }

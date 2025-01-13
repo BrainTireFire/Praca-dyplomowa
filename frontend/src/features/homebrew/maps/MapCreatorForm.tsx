@@ -11,12 +11,8 @@ import { useCreateBoard } from "./useCreateBoard";
 import { BoardCreateDto } from "../../../models/map/BoardDto";
 import { useUpdateBoard } from "./useUpdateBoard";
 import { BoardUpdateDto } from "../../../models/map/BoardUpdate";
-import { ReusableTable } from "../../../ui/containers/ReusableTable";
+import { ReusableTable } from "../../../ui/containers/ReusableTable2";
 import Modal from "../../../ui/containers/Modal";
-import EffectInstanceForm from "../../effects/EffectInstanceForm";
-import { EffectParentObjectIdContext } from "../../../context/EffectParentObjectIdContext";
-import { ParentObjectIdContext } from "../../../context/ParentObjectIdContext";
-import { PowerSelectionForm } from "../../powers/PowerSelectionForm";
 import { PowerSelectionFormField } from "./PowerSelectionFormField";
 import { PowerListItem } from "../../../models/power";
 
@@ -26,9 +22,8 @@ const Label = styled.label`
 `;
 
 const FieldSet = styled.div`
-  position: relative;
   width: 100%;
-  margin-bottom: 15px;
+  /* margin-bottom: 15px; */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -47,23 +42,6 @@ const RadioGroup = styled.div`
   justify-content: space-around;
   margin-bottom: 10px;
   gap: 10px;
-`;
-
-const Table = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 10px;
-`;
-
-const TableHeader = styled.th`
-  border: 1px solid var(--color-border);
-  padding: 5px;
-  background-color: var(--color-navbar);
-`;
-
-const TableCell = styled.td`
-  border: 1px solid var(--color-border);
-  padding: 5px;
 `;
 
 const ToggleButton = styled.button<{ color: string }>`
@@ -91,6 +69,12 @@ const ChatForm = styled.form`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-color: var(--color-button-primary) var(--color-main-background);
+  scrollbar-width: thin;
+  scrollbar-gutter: stable;
+  padding: 10px 0 10px 10px;
 `;
 
 const ErrorMessage = styled.p`
@@ -137,17 +121,10 @@ export default function MapCreatorForm({ state, onSubmit }: any) {
   const colorPickerPopover = useRef();
   const [isColorPickerVisible, setIsColorPickerVisible] = useState(false);
   const [colorValue, setColorValue] = useState("#fff");
-  const {
-    register,
-    formState,
-    getValues,
-    handleSubmit,
-    reset,
-    control,
-    setValue,
-  } = useForm<MapFormProps>();
+  const { register, formState, handleSubmit, reset, control, setValue } =
+    useForm<MapFormProps>();
   const { selectedBox, fields } = state;
-  const { updateBoard, isUpdating } = useUpdateBoard();
+  const { updateBoard } = useUpdateBoard();
   const { createBoard, isLoading } = useCreateBoard();
 
   const setFormValues = useCallback(() => {
@@ -341,31 +318,28 @@ export default function MapCreatorForm({ state, onSubmit }: any) {
             </Modal.Window>
           </Modal>
 
-          <FieldContainerStyled>
-            <FieldSet>
-              <Controller
-                name="powers"
-                control={control}
-                defaultValue={[]}
-                render={({ field }) => (
-                  <ReusableTable
-                    tableRowsColomns={TABLE_COLUMNS}
-                    data={field.value}
-                    customTableContainer={css`
-                      margin: 1px;
-                    `}
-                    customHeader={css`
-                      padding: 0.5px;
-                    `}
-                    // isSelectable={true}
-                    // onSelect={setSelectedMap}
-                    //isSearching={true}
-                    //mainHeader="Maps"
-                  />
-                )}
+          <Controller
+            name="powers"
+            control={control}
+            defaultValue={[]}
+            render={({ field }) => (
+              <ReusableTable
+                tableRowsColomns={TABLE_COLUMNS}
+                data={field.value}
+                customTableContainer={css`
+                  margin: 1px;
+                  min-height: 100px;
+                `}
+                customHeader={css`
+                  padding: 0.5px;
+                `}
+                // isSelectable={true}
+                // onSelect={setSelectedMap}
+                //isSearching={true}
+                //mainHeader="Maps"
               />
-            </FieldSet>
-          </FieldContainerStyled>
+            )}
+          />
 
           {/* Movement Cost */}
           <Label>Movement Cost:</Label>

@@ -3,10 +3,10 @@ import { useUpdateObjectPowers } from "../../hooks/useUpdateObjectPowers";
 import { usePowers } from "../../pages/powers/hooks/usePowers";
 import { useObjectPowers } from "../../hooks/useObjectPowers";
 import { PowerListItem } from "../../models/power";
-import { ReusableTable } from "../../ui/containers/ReusableTable";
+import { ReusableTable } from "../../ui/containers/ReusableTable2";
 import Spinner from "../../ui/interactive/Spinner";
 import Button from "../../ui/interactive/Button";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { ParentObjectIdContext } from "../../context/ParentObjectIdContext";
 
 export function PowerSelectionForm() {
@@ -62,7 +62,7 @@ export function PowerSelectionForm() {
       <Column1>
         {!isLoadingAllPowers && (
           <ReusableTable
-            mainHeader="All possible slots"
+            mainHeader="All available powers"
             tableRowsColomns={{ Name: "name" }}
             data={allPowersWithoutLocal.map((power, index) => {
               return {
@@ -72,6 +72,9 @@ export function PowerSelectionForm() {
             })}
             isSelectable={true}
             onSelect={handleSelectAllPowers}
+            customTableContainer={css`
+              height: 100%;
+            `}
           ></ReusableTable>
         )}
         {isLoadingAllPowers && <Spinner />}
@@ -117,7 +120,7 @@ export function PowerSelectionForm() {
       <Column3>
         {!isLoadingItemPowers && (
           <ReusableTable
-            mainHeader="Selected slots"
+            mainHeader="Selected powers"
             tableRowsColomns={{ Name: "name" }}
             data={
               itemPowersLocal?.map((power, index) => {
@@ -129,6 +132,9 @@ export function PowerSelectionForm() {
             }
             isSelectable={true}
             onSelect={handleSelectItemPowers}
+            customTableContainer={css`
+              height: 100%;
+            `}
           ></ReusableTable>
         )}
         {isLoadingItemPowers && <Spinner />}
@@ -139,12 +145,16 @@ export function PowerSelectionForm() {
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: auto auto auto;
+  grid-template-columns: 1fr 10% 1fr;
   grid-column-gap: 10px;
+  width: 70vw;
+  height: 70vh;
 `;
 
 const Column1 = styled.div`
   grid-column: 1/2;
+  height: 100%;
+  overflow-y: hidden;
 `;
 const Column2 = styled.div`
   grid-column: 2/3;
@@ -153,4 +163,6 @@ const Column2 = styled.div`
 `;
 const Column3 = styled.div`
   grid-column: 3/4;
+  height: 100%;
+  overflow-y: hidden;
 `;

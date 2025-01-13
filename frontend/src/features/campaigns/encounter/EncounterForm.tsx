@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import Input from "../../../ui/forms/Input";
 import Button from "../../../ui/interactive/Button";
 import Form from "../../../ui/forms/Form";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import EncounterMapTable from "./EncounterMapTable";
 import EncounterNPCTable from "./EncounterNPCTable";
 import { useCampaign } from "../hooks/useCampaign";
@@ -16,9 +16,9 @@ import { useCreateEncounter } from "../hooks/useCreateEncounter";
 const GridStyled = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 1fr auto 1fr;
-  gap: 20px;
+  grid-template-rows: 10% 80% 10%;
   height: 100%;
+  overflow-y: hidden;
 `;
 
 const GridInputStyled = styled.div`
@@ -32,11 +32,12 @@ const TableContainerStyled = styled.div`
   justify-content: space-between;
   align-items: center;
   margin: 0 100px;
-  gap: 20px;
+  height: 100%;
 `;
 
 const TableStyled = styled.div`
   flex: 1;
+  height: 100%;
 `;
 
 const GridButtonStyled = styled.div`
@@ -89,7 +90,7 @@ export default function EncounterForm() {
   }
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
+    <Form onSubmit={handleSubmit(onSubmit)} style={{ height: "100%" }}>
       <GridStyled>
         <GridInputStyled>
           <FormRowVertical label={"Name"} error={errors?.name?.message}>

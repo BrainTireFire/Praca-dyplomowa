@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { usePowers } from "../../../pages/powers/hooks/usePowers";
-import { ReusableTable } from "../../../ui/containers/ReusableTable";
+import { ReusableTable } from "../../../ui/containers/ReusableTable2";
 import Spinner from "../../../ui/interactive/Spinner";
 import Button from "../../../ui/interactive/Button";
 import { PowerListItem } from "../../../models/power";
@@ -56,7 +56,7 @@ export function PowerSelectionFormField({
       <Column1>
         {!isLoadingAllPowers && (
           <ReusableTable
-            mainHeader="All possible slots"
+            mainHeader="All available powers"
             tableRowsColomns={{ Name: "name" }}
             data={
               allPowersWithoutLocal?.map((power, index) => {
@@ -68,6 +68,9 @@ export function PowerSelectionFormField({
             }
             isSelectable={true}
             onSelect={handleSelectAllPowers}
+            customTableContainer={css`
+              height: 100%;
+            `}
           ></ReusableTable>
         )}
         {isLoadingAllPowers && <Spinner />}
@@ -105,7 +108,7 @@ export function PowerSelectionFormField({
       </Column2>
       <Column3>
         <ReusableTable
-          mainHeader="Selected slots"
+          mainHeader="Selected powers"
           tableRowsColomns={{ Name: "name" }}
           data={
             itemPowersLocal?.map((power, index) => {
@@ -117,6 +120,9 @@ export function PowerSelectionFormField({
           }
           isSelectable={true}
           onSelect={handleSelectItemPowers}
+          customTableContainer={css`
+            height: 100%;
+          `}
         ></ReusableTable>
       </Column3>
     </Grid>
@@ -125,12 +131,16 @@ export function PowerSelectionFormField({
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: auto auto auto;
+  grid-template-columns: 1fr 10% 1fr;
   grid-column-gap: 10px;
+  width: 80vw;
+  height: 70vh;
 `;
 
 const Column1 = styled.div`
   grid-column: 1/2;
+  height: 100%;
+  overflow-y: hidden;
 `;
 const Column2 = styled.div`
   grid-column: 2/3;
@@ -139,4 +149,6 @@ const Column2 = styled.div`
 `;
 const Column3 = styled.div`
   grid-column: 3/4;
+  height: 100%;
+  overflow-y: hidden;
 `;

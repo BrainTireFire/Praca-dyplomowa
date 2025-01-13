@@ -6,7 +6,7 @@ import Heading from "../../../ui/text/Heading";
 import Button from "../../../ui/interactive/Button";
 import { useEffect, useState } from "react";
 import { Encounter } from "../../../models/encounter/Encounter";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import EncounterMapCreaterLayout from "./EncounterMapCreaterLayout";
 import { useQuery } from "@tanstack/react-query";
 import { useEncounter } from "../hooks/useEncounter";
@@ -200,12 +200,13 @@ const CharacterList = styled.ul`
 
 export default function EncounterLayout() {
   const navigate = useNavigate();
+  const { campaignId } = useParams<{ campaignId: string }>();
   const [selectedEncounter, setSelectedEncounter] = useState<Encounter>();
   const [toggleMap, setToggleMap] = useState(false);
   const [detailsToggled, setDetailsToggled] = useState<Map<number, boolean>>(
     new Map()
   );
-  const { isLoading, encounters } = useEncounters();
+  const { isLoading, encounters } = useEncounters(campaignId);
 
   useEffect(() => {
     if (!isLoading && encounters && encounters.length > 0) {

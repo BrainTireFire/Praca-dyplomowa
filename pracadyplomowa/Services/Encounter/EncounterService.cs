@@ -31,9 +31,9 @@ public class EncounterService : IEncounterService
         _mapper = mapper;
     }
     
-    public async Task<PagedList<EncounterShortDto>> GetEncountersAsync(int ownedId, EncounterParams encounterParams)
+    public async Task<PagedList<EncounterShortDto>> GetEncountersAsync(int ownedId, int campaignId, EncounterParams encounterParams)
     {
-        var encounters = await _unitOfWork.EncounterRepository.GetEncounters(ownedId, encounterParams);
+        var encounters = await _unitOfWork.EncounterRepository.GetEncounters(ownedId, campaignId, encounterParams);
         var encounterSummary = _mapper.MapPagedList<Models.Entities.Campaign.Encounter, EncounterShortDto>(encounters);
         return encounterSummary;
     }

@@ -7,7 +7,7 @@ import {
   getColorForUser,
   drawGrid,
   highlightBox,
-  drawFieldBoxWithText,
+  drawAvatar,
   drawFieldCross,
   drawSelectedBox,
   fillSelectedBox,
@@ -52,9 +52,12 @@ export default function MapBoard({
     if (fields) {
       fields.forEach((field) => {
         fillSelectedBox(ctx, field, board.sizeX, board.sizeY);
+
         if (field.memberName) {
           drawTextName(ctx, field, board.sizeX, board.sizeY);
+          drawAvatar(ctx, field, board.sizeX, board.sizeY);
         }
+
         if (field.fieldMovementCost === "Impassable") {
           drawFieldCross(ctx, field, board.sizeX, board.sizeY);
         }

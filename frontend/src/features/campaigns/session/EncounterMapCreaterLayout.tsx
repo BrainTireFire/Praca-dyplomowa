@@ -144,12 +144,15 @@ export default function EncounterMapCreaterLayout({ encounterId, onToggle }) {
 
       if (field.fieldMovementCost === "Impassable") return;
 
+      const avatarUrl = character.isNpc
+        ? "https://pbs.twimg.com/profile_images/1810521561352617985/ornocKLB_400x400.jpg"
+        : "https://i1.sndcdn.com/avatars-000012078220-stfi4o-t1080x1080.jpg";
+
       handleFieldUpdate({
         positionX: selectedBox.x,
         positionY: selectedBox.y,
         memberName: character.name,
-        avatarUrl:
-          "https://i1.sndcdn.com/avatars-000012078220-stfi4o-t1080x1080.jpg",
+        avatarUrl: avatarUrl,
       });
 
       setSelectedBox(null);
@@ -167,8 +170,6 @@ export default function EncounterMapCreaterLayout({ encounterId, onToggle }) {
 
   const handleSubmit = () => {
     const fieldsToUpdate = getFieldsToUpdate();
-    console.log("encounter.id:", encounter.id);
-    console.log("fieldsToUpdate:", fieldsToUpdate);
     updatePlaceEncounter({
       encounterId: encounter.id,
       encounterUpdateDto: fieldsToUpdate,

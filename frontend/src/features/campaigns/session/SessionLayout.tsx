@@ -208,8 +208,6 @@ export default function SessionLayout({ encounter }: any) {
   );
   const [otherPath, setOtherPath] = useState<number[]>([]);
 
-  console.log(controlState.path);
-
   useEffect(() => {
     if (groupName) {
       const hubConnection = new HubConnectionBuilder()
@@ -282,7 +280,7 @@ export default function SessionLayout({ encounter }: any) {
         console.log("update");
         console.log(incomingPath);
         setOtherPath(incomingPath);
-        // dispatch({ type: "SET_PATH", payload: [] });
+        dispatch({ type: "SET_PATH", payload: [] });
       });
       connection.on("RequeryInitiative", () => {
         console.log("Requery initiative signal detected");
@@ -291,13 +289,20 @@ export default function SessionLayout({ encounter }: any) {
         });
       });
     }
+    return () => {
+      if (connection) {
+        connection.off("UpdatePath");
+        connection.off("RequeryInitiative");
+      }
+    };
   }, [connection, encounter.id, queryClient]);
 
   useEffect(() => {
     if (controlState.path && !!connection) {
-      console.log("path change detected");
-      setOtherPath([]);
-      connection.invoke("SendSelectedPath", controlState.path);
+      if (controlState.path.length !== 0) {
+        setOtherPath([]);
+        connection.invoke("SendSelectedPath", controlState.path);
+      }
     }
   }, [connection, controlState.path]);
 

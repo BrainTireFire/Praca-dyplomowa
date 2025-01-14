@@ -230,7 +230,7 @@ export default function VirtualBoard({
         ...selectedBoxes,
         [connectionId]: { x: gridX, y: gridY },
       };
-      console.log(updatedSelectedBoxes);
+
       setSelectedBoxes(updatedSelectedBoxes);
 
       if (mode === "Movement") {
@@ -384,7 +384,7 @@ export default function VirtualBoard({
     }
     return () => {
       if (connection) {
-        connection.off("ReceiveSelectedBox");
+        connection.off("ReceiveSelectedBoxes");
         connection.off("UpdateCursors");
       }
     };

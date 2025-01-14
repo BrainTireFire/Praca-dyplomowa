@@ -212,7 +212,7 @@ public class SessionHub  : Hub
     {
         if (SelectedPath.TryGetValue(groupName, out var paths))
         {
-            await Clients.Group(groupName).SendAsync("UpdatePath", paths);
+            await Clients.GroupExcept(groupName, Context.ConnectionId).SendAsync("UpdatePath", paths);
         }
     }
 
@@ -226,7 +226,7 @@ public class SessionHub  : Hub
     }
     private async Task NotifyAllRequeryInitiative(string groupName)
     {
-        await Clients.GroupExcept(groupName, Context.User?.GetUsername()).SendAsync("RequeryInitiative");
+        await Clients.GroupExcept(groupName, Context.ConnectionId).SendAsync("RequeryInitiative");
     }
     
 

@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using pracadyplomowa.Errors;
+using pracadyplomowa.Hubs;
 using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.Entities.Campaign;
 using pracadyplomowa.Models.Entities.Characters;
@@ -9,10 +11,12 @@ using pracadyplomowa.Services;
 namespace pracadyplomowa.Controllers
 {
 
-    public class CampaignController(IUnitOfWork unitOfWork, ICharacterService characterService) : BaseApiController
+    public class CampaignController(IUnitOfWork unitOfWork, ICharacterService characterService, 
+        IHubContext<NotificationHub> hubContext) : BaseApiController
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly ICharacterService _characterService = characterService;
+        private readonly IHubContext<NotificationHub> _hubContext = hubContext;
 
         [HttpPost]
         public async Task<ActionResult<int>> CreateCampaign(CampaignInsertDto campaignInsertDto)
@@ -71,6 +75,10 @@ namespace pracadyplomowa.Controllers
             campaign.R_CampaignHasCharacters.Add(character);
 
             await _unitOfWork.SaveChangesAsync();
+            
+            var notificationMessage = $"{character.Name} has been successfully added to the campaign \"{campaign.Name}\".";
+            await _hubContext.Clients.All.SendAsync("ReceiveNotification", notificationMessage, campaignId);
+            
             return Ok(campaignId);
         }
 

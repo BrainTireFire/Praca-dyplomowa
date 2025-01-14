@@ -132,6 +132,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapHub<SessionHub>("/session");
+app.MapHub<NotificationHub>("/notifications");
 app.MapControllers();
 
 using var scope = app.Services.CreateScope();

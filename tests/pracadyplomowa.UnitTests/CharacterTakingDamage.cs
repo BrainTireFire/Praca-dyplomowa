@@ -11,7 +11,7 @@ using pracadyplomowa.Models.Entities.Powers.EffectBlueprints;
 using pracadyplomowa.Models.Enums;
 using Xunit;
 
-namespace pracadyplomowa.UnitTests.obj.CharacterTests
+namespace pracadyplomowa.UnitTests.CharacterTests
 {
     public class CharacterTakingDamage
     {

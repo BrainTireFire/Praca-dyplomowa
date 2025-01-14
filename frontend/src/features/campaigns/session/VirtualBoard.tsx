@@ -18,12 +18,13 @@ import {
 import { VirtualBoardProps } from "./../../../models/session/VirtualBoardProps";
 import { Coordinate } from "../../../models/session/Coordinate";
 import VirtualBoardMenu from "../../../ui/containers/VirtualBoardMenu";
+import { PiPathLight } from "react-icons/pi";
 
 const CanvasContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
+  overflow: auto;
   position: relative;
   width: 100%;
   height: 100%;
@@ -44,6 +45,10 @@ export default function VirtualBoard({
   encounter,
   connection,
   groupName,
+  mode,
+  dispatch,
+  path,
+  otherPath,
 }: VirtualBoardProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [selectedBoxes, setSelectedBoxes] = useState<{
@@ -114,7 +119,7 @@ export default function VirtualBoard({
         if (matchingParticipance && field.fieldMovementCost !== "Impassable") {
           field.memberName = matchingParticipance.character.name;
           field.avatarUrl = matchingParticipance.character.isNpc
-            ? "https://pbs.twimg.com/profile_images/1810521561352617985/ornocKLB_400x400.jpg"
+            ? "https://i1.sndcdn.com/avatars-000012078220-stfi4o-t1080x1080.jpg"
             : "https://i1.sndcdn.com/avatars-000012078220-stfi4o-t1080x1080.jpg";
 
           // Call drawAvatar and drawTextName separately, ensuring drawAvatar finishes first
@@ -146,9 +151,40 @@ export default function VirtualBoard({
     Object.keys(selectedBoxes).forEach((connectionId) => {
       const box = selectedBoxes[connectionId];
       const color = getColorForUser(connectionId);
-      drawSelectedBox(ctx, box, 16, 9);
+      if (mode === "Movement" || otherPath.length > 0) {
+        let localPath: number[] = [];
+        if (otherPath.length > 0) {
+          localPath = otherPath;
+        } else if (path.length > 0) {
+          localPath = path;
+        }
+        localPath.forEach((element) => {
+          let field = encounter.board.fields.find(
+            (field) => field.id === element
+          );
+          if (!!field) {
+            drawSelectedBox(
+              ctx,
+              { x: field.positionX, y: field.positionY },
+              16,
+              9
+            );
+          }
+        });
+      } else {
+        drawSelectedBox(ctx, box, 16, 9);
+      }
     });
-  }, [selectedBoxes, encounter]);
+  }, [
+    encounter.board.fields,
+    encounter.board.sizeX,
+    encounter.board.sizeY,
+    encounter.participances,
+    selectedBoxes,
+    mode,
+    otherPath,
+    path,
+  ]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -194,13 +230,40 @@ export default function VirtualBoard({
         ...selectedBoxes,
         [connectionId]: { x: gridX, y: gridY },
       };
+      console.log(updatedSelectedBoxes);
       setSelectedBoxes(updatedSelectedBoxes);
 
-      await connection.invoke(
-        "SendSelectedBoxes",
-        groupName,
-        updatedSelectedBoxes
-      );
+      if (mode === "Movement") {
+        let selectedField = encounter.board.fields.find(
+          (field) => field.positionX === gridX && field.positionY === gridY
+        );
+        let lastField = encounter.board.fields.find(
+          (field) => field.id === path[path.length - 1]
+        );
+        let distanceX =
+          (lastField?.positionX ?? -1) - (selectedField?.positionX ?? 1);
+        let distanceY =
+          (lastField?.positionY ?? -1) - (selectedField?.positionY ?? 1);
+
+        if (
+          !!selectedField &&
+          (path.length === 0 ||
+            !!path.find((x) => x === selectedField.id) ||
+            (Math.abs(distanceX) <= 1 && Math.abs(distanceY) <= 1))
+        ) {
+          console.log("dispatching");
+          dispatch({
+            type: "TOGGLE_PATH",
+            payload: selectedField?.id as number,
+          });
+        }
+      } else {
+        await connection.invoke(
+          "SendSelectedBoxes",
+          groupName,
+          updatedSelectedBoxes
+        );
+      }
     },
     200
   );
@@ -278,9 +341,25 @@ export default function VirtualBoard({
       };
       setSelectedBoxes(updatedSelectedBoxes);
 
-      connection?.invoke("SendSelectedBoxes", groupName, updatedSelectedBoxes);
+      if (mode === "Movement") {
+        let selectedField = encounter.board.fields.find(
+          (field) => field.positionX === x && field.positionY === y
+        );
+        dispatch({ type: "TOGGLE_PATH", payload: selectedField?.id as number });
+        console.log(path);
+      } else {
+        connection.invoke("SendSelectedBoxes", groupName, updatedSelectedBoxes);
+      }
     },
-    [connection, groupName, selectedBoxes]
+    [
+      connection,
+      dispatch,
+      encounter.board.fields,
+      groupName,
+      mode,
+      path,
+      selectedBoxes,
+    ]
   );
 
   useEffect(() => {

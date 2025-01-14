@@ -9,4 +9,5 @@ export type Encounter = {
   board: Board;
   campaign: Campaign;
   participances: ParticipanceDataDto[];
+  amIGameMaster: boolean;
 };

@@ -7,9 +7,10 @@ import { useParams } from "react-router-dom";
 const Container = styled.div`
   display: grid;
   grid-template-columns: 3fr 1fr;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto auto auto;
   gap: 10px;
   height: 100vh;
+  overflow: auto;
 `;
 
 export default function MainSession() {

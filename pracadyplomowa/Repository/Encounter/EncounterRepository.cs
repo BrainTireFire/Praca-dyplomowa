@@ -47,6 +47,7 @@ public class EncounterRepository : BaseRepository<Models.Entities.Campaign.Encou
                 .ThenInclude(b => b.R_ConsistsOfFields)
             .Include(e => e.R_Participances)
                 .ThenInclude(p => p.R_Character)
+                    .ThenInclude(c => c.R_Owner)
             .Include(e => e.R_Participances)
                 .ThenInclude(p => p.R_OccupiedField)
             .AsSplitQuery()

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import styled from "styled-components";
 import VirtualBoard from "./VirtualBoard";
 import {
@@ -11,19 +11,19 @@ import Button from "../../../ui/interactive/Button";
 import Heading from "../../../ui/text/Heading";
 import { useParams } from "react-router-dom";
 import { BASE_URL } from "../../../services/constAPI";
+import ActionBar from "./ActionBar";
+import { useQueryClient } from "@tanstack/react-query";
 
 const GridContainer = styled.div`
   grid-row: 1 / 2;
   grid-column: 1 / 2;
-  display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  overflow: hidden;
+  height: auto;
 `;
 
 const RightPanel = styled.div`
-  grid-row: 1 / 3;
+  grid-row: 1 / 4;
   grid-column: 2 / 3;
   display: flex;
   flex-direction: column;
@@ -39,7 +39,12 @@ const BottomPanel = styled.div`
   display: flex;
   background-color: var(--color-navbar);
   border: 1px solid var(--color-border);
-  height: 48%;
+  height: auto;
+`;
+const BottomPanel2 = styled.div`
+  grid-row: 3 / 4;
+  grid-column: 1 / 2;
+  height: auto;
 `;
 
 const UsersList = styled.div`
@@ -81,6 +86,106 @@ const ChatForm = styled.form`
   }
 `;
 
+export type Mode = "Idle" | "Movement" | "WeaponAttack" | "PowerCast";
+
+type ControlState = {
+  mode: Mode;
+  path: number[];
+};
+
+// Define action types
+const CHANGE_MODE = "CHANGE_MODE";
+const APPEND_PATH = "APPEND_PATH";
+const POP_PATH = "POP_PATH";
+const TOGGLE_PATH = "TOGGLE_PATH";
+const SET_PATH = "SET_PATH";
+
+// Define action interfaces
+interface ChangeModeAction {
+  type: typeof CHANGE_MODE;
+  payload: Mode;
+}
+
+interface AppendPathAction {
+  type: typeof APPEND_PATH;
+  payload: number;
+}
+
+interface PopPathAction {
+  type: typeof POP_PATH;
+  payload: number;
+}
+
+interface TogglePathAction {
+  type: typeof TOGGLE_PATH;
+  payload: number;
+}
+
+interface SetPathAction {
+  type: typeof SET_PATH;
+  payload: number[];
+}
+
+// Union type for all actions
+export type ControlStateActions =
+  | ChangeModeAction
+  | AppendPathAction
+  | PopPathAction
+  | TogglePathAction
+  | SetPathAction;
+
+// Reducer function
+const controlStateReducer = (
+  state: ControlState,
+  action: ControlStateActions
+): ControlState => {
+  switch (action.type) {
+    case CHANGE_MODE:
+      return {
+        ...state,
+        mode: action.payload,
+        path: action.payload !== "Movement" ? [] : state.path,
+      };
+    case APPEND_PATH:
+      return {
+        ...state,
+        path: [...state.path, action.payload],
+      };
+    case POP_PATH:
+      const index = state.path.indexOf(action.payload);
+      return {
+        ...state,
+        path: index !== -1 ? state.path.slice(0, index + 1) : state.path,
+      };
+    case TOGGLE_PATH:
+      if (state.path.includes(action.payload)) {
+        const idx = state.path.indexOf(action.payload);
+        return {
+          ...state,
+          path: idx !== -1 ? state.path.slice(0, idx + 1) : state.path,
+        };
+      } else {
+        return {
+          ...state,
+          path: [...state.path, action.payload],
+        };
+      }
+    case SET_PATH:
+      return {
+        ...state,
+        path: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+
+// initial state
+const initialState: ControlState = {
+  mode: "Idle",
+  path: [],
+};
+
 export default function SessionLayout({ encounter }: any) {
   const { groupName } = useParams();
 
@@ -92,6 +197,18 @@ export default function SessionLayout({ encounter }: any) {
   >([]);
 
   const [messageInput, setMessageInput] = useState<string>("");
+
+  const [selectedCharacterId, setSelectedCharacterId] = useState<number | null>(
+    null
+  );
+
+  const [controlState, dispatch] = useReducer(
+    controlStateReducer,
+    initialState
+  );
+  const [otherPath, setOtherPath] = useState<number[]>([]);
+
+  console.log(controlState.path);
 
   useEffect(() => {
     if (groupName) {
@@ -158,6 +275,32 @@ export default function SessionLayout({ encounter }: any) {
     }
   };
 
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    if (connection) {
+      connection.on("UpdatePath", (incomingPath: number[]) => {
+        console.log("update");
+        console.log(incomingPath);
+        setOtherPath(incomingPath);
+        // dispatch({ type: "SET_PATH", payload: [] });
+      });
+      connection.on("RequeryInitiative", () => {
+        console.log("Requery initiative signal detected");
+        queryClient.invalidateQueries({
+          queryKey: ["initiativeQueue", encounter.id],
+        });
+      });
+    }
+  }, [connection, encounter.id, queryClient]);
+
+  useEffect(() => {
+    if (controlState.path && !!connection) {
+      console.log("path change detected");
+      setOtherPath([]);
+      connection.invoke("SendSelectedPath", controlState.path);
+    }
+  }, [connection, controlState.path]);
+
   return (
     <>
       <GridContainer>
@@ -165,6 +308,10 @@ export default function SessionLayout({ encounter }: any) {
           encounter={encounter}
           connection={connection}
           groupName={groupName}
+          mode={controlState.mode}
+          dispatch={dispatch}
+          path={controlState.path}
+          otherPath={otherPath}
         />
       </GridContainer>
       <RightPanel>
@@ -203,6 +350,13 @@ export default function SessionLayout({ encounter }: any) {
           </ul>
         </UsersList>
       </BottomPanel>
+      <BottomPanel2>
+        <ActionBar
+          dispatch={dispatch}
+          encounter={encounter}
+          connection={connection as HubConnection}
+        ></ActionBar>
+      </BottomPanel2>
     </>
   );
 }

@@ -22,4 +22,5 @@ public record EncounterSummaryDto
     
     [Required]
     public ICollection<ParticipanceDataDto> Participances { get; init; }
+    public bool AmIGameMaster { get; set;}
 }

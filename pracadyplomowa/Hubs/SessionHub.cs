@@ -13,6 +13,7 @@ public class SessionHub  : Hub
     private static readonly ConcurrentDictionary<string, List<string>> UsersConnected = new();
     private static readonly ConcurrentDictionary<string, ConcurrentDictionary<string, Coordinate>> UserSelections = new();
     private static readonly ConcurrentDictionary<string, ConcurrentDictionary<string, Coordinate>> UserCursors = new();
+    private static readonly ConcurrentDictionary<string, List<int>> SelectedPath = new();
     
     public override async Task OnConnectedAsync()
     {
@@ -195,6 +196,37 @@ public class SessionHub  : Hub
         };
             
         await Clients.Group(groupName).SendAsync("ReceiveMessage", messageDto);
+    }
+    
+    public async Task SendSelectedPath(List<int> fieldIds)
+    {
+        var groupName = GetGroupName();
+        if (groupName != null)
+        {
+            SelectedPath[groupName] = fieldIds;
+            await NotifyAllInGroupAboutPath(groupName);
+        }
+    }
+
+    private async Task NotifyAllInGroupAboutPath(string groupName)
+    {
+        if (SelectedPath.TryGetValue(groupName, out var paths))
+        {
+            await Clients.Group(groupName).SendAsync("UpdatePath", paths);
+        }
+    }
+
+    public async Task SendRequeryInitiative(){
+        
+        var groupName = GetGroupName();
+        if (groupName != null)
+        {
+            await NotifyAllRequeryInitiative(groupName);
+        }
+    }
+    private async Task NotifyAllRequeryInitiative(string groupName)
+    {
+        await Clients.GroupExcept(groupName, Context.User?.GetUsername()).SendAsync("RequeryInitiative");
     }
     
 

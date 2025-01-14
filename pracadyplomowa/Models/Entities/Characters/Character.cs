@@ -1257,5 +1257,39 @@ namespace pracadyplomowa.Models.Entities.Characters
                 return immaterialResourceInstances;
             }
         }
+
+        // public ICollection<Field> GetOccupiedFields(Encounter encounter){
+        //     return encounter.R_Participances.Where(p => p.R_Character == this).FirstOrDefault()?.R_OccupiedFields ?? [];
+        // }
+        public ICollection<Field> GetOccupiedFieldsAlternative(Encounter encounter){
+            var occupiedField = encounter.R_Participances.Where(p => p.R_Character == this).FirstOrDefault()?.R_OccupiedField ?? null;
+            List<Field> occupiedFields = [];
+            if(occupiedField != null){
+                var size = occupiedField.R_OccupiedBy!.R_Character.Size;
+                List<Tuple<int, int>> occupiedCoordinates = occupiedField.GetOccupiedCoordinates(size);
+                foreach(var field in encounter.R_Board.R_ConsistsOfFields){
+                    if(occupiedCoordinates.Contains(new Tuple<int, int>(field.PositionX, field.PositionY))){
+                        occupiedFields.Add(field);
+                    }
+                }
+            }
+            return occupiedFields;
+        }
+        public void Move(Encounter encounter, List<Field> path){
+            
+        }
+
+        public List<Field> CanTraversePath(List<Field> path){ //returns achieveable part of the path
+            List<Field> enterable = [];
+            foreach(var field in path){
+                if(field.CanBeEnteredBy(this)){
+                    enterable.Add(field);
+                }
+                else{
+                    break;
+                }
+            }
+            return enterable;
+        }
     }
 }

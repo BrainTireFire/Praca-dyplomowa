@@ -96,7 +96,7 @@ export default function VirtualBoard({
 
     // Clear the canvas and redraw static elements
     ctx.clearRect(0, 0, width, height);
-    drawGrid(ctx, width, height, 16, 9);
+    drawGrid(ctx, width, height, sizeX, sizeY);
 
     if (encounter.board.fields) {
       encounter.board.fields.forEach(async (field) => {
@@ -146,7 +146,7 @@ export default function VirtualBoard({
     Object.keys(selectedBoxes).forEach((connectionId) => {
       const box = selectedBoxes[connectionId];
       const color = getColorForUser(connectionId);
-      drawSelectedBox(ctx, box, 16, 9);
+      drawSelectedBox(ctx, box, sizeX, sizeY);
     });
   }, [selectedBoxes, encounter]);
 

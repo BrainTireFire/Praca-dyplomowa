@@ -15,11 +15,11 @@ public class EncounterController : BaseApiController
         _encounterService = encounterService;
     }
     
-    [HttpGet("myEncounters")]
-    public async Task<ActionResult<IEnumerable<EncounterShortDto>>> GetEncounters([FromQuery] EncounterParams encounterParams)
+    [HttpGet("myEncounters/{campaignId}")]
+    public async Task<ActionResult<IEnumerable<EncounterShortDto>>> GetEncounters(int campaignId, [FromQuery] EncounterParams encounterParams)
     {
         var userId = User.GetUserId();
-        var encounters = await _encounterService.GetEncountersAsync(userId, encounterParams);
+        var encounters = await _encounterService.GetEncountersAsync(userId, campaignId, encounterParams);
 
         Response.AddPaginationHeader(encounters);
 

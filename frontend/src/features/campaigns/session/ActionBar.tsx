@@ -14,6 +14,7 @@ import { useContext, useEffect, useReducer } from "react";
 import { ControlledCharacterContext } from "./context/ControlledCharacterContext";
 import { useParticipanceData } from "../hooks/useParticipanceData";
 import { ParticipanceData } from "../../../services/apiEncounter";
+import Heading from "../../../ui/text/Heading";
 
 const initialParticipanceData: ParticipanceData = {
   actionsTaken: 0,
@@ -101,51 +102,53 @@ export default function ActionBar({
     return <Spinner></Spinner>;
   }
   return (
-    <Container IsActive={!!isItMyTurn}>
-      <Cell>
-        <FormRowVertical label={"Actions taken"}>
+    <>
+      <Heading as="h2">{participanceState.characterName}</Heading>
+      <Container IsActive={!!isItMyTurn}>
+        <Cell>
+          <FormRowVertical label={"Actions taken"}>
+            <span>
+              <Input
+                type="number"
+                size="small"
+                customStyles={css`
+                  width: 5em;
+                `}
+                disabled={!isGM}
+                value={participanceState.actionsTaken}
+                onChange={(e) =>
+                  participanceStateDispatch({
+                    type: "ACTIONS_TAKEN",
+                    payload: Number(e.target.value),
+                  })
+                }
+              />
+              &nbsp;/ {participanceState.totalActions}
+            </span>
+          </FormRowVertical>
+          <FormRowVertical label={"Bonus actions taken"}>
+            <span>
+              <Input
+                type="number"
+                size="small"
+                customStyles={css`
+                  width: 5em;
+                `}
+                disabled={!isGM}
+                value={participanceState.bonusActionsTaken}
+                onChange={(e) =>
+                  participanceStateDispatch({
+                    type: "BONUS_ACTIONS_TAKEN",
+                    payload: Number(e.target.value),
+                  })
+                }
+              />
+              &nbsp;/ {participanceState.totalBonusActions}
+            </span>
+          </FormRowVertical>
+          {/* <FormRowVertical label={"Reactions taken"}>
           <span>
-            <Input
-              type="number"
-              size="small"
-              customStyles={css`
-                width: 5em;
-              `}
-              disabled={!isGM}
-              value={participanceState.actionsTaken}
-              onChange={(e) =>
-                participanceStateDispatch({
-                  type: "ACTIONS_TAKEN",
-                  payload: Number(e.target.value),
-                })
-              }
-            />
-            &nbsp;/ {participanceState.totalActions}
-          </span>
-        </FormRowVertical>
-        <FormRowVertical label={"Bonus actions taken"}>
-          <span>
-            <Input
-              type="number"
-              size="small"
-              customStyles={css`
-                width: 5em;
-              `}
-              disabled={!isGM}
-              value={participanceState.bonusActionsTaken}
-              onChange={(e) =>
-                participanceStateDispatch({
-                  type: "BONUS_ACTIONS_TAKEN",
-                  payload: Number(e.target.value),
-                })
-              }
-            />
-            &nbsp;/ {participanceState.totalBonusActions}
-          </span>
-        </FormRowVertical>
-        {/* <FormRowVertical label={"Reactions taken"}>
-          <span>
-            <Input
+          <Input
               type="number"
               size="small"
               customStyles={css`
@@ -163,133 +166,136 @@ export default function ActionBar({
             &nbsp;/ X
           </span>
         </FormRowVertical> */}
-        <FormRowVertical label={"Attacks made"}>
-          <span>
-            <Input
-              type="number"
-              size="small"
-              customStyles={css`
-                width: 5em;
-              `}
-              disabled={!isGM}
-              value={participanceState.attacksMade}
-              onChange={(e) =>
-                participanceStateDispatch({
-                  type: "ATTACKS_MADE",
-                  payload: Number(e.target.value),
-                })
-              }
-            />
-            &nbsp;/ {participanceState.totalAttacksPerAction}
-          </span>
-        </FormRowVertical>
-      </Cell>
-      <Cell>
-        <span>Concentrates on: powerName</span>
-        <Button
-          size="small"
-          customStyles={css`
-            height: 50px;
-          `}
-          disabled={!isItMyTurn}
-        >
-          Drop concentration
-        </Button>
-      </Cell>
-      <Cell>
-        <FormRowVertical label={"Movement used"}>
-          <span>
-            <Input
-              type="number"
-              size="small"
-              customStyles={css`
-                width: 5em;
-              `}
-              disabled={!isGM}
-              value={participanceState.movementUsed}
-              onChange={(e) =>
-                participanceStateDispatch({
-                  type: "MOVEMENT_USED",
-                  payload: Number(e.target.value),
-                })
-              }
-            />
-            &nbsp;/ {participanceState.totalMovement}
-          </span>
-        </FormRowVertical>
-        <Button
-          size="small"
-          customStyles={css`
-            height: 50px;
-          `}
-          disabled={!isGM}
-        >
-          Update
-        </Button>
-      </Cell>
-      <Cell>
-        <Button
-          size="small"
-          customStyles={css`
-            height: 50px;
-          `}
-          disabled={!isItMyTurn}
-        >
-          Weapon attack
-        </Button>
-        <Button
-          size="small"
-          customStyles={css`
-            height: 50px;
-          `}
-          disabled={!isItMyTurn}
-        >
-          Use power
-        </Button>
-        <Button
-          size="small"
-          customStyles={css`
-            height: 50px;
-          `}
-          onClick={() => dispatch({ type: "CHANGE_MODE", payload: "Movement" })}
-          disabled={!isItMyTurn}
-        >
-          Plot movement
-        </Button>
-        <Button
-          size="small"
-          customStyles={css`
-            height: 50px;
-          `}
-          onClick={() => dispatch({ type: "CHANGE_MODE", payload: "Idle" })}
-          disabled={!isItMyTurn}
-        >
-          Idle
-        </Button>
-        <Button
-          size="small"
-          customStyles={css`
-            height: 50px;
-          `}
-          disabled={!isItMyTurn}
-        >
-          Next turn
-        </Button>
-        {isPending && <Spinner />}
-        {!isPending && (
+          <FormRowVertical label={"Attacks made"}>
+            <span>
+              <Input
+                type="number"
+                size="small"
+                customStyles={css`
+                  width: 5em;
+                `}
+                disabled={!isGM}
+                value={participanceState.attacksMade}
+                onChange={(e) =>
+                  participanceStateDispatch({
+                    type: "ATTACKS_MADE",
+                    payload: Number(e.target.value),
+                  })
+                }
+              />
+              &nbsp;/ {participanceState.totalAttacksPerAction}
+            </span>
+          </FormRowVertical>
+        </Cell>
+        <Cell>
+          <span>Concentrates on: powerName</span>
           <Button
             size="small"
             customStyles={css`
               height: 50px;
             `}
-            onClick={() => rollInitiative()}
+            disabled={!isItMyTurn}
+          >
+            Drop concentration
+          </Button>
+        </Cell>
+        <Cell>
+          <FormRowVertical label={"Movement used"}>
+            <span>
+              <Input
+                type="number"
+                size="small"
+                customStyles={css`
+                  width: 5em;
+                `}
+                disabled={!isGM}
+                value={participanceState.movementUsed}
+                onChange={(e) =>
+                  participanceStateDispatch({
+                    type: "MOVEMENT_USED",
+                    payload: Number(e.target.value),
+                  })
+                }
+              />
+              &nbsp;/ {participanceState.totalMovement}
+            </span>
+          </FormRowVertical>
+          <Button
+            size="small"
+            customStyles={css`
+              height: 50px;
+            `}
             disabled={!isGM}
           >
-            Roll initiative
+            Update
           </Button>
-        )}
-      </Cell>
-    </Container>
+        </Cell>
+        <Cell>
+          <Button
+            size="small"
+            customStyles={css`
+              height: 50px;
+            `}
+            disabled={!isItMyTurn}
+          >
+            Weapon attack
+          </Button>
+          <Button
+            size="small"
+            customStyles={css`
+              height: 50px;
+            `}
+            disabled={!isItMyTurn}
+          >
+            Use power
+          </Button>
+          <Button
+            size="small"
+            customStyles={css`
+              height: 50px;
+            `}
+            onClick={() =>
+              dispatch({ type: "CHANGE_MODE", payload: "Movement" })
+            }
+            disabled={!isItMyTurn}
+          >
+            Plot movement
+          </Button>
+          <Button
+            size="small"
+            customStyles={css`
+              height: 50px;
+            `}
+            onClick={() => dispatch({ type: "CHANGE_MODE", payload: "Idle" })}
+            disabled={!isItMyTurn}
+          >
+            Idle
+          </Button>
+          <Button
+            size="small"
+            customStyles={css`
+              height: 50px;
+            `}
+            disabled={!isItMyTurn}
+          >
+            Next turn
+          </Button>
+          {isPending && <Spinner />}
+          {!isPending && (
+            <Button
+              size="small"
+              customStyles={css`
+                height: 50px;
+              `}
+              onClick={() => rollInitiative()}
+              disabled={!isGM}
+            >
+              Roll initiative
+            </Button>
+          )}
+        </Cell>
+      </Container>
+    </>
   );
 }
 

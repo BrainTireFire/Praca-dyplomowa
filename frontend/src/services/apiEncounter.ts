@@ -217,6 +217,7 @@ export async function getParticipanceData(
 }
 
 export type ParticipanceData = {
+  characterName: string;
   actionsTaken: number;
   bonusActionsTaken: number;
   attacksMade: number;

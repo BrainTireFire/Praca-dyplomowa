@@ -7,6 +7,7 @@ namespace pracadyplomowa.Models.DTOs.Session
 {
     public class ParticipanceDataDto
     {
+        public string CharacterName { get; set; } = null!;
         public int ActionsTaken { get; set; }
         public int BonusActionsTaken { get; set; }
         public int ReactionsTaken { get; set; }

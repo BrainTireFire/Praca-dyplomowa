@@ -297,6 +297,7 @@ public class EncounterService : IEncounterService
         var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipance(encounterId, characterId);
         var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(characterId);
         var result = encounter.R_Participances.Where(x => x.R_CharacterId == characterId).Select(x => new Models.DTOs.Session.ParticipanceDataDto(){
+            CharacterName = x.R_Character.Name,
             ActionsTaken = x.NumberOfActionsTaken,
             BonusActionsTaken = x.NumberOfBonusActionsTaken,
             AttacksMade = x.NumberOfAttacksTaken,

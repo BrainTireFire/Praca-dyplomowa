@@ -8,6 +8,9 @@ import Spinner from "../../../ui/interactive/Spinner";
 import { useIsGm } from "../hooks/useIsGM";
 import useModifyInitiativeQueue from "../hooks/useModifyInitiativeQueue";
 import useSetActiveTurn from "../hooks/useSetActiveTurn";
+import { useContext } from "react";
+import { ControlledCharacterContext } from "../session/context/ControlledCharacterContext";
+import { useControlledCharacters } from "../hooks/useControlledCharacters";
 
 type characterInitiative = {
   id: number;
@@ -58,7 +61,16 @@ export function InitiativeQueue() {
     Number(groupName),
     () => {}
   );
-  if (isLoading || isLoadingIsGM || isPending) {
+  const {
+    isLoading: isLoadingControllerCharacters,
+    characterIds: controlledCharacterIds,
+  } = useControlledCharacters(Number(groupName));
+  if (
+    isLoading ||
+    isLoadingIsGM ||
+    isPending ||
+    isLoadingControllerCharacters
+  ) {
     return <Spinner />;
   }
   return (
@@ -70,6 +82,11 @@ export function InitiativeQueue() {
             key={item.characterId}
             isGM={isGM as boolean}
             handleChangeActiveTurn={setActiveTurn}
+            controlled={
+              (controlledCharacterIds as number[]).find(
+                (x) => item.characterId === x
+              ) !== undefined
+            }
           ></InititativeTile>
         ))}
     </>
@@ -80,12 +97,16 @@ function InititativeTile({
   item,
   isGM,
   handleChangeActiveTurn,
+  controlled,
 }: {
   item: InitiativeQueueItem;
   isGM: boolean;
   handleChangeActiveTurn: (characterId: number) => void;
+  controlled: boolean;
 }) {
-  console.log(item);
+  const [controlledCharacterId, setControlledCharacterId] = useContext(
+    ControlledCharacterContext
+  );
   return (
     <Tile IsActive={item.activeTurn}>
       <TileCell1>
@@ -105,11 +126,15 @@ function InititativeTile({
               size="small"
               onClick={() => handleChangeActiveTurn(item.characterId)}
             >
-              Set as active
+              Set active turn
             </Button>
             <Button size="small">Move down</Button>
           </>
         )}
+        <Button onClick={() => setControlledCharacterId(item.characterId)}>
+          {controlled || isGM ? "Take control" : "Set focus"}
+        </Button>
+        {controlledCharacterId}
       </TileCell2>
       <TileCell3>
         <Button size="small">Display character sheet</Button>

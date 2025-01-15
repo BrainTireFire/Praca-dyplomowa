@@ -345,16 +345,6 @@ export default function SessionLayout({ encounter }: any) {
           </Button>
         </ChatForm>
       </RightPanel>
-      <BottomPanel>
-        <UsersList>
-          <h3>Group: {groupName}</h3>
-          <ul>
-            {usersConnected.map((username, index) => (
-              <li key={index}>{username}</li>
-            ))}
-          </ul>
-        </UsersList>
-      </BottomPanel>
       <BottomPanel2>
         <ActionBar
           dispatch={dispatch}

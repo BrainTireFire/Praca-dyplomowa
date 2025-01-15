@@ -14,5 +14,8 @@ public interface IEncounterService
     Task<ActionResult> GetInitiativeQueueAsync(int encounterId);
     Task<ActionResult> ModifyInitiativeQueueAsync(int encounterId, List<ModifyInitiativeQueueOrderItem> newQueue);
     bool CheckIfIsGM(int encounterId, int userId);
+    Task<bool> CheckIfItsMyTurn(int encounterId, int characterId, int userId);
     Task SetActiveTurn(int encounterId, int activeCharacterId);
+    Task<List<int>> GetControlledCharacters(int encounterId, int userId);
+    Task<Models.DTOs.Session.ParticipanceDataDto> GetParticipanceData(int encounterId, int characterId);
 }

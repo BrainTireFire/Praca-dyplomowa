@@ -150,6 +150,22 @@ export async function getIsGM(encounterId: number): Promise<boolean> {
     options
   );
 }
+export async function getIsItMyTurn(
+  encounterId: number,
+  controlledCharacterId: number
+): Promise<boolean> {
+  const options: RequestInit = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/encounter/${encounterId}/turnCheck/${controlledCharacterId}`,
+    options
+  );
+}
 export async function setActiveTurn(
   encounterId: number,
   characterId: number
@@ -168,3 +184,45 @@ export async function setActiveTurn(
 
   return;
 }
+export async function getControlledCharacters(
+  encounterId: number
+): Promise<number[]> {
+  const options: RequestInit = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/encounter/${encounterId}/controlledCharacters`,
+    options
+  );
+}
+export async function getParticipanceData(
+  encounterId: number,
+  characterId: number
+): Promise<ParticipanceData> {
+  const options: RequestInit = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/encounter/${encounterId}/participanceData/${characterId}`,
+    options
+  );
+}
+
+export type ParticipanceData = {
+  actionsTaken: number;
+  bonusActionsTaken: number;
+  attacksMade: number;
+  movementUsed: number;
+  totalActions: number;
+  totalBonusActions: number;
+  totalAttacksPerAction: number;
+  totalMovement: number;
+};

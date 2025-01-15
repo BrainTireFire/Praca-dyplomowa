@@ -81,6 +81,12 @@ public class EncounterController : BaseApiController
         var result = _encounterService.CheckIfIsGM(encounterId, User.GetUserId());
         return Ok(result);
     }
+    [HttpGet("{encounterId}/turnCheck/{characterId}")]
+    public async Task<ActionResult<List<InitiativeQueueItemDto>>> CheckIfItsMyTurn(int encounterId, int characterId)
+    {
+        var result = await _encounterService.CheckIfItsMyTurn(encounterId, characterId, User.GetUserId());
+        return Ok(result);
+    }
     [HttpPost("{encounterId}/initiative/{characterId}")]
     public async Task<ActionResult<List<InitiativeQueueItemDto>>> SetActiveTurn(int encounterId, int characterId)
     {
@@ -90,5 +96,17 @@ public class EncounterController : BaseApiController
         }
         await _encounterService.SetActiveTurn(encounterId, characterId);
         return Ok();
+    }
+    [HttpGet("{encounterId}/controlledCharacters")]
+    public async Task<ActionResult<List<int>>> GetControlledCharacters(int encounterId)
+    {
+        var result = await _encounterService.GetControlledCharacters(encounterId, User.GetUserId());
+        return Ok(result);
+    }
+    [HttpGet("{encounterId}/participanceData/{characterId}")]
+    public async Task<ActionResult<Models.DTOs.Session.ParticipanceDataDto>> GetParticipanceData(int encounterId, int characterId)
+    {
+        var result = await _encounterService.GetParticipanceData(encounterId, characterId);
+        return Ok(result);
     }
 }

@@ -6,6 +6,7 @@ import Sidebar from "./bars/Sidebar";
 import Button from "../interactive/Button";
 import { HiXMark } from "react-icons/hi2";
 import { SidebarOverlay } from "../../features/campaigns/sidebarOverlayComponents/SidebarOverlay";
+import { ControlledCharacterContext } from "../../features/campaigns/session/context/ControlledCharacterContext";
 
 const StyledAppLayout = styled.div`
   display: grid;
@@ -42,6 +43,7 @@ const Container = styled.div`
 export default function AppLayout() {
   const [activeComponent, setActiveComponent] = useState<string | null>(null);
   const [isClosing, setIsClosing] = useState(false);
+  const [controlledCharacterId, setControlledCharacterId] = useState(null);
   const handleOpen = (component: string | null) => {
     setIsClosing(false);
     setActiveComponent(component);
@@ -54,21 +56,25 @@ export default function AppLayout() {
 
   return (
     <StyledAppLayout>
-      <Navbar />
-      <Sidebar setActiveComponent={handleOpen} />
-      <Main>
-        <Container>
-          <Outlet />
-        </Container>
-      </Main>
-      {/* Overlay Component */}
-      {activeComponent && (
-        <SidebarOverlay
-          isClosing={isClosing}
-          handleClose={handleClose}
-          activeComponent={activeComponent}
-        ></SidebarOverlay>
-      )}
+      <ControlledCharacterContext.Provider
+        value={[controlledCharacterId, setControlledCharacterId]}
+      >
+        <Navbar />
+        <Sidebar setActiveComponent={handleOpen} />
+        <Main>
+          <Container>
+            <Outlet />
+          </Container>
+        </Main>
+        {/* Overlay Component */}
+        {activeComponent && (
+          <SidebarOverlay
+            isClosing={isClosing}
+            handleClose={handleClose}
+            activeComponent={activeComponent}
+          ></SidebarOverlay>
+        )}
+      </ControlledCharacterContext.Provider>
     </StyledAppLayout>
   );
 }

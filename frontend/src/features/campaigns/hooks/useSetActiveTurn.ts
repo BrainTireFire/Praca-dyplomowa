@@ -14,6 +14,12 @@ function useSetActiveTurn(encounterId: number, onSuccess: () => void) {
       queryClient.refetchQueries({
         queryKey: ["initiativeQueue", encounterId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["isItMyTurn", encounterId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["initiativeQueue", encounterId],
+      });
       toast.success("Changed active character");
       onSuccess();
     },

@@ -55,4 +55,35 @@ public class EncounterRepository : BaseRepository<Models.Entities.Campaign.Encou
         
         return encounter;
     }
+    public Task<Models.Entities.Campaign.Encounter> GetEncounterWithParticipances(int encounterId)
+    {
+        var encounter = _context.Encounters
+            .Where(e => e.Id == encounterId)
+            .Include(e => e.R_Participances)
+                .ThenInclude(p => p.R_Character)
+            .FirstAsync();
+        
+        return encounter;
+    }
+
+    public Task<Models.Entities.Campaign.Encounter> GetEncounterWithParticipance(int encounterId, int characterId){
+        var encounter = _context.Encounters
+            .Where(e => e.Id == encounterId)
+            .Include(e => e.R_Participances.Where(p => p.R_CharacterId == characterId))
+                .ThenInclude(p => p.R_Character)
+            .FirstAsync();
+        
+        return encounter;
+    }
+    public Task<Models.Entities.Campaign.Encounter> GetEncounterWithPlayerDetails(int encounterId)
+    {
+        var encounter = _context.Encounters
+            .Where(e => e.Id == encounterId)
+            .Include(e => e.R_Participances)
+                .ThenInclude(p => p.R_Character)
+                    .ThenInclude(c => c.R_Owner)
+            .FirstAsync();
+        
+        return encounter;
+    }
 }

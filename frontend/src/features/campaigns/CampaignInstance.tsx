@@ -13,6 +13,7 @@ import CharacterDetailBox from "./CharacterDetailBox";
 import { Campaign } from "../../models/campaign";
 import useRemoveCampaign from "./hooks/useRemoveCampaign";
 import ConfirmDelete from "../../ui/containers/ConfirmDelete";
+import GiveXP from "./GiveXP";
 
 const Container = styled.div`
   display: grid;
@@ -69,9 +70,9 @@ export default function CampaignInstance() {
             <Modal.Open opens="GiveXP">
               <Button size="large">{t("campaignInstance.giveXP")}</Button>
             </Modal.Open>
-            {/* <Modal.Window name="GiveXP">
-                <GiveXP membersList={members} />
-              </Modal.Window> */}
+            <Modal.Window name="GiveXP">
+              <GiveXP membersList={members} />
+            </Modal.Window>
           </Modal>
           <Modal>
             <Modal.Open opens="ShortRestModal">

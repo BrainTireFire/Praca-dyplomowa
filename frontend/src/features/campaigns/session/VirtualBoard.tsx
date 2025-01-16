@@ -26,6 +26,7 @@ import { Coordinate } from "../../../models/session/Coordinate";
 import VirtualBoardMenu from "../../../ui/containers/VirtualBoardMenu";
 import { PiPathLight } from "react-icons/pi";
 import { ControlledCharacterContext } from "./context/ControlledCharacterContext";
+import { useParticipanceData } from "../hooks/useParticipanceData";
 
 const CanvasContainer = styled.div`
   display: flex;
@@ -74,6 +75,8 @@ export default function VirtualBoard({
   const [selectedBox, setSelectedBox] = useState<Coordinate | null>(null);
   const [translatePos, setTranslatePos] = useState<Coordinate>({ x: 0, y: 0 });
   const [controlledCharacterId] = useContext(ControlledCharacterContext);
+  const { isLoading: isLoadingParticipanceData, participance } =
+    useParticipanceData(encounter.id, controlledCharacterId);
 
   const sizeX = encounter.board.sizeX;
   const sizeY = encounter.board.sizeY;
@@ -245,32 +248,7 @@ export default function VirtualBoard({
         let selectedField = encounter.board.fields.find(
           (field) => field.positionX === gridX && field.positionY === gridY
         );
-        let lastField = encounter.board.fields.find(
-          (field) => field.id === path[path.length - 1]
-        );
-        let occupiedField = encounter.participances.find(
-          (x) => x.character.id === controlledCharacterId
-        )?.occupiedField;
-        let distanceX =
-          (lastField?.positionX ?? -1) - (selectedField?.positionX ?? 1);
-        let distanceY =
-          (lastField?.positionY ?? -1) - (selectedField?.positionY ?? 1);
-        let distanceFromStartX =
-          (occupiedField?.positionX ?? -1) - (selectedField?.positionX ?? 1);
-        let distanceFromStartY =
-          (occupiedField?.positionY ?? -1) - (selectedField?.positionY ?? 1);
-        let distanceFromLastInPathOk =
-          Math.abs(distanceX) <= 1 && Math.abs(distanceY) <= 1;
-        let distanceFromCurrentPositionOk =
-          Math.abs(distanceFromStartX) === 1 ||
-          Math.abs(distanceFromStartY) === 1;
-        if (
-          !!selectedField &&
-          ((path.length === 0 && distanceFromCurrentPositionOk) ||
-            !!path.find((x) => x === selectedField.id) ||
-            distanceFromLastInPathOk)
-        ) {
-          console.log("dispatching");
+        if (checkIfCanAddFieldToPath(gridX, gridY)) {
           dispatch({
             type: "TOGGLE_PATH",
             payload: selectedField?.id as number,
@@ -286,6 +264,40 @@ export default function VirtualBoard({
     },
     200
   );
+
+  const checkIfCanAddFieldToPath = (gridX: number, gridY: number) => {
+    let selectedField = encounter.board.fields.find(
+      (field) => field.positionX === gridX && field.positionY === gridY
+    );
+    let lastField = encounter.board.fields.find(
+      (field) => field.id === path[path.length - 1]
+    );
+    let occupiedField = encounter.participances.find(
+      (x) => x.character.id === controlledCharacterId
+    )?.occupiedField;
+    let distanceX =
+      (lastField?.positionX ?? -1) - (selectedField?.positionX ?? 1);
+    let distanceY =
+      (lastField?.positionY ?? -1) - (selectedField?.positionY ?? 1);
+    let distanceFromStartX =
+      (occupiedField?.positionX ?? -1) - (selectedField?.positionX ?? 1);
+    let distanceFromStartY =
+      (occupiedField?.positionY ?? -1) - (selectedField?.positionY ?? 1);
+    let distanceFromLastInPathOk =
+      Math.abs(distanceX) <= 1 && Math.abs(distanceY) <= 1;
+    let distanceFromCurrentPositionOk =
+      Math.abs(distanceFromStartX) === 1 || Math.abs(distanceFromStartY) === 1;
+    let fieldAlreadyInPath = !!path.find((x) => x === selectedField?.id);
+    return (
+      !!selectedField &&
+      !!participance &&
+      ((((path.length === 0 && distanceFromCurrentPositionOk) ||
+        distanceFromLastInPathOk) &&
+        path.length * 5 <=
+          participance.totalMovement - participance.movementUsed) ||
+        fieldAlreadyInPath)
+    );
+  };
 
   const handleCanvasRightClick = (
     event: React.MouseEvent<HTMLCanvasElement>

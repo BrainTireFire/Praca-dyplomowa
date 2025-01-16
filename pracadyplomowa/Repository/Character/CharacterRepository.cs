@@ -50,7 +50,8 @@ namespace pracadyplomowa.Repository
                 c.Description,
                 c.R_CharacterBelongsToRace.Name,
                 c.R_CharacterHasLevelsInClass.First().R_Class.Name,
-                c.R_CampaignId
+                c.R_CampaignId,
+                c.ExperiencePoints
             ));
 
             return await PagedList<CharacterSummaryDto>.CreateAsync(charactersSumaries, characterParams.PageNumber, characterParams.PageSize);
@@ -215,7 +216,8 @@ namespace pracadyplomowa.Repository
             return character;
         }
 
-        public Task<Character> GetCharacterEquipment(int id){
+        public Task<Character> GetCharacterEquipment(int id)
+        {
             var character = _context.Characters
             .Where(c => c.Id == id)
             .Include(c => c.R_CharacterHasBackpack)
@@ -224,7 +226,8 @@ namespace pracadyplomowa.Repository
             return character;
         }
 
-        public Task<Character> GetCharacterEquipmentAndSlots(int id){
+        public Task<Character> GetCharacterEquipmentAndSlots(int id)
+        {
             var character = _context.Characters
             .Where(c => c.Id == id)
             .Include(c => c.R_CharacterHasBackpack)
@@ -299,7 +302,8 @@ namespace pracadyplomowa.Repository
             return character;
         }
 
-        public Dictionary<int, Character> GetCharactersForAccessAnalysis(List<int> ids){
+        public Dictionary<int, Character> GetCharactersForAccessAnalysis(List<int> ids)
+        {
             return _context.Characters
             .Where(i => ids.Contains(i.Id))
             .Include(c => c.R_Campaign)

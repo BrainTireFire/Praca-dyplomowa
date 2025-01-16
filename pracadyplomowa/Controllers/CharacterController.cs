@@ -47,13 +47,13 @@ namespace pracadyplomowa.Controllers
 
             return Ok(characters);
         }
-        
+
         [HttpGet("npcCharacters")]
         public async Task<ActionResult<CharacterSummaryDto>> GetNpcCharacters([FromQuery] CharacterParams characterParams)
         {
             var userId = User.GetUserId();
             var isNpc = true;
-            var characters = await _unitOfWork.CharacterRepository.GetCharacterSummaries(userId, isNpc,  characterParams);
+            var characters = await _unitOfWork.CharacterRepository.GetCharacterSummaries(userId, isNpc, characterParams);
 
             Response.AddPaginationHeader(characters);
 
@@ -61,8 +61,10 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpDelete("{characterId}")]
-        public async Task<ActionResult> DeleteCharacter(int characterId){
-            if(!_characterService.CheckExistenceAndReadEditAccess(characterId, User.GetUserId(), [Character.AccessLevels.Read], out var errorResult, out var grantedAccessLevels)){
+        public async Task<ActionResult> DeleteCharacter(int characterId)
+        {
+            if (!_characterService.CheckExistenceAndReadEditAccess(characterId, User.GetUserId(), [Character.AccessLevels.Read], out var errorResult, out var grantedAccessLevels))
+            {
                 return errorResult;
             }
             _unitOfWork.CharacterRepository.Delete(characterId);
@@ -83,7 +85,7 @@ namespace pracadyplomowa.Controllers
             {
                 return BadRequest(new ApiResponse(400, "First level of Class with Id " + characterDto.StartingClassId + " does not exist"));
             }
-            
+
             var ownerId = User.GetUserId();
             var character = new Character(
                 characterDto.Name,
@@ -96,7 +98,8 @@ namespace pracadyplomowa.Controllers
                 characterDto.Charisma,
                 classLevel,
                 race,
-                ownerId
+                ownerId,
+                0 // 0 xp on start
             );
 
             var item = (await _unitOfWork.ItemRepository.GetByNameWithEquipmentSlots("Iron longsword")).CloneInstance();
@@ -106,23 +109,23 @@ namespace pracadyplomowa.Controllers
 
             character.R_CharacterHasBackpack = new Backpack()
             {
-                R_BackpackOfCharacter = character, 
+                R_BackpackOfCharacter = character,
                 R_BackpackHasItems = [item, item2]
             };
-            
+
             var rightPalmSlot = item.R_ItemIsEquippableInSlots.FirstOrDefault(x => x.Name == "Right palm");
             if (rightPalmSlot != null)
             {
                 character.EquipItem(item, rightPalmSlot);
             }
-            
+
             var leftPalmSlot = item2.R_ItemIsEquippableInSlots.FirstOrDefault(x => x.Name == "Left palm");
             if (leftPalmSlot != null)
             {
                 character.EquipItem(item2, leftPalmSlot);
             }
-            
-            if(item2 is MeleeWeapon weapon && weapon.Versatile)
+
+            if (item2 is MeleeWeapon weapon && weapon.Versatile)
             {
                 weapon.EquipVersatile();
             }
@@ -136,7 +139,8 @@ namespace pracadyplomowa.Controllers
         [HttpGet("{characterId}")]
         public async Task<ActionResult> GetCharacter(int characterId)
         {
-            if(!_characterService.CheckExistenceAndReadEditAccess(characterId, User.GetUserId(), [Character.AccessLevels.Read], out var errorResult, out var grantedAccessLevels)){
+            if (!_characterService.CheckExistenceAndReadEditAccess(characterId, User.GetUserId(), [Character.AccessLevels.Read], out var errorResult, out var grantedAccessLevels))
+            {
                 return errorResult;
             }
             var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(characterId);
@@ -151,7 +155,8 @@ namespace pracadyplomowa.Controllers
         [HttpPatch("{characterId}")]
         public async Task<ActionResult> UpdateCharacterDescriptionAndName(int characterId, [FromBody] CharacterDescriptionUpdateDto data)
         {
-            if(!_characterService.CheckExistenceAndReadEditAccess(characterId, User.GetUserId(), [Character.AccessLevels.EditDescriptiveFields], out var errorResult, out var grantedAccessLevels, out var character)){
+            if (!_characterService.CheckExistenceAndReadEditAccess(characterId, User.GetUserId(), [Character.AccessLevels.EditDescriptiveFields], out var errorResult, out var grantedAccessLevels, out var character))
+            {
                 return errorResult;
             }
 
@@ -223,10 +228,12 @@ namespace pracadyplomowa.Controllers
                     var totalPicks = selectedEffects.Count + selectedPowersAlwaysAvailable.Count + selectedPowersToPrepare.Count + selectedResources.Count;
                     if (totalPicks != 0 && totalPicks == choiceGroup.NumberToChoose)
                     {
-                        try{
+                        try
+                        {
                             choiceGroup.Generate(character, selectedEffects, selectedPowersAlwaysAvailable, selectedPowersToPrepare, selectedResources);
                         }
-                        catch(ExpertiseException ex){
+                        catch (ExpertiseException ex)
+                        {
                             return BadRequest(new ApiResponse(400, ex.Message));
                         }
                     }
@@ -311,23 +318,28 @@ namespace pracadyplomowa.Controllers
                 return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not exist"));
             }
             var characterDto = new CharacterEquipmentAndSlotsDto();
-            characterDto.Items = character.R_CharacterHasBackpack.R_BackpackHasItems.Select(i => new CharacterEquipmentAndSlotsDto.Item(){
+            characterDto.Items = character.R_CharacterHasBackpack.R_BackpackHasItems.Select(i => new CharacterEquipmentAndSlotsDto.Item()
+            {
                 Id = i.Id,
                 Name = i.Name,
-                ItemFamily = new CharacterEquipmentAndSlotsDto.ItemFamily(){
+                ItemFamily = new CharacterEquipmentAndSlotsDto.ItemFamily()
+                {
                     Id = i.R_ItemInItemsFamily.Id,
                     Name = i.R_ItemInItemsFamily.Name
                 },
-                Slots = i.R_EquipData != null ? i.R_EquipData.R_Slots.Select(s => new CharacterEquipmentAndSlotsDto.Slot(){
+                Slots = i.R_EquipData != null ? i.R_EquipData.R_Slots.Select(s => new CharacterEquipmentAndSlotsDto.Slot()
+                {
                     Id = s.Id,
                     Name = s.Name
                 }).ToList() : [],
-                EquippableInSlots = i.R_ItemIsEquippableInSlots.Select(s => new CharacterEquipmentAndSlotsDto.Slot(){
+                EquippableInSlots = i.R_ItemIsEquippableInSlots.Select(s => new CharacterEquipmentAndSlotsDto.Slot()
+                {
                     Id = s.Id,
                     Name = s.Name
                 }).ToList()
             }).ToList();
-            characterDto.Slots = character.R_CharacterBelongsToRace.R_EquipmentSlots.Select(s => new CharacterEquipmentAndSlotsDto.Slot(){
+            characterDto.Slots = character.R_CharacterBelongsToRace.R_EquipmentSlots.Select(s => new CharacterEquipmentAndSlotsDto.Slot()
+            {
                 Id = s.Id,
                 Name = s.Name
             }).ToList();
@@ -342,13 +354,16 @@ namespace pracadyplomowa.Controllers
             {
                 return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not exist"));
             }
-            if(!character.R_CharacterBelongsToRace.R_EquipmentSlots.Where(s => s.Id == slotId).Any()){
+            if (!character.R_CharacterBelongsToRace.R_EquipmentSlots.Where(s => s.Id == slotId).Any())
+            {
                 return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not have slot with Id " + slotId));
             }
-            if(!character.R_CharacterHasBackpack.R_BackpackHasItems.Where(i => i.Id == itemId).Any()){
+            if (!character.R_CharacterHasBackpack.R_BackpackHasItems.Where(i => i.Id == itemId).Any())
+            {
                 return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not have item with Id " + itemId));
             }
-            if(!character.R_CharacterHasBackpack.R_BackpackHasItems.Where(i => i.Id == itemId).First().R_ItemIsEquippableInSlots.Where(s => s.Id == slotId).Any()){
+            if (!character.R_CharacterHasBackpack.R_BackpackHasItems.Where(i => i.Id == itemId).First().R_ItemIsEquippableInSlots.Where(s => s.Id == slotId).Any())
+            {
                 return BadRequest(new ApiResponse(400, "Item with Id " + itemId + " is not equippable in slot with Id " + slotId));
             }
             character.EquipItem(character.R_CharacterHasBackpack.R_BackpackHasItems.Where(i => i.Id == itemId).First(), character.R_CharacterBelongsToRace.R_EquipmentSlots.Where(s => s.Id == slotId).First());
@@ -364,13 +379,16 @@ namespace pracadyplomowa.Controllers
             {
                 return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not exist"));
             }
-            if(!character.R_CharacterBelongsToRace.R_EquipmentSlots.Where(s => s.Id == slotId).Any()){
+            if (!character.R_CharacterBelongsToRace.R_EquipmentSlots.Where(s => s.Id == slotId).Any())
+            {
                 return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not have slot with Id " + slotId));
             }
-            if(!character.R_CharacterHasBackpack.R_BackpackHasItems.Where(i => i.Id == itemId).Any()){
+            if (!character.R_CharacterHasBackpack.R_BackpackHasItems.Where(i => i.Id == itemId).Any())
+            {
                 return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not have item with Id " + itemId));
             }
-            if(!character.R_CharacterHasBackpack.R_BackpackHasItems.Where(i => i.Id == itemId).First().R_ItemIsEquippableInSlots.Where(s => s.Id == slotId).Any()){
+            if (!character.R_CharacterHasBackpack.R_BackpackHasItems.Where(i => i.Id == itemId).First().R_ItemIsEquippableInSlots.Where(s => s.Id == slotId).Any())
+            {
                 return BadRequest(new ApiResponse(400, "Item with Id " + itemId + " is not equippable in slot with Id " + slotId));
             }
             character.UnequipItem(character.R_CharacterHasBackpack.R_BackpackHasItems.Where(i => i.Id == itemId).First());
@@ -379,33 +397,41 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpPost("{characterId}/equipment")]
-        public async Task<ActionResult> AddItemToCharacterEquipment(int characterId, [FromBody] int itemId){
+        public async Task<ActionResult> AddItemToCharacterEquipment(int characterId, [FromBody] int itemId)
+        {
             var character = _unitOfWork.CharacterRepository.GetCharacterEquipment(characterId);
             var item = _unitOfWork.ItemRepository.GetById(itemId);
-            if(item != null){
+            if (item != null)
+            {
                 await character;
-                if(character == null){
+                if (character == null)
+                {
                     return NotFound("Character with id: ${characterId} was not found");
                 }
-                if(item.IsBlueprint){
+                if (item.IsBlueprint)
+                {
                     item = item.CloneInstance();
                 }
                 (await character).R_CharacterHasBackpack.R_BackpackHasItems.Add(item);
                 await _unitOfWork.SaveChangesAsync();
             }
-            else{
+            else
+            {
                 return NotFound("Item with id: ${itemId} was not found");
             }
             return Ok();
         }
 
         [HttpGet("{characterId}/resources")]
-        public async Task<ActionResult<List<SlotDto>>> GetCharacterResources(int characterId){
+        public async Task<ActionResult<List<SlotDto>>> GetCharacterResources(int characterId)
+        {
             var character = await _unitOfWork.CharacterRepository.GetByIdWithCustomResources(characterId);
-            if(character == null){
+            if (character == null)
+            {
                 return NotFound("Character with this Id does not exist");
             }
-            var resources = character.R_ImmaterialResourceInstances.GroupBy(r => new {r.R_BlueprintId, r.R_Blueprint.Name, r.Level}).Select(g => new ImmaterialResourceAmountDto(){
+            var resources = character.R_ImmaterialResourceInstances.GroupBy(r => new { r.R_BlueprintId, r.R_Blueprint.Name, r.Level }).Select(g => new ImmaterialResourceAmountDto()
+            {
                 BlueprintId = g.Key.R_BlueprintId,
                 Name = g.Key.Name,
                 Level = g.Key.Level,
@@ -415,19 +441,21 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpPatch("{characterId}/resources")]
-        public async Task<ActionResult<List<SlotDto>>> SetCharacterResources(int characterId, [FromBody] List<ImmaterialResourceAmountDto> resourceDtos){
+        public async Task<ActionResult<List<SlotDto>>> SetCharacterResources(int characterId, [FromBody] List<ImmaterialResourceAmountDto> resourceDtos)
+        {
             var character = await _unitOfWork.CharacterRepository.GetByIdWithCustomResources(characterId);
-            if(character == null){
+            if (character == null)
+            {
                 return NotFound("Character with this Id does not exist");
             }
             // var resourceBlueprints = await _immaterialResourceBlueprintRepository.GetAllByIds(resourceDtos.Select(x => x.BlueprintId).ToList());
             character.R_ImmaterialResourceInstances.Clear();
             var resourceInstances = resourceDtos
-                .SelectMany(dto => 
-                    Enumerable.Range(0, dto.Count).Select(_ => new ImmaterialResourceInstance 
-                    { 
-                        R_BlueprintId = dto.BlueprintId, 
-                        Level = dto.Level 
+                .SelectMany(dto =>
+                    Enumerable.Range(0, dto.Count).Select(_ => new ImmaterialResourceInstance
+                    {
+                        R_BlueprintId = dto.BlueprintId,
+                        Level = dto.Level
                     })
                 ).ToList();
             character.R_ImmaterialResourceInstances.AddRange(resourceInstances);
@@ -436,9 +464,11 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpGet("{characterId}/powers")]
-        public async Task<ActionResult<List<SlotDto>>> GetCharacterCustomSourceKnownPowers(int characterId){ // returns list of powers which do not have source
+        public async Task<ActionResult<List<SlotDto>>> GetCharacterCustomSourceKnownPowers(int characterId)
+        { // returns list of powers which do not have source
             var character = await _unitOfWork.CharacterRepository.GetByIdWithKnownPowers(characterId);
-            if(character == null){
+            if (character == null)
+            {
                 return NotFound("character with this Id does not exist");
             }
             var powers = _mapper.Map<List<PowerCompactDto>>(character.R_PowersKnown);
@@ -446,10 +476,12 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpGet("{characterId}/powersPrepared")]
-        public async Task<ActionResult<List<SlotDto>>> GetCharacterAllPreparedPowers(int characterId){ // returns list of powers which do not have source
+        public async Task<ActionResult<List<SlotDto>>> GetCharacterAllPreparedPowers(int characterId)
+        { // returns list of powers which do not have source
             var character = await _unitOfWork.CharacterRepository.GetByIdWithPreparedPowers(characterId);
-            
-            if(character == null){
+
+            if (character == null)
+            {
                 return NotFound("character with this Id does not exist");
             }
             var powers = _mapper.Map<List<PowerCompactDto>>(character.R_PowersPrepared.SelectMany(ps => ps.R_PreparedPowers).ToList());
@@ -457,10 +489,12 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpGet("{characterId}/powersPrepared/class/{classId}")]
-        public async Task<ActionResult<List<SlotDto>>> GetCharacterPreparedPowersForClass(int characterId, int classId){ // returns list of powers which do not have source
+        public async Task<ActionResult<List<SlotDto>>> GetCharacterPreparedPowersForClass(int characterId, int classId)
+        { // returns list of powers which do not have source
             var character = await _unitOfWork.CharacterRepository.GetByIdWithPreparedPowers(characterId);
-            
-            if(character == null){
+
+            if (character == null)
+            {
                 return NotFound("character with this Id does not exist");
             }
             var powers = _mapper.Map<List<PowerCompactDto>>(character.R_PowersPrepared.Where(ps => ps.R_ClassId == classId).SelectMany(ps => ps.R_PreparedPowers).ToList());
@@ -468,9 +502,11 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpGet("{characterId}/powersToPrepare")]
-        public async Task<ActionResult<List<PowersToPrepareDto>>> GetCharacterPowersToPrepare(int characterId){ // returns list of powers which do not have source
+        public async Task<ActionResult<List<PowersToPrepareDto>>> GetCharacterPowersToPrepare(int characterId)
+        { // returns list of powers which do not have source
             var character = await _unitOfWork.CharacterRepository.GetByIdWithPowersToPrepare(characterId);
-            if(character == null){
+            if (character == null)
+            {
                 return NotFound("character with this Id does not exist");
             }
             var powers = character
@@ -482,7 +518,8 @@ namespace pracadyplomowa.Controllers
             .Select(cl => cl.R_Class)
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             .Distinct()
-            .Select(x => new PowersToPrepareDto(){
+            .Select(x => new PowersToPrepareDto()
+            {
                 PowerList = _mapper.Map<List<PowerCompactDto>>(
                     x.R_ClassLevels
                     .SelectMany(cl => cl.R_ChoiceGroups)
@@ -503,9 +540,11 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpPatch("{characterId}/powers")]
-        public async Task<ActionResult<List<SlotDto>>> SetCharacterPowers(int characterId, [FromBody] List<PowerCompactDto> powerDtos){
+        public async Task<ActionResult<List<SlotDto>>> SetCharacterPowers(int characterId, [FromBody] List<PowerCompactDto> powerDtos)
+        {
             var character = await _unitOfWork.CharacterRepository.GetByIdWithKnownPowers(characterId);
-            if(character == null){
+            if (character == null)
+            {
                 return NotFound("character with this Id does not exist");
             }
             var powers = _unitOfWork.PowerRepository.GetAllByIds(powerDtos.Select(x => x.Id).ToList());
@@ -516,23 +555,29 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpPatch("{characterId}/powersPrepared/class/{classId}")]
-        public async Task<ActionResult<List<SlotDto>>> SetCharacterPowersPrepared(int characterId, [FromBody] List<PowerCompactDto> powerDtos, int classId){
+        public async Task<ActionResult<List<SlotDto>>> SetCharacterPowersPrepared(int characterId, [FromBody] List<PowerCompactDto> powerDtos, int classId)
+        {
             var character = await _unitOfWork.CharacterRepository.GetByIdWithPreparedPowers(characterId);
-            if(character == null){
+            if (character == null)
+            {
                 return NotFound("character with this Id does not exist");
             }
             var maxPowers = character.GetMaximumPreparedPowers(classId);
-            if(maxPowers < powerDtos.Count){
+            if (maxPowers < powerDtos.Count)
+            {
                 return BadRequest($"You cannot prepare more than {maxPowers} for class with id: {classId}");
             }
             var powers = _unitOfWork.PowerRepository.GetAllByIds(powerDtos.Select(x => x.Id).ToList());
-            if(character.R_PowersPrepared.Where(ps => ps.R_ClassId == classId).FirstOrDefault() == null) {
-                character.R_PowersPrepared.Add(new PowerSelection(){
+            if (character.R_PowersPrepared.Where(ps => ps.R_ClassId == classId).FirstOrDefault() == null)
+            {
+                character.R_PowersPrepared.Add(new PowerSelection()
+                {
                     R_ClassId = classId,
                     R_CharacterId = characterId
                 });
             }
-            else{
+            else
+            {
                 character.R_PowersPrepared.Where(ps => ps.R_ClassId == classId).First().R_PreparedPowers.Clear();
             }
             character.R_PowersPrepared.Where(ps => ps.R_ClassId == classId).First().R_PreparedPowers.AddRange(await powers);
@@ -556,17 +601,32 @@ namespace pracadyplomowa.Controllers
         public async Task<ActionResult> AddNewTemporaryEffectInstance([FromBody] EffectBlueprintFormDto effectDto, [FromRoute] int characterId)
         {
             var effectInstance = _mapper.Map<EffectInstance>(effectDto);
-            
-            effectInstance.R_OwnedByGroup = new EffectGroup(){
+
+            effectInstance.R_OwnedByGroup = new EffectGroup()
+            {
                 DurationLeft = effectDto.DurationLeft,
                 Name = "Custom"
             };
-                
+
             effectInstance.R_TargetedCharacterId = characterId;
 
             _unitOfWork.EffectInstanceRepository.Add(effectInstance);
             await _unitOfWork.SaveChangesAsync();
             return Ok(effectInstance.Id);
+        }
+
+        [HttpPatch("{characterId}/xp")]
+        public async Task<ActionResult> UpdateXP(int characterId, [FromBody] int xp)
+        {
+            if (!_characterService.CheckExistenceAndReadEditAccess(characterId, User.GetUserId(), [Character.AccessLevels.EditDescriptiveFields], out var errorResult, out var grantedAccessLevels, out var character))
+            {
+                return errorResult;
+            }
+            Console.WriteLine($"characterId: + {characterId} + xp: = {xp}");
+            character!.ExperiencePoints = xp;
+
+            await _unitOfWork.SaveChangesAsync();
+            return Ok();
         }
     }
 }

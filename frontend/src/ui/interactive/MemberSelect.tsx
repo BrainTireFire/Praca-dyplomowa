@@ -23,7 +23,7 @@ export function MemberSelect({ member, setSelectedMembers, type }) {
         id={member.id}
       ></Input>
       <label htmlFor={member.id}>
-        {member.character}
+        {member.name}
         {type === "xp" ? ` - XP: ${member.xp}` : ""}
         {type === "rest" ? ` - Rest: ${member.rest}` : ""}
       </label>

@@ -227,3 +227,22 @@ export type ParticipanceData = {
   totalAttacksPerAction: number;
   totalMovement: number;
 };
+
+export async function moveCharacter(
+  encounterId: number,
+  characterId: number,
+  fieldIds: number[]
+): Promise<number[]> {
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(fieldIds),
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/encounter/${encounterId}/movement/${characterId}`,
+    options
+  );
+}

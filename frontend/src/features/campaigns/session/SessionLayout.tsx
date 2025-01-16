@@ -88,7 +88,7 @@ const ChatForm = styled.form`
 
 export type Mode = "Idle" | "Movement" | "WeaponAttack" | "PowerCast";
 
-type ControlState = {
+export type ControlState = {
   mode: Mode;
   path: number[];
 };
@@ -347,6 +347,7 @@ export default function SessionLayout({ encounter }: any) {
       </RightPanel>
       <BottomPanel2>
         <ActionBar
+          controlState={controlState}
           dispatch={dispatch}
           encounter={encounter}
           connection={connection as HubConnection}

@@ -1275,8 +1275,10 @@ namespace pracadyplomowa.Models.Entities.Characters
             }
             return occupiedFields;
         }
-        public void Move(Encounter encounter, List<Field> path){
-            
+        public void Move(Encounter encounter, Field field){
+            var participance = encounter.R_Participances.First(x => x.R_CharacterId == this.Id);
+            participance.R_OccupiedField = encounter.R_Board.R_ConsistsOfFields.First(x => x == field);
+            field.R_OccupiedBy = participance;
         }
 
         public List<Field> CanTraversePath(List<Field> path){ //returns achieveable part of the path

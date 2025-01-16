@@ -70,11 +70,6 @@ public class EncounterController : BaseApiController
     {
         return await _encounterService.ModifyInitiativeQueueAsync(encounterId, newQueue);
     }
-    [HttpGet("{encounterId}/movement/{participanceId}")]
-    public async Task<ActionResult<List<InitiativeQueueItemDto>>> MoveCharacter(int encounterId, int participanceId, [FromBody] List<int> fieldIds)
-    {
-        return await _encounterService.GetInitiativeQueueAsync(encounterId);
-    }
     [HttpGet("{encounterId}/gmCheck")]
     public ActionResult<List<InitiativeQueueItemDto>> CheckIfIsGM(int encounterId)
     {
@@ -107,6 +102,12 @@ public class EncounterController : BaseApiController
     public async Task<ActionResult<Models.DTOs.Session.ParticipanceDataDto>> GetParticipanceData(int encounterId, int characterId)
     {
         var result = await _encounterService.GetParticipanceData(encounterId, characterId);
+        return Ok(result);
+    }
+    [HttpPost("{encounterId}/movement/{characterId}")]
+    public async Task<ActionResult<List<int>>> MoveCharacter(int encounterId, int characterId, [FromBody] List<int> fieldIds)
+    {
+        var result = await _encounterService.MoveCharacter(encounterId, characterId, fieldIds);
         return Ok(result);
     }
 }

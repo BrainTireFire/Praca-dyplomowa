@@ -3,7 +3,7 @@ import Box from "../../../ui/containers/Box";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import Input from "../../../ui/forms/Input";
 import Button from "../../../ui/interactive/Button";
-import { ControlStateActions } from "./SessionLayout";
+import { ControlState, ControlStateActions } from "./SessionLayout";
 import useRollInitiative from "../hooks/useRollInitiative";
 import { Encounter } from "../../../models/encounter/Encounter";
 import { HubConnection } from "@microsoft/signalr";
@@ -15,6 +15,8 @@ import { ControlledCharacterContext } from "./context/ControlledCharacterContext
 import { useParticipanceData } from "../hooks/useParticipanceData";
 import { ParticipanceData } from "../../../services/apiEncounter";
 import Heading from "../../../ui/text/Heading";
+import ButtonGroup from "../../../ui/interactive/ButtonGroup";
+import useMoveCharacter from "../hooks/useMoveCharacter";
 
 const initialParticipanceData: ParticipanceData = {
   actionsTaken: 0,
@@ -67,10 +69,12 @@ export function participanceReducer(
 }
 
 export default function ActionBar({
+  controlState,
   encounter,
   dispatch,
   connection,
 }: {
+  controlState: ControlState;
   encounter: Encounter;
   dispatch: React.Dispatch<ControlStateActions>;
   connection: HubConnection;
@@ -98,7 +102,17 @@ export default function ActionBar({
       });
     }
   }, [participance, participanceStateDispatch]);
-  if (isLoadingIsGM || isLoadingIsItMyTurn || isLoadingParticipanceData) {
+  const { isPending: isPendingMove, moveCharacter } = useMoveCharacter(
+    encounter.id,
+    controlledCharacterId,
+    () => {}
+  );
+  if (
+    isLoadingIsGM ||
+    isLoadingIsItMyTurn ||
+    isLoadingParticipanceData ||
+    isPendingMove
+  ) {
     return <Spinner></Spinner>;
   }
   return (
@@ -109,6 +123,9 @@ export default function ActionBar({
       {controlledCharacterId && (
         <>
           <Heading as="h2">{participanceState.characterName}</Heading>
+          <Heading as="h3">
+            {isItMyTurn ? "Active turn!" : "Waiting for turn"}
+          </Heading>
           <Container IsActive={!!isItMyTurn}>
             <Cell>
               <FormRowVertical label={"Actions taken"}>
@@ -238,36 +255,45 @@ export default function ActionBar({
               )}
             </Cell>
             <Cell>
-              <Button
-                size="small"
-                customStyles={css`
-                  height: 50px;
-                `}
-                disabled={!isItMyTurn}
-              >
-                Weapon attack
-              </Button>
-              <Button
-                size="small"
-                customStyles={css`
-                  height: 50px;
-                `}
-                disabled={!isItMyTurn}
-              >
-                Use power
-              </Button>
-              <Button
-                size="small"
-                customStyles={css`
-                  height: 50px;
-                `}
-                onClick={() =>
-                  dispatch({ type: "CHANGE_MODE", payload: "Movement" })
-                }
-                disabled={!isItMyTurn}
-              >
-                Plot movement
-              </Button>
+              {controlState.mode === "Idle" && (
+                <ButtonGroup>
+                  <Button
+                    size="small"
+                    customStyles={css`
+                      height: 50px;
+                    `}
+                    disabled={!isItMyTurn}
+                  >
+                    Weapon attack
+                  </Button>
+                  <Button
+                    size="small"
+                    customStyles={css`
+                      height: 50px;
+                    `}
+                    disabled={!isItMyTurn}
+                  >
+                    Use power
+                  </Button>
+                  <Button
+                    size="small"
+                    customStyles={css`
+                      height: 50px;
+                    `}
+                    onClick={() =>
+                      dispatch({ type: "CHANGE_MODE", payload: "Movement" })
+                    }
+                    disabled={!isItMyTurn}
+                  >
+                    Plot movement
+                  </Button>
+                </ButtonGroup>
+              )}
+              {controlState.mode === "Movement" && (
+                <Button onClick={() => moveCharacter(controlState.path)}>
+                  Confirm movement
+                </Button>
+              )}
               <Button
                 size="small"
                 customStyles={css`

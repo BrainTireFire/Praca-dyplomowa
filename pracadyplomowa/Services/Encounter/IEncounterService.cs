@@ -18,4 +18,5 @@ public interface IEncounterService
     Task SetActiveTurn(int encounterId, int activeCharacterId);
     Task<List<int>> GetControlledCharacters(int encounterId, int userId);
     Task<Models.DTOs.Session.ParticipanceDataDto> GetParticipanceData(int encounterId, int characterId);
+    Task<List<int>> MoveCharacter(int encounterId, int characterId, List<int> fieldIds);
 }

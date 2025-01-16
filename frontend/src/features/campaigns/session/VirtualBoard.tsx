@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  useContext,
+} from "react";
 import styled from "styled-components";
 import { debounce } from "lodash";
 import {
@@ -19,6 +25,7 @@ import { VirtualBoardProps } from "./../../../models/session/VirtualBoardProps";
 import { Coordinate } from "../../../models/session/Coordinate";
 import VirtualBoardMenu from "../../../ui/containers/VirtualBoardMenu";
 import { PiPathLight } from "react-icons/pi";
+import { ControlledCharacterContext } from "./context/ControlledCharacterContext";
 
 const CanvasContainer = styled.div`
   display: flex;
@@ -66,6 +73,7 @@ export default function VirtualBoard({
   });
   const [selectedBox, setSelectedBox] = useState<Coordinate | null>(null);
   const [translatePos, setTranslatePos] = useState<Coordinate>({ x: 0, y: 0 });
+  const [controlledCharacterId] = useContext(ControlledCharacterContext);
 
   const sizeX = encounter.board.sizeX;
   const sizeY = encounter.board.sizeY;
@@ -240,16 +248,27 @@ export default function VirtualBoard({
         let lastField = encounter.board.fields.find(
           (field) => field.id === path[path.length - 1]
         );
+        let occupiedField = encounter.participances.find(
+          (x) => x.character.id === controlledCharacterId
+        )?.occupiedField;
         let distanceX =
           (lastField?.positionX ?? -1) - (selectedField?.positionX ?? 1);
         let distanceY =
           (lastField?.positionY ?? -1) - (selectedField?.positionY ?? 1);
-
+        let distanceFromStartX =
+          (occupiedField?.positionX ?? -1) - (selectedField?.positionX ?? 1);
+        let distanceFromStartY =
+          (occupiedField?.positionY ?? -1) - (selectedField?.positionY ?? 1);
+        let distanceFromLastInPathOk =
+          Math.abs(distanceX) <= 1 && Math.abs(distanceY) <= 1;
+        let distanceFromCurrentPositionOk =
+          Math.abs(distanceFromStartX) === 1 ||
+          Math.abs(distanceFromStartY) === 1;
         if (
           !!selectedField &&
-          (path.length === 0 ||
+          ((path.length === 0 && distanceFromCurrentPositionOk) ||
             !!path.find((x) => x === selectedField.id) ||
-            (Math.abs(distanceX) <= 1 && Math.abs(distanceY) <= 1))
+            distanceFromLastInPathOk)
         ) {
           console.log("dispatching");
           dispatch({

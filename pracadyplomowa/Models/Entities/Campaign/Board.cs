@@ -35,5 +35,13 @@ namespace pracadyplomowa.Models.Entities.Campaign
             field.AssignToBoard(this);
             R_ConsistsOfFields.Add(field);
         }
+
+        public Field[,] GetFieldsAs2DTable(){
+            var grid = new Field[SizeX, SizeY];
+            foreach(var field in R_ConsistsOfFields){
+                grid[field.PositionX, field.PositionY] = field;
+            }
+            return grid;
+        }
     }
 }

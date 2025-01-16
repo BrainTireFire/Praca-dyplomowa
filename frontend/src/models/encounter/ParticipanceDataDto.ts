@@ -1,4 +1,4 @@
-import { Field } from "react-hook-form";
+import { Field } from "../map/Board";
 import { CharacterItem } from "../character";
 
 export type ParticipanceDataDto = {

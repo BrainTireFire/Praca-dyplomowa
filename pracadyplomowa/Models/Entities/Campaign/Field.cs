@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using pracadyplomowa.Models.Entities.Characters;
@@ -56,6 +57,13 @@ namespace pracadyplomowa.Models.Entities.Campaign
             powers.ForEach(power => this.R_CasterPowers.Add(power));
         }
         
+        [NotMapped]
+        public FieldMovementCostType ActualMovementCost {
+            get {
+                return this.FieldMovementCost;
+            }
+        }
+
         public void AssignToBoard(Board board)
         {
             R_Board = board ?? throw new ArgumentNullException(nameof(board));
@@ -207,7 +215,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
             var willOccupyCoordinatesIfEnters = GetOccupiedCoordinates(character.Size);
             foreach(var field in this.R_Board.R_ConsistsOfFields){
                 if(willOccupyCoordinatesIfEnters.Contains(new Tuple<int, int>(field.PositionX, field.PositionY))){
-                    if(field.IsOccupiedAlternative(character)){
+                    if(field.IsOccupiedAlternative(character) || field.FieldMovementCost == FieldMovementCostType.Impassable){
                         return false;
                     }
                 }

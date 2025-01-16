@@ -309,4 +309,35 @@ public class EncounterService : IEncounterService
         }).First();
         return result;
     }
+    public async Task<List<int>> MoveCharacter(int encounterId, int characterId, List<int> fieldIds){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId);
+        foreach(var characterIdInLoop in encounter.R_Participances.Select(x => x.R_CharacterId).ToList()){
+            await _unitOfWork.CharacterRepository.GetByIdWithAll(characterIdInLoop);
+        }
+        var participance = encounter.R_Participances.First(x => x.R_Character.Id == characterId);
+        var character = participance.R_Character;
+        List<Field> fields = [];
+        foreach(var fieldId in fieldIds){
+            fields.Add(encounter.R_Board.R_ConsistsOfFields.First(x => x.Id == fieldId));
+        }
+        var traversableFields = character.CanTraversePath(fields);
+        var remainingMovementCapacityInFeet = character.Speed - participance.DistanceTraveled;
+        var missingMovementCapacity = remainingMovementCapacityInFeet / 5 - traversableFields.Count;
+        if(missingMovementCapacity <= 0){
+            missingMovementCapacity *= -1;
+        }
+        else{
+            missingMovementCapacity = 0;
+        }
+        for(int i = 0; i < missingMovementCapacity; i++){
+            traversableFields.RemoveAt(traversableFields.Count - 1);
+        }
+        var traversableIds = traversableFields.Select(x => x.Id).ToList();
+        if(traversableFields.Count == fields.Count){
+            character.Move(encounter, traversableFields.Last());
+            participance.DistanceTraveled += traversableFields.Count * 5;
+        }
+        await _unitOfWork.SaveChangesAsync();
+        return traversableIds;
+    }
 }

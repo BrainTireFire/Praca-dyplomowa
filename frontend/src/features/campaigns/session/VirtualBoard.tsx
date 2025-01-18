@@ -191,10 +191,6 @@ export default function VirtualBoard({
         } else if (path.length > 0) {
           localPath = path;
         }
-        console.log("Paths: ");
-        console.log(path);
-        console.log(otherPath);
-        console.log(localPath);
 
         localPath.forEach((element) => {
           let field = encounter.board.fields.find(

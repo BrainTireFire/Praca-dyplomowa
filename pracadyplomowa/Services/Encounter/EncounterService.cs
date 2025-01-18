@@ -343,6 +343,9 @@ public class EncounterService : IEncounterService
         await _unitOfWork.SaveChangesAsync();
     }
     public async Task<List<int>> MoveCharacter(int encounterId, int characterId, List<int> fieldIds){
+        if(fieldIds.Count == 0){
+            return fieldIds;
+        }
         var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId);
         foreach(var characterIdInLoop in encounter.R_Participances.Select(x => x.R_CharacterId).ToList()){
             await _unitOfWork.CharacterRepository.GetByIdWithAll(characterIdInLoop);

@@ -205,6 +205,12 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .WithOne(c => c.R_GeneratedBy)
                         .HasForeignKey<EffectGroup>(c => c.R_GeneratesAuraId)
                         .IsRequired(false);
+                builder.Entity<EffectGroup>()
+                        .HasMany(c => c.R_OwnedEffects)
+                        .WithOne(e => e.R_OwnedByGroup)
+                        .HasForeignKey(c => c.R_OwnedByGroupId)
+                        .IsRequired(false)
+                        .OnDelete(DeleteBehavior.Cascade);
                 
                 builder.Entity<Field>()
                         .HasOne(c => c.R_OccupiedBy)
@@ -290,4 +296,10 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                 builder.Entity<MeleeWeapon>().Navigation(i => i.VersatileDamageValue).AutoInclude();
                 builder.Entity<EquipData>().Navigation(i => i.R_Slots).AutoInclude();
         }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.AddInterceptors(new Data.DeletionInterceptor());
+        base.OnConfiguring(optionsBuilder);
+    }
 }

@@ -6,6 +6,7 @@ using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Models.Entities.Items;
 using pracadyplomowa.Models.Enums;
 using pracadyplomowa.Models.Entities.Campaign;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace pracadyplomowa.Models.Entities.Powers
 {
@@ -50,6 +51,30 @@ namespace pracadyplomowa.Models.Entities.Powers
                     };
             this.R_GeneratesAura = aura;
             aura.R_GeneratedBy = this;
+        }
+
+        [NotMapped]
+        public bool DeleteOnSave { get; set; }
+
+        public void TickDuration(){
+            if(!IsConstant){
+                DurationLeft -= 1;
+                if(DurationLeft <= 0){
+                    R_OwnedEffects.ToList().ForEach(e => {
+                        e.Unlink();
+                    });
+                    Disperse();
+                    DeleteOnSave = true;
+                }
+            }
+        }
+
+        public void Disperse() {
+            if(R_ConcentratedOnByCharacter != null){
+                R_ConcentratedOnByCharacter.R_ConcentratesOn = null;
+            }
+            DeleteOnSave = true;
+            R_ConcentratedOnByCharacter = null;
         }
     }
 }

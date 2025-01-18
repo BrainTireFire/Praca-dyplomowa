@@ -16,7 +16,9 @@ public interface IEncounterService
     bool CheckIfIsGM(int encounterId, int userId);
     Task<bool> CheckIfItsMyTurn(int encounterId, int characterId, int userId);
     Task SetActiveTurn(int encounterId, int activeCharacterId);
+    Task NextTurn(int encounterId);
     Task<List<int>> GetControlledCharacters(int encounterId, int userId);
     Task<Models.DTOs.Session.ParticipanceDataDto> GetParticipanceData(int encounterId, int characterId);
+    Task UpdateParticipanceData(int encounterId, int characterId, Models.DTOs.Session.ParticipanceDataDto participanceDataDto);
     Task<List<int>> MoveCharacter(int encounterId, int characterId, List<int> fieldIds);
 }

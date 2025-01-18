@@ -605,8 +605,8 @@ namespace pracadyplomowa.Models.Entities.Characters
         
         [NotMapped]
         public List<EffectInstance> AllEffects => R_AffectedBy
-        .Union(this.R_UsedChoiceGroups.SelectMany(cg => cg.R_EffectsGranted))
-        .Union(this.R_EquippedItems.SelectMany(ed => ed.R_Item.R_EffectsOnEquip))
+        .Union(NativeEffects)
+        .Union(EffectsFromItems)
             // .Where(effect => effect is not SavingThrowEffectInstance || (effect is SavingThrowEffectInstance instance && instance.EffectType.SavingThrowEffect_Condition == null))
         .ToList();
 
@@ -614,6 +614,30 @@ namespace pracadyplomowa.Models.Entities.Characters
         public List<EffectInstance> NativeEffects => this.R_UsedChoiceGroups.SelectMany(cg => cg.R_EffectsGranted)
             // .Where(effect => effect is not SavingThrowEffectInstance || (effect is SavingThrowEffectInstance instance && instance.EffectType.SavingThrowEffect_Condition == null))
         .ToList();
+
+        [NotMapped]
+        public List<EffectInstance> EffectsFromItems => this.R_EquippedItems.SelectMany(ed => ed.R_Item.R_EffectsOnEquip)
+        .ToList();
+
+        public void ResolveAffectingEffects() {
+            AllEffects.ForEach(x => x.Resolve());
+        }
+
+        public void StartNextTurn() {
+            ResolveAffectingEffects();
+            var effectGroupsForSavingThrowChecks = AllEffects.Where(e => e.R_OwnedByGroup != null && e.R_OwnedByGroup.DifficultyClassToBreak != null && e.R_OwnedByGroup.SavingThrow != null).Select(e => e.R_OwnedByGroup).Distinct().ToList();
+            effectGroupsForSavingThrowChecks.ForEach(eg => {
+                var result = SavingThrowRoll((Ability)eg!.SavingThrow!);
+                if(result >= eg.DifficultyClassToBreak){
+                    eg.Disperse();
+                }
+            });
+            R_ConcentratesOn?.TickDuration();
+        }
+
+        public void StopConcentrating(){
+            R_ConcentratesOn?.Disperse();
+        }
 
         private bool HasCondition(Condition condition){
             return this.AffectedByApprovedEffects

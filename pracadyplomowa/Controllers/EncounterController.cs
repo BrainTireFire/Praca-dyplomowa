@@ -92,6 +92,12 @@ public class EncounterController : BaseApiController
         await _encounterService.SetActiveTurn(encounterId, characterId);
         return Ok();
     }
+    [HttpPost("{encounterId}/nextTurn")]
+    public async Task<ActionResult<List<InitiativeQueueItemDto>>> NextTurn(int encounterId, int characterId)
+    {
+        await _encounterService.NextTurn(encounterId);
+        return Ok();
+    }
     [HttpGet("{encounterId}/controlledCharacters")]
     public async Task<ActionResult<List<int>>> GetControlledCharacters(int encounterId)
     {
@@ -103,6 +109,12 @@ public class EncounterController : BaseApiController
     {
         var result = await _encounterService.GetParticipanceData(encounterId, characterId);
         return Ok(result);
+    }
+    [HttpPatch("{encounterId}/participanceData/{characterId}")]
+    public async Task<ActionResult<Models.DTOs.Session.ParticipanceDataDto>> GetParticipanceData(int encounterId, int characterId, [FromBody] Models.DTOs.Session.ParticipanceDataDto participanceDataDto)
+    {
+        await _encounterService.UpdateParticipanceData(encounterId, characterId, participanceDataDto);
+        return Ok();
     }
     [HttpPost("{encounterId}/movement/{characterId}")]
     public async Task<ActionResult<List<int>>> MoveCharacter(int encounterId, int characterId, [FromBody] List<int> fieldIds)

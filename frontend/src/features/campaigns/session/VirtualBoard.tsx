@@ -20,6 +20,10 @@ import {
   fillSelectedBox,
   drawTextName,
   drawAvatar,
+  drawWeaponAttackRange,
+  getSizeMultiplier,
+  checkIfTargetInWeaponAttackRange,
+  getOccupiedCoordinatesForSize,
 } from "./CanvasUtils";
 import { VirtualBoardProps } from "./../../../models/session/VirtualBoardProps";
 import { Coordinate } from "../../../models/session/Coordinate";
@@ -27,6 +31,7 @@ import VirtualBoardMenu from "../../../ui/containers/VirtualBoardMenu";
 import { PiPathLight } from "react-icons/pi";
 import { ControlledCharacterContext } from "./context/ControlledCharacterContext";
 import { useParticipanceData } from "../hooks/useParticipanceData";
+import { size } from "../../effects/sizes";
 
 const CanvasContainer = styled.div`
   display: flex;
@@ -57,6 +62,7 @@ export default function VirtualBoard({
   dispatch,
   path,
   otherPath,
+  weaponAttack,
 }: VirtualBoardProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [selectedBoxes, setSelectedBoxes] = useState<{
@@ -100,7 +106,7 @@ export default function VirtualBoard({
     },
     [userCursors, sizeX, sizeY]
   );
-
+  const ActiveCharacterSize: size = "Medium";
   const drawCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -130,21 +136,23 @@ export default function VirtualBoard({
         if (matchingParticipance && field.fieldMovementCost !== "Impassable") {
           field.memberName = matchingParticipance.character.name;
           field.avatarUrl = matchingParticipance.character.isNpc
-            ? "https://i1.sndcdn.com/avatars-000012078220-stfi4o-t1080x1080.jpg"
-            : "https://i1.sndcdn.com/avatars-000012078220-stfi4o-t1080x1080.jpg";
+            ? "https://s3.amazonaws.com/files.d20.io/images/390056921/JkAY2BnZBWR-IYsYkqx3_Q/original.png"
+            : "https://s3.amazonaws.com/files.d20.io/images/390056921/JkAY2BnZBWR-IYsYkqx3_Q/original.png";
 
           // Call drawAvatar and drawTextName separately, ensuring drawAvatar finishes first
           await drawAvatar(
             ctx,
             field,
             encounter.board.sizeX,
-            encounter.board.sizeY
+            encounter.board.sizeY,
+            ActiveCharacterSize
           );
           drawTextName(
             ctx,
             field,
             encounter.board.sizeX,
-            encounter.board.sizeY
+            encounter.board.sizeY,
+            ActiveCharacterSize
           );
         }
 
@@ -159,6 +167,20 @@ export default function VirtualBoard({
       });
     }
 
+    if (mode === "WeaponAttack") {
+      let occupiedField = encounter.participances.find(
+        (x) => x.character.id === controlledCharacterId
+      )?.occupiedField;
+      drawWeaponAttackRange(
+        ctx,
+        { x: occupiedField!.positionX, y: occupiedField!.positionY },
+        weaponAttack.range,
+        ActiveCharacterSize,
+        16,
+        9
+      );
+    }
+
     Object.keys(selectedBoxes).forEach((connectionId) => {
       const box = selectedBoxes[connectionId];
       const color = getColorForUser(connectionId);
@@ -169,6 +191,11 @@ export default function VirtualBoard({
         } else if (path.length > 0) {
           localPath = path;
         }
+        console.log("Paths: ");
+        console.log(path);
+        console.log(otherPath);
+        console.log(localPath);
+
         localPath.forEach((element) => {
           let field = encounter.board.fields.find(
             (field) => field.id === element
@@ -191,8 +218,10 @@ export default function VirtualBoard({
     encounter.board.sizeX,
     encounter.board.sizeY,
     encounter.participances,
-    selectedBoxes,
     mode,
+    selectedBoxes,
+    weaponAttack,
+    controlledCharacterId,
     otherPath,
     path,
   ]);
@@ -244,15 +273,59 @@ export default function VirtualBoard({
 
       setSelectedBoxes(updatedSelectedBoxes);
 
+      let selectedField = encounter.board.fields.find(
+        (field) => field.positionX === gridX && field.positionY === gridY
+      );
       if (mode === "Movement") {
-        let selectedField = encounter.board.fields.find(
-          (field) => field.positionX === gridX && field.positionY === gridY
-        );
-        if (checkIfCanAddFieldToPath(gridX, gridY)) {
+        if (
+          checkIfCanAddFieldToPath(
+            selectedField!.positionX,
+            selectedField!.positionY
+          )
+        ) {
+          console.log("Toggle path");
           dispatch({
             type: "TOGGLE_PATH",
             payload: selectedField?.id as number,
           });
+        }
+      } else if (mode === "WeaponAttack") {
+        let occupiedField = encounter.participances.find(
+          (x) => x.character.id === controlledCharacterId
+        )?.occupiedField;
+        let clickedCharacter = encounter.participances.find((participance) => {
+          let targetX = participance.occupiedField.positionX;
+          let targetY = participance.occupiedField.positionY;
+          let targetOccupiedCoordinates = getOccupiedCoordinatesForSize(
+            targetX,
+            targetY,
+            "Large"
+          );
+          for (var targetOccupiedCoordinate of targetOccupiedCoordinates) {
+            if (
+              targetOccupiedCoordinate.x === selectedField?.positionX &&
+              targetOccupiedCoordinate.y === selectedField.positionY
+            ) {
+              return true;
+            }
+          }
+          return false;
+        });
+        if (!!clickedCharacter) {
+          const inRange = checkIfTargetInWeaponAttackRange(
+            occupiedField!.positionX,
+            occupiedField!.positionY,
+            ActiveCharacterSize,
+            clickedCharacter!.occupiedField.positionX,
+            clickedCharacter!.occupiedField.positionY,
+            "Large",
+            weaponAttack.range
+          );
+          if (inRange) {
+            console.log("In range");
+          } else {
+            console.log("Not in range");
+          }
         }
       } else {
         await connection.invoke(
@@ -293,7 +366,7 @@ export default function VirtualBoard({
       !!participance &&
       ((((path.length === 0 && distanceFromCurrentPositionOk) ||
         distanceFromLastInPathOk) &&
-        path.length * 5 <=
+        path.length * 5 <
           participance.totalMovement - participance.movementUsed) ||
         fieldAlreadyInPath)
     );

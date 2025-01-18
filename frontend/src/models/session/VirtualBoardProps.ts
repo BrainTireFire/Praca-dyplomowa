@@ -13,4 +13,11 @@ export type VirtualBoardProps = {
   dispatch: React.Dispatch<ControlStateActions>;
   path: number[];
   otherPath: number[];
+  weaponAttack: WeaponAttack;
+};
+
+export type WeaponAttack = {
+  weaponId: number;
+  range: number;
+  isRanged: boolean;
 };

@@ -267,6 +267,30 @@ public class EncounterService : IEncounterService
         return;
     }
 
+    public async Task NextTurn(int encounterId){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipances(encounterId);
+
+        var x = encounter.R_Participances.SkipWhile(x => !x.ActiveTurn);
+        ParticipanceData participanceData;
+        if(x.Count() > 1){
+            participanceData = x.Skip(1).First();
+        }
+        else{
+            participanceData = encounter.R_Participances.First();
+        }
+        encounter.R_Participances.ToList().ForEach(x => x.ActiveTurn = false);
+        participanceData.ActiveTurn = true;
+        participanceData.NumberOfActionsTaken = 0;
+        participanceData.NumberOfBonusActionsTaken = 0;
+        participanceData.NumberOfAttacksTaken = 0;
+        participanceData.DistanceTraveled = 0;
+        var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(participanceData.R_CharacterId);
+        character.StartNextTurn();
+
+        await _unitOfWork.SaveChangesAsync();
+        return;
+    }
+
     // public ActionResult CheckIfIsGM(int encounterId, int userId){
     //     var encounter = _unitOfWork.EncounterRepository.GetById(encounterId);
     //     var isGm = encounter.R_OwnerId == userId;
@@ -308,6 +332,15 @@ public class EncounterService : IEncounterService
             TotalMovement = x.R_Character.TotalMovementPerTurn
         }).First();
         return result;
+    }
+    public async Task UpdateParticipanceData(int encounterId, int characterId, Models.DTOs.Session.ParticipanceDataDto participanceDataDto){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipance(encounterId, characterId);
+        var participance = encounter.R_Participances.First(x => x.R_CharacterId == characterId);
+        participance.DistanceTraveled = participanceDataDto.MovementUsed;
+        participance.NumberOfActionsTaken = participanceDataDto.ActionsTaken;
+        participance.NumberOfBonusActionsTaken = participanceDataDto.BonusActionsTaken;
+        participance.NumberOfAttacksTaken = participanceDataDto.AttacksMade;
+        await _unitOfWork.SaveChangesAsync();
     }
     public async Task<List<int>> MoveCharacter(int encounterId, int characterId, List<int> fieldIds){
         var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId);

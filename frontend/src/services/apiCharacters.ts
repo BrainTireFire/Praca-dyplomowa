@@ -25,6 +25,7 @@ export async function getNpcCharacters(): Promise<CharacterItem[]> {
 }
 
 export async function getCharacter(characterId: number): Promise<Character> {
+  console.log(`getCharacter api. Id: ${characterId}`);
   const response = await customFetch(
     `${BASE_URL}/api/character/${characterId}`
   );

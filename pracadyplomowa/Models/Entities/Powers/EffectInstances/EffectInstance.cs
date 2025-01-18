@@ -70,5 +70,12 @@ namespace pracadyplomowa.Models.Entities.Powers
         public virtual void Resolve(){
             
         }
+
+        public virtual void Unlink(){ //dont unlink from effect group so cascading delete works
+            R_TargetedCharacter?.R_AffectedBy.Remove(this);
+            R_TargetedItem?.R_AffectedBy.Remove(this);
+            this.R_TargetedCharacter = null;
+            this.R_TargetedItem = null;
+        }
     }
 }

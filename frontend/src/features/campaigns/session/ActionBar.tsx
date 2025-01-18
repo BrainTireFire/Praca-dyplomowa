@@ -17,6 +17,10 @@ import { ParticipanceData } from "../../../services/apiEncounter";
 import Heading from "../../../ui/text/Heading";
 import ButtonGroup from "../../../ui/interactive/ButtonGroup";
 import useMoveCharacter from "../hooks/useMoveCharacter";
+import useUpdateParticipanceData from "../hooks/useUpdateParticipanceData";
+import useNextTurn from "../hooks/useNextTurn";
+import Modal from "../../../ui/containers/Modal";
+import { AttackSelectionScreen } from "./AttackSelectionScreen";
 
 const initialParticipanceData: ParticipanceData = {
   actionsTaken: 0,
@@ -94,6 +98,12 @@ export default function ActionBar({
   );
   const { isLoading: isLoadingParticipanceData, participance } =
     useParticipanceData(encounter.id, controlledCharacterId);
+  const { isPending: isPendingParticipanceDataUpdate, updateParticipanceData } =
+    useUpdateParticipanceData(encounter.id, controlledCharacterId, () => {});
+  const { isPending: isPendingNextTurnSetting, nextTurn } = useNextTurn(
+    encounter.id,
+    () => {}
+  );
   useEffect(() => {
     if (!!participance) {
       participanceStateDispatch({
@@ -105,12 +115,16 @@ export default function ActionBar({
   const { isPending: isPendingMove, moveCharacter } = useMoveCharacter(
     encounter.id,
     controlledCharacterId,
-    () => {}
+    () => {
+      dispatch({ type: "SET_PATH", payload: [] });
+    }
   );
   if (
     isLoadingIsGM ||
     isLoadingIsItMyTurn ||
     isLoadingParticipanceData ||
+    isPendingParticipanceDataUpdate ||
+    isPendingNextTurnSetting ||
     isPendingMove
   ) {
     return <Spinner></Spinner>;
@@ -249,6 +263,7 @@ export default function ActionBar({
                     height: 50px;
                   `}
                   disabled={!isGM}
+                  onClick={() => updateParticipanceData(participanceState)}
                 >
                   Update
                 </Button>
@@ -257,15 +272,28 @@ export default function ActionBar({
             <Cell>
               {controlState.mode === "Idle" && (
                 <ButtonGroup>
-                  <Button
-                    size="small"
-                    customStyles={css`
-                      height: 50px;
-                    `}
-                    disabled={!isItMyTurn}
-                  >
-                    Weapon attack
-                  </Button>
+                  <Modal>
+                    <Modal.Open opens="attackSelection">
+                      <Button
+                        size="small"
+                        customStyles={css`
+                          height: 50px;
+                        `}
+                        disabled={!isItMyTurn}
+                      >
+                        Weapon attack
+                      </Button>
+                    </Modal.Open>
+                    <Modal.Window name="attackSelection">
+                      {controlledCharacterId && (
+                        <AttackSelectionScreen
+                          characterId={controlledCharacterId}
+                          participanceData={participanceState}
+                          dispatch={dispatch}
+                        />
+                      )}
+                    </Modal.Window>
+                  </Modal>
                   <Button
                     size="small"
                     customStyles={css`
@@ -312,6 +340,7 @@ export default function ActionBar({
                   height: 50px;
                 `}
                 disabled={!isItMyTurn}
+                onClick={() => nextTurn()}
               >
                 Next turn
               </Button>

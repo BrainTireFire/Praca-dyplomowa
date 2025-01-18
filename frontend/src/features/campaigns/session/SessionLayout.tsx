@@ -13,6 +13,7 @@ import { useParams } from "react-router-dom";
 import { BASE_URL } from "../../../services/constAPI";
 import ActionBar from "./ActionBar";
 import { useQueryClient } from "@tanstack/react-query";
+import { WeaponAttack } from "../../../models/session/VirtualBoardProps";
 
 const GridContainer = styled.div`
   grid-row: 1 / 2;
@@ -91,6 +92,7 @@ export type Mode = "Idle" | "Movement" | "WeaponAttack" | "PowerCast";
 export type ControlState = {
   mode: Mode;
   path: number[];
+  weaponAttackSelected: WeaponAttack | null;
 };
 
 // Define action types
@@ -99,9 +101,10 @@ const APPEND_PATH = "APPEND_PATH";
 const POP_PATH = "POP_PATH";
 const TOGGLE_PATH = "TOGGLE_PATH";
 const SET_PATH = "SET_PATH";
+const SET_WEAPON_ATTACK = "SET_WEAPON_ATTACK";
 
 // Define action interfaces
-interface ChangeModeAction {
+export interface ChangeModeAction {
   type: typeof CHANGE_MODE;
   payload: Mode;
 }
@@ -125,6 +128,10 @@ interface SetPathAction {
   type: typeof SET_PATH;
   payload: number[];
 }
+export interface SetWeaponAttack {
+  type: typeof SET_WEAPON_ATTACK;
+  payload: WeaponAttack;
+}
 
 // Union type for all actions
 export type ControlStateActions =
@@ -132,7 +139,8 @@ export type ControlStateActions =
   | AppendPathAction
   | PopPathAction
   | TogglePathAction
-  | SetPathAction;
+  | SetPathAction
+  | SetWeaponAttack;
 
 // Reducer function
 const controlStateReducer = (
@@ -145,6 +153,8 @@ const controlStateReducer = (
         ...state,
         mode: action.payload,
         path: action.payload !== "Movement" ? [] : state.path,
+        weaponAttackSelected:
+          action.payload !== "WeaponAttack" ? null : state.weaponAttackSelected,
       };
     case APPEND_PATH:
       return {
@@ -175,6 +185,12 @@ const controlStateReducer = (
         ...state,
         path: action.payload,
       };
+    case SET_WEAPON_ATTACK:
+      return {
+        ...state,
+        weaponAttackSelected: action.payload,
+        mode: "WeaponAttack",
+      };
     default:
       return state;
   }
@@ -184,6 +200,7 @@ const controlStateReducer = (
 const initialState: ControlState = {
   mode: "Idle",
   path: [],
+  weaponAttackSelected: null,
 };
 
 export default function SessionLayout({ encounter }: any) {
@@ -317,6 +334,7 @@ export default function SessionLayout({ encounter }: any) {
           dispatch={dispatch}
           path={controlState.path}
           otherPath={otherPath}
+          weaponAttack={controlState.weaponAttackSelected!}
         />
       </GridContainer>
       <RightPanel>

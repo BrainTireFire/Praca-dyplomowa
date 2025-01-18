@@ -184,6 +184,21 @@ export async function setActiveTurn(
 
   return;
 }
+export async function nextTurn(encounterId: number): Promise<void> {
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  await customFetch(
+    `${BASE_URL}/api/encounter/${encounterId}/nextTurn`,
+    options
+  );
+
+  return;
+}
 export async function getControlledCharacters(
   encounterId: number
 ): Promise<number[]> {
@@ -208,6 +223,24 @@ export async function getParticipanceData(
     headers: {
       "Content-Type": "application/json",
     },
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/encounter/${encounterId}/participanceData/${characterId}`,
+    options
+  );
+}
+export async function updateParticipanceData(
+  encounterId: number,
+  characterId: number,
+  participanceData: ParticipanceData
+): Promise<void> {
+  const options: RequestInit = {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(participanceData),
   };
 
   return await customFetch(

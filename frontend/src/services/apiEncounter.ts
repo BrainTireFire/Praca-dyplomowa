@@ -45,7 +45,7 @@ export async function updatePlaceEncounter(
   return null;
 }
 
-export async function getEncounters(): Promise<Encounter[]> {
+export async function getEncounters(campaignId: string): Promise<Encounter[]> {
   const options: RequestInit = {
     method: "GET",
     headers: {
@@ -54,7 +54,7 @@ export async function getEncounters(): Promise<Encounter[]> {
   };
 
   const data: Encounter[] = await customFetch(
-    `${BASE_URL}/api/encounter/myEncounters`,
+    `${BASE_URL}/api/encounter/myEncounters/${campaignId}`,
     options
   );
 

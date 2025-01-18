@@ -5,6 +5,9 @@ import { MemberSelect } from "../../ui/interactive/MemberSelect";
 import Input from "../../ui/forms/Input";
 import Button from "../../ui/interactive/Button";
 import styled from "styled-components";
+import { CharacterItem } from "../../models/character";
+import { useUpdateXP } from "../characters/hooks/useUpdateCharacter";
+import Spinner from "../../ui/interactive/Spinner";
 
 const Container = styled.div`
   display: flex;
@@ -14,20 +17,36 @@ const Container = styled.div`
   gap: 20px;
 `;
 
-function GiveXP({ membersList }) {
+function GiveXP({ membersList }: { membersList: CharacterItem[] }) {
   const [members, setMembers] = useState(membersList);
   const [selectedMembers, setSelectedMembers] = useState<number[]>([]);
-  const inputXPRef = useRef(0);
+  const [inputXP, setInputXP] = useState<number>(0);
+  const { isPending, updateXP } = useUpdateXP(membersList[0].campaignId || 0);
+
+  if (isPending) return <Spinner />;
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = parseInt(e.target.value);
+    if (isNaN(value)) {
+      value = 0;
+    } else {
+      value = value < 1 ? 0 : value;
+    }
+
+    setInputXP(value);
+  };
 
   const handleClick = () => {
-    const inputXP = Number(inputXPRef.current.value);
-    setMembers((previous) =>
-      previous.map((member) =>
-        selectedMembers.includes(member.id)
-          ? { ...member, xp: member.xp + inputXP }
-          : member
-      )
-    );
+    setMembers((previous) => {
+      return previous.map((member) => {
+        if (selectedMembers.includes(member.id)) {
+          const updatedXP = member.xp + inputXP;
+          updateXP({ characterId: member.id, xp: updatedXP });
+          return { ...member, xp: updatedXP };
+        }
+        return member;
+      });
+    });
   };
 
   return (
@@ -45,7 +64,11 @@ function GiveXP({ membersList }) {
         ))}
       </Box>
       <Heading as="h1">Amount of XP</Heading>
-      <Input ref={inputXPRef} placeholder="Type amount of XP"></Input>
+      <Input
+        type="number"
+        placeholder="Type amount of XP"
+        onChange={handleChange}
+      ></Input>
       <Button onClick={handleClick}>Give Points</Button>
     </Container>
   );

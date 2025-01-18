@@ -22,6 +22,7 @@ export type CharacterItem = {
   race: string;
   campaignId: number | null;
   isNpc: boolean;
+  xp: number;
 };
 
 export type Character = {
@@ -64,6 +65,7 @@ export type Character = {
   proficiencyBonus: number;
   isNpc: boolean;
   accessLevels: CharacterAccessLevels[];
+  xp: number;
 };
 
 export type CharacterInsertDto = {

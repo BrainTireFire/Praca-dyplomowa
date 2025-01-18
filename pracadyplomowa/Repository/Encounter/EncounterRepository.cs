@@ -8,10 +8,11 @@ public class EncounterRepository : BaseRepository<Models.Entities.Campaign.Encou
     {
     }
 
-    public async Task<PagedList<Models.Entities.Campaign.Encounter>> GetEncounters(int ownerId, EncounterParams encounterParams)
+    public async Task<PagedList<Models.Entities.Campaign.Encounter>> GetEncounters(int ownerId, int campaignId,  EncounterParams encounterParams)
     {
         var query = _context.Encounters
             .Where(e => e.R_OwnerId == ownerId)
+            .Where(e => e.R_Campaign.Id == campaignId)
             .Include(e => e.R_Campaign)
                 .ThenInclude(c => c.R_CampaignHasCharacters)
             .Include(e => e.R_Board)

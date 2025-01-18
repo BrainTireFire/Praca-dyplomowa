@@ -77,6 +77,21 @@ export async function updateCharacter(
   return;
 }
 
+export async function updateXPApi(
+  characterId: number,
+  xp: number
+): Promise<void> {
+  const options: RequestInit = {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(xp),
+  };
+  await customFetch(`${BASE_URL}/api/character/${characterId}/xp`, options);
+  return;
+}
+
 export async function getCharactersChoiceGroups(
   characterId: number
 ): Promise<ChoiceGroup[]> {

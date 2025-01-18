@@ -118,7 +118,7 @@ export default function VirtualBoard({
 
     // Clear the canvas and redraw static elements
     ctx.clearRect(0, 0, width, height);
-    drawGrid(ctx, width, height, 16, 9);
+    drawGrid(ctx, width, height, sizeX, sizeY);
 
     if (encounter.board.fields) {
       encounter.board.fields.forEach(async (field) => {
@@ -200,20 +200,17 @@ export default function VirtualBoard({
             drawSelectedBox(
               ctx,
               { x: field.positionX, y: field.positionY },
-              16,
-              9
+              sizeX,
+              sizeY
             );
           }
         });
       } else {
-        drawSelectedBox(ctx, box, 16, 9);
+        drawSelectedBox(ctx, box, sizeX, sizeY);
       }
     });
   }, [
-    encounter.board.fields,
-    encounter.board.sizeX,
-    encounter.board.sizeY,
-    encounter.participances,
+    encounter,
     mode,
     selectedBoxes,
     weaponAttack,

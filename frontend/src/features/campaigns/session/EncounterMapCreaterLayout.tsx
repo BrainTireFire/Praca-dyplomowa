@@ -84,10 +84,16 @@ const FieldContainerStyled = styled.div`
   align-items: center;
 `;
 
+type FieldEncounterMap = Field & {
+  memberId: number;
+  avatarUrl: string;
+  memberName: string;
+};
+
 export default function EncounterMapCreaterLayout({ encounterId, onToggle }) {
   const { isLoading, encounter } = useEncounter(encounterId);
   const [selectedBox, setSelectedBox] = useState<Coordinate>({});
-  const [fields, setFields] = useState<Field[]>([]);
+  const [fields, setFields] = useState<FieldEncounterMap[]>([]);
   const { updatePlaceEncounter, isUpdating } =
     useUpdatePlaceEncounter(encounterId);
 
@@ -98,11 +104,19 @@ export default function EncounterMapCreaterLayout({ encounterId, onToggle }) {
   }, [encounter?.board]);
 
   const handleFieldUpdate = useCallback(
-    (updatedField: Field) => {
+    (updatedField: {
+      positionX: number;
+      positionY: number;
+      memberName: string;
+      memberId: number;
+      avatarUrl: string;
+    }) => {
       setFields((prevFields) => {
         // Find the field that already has the same memberName
         const existingFieldWithMember = prevFields.find(
-          (field) => field.memberName === updatedField.memberName
+          (field) =>
+            field.memberName === updatedField.memberName &&
+            field.memberId === updatedField.memberId
         );
 
         // If the field exists, clear its memberName
@@ -144,17 +158,21 @@ export default function EncounterMapCreaterLayout({ encounterId, onToggle }) {
 
       if (field.fieldMovementCost === "Impassable") return;
 
+      const avatarUrl = character.isNpc
+        ? "https://pbs.twimg.com/profile_images/1810521561352617985/ornocKLB_400x400.jpg"
+        : "https://i1.sndcdn.com/avatars-000012078220-stfi4o-t1080x1080.jpg";
+
       handleFieldUpdate({
         positionX: selectedBox.x,
         positionY: selectedBox.y,
         memberName: character.name,
-        avatarUrl:
-          "https://i1.sndcdn.com/avatars-000012078220-stfi4o-t1080x1080.jpg",
+        memberId: character.id,
+        avatarUrl: avatarUrl,
       });
 
       setSelectedBox(null);
     },
-    [selectedBox, handleFieldUpdate]
+    [selectedBox, handleFieldUpdate, fields]
   );
 
   if (isLoading) {
@@ -167,8 +185,6 @@ export default function EncounterMapCreaterLayout({ encounterId, onToggle }) {
 
   const handleSubmit = () => {
     const fieldsToUpdate = getFieldsToUpdate();
-    console.log("encounter.id:", encounter.id);
-    console.log("fieldsToUpdate:", fieldsToUpdate);
     updatePlaceEncounter({
       encounterId: encounter.id,
       encounterUpdateDto: fieldsToUpdate,

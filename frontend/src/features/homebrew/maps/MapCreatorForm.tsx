@@ -60,8 +60,8 @@ const ToggleButton = styled.button<{ color: string }>`
 
 const ColorPickerStyled = styled.div`
   position: absolute;
-  top: 0;
-  left: calc(100% + 10px);
+  top: calc(10% - 5px);
+  left: calc(20% - 25px);
   z-index: 999;
 `;
 

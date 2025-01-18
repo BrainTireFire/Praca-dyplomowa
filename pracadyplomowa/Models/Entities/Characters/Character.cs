@@ -25,21 +25,27 @@ namespace pracadyplomowa.Models.Entities.Characters
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
         private int _Hitpoints;
-        public int Hitpoints { 
-            get {
+        public int Hitpoints
+        {
+            get
+            {
                 return _Hitpoints;
             }
-            set {
-                if(value > MaxHealth) {
-                    _Hitpoints = MaxHealth;}
-                else{
+            set
+            {
+                if (value > MaxHealth)
+                {
+                    _Hitpoints = MaxHealth;
+                }
+                else
+                {
                     _Hitpoints = value;
                 }
             }
         }
         public bool IsNpc { get; set; } = false;
         public DiceSet UsedHitDice { get; set; } = new DiceSet();
-
+        public int ExperiencePoints { get; set; }
         public int SucceededDeathSavingThrows { get; set; }
         public int FailedDeathSavingThrows { get; set; }
 
@@ -63,15 +69,18 @@ namespace pracadyplomowa.Models.Entities.Characters
         public virtual Power? R_SpawnedByPower { get; set; }
         public int? R_SpawnedByPowerId { get; set; }
         public virtual List<ImmaterialResourceInstance> R_ImmaterialResourceInstances { get; set; } = []; // only for manual assignment
-        public virtual List<ChoiceGroupUsage> R_UsedChoiceGroups { get; set;} = [];
+        public virtual List<ChoiceGroupUsage> R_UsedChoiceGroups { get; set; } = [];
 
-        public Character(){
+        public Character()
+        {
 
         }
-        public Character(string name, bool isNpc, int strengthValue, int dexterityValue, int constitutionValue, int intelligenceValue, int wisdomValue, int charismaValue, ClassLevel classLevel, Race race, int ownerId){
+        public Character(string name, bool isNpc, int strengthValue, int dexterityValue, int constitutionValue, int intelligenceValue, int wisdomValue, int charismaValue, ClassLevel classLevel, Race race, int ownerId, int xp)
+        {
 
             this.Name = name;
             this.IsNpc = isNpc;
+            this.ExperiencePoints = xp;
 
             this.R_CharacterHasLevelsInClass.Add(classLevel);
             this.R_CharacterBelongsToRace = race;
@@ -156,7 +165,7 @@ namespace pracadyplomowa.Models.Entities.Characters
 
             this.R_OwnerId = ownerId;
         }
-        
+
         public void AddParticipanceData(ParticipanceData participanceData)
         {
             if (participanceData == null)
@@ -171,16 +180,19 @@ namespace pracadyplomowa.Models.Entities.Characters
             }
         }
 
-        protected void GenerateChoiceGroupUsage(){
+        protected void GenerateChoiceGroupUsage()
+        {
             List<ChoiceGroup> fullChoiceGroups = this.R_CharacterHasLevelsInClass.SelectMany(cl => cl.R_ChoiceGroups).Union(
                 this.R_CharacterBelongsToRace.R_RaceLevels.Where(rl => rl.Level <= this.R_CharacterHasLevelsInClass.Count).SelectMany(rl => rl.R_ChoiceGroups)
                 ).Where(cg => cg.NumberToChoose == 0 && !this.R_UsedChoiceGroups.Select(ucg => ucg.R_ChoiceGroup).Contains(cg)).ToList();
-            foreach(ChoiceGroup cg in fullChoiceGroups){
+            foreach (ChoiceGroup cg in fullChoiceGroups)
+            {
                 cg.Generate(this);
             }
         }
 
-        public void AddClassLevel(ClassLevel classLevel){
+        public void AddClassLevel(ClassLevel classLevel)
+        {
             this.R_CharacterHasLevelsInClass.Add(classLevel);
             classLevel.R_Characters.Add(this);
 
@@ -194,10 +206,12 @@ namespace pracadyplomowa.Models.Entities.Characters
         // }
 
         [NotMapped]
-        public int MaxHealth {
-            get {
+        public int MaxHealth
+        {
+            get
+            {
                 int healthBase = this.R_CharacterHasLevelsInClass.Sum(cl => cl.HitPoints);
-                int optional = this.AffectedByApprovedEffects.OfType<HitpointEffectInstance>().Where(hei => 
+                int optional = this.AffectedByApprovedEffects.OfType<HitpointEffectInstance>().Where(hei =>
                     hei.EffectType.HitpointEffect == HitpointEffect.HitpointMaximumBonus
                 ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet);
                 return healthBase + optional;
@@ -212,153 +226,187 @@ namespace pracadyplomowa.Models.Entities.Characters
         // }
         [NotMapped]
         private int _TemporaryHitpoints;
-        public int TemporaryHitpoints {
-            get {
+        public int TemporaryHitpoints
+        {
+            get
+            {
                 return _TemporaryHitpoints;
             }
-            set {
+            set
+            {
                 _TemporaryHitpoints = value;
-                if(_TemporaryHitpoints < 0){
+                if (_TemporaryHitpoints < 0)
+                {
                     _TemporaryHitpoints = 0;
                 }
             }
         }
 
         [NotMapped]
-        public int ProficiencyBonus {
+        public int ProficiencyBonus
+        {
             get => this.R_CharacterHasLevelsInClass.Count / 5 + 2;
         }
 
-        public int AbilityValue(Ability ability){
-            return this.AffectedByApprovedEffects.OfType<AbilityEffectInstance>().Where(aei => 
+        public int AbilityValue(Ability ability)
+        {
+            return this.AffectedByApprovedEffects.OfType<AbilityEffectInstance>().Where(aei =>
             aei.EffectType.AbilityEffect == AbilityEffect.Bonus &&
             aei.EffectType.AbilityEffect_Ability == ability
             ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet);
         }
 
         [NotMapped]
-        public int Strength {
+        public int Strength
+        {
             get => this.AbilityValue(Ability.STRENGTH);
         }
         [NotMapped]
-        public int Dexterity {
+        public int Dexterity
+        {
             get => this.AbilityValue(Ability.DEXTERITY);
         }
         [NotMapped]
-        public int Constitution {
+        public int Constitution
+        {
             get => this.AbilityValue(Ability.CONSTITUTION);
         }
         [NotMapped]
-        public int Intelligence {
+        public int Intelligence
+        {
             get => this.AbilityValue(Ability.INTELLIGENCE);
         }
         [NotMapped]
-        public int Wisdom {
+        public int Wisdom
+        {
             get => this.AbilityValue(Ability.WISDOM);
         }
         [NotMapped]
-        public int Charisma {
+        public int Charisma
+        {
             get => this.AbilityValue(Ability.CHARISMA);
         }
 
-        public static int AbilityModifier(int abilityValue){
+        public static int AbilityModifier(int abilityValue)
+        {
             return (abilityValue - 10) / 2;
         }
 
         [NotMapped]
-        public int StrengthModifier {
+        public int StrengthModifier
+        {
             get => AbilityModifier(Strength);
         }
         [NotMapped]
-        public int DexterityModifier {
+        public int DexterityModifier
+        {
             get => AbilityModifier(Dexterity);
         }
         [NotMapped]
-        public int ConstitutionModifier {
+        public int ConstitutionModifier
+        {
             get => AbilityModifier(Constitution);
         }
         [NotMapped]
-        public int IntelligenceModifier {
+        public int IntelligenceModifier
+        {
             get => AbilityModifier(Intelligence);
         }
         [NotMapped]
-        public int WisdomModifier {
+        public int WisdomModifier
+        {
             get => AbilityModifier(Wisdom);
         }
         [NotMapped]
-        public int CharismaModifier {
+        public int CharismaModifier
+        {
             get => AbilityModifier(Charisma);
         }
 
-        public int SavingThrowValue(Ability ability){
-            int returnValue = this.AffectedByApprovedEffects.OfType<SavingThrowEffectInstance>().Where(aei => 
+        public int SavingThrowValue(Ability ability)
+        {
+            int returnValue = this.AffectedByApprovedEffects.OfType<SavingThrowEffectInstance>().Where(aei =>
             aei.EffectType.SavingThrowEffect == SavingThrowEffect.Bonus &&
             aei.EffectType.SavingThrowEffect_Ability == ability
-            ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet) 
+            ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet)
             + AbilityModifier(AbilityValue(ability));
 
             return returnValue + (SavingThrowProficiency(ability) ? ProficiencyBonus : 0);
         }
 
-        public bool SavingThrowProficiency(Ability ability){
-            return this.AffectedByApprovedEffects.OfType<SavingThrowEffectInstance>().Where(aei => 
+        public bool SavingThrowProficiency(Ability ability)
+        {
+            return this.AffectedByApprovedEffects.OfType<SavingThrowEffectInstance>().Where(aei =>
             aei.EffectType.SavingThrowEffect == SavingThrowEffect.Proficiency &&
             aei.EffectType.SavingThrowEffect_Ability == ability
             ).Any();
         }
 
         [NotMapped]
-        public int StrengthSavingThrowValue {
+        public int StrengthSavingThrowValue
+        {
             get => SavingThrowValue(Ability.STRENGTH);
         }
         [NotMapped]
-        public int DexteritySavingThrowValue {
+        public int DexteritySavingThrowValue
+        {
             get => SavingThrowValue(Ability.DEXTERITY);
         }
         [NotMapped]
-        public int ConstitutionSavingThrowValue {
+        public int ConstitutionSavingThrowValue
+        {
             get => SavingThrowValue(Ability.CONSTITUTION);
         }
         [NotMapped]
-        public int IntelligenceSavingThrowValue {
+        public int IntelligenceSavingThrowValue
+        {
             get => SavingThrowValue(Ability.INTELLIGENCE);
         }
         [NotMapped]
-        public int WisdomSavingThrowValue {
+        public int WisdomSavingThrowValue
+        {
             get => SavingThrowValue(Ability.WISDOM);
         }
         [NotMapped]
-        public int CharismaSavingThrowValue {
+        public int CharismaSavingThrowValue
+        {
             get => SavingThrowValue(Ability.CHARISMA);
         }
 
         [NotMapped]
-        public bool StrengthSavingThrowProficiency {
+        public bool StrengthSavingThrowProficiency
+        {
             get => SavingThrowProficiency(Ability.STRENGTH);
         }
         [NotMapped]
-        public bool DexteritySavingThrowProficiency {
+        public bool DexteritySavingThrowProficiency
+        {
             get => SavingThrowProficiency(Ability.DEXTERITY);
         }
         [NotMapped]
-        public bool ConstitutionSavingThrowProficiency {
+        public bool ConstitutionSavingThrowProficiency
+        {
             get => SavingThrowProficiency(Ability.CONSTITUTION);
         }
         [NotMapped]
-        public bool IntelligenceSavingThrowProficiency {
+        public bool IntelligenceSavingThrowProficiency
+        {
             get => SavingThrowProficiency(Ability.INTELLIGENCE);
         }
         [NotMapped]
-        public bool WisdomSavingThrowProficiency {
+        public bool WisdomSavingThrowProficiency
+        {
             get => SavingThrowProficiency(Ability.WISDOM);
         }
         [NotMapped]
-        public bool CharismaSavingThrowProficiency {
+        public bool CharismaSavingThrowProficiency
+        {
             get => SavingThrowProficiency(Ability.CHARISMA);
         }
 
-        public int SkillValue(Skill skill){
-            int value = this.AffectedByApprovedEffects.OfType<SkillEffectInstance>().Where(aei => 
+        public int SkillValue(Skill skill)
+        {
+            int value = this.AffectedByApprovedEffects.OfType<SkillEffectInstance>().Where(aei =>
             aei.EffectType.SkillEffect == SkillEffect.Bonus &&
             aei.EffectType.SkillEffect_Skill == skill
             ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet);
@@ -366,32 +414,35 @@ namespace pracadyplomowa.Models.Entities.Characters
             value += AbilityModifier(AbilityValue(Utils.SkillToAbility(skill)));
 
             var proficiencyBonus = this.ProficiencyBonus;
-            if(SkillExpertise(skill)) proficiencyBonus *= 2;
+            if (SkillExpertise(skill)) proficiencyBonus *= 2;
 
             value += SkillProficiency(skill) ? proficiencyBonus : 0;
 
             return value;
         }
 
-        public bool SkillProficiency(Skill skill){
-            return this.AffectedByApprovedEffects.OfType<SkillEffectInstance>().Where(aei => 
+        public bool SkillProficiency(Skill skill)
+        {
+            return this.AffectedByApprovedEffects.OfType<SkillEffectInstance>().Where(aei =>
             aei.EffectType.SkillEffect == SkillEffect.Proficiency &&
             aei.EffectType.SkillEffect_Skill == skill
             ).Any();
         }
 
-        public bool SkillProficiencyNative(Skill skill){
-            return this.NativeEffects.OfType<SkillEffectInstance>().Where(aei => 
+        public bool SkillProficiencyNative(Skill skill)
+        {
+            return this.NativeEffects.OfType<SkillEffectInstance>().Where(aei =>
             aei.EffectType.SkillEffect == SkillEffect.Proficiency &&
             aei.EffectType.SkillEffect_Skill == skill
             ).Any();
         }
-        public bool SkillExpertise(Skill skill){
-            bool hasUpgradeToExpertise =  this.AffectedByApprovedEffects.OfType<SkillEffectInstance>().Where(aei => 
+        public bool SkillExpertise(Skill skill)
+        {
+            bool hasUpgradeToExpertise = this.AffectedByApprovedEffects.OfType<SkillEffectInstance>().Where(aei =>
             aei.EffectType.SkillEffect == SkillEffect.UpgradeToExpertise &&
             aei.EffectType.SkillEffect_Skill == skill
             ).Any();
-            bool hasProficiency =  this.AffectedByApprovedEffects.OfType<SkillEffectInstance>().Where(aei => 
+            bool hasProficiency = this.AffectedByApprovedEffects.OfType<SkillEffectInstance>().Where(aei =>
             aei.EffectType.SkillEffect == SkillEffect.Proficiency &&
             aei.EffectType.SkillEffect_Skill == skill
             ).Any();
@@ -399,94 +450,116 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
 
         [NotMapped]
-        public int Athletics {
+        public int Athletics
+        {
             get => this.SkillValue(Skill.Athletics);
         }
         [NotMapped]
-        public int Acrobatics {
+        public int Acrobatics
+        {
             get => this.SkillValue(Skill.Acrobatics);
         }
         [NotMapped]
-        public int Sleight_of_Hand {
+        public int Sleight_of_Hand
+        {
             get => this.SkillValue(Skill.Sleight_of_Hand);
         }
         [NotMapped]
-        public int Stealth {
+        public int Stealth
+        {
             get => this.SkillValue(Skill.Stealth);
         }
         [NotMapped]
-        public int Arcana {
+        public int Arcana
+        {
             get => this.SkillValue(Skill.Arcana);
         }
         [NotMapped]
-        public int History {
+        public int History
+        {
             get => this.SkillValue(Skill.History);
         }
         [NotMapped]
-        public int Investigation {
+        public int Investigation
+        {
             get => this.SkillValue(Skill.Investigation);
         }
         [NotMapped]
-        public int Nature {
+        public int Nature
+        {
             get => this.SkillValue(Skill.Nature);
         }
         [NotMapped]
-        public int Religion {
+        public int Religion
+        {
             get => this.SkillValue(Skill.Religion);
         }
         [NotMapped]
-        public int Animal_Handling {
+        public int Animal_Handling
+        {
             get => this.SkillValue(Skill.Animal_Handling);
         }
         [NotMapped]
-        public int Insight {
+        public int Insight
+        {
             get => this.SkillValue(Skill.Insight);
         }
         [NotMapped]
-        public int Medicine {
+        public int Medicine
+        {
             get => this.SkillValue(Skill.Medicine);
         }
         [NotMapped]
-        public int Perception {
+        public int Perception
+        {
             get => this.SkillValue(Skill.Perception);
         }
         [NotMapped]
-        public int Survival {
+        public int Survival
+        {
             get => this.SkillValue(Skill.Survival);
         }
         [NotMapped]
-        public int Deception {
+        public int Deception
+        {
             get => this.SkillValue(Skill.Deception);
         }
         [NotMapped]
-        public int Intimidation {
+        public int Intimidation
+        {
             get => this.SkillValue(Skill.Intimidation);
         }
         [NotMapped]
-        public int Performance {
+        public int Performance
+        {
             get => this.SkillValue(Skill.Performance);
         }
         [NotMapped]
-        public int Persuasion {
+        public int Persuasion
+        {
             get => this.SkillValue(Skill.Persuasion);
         }
 
         [NotMapped]
-        public int Initiative {
+        public int Initiative
+        {
             get => this.DexterityModifier + this.AffectedByApprovedEffects.OfType<InitiativeEffectInstance>()
             .Sum(valueEffectInstance => valueEffectInstance.DiceSet);
         }
 
         [NotMapped]
-        public int Speed {
-            get {
+        public int Speed
+        {
+            get
+            {
                 int speed = this.R_CharacterBelongsToRace.Speed;
                 IEnumerable<MovementEffectInstance> multiplierData = this.AffectedByApprovedEffects
                                 .OfType<MovementEffectInstance>()
                                 .Where(m => m.EffectType.MovementEffect == MovementEffect.Multiplier);
                 bool hasMultiplier = multiplierData.Any();
                 int multiplier = 1;
-                if(hasMultiplier){
+                if (hasMultiplier)
+                {
                     multiplier = multiplierData
                                 .Sum(m => m.DiceSet.flat);
                 }
@@ -496,23 +569,28 @@ namespace pracadyplomowa.Models.Entities.Characters
                                 .Where(m => m.EffectType.MovementEffect == MovementEffect.Bonus)
                                 .Sum(m => m.DiceSet.flat);
 
-                return speed*multiplier+bonus;
+                return speed * multiplier + bonus;
             }
         }
 
         [NotMapped]
-        public int ArmorClass {
-            get {
+        public int ArmorClass
+        {
+            get
+            {
                 int baseArmorClass = 10;
                 int dexterityModifier = this.DexterityModifier;
                 IEnumerable<Apparel> apparel = this.R_EquippedItems.Where(ed => ed.R_Slots.Select(s => s.Type).Contains(SlotType.Apparel)).Select(aed => aed.R_Item).OfType<Apparel>();
                 bool wearsHeavyArmor = apparel.Where(a => a.R_ItemInItemsFamily.ItemType == ItemType.HeavyArmor).Any();
-                if(wearsHeavyArmor){
+                if (wearsHeavyArmor)
+                {
                     dexterityModifier = Math.Min(dexterityModifier, 0);
                 }
-                else{
+                else
+                {
                     bool wearsMediumArmor = apparel.Where(a => a.R_ItemInItemsFamily.ItemType == ItemType.MediumArmor).Any();
-                    if(wearsMediumArmor){
+                    if (wearsMediumArmor)
+                    {
                         dexterityModifier = Math.Min(dexterityModifier, 2);
                     }
                 }
@@ -531,7 +609,8 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
 
         [NotMapped]
-        public DiceSet HitDiceTotal {
+        public DiceSet HitDiceTotal
+        {
             get => new()
             {
                 d20 = this.R_CharacterHasLevelsInClass.Sum(cl => cl.HitDie.d20),
@@ -546,15 +625,18 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
 
         [NotMapped]
-        public Size Size {
-            get {
+        public Size Size
+        {
+            get
+            {
                 var size = this.R_CharacterBelongsToRace.Size;
                 var setSizes = this.AffectedByApprovedEffects
                                     .OfType<SizeEffectInstance>()
                                     .Where(ei => ei.EffectType.SizeEffect == SizeEffect.Change)
                                     .Select(ei => ei.EffectType.SizeEffect_SizeToSet)
                                     .ToList();
-                if(setSizes.Count != 0){
+                if (setSizes.Count != 0)
+                {
                     size = setSizes.Max();
                 }
                 var sizeChanges = this.AffectedByApprovedEffects
@@ -569,15 +651,17 @@ namespace pracadyplomowa.Models.Entities.Characters
                 }
                 else
                 {
-                    if(result < 0) return Size.Tiny;
+                    if (result < 0) return Size.Tiny;
                     else return Size.Gargantuan;
                 }
             }
         }
 
         [NotMapped]
-        public List<ImmaterialResourceInstance> ImmaterialResources {
-            get {
+        public List<ImmaterialResourceInstance> ImmaterialResources
+        {
+            get
+            {
                 return this.R_ImmaterialResourceInstances
                 .Union(this.R_UsedChoiceGroups
                     .SelectMany(ucg => ucg.R_ResourcesGranted)
@@ -594,15 +678,17 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
 
         [NotMapped]
-        public List<EffectInstance> AffectedByApprovedEffects {
-            get {
+        public List<EffectInstance> AffectedByApprovedEffects
+        {
+            get
+            {
                 return this.AllEffects.Where(x => x.Conditional == false || x.ConditionalApproved).ToList();
             }
         }
 
         [NotMapped]
         public List<Power> AllPowers => R_PowersKnown.Union(this.R_PowersPrepared.SelectMany(x => x.R_PreparedPowers)).Union(this.R_EquippedItems.Select(x => x.R_Item).Distinct().SelectMany(x => x.R_EquipItemGrantsAccessToPower)).ToList();
-        
+
         [NotMapped]
         public List<EffectInstance> AllEffects => R_AffectedBy
         .Union(NativeEffects)
@@ -612,7 +698,7 @@ namespace pracadyplomowa.Models.Entities.Characters
 
         [NotMapped]
         public List<EffectInstance> NativeEffects => this.R_UsedChoiceGroups.SelectMany(cg => cg.R_EffectsGranted)
-            // .Where(effect => effect is not SavingThrowEffectInstance || (effect is SavingThrowEffectInstance instance && instance.EffectType.SavingThrowEffect_Condition == null))
+        // .Where(effect => effect is not SavingThrowEffectInstance || (effect is SavingThrowEffectInstance instance && instance.EffectType.SavingThrowEffect_Condition == null))
         .ToList();
 
         [NotMapped]
@@ -639,7 +725,9 @@ namespace pracadyplomowa.Models.Entities.Characters
             R_ConcentratesOn?.Disperse();
         }
 
-        private bool HasCondition(Condition condition){
+
+        private bool HasCondition(Condition condition)
+        {
             return this.AffectedByApprovedEffects
                     .OfType<StatusEffectInstance>()
                     .Where(z => z.EffectType.StatusEffect == condition)
@@ -647,63 +735,81 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
 
         [NotMapped]
-        public bool IsBlinded {
-            get {
+        public bool IsBlinded
+        {
+            get
+            {
                 return HasCondition(Condition.Blinded);
             }
         }
         [NotMapped]
-        public bool IsParalyzed {
-            get {
+        public bool IsParalyzed
+        {
+            get
+            {
                 return HasCondition(Condition.Paralyzed);
             }
         }
         [NotMapped]
-        public bool IsRestrained {
-            get {
+        public bool IsRestrained
+        {
+            get
+            {
                 return HasCondition(Condition.Restrained);
             }
         }
         [NotMapped]
-        public bool IsStunned {
-            get {
+        public bool IsStunned
+        {
+            get
+            {
                 return HasCondition(Condition.Stunned);
             }
         }
         [NotMapped]
-        public bool IsUnconscious {
-            get {
+        public bool IsUnconscious
+        {
+            get
+            {
                 return HasCondition(Condition.Unconscious);
             }
         }
         [NotMapped]
-        public bool IsInvisible {
-            get {
+        public bool IsInvisible
+        {
+            get
+            {
                 return HasCondition(Condition.Invisible);
             }
         }
 
-        public int GetMaximumPreparedPowers(int classId){
+        public int GetMaximumPreparedPowers(int classId)
+        {
             var maximum = this.R_CharacterHasLevelsInClass.Select(x => x.R_Class).Distinct().Where(c => c.Id == classId).Select(x => x.MaximumPreparedSpellsFormula).FirstOrDefault()?.Roll(this) ?? 0;
-            if(maximum < 0) {
+            if (maximum < 0)
+            {
                 return 0;
             }
-            else {
+            else
+            {
                 return maximum;
             }
         }
 
 
-        public bool ItemFamilyProficiency(ItemFamily family){
-            return this.AffectedByApprovedEffects.OfType<ProficiencyEffectInstance>().Where(pei => 
+        public bool ItemFamilyProficiency(ItemFamily family)
+        {
+            return this.AffectedByApprovedEffects.OfType<ProficiencyEffectInstance>().Where(pei =>
                         pei.R_GrantsProficiencyInItemFamilyId == family.Id || pei.ProficiencyEffectType.ItemType == family.ItemType
                         ).Any();
         }
 
-        public void EquipItem(Item item, EquipmentSlot slot){
+        public void EquipItem(Item item, EquipmentSlot slot)
+        {
             item.Equip(this, slot);
         }
-        public void UnequipItem(Item item){
+        public void UnequipItem(Item item)
+        {
             item.Unequip(this);
         }
 
@@ -716,46 +822,49 @@ namespace pracadyplomowa.Models.Entities.Characters
             {
                 accessLevels = [
                     AccessLevels.Read,
-                    AccessLevels.EditDescriptiveFields, 
-                    AccessLevels.EditEquipmentInBackpack, 
-                    AccessLevels.EditEquippingItems, 
-                    AccessLevels.EditLevelingUp, 
-                    AccessLevels.EditEffects, 
-                    AccessLevels.EditResources, 
-                    AccessLevels.EditPowersKnown, 
-                    AccessLevels.EditSpellbook, 
+                    AccessLevels.EditDescriptiveFields,
+                    AccessLevels.EditEquipmentInBackpack,
+                    AccessLevels.EditEquippingItems,
+                    AccessLevels.EditLevelingUp,
+                    AccessLevels.EditEffects,
+                    AccessLevels.EditResources,
+                    AccessLevels.EditPowersKnown,
+                    AccessLevels.EditSpellbook,
                 ];
             }
-            else if(
+            else if (
                 this.R_Campaign != null &&
                 this.R_OwnerId == userId
-            ){
+            )
+            {
                 accessLevels = [
                     AccessLevels.Read,
-                    AccessLevels.EditDescriptiveFields, 
-                    AccessLevels.EditEquippingItems, 
-                    AccessLevels.EditLevelingUp, 
-                    AccessLevels.EditSpellbook, 
+                    AccessLevels.EditDescriptiveFields,
+                    AccessLevels.EditEquippingItems,
+                    AccessLevels.EditLevelingUp,
+                    AccessLevels.EditSpellbook,
                 ];
             }
-            else if(this.R_OwnerId == userId){
+            else if (this.R_OwnerId == userId)
+            {
                 accessLevels = [
                     AccessLevels.Read,
-                    AccessLevels.EditDescriptiveFields, 
-                    AccessLevels.EditEquipmentInBackpack, 
-                    AccessLevels.EditEquippingItems, 
-                    AccessLevels.EditLevelingUp, 
-                    AccessLevels.EditEffects, 
-                    AccessLevels.EditResources, 
-                    AccessLevels.EditPowersKnown, 
-                    AccessLevels.EditSpellbook, 
+                    AccessLevels.EditDescriptiveFields,
+                    AccessLevels.EditEquipmentInBackpack,
+                    AccessLevels.EditEquippingItems,
+                    AccessLevels.EditLevelingUp,
+                    AccessLevels.EditEffects,
+                    AccessLevels.EditResources,
+                    AccessLevels.EditPowersKnown,
+                    AccessLevels.EditSpellbook,
                     AccessLevels.Delete
                 ];
             }
             return accessLevels.Count > 0;
         }
 
-        public enum AccessLevels{
+        public enum AccessLevels
+        {
             EditDescriptiveFields,
             EditEquipmentInBackpack,
             EditEquippingItems,
@@ -768,55 +877,63 @@ namespace pracadyplomowa.Models.Entities.Characters
             Delete
         }
 
-        public int DifficultyClass(Power power){
+        public int DifficultyClass(Power power)
+        {
             return 8 + PowerCastBonus(power);
         }
 
-        private int PowerCastBonus(Power power){ // attack roll bonus or to be used with +8 as difficulty class
+        private int PowerCastBonus(Power power)
+        { // attack roll bonus or to be used with +8 as difficulty class
             // Power power = this.AllPowers.First(p => p.Id == powerId);
-            if(power.OverrideCastersDC && power.DifficultyClass != null){
+            if (power.OverrideCastersDC && power.DifficultyClass != null)
+            {
                 return (int)power.DifficultyClass;
             }
             List<Class> classes = power.R_AlwaysAvailableThroughChoiceGroupUsage
             .Where(cgu => cgu.R_ChoiceGroup.R_GrantedByClassLevel != null)
             .Select(cgu =>
-    #pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                 cgu.R_ChoiceGroup.R_GrantedByClassLevel
-    #pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                 .R_Class
             )
             .Union(
                 power.R_ToPrepareThroughChoiceGroupUsage
                 .Where(cgu => cgu.R_ChoiceGroup.R_GrantedByClassLevel != null)
                 .Select(cgu =>
-        #pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                     cgu.R_ChoiceGroup.R_GrantedByClassLevel
-        #pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                     .R_Class
                 )
             ).Distinct().ToList();
-            if(classes.Count != 0){
+            if (classes.Count != 0)
+            {
                 classes = this.R_CharacterHasLevelsInClass.Select(x => x.R_Class).Distinct().ToList();
             }
-            return classes.Aggregate( 0, (max, next) => {
+            return classes.Aggregate(0, (max, next) =>
+            {
                 int difficultyClass;
-                if(next.SpellcastingAbility == null){
+                if (next.SpellcastingAbility == null)
+                {
                     difficultyClass = 0;
                 }
                 difficultyClass = AbilityModifier((int)next.SpellcastingAbility) + ProficiencyBonus;
                 return difficultyClass > max ? difficultyClass : max;
             }) + ProficiencyBonus;
-            
+
         }
 
-        public DiceSet AttackBonusDiceSet(AttackRollEffect_Range range, AttackRollEffect_Source source){
+        public DiceSet AttackBonusDiceSet(AttackRollEffect_Range range, AttackRollEffect_Source source)
+        {
             return this.AffectedByApprovedEffects.OfType<AttackRollEffectInstance>()
             .Where(effect => effect.EffectType.AttackRollEffect_Range == range && effect.EffectType.AttackRollEffect_Source == source && effect.EffectType.AttackRollEffect_Type == AttackRollEffect_Type.Bonus)
             .Select(effect => effect.DiceSet)
             .Aggregate(new DiceSet(), (sum, next) => sum += next).getPersonalizedSet(this);
         }
 
-        private int PowerAttackRoll(Encounter encounter, Character target, Power power){
+        private int PowerAttackRoll(Encounter encounter, Character target, Power power)
+        {
             var range = power.IsRanged ? AttackRollEffect_Range.Ranged : AttackRollEffect_Range.Melee;
             var source = power.IsMagic ? AttackRollEffect_Source.Spell : AttackRollEffect_Source.Weapon;
             List<DiceSet.Dice> bonusRollResults = AttackBonusDiceSet(range, source).RollPrototype(false, false, null);
@@ -828,22 +945,23 @@ namespace pracadyplomowa.Models.Entities.Characters
             //check for disadvantage
             bool disadvantage = DisadvantageOnAttackRoll(encounter, target, range);
 
-            DiceSet.Dice baseRollResult = new DiceSet(){d20 = 1}.RollPrototype(advantage, disadvantage, rerollLowerThan).First();
+            DiceSet.Dice baseRollResult = new DiceSet() { d20 = 1 }.RollPrototype(advantage, disadvantage, rerollLowerThan).First();
 
             return bonusRollResults.Concat([baseRollResult]).Aggregate(0, (sum, current) => sum + current.result) + PowerCastBonus(power);
         }
 
-        public int SavingThrowRoll(Ability ability){
+        public int SavingThrowRoll(Ability ability)
+        {
             DiceSet bonusDiceSet = this.AffectedByApprovedEffects.OfType<SavingThrowEffectInstance>()
-             .Where(effect => 
+             .Where(effect =>
                 effect.EffectType.SavingThrowEffect_Ability == ability && effect.EffectType.SavingThrowEffect == SavingThrowEffect.Bonus
              ).Select(effect => effect.DiceSet)
             .Aggregate(new DiceSet(), (sum, next) => sum += next).getPersonalizedSet(this);
 
-            DiceSet baseDiceSet = new DiceSet(){d20 = 1};
+            DiceSet baseDiceSet = new DiceSet() { d20 = 1 };
 
             List<DiceSet.Dice> bonusRollResults = bonusDiceSet.RollPrototype(false, false, null);
-            
+
             //check for rerolls
             List<SavingThrowEffectInstance> rerollEffectList = this.AffectedByApprovedEffects
                                                                     .OfType<SavingThrowEffectInstance>()
@@ -851,7 +969,8 @@ namespace pracadyplomowa.Models.Entities.Characters
                                                                     .ToList();
             bool rerollEffectPresent = rerollEffectList.Count != 0;
             int? rerollLowerThan = null;
-            if(rerollEffectPresent){
+            if (rerollEffectPresent)
+            {
                 rerollLowerThan = rerollEffectList.Aggregate(0, (maximum, current) => current.DiceSet.flat > maximum ? current.DiceSet.flat : maximum);
             }
             //check for advantage
@@ -867,26 +986,32 @@ namespace pracadyplomowa.Models.Entities.Characters
                                                                         .ToList();
             bool proficiencyEffectPresent = advantageEffectList.Count != 0;
 
-            DiceSet.Dice baseRollResult = new DiceSet(){d20 = 1}.RollPrototype(advantageEffectPresent, false, rerollLowerThan).First();
+            DiceSet.Dice baseRollResult = new DiceSet() { d20 = 1 }.RollPrototype(advantageEffectPresent, false, rerollLowerThan).First();
 
             return bonusRollResults.Concat([baseRollResult]).Aggregate(0, (sum, current) => sum + current.result) + (proficiencyEffectPresent ? ProficiencyBonus : 0);
         }
 
-        public Dictionary<int, HitType> CheckIfPowerHitSuccessfull(Encounter encounter, Power power, List<Character> targets){
+        public Dictionary<int, HitType> CheckIfPowerHitSuccessfull(Encounter encounter, Power power, List<Character> targets)
+        {
             //retrieve data
             Dictionary<int, HitType> hitMap = [];
 
-            foreach(var targetedCharacter in targets){
-                if(power.PowerType == PowerType.Attack){
+            foreach (var targetedCharacter in targets)
+            {
+                if (power.PowerType == PowerType.Attack)
+                {
                     int roll = this.PowerAttackRoll(encounter, targetedCharacter, power);
                     HitType outcome = HitType.Miss;
-                    if(roll == 1){
+                    if (roll == 1)
+                    {
                         outcome = HitType.CriticalMiss;
                     }
-                    if(roll == 20){
+                    if (roll == 20)
+                    {
                         outcome = HitType.CriticalHit;
                     }
-                    if(roll >= targetedCharacter.ArmorClass){
+                    if (roll >= targetedCharacter.ArmorClass)
+                    {
                         outcome = HitType.Hit;
                     }
                     hitMap.Add(
@@ -894,10 +1019,12 @@ namespace pracadyplomowa.Models.Entities.Characters
                         outcome
                     );
                 }
-                else if(power.PowerType == PowerType.Saveable){
+                else if (power.PowerType == PowerType.Saveable)
+                {
                     int roll = targetedCharacter.SavingThrowRoll((Ability)power.SavingThrow);
                     HitType outcome = HitType.Miss;
-                    if(roll <= this.DifficultyClass(power) && roll != 20){
+                    if (roll <= this.DifficultyClass(power) && roll != 20)
+                    {
                         outcome = HitType.Hit;
                     }
                     hitMap.Add(
@@ -916,7 +1043,8 @@ namespace pracadyplomowa.Models.Entities.Characters
             return hitMap;
         }
 
-        public bool CheckIfUnarmedHitSuccessfull(Encounter encounter, Character target, out bool criticalHit){
+        public bool CheckIfUnarmedHitSuccessfull(Encounter encounter, Character target, out bool criticalHit)
+        {
             //check for rerolls
             bool rerollEffectPresent = RerollOnAttackRoll(AttackRollEffect_Source.Weapon, AttackRollEffect_Range.Melee, out int rerollLowerThan);
 
@@ -928,20 +1056,24 @@ namespace pracadyplomowa.Models.Entities.Characters
 
             //roll the dice
             List<DiceSet.Dice> bonusRollResults = this.AttackBonusDiceSet(AttackRollEffect_Range.Melee, AttackRollEffect_Source.Weapon).RollPrototype(false, false, null);
-            DiceSet.Dice baseRollResult = new DiceSet(){d20 = 1}.RollPrototype(advantage, disadvantage, rerollLowerThan).First();
+            DiceSet.Dice baseRollResult = new DiceSet() { d20 = 1 }.RollPrototype(advantage, disadvantage, rerollLowerThan).First();
 
             //check for hit
-            if(baseRollResult.result == 20){
+            if (baseRollResult.result == 20)
+            {
                 criticalHit = true;
                 return true;
             }
-            else{
+            else
+            {
                 criticalHit = false;
                 return bonusRollResults.Concat([baseRollResult]).Aggregate(0, (sum, current) => sum + current.result) >= target.ArmorClass;
             }
         }
-        public bool CheckIfWeaponHitSuccessfull(Encounter encounter, Weapon weapon, Character target, AttackRollEffect_Range attacksRange, out bool criticalHit){
-            if(weapon is MeleeWeapon meleeWeapon && !meleeWeapon.Thrown && attacksRange == AttackRollEffect_Range.Ranged){
+        public bool CheckIfWeaponHitSuccessfull(Encounter encounter, Weapon weapon, Character target, AttackRollEffect_Range attacksRange, out bool criticalHit)
+        {
+            if (weapon is MeleeWeapon meleeWeapon && !meleeWeapon.Thrown && attacksRange == AttackRollEffect_Range.Ranged)
+            {
                 criticalHit = false;
                 return false;
             }
@@ -956,20 +1088,23 @@ namespace pracadyplomowa.Models.Entities.Characters
 
             //roll the dice
             List<DiceSet.Dice> bonusRollResults = weapon.GetTotalAttackBonus().RollPrototype(false, false, null);
-            DiceSet.Dice baseRollResult = new DiceSet(){d20 = 1}.RollPrototype(advantage, disadvantage, rerollLowerThan).First();
+            DiceSet.Dice baseRollResult = new DiceSet() { d20 = 1 }.RollPrototype(advantage, disadvantage, rerollLowerThan).First();
 
             //check for hit
-            if(baseRollResult.result == 20){
+            if (baseRollResult.result == 20)
+            {
                 criticalHit = true;
                 return true;
             }
-            else{
+            else
+            {
                 criticalHit = false;
                 return bonusRollResults.Concat([baseRollResult]).Aggregate(0, (sum, current) => sum + current.result) >= target.ArmorClass;
             }
         }
 
-        public bool RerollOnAttackRoll(AttackRollEffect_Source source, AttackRollEffect_Range range, out int rerollLowerThan){
+        public bool RerollOnAttackRoll(AttackRollEffect_Source source, AttackRollEffect_Range range, out int rerollLowerThan)
+        {
             List<AttackRollEffectInstance> rerollEffectList = this.AffectedByApprovedEffects
                                                                     .OfType<AttackRollEffectInstance>()
                                                                     .Where(x => x.EffectType.AttackRollEffect_Type == AttackRollEffect_Type.RerollLowerThan
@@ -978,13 +1113,15 @@ namespace pracadyplomowa.Models.Entities.Characters
                                                                     .ToList();
             bool rerollEffectPresent = rerollEffectList.Count != 0;
             rerollLowerThan = 0;
-            if(rerollEffectPresent){
+            if (rerollEffectPresent)
+            {
                 rerollLowerThan = rerollEffectList.Aggregate(0, (maximum, current) => current.DiceSet.flat > maximum ? current.DiceSet.flat : maximum);
             }
             return rerollEffectPresent;
         }
 
-        public bool AdvantageOnAttackRoll(Encounter encounter, Character target, AttackRollEffect_Source source, AttackRollEffect_Range range){
+        public bool AdvantageOnAttackRoll(Encounter encounter, Character target, AttackRollEffect_Source source, AttackRollEffect_Range range)
+        {
             bool attackerHasEffectGrantingAdvantage = this.AffectedByApprovedEffects
                                                                         .OfType<AttackRollEffectInstance>()
                                                                         .Where(x => x.EffectType.AttackRollEffect_Type == AttackRollEffect_Type.Advantage && x.EffectType.AttackRollEffect_Source == source && x.EffectType.AttackRollEffect_Range == range)
@@ -1012,7 +1149,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                                             Condition.Prone,
                                         }.Contains(z.EffectType.StatusEffect))
                                         .Any();
-                                        
+
             var characterParticipanceData = encounter.R_Participances.First(z => z.R_CharacterId == this.Id);
             var targetParticipanceData = encounter.R_Participances.First(z => z.R_CharacterId == target.Id);
             bool isTargetAdjacentToAttacker = characterParticipanceData.IsAdjacentToParticipant(targetParticipanceData);
@@ -1020,7 +1157,8 @@ namespace pracadyplomowa.Models.Entities.Characters
             return attackerHasEffectGrantingAdvantage || targetHasConditionGrantingAdvantage || attackerHasConditionGrantingAdvantage || (isTargetProne && isTargetAdjacentToAttacker);
         }
 
-        public bool DisadvantageOnAttackRoll(Encounter encounter, Character target, AttackRollEffect_Range range){
+        public bool DisadvantageOnAttackRoll(Encounter encounter, Character target, AttackRollEffect_Range range)
+        {
             bool attackerHasConditionImposingDisadvantage = this.AffectedByApprovedEffects
                                                                         .OfType<StatusEffectInstance>()
                                                                         .Where(z => new List<Condition>(){
@@ -1042,7 +1180,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                                             Condition.Prone,
                                         }.Contains(z.EffectType.StatusEffect))
                                         .Any();
-                                        
+
             var characterParticipanceData = encounter.R_Participances.First(z => z.R_CharacterId == this.Id);
             var targetParticipanceData = encounter.R_Participances.First(z => z.R_CharacterId == target.Id);
             bool isTargetAdjacentToAttacker = characterParticipanceData.IsAdjacentToParticipant(targetParticipanceData);
@@ -1053,7 +1191,8 @@ namespace pracadyplomowa.Models.Entities.Characters
                 || (range == AttackRollEffect_Range.Ranged && isTargetAdjacentToAttacker);
         }
 
-        public void GetExtraWeaponDamage(out DiceSet extraWeaponDamage){
+        public void GetExtraWeaponDamage(out DiceSet extraWeaponDamage)
+        {
             //check for extra weapon damage from character
             List<DamageEffectInstance> extraWeaponDamageEffectList = this.AffectedByApprovedEffects
                                                                     .OfType<DamageEffectInstance>()
@@ -1062,7 +1201,8 @@ namespace pracadyplomowa.Models.Entities.Characters
             extraWeaponDamage = extraWeaponDamageEffectList.Aggregate(new DiceSet(), (sum, current) => sum + current.DiceSet.getPersonalizedSet(this));
         }
 
-        public void GetAdditionalDamageOnWeaponStrike(out Dictionary<DamageType, DiceSet> damageTypeToDiceSetMap){
+        public void GetAdditionalDamageOnWeaponStrike(out Dictionary<DamageType, DiceSet> damageTypeToDiceSetMap)
+        {
             //check for additional damage from character
             Dictionary<DamageType, List<DamageEffectInstance>> extraDamageEffectMap = AffectedByApprovedEffects
                                                                     .OfType<DamageEffectInstance>()
@@ -1072,7 +1212,8 @@ namespace pracadyplomowa.Models.Entities.Characters
             damageTypeToDiceSetMap = extraDamageEffectMap.ToDictionary(element => element.Key, element => element.Value.Aggregate(new DiceSet(), (sum, current) => sum + current.DiceSet.getPersonalizedSet(this)));
         }
 
-        public WeaponHitResult ApplyWeaponHitEffects(Encounter encounter, Weapon weapon, Character target, bool criticalHit){
+        public WeaponHitResult ApplyWeaponHitEffects(Encounter encounter, Weapon weapon, Character target, bool criticalHit)
+        {
             //get weapon damage
             var weaponBaseDamage = weapon.GetBaseEquippedDamageDiceSet();
             var weaponEffectDamage = weapon.GetEffectsEquippedDamageDiceSet();
@@ -1084,15 +1225,17 @@ namespace pracadyplomowa.Models.Entities.Characters
                                                                     .ToList();
             bool rerollEffectPresent = rerollEffectList.Count != 0;
             int? rerollLowerThan = null;
-            if(rerollEffectPresent){
+            if (rerollEffectPresent)
+            {
                 rerollLowerThan = rerollEffectList.Aggregate(0, (maximum, current) => current.DiceSet.flat > maximum ? current.DiceSet.flat : maximum);
             }
             //roll the dice
             List<DiceSet.Dice> baseWeaponDamageRollResult = weaponBaseDamage.RollPrototype(false, false, rerollLowerThan);
             Dictionary<DamageType, List<DiceSet.Dice>> weaponEffectDamageRollResults = weaponEffectDamage.ToDictionary(element => element.Key, element => element.Value.RollPrototype(false, false, null));
-            if(criticalHit){
+            if (criticalHit)
+            {
                 baseWeaponDamageRollResult.ForEach(die => die.result = die.result *= 2);
-                weaponEffectDamageRollResults.Values.ToList().ForEach(list => list.ForEach( die => die.result = die.result *= 2));
+                weaponEffectDamageRollResults.Values.ToList().ForEach(list => list.ForEach(die => die.result = die.result *= 2));
             }
 
             //calculate total damage of weapon type from weapon and wielder modifiers
@@ -1104,22 +1247,26 @@ namespace pracadyplomowa.Models.Entities.Characters
             //check for targets damage resistance and apply damage
             var weaponHitResult = new WeaponHitResult();
             weaponHitResult.DamageTaken.Add(weapon.DamageType, target.TakeDamage(totalWeaponDamage, weapon.DamageType));
-            foreach(var pair in totalEffectDamage){
+            foreach (var pair in totalEffectDamage)
+            {
                 weaponHitResult.DamageTaken.Add(pair.Key, target.TakeDamage(pair.Value, pair.Key));
             }
-            foreach (var power in weapon.R_PowersCastedOnHit){
+            foreach (var power in weapon.R_PowersCastedOnHit)
+            {
                 weapon.CheckIfPowerHitSuccessfull(encounter, power, [target]).TryGetValue(target.Id, out HitType outcome);
                 weaponHitResult.PowerIdToHitStatus.Add(power.Id, outcome);
             }
             return weaponHitResult;
         }
 
-        public class WeaponHitResult {
-            public Dictionary<DamageType, int> DamageTaken {get; set;} = [];
-            public Dictionary<int, HitType> PowerIdToHitStatus {get; set;} = [];
+        public class WeaponHitResult
+        {
+            public Dictionary<DamageType, int> DamageTaken { get; set; } = [];
+            public Dictionary<int, HitType> PowerIdToHitStatus { get; set; } = [];
         }
 
-        public int TakeDamage(int damage, DamageType damageType){ // returns damage actually taken after resistance/vulnerability analysis
+        public int TakeDamage(int damage, DamageType damageType)
+        { // returns damage actually taken after resistance/vulnerability analysis
             //check for targets damage resistance
             List<ResistanceEffectInstance> resistanceEffectInstances = this.AffectedByApprovedEffects
                                                                         .OfType<ResistanceEffectInstance>()
@@ -1133,7 +1280,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                                                                         .Where(x => x.EffectType.ResistanceEffect_DamageType == damageType && x.EffectType.ResistanceEffect == ResistanceEffect.Vulnerability)
                                                                         .ToList();
             bool vulnerabilityEffectPresent = vulnerabilityEffectInstances.Count != 0;
-            
+
             //check for immunity to damage
             List<ResistanceEffectInstance> immunityEffectInstances = this.AffectedByApprovedEffects
                                                                         .OfType<ResistanceEffectInstance>()
@@ -1141,45 +1288,56 @@ namespace pracadyplomowa.Models.Entities.Characters
                                                                         .ToList();
             bool immunityEffectPresent = immunityEffectInstances.Count != 0;
 
-            if(immunityEffectPresent){
+            if (immunityEffectPresent)
+            {
                 return 0;
             }
-            if(resistanceEffectPresent){
+            if (resistanceEffectPresent)
+            {
                 damage /= 2;
             }
-            if(vulnerabilityEffectPresent){
+            if (vulnerabilityEffectPresent)
+            {
                 damage *= 2;
             }
 
             int reducedDamage = damage - this.TemporaryHitpoints;
-            if(reducedDamage < 0){
+            if (reducedDamage < 0)
+            {
                 reducedDamage = 0;
             }
             this.TemporaryHitpoints -= damage;
             this.Hitpoints -= reducedDamage;
-            
+
             return damage;
         }
 
         [NotMapped]
-        public int Level {
-            get {
+        public int Level
+        {
+            get
+            {
                 return this.R_CharacterHasLevelsInClass.Count;
             }
         }
 
-        public int GetLevelInClass(int classId){
+        public int GetLevelInClass(int classId)
+        {
             return this.R_CharacterHasLevelsInClass.Where(c => c.R_ClassId == classId).Count();
         }
 
-        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel){
+        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel)
+        {
             // check for available immaterial resource
-            if(power.R_UsesImmaterialResource != null){
+            if (power.R_UsesImmaterialResource != null)
+            {
                 var immaterialResourceInstance = this.AllImmaterialResourceInstances.FirstOrDefault(x => x.R_Blueprint == power.R_UsesImmaterialResource && !x.NeedsRefresh && x.Level == immaterialResourceLevel);
-                if(immaterialResourceInstance == null){
+                if (immaterialResourceInstance == null)
+                {
                     return Outcome.ImmaterialResourceUnavailable;
                 }
-                else{
+                else
+                {
                     //consume immaterial resource
                     immaterialResourceInstance.NeedsRefresh = true;
                 }
@@ -1188,49 +1346,58 @@ namespace pracadyplomowa.Models.Entities.Characters
             List<ItemCostRequirement> materialComponentsRequired = (power.R_ItemsCostRequirement?.OrderBy(req => req.Worth.GetValueInCopperPieces()).ToList()) ?? [];
             HashSet<Item> itemsSetAside = [];
             bool allMaterialComponentsFound = true;
-            foreach(var requirement in materialComponentsRequired){
+            foreach (var requirement in materialComponentsRequired)
+            {
                 var materialComponentFound = this.R_CharacterHasBackpack.R_BackpackHasItems.OrderBy(item => item.Price.GetValueInCopperPieces()).FirstOrDefault(
-                    item => 
+                    item =>
                     requirement.R_ItemFamilyId == item.R_ItemInItemsFamilyId
                     && requirement.Worth <= item.Price
                     && !itemsSetAside.Contains(item));
-                if(materialComponentFound == null){
+                if (materialComponentFound == null)
+                {
                     allMaterialComponentsFound = false;
                 }
-                else{
+                else
+                {
                     itemsSetAside.Add(materialComponentFound);
                 }
             }
-            if(!allMaterialComponentsFound){
+            if (!allMaterialComponentsFound)
+            {
                 return Outcome.InsufficientMaterialComponents;
             }
-            
+
             //configure effect group
             EffectGroup effectGroup = new();
             effectGroup.DurationLeft = power.Duration;
             effectGroup.IsConstant = false;
-            if(power.PowerType == PowerType.Saveable && power.SavingThrowRoll == Enums.SavingThrowRoll.RetakenEveryTurn){
+            if (power.PowerType == PowerType.Saveable && power.SavingThrowRoll == Enums.SavingThrowRoll.RetakenEveryTurn)
+            {
                 effectGroup.DifficultyClassToBreak = DifficultyClass(power);
                 effectGroup.SavingThrow = (Ability)power.SavingThrow;
             }
             effectGroup.Name = power.Name;
-            if(power.RequiresConcentration){
+            if (power.RequiresConcentration)
+            {
                 effectGroup.R_ConcentratedOnByCharacter = this;
             }
             List<EffectInstance> generatedEffects = [];
-            foreach(Character target in targetsToHitSuccessMap.Keys){
-                if(power.PowerType != PowerType.AuraCreator){
+            foreach (Character target in targetsToHitSuccessMap.Keys)
+            {
+                if (power.PowerType != PowerType.AuraCreator)
+                {
                     //generate effects
                     if (targetsToHitSuccessMap.TryGetValue(target, out var outcome))
                     {
                         foreach (EffectBlueprint effectBlueprint in power.R_EffectBlueprints)
                         {
                             bool shouldAdd = false;
-                            if(power.UpcastBy == UpcastBy.NotUpcasted
+                            if (power.UpcastBy == UpcastBy.NotUpcasted
                             || (power.UpcastBy == UpcastBy.ResourceLevel && immaterialResourceLevel >= effectBlueprint.Level)
                             || (power.UpcastBy == UpcastBy.CharacterLevel && this.Level >= effectBlueprint.Level)
                             || (power.UpcastBy == UpcastBy.ClassLevel && this.GetLevelInClass((int)power.R_ClassForUpcastingId) >= effectBlueprint.Level)
-                            ){
+                            )
+                            {
                                 if (power.PowerType == PowerType.Attack && outcome == HitType.Hit || outcome == HitType.CriticalHit)
                                 {
                                     shouldAdd = true;
@@ -1250,7 +1417,8 @@ namespace pracadyplomowa.Models.Entities.Characters
                                 if (shouldAdd)
                                 {
                                     var effectInstance = effectBlueprint.Generate(this, target);
-                                    if(outcome == HitType.CriticalHit && effectInstance is DamageEffectInstance damageEffectInstance){
+                                    if (outcome == HitType.CriticalHit && effectInstance is DamageEffectInstance damageEffectInstance)
+                                    {
                                         damageEffectInstance.CriticalHit = true;
                                     }
                                     generatedEffects.Add(effectInstance);
@@ -1259,10 +1427,12 @@ namespace pracadyplomowa.Models.Entities.Characters
                         }
                     }
                 }
-                else{
+                else
+                {
                     effectGroup.GenerateAura(target, power.R_EffectBlueprints, (int)power.AuraSize!);
                 }
-                foreach(var effect in generatedEffects){
+                foreach (var effect in generatedEffects)
+                {
                     effectGroup.AddEffectOnCharacter(effect);
                 }
             }
@@ -1270,11 +1440,14 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
 
         [NotMapped]
-        public List<ImmaterialResourceInstance> AllImmaterialResourceInstances{
-            get {
+        public List<ImmaterialResourceInstance> AllImmaterialResourceInstances
+        {
+            get
+            {
                 List<ImmaterialResourceInstance> immaterialResourceInstances = [];
                 immaterialResourceInstances.AddRange(this.R_ImmaterialResourceInstances);
-                foreach(var item in this.R_EquippedItems.Select(x => x.R_Item)){
+                foreach (var item in this.R_EquippedItems.Select(x => x.R_Item))
+                {
                     immaterialResourceInstances.AddRange(item.R_ItemGrantsResources);
                 }
                 immaterialResourceInstances.Reverse();

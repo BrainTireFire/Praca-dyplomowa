@@ -53,7 +53,6 @@ export default function ShopsTable({ shops }) {
               <Button
                 onClick={(e) => {
                   e.stopPropagation();
-                  console.log(`REQUEST DELETE TO DB Shop #${shop.id}`);
                 }}
               >
                 <HiXMark />

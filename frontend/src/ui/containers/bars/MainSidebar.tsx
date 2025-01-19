@@ -61,7 +61,6 @@ function MainSidebar({
 }) {
   const { campaignId } = useParams<{ campaignId: string }>();
   const { groupName } = useParams<{ groupName: string }>();
-  console.log(campaignId);
   return (
     <>
       <nav>

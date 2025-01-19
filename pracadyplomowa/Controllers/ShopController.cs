@@ -28,12 +28,25 @@ namespace pracadyplomowa.Controllers
             return Ok(shop.Id);
         }
 
-        [HttpGet("{campaignId}")]
-        public async Task<ActionResult<Shop>> GetShops(int campaignId)
+        [HttpGet("campaign/{campaignId}")]
+        public async Task<ActionResult<ICollection<Shop>>> GetShops(int campaignId)
         {
             List<Shop> shops = await _unitOfWork.ShopRepository.GetShops(campaignId);
 
             List<ShopDto> shopsDto = shops.Select(e => new ShopDto(e)).ToList();
+
+            return Ok(shopsDto);
+        }
+
+        [HttpGet("{shopId}")]
+        public ActionResult<Shop> GetShop(int shopId)
+        {
+            var shop = _unitOfWork.ShopRepository.GetById(shopId);
+
+            if (shop == null)
+                return NotFound();
+
+            ShopDto shopsDto = new(shop);
 
             return Ok(shopsDto);
         }

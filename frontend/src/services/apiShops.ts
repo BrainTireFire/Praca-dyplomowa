@@ -19,7 +19,20 @@ export async function getShops(campaignId: number): Promise<Shop[]> {
     method: "GET",
   };
 
-  const data = await customFetch(`${BASE_URL}/api/shop/${campaignId}`, options);
+  const data = await customFetch(
+    `${BASE_URL}/api/shop/campaign/${campaignId}`,
+    options
+  );
+
+  return data;
+}
+
+export async function getShop(shopId: number): Promise<Shop> {
+  const options: RequestInit = {
+    method: "GET",
+  };
+
+  const data = await customFetch(`${BASE_URL}/api/shop/${shopId}`, options);
 
   return data;
 }

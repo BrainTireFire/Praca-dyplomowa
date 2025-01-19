@@ -1,22 +1,21 @@
 import Heading from "../../../ui/text/Heading";
-import { useCampaign } from "../../../features/campaigns/hooks/useCampaign";
 import { useParams } from "react-router-dom";
 import Spinner from "../../../ui/interactive/Spinner";
 import { useTranslation } from "react-i18next";
+import { useShop } from "../../../features/campaigns/shop/hooks/useShop";
 
 function CustomizeShop() {
-  const { isLoading, campaign } = useCampaign();
+  const { shop, isPending } = useShop();
   const { t } = useTranslation();
-  const { shopId } = useParams<{ shopId: string }>();
-  if (isLoading) {
+
+  if (isPending) {
     return <Spinner />;
   }
 
-  if (!campaign) {
-    return <div>{t("campaign.error.notFound")}</div>;
+  if (!shop) {
+    return <div>shop not found</div>;
   }
-  const { shops } = campaign;
-  const shop = shops[shopId - 1];
+
   return (
     <Heading as="h1">
       Shop #{shop.id}

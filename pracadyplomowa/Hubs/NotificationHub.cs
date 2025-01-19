@@ -31,6 +31,12 @@ public class NotificationHub : Hub
                 await Groups.AddToGroupAsync(Context.ConnectionId, $"Campaign_{campaign.Id}");
             }
             
+            var campaigns = await _unitOfWork.CampaignRepository.GetCampaigns(userId.Value);
+            foreach (var campaign in campaigns)
+            {
+                await Groups.AddToGroupAsync(Context.ConnectionId, $"Campaign_{campaign.Id}");
+            }
+            
             await Groups.AddToGroupAsync(Context.ConnectionId, "Global");
             _connectionService.AddUserConnection(userId.Value, Context.ConnectionId);
         }

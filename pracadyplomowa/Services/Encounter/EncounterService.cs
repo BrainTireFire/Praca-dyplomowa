@@ -2,10 +2,14 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using pracadyplomowa.Errors;
+using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.DTOs.Encounter;
 using pracadyplomowa.Models.DTOs.Session;
 using pracadyplomowa.Models.Entities.Campaign;
 using pracadyplomowa.Models.Entities.Characters;
+using pracadyplomowa.Models.Entities.Items;
+using pracadyplomowa.Models.Entities.Powers;
+using pracadyplomowa.Models.Entities.Powers.EffectInstances;
 using pracadyplomowa.Models.Enums;
 using pracadyplomowa.Repository;
 using pracadyplomowa.Repository.Board;
@@ -375,5 +379,131 @@ public class EncounterService : IEncounterService
         }
         await _unitOfWork.SaveChangesAsync();
         return traversableIds;
+    }
+
+    public async Task<WeaponAttackConditionalEffectsDtos> GetConditionalEffectForWeaponAttackRoll(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipances(encounterId) ?? throw new SessionNotFoundException("Encounter with specified Id does not exist");
+        foreach (var x in encounter.R_Participances.Select(x => x.R_Character)){
+            await _unitOfWork.CharacterRepository.GetByIdWithAll(x.Id);
+        }
+        var character = (encounter.R_Participances.FirstOrDefault(x => x.R_CharacterId == characterId)?.R_Character) ?? throw new SessionBadRequestException("Attacking character does not take part in specified encounter");
+        var target = encounter.R_Participances.First(x => x.R_CharacterId == targetId).R_Character ?? throw new SessionBadRequestException("Target character does not take part in specified encounter");
+        var weapon = (character.R_EquippedItems.FirstOrDefault(x => x.R_ItemId == weaponId)?.R_Item) ?? throw new SessionBadRequestException("Specified weapon is not equipped by attacking character");
+        if (rangedAttack && ((weapon is MeleeWeapon meleeWeapon && !meleeWeapon.Thrown) || weapon is not RangedWeapon)){
+            throw new SessionBadRequestException("Can't perform a ranged attack with this weapon");
+        }
+
+        var result = new WeaponAttackConditionalEffectsDtos
+        {
+            WeaponId = weaponId,
+            WeaponName = weapon.Name,
+            WeaponDescription = weapon.Description,
+            CasterConditionalEffects = [.. character.AllEffects
+            .OfType<AttackRollEffectInstance>()
+            .Where(x => x.Conditional && x.EffectType.AttackRollEffect_Range == (rangedAttack ? Models.Enums.EffectOptions.AttackRollEffect_Range.Ranged : Models.Enums.EffectOptions.AttackRollEffect_Range.Melee)).Select(x => new WeaponAttackConditionalEffectsDtos.ConditionalEffectDto(){
+                EffectId = x.Id,
+                EffectName = x.Name,
+                EffectDescription = x.Description
+            })]
+        };
+        result.TargetsConditionalEffects.Add(targetId, new WeaponAttackConditionalEffectsDtos.TargetDto(){
+            TargetName = target.Name,
+            TargetConditionalEffects = [.. target.AllEffects
+        .OfType<ArmorClassEffectInstance>()
+        .Where(x => x.Conditional).Select(x => new WeaponAttackConditionalEffectsDtos.ConditionalEffectDto(){
+            EffectId = x.Id,
+            EffectName = x.Name,
+            EffectDescription = x.Description
+        })]
+        });
+        // var result = new WeaponAttackConditionalEffectsDtos
+        // {
+        //     WeaponId = weaponId,
+        //     WeaponName = weapon.Name,
+        //     WeaponDescription = weapon.Description,
+        //     CasterConditionalEffects = [.. character.AllEffects
+        //     .Select(x => new WeaponAttackConditionalEffectsDtos.ConditionalEffectDto(){
+        //         EffectId = x.Id,
+        //         EffectName = x.Name,
+        //         EffectDescription = x.Description
+        //     })]
+        // };
+        // result.TargetsConditionalEffects.Add(targetId, new WeaponAttackConditionalEffectsDtos.TargetDto(){
+        //     TargetName = target.Name,
+        //     TargetConditionalEffects = [.. target.AllEffects
+        // .Select(x => new WeaponAttackConditionalEffectsDtos.ConditionalEffectDto(){
+        //     EffectId = x.Id,
+        //     EffectName = x.Name,
+        //     EffectDescription = x.Description
+        // })]
+        // });
+        return result;
+    }
+
+    public class SessionException(string message) : Exception(message) {
+    }
+    public class SessionNotFoundException(string message) : SessionException(message) {
+    }
+    public class SessionBadRequestException(string message) : SessionException(message) {
+    }
+
+    public async Task<HitType> MakeAttackRoll(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId) ?? throw new SessionNotFoundException("Encounter with specified Id does not exist");
+        foreach (var x in encounter.R_Participances.Select(x => x.R_Character)){
+            await _unitOfWork.CharacterRepository.GetByIdWithAll(x.Id);
+        }
+        var character = (encounter.R_Participances.FirstOrDefault(x => x.R_CharacterId == characterId)?.R_Character) ?? throw new SessionBadRequestException("Attacking character does not take part in specified encounter");
+        var target = encounter.R_Participances.First(x => x.R_CharacterId == targetId).R_Character ?? throw new SessionBadRequestException("Target character does not take part in specified encounter");
+        Weapon weapon = (Weapon)((character.R_EquippedItems.FirstOrDefault(x => x.R_ItemId == weaponId)?.R_Item) ?? throw new SessionBadRequestException("Specified weapon is not equipped by attacking character"));
+        if (rangedAttack && ((weapon is MeleeWeapon meleeWeapon && !meleeWeapon.Thrown) || weapon is not RangedWeapon)){
+            throw new SessionBadRequestException("Can't perform a ranged attack with this weapon");
+        }
+
+        foreach(var effect in character.AllEffects.Where(x => casterApprovedEffectIds.Contains(x.Id))){
+            effect.ConditionalApproved = true;
+        }
+        foreach(var effect in target.AllEffects.Where(x => targetApprovedEffectIds.Contains(x.Id))){
+            effect.ConditionalApproved = true;
+        }
+
+        var result = character.CheckIfWeaponHitSuccessfull(encounter, weapon, target, rangedAttack ? Models.Enums.EffectOptions.AttackRollEffect_Range.Ranged : Models.Enums.EffectOptions.AttackRollEffect_Range.Melee);
+        return result;
+    }
+
+    
+
+    public async Task<WeaponAttackConditionalEffectsDtos> GetConditionalEffectForWeaponHit(int encounterId, int characterId, int weaponId, int targetId){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipances(encounterId) ?? throw new SessionNotFoundException("Encounter with specified Id does not exist");
+        foreach (var x in encounter.R_Participances.Select(x => x.R_Character)){
+            await _unitOfWork.CharacterRepository.GetByIdWithAll(x.Id);
+        }
+        var character = (encounter.R_Participances.FirstOrDefault(x => x.R_CharacterId == characterId)?.R_Character) ?? throw new SessionBadRequestException("Attacking character does not take part in specified encounter");
+        var target = encounter.R_Participances.First(x => x.R_CharacterId == targetId).R_Character ?? throw new SessionBadRequestException("Target character does not take part in specified encounter");
+        var weapon = (character.R_EquippedItems.FirstOrDefault(x => x.R_ItemId == weaponId)?.R_Item) ?? throw new SessionBadRequestException("Specified weapon is not equipped by attacking character");
+
+        var result = new WeaponAttackConditionalEffectsDtos
+        {
+            WeaponId = weaponId,
+            WeaponName = weapon.Name,
+            WeaponDescription = weapon.Description,
+            CasterConditionalEffects = [.. character.AllEffects
+            .OfType<DamageEffectInstance>()
+            .Where(x => x.Conditional).Select(x => new WeaponAttackConditionalEffectsDtos.ConditionalEffectDto(){
+                EffectId = x.Id,
+                EffectName = x.Name,
+                EffectDescription = x.Description
+            })]
+        };
+        result.TargetsConditionalEffects.Add(targetId, new WeaponAttackConditionalEffectsDtos.TargetDto(){
+            TargetName = target.Name,
+            TargetConditionalEffects = [.. target.AllEffects
+        .OfType<ResistanceEffectInstance>()
+        .Where(x => x.Conditional).Select(x => new WeaponAttackConditionalEffectsDtos.ConditionalEffectDto(){
+            EffectId = x.Id,
+            EffectName = x.Name,
+            EffectDescription = x.Description
+        })]
+        });
+        return result;
     }
 }

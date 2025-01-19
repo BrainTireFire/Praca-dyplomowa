@@ -691,18 +691,14 @@ namespace pracadyplomowa.Models.Entities.Characters
 
         [NotMapped]
         public List<EffectInstance> AllEffects => R_AffectedBy
-        .Union(NativeEffects)
-        .Union(EffectsFromItems)
-            // .Where(effect => effect is not SavingThrowEffectInstance || (effect is SavingThrowEffectInstance instance && instance.EffectType.SavingThrowEffect_Condition == null))
         .ToList();
 
         [NotMapped]
-        public List<EffectInstance> NativeEffects => this.R_UsedChoiceGroups.SelectMany(cg => cg.R_EffectsGranted)
-        // .Where(effect => effect is not SavingThrowEffectInstance || (effect is SavingThrowEffectInstance instance && instance.EffectType.SavingThrowEffect_Condition == null))
+        public List<EffectInstance> NativeEffects => this.R_UsedChoiceGroups.SelectMany(cg => cg.R_EffectsGranted).Intersect(AllEffects)
         .ToList();
 
         [NotMapped]
-        public List<EffectInstance> EffectsFromItems => this.R_EquippedItems.SelectMany(ed => ed.R_Item.R_EffectsOnEquip)
+        public List<EffectInstance> EffectsFromItems => this.R_EquippedItems.SelectMany(ed => ed.R_Item.R_EffectsOnEquip).Intersect(AllEffects)
         .ToList();
 
         public void ResolveAffectingEffects() {
@@ -1043,7 +1039,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             return hitMap;
         }
 
-        public bool CheckIfUnarmedHitSuccessfull(Encounter encounter, Character target, out bool criticalHit)
+        public HitType CheckIfUnarmedHitSuccessfull(Encounter encounter, Character target)
         {
             //check for rerolls
             bool rerollEffectPresent = RerollOnAttackRoll(AttackRollEffect_Source.Weapon, AttackRollEffect_Range.Melee, out int rerollLowerThan);
@@ -1057,25 +1053,26 @@ namespace pracadyplomowa.Models.Entities.Characters
             //roll the dice
             List<DiceSet.Dice> bonusRollResults = this.AttackBonusDiceSet(AttackRollEffect_Range.Melee, AttackRollEffect_Source.Weapon).RollPrototype(false, false, null);
             DiceSet.Dice baseRollResult = new DiceSet() { d20 = 1 }.RollPrototype(advantage, disadvantage, rerollLowerThan).First();
-
+            
             //check for hit
             if (baseRollResult.result == 20)
             {
-                criticalHit = true;
-                return true;
+                return HitType.CriticalHit;
+            }
+            else if (baseRollResult.result == 1)
+            {
+                return HitType.CriticalMiss;
             }
             else
             {
-                criticalHit = false;
-                return bonusRollResults.Concat([baseRollResult]).Aggregate(0, (sum, current) => sum + current.result) >= target.ArmorClass;
+                return bonusRollResults.Concat([baseRollResult]).Aggregate(0, (sum, current) => sum + current.result) >= target.ArmorClass ? HitType.Hit : HitType.Miss;
             }
         }
-        public bool CheckIfWeaponHitSuccessfull(Encounter encounter, Weapon weapon, Character target, AttackRollEffect_Range attacksRange, out bool criticalHit)
+        public HitType CheckIfWeaponHitSuccessfull(Encounter encounter, Weapon weapon, Character target, AttackRollEffect_Range attacksRange)
         {
             if (weapon is MeleeWeapon meleeWeapon && !meleeWeapon.Thrown && attacksRange == AttackRollEffect_Range.Ranged)
             {
-                criticalHit = false;
-                return false;
+                return HitType.CriticalMiss;
             }
             //check for rerolls
             bool rerollEffectPresent = RerollOnAttackRoll(AttackRollEffect_Source.Weapon, attacksRange, out int rerollLowerThan);
@@ -1093,13 +1090,15 @@ namespace pracadyplomowa.Models.Entities.Characters
             //check for hit
             if (baseRollResult.result == 20)
             {
-                criticalHit = true;
-                return true;
+                return HitType.CriticalHit;
+            }
+            else if (baseRollResult.result == 1)
+            {
+                return HitType.CriticalMiss;
             }
             else
             {
-                criticalHit = false;
-                return bonusRollResults.Concat([baseRollResult]).Aggregate(0, (sum, current) => sum + current.result) >= target.ArmorClass;
+                return bonusRollResults.Concat([baseRollResult]).Aggregate(0, (sum, current) => sum + current.result) >= target.ArmorClass ? HitType.Hit : HitType.Miss;
             }
         }
 

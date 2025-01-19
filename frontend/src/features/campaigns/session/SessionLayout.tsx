@@ -14,6 +14,8 @@ import { BASE_URL } from "../../../services/constAPI";
 import ActionBar from "./ActionBar";
 import { useQueryClient } from "@tanstack/react-query";
 import { WeaponAttack } from "../../../models/session/VirtualBoardProps";
+import ModalNoButton from "../../../ui/containers/ModalNoButton";
+import { AttackRollConditionalEffects } from "./AttackRollConditionalEffects";
 
 const GridContainer = styled.div`
   grid-row: 1 / 2;
@@ -87,12 +89,18 @@ const ChatForm = styled.form`
   }
 `;
 
-export type Mode = "Idle" | "Movement" | "WeaponAttack" | "PowerCast";
+export type Mode =
+  | "Idle"
+  | "Movement"
+  | "WeaponAttack"
+  | "PowerCast"
+  | "WeaponAttackOverlay";
 
 export type ControlState = {
   mode: Mode;
   path: number[];
   weaponAttackSelected: WeaponAttack | null;
+  weaponAttackRollOverlayData: WeaponAttackOverlayData | null;
 };
 
 // Define action types
@@ -102,6 +110,7 @@ const POP_PATH = "POP_PATH";
 const TOGGLE_PATH = "TOGGLE_PATH";
 const SET_PATH = "SET_PATH";
 const SET_WEAPON_ATTACK = "SET_WEAPON_ATTACK";
+const WEAPON_ATTACK_OVERLAY_DATA = "WEAPON_ATTACK_OVERLAY_DATA";
 
 // Define action interfaces
 export interface ChangeModeAction {
@@ -132,6 +141,14 @@ export interface SetWeaponAttack {
   type: typeof SET_WEAPON_ATTACK;
   payload: WeaponAttack;
 }
+export interface WeaponAttackOverlay {
+  type: typeof WEAPON_ATTACK_OVERLAY_DATA;
+  payload: WeaponAttackOverlayData;
+}
+
+type WeaponAttackOverlayData = {
+  targetId: number;
+};
 
 // Union type for all actions
 export type ControlStateActions =
@@ -140,7 +157,8 @@ export type ControlStateActions =
   | PopPathAction
   | TogglePathAction
   | SetPathAction
-  | SetWeaponAttack;
+  | SetWeaponAttack
+  | WeaponAttackOverlay;
 
 // Reducer function
 const controlStateReducer = (
@@ -191,6 +209,12 @@ const controlStateReducer = (
         weaponAttackSelected: action.payload,
         mode: "WeaponAttack",
       };
+    case WEAPON_ATTACK_OVERLAY_DATA:
+      return {
+        ...state,
+        weaponAttackRollOverlayData: action.payload,
+        mode: "WeaponAttackOverlay",
+      };
     default:
       return state;
   }
@@ -201,6 +225,7 @@ const initialState: ControlState = {
   mode: "Idle",
   path: [],
   weaponAttackSelected: null,
+  weaponAttackRollOverlayData: null,
 };
 
 export default function SessionLayout({ encounter }: any) {
@@ -371,6 +396,14 @@ export default function SessionLayout({ encounter }: any) {
           connection={connection as HubConnection}
         ></ActionBar>
       </BottomPanel2>
+      <ModalNoButton
+        open={controlState.mode === "WeaponAttackOverlay"}
+        handleClose={() => dispatch({ type: "CHANGE_MODE", payload: "Idle" })}
+      >
+        <AttackRollConditionalEffects
+          controlState={controlState}
+        ></AttackRollConditionalEffects>
+      </ModalNoButton>
     </>
   );
 }

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.DTOs.Encounter;
 using pracadyplomowa.Models.DTOs.Session;
+using pracadyplomowa.Models.Enums;
 
 namespace pracadyplomowa.Services.Encounter;
 
@@ -21,4 +23,7 @@ public interface IEncounterService
     Task<Models.DTOs.Session.ParticipanceDataDto> GetParticipanceData(int encounterId, int characterId);
     Task UpdateParticipanceData(int encounterId, int characterId, Models.DTOs.Session.ParticipanceDataDto participanceDataDto);
     Task<List<int>> MoveCharacter(int encounterId, int characterId, List<int> fieldIds);
+    Task<WeaponAttackConditionalEffectsDtos> GetConditionalEffectForWeaponAttackRoll(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack);
+    Task<HitType> MakeAttackRoll(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds);
+    Task<WeaponAttackConditionalEffectsDtos> GetConditionalEffectForWeaponHit(int encounterId, int characterId, int weaponId, int targetId);
 }

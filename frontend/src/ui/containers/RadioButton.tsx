@@ -39,11 +39,13 @@ const RadioButton = ({
   checked,
   onChange,
   circle,
+  readOnly,
 }: {
   label?: string;
   checked: boolean;
   onChange?: Function;
   circle?: boolean;
+  readOnly?: boolean;
 }) => {
   return (
     <RadioButtonWrapper>
@@ -52,6 +54,7 @@ const RadioButton = ({
         checked={checked}
         onChange={onChange}
         circle={circle}
+        readOnly={readOnly}
       />
       <RadioLabel>{label}</RadioLabel>
     </RadioButtonWrapper>

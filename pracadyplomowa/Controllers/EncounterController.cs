@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.DTOs.Encounter;
 using pracadyplomowa.Models.DTOs.Session;
 using pracadyplomowa.Services.Encounter;
+using static pracadyplomowa.Services.Encounter.EncounterService;
 
 namespace pracadyplomowa.Controllers;
 
@@ -122,4 +124,60 @@ public class EncounterController : BaseApiController
         var result = await _encounterService.MoveCharacter(encounterId, characterId, fieldIds);
         return Ok(result);
     }
+    [HttpGet("{encounterId}/conditionalEffectsForAttackRoll")]
+    public async Task<ActionResult<WeaponAttackConditionalEffectsDtos>> GetConditionalEffectsFromAttackRoll(int encounterId, [FromQuery] int characterId, [FromQuery] int targetId, [FromQuery] int weaponId, [FromQuery] bool isRanged)
+    {
+        try{
+            var result = await _encounterService.GetConditionalEffectForWeaponAttackRoll(encounterId, characterId, weaponId, targetId, isRanged);
+            return Ok(result);
+        }
+        catch(SessionNotFoundException ex){
+            return NotFound(ex.Message);
+        }
+        catch(SessionBadRequestException ex){
+            return BadRequest(ex.Message);
+        }
+    }
+    [HttpPost("{encounterId}/attackRoll")]
+    public async Task<ActionResult<WeaponAttackConditionalEffectsDtos>> MakeAttackRoll(int encounterId, [FromQuery] int characterId, [FromQuery] int targetId, [FromQuery] int weaponId, [FromQuery] bool isRanged, [FromBody] ConditionalEffectsDtos conditionalEffectsDtos)
+    {
+        try{
+            var result = await _encounterService.MakeAttackRoll(encounterId, characterId, weaponId, targetId, isRanged, conditionalEffectsDtos.CasterConditionalEffects, conditionalEffectsDtos.TargetsConditionalEffects[targetId]);
+            return Ok(result);
+        }
+        catch(SessionNotFoundException ex){
+            return NotFound(ex.Message);
+        }
+        catch(SessionBadRequestException ex){
+            return BadRequest(ex.Message);
+        }
+    }
+    [HttpGet("{encounterId}/conditionalEffectsForWeaponHit")]
+    public async Task<ActionResult<WeaponAttackConditionalEffectsDtos>> GetConditionalEffectsForWeaponHit(int encounterId, [FromQuery] int characterId, [FromQuery] int targetId, [FromQuery] int weaponId)
+    {
+        try{
+            var result = await _encounterService.GetConditionalEffectForWeaponHit(encounterId, characterId, weaponId, targetId);
+            return Ok(result);
+        }
+        catch(SessionNotFoundException ex){
+            return NotFound(ex.Message);
+        }
+        catch(SessionBadRequestException ex){
+            return BadRequest(ex.Message);
+        }
+    }
+    // [HttpPost("{encounterId}/weaponHit")]
+    // public async Task<ActionResult<WeaponAttackConditionalEffectsDtos>> ApplyWeaponHitEffects(int encounterId, [FromQuery] int characterId, [FromQuery] int targetId, [FromQuery] int weaponId, [FromBody] ConditionalEffectsDtos conditionalEffectsDtos)
+    // {
+    //     try{
+    //         var result = await _encounterService.MakeAttackRoll(encounterId, characterId, weaponId, targetId, isRanged, conditionalEffectsDtos.CasterConditionalEffects, conditionalEffectsDtos.TargetsConditionalEffects[targetId]);
+    //         return Ok(result);
+    //     }
+    //     catch(SessionNotFoundException ex){
+    //         return NotFound(ex.Message);
+    //     }
+    //     catch(SessionBadRequestException ex){
+    //         return BadRequest(ex.Message);
+    //     }
+    // }
 }

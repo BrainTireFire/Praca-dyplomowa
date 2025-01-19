@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { FaSort } from "react-icons/fa";
 import styled, { css } from "styled-components";
+import Button from "../interactive/Button";
+import Input from "../forms/Input";
 
 const TableWithFooterContainer = styled.div<{
   customTableContainer?: ReturnType<typeof css>;
@@ -119,6 +121,8 @@ type ReusableTableProps = {
   isSearching?: boolean;
   customTableContainer?: ReturnType<typeof css>;
   customHeader?: ReturnType<typeof css>;
+  isMultiSelect?: boolean;
+  handleMultiSelectionChange?: (id: number | string) => void;
 };
 
 const FilterInput = styled.input`
@@ -139,6 +143,8 @@ export const ReusableTable = ({
   isSearching,
   customTableContainer,
   customHeader,
+  isMultiSelect,
+  handleMultiSelectionChange,
 }: ReusableTableProps) => {
   const [sortConfig, setSortConfig] = useState<{
     key: string;
@@ -213,6 +219,7 @@ export const ReusableTable = ({
                   </SortIcon>
                 </TableHeaderCellClickable>
               ))}
+              {isMultiSelect && <TableHeaderCell></TableHeaderCell>}
             </TableHeaderRow>
           </TableHeader>
           <TableBody>
@@ -225,6 +232,15 @@ export const ReusableTable = ({
                 {visibleColumns.map((col, colIndex) => (
                   <TableCell key={colIndex}>{item[col]}</TableCell>
                 ))}
+                {isMultiSelect && handleMultiSelectionChange && (
+                  <TableCell key={"button"}>
+                    <Input
+                      type="checkbox"
+                      value={item.selected}
+                      onChange={() => handleMultiSelectionChange(item.itemId)}
+                    ></Input>
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>

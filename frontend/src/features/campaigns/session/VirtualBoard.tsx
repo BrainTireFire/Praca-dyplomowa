@@ -32,6 +32,7 @@ import { PiPathLight } from "react-icons/pi";
 import { ControlledCharacterContext } from "./context/ControlledCharacterContext";
 import { useParticipanceData } from "../hooks/useParticipanceData";
 import { size } from "../../effects/sizes";
+import { useConditionalEffectsForAttackRoll } from "../hooks/useConditionalEffectsForAttackRoll";
 
 const CanvasContainer = styled.div`
   display: flex;
@@ -83,6 +84,7 @@ export default function VirtualBoard({
   const [controlledCharacterId] = useContext(ControlledCharacterContext);
   const { isLoading: isLoadingParticipanceData, participance } =
     useParticipanceData(encounter.id, controlledCharacterId);
+  // const [targetId, setTargetId] = useState<number | null>(null);
 
   const sizeX = encounter.board.sizeX;
   const sizeY = encounter.board.sizeY;
@@ -316,6 +318,11 @@ export default function VirtualBoard({
           );
           if (inRange) {
             console.log("In range");
+            // setTargetId(clickedCharacter.character.id);
+            dispatch({
+              type: "WEAPON_ATTACK_OVERLAY_DATA",
+              payload: { targetId: clickedCharacter.character.id },
+            });
           } else {
             console.log("Not in range");
           }

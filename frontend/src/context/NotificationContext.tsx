@@ -31,23 +31,22 @@ interface NotificationProviderProps {
 export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   children,
 }) => {
-  const connection = useRef<signalR.HubConnection | null>(null);
+  const hubConnection = useRef<signalR.HubConnection | null>(null);
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
-    // Set up SignalR connection
-    connection.current = new signalR.HubConnectionBuilder()
+    hubConnection.current = new signalR.HubConnectionBuilder()
       .withUrl(`${BASE_URL}/notifications`)
       .configureLogging(signalR.LogLevel.Information)
       .withAutomaticReconnect()
       .build();
 
-    connection.current
+    hubConnection.current
       .start()
       .then(() => console.log("Connected to NotificationHub"))
       .catch((err) => console.error("SignalR Connection Error:", err));
 
-    connection.current.on(
+    hubConnection.current.on(
       "ReceiveNotification",
       (message: string, campaignId: string) => {
         const newNotification: Notification = {
@@ -74,13 +73,13 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
             ),
             error: (error) => `Notification failed: ${error}`,
           },
-          { success: { duration: 10000, icon: null } }
+          { success: { duration: 5000, icon: null } }
         );
       }
     );
 
     return () => {
-      connection.current?.stop();
+      hubConnection.current?.stop();
     };
   }, []);
 

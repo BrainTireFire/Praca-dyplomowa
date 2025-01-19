@@ -70,12 +70,12 @@ const CloseButton = styled.button`
   }
 `;
 
-interface JoinCampaignToastProps {
+interface KickCampaingToastProps {
   message: string;
   link: string;
 }
 
-const JoinCampaignToast: React.FC<JoinCampaignToastProps> = ({
+const KickCampaingToast: React.FC<KickCampaingToastProps> = ({
   message,
   link,
 }) => {
@@ -95,7 +95,7 @@ const JoinCampaignToast: React.FC<JoinCampaignToastProps> = ({
           <ImCross />
         </CloseButton>
         <ToastContent>
-          <ToastHeader>New person join campaign</ToastHeader>
+          <ToastHeader>The person was kick from the campaign</ToastHeader>
           <Message>{message}</Message>
           <ToastAction>Click here to view the campaign</ToastAction>
         </ToastContent>
@@ -104,4 +104,4 @@ const JoinCampaignToast: React.FC<JoinCampaignToastProps> = ({
   );
 };
 
-export default JoinCampaignToast;
+export default KickCampaingToast;

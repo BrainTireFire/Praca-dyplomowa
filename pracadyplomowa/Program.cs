@@ -23,6 +23,8 @@ using pracadyplomowa.RequestHelpers;
 using pracadyplomowa.Services.Encounter;
 using pracadyplomowa.Services.Item;
 using pracadyplomowa.Services;
+using pracadyplomowa.Services.Websockets.Connection;
+using pracadyplomowa.Services.Websockets.Notification;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +49,8 @@ builder.Services.AddScoped<IBoardService, BoardService>();
 builder.Services.AddScoped<IEncounterService, EncounterService>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<ICharacterService, CharacterService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IConnectionService, ConnectionService>(); 
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();

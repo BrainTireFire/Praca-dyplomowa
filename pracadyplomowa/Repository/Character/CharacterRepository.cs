@@ -56,6 +56,14 @@ namespace pracadyplomowa.Repository
 
             return await PagedList<CharacterSummaryDto>.CreateAsync(charactersSumaries, characterParams.PageNumber, characterParams.PageSize);
         }
+        
+        public Task<List<Character>> GetCharactersByUserId(int userId)
+        {
+            return _context.Characters
+                .Where(c => c.R_OwnerId == userId)
+                .Include(c => c.R_Campaign)
+                .ToListAsync();
+        }
 
         public Task<Character> GetByIdWithAll(int Id)
         {

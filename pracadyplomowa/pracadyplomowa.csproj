@@ -24,4 +24,8 @@
     <PackageReference Include="Newtonsoft.Json"/>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\Websockets\" />
+  </ItemGroup>
+
 </Project>

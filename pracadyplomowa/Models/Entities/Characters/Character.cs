@@ -691,15 +691,40 @@ namespace pracadyplomowa.Models.Entities.Characters
 
         [NotMapped]
         public List<EffectInstance> AllEffects => R_AffectedBy
-        .Union(this.R_UsedChoiceGroups.SelectMany(cg => cg.R_EffectsGranted))
-        .Union(this.R_EquippedItems.SelectMany(ed => ed.R_Item.R_EffectsOnEquip))
-        // .Where(effect => effect is not SavingThrowEffectInstance || (effect is SavingThrowEffectInstance instance && instance.EffectType.SavingThrowEffect_Condition == null))
+        .Union(NativeEffects)
+        .Union(EffectsFromItems)
+            // .Where(effect => effect is not SavingThrowEffectInstance || (effect is SavingThrowEffectInstance instance && instance.EffectType.SavingThrowEffect_Condition == null))
         .ToList();
 
         [NotMapped]
         public List<EffectInstance> NativeEffects => this.R_UsedChoiceGroups.SelectMany(cg => cg.R_EffectsGranted)
         // .Where(effect => effect is not SavingThrowEffectInstance || (effect is SavingThrowEffectInstance instance && instance.EffectType.SavingThrowEffect_Condition == null))
         .ToList();
+
+        [NotMapped]
+        public List<EffectInstance> EffectsFromItems => this.R_EquippedItems.SelectMany(ed => ed.R_Item.R_EffectsOnEquip)
+        .ToList();
+
+        public void ResolveAffectingEffects() {
+            AllEffects.ForEach(x => x.Resolve());
+        }
+
+        public void StartNextTurn() {
+            ResolveAffectingEffects();
+            var effectGroupsForSavingThrowChecks = AllEffects.Where(e => e.R_OwnedByGroup != null && e.R_OwnedByGroup.DifficultyClassToBreak != null && e.R_OwnedByGroup.SavingThrow != null).Select(e => e.R_OwnedByGroup).Distinct().ToList();
+            effectGroupsForSavingThrowChecks.ForEach(eg => {
+                var result = SavingThrowRoll((Ability)eg!.SavingThrow!);
+                if(result >= eg.DifficultyClassToBreak){
+                    eg.Disperse();
+                }
+            });
+            R_ConcentratesOn?.TickDuration();
+        }
+
+        public void StopConcentrating(){
+            R_ConcentratesOn?.Disperse();
+        }
+
 
         private bool HasCondition(Condition condition)
         {
@@ -1427,6 +1452,84 @@ namespace pracadyplomowa.Models.Entities.Characters
                 }
                 immaterialResourceInstances.Reverse();
                 return immaterialResourceInstances;
+            }
+        }
+
+        // public ICollection<Field> GetOccupiedFields(Encounter encounter){
+        //     return encounter.R_Participances.Where(p => p.R_Character == this).FirstOrDefault()?.R_OccupiedFields ?? [];
+        // }
+        public ICollection<Field> GetOccupiedFieldsAlternative(Encounter encounter){
+            var occupiedField = encounter.R_Participances.Where(p => p.R_Character == this).FirstOrDefault()?.R_OccupiedField ?? null;
+            List<Field> occupiedFields = [];
+            if(occupiedField != null){
+                var size = occupiedField.R_OccupiedBy!.R_Character.Size;
+                List<Tuple<int, int>> occupiedCoordinates = occupiedField.GetOccupiedCoordinates(size);
+                foreach(var field in encounter.R_Board.R_ConsistsOfFields){
+                    if(occupiedCoordinates.Contains(new Tuple<int, int>(field.PositionX, field.PositionY))){
+                        occupiedFields.Add(field);
+                    }
+                }
+            }
+            return occupiedFields;
+        }
+        public void Move(Encounter encounter, Field field){
+            var participance = encounter.R_Participances.First(x => x.R_CharacterId == this.Id);
+            participance.R_OccupiedField = encounter.R_Board.R_ConsistsOfFields.First(x => x == field);
+            field.R_OccupiedBy = participance;
+        }
+
+        public List<Field> CanTraversePath(List<Field> path){ //returns achieveable part of the path
+            List<Field> enterable = [];
+            foreach(var field in path){
+                if(field.CanBeEnteredBy(this)){
+                    enterable.Add(field);
+                }
+                else{
+                    break;
+                }
+            }
+            return enterable;
+        }
+
+        [NotMapped]
+        public int TotalActionsPerTurn{
+            get {
+                return AffectedByApprovedEffects.OfType<ActionEffectInstance>().Where(x => x.EffectType.ActionEffect == ActionEffect.Action).Count() + 1;
+            }
+        }
+
+        [NotMapped]
+        public int TotaBonusActionsPerTurn{
+            get {
+                return AffectedByApprovedEffects.OfType<ActionEffectInstance>().Where(x => x.EffectType.ActionEffect == ActionEffect.BonusAction).Count() + 1;
+            }
+        }
+
+        [NotMapped]
+        public int TotaReactionsPerTurn{
+            get {
+                return AffectedByApprovedEffects.OfType<ActionEffectInstance>().Where(x => x.EffectType.ActionEffect == ActionEffect.Reaction).Count() + 1;
+            }
+        }
+
+        [NotMapped]
+        public int TotalMovementPerTurn{
+            get {
+                var bonus = AffectedByApprovedEffects.OfType<MovementEffectInstance>().Where(x => x.EffectType.MovementEffect == MovementEffect.Bonus).Select(x => x.DiceSet.flat).Sum();
+                var multiplierEffects = AffectedByApprovedEffects.OfType<MovementEffectInstance>().Where(x => x.EffectType.MovementEffect == MovementEffect.Multiplier);
+                var multiplier = multiplierEffects.Select(x => x.DiceSet.flat).Sum();
+                var numberOfMultipliers = multiplierEffects.Count();
+                return R_CharacterBelongsToRace.Speed * (multiplier - (numberOfMultipliers - 1)) + bonus;
+            }
+        }
+
+        [NotMapped]
+        public int TotalAttacksPerTurn{
+            get {
+                int baseNumber = 1;
+                int maxFromEffects = AffectedByApprovedEffects.OfType<AttackPerAttackActionEffectInstance>().Where(x => x.EffectType.AttackPerActionEffect == AttackPerActionEffect.AttacksTotal).Select(x => x.DiceSet.flat).Max();
+                int additional = AffectedByApprovedEffects.OfType<AttackPerAttackActionEffectInstance>().Where(x => x.EffectType.AttackPerActionEffect == AttackPerActionEffect.AdditionalAttacks).Select(x => x.DiceSet.flat).Sum();
+                return Math.Max(baseNumber, maxFromEffects) + additional;
             }
         }
     }

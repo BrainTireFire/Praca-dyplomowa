@@ -11,6 +11,7 @@ const GlobalStyles = createGlobalStyle`
   --color-border: #49A078;
 
   --color-button-primary: #D14836;
+  --color-button-primary-disabled:rgb(206, 138, 129);
   --color-button-secondary: #49C5B6;
   --color-button-danger: #ab0101;
 

@@ -3,6 +3,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using pracadyplomowa.Errors;
 using pracadyplomowa.Models.DTOs.Encounter;
+using pracadyplomowa.Models.DTOs.Session;
 using pracadyplomowa.Models.Entities.Campaign;
 using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Models.Enums;
@@ -38,10 +39,11 @@ public class EncounterService : IEncounterService
         return encounterSummary;
     }
 
-    public async Task<EncounterSummaryDto> GetEncounterAsync(int encounterId)
+    public async Task<EncounterSummaryDto> GetEncounterAsync(int encounterId, int userId)
     {
         var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId);
         var encounterSummary = _mapper.Map<EncounterSummaryDto>(encounter);
+        encounterSummary.AmIGameMaster = userId == encounter.R_OwnerId;
         return encounterSummary;
     }
 
@@ -191,5 +193,187 @@ public class EncounterService : IEncounterService
         {
             return new BadRequestObjectResult(new ApiResponse(400, e.Message));
         }
+    }
+
+    public async Task<ActionResult> RollInitiativeAsync(int encounterId){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId);
+        if (encounter == null)
+        {
+            return new NotFoundObjectResult(new ApiResponse(400, "Encounter with Id " + encounterId + " does not exist"));
+        }
+        var characters = new List<Character>();
+        var participatingCharacters = encounter.R_Participances.Select(p => p.R_Character).ToList();
+        foreach(var character in participatingCharacters){
+            characters.Add(await _unitOfWork.CharacterRepository.GetByIdWithAll(character.Id));
+        }
+        foreach(var participanceData in encounter.R_Participances){
+            participanceData.InitiativeRollResult = new DiceSet(){d20 = 1}.Roll(null) + participanceData.R_Character.Initiative;
+        }
+        int i = 1;
+        encounter.R_Participances.OrderByDescending(x => x.InitiativeRollResult).ToList().ForEach((x) => {x.InitiativeOrder = i++; x.ActiveTurn = false;});
+        var firstParticipance = encounter.R_Participances.OrderByDescending(x => x.InitiativeRollResult).FirstOrDefault();
+        if(firstParticipance != null){
+            firstParticipance.ActiveTurn = true;
+        }
+        await  _unitOfWork.SaveChangesAsync();
+        return new OkResult();
+    }
+    
+    public async Task<ActionResult> GetInitiativeQueueAsync(int encounterId){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithPlayerDetails(encounterId);
+        if (encounter == null)
+        {
+            return new NotFoundObjectResult(new ApiResponse(400, "Encounter with Id " + encounterId + " does not exist"));
+        }
+        var result = encounter.R_Participances.OrderBy(x => x.InitiativeOrder).Select(participance => new InitiativeQueueItemDto(){
+            CharacterId = participance.R_CharacterId,
+            Name = participance.R_Character.Name,
+            PlayerName = participance.R_Character.R_Owner!.UserName ?? "Unknown",
+            PlaceInQueue = participance.InitiativeOrder,
+            InitiativeRollResult = participance.InitiativeRollResult,
+            ActiveTurn = participance.ActiveTurn
+        });
+        return new OkObjectResult(result);
+    }
+    
+    public async Task<ActionResult> ModifyInitiativeQueueAsync(int encounterId, List<ModifyInitiativeQueueOrderItem> newQueue){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipances(encounterId);
+        if (encounter == null)
+        {
+            return new NotFoundObjectResult(new ApiResponse(400, "Encounter with Id " + encounterId + " does not exist"));
+        }
+        foreach(var item in newQueue){
+            var participance = encounter.R_Participances.FirstOrDefault(x => x.R_CharacterId == item.CharacterId);
+            if(participance != null){
+                participance.InitiativeOrder = item.PlaceInQueue;
+            }
+            else{
+                return new BadRequestObjectResult(new ApiResponse(400, $"Character with ID: {item.CharacterId} is not taking part in this encounter"));
+            }
+        }
+        await _unitOfWork.SaveChangesAsync();
+        return new OkResult();
+    }
+
+    public async Task SetActiveTurn(int encounterId, int activeCharacterId){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipances(encounterId);
+
+        var participance = encounter.R_Participances.FirstOrDefault(x => x.R_CharacterId == activeCharacterId);
+        if(participance != null){
+            encounter.R_Participances.ToList().ForEach(x => x.ActiveTurn = false);
+            participance.ActiveTurn = true;
+        }
+        await _unitOfWork.SaveChangesAsync();
+        return;
+    }
+
+    public async Task NextTurn(int encounterId){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipances(encounterId);
+
+        var x = encounter.R_Participances.SkipWhile(x => !x.ActiveTurn);
+        ParticipanceData participanceData;
+        if(x.Count() > 1){
+            participanceData = x.Skip(1).First();
+        }
+        else{
+            participanceData = encounter.R_Participances.First();
+        }
+        encounter.R_Participances.ToList().ForEach(x => x.ActiveTurn = false);
+        participanceData.ActiveTurn = true;
+        participanceData.NumberOfActionsTaken = 0;
+        participanceData.NumberOfBonusActionsTaken = 0;
+        participanceData.NumberOfAttacksTaken = 0;
+        participanceData.DistanceTraveled = 0;
+        var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(participanceData.R_CharacterId);
+        character.StartNextTurn();
+
+        await _unitOfWork.SaveChangesAsync();
+        return;
+    }
+
+    // public ActionResult CheckIfIsGM(int encounterId, int userId){
+    //     var encounter = _unitOfWork.EncounterRepository.GetById(encounterId);
+    //     var isGm = encounter.R_OwnerId == userId;
+    //     return new OkObjectResult(isGm);
+    // }
+
+    public bool CheckIfIsGM(int encounterId, int userId){
+        var encounter = _unitOfWork.EncounterRepository.GetById(encounterId);
+        return encounter.R_OwnerId == userId;
+    }
+    public async Task<bool> CheckIfItsMyTurn(int encounterId, int characterId, int userId){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipances(encounterId);
+        var isGM = encounter.R_OwnerId == userId;
+        var result = encounter.R_Participances.FirstOrDefault(x => x.R_CharacterId == characterId && (x.R_Character.R_OwnerId == userId || isGM));
+        if(result == null){
+            return false;
+        }
+        else{
+            return result.ActiveTurn;
+        }
+    }
+    public async Task<List<int>> GetControlledCharacters(int encounterId, int userId){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipances(encounterId);
+        var result = encounter.R_Participances.Where(x => x.R_Character.R_OwnerId == userId).Select(x => x.R_CharacterId).ToList();
+        return result;
+    }
+    public async Task<Models.DTOs.Session.ParticipanceDataDto> GetParticipanceData(int encounterId, int characterId){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipance(encounterId, characterId);
+        var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(characterId);
+        var result = encounter.R_Participances.Where(x => x.R_CharacterId == characterId).Select(x => new Models.DTOs.Session.ParticipanceDataDto(){
+            CharacterName = x.R_Character.Name,
+            ActionsTaken = x.NumberOfActionsTaken,
+            BonusActionsTaken = x.NumberOfBonusActionsTaken,
+            AttacksMade = x.NumberOfAttacksTaken,
+            MovementUsed = x.DistanceTraveled,
+            TotalActions = x.R_Character.TotalActionsPerTurn,
+            TotalAttacksPerAction = x.R_Character.TotalAttacksPerTurn,
+            TotalBonusActions = x.R_Character.TotaBonusActionsPerTurn,
+            TotalMovement = x.R_Character.TotalMovementPerTurn
+        }).First();
+        return result;
+    }
+    public async Task UpdateParticipanceData(int encounterId, int characterId, Models.DTOs.Session.ParticipanceDataDto participanceDataDto){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipance(encounterId, characterId);
+        var participance = encounter.R_Participances.First(x => x.R_CharacterId == characterId);
+        participance.DistanceTraveled = participanceDataDto.MovementUsed;
+        participance.NumberOfActionsTaken = participanceDataDto.ActionsTaken;
+        participance.NumberOfBonusActionsTaken = participanceDataDto.BonusActionsTaken;
+        participance.NumberOfAttacksTaken = participanceDataDto.AttacksMade;
+        await _unitOfWork.SaveChangesAsync();
+    }
+    public async Task<List<int>> MoveCharacter(int encounterId, int characterId, List<int> fieldIds){
+        if(fieldIds.Count == 0){
+            return fieldIds;
+        }
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId);
+        foreach(var characterIdInLoop in encounter.R_Participances.Select(x => x.R_CharacterId).ToList()){
+            await _unitOfWork.CharacterRepository.GetByIdWithAll(characterIdInLoop);
+        }
+        var participance = encounter.R_Participances.First(x => x.R_Character.Id == characterId);
+        var character = participance.R_Character;
+        List<Field> fields = [];
+        foreach(var fieldId in fieldIds){
+            fields.Add(encounter.R_Board.R_ConsistsOfFields.First(x => x.Id == fieldId));
+        }
+        var traversableFields = character.CanTraversePath(fields);
+        var remainingMovementCapacityInFeet = character.Speed - participance.DistanceTraveled;
+        var missingMovementCapacity = remainingMovementCapacityInFeet / 5 - traversableFields.Count;
+        if(missingMovementCapacity <= 0){
+            missingMovementCapacity *= -1;
+        }
+        else{
+            missingMovementCapacity = 0;
+        }
+        for(int i = 0; i < missingMovementCapacity; i++){
+            traversableFields.RemoveAt(traversableFields.Count - 1);
+        }
+        var traversableIds = traversableFields.Select(x => x.Id).ToList();
+        if(traversableFields.Count == fields.Count){
+            character.Move(encounter, traversableFields.Last());
+            participance.DistanceTraveled += traversableFields.Count * 5;
+        }
+        await _unitOfWork.SaveChangesAsync();
+        return traversableIds;
     }
 }

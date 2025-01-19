@@ -10,11 +10,13 @@ namespace pracadyplomowa.Models.Entities.Campaign
     {
         //Properties
         public int InitiativeOrder { get; set; }
+        public int InitiativeRollResult { get; set; }
         public bool IsSurprised { get; set; }
         public int NumberOfActionsTaken { get; set; }
         public int NumberOfBonusActionsTaken { get; set; }
         public int NumberOfAttacksTaken { get; set; }
         public int DistanceTraveled { get; set; }
+        public bool ActiveTurn {get; set;}
 
         //Relationship
         public virtual Encounter R_Encounter { get; set; } = null!;
@@ -52,16 +54,10 @@ namespace pracadyplomowa.Models.Entities.Campaign
 
         public bool IsAdjacentToParticipant(ParticipanceData participance)
         {
-            // foreach (var field in R_OccupiedFields)
-            // {
-            //     foreach (var otherField in participance.R_OccupiedFields)
-            //     {
-            //         if (field.IsAdjacentToField(otherField))
-            //         {
-            //             return true;
-            //         }
-            //     }
-            // }
+            if (R_OccupiedField.IsAdjacentToField(participance.R_OccupiedField))
+            {
+                return true;
+            }
             return false;
         }
     }

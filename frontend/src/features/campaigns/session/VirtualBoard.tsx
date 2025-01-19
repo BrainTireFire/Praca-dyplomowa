@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  useContext,
+} from "react";
 import styled from "styled-components";
 import { debounce } from "lodash";
 import {
@@ -14,16 +20,24 @@ import {
   fillSelectedBox,
   drawTextName,
   drawAvatar,
+  drawWeaponAttackRange,
+  getSizeMultiplier,
+  checkIfTargetInWeaponAttackRange,
+  getOccupiedCoordinatesForSize,
 } from "./CanvasUtils";
 import { VirtualBoardProps } from "./../../../models/session/VirtualBoardProps";
 import { Coordinate } from "../../../models/session/Coordinate";
 import VirtualBoardMenu from "../../../ui/containers/VirtualBoardMenu";
+import { PiPathLight } from "react-icons/pi";
+import { ControlledCharacterContext } from "./context/ControlledCharacterContext";
+import { useParticipanceData } from "../hooks/useParticipanceData";
+import { size } from "../../effects/sizes";
 
 const CanvasContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
+  overflow: auto;
   position: relative;
   width: 100%;
   height: 100%;
@@ -44,6 +58,11 @@ export default function VirtualBoard({
   encounter,
   connection,
   groupName,
+  mode,
+  dispatch,
+  path,
+  otherPath,
+  weaponAttack,
 }: VirtualBoardProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [selectedBoxes, setSelectedBoxes] = useState<{
@@ -61,6 +80,9 @@ export default function VirtualBoard({
   });
   const [selectedBox, setSelectedBox] = useState<Coordinate | null>(null);
   const [translatePos, setTranslatePos] = useState<Coordinate>({ x: 0, y: 0 });
+  const [controlledCharacterId] = useContext(ControlledCharacterContext);
+  const { isLoading: isLoadingParticipanceData, participance } =
+    useParticipanceData(encounter.id, controlledCharacterId);
 
   const sizeX = encounter.board.sizeX;
   const sizeY = encounter.board.sizeY;
@@ -84,7 +106,7 @@ export default function VirtualBoard({
     },
     [userCursors, sizeX, sizeY]
   );
-
+  const ActiveCharacterSize: size = "Medium";
   const drawCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -114,21 +136,23 @@ export default function VirtualBoard({
         if (matchingParticipance && field.fieldMovementCost !== "Impassable") {
           field.memberName = matchingParticipance.character.name;
           field.avatarUrl = matchingParticipance.character.isNpc
-            ? "https://pbs.twimg.com/profile_images/1810521561352617985/ornocKLB_400x400.jpg"
-            : "https://i1.sndcdn.com/avatars-000012078220-stfi4o-t1080x1080.jpg";
+            ? "https://s3.amazonaws.com/files.d20.io/images/390056921/JkAY2BnZBWR-IYsYkqx3_Q/original.png"
+            : "https://s3.amazonaws.com/files.d20.io/images/390056921/JkAY2BnZBWR-IYsYkqx3_Q/original.png";
 
           // Call drawAvatar and drawTextName separately, ensuring drawAvatar finishes first
           await drawAvatar(
             ctx,
             field,
             encounter.board.sizeX,
-            encounter.board.sizeY
+            encounter.board.sizeY,
+            ActiveCharacterSize
           );
           drawTextName(
             ctx,
             field,
             encounter.board.sizeX,
-            encounter.board.sizeY
+            encounter.board.sizeY,
+            ActiveCharacterSize
           );
         }
 
@@ -143,12 +167,57 @@ export default function VirtualBoard({
       });
     }
 
+    if (mode === "WeaponAttack") {
+      let occupiedField = encounter.participances.find(
+        (x) => x.character.id === controlledCharacterId
+      )?.occupiedField;
+      drawWeaponAttackRange(
+        ctx,
+        { x: occupiedField!.positionX, y: occupiedField!.positionY },
+        weaponAttack.range,
+        ActiveCharacterSize,
+        16,
+        9
+      );
+    }
+
     Object.keys(selectedBoxes).forEach((connectionId) => {
       const box = selectedBoxes[connectionId];
       const color = getColorForUser(connectionId);
-      drawSelectedBox(ctx, box, sizeX, sizeY);
+      if (mode === "Movement" || otherPath.length > 0) {
+        let localPath: number[] = [];
+        if (otherPath.length > 0) {
+          localPath = otherPath;
+        } else if (path.length > 0) {
+          localPath = path;
+        }
+
+        localPath.forEach((element) => {
+          let field = encounter.board.fields.find(
+            (field) => field.id === element
+          );
+          if (!!field) {
+            drawSelectedBox(
+              ctx,
+              { x: field.positionX, y: field.positionY },
+              sizeX,
+              sizeY
+            );
+          }
+        });
+      } else {
+        drawSelectedBox(ctx, box, sizeX, sizeY);
+      }
     });
-  }, [selectedBoxes, encounter]);
+  }, [
+    encounter,
+    mode,
+    selectedBoxes,
+    weaponAttack,
+    controlledCharacterId,
+    otherPath,
+    path,
+  ]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -194,16 +263,107 @@ export default function VirtualBoard({
         ...selectedBoxes,
         [connectionId]: { x: gridX, y: gridY },
       };
+
       setSelectedBoxes(updatedSelectedBoxes);
 
-      await connection.invoke(
-        "SendSelectedBoxes",
-        groupName,
-        updatedSelectedBoxes
+      let selectedField = encounter.board.fields.find(
+        (field) => field.positionX === gridX && field.positionY === gridY
       );
+      if (mode === "Movement") {
+        if (
+          checkIfCanAddFieldToPath(
+            selectedField!.positionX,
+            selectedField!.positionY
+          )
+        ) {
+          console.log("Toggle path");
+          dispatch({
+            type: "TOGGLE_PATH",
+            payload: selectedField?.id as number,
+          });
+        }
+      } else if (mode === "WeaponAttack") {
+        let occupiedField = encounter.participances.find(
+          (x) => x.character.id === controlledCharacterId
+        )?.occupiedField;
+        let clickedCharacter = encounter.participances.find((participance) => {
+          let targetX = participance.occupiedField.positionX;
+          let targetY = participance.occupiedField.positionY;
+          let targetOccupiedCoordinates = getOccupiedCoordinatesForSize(
+            targetX,
+            targetY,
+            "Large"
+          );
+          for (var targetOccupiedCoordinate of targetOccupiedCoordinates) {
+            if (
+              targetOccupiedCoordinate.x === selectedField?.positionX &&
+              targetOccupiedCoordinate.y === selectedField.positionY
+            ) {
+              return true;
+            }
+          }
+          return false;
+        });
+        if (!!clickedCharacter) {
+          const inRange = checkIfTargetInWeaponAttackRange(
+            occupiedField!.positionX,
+            occupiedField!.positionY,
+            ActiveCharacterSize,
+            clickedCharacter!.occupiedField.positionX,
+            clickedCharacter!.occupiedField.positionY,
+            "Large",
+            weaponAttack.range
+          );
+          if (inRange) {
+            console.log("In range");
+          } else {
+            console.log("Not in range");
+          }
+        }
+      } else {
+        await connection.invoke(
+          "SendSelectedBoxes",
+          groupName,
+          updatedSelectedBoxes
+        );
+      }
     },
     200
   );
+
+  const checkIfCanAddFieldToPath = (gridX: number, gridY: number) => {
+    let selectedField = encounter.board.fields.find(
+      (field) => field.positionX === gridX && field.positionY === gridY
+    );
+    let lastField = encounter.board.fields.find(
+      (field) => field.id === path[path.length - 1]
+    );
+    let occupiedField = encounter.participances.find(
+      (x) => x.character.id === controlledCharacterId
+    )?.occupiedField;
+    let distanceX =
+      (lastField?.positionX ?? -1) - (selectedField?.positionX ?? 1);
+    let distanceY =
+      (lastField?.positionY ?? -1) - (selectedField?.positionY ?? 1);
+    let distanceFromStartX =
+      (occupiedField?.positionX ?? -1) - (selectedField?.positionX ?? 1);
+    let distanceFromStartY =
+      (occupiedField?.positionY ?? -1) - (selectedField?.positionY ?? 1);
+    let distanceFromLastInPathOk =
+      Math.abs(distanceX) <= 1 && Math.abs(distanceY) <= 1;
+    let distanceFromCurrentPositionOk =
+      Math.abs(distanceFromStartX) === 1 || Math.abs(distanceFromStartY) === 1;
+    let fieldAlreadyInPath = !!path.find((x) => x === selectedField?.id);
+    return (
+      !!selectedField &&
+      !!participance &&
+      ((((path.length === 0 && distanceFromCurrentPositionOk) ||
+        distanceFromLastInPathOk) &&
+        path.length * 5 <
+          participance.totalMovement - participance.movementUsed) ||
+        fieldAlreadyInPath)
+    );
+  };
 
   const handleCanvasRightClick = (
     event: React.MouseEvent<HTMLCanvasElement>
@@ -278,9 +438,25 @@ export default function VirtualBoard({
       };
       setSelectedBoxes(updatedSelectedBoxes);
 
-      connection?.invoke("SendSelectedBoxes", groupName, updatedSelectedBoxes);
+      if (mode === "Movement") {
+        let selectedField = encounter.board.fields.find(
+          (field) => field.positionX === x && field.positionY === y
+        );
+        dispatch({ type: "TOGGLE_PATH", payload: selectedField?.id as number });
+        console.log(path);
+      } else {
+        connection.invoke("SendSelectedBoxes", groupName, updatedSelectedBoxes);
+      }
     },
-    [connection, groupName, selectedBoxes]
+    [
+      connection,
+      dispatch,
+      encounter.board.fields,
+      groupName,
+      mode,
+      path,
+      selectedBoxes,
+    ]
   );
 
   useEffect(() => {
@@ -305,7 +481,7 @@ export default function VirtualBoard({
     }
     return () => {
       if (connection) {
-        connection.off("ReceiveSelectedBox");
+        connection.off("ReceiveSelectedBoxes");
         connection.off("UpdateCursors");
       }
     };

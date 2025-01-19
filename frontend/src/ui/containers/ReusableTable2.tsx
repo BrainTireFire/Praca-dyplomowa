@@ -70,7 +70,7 @@ const TableRow = styled.tr<{ isSelected: boolean }>`
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: var(--color-header-text);
+    background-color: rgba(116, 177, 116, 0.5);
   }
 `;
 

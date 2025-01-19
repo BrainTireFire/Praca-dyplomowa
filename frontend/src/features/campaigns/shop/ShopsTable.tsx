@@ -30,7 +30,13 @@ const Td = styled.td`
   text-align: center;
 `;
 
-export default function ShopsTable({ shops }) {
+export default function ShopsTable({
+  shops,
+  onRemove,
+}: {
+  shops: Shop[];
+  onRemove: Function;
+}) {
   const navigate = useNavigate();
   return (
     <Table>
@@ -52,6 +58,7 @@ export default function ShopsTable({ shops }) {
             <Td>
               <Button
                 onClick={(e) => {
+                  onRemove(shop.id);
                   e.stopPropagation();
                 }}
               >

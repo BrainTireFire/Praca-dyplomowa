@@ -50,5 +50,13 @@ namespace pracadyplomowa.Controllers
 
             return Ok(shopsDto);
         }
+
+        [HttpDelete("{shopId}")]
+        public async Task<ActionResult> RemoveShop(int shopId)
+        {
+            _unitOfWork.ShopRepository.Delete(shopId);
+            await _unitOfWork.SaveChangesAsync();
+            return Ok();
+        }
     }
 }

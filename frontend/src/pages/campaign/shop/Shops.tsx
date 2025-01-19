@@ -12,6 +12,7 @@ import SearchForm from "../../../features/campaigns/shop/SearchForm";
 import ShopsTable from "../../../features/campaigns/shop/ShopsTable";
 import { Shop } from "../../../models/shop";
 import { useShops } from "../../../features/campaigns/shop/hooks/useShops";
+import useRemoveShop from "../../../features/campaigns/shop/hooks/useRemoveShop";
 
 const Container = styled.div`
   display: grid;
@@ -30,6 +31,7 @@ const SearchFormContainer = styled.div`
 
 export default function Shops() {
   const { shops, isPending } = useShops();
+  const { removeShop, isPending: isRemovePending } = useRemoveShop();
   const { t } = useTranslation();
   const [searchInputs, setSearchInputs] = useState({
     name: "",
@@ -37,7 +39,7 @@ export default function Shops() {
     location: "",
   });
 
-  if (isPending) {
+  if (isPending || isRemovePending) {
     return <Spinner />;
   }
 
@@ -69,7 +71,10 @@ export default function Shops() {
           <SearchForm onInputChange={handleInputChange} />
         </SearchFormContainer>
       </Box>
-      <ShopsTable shops={filterShopsData}></ShopsTable>
+      <ShopsTable
+        shops={filterShopsData}
+        onRemove={(shopId: number) => removeShop(shopId)}
+      ></ShopsTable>
       <Modal>
         <Modal.Open opens="CreateShop">
           <Button style={{ width: "200px" }}>Create new Shop</Button>

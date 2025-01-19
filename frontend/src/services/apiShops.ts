@@ -36,3 +36,7 @@ export async function getShop(shopId: number): Promise<Shop> {
 
   return data;
 }
+
+export async function removeShop(shopId: number): Promise<void> {
+  await customFetch(`${BASE_URL}/api/shop/${shopId}`, { method: "DELETE" });
+}

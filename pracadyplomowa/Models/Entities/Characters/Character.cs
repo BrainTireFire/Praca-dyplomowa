@@ -1250,18 +1250,18 @@ namespace pracadyplomowa.Models.Entities.Characters
             {
                 weaponHitResult.DamageTaken.Add(pair.Key, target.TakeDamage(pair.Value, pair.Key));
             }
-            foreach (var power in weapon.R_PowersCastedOnHit)
-            {
-                weapon.CheckIfPowerHitSuccessfull(encounter, power, [target]).TryGetValue(target.Id, out HitType outcome);
-                weaponHitResult.PowerIdToHitStatus.Add(power.Id, outcome);
-            }
+            // foreach (var power in weapon.R_EquipItemGrantsAccessToPower.Where(x => x.CastableBy == CastableBy.OnWeaponHit))
+            // {
+            //     weapon.CheckIfPowerHitSuccessfull(encounter, power, [target]).TryGetValue(target.Id, out HitType outcome);
+            //     weaponHitResult.PowerIdToHitStatus.Add(power.Id, outcome);
+            // }
             return weaponHitResult;
         }
 
         public class WeaponHitResult
         {
             public Dictionary<DamageType, int> DamageTaken { get; set; } = [];
-            public Dictionary<int, HitType> PowerIdToHitStatus { get; set; } = [];
+            // public Dictionary<int, HitType> PowerIdToHitStatus { get; set; } = [];
         }
 
         public int TakeDamage(int damage, DamageType damageType)

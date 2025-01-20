@@ -1,3 +1,4 @@
+import { DiceSet } from "../models/diceset";
 import { Encounter } from "../models/encounter/Encounter";
 import { EncounterCreateDto } from "../models/encounter/EncounterCreateDto";
 import { EncounterUpdateDto } from "../models/encounter/EncounterUpdateDto";
@@ -280,44 +281,6 @@ export async function moveCharacter(
   );
 }
 
-export async function getConditionalEffectsForAttackRoll(
-  encounterId: number,
-  characterId: number,
-  targetId: number,
-  weaponId: number,
-  isRanged: boolean
-): Promise<WeaponAttackConditionalEffectsDto> {
-  const options: RequestInit = {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  };
-
-  return await customFetch(
-    `${BASE_URL}/api/encounter/${encounterId}/conditionalEffectsForAttackRoll?characterId=${characterId}&targetId=${targetId}&weaponId=${weaponId}&isRanged=${isRanged}`,
-    options
-  );
-}
-export async function getConditionalEffectsForWeaponHit(
-  encounterId: number,
-  characterId: number,
-  targetId: number,
-  weaponId: number
-): Promise<WeaponAttackConditionalEffectsDto> {
-  const options: RequestInit = {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  };
-
-  return await customFetch(
-    `${BASE_URL}/api/encounter/${encounterId}/conditionalEffectsForWeaponHit?characterId=${characterId}&targetId=${targetId}&weaponId=${weaponId}`,
-    options
-  );
-}
-
 export interface WeaponAttackConditionalEffectsDto {
   weaponId: number;
   weaponName: string;
@@ -344,7 +307,7 @@ export async function makeAttackRoll(
   targetId: number,
   weaponId: number,
   isRanged: boolean,
-  approvedConditionalEffects: ConditionalEffectsDtos
+  approvedConditionalEffects: ApprovedConditionalEffectsDto
 ): Promise<string> {
   const options: RequestInit = {
     method: "POST",
@@ -360,9 +323,9 @@ export async function makeAttackRoll(
   );
 }
 
-export interface ConditionalEffectsDtos {
+export interface ApprovedConditionalEffectsDto {
   CasterConditionalEffects: number[];
-  TargetsConditionalEffects: Record<number, number[]>;
+  TargetConditionalEffects: number[];
 }
 
 export async function applyWeaponHitEffects(
@@ -370,8 +333,10 @@ export async function applyWeaponHitEffects(
   characterId: number,
   targetId: number,
   weaponId: number,
-  approvedConditionalEffects: ConditionalEffectsDtos
-): Promise<string> {
+  isRanged: boolean,
+  isCritical: boolean,
+  approvedConditionalEffects: ApprovedConditionalEffectsDto
+): Promise<AppliedDamage> {
   const options: RequestInit = {
     method: "POST",
     headers: {
@@ -381,7 +346,67 @@ export async function applyWeaponHitEffects(
   };
 
   return await customFetch(
-    `${BASE_URL}/api/encounter/${encounterId}/attackRoll?characterId=${characterId}&targetId=${targetId}&weaponId=${weaponId}&isRanged=${isRanged}`,
+    `${BASE_URL}/api/encounter/${encounterId}/weaponHit?characterId=${characterId}&targetId=${targetId}&weaponId=${weaponId}&isRanged=${isRanged}&isCritical=${isCritical}`,
     options
   );
+}
+export type AppliedDamage = { [key: string]: number };
+
+export async function getWeaponDamageAndPowersOnHit(
+  encounterId: number,
+  characterId: number,
+  weaponId: number
+): Promise<WeaponDamageAndPowersDto> {
+  const options: RequestInit = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/encounter/${encounterId}/weaponData?characterId=${characterId}&weaponId=${weaponId}`,
+    options
+  );
+}
+
+export interface WeaponDamageAndPowersDto {
+  weaponId: number;
+  weaponName: string;
+  damageValues: DamageValueDto[];
+  powersOnHit: PowersOnHitDto[];
+}
+
+export interface DamageValueDto {
+  damageType: string;
+  damageValue: DiceSet;
+  damageSource: string;
+}
+
+export interface PowersOnHitDto {
+  powerId: number;
+  powerName: string;
+}
+
+export async function getConditionalEffects(
+  encounterId: number,
+  characterId: number,
+  targetId: number
+): Promise<ConditionalEffectsDto> {
+  const options: RequestInit = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/encounter/${encounterId}/conditionalEffects?characterId=${characterId}&targetId=${targetId}`,
+    options
+  );
+}
+
+export interface ConditionalEffectsDto {
+  casterConditionalEffects: ConditionalEffectDto[];
+  targetConditionalEffects: ConditionalEffectDto[];
 }

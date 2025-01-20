@@ -30,7 +30,7 @@ namespace pracadyplomowa.Models.Entities.Items
             DamageType = weapon.DamageType;
             DamageValue = new DiceSet(weapon.DamageValue);
             Range = weapon.Range;
-            R_PowersCastedOnHit = [.. weapon.R_PowersCastedOnHit];
+            // R_PowersCastedOnHit = [.. weapon.R_PowersCastedOnHit];
         }
 
         public WeaponWeight WeaponWeight { get; set; }
@@ -40,7 +40,7 @@ namespace pracadyplomowa.Models.Entities.Items
         public int Range { get; set; } // for ranged or thrown weapons
         
         //Relationship
-        public virtual ICollection<Power> R_PowersCastedOnHit { get; set; } = [];
+        // public virtual ICollection<Power> R_PowersCastedOnHit { get; set; } = [];
 
         [NotMapped]
         protected Character? Wielder {

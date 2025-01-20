@@ -184,9 +184,9 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .HasForeignKey(c => c.R_SpawnedByPowerId)
                         .IsRequired(false);
 
-                builder.Entity<Weapon>()
-                        .HasMany(c => c.R_PowersCastedOnHit)
-                        .WithMany(c => c.R_WeaponsCastingOnHit);
+                // builder.Entity<Weapon>()
+                //         .HasMany(c => c.R_PowersCastedOnHit)
+                //         .WithMany(c => c.R_WeaponsCastingOnHit);
 
                 builder.Entity<EffectBlueprint>()
                         .HasOne(c => c.R_CastedOnCharactersByAura)

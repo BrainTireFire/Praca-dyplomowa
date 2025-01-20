@@ -399,11 +399,10 @@ namespace pracadyplomowa.Controllers
         [HttpPost("{characterId}/equipment")]
         public async Task<ActionResult> AddItemToCharacterEquipment(int characterId, [FromBody] int itemId)
         {
-            var character = _unitOfWork.CharacterRepository.GetCharacterEquipment(characterId);
-            var item = _unitOfWork.ItemRepository.GetById(itemId);
+            var character = await _unitOfWork.CharacterRepository.GetCharacterEquipment(characterId);
+            var item = await _unitOfWork.ItemRepository.GetByIdWithSlotsPowersEffectsResources(itemId);
             if (item != null)
             {
-                await character;
                 if (character == null)
                 {
                     return NotFound("Character with id: ${characterId} was not found");
@@ -412,7 +411,7 @@ namespace pracadyplomowa.Controllers
                 {
                     item = item.CloneInstance();
                 }
-                (await character).R_CharacterHasBackpack.R_BackpackHasItems.Add(item);
+                character.R_CharacterHasBackpack.R_BackpackHasItems.Add(item);
                 await _unitOfWork.SaveChangesAsync();
             }
             else

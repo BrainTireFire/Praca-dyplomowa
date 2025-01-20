@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import {
-  ConditionalEffectsDtos,
+  ApprovedConditionalEffectsDto,
   makeAttackRoll as makeAttackRollApi,
 } from "../../../services/apiEncounter";
 import toast from "react-hot-toast";
@@ -14,7 +14,7 @@ export function useMakeAttackRoll(
   onSuccess: (x: string) => void
 ) {
   const { mutate: makeAttackRoll, isPending } = useMutation({
-    mutationFn: (approvedConditionalEffects: ConditionalEffectsDtos) => {
+    mutationFn: (approvedConditionalEffects: ApprovedConditionalEffectsDto) => {
       return makeAttackRollApi(
         encounterId,
         characterId,

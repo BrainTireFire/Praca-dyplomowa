@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using pracadyplomowa.Models.Enums;
 
 namespace pracadyplomowa.Models.DTOs
 {
@@ -30,4 +31,9 @@ namespace pracadyplomowa.Models.DTOs
         public Dictionary<int, List<int>> TargetsConditionalEffects { get; set; } = [];
     }
 
+    public class DamageTypeOnHitDto {
+        public DamageType DamageType { get; set; }
+        public DiceSetDto DamageValue { get; set; } = null!;
+        public string DamageSource { get; set; } = null!;
+    }
 }

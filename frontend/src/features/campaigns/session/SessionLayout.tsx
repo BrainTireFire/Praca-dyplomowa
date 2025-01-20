@@ -15,7 +15,7 @@ import ActionBar from "./ActionBar";
 import { useQueryClient } from "@tanstack/react-query";
 import { WeaponAttack } from "../../../models/session/VirtualBoardProps";
 import ModalNoButton from "../../../ui/containers/ModalNoButton";
-import { AttackRollConditionalEffects } from "./AttackRollConditionalEffects";
+import { WeaponAttackResolution } from "./WeaponAttackResolution";
 
 const GridContainer = styled.div`
   grid-row: 1 / 2;
@@ -400,9 +400,9 @@ export default function SessionLayout({ encounter }: any) {
         open={controlState.mode === "WeaponAttackOverlay"}
         handleClose={() => dispatch({ type: "CHANGE_MODE", payload: "Idle" })}
       >
-        <AttackRollConditionalEffects
+        <WeaponAttackResolution
           controlState={controlState}
-        ></AttackRollConditionalEffects>
+        ></WeaponAttackResolution>
       </ModalNoButton>
     </>
   );

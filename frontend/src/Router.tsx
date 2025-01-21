@@ -33,65 +33,57 @@ import MainSession from "./pages/campaign/session/MainSession";
 
 export default function Router() {
   return (
-    <BrowserRouter>
-      <Routes>
+    <Routes>
+      <Route
+        element={
+          <ProtectedRoute>
+            <AppLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Navigate replace to="main" />} />
+        <Route path="main" element={<MainDashboard />} />
+        <Route path="join/:campaignId" element={<CampaignJoin />} />
+        <Route path="campaigns" element={<Campagins />} />
+        <Route path="campaigns/:campaignId" element={<CampaignInstance />} />
+        <Route path="campaigns/:campaignId/shops" element={<Shops />} />
         <Route
-          element={
-            <ProtectedRoute>
-              <AppLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route index element={<Navigate replace to="main" />} />
-          <Route path="main" element={<MainDashboard />} />
-          <Route path="join/:campaignId" element={<CampaignJoin />} />
-          <Route path="campaigns" element={<Campagins />} />
-          <Route path="campaigns/:campaignId" element={<CampaignInstance />} />
-          <Route path="campaigns/:campaignId/shops" element={<Shops />} />
-          <Route
-            path="campaigns/:campaignId/shops/:shopId"
-            element={<CustomizeShop />}
-          />
-          <Route
-            path="campaigns/:campaignId/createSession"
-            element={<MainBoard />}
-          />
-          <Route
-            path="campaigns/:campaignId/session/:groupName"
-            element={<MainSession />}
-          />
-          <Route
-            path="campaigns/:campaignId/encounter"
-            element={<Encounter />}
-          />
-          <Route path="characters" element={<Characters />} />
-          <Route path="npc" element={<NpcCharacter />} />
-          <Route path="items" element={<Items />} />
-          <Route path="powers" element={<Powers />} />
-          <Route path="homebrew" element={<Homebrew />} />
-          <Route
-            path="homebrew/createPower"
-            element={<HomebrewCreatePower />}
-          />
-          <Route path="homebrew/createMap" element={<BoardCreateForm />} />
-          <Route
-            path="homebrew/updateMap/:boardId"
-            element={<MapUpdateBoardForm />}
-          />
-          <Route path="homebrew/map" element={<HomebrewMap />} />
-          <Route path="homebrew/map/:boardId" element={<MapInstance />} />
-          <Route path="contact" element={<Concact />} />
-          <Route path="profile" element={<Profile />} />
-        </Route>
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
-        <Route path="forgotPassword" element={<ForgotPassword />} />
-        <Route path="changedPassword" element={<PasswordChanged />} />
-        <Route path="home" element={<Home />} />
-        <Route path="forbidden" element={<Forbidden />} />
-        <Route path="serviceDown" element={<ServiceDown />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </BrowserRouter>
+          path="campaigns/:campaignId/shops/:shopId"
+          element={<CustomizeShop />}
+        />
+        <Route
+          path="campaigns/:campaignId/createSession"
+          element={<MainBoard />}
+        />
+        <Route
+          path="campaigns/:campaignId/session/:groupName"
+          element={<MainSession />}
+        />
+        <Route path="campaigns/:campaignId/encounter" element={<Encounter />} />
+        <Route path="characters" element={<Characters />} />
+        <Route path="npc" element={<NpcCharacter />} />
+        <Route path="items" element={<Items />} />
+        <Route path="powers" element={<Powers />} />
+        <Route path="homebrew" element={<Homebrew />} />
+        <Route path="homebrew/createPower" element={<HomebrewCreatePower />} />
+        <Route path="homebrew/createMap" element={<BoardCreateForm />} />
+        <Route
+          path="homebrew/updateMap/:boardId"
+          element={<MapUpdateBoardForm />}
+        />
+        <Route path="homebrew/map" element={<HomebrewMap />} />
+        <Route path="homebrew/map/:boardId" element={<MapInstance />} />
+        <Route path="contact" element={<Concact />} />
+        <Route path="profile" element={<Profile />} />
+      </Route>
+      <Route path="login" element={<Login />} />
+      <Route path="register" element={<Register />} />
+      <Route path="forgotPassword" element={<ForgotPassword />} />
+      <Route path="changedPassword" element={<PasswordChanged />} />
+      <Route path="home" element={<Home />} />
+      <Route path="forbidden" element={<Forbidden />} />
+      <Route path="serviceDown" element={<ServiceDown />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 }

@@ -1,18 +1,23 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using pracadyplomowa.Errors;
+using pracadyplomowa.Hubs;
 using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.Entities.Campaign;
 using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Repository.UnitOfWork;
 using pracadyplomowa.Services;
+using pracadyplomowa.Services.Websockets.Notification;
 
 namespace pracadyplomowa.Controllers
 {
 
-    public class CampaignController(IUnitOfWork unitOfWork, ICharacterService characterService) : BaseApiController
+    public class CampaignController(IUnitOfWork unitOfWork, ICharacterService characterService, 
+        INotificationService notificationService) : BaseApiController
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly ICharacterService _characterService = characterService;
+        private readonly INotificationService _notificationService = notificationService;
 
         [HttpPost]
         public async Task<ActionResult<int>> CreateCampaign(CampaignInsertDto campaignInsertDto)
@@ -71,6 +76,10 @@ namespace pracadyplomowa.Controllers
             campaign.R_CampaignHasCharacters.Add(character);
 
             await _unitOfWork.SaveChangesAsync();
+            
+            var userId = User.GetUserId();
+            await _notificationService.SendNotificationAndAddToGroup(userId, campaignId, character.Name, campaign.Name);
+
             return Ok(campaignId);
         }
 
@@ -89,6 +98,10 @@ namespace pracadyplomowa.Controllers
             campaign.R_CampaignHasCharacters.Remove(character);
 
             await _unitOfWork.SaveChangesAsync();
+            
+            var userId = User.GetUserId();
+            await _notificationService.SendNotificationAndRemoveFromGroup(userId, campaign.Id, character.Name, campaign.Name);
+            
             return Ok();
         }
 

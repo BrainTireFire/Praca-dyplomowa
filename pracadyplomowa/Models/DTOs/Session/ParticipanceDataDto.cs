@@ -17,5 +17,8 @@ namespace pracadyplomowa.Models.DTOs.Session
         public int TotalBonusActions { get; set; }
         public int TotalAttacksPerAction { get; set; }
         public int TotalMovement { get; set; }
+        public int Hitpoints { get; set; }
+        public int MaxHitpoints { get; set; }
+        public int TemporaryHitpoints { get; set; }
     }
 }

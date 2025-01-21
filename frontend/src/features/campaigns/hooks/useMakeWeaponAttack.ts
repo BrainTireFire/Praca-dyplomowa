@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   makeWeaponAttack as makeWeaponAttackApi,
   WeaponAttackResultDto,
@@ -14,6 +14,7 @@ export function useMakeWeaponAttack(
   isRanged: boolean,
   onSuccess: (result: WeaponAttackResultDto) => void
 ) {
+  const queryClient = useQueryClient();
   const { mutate: makeWeaponAttack, isPending } = useMutation({
     mutationFn: (weaponAttackData: stateType) => {
       return makeWeaponAttackApi(
@@ -26,6 +27,9 @@ export function useMakeWeaponAttack(
       );
     },
     onSuccess: (result: WeaponAttackResultDto) => {
+      queryClient.invalidateQueries({
+        queryKey: ["participance", encounterId, characterId],
+      });
       toast.success(describeWeaponAttackResult(result), { duration: 10000 });
       onSuccess(result);
     },
@@ -49,11 +53,13 @@ function describeWeaponAttackResult(
     return "No attack result provided.";
   }
 
-  const { attackRollResult, powerResult, totalDamage } = attackResult;
+  const { attackRollResult, powerResult, totalDamage, hitpointsLeft } =
+    attackResult;
 
   // Describe the attack roll result and total damage
   let description = `Attack Result: ${attackRollResult}\n`;
   description += `Total Damage: ${totalDamage}\n`;
+  description += `Hitpoints left: ${hitpointsLeft}\n`;
 
   // Describe the power results
   if (powerResult && powerResult.length > 0) {

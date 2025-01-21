@@ -10,6 +10,7 @@ namespace pracadyplomowa.Models.DTOs
         public HitType AttackRollResult {get; set;}
         public List<PowerUsageResultDto> PowerResult {get; set;} = [];
         public int TotalDamage { get; set; }
+        public int HitpointsLeft { get; set; }
 
         public class PowerUsageResultDto {
             public string PowerName { get; set; } = null!;

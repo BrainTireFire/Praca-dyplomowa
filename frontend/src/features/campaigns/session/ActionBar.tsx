@@ -38,6 +38,8 @@ export type ParticipanceAction =
   | { type: "BONUS_ACTIONS_TAKEN"; payload: number }
   | { type: "ATTACKS_MADE"; payload: number }
   | { type: "MOVEMENT_USED"; payload: number }
+  | { type: "HITPOINTS_LEFT"; payload: number }
+  | { type: "TEMPORARY_HITPOINTS_LEFT"; payload: number }
   | { type: "RESET_PARTICIPANCE_DATA"; payload: ParticipanceData };
 
 export function participanceReducer(
@@ -64,6 +66,16 @@ export function participanceReducer(
       return {
         ...state,
         movementUsed: action.payload,
+      };
+    case "HITPOINTS_LEFT":
+      return {
+        ...state,
+        hitpoints: action.payload,
+      };
+    case "TEMPORARY_HITPOINTS_LEFT":
+      return {
+        ...state,
+        temporaryHitpoints: action.payload,
       };
     case "RESET_PARTICIPANCE_DATA":
       return { ...action.payload };
@@ -254,6 +266,46 @@ export default function ActionBar({
                     }
                   />
                   &nbsp;/ {participanceState.totalMovement}
+                </span>
+              </FormRowVertical>
+              <FormRowVertical label={"Hitpoints"}>
+                <span>
+                  <Input
+                    type="number"
+                    size="small"
+                    customStyles={css`
+                      width: 5em;
+                    `}
+                    disabled={!isGM}
+                    value={participanceState.hitpoints}
+                    onChange={(e) =>
+                      participanceStateDispatch({
+                        type: "HITPOINTS_LEFT",
+                        payload: Number(e.target.value),
+                      })
+                    }
+                  />
+                  &nbsp;/ {participanceState.maxHitpoints}
+                </span>
+              </FormRowVertical>
+              <FormRowVertical label={"Temporary hitpoints"}>
+                <span>
+                  <Input
+                    type="number"
+                    size="small"
+                    customStyles={css`
+                      width: 5em;
+                    `}
+                    disabled={!isGM}
+                    value={participanceState.temporaryHitpoints}
+                    onChange={(e) =>
+                      participanceStateDispatch({
+                        type: "TEMPORARY_HITPOINTS_LEFT",
+                        payload: Number(e.target.value),
+                      })
+                    }
+                  />
+                  &nbsp;
                 </span>
               </FormRowVertical>
               {isGM && (

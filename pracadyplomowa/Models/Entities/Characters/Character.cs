@@ -1300,13 +1300,14 @@ namespace pracadyplomowa.Models.Entities.Characters
                 damage *= 2;
             }
 
-            int reducedDamage = damage - this.TemporaryHitpoints;
-            if (reducedDamage < 0)
-            {
-                reducedDamage = 0;
+            var damageOvershoot = this.TemporaryHitpoints - damage;
+            if(damageOvershoot > 0){
+                this.TemporaryHitpoints = damageOvershoot;
             }
-            this.TemporaryHitpoints -= damage;
-            this.Hitpoints -= reducedDamage;
+            else{
+                this.TemporaryHitpoints = 0;
+                this.Hitpoints += damageOvershoot; // its going to be negative so +
+            }
 
             return damage;
         }
@@ -1498,7 +1499,7 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
 
         [NotMapped]
-        public int TotaBonusActionsPerTurn{
+        public int TotalBonusActionsPerTurn{
             get {
                 return AffectedByApprovedEffects.OfType<ActionEffectInstance>().Where(x => x.EffectType.ActionEffect == ActionEffect.BonusAction).Count() + 1;
             }

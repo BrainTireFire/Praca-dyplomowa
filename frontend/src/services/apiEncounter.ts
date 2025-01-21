@@ -265,6 +265,9 @@ export type ParticipanceData = {
   totalBonusActions: number;
   totalAttacksPerAction: number;
   totalMovement: number;
+  hitpoints: number;
+  maxHitpoints: number;
+  temporaryHitpoints: number;
 };
 
 export async function moveCharacter(
@@ -467,6 +470,7 @@ export interface WeaponAttackResultDto {
   attackRollResult: string; // Represents the serialized HitType
   powerResult: PowerUsageResultDto[];
   totalDamage: number;
+  hitpointsLeft: number;
 }
 interface PowerUsageResultDto {
   powerName: string;

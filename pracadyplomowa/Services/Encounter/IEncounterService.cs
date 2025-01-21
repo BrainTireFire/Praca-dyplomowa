@@ -25,7 +25,7 @@ public interface IEncounterService
     Task UpdateParticipanceData(int encounterId, int characterId, Models.DTOs.Session.ParticipanceDataDto participanceDataDto);
     Task<List<int>> MoveCharacter(int encounterId, int characterId, List<int> fieldIds);
     Task<ConditionalEffectsSetDto> GetConditionalEffects(int encounterId, int characterId, int targetId);
-    Task<HitType> MakeAttackRoll(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds);
+    Task<HitType> MakeWeaponAttackRoll(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds);
     Task<WeaponDamageAndPowersDto> GetWeaponData(int encounterId, int characterId, int weaponId);
     Task<Character.WeaponHitResult> ApplyWeaponHit(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, bool criticalHit, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds);
     Task<AttackRollAndDamageResultDto> AttackRollAndDamage(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds);

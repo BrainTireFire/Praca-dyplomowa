@@ -333,8 +333,11 @@ public class EncounterService : IEncounterService
             MovementUsed = x.DistanceTraveled,
             TotalActions = x.R_Character.TotalActionsPerTurn,
             TotalAttacksPerAction = x.R_Character.TotalAttacksPerTurn,
-            TotalBonusActions = x.R_Character.TotaBonusActionsPerTurn,
-            TotalMovement = x.R_Character.TotalMovementPerTurn
+            TotalBonusActions = x.R_Character.TotalBonusActionsPerTurn,
+            TotalMovement = x.R_Character.TotalMovementPerTurn,
+            Hitpoints = character.Hitpoints,
+            MaxHitpoints = character.MaxHealth,
+            TemporaryHitpoints = character.TemporaryHitpoints
         }).First();
         return result;
     }
@@ -345,6 +348,9 @@ public class EncounterService : IEncounterService
         participance.NumberOfActionsTaken = participanceDataDto.ActionsTaken;
         participance.NumberOfBonusActionsTaken = participanceDataDto.BonusActionsTaken;
         participance.NumberOfAttacksTaken = participanceDataDto.AttacksMade;
+        var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(characterId);
+        character.Hitpoints = participanceDataDto.Hitpoints;
+        character.TemporaryHitpoints = participanceDataDto.TemporaryHitpoints;
         await _unitOfWork.SaveChangesAsync();
     }
     
@@ -390,7 +396,7 @@ public class EncounterService : IEncounterService
     public class SessionBadRequestException(string message) : SessionException(message) {
     }
 
-    public async Task<HitType> MakeAttackRoll(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds){
+    public async Task<HitType> MakeWeaponAttackRoll(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds){
         var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId) ?? throw new SessionNotFoundException("Encounter with specified Id does not exist");
         foreach (var x in encounter.R_Participances.Select(x => x.R_Character)){
             await _unitOfWork.CharacterRepository.GetByIdWithAll(x.Id);
@@ -402,15 +408,8 @@ public class EncounterService : IEncounterService
             throw new SessionBadRequestException("Can't perform a ranged attack with this weapon");
         }
 
-        foreach(var effect in character.AllEffects.Where(x => casterApprovedEffectIds.Contains(x.Id))){
-            effect.ConditionalApproved = true;
-        }
-        foreach(var effect in target.AllEffects.Where(x => targetApprovedEffectIds.Contains(x.Id))){
-            effect.ConditionalApproved = true;
-        }
-
-        var result = character.CheckIfWeaponHitSuccessfull(encounter, weapon, target, rangedAttack ? Models.Enums.EffectOptions.AttackRollEffect_Range.Ranged : Models.Enums.EffectOptions.AttackRollEffect_Range.Melee);
-        return result;
+        var attackRollResult = await MakeWeaponAttackRoll(encounter, character, weapon, target, rangedAttack, casterApprovedEffectIds, targetApprovedEffectIds);
+        return attackRollResult;
     }
     public async Task<Character.WeaponHitResult> ApplyWeaponHit(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, bool criticalHit, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds){
         var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId) ?? throw new SessionNotFoundException("Encounter with specified Id does not exist");
@@ -582,14 +581,41 @@ public class EncounterService : IEncounterService
             await _unitOfWork.CharacterRepository.GetByIdWithAll(x.Id);
         }
         var character = (encounter.R_Participances.FirstOrDefault(x => x.R_CharacterId == characterId)?.R_Character) ?? throw new SessionBadRequestException("Attacking character does not take part in specified encounter");
+        var participance = encounter.R_Participances.First(x => x.R_CharacterId == characterId);
         var target = encounter.R_Participances.First(x => x.R_CharacterId == targetId).R_Character ?? throw new SessionBadRequestException("Target character does not take part in specified encounter");
-        int initialTargetHealth = target.Hitpoints;
+        int initialTargetHealth = target.Hitpoints + target.TemporaryHitpoints;
         Weapon weapon = (Weapon)((character.R_EquippedItems.FirstOrDefault(x => x.R_ItemId == weaponId)?.R_Item) ?? throw new SessionBadRequestException("Specified weapon is not equipped by attacking character"));
+        
+        if(weapon.R_EquipData!.R_Slots.Where(x => x.Type == SlotType.MainHand).Any())
+        {
+            var attacksPerActionLeft = character.TotalAttacksPerTurn - participance.NumberOfAttacksTaken;
+            var actionsLeft = character.TotalActionsPerTurn - participance.NumberOfActionsTaken;
+            if((attacksPerActionLeft == character.TotalAttacksPerTurn || attacksPerActionLeft == 0) && actionsLeft > 0){
+                participance.NumberOfActionsTaken++;
+                participance.NumberOfAttacksTaken = 1;
+            }
+            else if(attacksPerActionLeft > 0){
+                participance.NumberOfAttacksTaken++;
+            }
+            else{
+                throw new SessionBadRequestException("Character cannot make more main-hand attacks");
+            }
+        }
+        else{
+            var bonusActionsLeft = character.TotalBonusActionsPerTurn - participance.NumberOfBonusActionsTaken;
+            if(bonusActionsLeft > 0){
+                participance.NumberOfBonusActionsTaken++;
+            }
+            else{
+                throw new SessionBadRequestException("Character cannot make more off-hand attacks");
+            }
+        }
+
         if (isRanged && ((weapon is MeleeWeapon meleeWeapon && !meleeWeapon.Thrown) || weapon is not RangedWeapon)){
             throw new SessionBadRequestException("Can't perform a ranged attack with this weapon");
         }
         await _unitOfWork.ItemRepository.GetByIdWithSlotsPowersWithEffectsEffectsResources(weapon.Id);
-        var attackRollResult = await MakeAttackRoll(encounter, character, weapon, target, isRanged, approvedConditionalEffects.WeaponAttackConditionalEffects.CasterConditionalEffects, approvedConditionalEffects.WeaponAttackConditionalEffects.TargetConditionalEffects);
+        var attackRollResult = await MakeWeaponAttackRoll(encounter, character, weapon, target, isRanged, approvedConditionalEffects.WeaponAttackConditionalEffects.CasterConditionalEffects, approvedConditionalEffects.WeaponAttackConditionalEffects.TargetConditionalEffects);
         var result = new WeaponAttackResultDto(){
             AttackRollResult = attackRollResult
         };
@@ -608,15 +634,16 @@ public class EncounterService : IEncounterService
                 }
             }
         }
-        int finalTargetHealth = target.Hitpoints;
+        int finalTargetHealth = target.Hitpoints + target.TemporaryHitpoints;
         result.TotalDamage = initialTargetHealth - finalTargetHealth;
+        result.HitpointsLeft = target.Hitpoints;
         await _unitOfWork.SaveChangesAsync();
         return result;
     }
 
 
 
-    private async Task<HitType> MakeAttackRoll(Models.Entities.Campaign.Encounter encounter, Character character, Weapon weapon, Character target, bool rangedAttack, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds){
+    private async Task<HitType> MakeWeaponAttackRoll(Models.Entities.Campaign.Encounter encounter, Character character, Weapon weapon, Character target, bool rangedAttack, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds){
         foreach(var effect in character.AllEffects.Where(x => !casterApprovedEffectIds.Contains(x.Id))){
             effect.ConditionalApproved = false;
         }
@@ -687,6 +714,9 @@ public class EncounterService : IEncounterService
         var result = weapon.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, hitType}}, null, out var generatedEffects);
         foreach(var effect in generatedEffects){
             effect.Resolve();
+        }
+        foreach(var group in generatedEffects.Where(x => x.R_OwnedByGroup != null).Select(x => x.R_OwnedByGroup).Distinct()){
+            group?.TickDuration();
         }
         return;
     }

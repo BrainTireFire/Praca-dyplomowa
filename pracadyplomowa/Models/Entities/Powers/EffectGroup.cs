@@ -58,13 +58,14 @@ namespace pracadyplomowa.Models.Entities.Powers
 
         public void TickDuration(){
             if(!IsConstant){
-                DurationLeft -= 1;
-                if(DurationLeft <= 0){
+                if(DurationLeft != null){
+                    DurationLeft -= 1;
+                }
+                if(DurationLeft == null || DurationLeft <= 0){
                     R_OwnedEffects.ToList().ForEach(e => {
                         e.Unlink();
                     });
                     Disperse();
-                    DeleteOnSave = true;
                 }
             }
         }

@@ -131,7 +131,7 @@ public class EncounterController : BaseApiController
     public async Task<ActionResult<HitType>> MakeAttackRoll(int encounterId, [FromQuery] int characterId, [FromQuery] int targetId, [FromQuery] int weaponId, [FromQuery] bool isRanged, [FromBody] ApprovedConditionalEffectsDto conditionalEffectsDtos)
     {
         try{
-            var result = await _encounterService.MakeAttackRoll(encounterId, characterId, weaponId, targetId, isRanged, conditionalEffectsDtos.CasterConditionalEffects, conditionalEffectsDtos.TargetConditionalEffects);
+            var result = await _encounterService.MakeWeaponAttackRoll(encounterId, characterId, weaponId, targetId, isRanged, conditionalEffectsDtos.CasterConditionalEffects, conditionalEffectsDtos.TargetConditionalEffects);
             return Ok(result);
         }
         catch(SessionNotFoundException ex){

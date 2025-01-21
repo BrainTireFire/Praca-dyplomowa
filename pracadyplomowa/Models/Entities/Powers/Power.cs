@@ -29,7 +29,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         public int? AuraSize { get; set; }
         public bool OverrideCastersDC { get; set; } = false;
         public int? DifficultyClass { get; set; }
-        public Ability? SavingThrow { get; set; }
+        public Ability? SavingThrowAbility { get; set; }
         public bool RequiresConcentration { get; set; }
         public SavingThrowBehaviour? SavingThrowBehaviour { get; set; }
         public SavingThrowRoll? SavingThrowRoll { get; set; }

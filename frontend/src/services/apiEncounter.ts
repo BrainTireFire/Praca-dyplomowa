@@ -1,3 +1,8 @@
+import {
+  conditionalEffectSet,
+  conditionalEffectType,
+  stateType,
+} from "../features/campaigns/session/WeaponAttackConditionalEffectsReducer";
 import { DiceSet } from "../models/diceset";
 import { Encounter } from "../models/encounter/Encounter";
 import { EncounterCreateDto } from "../models/encounter/EncounterCreateDto";
@@ -281,26 +286,6 @@ export async function moveCharacter(
   );
 }
 
-export interface WeaponAttackConditionalEffectsDto {
-  weaponId: number;
-  weaponName: string;
-  weaponDescription: string;
-  casterConditionalEffects: ConditionalEffectDto[];
-  targetsConditionalEffects: Record<number, TargetDto>;
-}
-
-export interface ConditionalEffectDto {
-  effectId: number;
-  effectName: string;
-  effectDescription: string;
-  selected: boolean;
-}
-
-export interface TargetDto {
-  targetName: string;
-  targetConditionalEffects: ConditionalEffectDto[];
-}
-
 export async function makeAttackRoll(
   encounterId: number,
   characterId: number,
@@ -352,11 +337,13 @@ export async function applyWeaponHitEffects(
 }
 export type AppliedDamage = { [key: string]: number };
 
-export async function getWeaponDamageAndPowersOnHit(
+export async function getWeaponAttackData(
   encounterId: number,
   characterId: number,
-  weaponId: number
-): Promise<WeaponDamageAndPowersDto> {
+  targetId: number,
+  weaponId: number,
+  isRanged: boolean
+): Promise<WeaponAttackData> {
   const options: RequestInit = {
     method: "GET",
     headers: {
@@ -365,9 +352,14 @@ export async function getWeaponDamageAndPowersOnHit(
   };
 
   return await customFetch(
-    `${BASE_URL}/api/encounter/${encounterId}/weaponData?characterId=${characterId}&weaponId=${weaponId}`,
+    `${BASE_URL}/api/encounter/${encounterId}/weaponAttackData?characterId=${characterId}&targetId=${targetId}&weaponId=${weaponId}&isRanged=${isRanged}`,
     options
   );
+}
+
+export interface WeaponAttackData {
+  weaponDamageAndPowers: WeaponDamageAndPowersDto;
+  conditionalEffects: ConditionalEffectsDto;
 }
 
 export interface WeaponDamageAndPowersDto {
@@ -386,27 +378,97 @@ export interface DamageValueDto {
 export interface PowersOnHitDto {
   powerId: number;
   powerName: string;
+  powerDescription: string;
+  powerEffects: PowerEffectDto[];
 }
 
-export async function getConditionalEffects(
-  encounterId: number,
-  characterId: number,
-  targetId: number
-): Promise<ConditionalEffectsDto> {
-  const options: RequestInit = {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  };
-
-  return await customFetch(
-    `${BASE_URL}/api/encounter/${encounterId}/conditionalEffects?characterId=${characterId}&targetId=${targetId}`,
-    options
-  );
+export interface PowerEffectDto {
+  powerEffectId: number;
+  powerEffectName: string;
+  powerEffectDescription: string;
 }
 
 export interface ConditionalEffectsDto {
   casterConditionalEffects: ConditionalEffectDto[];
   targetConditionalEffects: ConditionalEffectDto[];
+}
+export interface ConditionalEffectDto {
+  effectId: number;
+  effectName: string;
+  effectDescription: string;
+  selected: boolean;
+}
+
+export async function makeWeaponAttack(
+  encounterId: number,
+  characterId: number,
+  targetId: number,
+  weaponId: number,
+  isRanged: boolean,
+  approvedConditionalEffects: stateType
+): Promise<WeaponAttackResultDto> {
+  /**
+   * Transforms a stateType object by keeping only `effectId` where `selected === true`.
+   * @param {stateType} state - The state object to transform.
+   * @returns {stateType} - A new state object with transformed conditional effects.
+   */
+  function transformState(state: stateType) {
+    if (!state) {
+      throw new Error("Invalid state object");
+    }
+
+    // Helper function to filter and map conditionalEffectType arrays
+    const filterEffectIds = (effects: conditionalEffectType[]) =>
+      effects
+        .filter((effect) => effect.selected)
+        .map((effect) => effect.effectId);
+
+    // Transform a conditionalEffectSet
+    const transformConditionalEffectSet = (
+      effectSet: conditionalEffectSet
+    ) => ({
+      casterConditionalEffects: filterEffectIds(
+        effectSet.casterConditionalEffects
+      ),
+      targetConditionalEffects: filterEffectIds(
+        effectSet.targetConditionalEffects
+      ),
+    });
+
+    // Transform the state object
+    return {
+      weaponAttackConditionalEffects: transformConditionalEffectSet(
+        state.weaponAttackConditionalEffects
+      ),
+      powers: state.powers.map((power) => ({
+        powerId: power.powerId,
+        powerConditionalEffects: transformConditionalEffectSet(
+          power.powerConditionalEffects
+        ),
+      })),
+    };
+  }
+
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(transformState(approvedConditionalEffects)),
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/encounter/${encounterId}/makeWeaponAttack?characterId=${characterId}&targetId=${targetId}&weaponId=${weaponId}&isRanged=${isRanged}`,
+    options
+  );
+}
+
+export interface WeaponAttackResultDto {
+  attackRollResult: string; // Represents the serialized HitType
+  powerResult: PowerUsageResultDto[];
+  totalDamage: number;
+}
+interface PowerUsageResultDto {
+  powerName: string;
+  success: boolean;
 }

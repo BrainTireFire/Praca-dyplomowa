@@ -161,7 +161,7 @@ namespace pracadyplomowa.Models.Entities.Items
 
             foreach(var targetedCharacter in targets){
                 if(power.PowerType == PowerType.Saveable){
-                    int roll = targetedCharacter.SavingThrowRoll((Ability)power.SavingThrow);
+                    int roll = targetedCharacter.SavingThrowRoll((Ability)power.SavingThrowAbility);
                     hitMap.Add(
                         targetedCharacter.Id,
                         roll <= Wielder?.DifficultyClass(power) && roll != 20 ? HitType.Hit : HitType.Miss
@@ -178,10 +178,10 @@ namespace pracadyplomowa.Models.Entities.Items
             return hitMap;
         }
 
-        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel)
+        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel, out List<EffectInstance> generatedEffects)
         {
             EffectGroup effectGroup = new();
-            
+            generatedEffects = [];
             //generate effects
             foreach(Character target in targetsToHitSuccessMap.Keys){
                 if (targetsToHitSuccessMap.TryGetValue(target, out var outcome))
@@ -209,6 +209,7 @@ namespace pracadyplomowa.Models.Entities.Items
                         if (shouldAdd)
                         {
                             var effectInstance = effectBlueprint.Generate(Wielder, target);
+                            generatedEffects.Add(effectInstance);
                             if(outcome == HitType.CriticalHit && effectInstance is DamageEffectInstance damageEffectInstance){
                                 damageEffectInstance.CriticalHit = true;
                             }
@@ -222,7 +223,7 @@ namespace pracadyplomowa.Models.Entities.Items
             effectGroup.IsConstant = false;
             if(power.PowerType == PowerType.Saveable && power.SavingThrowRoll == Enums.SavingThrowRoll.RetakenEveryTurn){
                 effectGroup.DifficultyClassToBreak = Wielder?.DifficultyClass(power);
-                effectGroup.SavingThrow = (Ability)power.SavingThrow;
+                effectGroup.SavingThrow = (Ability)power.SavingThrowAbility;
             }
             effectGroup.Name = power.Name;
             return Outcome.Success;

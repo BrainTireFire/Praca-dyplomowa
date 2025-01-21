@@ -436,6 +436,36 @@ public class EncounterService : IEncounterService
         return result;
     }
 
+    public async Task<AttackRollAndDamageResultDto> AttackRollAndDamage(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId) ?? throw new SessionNotFoundException("Encounter with specified Id does not exist");
+        foreach (var x in encounter.R_Participances.Select(x => x.R_Character)){
+            await _unitOfWork.CharacterRepository.GetByIdWithAll(x.Id);
+        }
+        var character = (encounter.R_Participances.FirstOrDefault(x => x.R_CharacterId == characterId)?.R_Character) ?? throw new SessionBadRequestException("Attacking character does not take part in specified encounter");
+        var target = encounter.R_Participances.First(x => x.R_CharacterId == targetId).R_Character ?? throw new SessionBadRequestException("Target character does not take part in specified encounter");
+        Weapon weapon = (Weapon)((character.R_EquippedItems.FirstOrDefault(x => x.R_ItemId == weaponId)?.R_Item) ?? throw new SessionBadRequestException("Specified weapon is not equipped by attacking character"));
+        if (rangedAttack && ((weapon is MeleeWeapon meleeWeapon && !meleeWeapon.Thrown) || weapon is not RangedWeapon)){
+            throw new SessionBadRequestException("Can't perform a ranged attack with this weapon");
+        }
+        foreach(var effect in character.AllEffects.Where(x => casterApprovedEffectIds.Contains(x.Id))){
+            effect.ConditionalApproved = true;
+        }
+        foreach(var effect in target.AllEffects.Where(x => targetApprovedEffectIds.Contains(x.Id))){
+            effect.ConditionalApproved = true;
+        }
+        var attackRollResult = character.CheckIfWeaponHitSuccessfull(encounter, weapon, target, rangedAttack ? Models.Enums.EffectOptions.AttackRollEffect_Range.Ranged : Models.Enums.EffectOptions.AttackRollEffect_Range.Melee);
+        AttackRollAndDamageResultDto attackRollAndDamageResult = new()
+        {
+            HitType = attackRollResult
+        };
+        if (attackRollResult == HitType.Hit || attackRollResult == HitType.CriticalHit){
+            attackRollAndDamageResult.WeaponHitResult =  character.ApplyWeaponHitEffects(encounter, weapon, target, attackRollResult == HitType.CriticalHit);
+        }
+        await _unitOfWork.SaveChangesAsync();
+        return attackRollAndDamageResult;
+    }
+
+
     public async Task<ConditionalEffectsSetDto> GetConditionalEffects(int encounterId, int characterId, int targetId){
         var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipances(encounterId) ?? throw new SessionNotFoundException("Encounter with specified Id does not exist");
         foreach (var x in encounter.R_Participances.Select(x => x.R_Character)){
@@ -474,7 +504,7 @@ public class EncounterService : IEncounterService
         }
         var character = (encounter.R_Participances.FirstOrDefault(x => x.R_CharacterId == characterId)?.R_Character) ?? throw new SessionBadRequestException("Attacking character does not take part in specified encounter");
         Weapon weapon = (Weapon)((character.R_EquippedItems.FirstOrDefault(x => x.R_ItemId == weaponId)?.R_Item) ?? throw new SessionBadRequestException("Specified weapon is not equipped by attacking character"));
-        await _unitOfWork.ItemRepository.GetByIdWithSlotsPowersEffectsResources(weapon.Id);
+        await _unitOfWork.ItemRepository.GetByIdWithSlotsPowersWithEffectsEffectsResources(weapon.Id);
         var result = new WeaponDamageAndPowersDto();
         result.WeaponId = weaponId;
         result.WeaponName = weapon.Name;
@@ -528,12 +558,136 @@ public class EncounterService : IEncounterService
         }
 
         foreach(var power in weapon.R_EquipItemGrantsAccessToPower.Where(x => x.CastableBy == CastableBy.OnWeaponHit)){
-            result.PowersOnHit.Add(new WeaponDamageAndPowersDto.PowersOnHitDto(){
+            var powerDto = new WeaponDamageAndPowersDto.PowersOnHitDto(){
                 PowerId = power.Id,
-                PowerName = power.Name
-            });
+                PowerName = power.Name,
+                PowerDescription = power.Description
+            };
+            foreach(var effect in power.R_EffectBlueprints){
+                powerDto.PowerEffects.Add(new WeaponDamageAndPowersDto.PowersOnHitDto.PowerEffectDto(){
+                    PowerEffectId = effect.Id,
+                    PowerEffectName = effect.Name,
+                    PowerEffectDescription = effect.Description,
+                });
+            }
+            result.PowersOnHit.Add(powerDto);
         }
         result.DamageValues = damageTypeOnHit;
         return result;
+    }
+
+    public async Task<WeaponAttackResultDto> MakeWeaponAttack(int encounterId, [FromQuery] int characterId, [FromQuery] int weaponId, [FromQuery] int targetId, [FromQuery] bool isRanged, [FromBody] WeaponAttackIncomingDataDto approvedConditionalEffects){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId) ?? throw new SessionNotFoundException("Encounter with specified Id does not exist");
+        foreach (var x in encounter.R_Participances.Select(x => x.R_Character)){
+            await _unitOfWork.CharacterRepository.GetByIdWithAll(x.Id);
+        }
+        var character = (encounter.R_Participances.FirstOrDefault(x => x.R_CharacterId == characterId)?.R_Character) ?? throw new SessionBadRequestException("Attacking character does not take part in specified encounter");
+        var target = encounter.R_Participances.First(x => x.R_CharacterId == targetId).R_Character ?? throw new SessionBadRequestException("Target character does not take part in specified encounter");
+        int initialTargetHealth = target.Hitpoints;
+        Weapon weapon = (Weapon)((character.R_EquippedItems.FirstOrDefault(x => x.R_ItemId == weaponId)?.R_Item) ?? throw new SessionBadRequestException("Specified weapon is not equipped by attacking character"));
+        if (isRanged && ((weapon is MeleeWeapon meleeWeapon && !meleeWeapon.Thrown) || weapon is not RangedWeapon)){
+            throw new SessionBadRequestException("Can't perform a ranged attack with this weapon");
+        }
+        await _unitOfWork.ItemRepository.GetByIdWithSlotsPowersWithEffectsEffectsResources(weapon.Id);
+        var attackRollResult = await MakeAttackRoll(encounter, character, weapon, target, isRanged, approvedConditionalEffects.WeaponAttackConditionalEffects.CasterConditionalEffects, approvedConditionalEffects.WeaponAttackConditionalEffects.TargetConditionalEffects);
+        var result = new WeaponAttackResultDto(){
+            AttackRollResult = attackRollResult
+        };
+        if(attackRollResult == HitType.Hit || attackRollResult == HitType.CriticalHit){
+            var damageRollResult = await ApplyWeaponHit(encounter, character, weapon, target, isRanged, attackRollResult == HitType.CriticalHit, approvedConditionalEffects.WeaponAttackConditionalEffects.CasterConditionalEffects, approvedConditionalEffects.WeaponAttackConditionalEffects.TargetConditionalEffects);
+            foreach (var power in weapon.R_EquipItemGrantsAccessToPower.Where(x => x.CastableBy == CastableBy.OnWeaponHit))
+            {
+                var conditionalEffectsForPower = approvedConditionalEffects.Powers.Find(x => x.PowerId == power.Id)!.PowerConditionalEffects;
+                var powerRollResult = await CheckWeaponPowerHit(encounter, character, weapon, power, target, conditionalEffectsForPower.CasterConditionalEffects, conditionalEffectsForPower.TargetConditionalEffects);
+                result.PowerResult.Add(new WeaponAttackResultDto.PowerUsageResultDto(){
+                    PowerName = power.Name,
+                    Success = powerRollResult == HitType.Hit || powerRollResult == HitType.CriticalHit
+                });
+                if(powerRollResult == HitType.Hit || powerRollResult == HitType.CriticalHit){
+                    await ApplyWeaponPowerHit(encounter, character, weapon, power, target, powerRollResult, conditionalEffectsForPower.CasterConditionalEffects, conditionalEffectsForPower.TargetConditionalEffects);
+                }
+            }
+        }
+        int finalTargetHealth = target.Hitpoints;
+        result.TotalDamage = initialTargetHealth - finalTargetHealth;
+        await _unitOfWork.SaveChangesAsync();
+        return result;
+    }
+
+
+
+    private async Task<HitType> MakeAttackRoll(Models.Entities.Campaign.Encounter encounter, Character character, Weapon weapon, Character target, bool rangedAttack, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds){
+        foreach(var effect in character.AllEffects.Where(x => !casterApprovedEffectIds.Contains(x.Id))){
+            effect.ConditionalApproved = false;
+        }
+        foreach(var effect in target.AllEffects.Where(x => !targetApprovedEffectIds.Contains(x.Id))){
+            effect.ConditionalApproved = false;
+        }
+        foreach(var effect in character.AllEffects.Where(x => casterApprovedEffectIds.Contains(x.Id))){
+            effect.ConditionalApproved = true;
+        }
+        foreach(var effect in target.AllEffects.Where(x => targetApprovedEffectIds.Contains(x.Id))){
+            effect.ConditionalApproved = true;
+        }
+
+        var result = character.CheckIfWeaponHitSuccessfull(encounter, weapon, target, rangedAttack ? Models.Enums.EffectOptions.AttackRollEffect_Range.Ranged : Models.Enums.EffectOptions.AttackRollEffect_Range.Melee);
+        return result;
+    }
+
+    private async Task<Character.WeaponHitResult> ApplyWeaponHit(Models.Entities.Campaign.Encounter encounter, Character character, Weapon weapon, Character target, bool rangedAttack, bool criticalHit, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds){
+        foreach(var effect in character.AllEffects.Where(x => !casterApprovedEffectIds.Contains(x.Id))){
+            effect.ConditionalApproved = false;
+        }
+        foreach(var effect in target.AllEffects.Where(x => !targetApprovedEffectIds.Contains(x.Id))){
+            effect.ConditionalApproved = false;
+        }
+        foreach(var effect in character.AllEffects.Where(x => casterApprovedEffectIds.Contains(x.Id))){
+            effect.ConditionalApproved = true;
+        }
+        foreach(var effect in target.AllEffects.Where(x => targetApprovedEffectIds.Contains(x.Id))){
+            effect.ConditionalApproved = true;
+        }
+
+        var result = character.ApplyWeaponHitEffects(encounter, weapon, target, criticalHit);
+        return result;
+    }
+
+    private async Task<HitType> CheckWeaponPowerHit(Models.Entities.Campaign.Encounter encounter, Character character, Weapon weapon, Power power, Character target, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds){
+        foreach(var effect in character.AllEffects.Where(x => !casterApprovedEffectIds.Contains(x.Id))){
+            effect.ConditionalApproved = false;
+        }
+        foreach(var effect in target.AllEffects.Where(x => !targetApprovedEffectIds.Contains(x.Id))){
+            effect.ConditionalApproved = false;
+        }
+        foreach(var effect in character.AllEffects.Where(x => casterApprovedEffectIds.Contains(x.Id))){
+            effect.ConditionalApproved = true;
+        }
+        foreach(var effect in target.AllEffects.Where(x => targetApprovedEffectIds.Contains(x.Id))){
+            effect.ConditionalApproved = true;
+        }
+
+        var result = weapon.CheckIfPowerHitSuccessfull(encounter, power, [target]);
+        return result[target.Id];
+    }
+
+    private async Task ApplyWeaponPowerHit(Models.Entities.Campaign.Encounter encounter, Character character, Weapon weapon, Power power, Character target, HitType hitType, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds){
+        foreach(var effect in character.AllEffects.Where(x => !casterApprovedEffectIds.Contains(x.Id))){
+            effect.ConditionalApproved = false;
+        }
+        foreach(var effect in target.AllEffects.Where(x => !targetApprovedEffectIds.Contains(x.Id))){
+            effect.ConditionalApproved = false;
+        }
+        foreach(var effect in character.AllEffects.Where(x => casterApprovedEffectIds.Contains(x.Id))){
+            effect.ConditionalApproved = true;
+        }
+        foreach(var effect in target.AllEffects.Where(x => targetApprovedEffectIds.Contains(x.Id))){
+            effect.ConditionalApproved = true;
+        }
+
+        var result = weapon.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, hitType}}, null, out var generatedEffects);
+        foreach(var effect in generatedEffects){
+            effect.Resolve();
+        }
+        return;
     }
 }

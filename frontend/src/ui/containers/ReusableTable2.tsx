@@ -236,7 +236,7 @@ export const ReusableTable = ({
                   <TableCell key={"button"}>
                     <Input
                       type="checkbox"
-                      value={item.selected}
+                      checked={item.selected}
                       onChange={() => handleMultiSelectionChange(item.itemId)}
                     ></Input>
                   </TableCell>

@@ -6,23 +6,19 @@ import TabList from "../../../ui/containers/tabs/TabList";
 import Spinner from "../../../ui/interactive/Spinner";
 import TabItem from "../../../ui/containers/tabs/TabItem";
 import styled, { css } from "styled-components";
-import {
-  ApprovedConditionalEffectsDto,
-  ConditionalEffectDto,
-  DamageValueDto,
-} from "../../../services/apiEncounter";
+import { DamageValueDto } from "../../../services/apiEncounter";
 import Button from "../../../ui/interactive/Button";
 import Heading from "../../../ui/text/Heading";
-import useMakeAttackRoll from "../hooks/useMakeAttackRoll";
-import { useWeaponDamageAndPowersOnHit } from "../hooks/useWeaponDamageAndPowersOnHit";
 import { ReusableTable } from "../../../ui/containers/ReusableTable2";
-import { useConditionalEffects } from "../hooks/useConditionalEffects";
-import ConditionalEffectsReducer, {
-  initialData,
-} from "./ConditionalEffectsReducer";
+
 import { DiceSetString } from "../../../models/diceset";
 import ButtonGroup from "../../../ui/interactive/ButtonGroup";
-import useApplyWeaponHitDamage from "../hooks/useApplyWeaponHitDamage";
+import { useGetWeaponAttackData } from "../hooks/useGetWeaponAttackData";
+import {
+  initialData,
+  WeaponAttackConditionalEffectsReducer,
+} from "./WeaponAttackConditionalEffectsReducer";
+import useMakeWeaponAttack from "../hooks/useMakeWeaponAttack";
 
 // function mapToTargetsConditionalEffects(
 //   targets: Record<number, TargetDto>
@@ -45,33 +41,29 @@ export function WeaponAttackResolution({
   const { groupName } = useParams<{ groupName: string }>();
   const [controlledCharacterId] = useContext(ControlledCharacterContext);
   const { isLoading: isLoadingWeaponDamage, weaponAttackData } =
-    useWeaponDamageAndPowersOnHit(
+    useGetWeaponAttackData(
       Number(groupName),
       controlledCharacterId,
-      controlState.weaponAttackSelected?.weaponId!
+      controlState.weaponAttackRollOverlayData!.targetId,
+      controlState.weaponAttackSelected?.weaponId!,
+      controlState.weaponAttackSelected?.isRanged!
     );
 
-  const {
-    isLoading: isLoadingConditionalEffects,
-    conditionalEffects: conditionalEffectsApi,
-  } = useConditionalEffects(
-    Number(groupName),
-    controlledCharacterId,
-    controlState.weaponAttackRollOverlayData?.targetId!
-  );
-
-  const [conditionalEffects, dispatch] = useReducer(
-    ConditionalEffectsReducer,
+  const [state, dispatch] = useReducer(
+    WeaponAttackConditionalEffectsReducer,
     initialData
   );
 
   useEffect(() => {
-    if (!!conditionalEffectsApi) {
-      dispatch({ type: "SET_STATE", payload: conditionalEffectsApi });
+    if (!!weaponAttackData) {
+      dispatch({
+        type: "SYNC_CONDITIONAL_EFFECTS",
+        payload: { data: weaponAttackData },
+      });
     }
-  }, [conditionalEffectsApi]);
+  }, [weaponAttackData]);
 
-  const { isPending: isPendingAttackRoll, makeAttackRoll } = useMakeAttackRoll(
+  const { isPending: isPendingAttack, makeWeaponAttack } = useMakeWeaponAttack(
     Number(groupName),
     controlledCharacterId,
     controlState.weaponAttackRollOverlayData?.targetId!,
@@ -80,34 +72,19 @@ export function WeaponAttackResolution({
     () => {}
   );
 
-  const { isPending: isPendingDamageApplication, applyWeaponHitEffects } =
-    useApplyWeaponHitDamage(
-      Number(groupName),
-      controlledCharacterId,
-      controlState.weaponAttackRollOverlayData?.targetId!,
-      controlState.weaponAttackSelected?.weaponId!,
-      controlState.weaponAttackSelected?.isRanged!,
-      () => {}
-    );
-
-  if (
-    isLoadingConditionalEffects ||
-    isLoadingWeaponDamage ||
-    isPendingAttackRoll ||
-    isPendingDamageApplication
-  ) {
+  if (isLoadingWeaponDamage || isPendingAttack) {
     return <Spinner></Spinner>;
   }
   console.log(weaponAttackData);
 
-  const resultPayload: ApprovedConditionalEffectsDto = {
-    CasterConditionalEffects: conditionalEffects.casterConditionalEffects
-      .filter((x) => x.selected)
-      .map((x) => x.effectId),
-    TargetConditionalEffects: conditionalEffects.targetConditionalEffects
-      .filter((x) => x.selected)
-      .map((x) => x.effectId),
-  };
+  // const resultPayload: ApprovedConditionalEffectsDto = {
+  //   CasterConditionalEffects: conditionalEffects.casterConditionalEffects
+  //     .filter((x) => x.selected)
+  //     .map((x) => x.effectId),
+  //   TargetConditionalEffects: conditionalEffects.targetConditionalEffects
+  //     .filter((x) => x.selected)
+  //     .map((x) => x.effectId),
+  // };
 
   return (
     <Container>
@@ -124,12 +101,17 @@ export function WeaponAttackResolution({
                       Name: "name",
                       Description: "description",
                     }}
-                    data={conditionalEffects!.casterConditionalEffects.map(
-                      (effect: ConditionalEffectDto, index: number) => {
+                    data={state.weaponAttackConditionalEffects.casterConditionalEffects.map(
+                      (effect, index: number) => {
                         return {
                           id: index,
-                          name: effect.effectName,
-                          description: effect.effectDescription,
+                          name: weaponAttackData?.conditionalEffects.casterConditionalEffects.find(
+                            (x) => x.effectId === effect.effectId
+                          )?.effectName,
+                          description:
+                            weaponAttackData?.conditionalEffects.casterConditionalEffects.find(
+                              (x) => x.effectId === effect.effectId
+                            )?.effectDescription,
                           selected: effect.selected,
                           itemId: effect.effectId,
                         };
@@ -140,8 +122,8 @@ export function WeaponAttackResolution({
                     handleMultiSelectionChange={(id: number | string) => {
                       console.log(id);
                       dispatch({
-                        type: "TOGGLE_CASTER_EFFECT",
-                        payload: { effectId: Number(id) },
+                        type: "TOGGLE_WEAPON_ATTACK_CONDITIONAL_EFFECT",
+                        payload: { effectId: Number(id), isCaster: true },
                       });
                     }}
                     // customTableContainer={css`
@@ -156,12 +138,17 @@ export function WeaponAttackResolution({
                       Name: "name",
                       Description: "description",
                     }}
-                    data={conditionalEffects.targetConditionalEffects.map(
-                      (effect: ConditionalEffectDto, index: number) => {
+                    data={state.weaponAttackConditionalEffects.targetConditionalEffects.map(
+                      (effect, index: number) => {
                         return {
                           id: index,
-                          name: effect.effectName,
-                          description: effect.effectDescription,
+                          name: weaponAttackData?.conditionalEffects.targetConditionalEffects.find(
+                            (x) => x.effectId === effect.effectId
+                          )?.effectName,
+                          description:
+                            weaponAttackData?.conditionalEffects.targetConditionalEffects.find(
+                              (x) => x.effectId === effect.effectId
+                            )?.effectDescription,
                           selected: effect.selected,
                           itemId: effect.effectId,
                         };
@@ -171,10 +158,8 @@ export function WeaponAttackResolution({
                     isMultiSelect={true}
                     handleMultiSelectionChange={(id: number | string) =>
                       dispatch({
-                        type: "TOGGLE_TARGET_EFFECT",
-                        payload: {
-                          effectId: Number(id),
-                        },
+                        type: "TOGGLE_WEAPON_ATTACK_CONDITIONAL_EFFECT",
+                        payload: { effectId: Number(id), isCaster: false },
                       })
                     }
                     customTableContainer={css`
@@ -191,16 +176,18 @@ export function WeaponAttackResolution({
                     Value: "damageValue",
                     Source: "source",
                   }}
-                  data={weaponAttackData!.damageValues!.map(
-                    (damage: DamageValueDto, index: number) => {
-                      return {
-                        id: index,
-                        damageType: damage.damageType,
-                        damageValue: DiceSetString(damage.damageValue),
-                        source: damage.damageSource,
-                      };
-                    }
-                  )}
+                  data={
+                    weaponAttackData?.weaponDamageAndPowers.damageValues!.map(
+                      (damage: DamageValueDto, index: number) => {
+                        return {
+                          id: index,
+                          damageType: damage.damageType,
+                          damageValue: DiceSetString(damage.damageValue),
+                          source: damage.damageSource,
+                        };
+                      }
+                    ) ?? []
+                  }
                   isSelectable={false}
                   isMultiSelect={false}
                   // customTableContainer={css`
@@ -208,30 +195,142 @@ export function WeaponAttackResolution({
                   // `}
                 ></ReusableTable>
               </TableContainer>
-              <ButtonGroup>
-                <Button onClick={() => makeAttackRoll(resultPayload)}>
-                  Make attack roll
-                </Button>
-                <Button
-                  onClick={() =>
-                    applyWeaponHitEffects({
-                      approvedConditionalEffects: resultPayload,
-                      isCritical: false,
-                    })
-                  }
-                >
-                  Apply damage
-                </Button>
-              </ButtonGroup>
             </ContainerEffects>
           </TabItem>,
-          ...weaponAttackData!.powersOnHit.map((x) => (
+          ...weaponAttackData!.weaponDamageAndPowers.powersOnHit.map((x) => (
             <TabItem key={x.powerId} label={x.powerName}>
-              <div>Test power</div>
+              <ContainerEffects>
+                <TabsContainer>
+                  <TableContainer>
+                    <ReusableTable
+                      mainHeader={`Conditional effects for attacker`}
+                      tableRowsColomns={{
+                        Name: "name",
+                        Description: "description",
+                      }}
+                      data={(() => {
+                        const power = state.powers.find(
+                          (y) => y.powerId === x.powerId
+                        );
+                        return power
+                          ? power.powerConditionalEffects.casterConditionalEffects.map(
+                              (effect, index: number) => {
+                                return {
+                                  id: index,
+                                  name: weaponAttackData?.conditionalEffects.casterConditionalEffects.find(
+                                    (x) => x.effectId === effect.effectId
+                                  )?.effectName,
+                                  description:
+                                    weaponAttackData?.conditionalEffects.casterConditionalEffects.find(
+                                      (x) => x.effectId === effect.effectId
+                                    )?.effectDescription,
+                                  selected: effect.selected,
+                                  itemId: effect.effectId,
+                                };
+                              }
+                            )
+                          : [];
+                      })()}
+                      isSelectable={false}
+                      isMultiSelect={true}
+                      handleMultiSelectionChange={(id: number | string) => {
+                        console.log(id);
+                        dispatch({
+                          type: "TOGGLE_POWER_CONDITIONAL_EFFECT",
+                          payload: {
+                            powerId: x.powerId,
+                            effectId: Number(id),
+                            isCaster: true,
+                          },
+                        });
+                      }}
+                      // customTableContainer={css`
+                      //   height: 100%;
+                      // `}
+                    ></ReusableTable>
+                  </TableContainer>
+                  <TableContainer>
+                    <ReusableTable
+                      mainHeader={`Conditional effects for target`}
+                      tableRowsColomns={{
+                        Name: "name",
+                        Description: "description",
+                      }}
+                      data={(() => {
+                        const power = state.powers.find(
+                          (y) => y.powerId === x.powerId
+                        );
+                        return power
+                          ? power.powerConditionalEffects.targetConditionalEffects.map(
+                              (effect, index: number) => {
+                                return {
+                                  id: index,
+                                  name: weaponAttackData?.conditionalEffects.targetConditionalEffects.find(
+                                    (x) => x.effectId === effect.effectId
+                                  )?.effectName,
+                                  description:
+                                    weaponAttackData?.conditionalEffects.targetConditionalEffects.find(
+                                      (x) => x.effectId === effect.effectId
+                                    )?.effectDescription,
+                                  selected: effect.selected,
+                                  itemId: effect.effectId,
+                                };
+                              }
+                            )
+                          : [];
+                      })()}
+                      isSelectable={false}
+                      isMultiSelect={true}
+                      handleMultiSelectionChange={(id: number | string) => {
+                        console.log(id);
+                        dispatch({
+                          type: "TOGGLE_POWER_CONDITIONAL_EFFECT",
+                          payload: {
+                            powerId: x.powerId,
+                            effectId: Number(id),
+                            isCaster: false,
+                          },
+                        });
+                      }}
+                      customTableContainer={css`
+                        height: 100%;
+                      `}
+                    ></ReusableTable>
+                  </TableContainer>
+                </TabsContainer>
+                <TableContainer>
+                  <ReusableTable
+                    mainHeader={`Effects applied by power`}
+                    tableRowsColomns={{
+                      Name: "name",
+                      Description: "description",
+                    }}
+                    data={
+                      x.powerEffects.map((effect, index: number) => {
+                        return {
+                          id: index,
+                          name: effect.powerEffectName,
+                          description: effect.powerEffectDescription,
+                        };
+                      }) ?? []
+                    }
+                    isSelectable={false}
+                    isMultiSelect={false}
+                    // customTableContainer={css`
+                    //   height: 100%;
+                    // `}
+                  ></ReusableTable>
+                </TableContainer>
+              </ContainerEffects>
             </TabItem>
           )),
         ]}
       </TabList>
+      <ButtonGroup>
+        <Button onClick={() => makeWeaponAttack(state)}>
+          Make attack roll
+        </Button>
+      </ButtonGroup>
     </Container>
   );
 }

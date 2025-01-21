@@ -1017,7 +1017,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                 }
                 else if (power.PowerType == PowerType.Saveable)
                 {
-                    int roll = targetedCharacter.SavingThrowRoll((Ability)power.SavingThrow);
+                    int roll = targetedCharacter.SavingThrowRoll((Ability)power.SavingThrowAbility);
                     HitType outcome = HitType.Miss;
                     if (roll <= this.DifficultyClass(power) && roll != 20)
                     {
@@ -1325,8 +1325,9 @@ namespace pracadyplomowa.Models.Entities.Characters
             return this.R_CharacterHasLevelsInClass.Where(c => c.R_ClassId == classId).Count();
         }
 
-        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel)
+        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel, out List<EffectInstance> generatedEffects)
         {
+            generatedEffects = [];
             // check for available immaterial resource
             if (power.R_UsesImmaterialResource != null)
             {
@@ -1373,14 +1374,13 @@ namespace pracadyplomowa.Models.Entities.Characters
             if (power.PowerType == PowerType.Saveable && power.SavingThrowRoll == Enums.SavingThrowRoll.RetakenEveryTurn)
             {
                 effectGroup.DifficultyClassToBreak = DifficultyClass(power);
-                effectGroup.SavingThrow = (Ability)power.SavingThrow;
+                effectGroup.SavingThrow = (Ability)power.SavingThrowAbility;
             }
             effectGroup.Name = power.Name;
             if (power.RequiresConcentration)
             {
                 effectGroup.R_ConcentratedOnByCharacter = this;
             }
-            List<EffectInstance> generatedEffects = [];
             foreach (Character target in targetsToHitSuccessMap.Keys)
             {
                 if (power.PowerType != PowerType.AuraCreator)

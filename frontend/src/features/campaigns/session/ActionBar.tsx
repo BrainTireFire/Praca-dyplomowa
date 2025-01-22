@@ -21,6 +21,7 @@ import useUpdateParticipanceData from "../hooks/useUpdateParticipanceData";
 import useNextTurn from "../hooks/useNextTurn";
 import Modal from "../../../ui/containers/Modal";
 import { AttackSelectionScreen } from "./AttackSelectionScreen";
+import { PowerSelectionScreen } from "./PowerSelectionScreen";
 
 const initialParticipanceData: ParticipanceData = {
   actionsTaken: 0,
@@ -346,15 +347,28 @@ export default function ActionBar({
                       )}
                     </Modal.Window>
                   </Modal>
-                  <Button
-                    size="small"
-                    customStyles={css`
-                      height: 50px;
-                    `}
-                    disabled={!isItMyTurn}
-                  >
-                    Use power
-                  </Button>
+                  <Modal>
+                    <Modal.Open opens="powerSelection">
+                      <Button
+                        size="small"
+                        customStyles={css`
+                          height: 50px;
+                        `}
+                        disabled={!isItMyTurn}
+                      >
+                        Cast power
+                      </Button>
+                    </Modal.Open>
+                    <Modal.Window name="powerSelection">
+                      {controlledCharacterId && (
+                        <PowerSelectionScreen
+                          characterId={controlledCharacterId}
+                          participanceData={participanceState}
+                          dispatch={dispatch}
+                        />
+                      )}
+                    </Modal.Window>
+                  </Modal>
                   <Button
                     size="small"
                     customStyles={css`

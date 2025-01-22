@@ -658,26 +658,6 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
 
         [NotMapped]
-        public List<ImmaterialResourceInstance> ImmaterialResources
-        {
-            get
-            {
-                return this.R_ImmaterialResourceInstances
-                .Union(this.R_UsedChoiceGroups
-                    .SelectMany(ucg => ucg.R_ResourcesGranted)
-                )
-                .Union(this.R_EquippedItems
-                    .Select(equipData => equipData.R_Item)
-                    .Distinct()
-                    .SelectMany(item => item.R_ItemGrantsResources)
-                )
-                .Union(this.R_ImmaterialResourceInstances
-                )
-                .ToList();
-            }
-        }
-
-        [NotMapped]
         public List<EffectInstance> AffectedByApprovedEffects
         {
             get
@@ -687,7 +667,15 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
 
         [NotMapped]
-        public List<Power> AllPowers => R_PowersKnown.Union(this.R_PowersPrepared.SelectMany(x => x.R_PreparedPowers)).Union(this.R_EquippedItems.Select(x => x.R_Item).Distinct().SelectMany(x => x.R_EquipItemGrantsAccessToPower)).ToList();
+        public List<Power> AllPowers {
+            get {
+                return [.. R_PowersKnown
+                    .Union(this.R_PowersPrepared
+                    .SelectMany(x => x.R_PreparedPowers))
+                    .Union(this.R_EquippedItems.Select(x => x.R_Item).Distinct().SelectMany(x => x.R_EquipItemGrantsAccessToPower))
+                    .Union(this.R_UsedChoiceGroups.SelectMany(ucg => ucg.R_PowersAlwaysAvailableGranted))];
+            }
+        }
 
         [NotMapped]
         public List<EffectInstance> AllEffects => R_AffectedBy
@@ -722,11 +710,15 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
 
 
-        private bool HasCondition(Condition condition)
+        public bool HasCondition(Condition condition)
         {
+            return HasAnyCondition([condition]);
+        }
+
+        public bool HasAnyCondition(List<Condition> condition){
             return this.AffectedByApprovedEffects
                     .OfType<StatusEffectInstance>()
-                    .Where(z => z.EffectType.StatusEffect == condition)
+                    .Where(z => condition.Contains(z.EffectType.StatusEffect))
                     .Any();
         }
 
@@ -1344,26 +1336,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                 }
             }
             // check whether material components present
-            List<ItemCostRequirement> materialComponentsRequired = (power.R_ItemsCostRequirement?.OrderBy(req => req.Worth.GetValueInCopperPieces()).ToList()) ?? [];
-            HashSet<Item> itemsSetAside = [];
-            bool allMaterialComponentsFound = true;
-            foreach (var requirement in materialComponentsRequired)
-            {
-                var materialComponentFound = this.R_CharacterHasBackpack.R_BackpackHasItems.OrderBy(item => item.Price.GetValueInCopperPieces()).FirstOrDefault(
-                    item =>
-                    requirement.R_ItemFamilyId == item.R_ItemInItemsFamilyId
-                    && requirement.Worth <= item.Price
-                    && !itemsSetAside.Contains(item));
-                if (materialComponentFound == null)
-                {
-                    allMaterialComponentsFound = false;
-                }
-                else
-                {
-                    itemsSetAside.Add(materialComponentFound);
-                }
-            }
-            if (!allMaterialComponentsFound)
+            if (!HasAllMaterialComponentsForPower(power))
             {
                 return Outcome.InsufficientMaterialComponents;
             }
@@ -1439,19 +1412,44 @@ namespace pracadyplomowa.Models.Entities.Characters
             return Outcome.Success;
         }
 
+        public bool HasAllMaterialComponentsForPower(Power power){
+            List<ItemCostRequirement> materialComponentsRequired = (power.R_ItemsCostRequirement?.OrderBy(req => req.Worth.GetValueInCopperPieces()).ToList()) ?? [];
+            HashSet<Item> itemsSetAside = [];
+            bool allMaterialComponentsFound = true;
+            foreach (var requirement in materialComponentsRequired)
+            {
+                var materialComponentFound = this.R_CharacterHasBackpack.R_BackpackHasItems.OrderBy(item => item.Price.GetValueInCopperPieces()).FirstOrDefault(
+                    item =>
+                    requirement.R_ItemFamilyId == item.R_ItemInItemsFamilyId
+                    && requirement.Worth <= item.Price
+                    && !itemsSetAside.Contains(item));
+                if (materialComponentFound == null)
+                {
+                    allMaterialComponentsFound = false;
+                }
+                else
+                {
+                    itemsSetAside.Add(materialComponentFound);
+                }
+            }
+            return allMaterialComponentsFound;
+        }
+
         [NotMapped]
         public List<ImmaterialResourceInstance> AllImmaterialResourceInstances
         {
             get
             {
-                List<ImmaterialResourceInstance> immaterialResourceInstances = [];
-                immaterialResourceInstances.AddRange(this.R_ImmaterialResourceInstances);
-                foreach (var item in this.R_EquippedItems.Select(x => x.R_Item))
-                {
-                    immaterialResourceInstances.AddRange(item.R_ItemGrantsResources);
-                }
-                immaterialResourceInstances.Reverse();
-                return immaterialResourceInstances;
+                return this.R_ImmaterialResourceInstances
+                .Union(this.R_UsedChoiceGroups
+                    .SelectMany(ucg => ucg.R_ResourcesGranted)
+                )
+                .Union(this.R_EquippedItems
+                    .Select(equipData => equipData.R_Item)
+                    .Distinct()
+                    .SelectMany(item => item.R_ItemGrantsResources)
+                )
+                .ToList();
             }
         }
 

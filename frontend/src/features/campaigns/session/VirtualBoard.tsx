@@ -64,6 +64,7 @@ export default function VirtualBoard({
   path,
   otherPath,
   weaponAttack,
+  power
 }: VirtualBoardProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [selectedBoxes, setSelectedBoxes] = useState<{

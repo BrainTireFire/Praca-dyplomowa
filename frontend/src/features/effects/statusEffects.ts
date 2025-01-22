@@ -19,6 +19,7 @@ export const statusEffects = [
   "Exhaustion_4",
   "Exhaustion_5",
   "Exhaustion_6",
+  "Muffled",
 ] as const;
 
 export type statusEffect = (typeof statusEffects)[number];
@@ -44,6 +45,7 @@ export const StatusEffectLabelMap = {
   Exhaustion_4: "Exhaustion Level 4",
   Exhaustion_5: "Exhaustion Level 5",
   Exhaustion_6: "Exhaustion Level 6",
+  Muffled: "Muffled",
 } as const;
 
 export const statusEffectDropdown = statusEffects.map((x) => {

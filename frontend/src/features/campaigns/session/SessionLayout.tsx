@@ -13,7 +13,7 @@ import { useParams } from "react-router-dom";
 import { BASE_URL } from "../../../services/constAPI";
 import ActionBar from "./ActionBar";
 import { useQueryClient } from "@tanstack/react-query";
-import { WeaponAttack } from "../../../models/session/VirtualBoardProps";
+import { WeaponAttack, Power } from "../../../models/session/VirtualBoardProps";
 import ModalNoButton from "../../../ui/containers/ModalNoButton";
 import { WeaponAttackResolution } from "./WeaponAttackResolution";
 
@@ -100,7 +100,9 @@ export type ControlState = {
   mode: Mode;
   path: number[];
   weaponAttackSelected: WeaponAttack | null;
+  powerSelected: Power | null;
   weaponAttackRollOverlayData: WeaponAttackOverlayData | null;
+  powerTargets: number[];
 };
 
 // Define action types
@@ -110,6 +112,8 @@ const POP_PATH = "POP_PATH";
 const TOGGLE_PATH = "TOGGLE_PATH";
 const SET_PATH = "SET_PATH";
 const SET_WEAPON_ATTACK = "SET_WEAPON_ATTACK";
+const SET_POWER = "SET_POWER";
+const TOGGLE_POWER_TARGET = "TOGGLE_POWER_TARGET";
 const WEAPON_ATTACK_OVERLAY_DATA = "WEAPON_ATTACK_OVERLAY_DATA";
 
 // Define action interfaces
@@ -141,9 +145,17 @@ export interface SetWeaponAttack {
   type: typeof SET_WEAPON_ATTACK;
   payload: WeaponAttack;
 }
+export interface SetPower {
+  type: typeof SET_POWER;
+  payload: Power;
+}
 export interface WeaponAttackOverlay {
   type: typeof WEAPON_ATTACK_OVERLAY_DATA;
   payload: WeaponAttackOverlayData;
+}
+export interface TogglePowerTarget {
+  type: typeof TOGGLE_POWER_TARGET;
+  payload: number; // characterId
 }
 
 type WeaponAttackOverlayData = {
@@ -158,7 +170,9 @@ export type ControlStateActions =
   | TogglePathAction
   | SetPathAction
   | SetWeaponAttack
-  | WeaponAttackOverlay;
+  | SetPower
+  | WeaponAttackOverlay
+  | TogglePowerTarget;
 
 // Reducer function
 const controlStateReducer = (
@@ -173,6 +187,8 @@ const controlStateReducer = (
         path: action.payload !== "Movement" ? [] : state.path,
         weaponAttackSelected:
           action.payload !== "WeaponAttack" ? null : state.weaponAttackSelected,
+        powerSelected:
+          action.payload !== "PowerCast" ? null : state.powerSelected,
       };
     case APPEND_PATH:
       return {
@@ -209,6 +225,29 @@ const controlStateReducer = (
         weaponAttackSelected: action.payload,
         mode: "WeaponAttack",
       };
+    case SET_POWER:
+      return {
+        ...state,
+        powerSelected: action.payload,
+        mode: "PowerCast",
+      };
+    case TOGGLE_POWER_TARGET:
+      const foundIndex = state.powerTargets.findIndex(
+        (x) => x === action.payload
+      );
+      if (foundIndex === -1) {
+        let newPowerTargets = state.powerTargets;
+        newPowerTargets.push(action.payload);
+        return {
+          ...state,
+          powerTargets: newPowerTargets,
+        };
+      } else {
+        return {
+          ...state,
+          powerTargets: state.powerTargets.filter((x) => x !== action.payload),
+        };
+      }
     case WEAPON_ATTACK_OVERLAY_DATA:
       return {
         ...state,
@@ -225,7 +264,9 @@ const initialState: ControlState = {
   mode: "Idle",
   path: [],
   weaponAttackSelected: null,
+  powerSelected: null,
   weaponAttackRollOverlayData: null,
+  powerTargets: [],
 };
 
 export default function SessionLayout({ encounter }: any) {
@@ -360,6 +401,7 @@ export default function SessionLayout({ encounter }: any) {
           path={controlState.path}
           otherPath={otherPath}
           weaponAttack={controlState.weaponAttackSelected!}
+          power={controlState.powerSelected!}
         />
       </GridContainer>
       <RightPanel>

@@ -71,11 +71,16 @@ namespace pracadyplomowa.Models.Entities.Powers
             
         }
 
-        public virtual void Unlink(){ //dont unlink from effect group so cascading delete works
+        public virtual void Unlink(){ //unlink only from targeted objects, not sources!
             R_TargetedCharacter?.R_AffectedBy.Remove(this);
             R_TargetedItem?.R_AffectedBy.Remove(this);
             this.R_TargetedCharacter = null;
             this.R_TargetedItem = null;
+        }
+
+        public virtual void Link(Character character){
+            R_TargetedCharacter = character;
+            character.R_AffectedBy.Add(this);
         }
     }
 }

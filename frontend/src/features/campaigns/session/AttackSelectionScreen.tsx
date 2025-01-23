@@ -107,7 +107,7 @@ function WeaponAttackRow({
     : "No bonus actions left";
   return (
     <Table.Row>
-      <RadioButton checked={weaponAttack.main} />
+      <RadioButton checked={weaponAttack.main} readOnly={true} />
 
       <Cell>{DiceSetString(weaponAttack.damage)}</Cell>
       <Cell>{DiceSetString(weaponAttack.attackBonus)}</Cell>

@@ -1,4 +1,6 @@
 import { EffectBlueprint } from "../features/effects/EffectBlueprintForm";
+import { CoinPurse } from "../features/items/models/coinPurse";
+import { AreaShape } from "../features/powers/models/power";
 import {
   CharacterItem,
   Character,
@@ -382,6 +384,45 @@ export async function addToEquipment(
     options
   );
 }
+
+export async function getPowers(
+  characterId: number
+): Promise<PowerForEncounterDto[]> {
+  const response = await customFetch(
+    `${BASE_URL}/api/character/${characterId}/allPowersForEncounter`
+  );
+
+  console.log(response);
+
+  return response;
+}
+
+export type PowerForEncounterDto = {
+  id: number;
+  name: string;
+  description: string;
+  resourceName: string | null;
+  minimumResourceLevel: number | null;
+  actionTypeRequired: string | null;
+  requiredResourceAvailable: boolean;
+  materialComponents: MaterialComponentDto[];
+  requiredMaterialComponentsAvailable: boolean;
+  somaticComponentRequirementSatisfied: boolean;
+  vocalComponentRequirementSatisfied: boolean;
+  range: number | null;
+  maxTargets: number | null;
+  areaShape: AreaShape | null;
+  areaSize: number | null;
+  castableBy: string | null;
+  powerType: string | null;
+  targetType: string | null;
+};
+
+export type MaterialComponentDto = {
+  id: number;
+  name: string;
+  cost: CoinPurse;
+};
 
 export type ChoiceGroup = {
   id: number;

@@ -16,7 +16,7 @@ const TabList: React.FC<TabListProps> = ({ children, activeTabIndex = 0 }) => {
       React.isValidElement(child) && child.type === TabItem
   );
   return (
-    <div className="tabs">
+    <Container>
       <TabListWrapper>
         <TabListInternal role="tablist" aria-orientation="horizontal">
           {tabs.map((tab, index) => (
@@ -37,16 +37,23 @@ const TabList: React.FC<TabListProps> = ({ children, activeTabIndex = 0 }) => {
         </TabListInternal>
       </TabListWrapper>
       {tabs[activeTab]}
-    </div>
+    </Container>
   );
 };
 
 export default TabList;
 
+const Container = styled.div`
+  overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
+`;
+
 const TabListWrapper = styled.nav`
   overflow-x: scroll;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
+  flex: 0 0 auto;
 `;
 
 const TabListInternal = styled.ul`

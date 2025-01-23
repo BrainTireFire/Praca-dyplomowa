@@ -22,5 +22,6 @@ namespace pracadyplomowa.Models.Enums
         Exhaustion_4,
         Exhaustion_5,
         Exhaustion_6,
+        Muffled
     }
 }

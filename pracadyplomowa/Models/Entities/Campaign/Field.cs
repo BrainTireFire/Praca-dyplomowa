@@ -118,7 +118,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
                 }
                 else if (power.PowerType == PowerType.Saveable && power.OverrideCastersDC)
                 {
-                    int roll = targetedCharacter.SavingThrowRoll((Ability)power.SavingThrow);
+                    int roll = targetedCharacter.SavingThrowRoll((Ability)power.SavingThrowAbility);
                     HitType outcome = HitType.Miss;
                     if (roll <= power.DifficultyClass && roll != 20)
                     {
@@ -140,10 +140,10 @@ namespace pracadyplomowa.Models.Entities.Campaign
             return hitMap;
         }
 
-        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel)
+        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel, out List<EffectInstance> generatedEffects)
         {
             EffectGroup effectGroup = new();
-
+            generatedEffects = [];
             //generate effects
             foreach (Character target in targetsToHitSuccessMap.Keys)
             {
@@ -187,7 +187,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
             if (power.PowerType == PowerType.Saveable && power.SavingThrowRoll == Enums.SavingThrowRoll.RetakenEveryTurn)
             {
                 effectGroup.DifficultyClassToBreak = power.DifficultyClass;
-                effectGroup.SavingThrow = (Ability)power.SavingThrow;
+                effectGroup.SavingThrow = (Ability)power.SavingThrowAbility;
             }
             effectGroup.Name = power.Name;
             return Outcome.Success;

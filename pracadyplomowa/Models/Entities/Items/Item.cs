@@ -71,6 +71,9 @@ namespace pracadyplomowa.Models.Entities.Items
         public void Unequip(Character character){
             character.R_EquippedItems.RemoveAll(ed => ed.R_Character == character && ed.R_Item == this);
             this.R_EquipData = null;
+            foreach(var effect in R_EffectsOnEquip){
+                effect.Unlink();
+            }
         }
 // powersAlwaysAvailable.Intersect(this.R_PowersAlwaysAvailable).Count() == powersAlwaysAvailable.Count
         public void Equip(Character character, EquipmentSlot slot){
@@ -84,6 +87,9 @@ namespace pracadyplomowa.Models.Entities.Items
                     }
                     else{
                         EquipInAllSlots(character);
+                    }
+                    foreach(var effect in R_EffectsOnEquip){
+                        effect.Link(character);
                     }
                 }
                 else{

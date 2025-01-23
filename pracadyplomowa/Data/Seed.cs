@@ -438,8 +438,13 @@ public class Seed
                 Name = "Second wind charge",
                 RefreshesOn = RefreshType.ShortRest
             };
+            ImmaterialResourceBlueprint actionSurgeResource = new(){
+                Name = "Action surge charge",
+                RefreshesOn = RefreshType.ShortRest
+            };
             // fighterClass.R_ClassLevels.Where(cl => cl.Level == 1).First().R_ImmaterialResourceAmounts.Add(new ImmaterialResourceAmount(){Count = 1, Level = 1, R_Blueprint = secondWindResource});
             ImmaterialResourceAmount secondWindResourceAmount = new ImmaterialResourceAmount(){Count = 1, Level = 1, R_Blueprint = secondWindResource};
+            ImmaterialResourceAmount actionSurgeAmount = new ImmaterialResourceAmount(){Count = 1, Level = 1, R_Blueprint = actionSurgeResource};
             Power secondWind = new("Second wind", ActionType.BonusAction, CastableBy.Character, PowerType.PassiveEffect, TargetType.Caster){
                 R_UsesImmaterialResource = secondWindResource
             };
@@ -456,7 +461,7 @@ public class Seed
             features.R_PowersAlwaysAvailable.AddRange([secondWind, actionSurge]);
             features.R_PowersToPrepare.Add(secondWind);
             features.R_PowersToPrepare.Add(actionSurge);
-            features.R_Resources.AddRange([secondWindResourceAmount]);
+            features.R_Resources.AddRange([secondWindResourceAmount, actionSurgeAmount]);
 
             fighterClass.R_ClassLevels.Where(cl => cl.Level == 1).First().R_ChoiceGroups.AddRange(
                 [savingThrowProficiency, armorProficiency, simpleWeaponProficiency, fighterSkillProficiency, fightingStyle, features]

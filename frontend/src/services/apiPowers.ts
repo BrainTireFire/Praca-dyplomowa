@@ -57,6 +57,7 @@ export async function updatePower(powerDto: Power): Promise<void> {
     },
     body: JSON.stringify(powerDto),
   };
+  console.log(powerDto);
   await customFetch(`${BASE_URL}/api/power`, options);
   return;
 }

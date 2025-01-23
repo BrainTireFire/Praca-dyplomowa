@@ -7,7 +7,8 @@ export function useUpdatePower(onSuccess: () => void) {
   const queryClient = useQueryClient();
   const { mutate: updatePower, isPending } = useMutation({
     mutationFn: (power: Power) => updatePowerApi(power),
-    onSuccess: () => {
+    onSuccess: (result: any) => {
+      console.log(result);
       queryClient.invalidateQueries({ queryKey: ["powerList"] });
       onSuccess();
     },

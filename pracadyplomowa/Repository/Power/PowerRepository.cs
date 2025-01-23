@@ -25,6 +25,15 @@ namespace pracadyplomowa.Repository
             .Include(p => p.R_UsesImmaterialResource)
             .FirstAsync();
         }
+        public async Task<Power> GetAllByIdsWithEffectBlueprintsAndMaterialResources(List<int> Ids)
+        {
+            return await _context.Powers.Where(i => Ids.Contains(i.Id))
+            .Include(p => p.R_EffectBlueprints)
+            .Include(p => p.R_ItemsCostRequirement)
+            .ThenInclude(icr => icr.R_ItemFamily)
+            .Include(p => p.R_UsesImmaterialResource)
+            .FirstAsync();
+        }
 
         public Task<List<Power>> GetAllByIds(List<int> Ids){
             return _context.Powers.Where(i => Ids.Contains(i.Id)).ToListAsync();

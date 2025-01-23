@@ -1,3 +1,9 @@
+import {
+  conditionalEffectSet,
+  conditionalEffectType,
+  stateType,
+} from "../features/campaigns/session/WeaponAttackConditionalEffectsReducer";
+import { DiceSet } from "../models/diceset";
 import { Encounter } from "../models/encounter/Encounter";
 import { EncounterCreateDto } from "../models/encounter/EncounterCreateDto";
 import { EncounterUpdateDto } from "../models/encounter/EncounterUpdateDto";
@@ -259,6 +265,9 @@ export type ParticipanceData = {
   totalBonusActions: number;
   totalAttacksPerAction: number;
   totalMovement: number;
+  hitpoints: number;
+  maxHitpoints: number;
+  temporaryHitpoints: number;
 };
 
 export async function moveCharacter(
@@ -278,4 +287,192 @@ export async function moveCharacter(
     `${BASE_URL}/api/encounter/${encounterId}/movement/${characterId}`,
     options
   );
+}
+
+export async function makeAttackRoll(
+  encounterId: number,
+  characterId: number,
+  targetId: number,
+  weaponId: number,
+  isRanged: boolean,
+  approvedConditionalEffects: ApprovedConditionalEffectsDto
+): Promise<string> {
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(approvedConditionalEffects),
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/encounter/${encounterId}/attackRoll?characterId=${characterId}&targetId=${targetId}&weaponId=${weaponId}&isRanged=${isRanged}`,
+    options
+  );
+}
+
+export interface ApprovedConditionalEffectsDto {
+  CasterConditionalEffects: number[];
+  TargetConditionalEffects: number[];
+}
+
+export async function applyWeaponHitEffects(
+  encounterId: number,
+  characterId: number,
+  targetId: number,
+  weaponId: number,
+  isRanged: boolean,
+  isCritical: boolean,
+  approvedConditionalEffects: ApprovedConditionalEffectsDto
+): Promise<AppliedDamage> {
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(approvedConditionalEffects),
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/encounter/${encounterId}/weaponHit?characterId=${characterId}&targetId=${targetId}&weaponId=${weaponId}&isRanged=${isRanged}&isCritical=${isCritical}`,
+    options
+  );
+}
+export type AppliedDamage = { [key: string]: number };
+
+export async function getWeaponAttackData(
+  encounterId: number,
+  characterId: number,
+  targetId: number,
+  weaponId: number,
+  isRanged: boolean
+): Promise<WeaponAttackData> {
+  const options: RequestInit = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/encounter/${encounterId}/weaponAttackData?characterId=${characterId}&targetId=${targetId}&weaponId=${weaponId}&isRanged=${isRanged}`,
+    options
+  );
+}
+
+export interface WeaponAttackData {
+  weaponDamageAndPowers: WeaponDamageAndPowersDto;
+  conditionalEffects: ConditionalEffectsDto;
+}
+
+export interface WeaponDamageAndPowersDto {
+  weaponId: number;
+  weaponName: string;
+  damageValues: DamageValueDto[];
+  powersOnHit: PowersOnHitDto[];
+}
+
+export interface DamageValueDto {
+  damageType: string;
+  damageValue: DiceSet;
+  damageSource: string;
+}
+
+export interface PowersOnHitDto {
+  powerId: number;
+  powerName: string;
+  powerDescription: string;
+  powerEffects: PowerEffectDto[];
+}
+
+export interface PowerEffectDto {
+  powerEffectId: number;
+  powerEffectName: string;
+  powerEffectDescription: string;
+}
+
+export interface ConditionalEffectsDto {
+  casterConditionalEffects: ConditionalEffectDto[];
+  targetConditionalEffects: ConditionalEffectDto[];
+}
+export interface ConditionalEffectDto {
+  effectId: number;
+  effectName: string;
+  effectDescription: string;
+  selected: boolean;
+}
+
+export async function makeWeaponAttack(
+  encounterId: number,
+  characterId: number,
+  targetId: number,
+  weaponId: number,
+  isRanged: boolean,
+  approvedConditionalEffects: stateType
+): Promise<WeaponAttackResultDto> {
+  /**
+   * Transforms a stateType object by keeping only `effectId` where `selected === true`.
+   * @param {stateType} state - The state object to transform.
+   * @returns {stateType} - A new state object with transformed conditional effects.
+   */
+  function transformState(state: stateType) {
+    if (!state) {
+      throw new Error("Invalid state object");
+    }
+
+    // Helper function to filter and map conditionalEffectType arrays
+    const filterEffectIds = (effects: conditionalEffectType[]) =>
+      effects
+        .filter((effect) => effect.selected)
+        .map((effect) => effect.effectId);
+
+    // Transform a conditionalEffectSet
+    const transformConditionalEffectSet = (
+      effectSet: conditionalEffectSet
+    ) => ({
+      casterConditionalEffects: filterEffectIds(
+        effectSet.casterConditionalEffects
+      ),
+      targetConditionalEffects: filterEffectIds(
+        effectSet.targetConditionalEffects
+      ),
+    });
+
+    // Transform the state object
+    return {
+      weaponAttackConditionalEffects: transformConditionalEffectSet(
+        state.weaponAttackConditionalEffects
+      ),
+      powers: state.powers.map((power) => ({
+        powerId: power.powerId,
+        powerConditionalEffects: transformConditionalEffectSet(
+          power.powerConditionalEffects
+        ),
+      })),
+    };
+  }
+
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(transformState(approvedConditionalEffects)),
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/encounter/${encounterId}/makeWeaponAttack?characterId=${characterId}&targetId=${targetId}&weaponId=${weaponId}&isRanged=${isRanged}`,
+    options
+  );
+}
+
+export interface WeaponAttackResultDto {
+  attackRollResult: string; // Represents the serialized HitType
+  powerResult: PowerUsageResultDto[];
+  totalDamage: number;
+  hitpointsLeft: number;
+}
+interface PowerUsageResultDto {
+  powerName: string;
+  success: boolean;
 }

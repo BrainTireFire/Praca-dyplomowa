@@ -18,6 +18,9 @@ function useUpdateParticipanceData(
       queryClient.invalidateQueries({
         queryKey: ["participance", encounterId, characterId],
       });
+      queryClient.refetchQueries({
+        queryKey: ["participance", encounterId, characterId],
+      });
       toast.success("Initiative roll succesfull");
       onSuccess();
     },

@@ -423,7 +423,7 @@ namespace pracadyplomowa.UnitTests.CharacterTests
             backpack.R_BackpackHasItems.Add(item);
             backpack.R_BackpackHasItems.Add(item2);
             Power power = new("Test power", Models.Enums.ActionType.Action, Models.Enums.CastableBy.Character, Models.Enums.PowerType.Saveable, Models.Enums.TargetType.Character){
-                SavingThrow = Ability.STRENGTH,
+                SavingThrowAbility = Ability.STRENGTH,
                 SavingThrowBehaviour = SavingThrowBehaviour.Breaks,
                 SavingThrowRoll = SavingThrowRoll.TakenOnce,
             };
@@ -544,7 +544,7 @@ namespace pracadyplomowa.UnitTests.CharacterTests
             backpack.R_BackpackHasItems.Add(item);
             backpack.R_BackpackHasItems.Add(item2);
             Power power = new("Test power", Models.Enums.ActionType.Action, Models.Enums.CastableBy.Character, Models.Enums.PowerType.Saveable, Models.Enums.TargetType.Character){
-                SavingThrow = Ability.STRENGTH,
+                SavingThrowAbility = Ability.STRENGTH,
                 SavingThrowBehaviour = SavingThrowBehaviour.Breaks,
                 SavingThrowRoll = SavingThrowRoll.TakenOnce,
                 UpcastBy = UpcastBy.ResourceLevel
@@ -674,7 +674,7 @@ namespace pracadyplomowa.UnitTests.CharacterTests
             backpack.R_BackpackHasItems.Add(item);
             backpack.R_BackpackHasItems.Add(item2);
             Power power = new("Test power", Models.Enums.ActionType.Action, Models.Enums.CastableBy.Character, Models.Enums.PowerType.Saveable, Models.Enums.TargetType.Character){
-                SavingThrow = Ability.STRENGTH,
+                SavingThrowAbility = Ability.STRENGTH,
                 SavingThrowBehaviour = SavingThrowBehaviour.Breaks,
                 SavingThrowRoll = SavingThrowRoll.TakenOnce,
                 UpcastBy = UpcastBy.ResourceLevel
@@ -805,7 +805,7 @@ namespace pracadyplomowa.UnitTests.CharacterTests
             backpack.R_BackpackHasItems.Add(item);
             backpack.R_BackpackHasItems.Add(item2);
             Power power = new("Test power", Models.Enums.ActionType.Action, Models.Enums.CastableBy.Character, Models.Enums.PowerType.Saveable, Models.Enums.TargetType.Character){
-                SavingThrow = Ability.STRENGTH,
+                SavingThrowAbility = Ability.STRENGTH,
                 SavingThrowBehaviour = SavingThrowBehaviour.Modifies,
                 SavingThrowRoll = SavingThrowRoll.TakenOnce,
                 UpcastBy = UpcastBy.ResourceLevel

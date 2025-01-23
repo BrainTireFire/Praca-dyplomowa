@@ -107,24 +107,29 @@ export const PowerCastConditionalEffectsReducer: Reducer<StateType, Action> = (
         return updatedEffects;
       };
 
-      const targetEffects = Object.entries(
-        data.conditionalEffects.targetConditionalEffects
-      ).reduce<Record<number, ConditionalEffectSelection[]>>(
-        (acc, [targetId, effects]) => {
-          acc[Number(targetId)] = syncEffects(
+      const targetEffects = data.conditionalEffects.targetData
+        .map((target) => {
+          let output = syncEffects(
             state.conditionalEffects.targetConditionalEffects[
-              Number(targetId)
+              Number(target.targetId)
             ] || [],
-            effects
+            target.targetConditionalEffects
           );
+          return {
+            targetId: target.targetId,
+            effects: output,
+          };
+        }, {})
+        .reduce<Record<number, ConditionalEffectSelection[]>>((acc, item) => {
+          acc[Number(item.targetId)] = item.effects;
           return acc;
-        },
-        {}
-      );
+        }, {});
+      console.log("sync");
+      console.log(targetEffects);
 
       return {
         ...state,
-        spellSlotLevel: null, // Reset spell slot level on sync
+        spellSlotLevel: data.powerData.availableImmaterialResourceLevels[0], // Reset spell slot level on sync
         conditionalEffects: {
           casterConditionalEffects: syncEffects(
             state.conditionalEffects.casterConditionalEffects,
@@ -141,7 +146,7 @@ export const PowerCastConditionalEffectsReducer: Reducer<StateType, Action> = (
 };
 
 export const initialState: StateType = {
-  spellSlotLevel: null,
+  spellSlotLevel: 0,
   conditionalEffects: {
     casterConditionalEffects: [],
     targetConditionalEffects: {},

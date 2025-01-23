@@ -31,12 +31,18 @@ namespace pracadyplomowa.Models.DTOs
     public class ConditionalEffectsSetForManyTargetsDto
     {
         public List<ConditionalEffectDto> CasterConditionalEffects { get; set; } = [];
-        public Dictionary<int, List<ConditionalEffectDto>> TargetConditionalEffects { get; set; } = [];
+        public List<TargetDataDto> TargetData { get; set; } = [];
         public class ConditionalEffectDto {
             public int EffectId { get; set; }
             public string EffectName { get; set; } = null!;
             public string EffectDescription { get; set; } = null!;
             public bool Selected { get; set; } = false;
+        }
+
+        public class TargetDataDto {
+            public int TargetId { get; set; }
+            public string TargetName { get; set; } = null!;
+            public List<ConditionalEffectDto> TargetConditionalEffects { get; set; } = [];
         }
     }
 }

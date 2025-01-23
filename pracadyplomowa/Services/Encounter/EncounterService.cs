@@ -518,12 +518,15 @@ public class EncounterService : IEncounterService
             })]
         };
         foreach(var target in targetList){
-            result.TargetConditionalEffects.Add(target.Id, [.. target.AllEffects
-            .Select(x => new ConditionalEffectsSetForManyTargetsDto.ConditionalEffectDto(){
-                EffectId = x.Id,
-                EffectName = x.Name,
-                EffectDescription = x.Description
-            })]);
+            result.TargetData.Add(new ConditionalEffectsSetForManyTargetsDto.TargetDataDto(){
+                TargetId = target.Id,
+                TargetName = target.Name,
+                TargetConditionalEffects = [.. target.AllEffects
+                                                .Select(x => new ConditionalEffectsSetForManyTargetsDto.ConditionalEffectDto(){
+                                                    EffectId = x.Id,
+                                                    EffectName = x.Name,
+                                                    EffectDescription = x.Description
+                                                })]});
         }
         return result;
     }
@@ -536,10 +539,19 @@ public class EncounterService : IEncounterService
         var character = (encounter.R_Participances.FirstOrDefault(x => x.R_CharacterId == characterId)?.R_Character) ?? throw new SessionBadRequestException("Attacking character does not take part in specified encounter");
         Power power = character.AllPowers.FirstOrDefault(x => x.Id == powerId) ?? throw new SessionBadRequestException("Specified weapon is not equipped by attacking character");
         await _unitOfWork.PowerRepository.GetAllByIdsWithEffectBlueprintsAndMaterialResources([power.Id]);
-        var result = new PowerDataForResolutionDto();
-        result.PowerId = power.Id;
-        result.PowerName = power.Name;
-        foreach(var levelGroup in power.R_EffectBlueprints.GroupBy(x => x.Level).ToList()){
+        List<int> availableImmaterialResourceLevels = character.AllImmaterialResourceInstances
+                                                            .Where(x => x.R_BlueprintId == power.R_UsesImmaterialResourceId)
+                                                            .Select(x => x.Level)
+                                                            .Where(x => power.R_EffectBlueprints.Select(y => y.Level).Contains(x))
+                                                            .ToList();
+        var result = new PowerDataForResolutionDto
+        {
+            PowerId = power.Id,
+            PowerName = power.Name,
+            AvailableImmaterialResourceLevels = availableImmaterialResourceLevels,
+            ResourceName = power.R_UsesImmaterialResource?.Name! 
+        };
+        foreach (var levelGroup in power.R_EffectBlueprints.GroupBy(x => x.Level).ToList()){
             var level = levelGroup.Key;
             result.PowerEffects.Add(level, []);
             foreach(var savedGroup in levelGroup.GroupBy(x => x.Saved).ToList()){

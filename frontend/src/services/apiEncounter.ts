@@ -527,6 +527,7 @@ export type PowerDataForResolutionDto = {
   powerName: string;
   resourceName: string;
   powerEffects: Record<number, Record<number, PowerEffectDto[]>>;
+  availableImmaterialResourceLevels: number[];
 };
 
 export type PowerDataAndConditionalEffectsDto = {
@@ -536,5 +537,11 @@ export type PowerDataAndConditionalEffectsDto = {
 
 export type ConditionalEffectsSetForManyTargetsDto = {
   casterConditionalEffects: ConditionalEffectDto[];
-  targetConditionalEffects: Record<number, ConditionalEffectDto[]>;
+  targetData: TargetDataDto[];
+};
+
+export type TargetDataDto = {
+  targetId: number;
+  targetName: string;
+  targetConditionalEffects: ConditionalEffectDto[];
 };

@@ -212,10 +212,10 @@ const effectReducer = (
       newState = { ...state, description: action.payload };
       break;
     case "setDurationLeft":
-      newState = { ...state, durationLeft: action.payload };
+      newState = { ...state, durationLeft: Number(action.payload) };
       break;
     case "setResourceLevel":
-      newState = { ...state, resourceLevel: action.payload };
+      newState = { ...state, resourceLevel: Number(action.payload) };
       break;
     case "setSavingThrowSuccess":
       newState = { ...state, savingThrowSuccess: action.payload };

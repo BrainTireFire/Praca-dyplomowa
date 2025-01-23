@@ -189,8 +189,8 @@ export default function VirtualBoard({
       let occupiedField = encounter.participances.find(
         (x) => x.character.id === controlledCharacterId
       )?.occupiedField;
-      if (power.targetType === "Caster") {
-        let range = 0;
+      if (power.targetType === "Caster" || power.targetType == "Character") {
+        let range = power.range ? power.range : 0;
         drawAttackRange(
           ctx,
           { x: occupiedField!.positionX, y: occupiedField!.positionY },
@@ -333,7 +333,7 @@ export default function VirtualBoard({
           let targetOccupiedCoordinates = getOccupiedCoordinatesForSize(
             targetX,
             targetY,
-            "Large"
+            "Medium"
           );
           for (var targetOccupiedCoordinate of targetOccupiedCoordinates) {
             if (
@@ -352,7 +352,7 @@ export default function VirtualBoard({
             ActiveCharacterSize,
             clickedCharacter!.occupiedField.positionX,
             clickedCharacter!.occupiedField.positionY,
-            "Large",
+            "Medium",
             weaponAttack.range
           );
           if (inRange) {

@@ -1513,9 +1513,10 @@ namespace pracadyplomowa.Models.Entities.Characters
         [NotMapped]
         public int TotalMovementPerTurn{
             get {
-                var bonus = AffectedByApprovedEffects.OfType<MovementEffectInstance>().Where(x => x.EffectType.MovementEffect == MovementEffect.Bonus).Select(x => x.DiceSet.flat).Sum();
+                var effectsBonus = AffectedByApprovedEffects.OfType<MovementEffectInstance>().Where(x => x.EffectType.MovementEffect == MovementEffect.Bonus).Select(x => x.DiceSet.flat);
+                var bonus = effectsBonus.Any() ? effectsBonus.Sum() : 0;
                 var multiplierEffects = AffectedByApprovedEffects.OfType<MovementEffectInstance>().Where(x => x.EffectType.MovementEffect == MovementEffect.Multiplier);
-                var multiplier = multiplierEffects.Select(x => x.DiceSet.flat).Sum();
+                var multiplier = multiplierEffects.Any() ? multiplierEffects.Select(x => x.DiceSet.flat).Sum() : 0;
                 var numberOfMultipliers = multiplierEffects.Count();
                 return R_CharacterBelongsToRace.Speed * (multiplier - (numberOfMultipliers - 1)) + bonus;
             }
@@ -1525,8 +1526,10 @@ namespace pracadyplomowa.Models.Entities.Characters
         public int TotalAttacksPerTurn{
             get {
                 int baseNumber = 1;
-                int maxFromEffects = AffectedByApprovedEffects.OfType<AttackPerAttackActionEffectInstance>().Where(x => x.EffectType.AttackPerActionEffect == AttackPerActionEffect.AttacksTotal).Select(x => x.DiceSet.flat).Max();
-                int additional = AffectedByApprovedEffects.OfType<AttackPerAttackActionEffectInstance>().Where(x => x.EffectType.AttackPerActionEffect == AttackPerActionEffect.AdditionalAttacks).Select(x => x.DiceSet.flat).Sum();
+                var effectsMax = AffectedByApprovedEffects.OfType<AttackPerAttackActionEffectInstance>().Where(x => x.EffectType.AttackPerActionEffect == AttackPerActionEffect.AttacksTotal).Select(x => x.DiceSet.flat);
+                int maxFromEffects = effectsMax.Any() ? effectsMax.Max() : 0;
+                var effectsAdditinal = AffectedByApprovedEffects.OfType<AttackPerAttackActionEffectInstance>().Where(x => x.EffectType.AttackPerActionEffect == AttackPerActionEffect.AdditionalAttacks).Select(x => x.DiceSet.flat);
+                int additional = effectsAdditinal.Any() ? effectsAdditinal.Max() : 0;
                 return Math.Max(baseNumber, maxFromEffects) + additional;
             }
         }

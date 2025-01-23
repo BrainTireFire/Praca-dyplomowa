@@ -388,6 +388,20 @@ export default function ActionBar({
                   Confirm movement
                 </Button>
               )}
+              {controlState.mode === "PowerCast" && (
+                <Button
+                  onClick={() =>
+                    dispatch({
+                      type: "POWER_CAST_OVERLAY_DATA",
+                      payload: { targetIds: controlState.powerTargets },
+                    })
+                  }
+                >
+                  Confirm power target selection (targets:{" "}
+                  {controlState.powerTargets.length}/
+                  {controlState.powerSelected?.maxTargets})
+                </Button>
+              )}
               <Button
                 size="small"
                 customStyles={css`

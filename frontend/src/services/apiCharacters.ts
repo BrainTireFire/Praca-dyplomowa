@@ -1,6 +1,11 @@
 import { EffectBlueprint } from "../features/effects/EffectBlueprintForm";
 import { CoinPurse } from "../features/items/models/coinPurse";
-import { AreaShape } from "../features/powers/models/power";
+import {
+  AreaShape,
+  CastableBy,
+  PowerType,
+  TargetType,
+} from "../features/powers/models/power";
 import {
   CharacterItem,
   Character,
@@ -413,9 +418,9 @@ export type PowerForEncounterDto = {
   maxTargets: number | null;
   areaShape: AreaShape | null;
   areaSize: number | null;
-  castableBy: string | null;
-  powerType: string | null;
-  targetType: string | null;
+  castableBy: CastableBy;
+  powerType: PowerType;
+  targetType: TargetType;
 };
 
 export type MaterialComponentDto = {

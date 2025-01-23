@@ -20,10 +20,11 @@ import {
   fillSelectedBox,
   drawTextName,
   drawAvatar,
-  drawWeaponAttackRange,
+  drawWeaponAttackRange as drawAttackRange,
   getSizeMultiplier,
-  checkIfTargetInWeaponAttackRange,
+  checkIfTargetInWeaponAttackRange as checkIfTargetInAttackRange,
   getOccupiedCoordinatesForSize,
+  drawSelectedTargetMarker,
 } from "./CanvasUtils";
 import { VirtualBoardProps } from "./../../../models/session/VirtualBoardProps";
 import { Coordinate } from "../../../models/session/Coordinate";
@@ -64,7 +65,8 @@ export default function VirtualBoard({
   path,
   otherPath,
   weaponAttack,
-  power
+  power,
+  selectedTargets,
 }: VirtualBoardProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [selectedBoxes, setSelectedBoxes] = useState<{
@@ -174,14 +176,44 @@ export default function VirtualBoard({
       let occupiedField = encounter.participances.find(
         (x) => x.character.id === controlledCharacterId
       )?.occupiedField;
-      drawWeaponAttackRange(
+      drawAttackRange(
         ctx,
         { x: occupiedField!.positionX, y: occupiedField!.positionY },
         weaponAttack.range,
         ActiveCharacterSize,
-        16,
-        9
+        encounter.board.sizeX,
+        encounter.board.sizeY
       );
+    }
+    if (mode === "PowerCast") {
+      let occupiedField = encounter.participances.find(
+        (x) => x.character.id === controlledCharacterId
+      )?.occupiedField;
+      if (power.targetType === "Caster") {
+        let range = 0;
+        drawAttackRange(
+          ctx,
+          { x: occupiedField!.positionX, y: occupiedField!.positionY },
+          range,
+          ActiveCharacterSize,
+          encounter.board.sizeX,
+          encounter.board.sizeY
+        );
+      }
+
+      encounter.participances.forEach((element) => {
+        if (selectedTargets.find((x) => x === element.character.id)) {
+          let occupiedField = element.occupiedField;
+          drawSelectedTargetMarker(
+            ctx,
+            { x: occupiedField!.positionX, y: occupiedField!.positionY },
+            0,
+            ActiveCharacterSize,
+            encounter.board.sizeX,
+            encounter.board.sizeY
+          );
+        }
+      });
     }
 
     Object.keys(selectedBoxes).forEach((connectionId) => {
@@ -213,11 +245,18 @@ export default function VirtualBoard({
       }
     });
   }, [
-    encounter,
+    sizeX,
+    sizeY,
+    encounter.board.fields,
+    encounter.board.sizeX,
+    encounter.board.sizeY,
+    encounter.participances,
     mode,
     selectedBoxes,
-    weaponAttack,
+    weaponAttack?.range,
     controlledCharacterId,
+    power?.targetType,
+    selectedTargets,
     otherPath,
     path,
   ]);
@@ -279,7 +318,6 @@ export default function VirtualBoard({
             selectedField!.positionY
           )
         ) {
-          console.log("Toggle path");
           dispatch({
             type: "TOGGLE_PATH",
             payload: selectedField?.id as number,
@@ -308,7 +346,7 @@ export default function VirtualBoard({
           return false;
         });
         if (!!clickedCharacter) {
-          const inRange = checkIfTargetInWeaponAttackRange(
+          const inRange = checkIfTargetInAttackRange(
             occupiedField!.positionX,
             occupiedField!.positionY,
             ActiveCharacterSize,
@@ -323,6 +361,49 @@ export default function VirtualBoard({
             dispatch({
               type: "WEAPON_ATTACK_OVERLAY_DATA",
               payload: { targetId: clickedCharacter.character.id },
+            });
+          } else {
+            console.log("Not in range");
+          }
+        }
+      } else if (mode === "PowerCast") {
+        let occupiedField = encounter.participances.find(
+          (x) => x.character.id === controlledCharacterId
+        )?.occupiedField;
+        let clickedCharacter = encounter.participances.find((participance) => {
+          let targetX = participance.occupiedField.positionX;
+          let targetY = participance.occupiedField.positionY;
+          let targetOccupiedCoordinates = getOccupiedCoordinatesForSize(
+            targetX,
+            targetY,
+            "Medium"
+          );
+          for (var targetOccupiedCoordinate of targetOccupiedCoordinates) {
+            if (
+              targetOccupiedCoordinate.x === selectedField?.positionX &&
+              targetOccupiedCoordinate.y === selectedField.positionY
+            ) {
+              return true;
+            }
+          }
+          return false;
+        });
+        if (!!clickedCharacter) {
+          const inRange = checkIfTargetInAttackRange(
+            occupiedField!.positionX,
+            occupiedField!.positionY,
+            ActiveCharacterSize,
+            clickedCharacter!.occupiedField.positionX,
+            clickedCharacter!.occupiedField.positionY,
+            "Medium",
+            power.range ? power.range : 0
+          );
+          if (inRange) {
+            console.log("In range");
+            // setTargetId(clickedCharacter.character.id);
+            dispatch({
+              type: "TOGGLE_POWER_TARGET",
+              payload: clickedCharacter.character.id,
             });
           } else {
             console.log("Not in range");
@@ -451,7 +532,6 @@ export default function VirtualBoard({
           (field) => field.positionX === x && field.positionY === y
         );
         dispatch({ type: "TOGGLE_PATH", payload: selectedField?.id as number });
-        console.log(path);
       } else {
         connection.invoke("SendSelectedBoxes", groupName, updatedSelectedBoxes);
       }

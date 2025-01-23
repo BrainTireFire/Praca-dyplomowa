@@ -138,11 +138,53 @@ export const drawWeaponAttackRange = (
   columns: number,
   rows: number
 ) => {
+  drawBoundingBoxOverCharacter(
+    ctx,
+    origin,
+    range,
+    characterSize,
+    columns,
+    rows,
+    "#2212AC",
+    2
+  );
+};
+
+export const drawSelectedTargetMarker = (
+  ctx: CanvasRenderingContext2D,
+  origin: { x: number; y: number },
+  range: number,
+  characterSize: size,
+  columns: number,
+  rows: number
+) => {
+  drawBoundingBoxOverCharacter(
+    ctx,
+    origin,
+    range,
+    characterSize,
+    columns,
+    rows,
+    "#ce1313",
+    10
+  );
+};
+
+export const drawBoundingBoxOverCharacter = (
+  ctx: CanvasRenderingContext2D,
+  origin: { x: number; y: number },
+  range: number,
+  characterSize: size,
+  columns: number,
+  rows: number,
+  color: string,
+  lineWidth: number
+) => {
   const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
 
   ctx.save();
-  ctx.strokeStyle = getCssVariable("--color-link");
-  ctx.lineWidth = 2;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth;
 
   let originOccupiedCoordinates = getOccupiedCoordinatesForSize(
     origin.x,

@@ -476,3 +476,65 @@ interface PowerUsageResultDto {
   powerName: string;
   success: boolean;
 }
+
+/**
+ * Generates a query string for an array of integers.
+ * @param {string} paramName - The name of the query parameter (e.g., "ids").
+ * @param {number[]} values - The array of integers to include in the query string.
+ * @returns {string} - The generated query string.
+ */
+function generateQueryString(
+  paramName: string,
+  values: (number | string | boolean)[]
+) {
+  if (!Array.isArray(values) || values.length === 0) {
+    return "";
+  }
+
+  // Map the array into repeated key=value pairs and join them with "&"
+  const queryString = values
+    .map(
+      (value) => `${encodeURIComponent(paramName)}=${encodeURIComponent(value)}`
+    )
+    .join("&");
+  return `${queryString}`;
+}
+
+export async function getPowerData(
+  encounterId: number,
+  characterId: number,
+  powerId: number,
+  targetIds: number[]
+): Promise<PowerDataAndConditionalEffectsDto> {
+  const options: RequestInit = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/encounter/${encounterId}/powerCastData?characterId=${characterId}&powerId=${powerId}&${generateQueryString(
+      "targetIds",
+      targetIds
+    )}`,
+    options
+  );
+}
+
+export type PowerDataForResolutionDto = {
+  powerId: number;
+  powerName: string;
+  resourceName: string;
+  powerEffects: Record<number, Record<number, PowerEffectDto[]>>;
+};
+
+export type PowerDataAndConditionalEffectsDto = {
+  powerData: PowerDataForResolutionDto;
+  conditionalEffects: ConditionalEffectsSetForManyTargetsDto;
+};
+
+export type ConditionalEffectsSetForManyTargetsDto = {
+  casterConditionalEffects: ConditionalEffectDto[];
+  targetConditionalEffects: Record<number, ConditionalEffectDto[]>;
+};

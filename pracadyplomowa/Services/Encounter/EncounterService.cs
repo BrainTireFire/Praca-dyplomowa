@@ -496,6 +496,67 @@ public class EncounterService : IEncounterService
         return result;
     }
 
+    public async Task<ConditionalEffectsSetForManyTargetsDto> GetConditionalEffects(int encounterId, int characterId, List<int> targetIds){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipances(encounterId) ?? throw new SessionNotFoundException("Encounter with specified Id does not exist");
+        foreach (var x in encounter.R_Participances.Select(x => x.R_Character)){
+            await _unitOfWork.CharacterRepository.GetByIdWithAll(x.Id);
+        }
+        var character = (encounter.R_Participances.FirstOrDefault(x => x.R_CharacterId == characterId)?.R_Character) ?? throw new SessionBadRequestException("Attacking character does not take part in specified encounter");
+        var targetList = new List<Character>();
+        foreach(var id in targetIds){
+            var target = encounter.R_Participances.First(x => x.R_CharacterId == id).R_Character ?? throw new SessionBadRequestException("Target character does not take part in specified encounter");
+            targetList.Add(target);
+        }
+
+        var result = new ConditionalEffectsSetForManyTargetsDto()
+        {
+            CasterConditionalEffects = [.. character.AllEffects
+            .Select(x => new ConditionalEffectsSetForManyTargetsDto.ConditionalEffectDto(){
+                EffectId = x.Id,
+                EffectName = x.Name,
+                EffectDescription = x.Description
+            })]
+        };
+        foreach(var target in targetList){
+            result.TargetConditionalEffects.Add(target.Id, [.. target.AllEffects
+            .Select(x => new ConditionalEffectsSetForManyTargetsDto.ConditionalEffectDto(){
+                EffectId = x.Id,
+                EffectName = x.Name,
+                EffectDescription = x.Description
+            })]);
+        }
+        return result;
+    }
+
+    public async Task<PowerDataForResolutionDto> GetPowerData(int encounterId, int characterId, int powerId){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipances(encounterId) ?? throw new SessionNotFoundException("Encounter with specified Id does not exist");
+        foreach (var x in encounter.R_Participances.Select(x => x.R_Character)){
+            await _unitOfWork.CharacterRepository.GetByIdWithAll(x.Id);
+        }
+        var character = (encounter.R_Participances.FirstOrDefault(x => x.R_CharacterId == characterId)?.R_Character) ?? throw new SessionBadRequestException("Attacking character does not take part in specified encounter");
+        Power power = character.AllPowers.FirstOrDefault(x => x.Id == powerId) ?? throw new SessionBadRequestException("Specified weapon is not equipped by attacking character");
+        await _unitOfWork.PowerRepository.GetAllByIdsWithEffectBlueprintsAndMaterialResources([power.Id]);
+        var result = new PowerDataForResolutionDto();
+        result.PowerId = power.Id;
+        result.PowerName = power.Name;
+        foreach(var levelGroup in power.R_EffectBlueprints.GroupBy(x => x.Level).ToList()){
+            var level = levelGroup.Key;
+            result.PowerEffects.Add(level, []);
+            foreach(var savedGroup in levelGroup.GroupBy(x => x.Saved).ToList()){
+                var saved = savedGroup.Key ? 1 : 0;
+                result.PowerEffects.GetValueOrDefault(level)!.Add(saved, []);
+                foreach(var effect in savedGroup){
+                    result.PowerEffects.GetValueOrDefault(level)!.GetValueOrDefault(saved)!.Add(new PowerDataForResolutionDto.PowerEffectDto(){
+                        PowerEffectId = effect.Id,
+                        PowerEffectName = effect.Name,
+                        PowerEffectDescription = effect.Description,
+                    });
+                }
+            }
+        }
+        return result;
+    }
+
     public async Task<WeaponDamageAndPowersDto> GetWeaponData(int encounterId, int characterId, int weaponId){
         var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipances(encounterId) ?? throw new SessionNotFoundException("Encounter with specified Id does not exist");
         foreach (var x in encounter.R_Participances.Select(x => x.R_Character)){

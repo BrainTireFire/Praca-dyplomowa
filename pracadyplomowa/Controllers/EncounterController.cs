@@ -233,6 +233,26 @@ public class EncounterController : BaseApiController
             return BadRequest(ex.Message);
         }
     }
+    [HttpGet("{encounterId}/powerCastData")]
+    public async Task<ActionResult<PowerDataAndConditionalEffectsDto>> GetPowerCastConditionalEffects(int encounterId, [FromQuery] int characterId, [FromQuery] int powerId, [FromQuery] List<int> targetIds){
+        
+        try{
+            var powerData = await _encounterService.GetPowerData(encounterId, characterId, powerId);
+            var conditionalEffects = await _encounterService.GetConditionalEffects(encounterId, characterId, targetIds);
+            var result = new PowerDataAndConditionalEffectsDto
+            {
+                PowerData = powerData,
+                ConditionalEffects = conditionalEffects
+            };
+            return Ok(result);
+        }
+        catch(SessionNotFoundException ex){
+            return NotFound(ex.Message);
+        }
+        catch(SessionBadRequestException ex){
+            return BadRequest(ex.Message);
+        }
+    }
 
     [HttpPost("{encounterId}/makeWeaponAttack")]
     public async Task<ActionResult<WeaponAttackResultDto>> MakeWeaponAttack(int encounterId, [FromQuery] int characterId, [FromQuery] int weaponId, [FromQuery] int targetId, [FromQuery] bool isRanged, [FromBody] WeaponAttackIncomingDataDto approvedConditionalEffects){

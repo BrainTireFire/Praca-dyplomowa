@@ -1,4 +1,9 @@
 import {
+  ConditionalEffectSelection,
+  ConditionalEffectsSelectionSet,
+  StateType,
+} from "../features/campaigns/session/PowerCastConditionalEffectsReducer";
+import {
   conditionalEffectSet,
   conditionalEffectType,
   stateType,
@@ -545,3 +550,80 @@ export type TargetDataDto = {
   targetName: string;
   targetConditionalEffects: ConditionalEffectDto[];
 };
+
+export async function castPower(
+  encounterId: number,
+  characterId: number,
+  powerId: number,
+  approvedConditionalEffects: StateType
+): Promise<CastPowerResultDto> {
+  /**
+   * Transforms a stateType object by keeping only `effectId` where `selected === true`.
+   * @param {stateType} state - The state object to transform.
+   * @returns {stateType} - A new state object with transformed conditional effects.
+   */
+  function transformState(state: StateType) {
+    if (!state) {
+      throw new Error("Invalid state object");
+    }
+
+    // Helper function to filter and map conditionalEffectType arrays
+    const filterEffectIds = (effects: ConditionalEffectSelection[]) =>
+      effects
+        .filter((effect) => effect.selected)
+        .map((effect) => effect.effectId);
+
+    function cleanConditionalEffectSelection(
+      input: Record<number, ConditionalEffectSelection[]>
+    ): Record<number, number[]> {
+      const result: Record<number, number[]> = {};
+
+      for (const [key, value] of Object.entries(input)) {
+        const filtered = filterEffectIds(value);
+
+        result[Number(key)] = filtered;
+      }
+
+      return result;
+    }
+    // Transform a conditionalEffectSet
+    const transformConditionalEffectSet = (
+      effectSet: ConditionalEffectsSelectionSet
+    ) => ({
+      casterConditionalEffects: filterEffectIds(
+        effectSet.casterConditionalEffects
+      ),
+      targetConditionalEffects: cleanConditionalEffectSelection(
+        effectSet.targetConditionalEffects
+      ),
+    });
+
+    // Transform the state object
+    return {
+      spellSlotLevel: state.spellSlotLevel,
+      conditionalEffects: transformConditionalEffectSet(
+        state.conditionalEffects
+      ),
+    };
+  }
+
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(transformState(approvedConditionalEffects)),
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/encounter/${encounterId}/castPower?characterId=${characterId}&powerId=${powerId}`,
+    options
+  );
+}
+
+export type CastPowerResultDto = {
+  hitMap: Record<number, HitType>; // HitType is serialized to a string
+  nameMap: Record<number, string>;
+};
+
+export type HitType = "CriticalHit" | "Hit" | "Miss" | "CriticalMiss";

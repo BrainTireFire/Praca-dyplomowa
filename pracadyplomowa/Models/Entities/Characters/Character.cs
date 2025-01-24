@@ -1366,9 +1366,9 @@ namespace pracadyplomowa.Models.Entities.Characters
                         {
                             bool shouldAdd = false;
                             if (power.UpcastBy == UpcastBy.NotUpcasted
-                            || (power.UpcastBy == UpcastBy.ResourceLevel && immaterialResourceLevel >= effectBlueprint.Level)
-                            || (power.UpcastBy == UpcastBy.CharacterLevel && this.Level >= effectBlueprint.Level)
-                            || (power.UpcastBy == UpcastBy.ClassLevel && this.GetLevelInClass((int)power.R_ClassForUpcastingId) >= effectBlueprint.Level)
+                            || (power.UpcastBy == UpcastBy.ResourceLevel && immaterialResourceLevel == effectBlueprint.Level)
+                            || (power.UpcastBy == UpcastBy.CharacterLevel && this.Level == effectBlueprint.Level)
+                            || (power.UpcastBy == UpcastBy.ClassLevel && this.GetLevelInClass((int)power.R_ClassForUpcastingId) == effectBlueprint.Level)
                             )
                             {
                                 if (power.PowerType == PowerType.Attack && outcome == HitType.Hit || outcome == HitType.CriticalHit)
@@ -1406,8 +1406,14 @@ namespace pracadyplomowa.Models.Entities.Characters
                 }
                 foreach (var effect in generatedEffects)
                 {
-                    effectGroup.AddEffectOnCharacter(effect);
+                    effectGroup.AddEffect(effect);
                 }
+            }
+            foreach(var effect in generatedEffects){
+                effect.Resolve();
+            }
+            foreach(var group in generatedEffects.Where(x => x.R_OwnedByGroup != null).Select(x => x.R_OwnedByGroup).Distinct()){
+                group?.TickDuration();
             }
             return Outcome.Success;
         }

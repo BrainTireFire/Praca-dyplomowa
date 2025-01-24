@@ -540,7 +540,7 @@ public class EncounterService : IEncounterService
         Power power = character.AllPowers.FirstOrDefault(x => x.Id == powerId) ?? throw new SessionBadRequestException("Specified weapon is not equipped by attacking character");
         await _unitOfWork.PowerRepository.GetAllByIdsWithEffectBlueprintsAndMaterialResources([power.Id]);
         List<int> availableImmaterialResourceLevels = character.AllImmaterialResourceInstances
-                                                            .Where(x => x.R_BlueprintId == power.R_UsesImmaterialResourceId)
+                                                            .Where(x => x.R_BlueprintId == power.R_UsesImmaterialResourceId && !x.NeedsRefresh)
                                                             .Select(x => x.Level)
                                                             .Where(x => power.R_EffectBlueprints.Select(y => y.Level).Contains(x))
                                                             .ToList();
@@ -793,4 +793,89 @@ public class EncounterService : IEncounterService
         }
         return;
     }
+
+    public async Task<CastPowerResultDto> CastPower(int encounterId, int characterId, int powerId, CastPowerIncomingDataDto incomingDataDto){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId) ?? throw new SessionNotFoundException("Encounter with specified Id does not exist");
+        foreach (var x in encounter.R_Participances.Select(x => x.R_Character)){
+            await _unitOfWork.CharacterRepository.GetByIdWithAll(x.Id);
+        }
+        var character = (encounter.R_Participances.FirstOrDefault(x => x.R_CharacterId == characterId)?.R_Character) ?? throw new SessionBadRequestException("Attacking character does not take part in specified encounter");
+        var participance = encounter.R_Participances.First(x => x.R_CharacterId == characterId);
+        Dictionary<int, Character> targetMap = new();
+        foreach(var targetId in incomingDataDto.ConditionalEffects.TargetConditionalEffects.Keys){
+            if(encounter.R_Participances.Select(x => x.R_CharacterId).Contains(targetId)){
+                targetMap.Add(targetId, encounter.R_Participances.First(x => x.R_CharacterId == targetId).R_Character);
+            }   
+            else{
+                throw new SessionBadRequestException("Target character does not take part in specified encounter");
+            }
+        }
+        Power power = (character.AllPowers.FirstOrDefault(x => x.Id == powerId)) ?? throw new SessionBadRequestException("Specified power is not available to casting character");
+        var bonusActionsAvailable = character.TotalBonusActionsPerTurn - participance.NumberOfBonusActionsTaken;
+        var actionsAvailable = character.TotalActionsPerTurn - participance.NumberOfActionsTaken;
+        var attacksAvailable = character.TotalAttacksPerTurn - participance.NumberOfAttacksTaken;
+
+        //Action analysis
+        if(power.RequiredActionType == ActionType.Action && character.TotalActionsPerTurn - participance.NumberOfActionsTaken <= 0){
+            throw new SessionBadRequestException("No actions left");
+        }
+        if(power.RequiredActionType == ActionType.Action && character.TotalActionsPerTurn - participance.NumberOfActionsTaken > 0){
+            participance.NumberOfActionsTaken++;
+        }
+
+        if(power.RequiredActionType == ActionType.BonusAction && character.TotalBonusActionsPerTurn - participance.NumberOfBonusActionsTaken <= 0){
+
+            throw new SessionBadRequestException("No bonus actions left");
+        }
+        if(power.RequiredActionType == ActionType.BonusAction && character.TotalBonusActionsPerTurn - participance.NumberOfBonusActionsTaken > 0){
+            participance.NumberOfBonusActionsTaken++;
+        }
+
+        if(power.RequiredActionType == ActionType.WeaponAttack && character.TotalAttacksPerTurn - participance.NumberOfAttacksTaken <= 0){
+            if(character.TotalActionsPerTurn - participance.NumberOfActionsTaken <= 0){
+                throw new SessionBadRequestException("No actions left");
+            }
+            else if(character.TotalActionsPerTurn - participance.NumberOfActionsTaken > 0){
+                participance.NumberOfActionsTaken++;
+                participance.NumberOfAttacksTaken = 0;
+            }
+        }
+        if(power.RequiredActionType == ActionType.WeaponAttack && character.TotalAttacksPerTurn - participance.NumberOfAttacksTaken > 0){
+            participance.NumberOfAttacksTaken++;
+            throw new SessionBadRequestException("No attacks left");
+        }
+
+        //set approved effects
+        foreach(var effect in character.AllEffects){
+            effect.ConditionalApproved = incomingDataDto.ConditionalEffects.CasterConditionalEffects.Contains(effect.Id);
+        }
+        foreach(var targetId in incomingDataDto.ConditionalEffects.TargetConditionalEffects.Keys){
+            foreach(var effect in targetMap[targetId].AllEffects){
+                effect.ConditionalApproved = incomingDataDto.ConditionalEffects.TargetConditionalEffects[targetId].Contains(effect.Id);
+            }
+        }
+
+
+        var hitMap = character.CheckIfPowerHitSuccessfull(encounter, power, targetMap.Values.ToList());
+        Dictionary<Character, HitType> characterToHitMap = new ();
+        foreach(var hit in hitMap){
+            characterToHitMap.Add(targetMap[hit.Key], hit.Value);
+        }
+        var outcome = character.ApplyPowerEffects(power, characterToHitMap, incomingDataDto.SpellSlotLevel, out var generatedEffects);
+        if(outcome == Models.Entities.Interfaces.Outcome.ImmaterialResourceUnavailable){
+            throw new SessionBadRequestException("Character doesn't have immaterial resource of specified level");
+        }
+        if(outcome == Models.Entities.Interfaces.Outcome.InsufficientMaterialComponents){
+            throw new SessionBadRequestException("Character doesn't have enough material resources");
+        }
+        await _unitOfWork.SaveChangesAsync();
+        CastPowerResultDto result = new();
+        result.HitMap = hitMap;
+        foreach(var target in targetMap.Values){
+            result.NameMap.Add(target.Id, target.Name);
+        }
+        return result;
+    }
+
+
 }

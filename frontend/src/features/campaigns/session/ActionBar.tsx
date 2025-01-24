@@ -390,6 +390,13 @@ export default function ActionBar({
               )}
               {controlState.mode === "PowerCast" && (
                 <Button
+                  disabled={
+                    controlState.powerSelected
+                      ? controlState.powerSelected.maxTargets! -
+                          controlState.powerTargets.length >
+                          0 || controlState.powerTargets.length === 0
+                      : true
+                  }
                   onClick={() =>
                     dispatch({
                       type: "POWER_CAST_OVERLAY_DATA",

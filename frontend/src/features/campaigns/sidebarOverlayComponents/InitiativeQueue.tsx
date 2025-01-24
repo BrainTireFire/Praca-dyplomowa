@@ -11,6 +11,7 @@ import useSetActiveTurn from "../hooks/useSetActiveTurn";
 import { useContext } from "react";
 import { ControlledCharacterContext } from "../session/context/ControlledCharacterContext";
 import { useControlledCharacters } from "../hooks/useControlledCharacters";
+import useNextTurn from "../hooks/useNextTurn";
 
 type characterInitiative = {
   id: number;
@@ -65,6 +66,10 @@ export function InitiativeQueue() {
     isLoading: isLoadingControllerCharacters,
     characterIds: controlledCharacterIds,
   } = useControlledCharacters(Number(groupName));
+  const { isPending: isPendingNextTurn, nextTurn } = useNextTurn(
+    Number(groupName),
+    () => {}
+  );
   if (
     isLoading ||
     isLoadingIsGM ||
@@ -89,6 +94,9 @@ export function InitiativeQueue() {
             }
           ></InititativeTile>
         ))}
+      <Button disabled={!isGM} onClick={() => nextTurn()}>
+        Next turn
+      </Button>
     </>
   );
 }

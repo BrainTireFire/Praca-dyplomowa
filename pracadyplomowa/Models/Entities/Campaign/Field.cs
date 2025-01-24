@@ -176,7 +176,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
                             {
                                 damageEffectInstance.CriticalHit = true;
                             }
-                            effectGroup.AddEffectOnCharacter(effectInstance);
+                            effectGroup.AddEffect(effectInstance);
                         }
                     }
                 }

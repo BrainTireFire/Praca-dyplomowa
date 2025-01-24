@@ -268,4 +268,19 @@ public class EncounterController : BaseApiController
             return BadRequest(ex.Message);
         }
     }
+
+    [HttpPost("{encounterId}/castPower")]
+    public async Task<ActionResult<CastPowerResultDto>> CastPower(int encounterId, [FromQuery] int characterId, [FromQuery] int powerId, [FromBody] CastPowerIncomingDataDto incomingDataDto){
+        
+        try{
+            var result = await _encounterService.CastPower(encounterId, characterId, powerId, incomingDataDto);
+            return Ok(result);
+        }
+        catch(SessionNotFoundException ex){
+            return NotFound(ex.Message);
+        }
+        catch(SessionBadRequestException ex){
+            return BadRequest(ex.Message);
+        }
+    }
 }

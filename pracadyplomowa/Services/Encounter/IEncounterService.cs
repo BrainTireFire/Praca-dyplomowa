@@ -32,4 +32,5 @@ public interface IEncounterService
     Task<AttackRollAndDamageResultDto> AttackRollAndDamage(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds);
     Task<WeaponAttackResultDto> MakeWeaponAttack(int encounterId, [FromQuery] int characterId, [FromQuery] int weaponId, [FromQuery] int targetId, [FromQuery] bool isRanged, [FromBody] WeaponAttackIncomingDataDto approvedConditionalEffects);
     Task<PowerDataForResolutionDto> GetPowerData(int encounterId, int characterId, int powerId);
+    Task<CastPowerResultDto> CastPower(int encounterId, int characterId, int powerId, CastPowerIncomingDataDto incomingDataDto);
 }

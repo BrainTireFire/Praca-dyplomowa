@@ -661,7 +661,7 @@ namespace pracadyplomowa.Controllers
                 var spellcastingFocusHeld = character.R_EquippedItems.Where(x => x.R_Item.IsSpellFocus && x.R_Slots.Where(y => y.Type == SlotType.MainHand || y.Type == SlotType.MainHand).Any()).Any();
                 bool somaticComponentRequirementSatisfied = mainHandsPossesed - mainHandsOccupied > 0 || offHandsOccupied - offHandsPossesed > 0 || spellcastingFocusHeld || !power.SomaticComponent;
                 bool vocalComponentSatisfied = !character.HasAnyCondition([Condition.Muffled, Condition.Petrified]) || !power.VerbalComponent;
-                bool requiredResourceAvailable = character.AllImmaterialResourceInstances.Where(x => !x.NeedsRefresh && x.Level >= minimumResourceLevel && x.R_BlueprintId == power.R_UsesImmaterialResource?.Id).Any();
+                bool requiredResourceAvailable = power.RequiredResourceAvailable(character, minimumResourceLevel);
                 result.Add(new PowerForEncounterDto(){
                     Id = power.Id,
                     Name = power.Name,

@@ -19,6 +19,7 @@ import {
 } from "./PowerCastConditionalEffectsReducer";
 import Dropdown from "../../../ui/forms/Dropdown";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
+import useCastPower from "../hooks/useCastPower";
 
 // function mapToTargetsConditionalEffects(
 //   targets: Record<number, TargetDto>
@@ -72,7 +73,14 @@ export function PowerCastResolution({
   //   () => {}
   // );
 
-  if (isLoadingPowerData || !hasEffectRun) {
+  const { isPending: isPendingPowerCast, castPower } = useCastPower(
+    Number(groupName),
+    controlledCharacterId,
+    controlState.powerSelected?.powerId!,
+    () => {}
+  );
+
+  if (isLoadingPowerData || !hasEffectRun || isPendingPowerCast) {
     return <Spinner></Spinner>;
   }
   console.log(powerCastData);
@@ -266,7 +274,7 @@ export function PowerCastResolution({
         ></Dropdown>
       </FormRowVertical>
       <ButtonGroup>
-        <Button onClick={() => {}}>Make attack roll</Button>
+        <Button onClick={() => castPower(state)}>Resolve</Button>
       </ButtonGroup>
     </Container>
   );

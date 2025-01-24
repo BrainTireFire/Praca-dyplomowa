@@ -200,6 +200,7 @@ const controlStateReducer = (
           action.payload !== "WeaponAttack" ? null : state.weaponAttackSelected,
         powerSelected:
           action.payload !== "PowerCast" ? null : state.powerSelected,
+        powerTargets: [],
       };
     case APPEND_PATH:
       return {

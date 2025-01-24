@@ -160,6 +160,7 @@ export interface TogglePowerTarget {
 
 type WeaponAttackOverlayData = {
   targetId: number;
+  sourceId: number;
 };
 
 // Union type for all actions
@@ -328,6 +329,33 @@ export default function SessionLayout({ encounter }: any) {
             }
           );
 
+          hubConnection.on(
+            "WeaponAttackOverlay",
+            (
+              targetId: number,
+              sourceId: number,
+              weaponId: number,
+              isRange: boolean,
+              range: number
+            ) => {
+              console.log("WeaponAttackOverlay triggered");
+
+              dispatch({
+                type: "SET_WEAPON_ATTACK",
+                payload: {
+                  weaponId: weaponId,
+                  isRanged: isRange,
+                  range: range,
+                },
+              });
+
+              dispatch({
+                type: "WEAPON_ATTACK_OVERLAY_DATA",
+                payload: { targetId: targetId, sourceId },
+              });
+            }
+          );
+
           setConnection(hubConnection);
         })
         .catch((error) => console.error("SignalR Connection Error: ", error));
@@ -350,6 +378,33 @@ export default function SessionLayout({ encounter }: any) {
           .invoke("SendMessageToGroup", groupName, messageInput)
           .catch((err) => console.error("Error while sending message", err));
         setMessageInput("");
+      } catch (error) {
+        console.error("Error sending message:", error);
+      }
+    }
+  };
+
+  const handleWeaponAttackOverlay = async (
+    targetId: number,
+    sourceId: number,
+    campaignId: number,
+    weaponId: number,
+    isRange: boolean,
+    range: number
+  ) => {
+    if (connection) {
+      try {
+        await connection
+          .invoke(
+            "TriggerWeaponAttackOverlay",
+            campaignId,
+            targetId,
+            sourceId,
+            weaponId,
+            isRange,
+            range
+          )
+          .catch((err) => console.error("Error while sending message", err));
       } catch (error) {
         console.error("Error sending message:", error);
       }
@@ -402,6 +457,7 @@ export default function SessionLayout({ encounter }: any) {
           otherPath={otherPath}
           weaponAttack={controlState.weaponAttackSelected!}
           power={controlState.powerSelected!}
+          onWeaponAttackOverlay={handleWeaponAttackOverlay}
         />
       </GridContainer>
       <RightPanel>

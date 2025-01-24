@@ -64,7 +64,8 @@ export default function VirtualBoard({
   path,
   otherPath,
   weaponAttack,
-  power
+  power,
+  onWeaponAttackOverlay,
 }: VirtualBoardProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [selectedBoxes, setSelectedBoxes] = useState<{
@@ -174,14 +175,17 @@ export default function VirtualBoard({
       let occupiedField = encounter.participances.find(
         (x) => x.character.id === controlledCharacterId
       )?.occupiedField;
-      drawWeaponAttackRange(
-        ctx,
-        { x: occupiedField!.positionX, y: occupiedField!.positionY },
-        weaponAttack.range,
-        ActiveCharacterSize,
-        16,
-        9
-      );
+
+      if (occupiedField) {
+        drawWeaponAttackRange(
+          ctx,
+          { x: occupiedField.positionX, y: occupiedField.positionY },
+          weaponAttack.range,
+          ActiveCharacterSize,
+          16,
+          9
+        );
+      }
     }
 
     Object.keys(selectedBoxes).forEach((connectionId) => {
@@ -320,10 +324,14 @@ export default function VirtualBoard({
           if (inRange) {
             console.log("In range");
             // setTargetId(clickedCharacter.character.id);
-            dispatch({
-              type: "WEAPON_ATTACK_OVERLAY_DATA",
-              payload: { targetId: clickedCharacter.character.id },
-            });
+            onWeaponAttackOverlay(
+              clickedCharacter.character.id,
+              controlledCharacterId,
+              encounter.campaign.id,
+              weaponAttack.weaponId,
+              weaponAttack.isRanged,
+              weaponAttack.range
+            );
           } else {
             console.log("Not in range");
           }

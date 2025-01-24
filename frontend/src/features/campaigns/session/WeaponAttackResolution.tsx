@@ -39,15 +39,16 @@ export function WeaponAttackResolution({
   controlState: ControlState;
 }) {
   const { groupName } = useParams<{ groupName: string }>();
-  const [controlledCharacterId] = useContext(ControlledCharacterContext);
   const { isLoading: isLoadingWeaponDamage, weaponAttackData } =
     useGetWeaponAttackData(
       Number(groupName),
-      controlledCharacterId,
+      controlState.weaponAttackRollOverlayData!.sourceId,
       controlState.weaponAttackRollOverlayData!.targetId,
       controlState.weaponAttackSelected?.weaponId!,
       controlState.weaponAttackSelected?.isRanged!
     );
+
+  console.log("controlState ", controlState);
 
   const [state, dispatch] = useReducer(
     WeaponAttackConditionalEffectsReducer,
@@ -65,7 +66,7 @@ export function WeaponAttackResolution({
 
   const { isPending: isPendingAttack, makeWeaponAttack } = useMakeWeaponAttack(
     Number(groupName),
-    controlledCharacterId,
+    controlState.weaponAttackRollOverlayData!.sourceId,
     controlState.weaponAttackRollOverlayData?.targetId!,
     controlState.weaponAttackSelected?.weaponId!,
     controlState.weaponAttackSelected?.isRanged!,

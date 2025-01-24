@@ -2,18 +2,27 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using pracadyplomowa.DTOs.Session;
+using pracadyplomowa.Models.Entities.Campaign;
+using pracadyplomowa.Repository.UnitOfWork;
 
 namespace pracadyplomowa.Hubs;
 
 [Authorize]
 public class SessionHub  : Hub
 {
+    private readonly IUnitOfWork _unitOfWork;
+    
     //TODO the same users is connecting!
     //
     private static readonly ConcurrentDictionary<string, List<string>> UsersConnected = new();
     private static readonly ConcurrentDictionary<string, ConcurrentDictionary<string, Coordinate>> UserSelections = new();
     private static readonly ConcurrentDictionary<string, ConcurrentDictionary<string, Coordinate>> UserCursors = new();
     private static readonly ConcurrentDictionary<string, List<int>> SelectedPath = new();
+   
+    public SessionHub(IUnitOfWork unitOfWork)
+    {
+        _unitOfWork = unitOfWork;
+    }
     
     public override async Task OnConnectedAsync()
     {
@@ -53,6 +62,16 @@ public class SessionHub  : Hub
                     Context.Abort();
                 }
             }
+
+            var userId = Context.User?.GetUserId();
+            if (userId.HasValue)
+            {
+                List<Campaign> campaigns = await _unitOfWork.CampaignRepository.GetCampaigns(userId.Value);
+                foreach (var campaign in campaigns)
+                {
+                    await Groups.AddToGroupAsync(Context.ConnectionId, $"Campaign_{campaign.Id}_GM");
+                }
+            }
         }
 
         await base.OnConnectedAsync();
@@ -86,6 +105,16 @@ public class SessionHub  : Hub
                     UserSelections.TryRemove(groupName, out _);
                 }
                 await NotifyAllSelectionsInGroup(groupName);
+            }
+        }
+        
+        var userId = Context.User?.GetUserId();
+        if (userId.HasValue)
+        {
+            List<Campaign> campaigns = await _unitOfWork.CampaignRepository.GetCampaigns(userId.Value);
+            foreach (var campaign in campaigns)
+            {
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"Campaign_{campaign.Id}_GM");
             }
         }
 
@@ -229,7 +258,19 @@ public class SessionHub  : Hub
         await Clients.GroupExcept(groupName, Context.ConnectionId).SendAsync("RequeryInitiative");
     }
     
-
+    public async Task TriggerWeaponAttackOverlay(
+        int campaignId, 
+        int targetId, 
+        int sourceId, 
+        int weaponId, 
+        bool isRanged, 
+        int range)
+    {
+        var groupName = $"Campaign_{campaignId}_GM";
+        await Clients.Group(groupName)
+            .SendAsync("WeaponAttackOverlay", targetId, sourceId, weaponId, isRanged, range);
+    }
+    
     public class Coordinate
     {
         public int X { get; set; }

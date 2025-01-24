@@ -16,6 +16,7 @@ export type VirtualBoardProps = {
   otherPath: number[];
   weaponAttack: WeaponAttack;
   power: Power;
+  onWeaponAttackOverlay: any;
 };
 
 export type WeaponAttack = {

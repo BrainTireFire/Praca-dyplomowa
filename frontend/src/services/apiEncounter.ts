@@ -260,6 +260,23 @@ export async function updateParticipanceData(
   );
 }
 
+export async function deleteParticipanceData(
+  encounterId: number,
+  characterId: number
+): Promise<void> {
+  const options: RequestInit = {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/encounter/${encounterId}/participanceData/${characterId}`,
+    options
+  );
+}
+
 export type ParticipanceData = {
   characterName: string;
   actionsTaken: number;

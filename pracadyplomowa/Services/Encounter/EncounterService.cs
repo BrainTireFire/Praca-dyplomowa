@@ -359,6 +359,16 @@ public class EncounterService : IEncounterService
         character.TemporaryHitpoints = participanceDataDto.TemporaryHitpoints;
         await _unitOfWork.SaveChangesAsync();
     }
+
+    public async Task DeleteParticipanceData(int encounterId, int characterId, int userId){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipance(encounterId, characterId);
+        if(encounter.R_OwnerId != userId){
+            throw new SessionBadRequestException("You are not Dungeon Master");
+        }
+        var participance = encounter.R_Participances.Where(i => i.R_CharacterId == characterId).First() ?? throw new SessionBadRequestException("Specified character does not take part in the encounter");
+        _unitOfWork.ParticipanceDataRepository.Delete(participance.Id);
+        await _unitOfWork.SaveChangesAsync();
+    }
     
     public async Task<List<int>> MoveCharacter(int encounterId, int characterId, List<int> fieldIds){
         if(fieldIds.Count == 0){

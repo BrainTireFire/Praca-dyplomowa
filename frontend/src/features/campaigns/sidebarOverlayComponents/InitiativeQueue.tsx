@@ -14,6 +14,7 @@ import { useControlledCharacters } from "../hooks/useControlledCharacters";
 import useNextTurn from "../hooks/useNextTurn";
 import useRollInitiative from "../hooks/useRollInitiative";
 import ButtonGroup from "../../../ui/interactive/ButtonGroup";
+import useDeleteParticipanceData from "../hooks/useDeleteParticipanceData";
 
 type characterInitiative = {
   id: number;
@@ -124,9 +125,12 @@ function InititativeTile({
   handleChangeActiveTurn: (characterId: number) => void;
   controlled: boolean;
 }) {
+  const { groupName } = useParams<{ groupName: string }>();
   const [controlledCharacterId, setControlledCharacterId] = useContext(
     ControlledCharacterContext
   );
+  const { isPending: isPendingRemoval, deleteParticipanceData } =
+    useDeleteParticipanceData(Number(groupName), item.characterId, () => {});
   return (
     <Tile IsActive={item.activeTurn}>
       <TileCell1>
@@ -154,14 +158,17 @@ function InititativeTile({
         <Button onClick={() => setControlledCharacterId(item.characterId)}>
           {controlled || isGM ? "Take control" : "Set focus"}
         </Button>
-        {controlledCharacterId}
       </TileCell2>
       <TileCell3>
         <Button size="small">Display character sheet</Button>
       </TileCell3>
       <TileCell4>
         {isGM && (
-          <Button size="small" variation="danger">
+          <Button
+            size="small"
+            variation="danger"
+            onClick={() => deleteParticipanceData()}
+          >
             Remove
           </Button>
         )}

@@ -120,6 +120,18 @@ public class EncounterController : BaseApiController
         await _encounterService.UpdateParticipanceData(encounterId, characterId, participanceDataDto);
         return Ok();
     }
+    [HttpDelete("{encounterId}/participanceData/{characterId}")]
+    public async Task<ActionResult> RemoveParticipanceData(int encounterId, int characterId){
+        try{
+            await _encounterService.DeleteParticipanceData(encounterId, characterId, User.GetUserId());
+        }
+        catch(SessionBadRequestException ex){
+            return BadRequest(ex.Message);
+        }
+        return Ok();
+    }
+
+
     [HttpPost("{encounterId}/movement/{characterId}")]
     public async Task<ActionResult<List<int>>> MoveCharacter(int encounterId, int characterId, [FromBody] List<int> fieldIds)
     {

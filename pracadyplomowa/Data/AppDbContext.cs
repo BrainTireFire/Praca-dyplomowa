@@ -216,7 +216,8 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .HasOne(c => c.R_OccupiedBy)
                         .WithOne(c => c.R_OccupiedField)
                         .HasForeignKey<Field>(c => c.R_OccupiedById)
-                        .IsRequired(false);
+                        .IsRequired(false)
+                        .OnDelete(DeleteBehavior.SetNull);
 
                 // builder.Entity<EffectGroup>()
                 //         .HasOne(c => c.R_OriginatesFromAura)

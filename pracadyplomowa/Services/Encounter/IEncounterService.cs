@@ -23,6 +23,7 @@ public interface IEncounterService
     Task<List<int>> GetControlledCharacters(int encounterId, int userId);
     Task<Models.DTOs.Session.ParticipanceDataDto> GetParticipanceData(int encounterId, int characterId);
     Task UpdateParticipanceData(int encounterId, int characterId, Models.DTOs.Session.ParticipanceDataDto participanceDataDto);
+    Task DeleteParticipanceData(int encounterId, int characterId, int userId);
     Task<List<int>> MoveCharacter(int encounterId, int characterId, List<int> fieldIds);
     Task<ConditionalEffectsSetDto> GetConditionalEffects(int encounterId, int characterId, int targetId);
     Task<ConditionalEffectsSetForManyTargetsDto> GetConditionalEffects(int encounterId, int characterId, List<int> targetId);

@@ -21,7 +21,7 @@ function useUpdateParticipanceData(
       queryClient.refetchQueries({
         queryKey: ["participance", encounterId, characterId],
       });
-      toast.success("Initiative roll succesfull");
+      toast.success("Updated participance data");
       onSuccess();
     },
     onError: (err) => toast.error(err.message),

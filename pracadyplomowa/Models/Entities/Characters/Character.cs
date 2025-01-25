@@ -702,7 +702,11 @@ namespace pracadyplomowa.Models.Entities.Characters
                     eg.Disperse();
                 }
             });
-            R_ConcentratesOn?.TickDuration();
+            var resources = AllImmaterialResourceInstances.Where(x => x.NeedsRefresh && x.R_Blueprint.RefreshesOn == RefreshType.TurnStart).ToList();
+            foreach(var resource in resources){
+                resource.NeedsRefresh = false;
+            }
+            // R_ConcentratesOn?.TickDuration();
         }
 
         public void StopConcentrating(){
@@ -1385,6 +1389,9 @@ namespace pracadyplomowa.Models.Entities.Characters
                                     {
                                         shouldAdd = true;
                                     }
+                                }
+                                else if(power.PowerType == PowerType.PassiveEffect){
+                                    shouldAdd = true;
                                 }
 
                                 if (shouldAdd)

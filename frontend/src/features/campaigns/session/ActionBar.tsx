@@ -393,7 +393,7 @@ export default function ActionBar({
                   disabled={
                     controlState.powerSelected
                       ? controlState.powerSelected.maxTargets! -
-                          controlState.powerTargets.length >
+                          controlState.powerTargets.length <
                           0 || controlState.powerTargets.length === 0
                       : true
                   }

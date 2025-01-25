@@ -10,7 +10,7 @@ namespace pracadyplomowa.Data
 {
     public class DeletionInterceptor : SaveChangesInterceptor
     {
-        public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
+        public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
         {
             var context = eventData.Context;
 
@@ -27,7 +27,8 @@ namespace pracadyplomowa.Data
                 }
             }
 
-            return base.SavingChanges(eventData, result);
+            await base.SavingChangesAsync(eventData, result, cancellationToken);
+            return result;
         }
     }
 }

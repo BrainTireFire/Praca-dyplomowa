@@ -12,6 +12,8 @@ import { useContext } from "react";
 import { ControlledCharacterContext } from "../session/context/ControlledCharacterContext";
 import { useControlledCharacters } from "../hooks/useControlledCharacters";
 import useNextTurn from "../hooks/useNextTurn";
+import useRollInitiative from "../hooks/useRollInitiative";
+import ButtonGroup from "../../../ui/interactive/ButtonGroup";
 
 type characterInitiative = {
   id: number;
@@ -70,11 +72,14 @@ export function InitiativeQueue() {
     Number(groupName),
     () => {}
   );
+  const { isPending: isPendingRollInitiative, rollInitiative } =
+    useRollInitiative(Number(groupName), () => {});
   if (
     isLoading ||
     isLoadingIsGM ||
     isPending ||
-    isLoadingControllerCharacters
+    isLoadingControllerCharacters ||
+    isPendingRollInitiative
   ) {
     return <Spinner />;
   }
@@ -94,9 +99,16 @@ export function InitiativeQueue() {
             }
           ></InititativeTile>
         ))}
-      <Button disabled={!isGM} onClick={() => nextTurn()}>
-        Next turn
-      </Button>
+      {isGM && (
+        <ButtonGroup style={{ paddingTop: "5px" }}>
+          <Button disabled={!isGM} onClick={() => nextTurn()}>
+            Next turn
+          </Button>
+          <Button onClick={() => rollInitiative()} disabled={!isGM}>
+            Roll initiative
+          </Button>
+        </ButtonGroup>
+      )}
     </>
   );
 }

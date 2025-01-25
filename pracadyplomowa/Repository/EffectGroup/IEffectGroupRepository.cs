@@ -8,5 +8,6 @@ namespace pracadyplomowa.Repository
 {
     public interface IEffectGroupRepository: IBaseRepository<EffectGroup>
     {
+        Task<List<EffectGroup>> GetAllEffectGroupsPresentInEncounter(int encounterId);
     }
 }

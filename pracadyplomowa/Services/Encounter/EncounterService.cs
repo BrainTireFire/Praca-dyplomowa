@@ -291,6 +291,12 @@ public class EncounterService : IEncounterService
         participanceData.DistanceTraveled = 0;
         var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(participanceData.R_CharacterId);
         character.StartNextTurn();
+        if(participanceData == encounter.R_Participances.First()){
+            List<EffectGroup> effectGroups = await _unitOfWork.EffectGroupRepository.GetAllEffectGroupsPresentInEncounter(encounterId);
+            foreach(var effectGroup in effectGroups){
+                effectGroup.TickDuration();
+            }
+        }
 
         await _unitOfWork.SaveChangesAsync();
         return;
@@ -788,9 +794,9 @@ public class EncounterService : IEncounterService
         foreach(var effect in generatedEffects){
             effect.Resolve();
         }
-        foreach(var group in generatedEffects.Where(x => x.R_OwnedByGroup != null).Select(x => x.R_OwnedByGroup).Distinct()){
-            group?.TickDuration();
-        }
+        // foreach(var group in generatedEffects.Where(x => x.R_OwnedByGroup != null).Select(x => x.R_OwnedByGroup).Distinct()){
+        //     group?.TickDuration();
+        // }
         return;
     }
 

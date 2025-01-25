@@ -32,6 +32,15 @@ namespace pracadyplomowa.Repository
 
             return campaign;
         }
+        public async Task<Campaign?> GetCampaignWithCharacters(int campaignId)
+        {
+            var campaign = await _context.Campaigns
+            .Where(c => c.Id == campaignId)
+            .Include(c => c.R_CampaignHasCharacters)
+            .FirstOrDefaultAsync();
+
+            return campaign;
+        }
 
         public async Task RemoveCampaign(int campaignId)
         {

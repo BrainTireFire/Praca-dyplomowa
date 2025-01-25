@@ -1642,5 +1642,23 @@ namespace pracadyplomowa.Models.Entities.Characters
             }
         }
 
+        public void PerformLongRest(){
+            StopConcentrating();
+            var resourcesToRefresh = AllImmaterialResourceInstances
+                                    .Where(i => i.NeedsRefresh && (i.R_Blueprint.RefreshesOn == RefreshType.LongRest || i.R_Blueprint.RefreshesOn == RefreshType.ShortRest || i.R_Blueprint.RefreshesOn == RefreshType.TurnStart))
+                                    .ToList();
+            foreach(var resource in resourcesToRefresh){
+                resource.NeedsRefresh = false;
+            }
+            _Hitpoints = MaxHealth;
+            _TemporaryHitpoints = 0;
+            foreach(var effect in AllEffects.Where(x => x.R_OwnedByGroup != null && x.R_OwnedByGroup.IsConstant == false).ToList()){
+                effect.Unlink();
+            }
+            SucceededDeathSavingThrows = 0;
+            FailedDeathSavingThrows = 0;
+        }
+
+
     }
 }

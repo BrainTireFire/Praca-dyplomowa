@@ -139,5 +139,22 @@ namespace pracadyplomowa.Controllers
             };
             return Ok(characterDto);
         }
+
+        [HttpPatch("{campaignId}/longRest")]
+        public async Task<ActionResult> PerformLongRest(int campaignId){
+            var campaign = await _unitOfWork.CampaignRepository.GetCampaignWithCharacters(campaignId);
+            if(campaign == null){
+                return NotFound();
+            }
+            if(campaign.R_OwnerId != User.GetUserId()){
+                return BadRequest("You are not the Dungeon Master");
+            }
+            foreach(var character in campaign.R_CampaignHasCharacters){
+                await _unitOfWork.CharacterRepository.GetByIdWithAll(character.Id);
+                character.PerformLongRest();
+            }
+            await _unitOfWork.SaveChangesAsync();
+            return Ok();
+        }
     }
 }

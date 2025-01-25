@@ -14,6 +14,7 @@ import { Campaign } from "../../models/campaign";
 import useRemoveCampaign from "./hooks/useRemoveCampaign";
 import ConfirmDelete from "../../ui/containers/ConfirmDelete";
 import GiveXP from "./GiveXP";
+import useLongRest from "./hooks/useLongRest";
 
 const Container = styled.div`
   display: grid;
@@ -47,6 +48,10 @@ export default function CampaignInstance() {
   const { isLoading, campaign } = useCampaign();
   const { removeCampaign, isPending: isRemoving } = useRemoveCampaign();
   const { kickCharacter, isPending: isKicking } = useKickCharacter();
+  const { isPending: isPendingLongRest, longRest } = useLongRest(
+    campaign?.id!,
+    () => {}
+  );
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -82,7 +87,9 @@ export default function CampaignInstance() {
                 <ShortRest membersList={members} />
               </Modal.Window>*/}
           </Modal>
-          <Button size="large">{t("campaignInstance.longRest")}</Button>
+          <Button size="large" onClick={() => longRest()}>
+            {t("campaignInstance.longRest")}
+          </Button>
           <Button
             size="large"
             onClick={() => navigate(`/campaigns/${id}/createSession`)}

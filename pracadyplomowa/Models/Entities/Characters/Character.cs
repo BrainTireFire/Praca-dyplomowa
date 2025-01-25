@@ -694,6 +694,7 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
 
         public void StartNextTurn() {
+            RollDeathSavingThrow();
             ResolveAffectingEffects();
             var effectGroupsForSavingThrowChecks = AllEffects.Where(e => e.R_OwnedByGroup != null && e.R_OwnedByGroup.DifficultyClassToBreak != null && e.R_OwnedByGroup.SavingThrow != null).Select(e => e.R_OwnedByGroup).Distinct().ToList();
             effectGroupsForSavingThrowChecks.ForEach(eg => {
@@ -1626,6 +1627,18 @@ namespace pracadyplomowa.Models.Entities.Characters
                     return ExperiencePoints >= requiredExperience;
                 }
                 return false;
+            }
+        }
+
+        public void RollDeathSavingThrow() {
+            if(_Hitpoints < 1){
+                var roll = new DiceSet(){d20 = 1}.Roll(this);
+                if(roll < 10){
+                    FailedDeathSavingThrows++;
+                }
+                else{
+                    SucceededDeathSavingThrows++;
+                }
             }
         }
 

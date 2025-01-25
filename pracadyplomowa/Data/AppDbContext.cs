@@ -161,7 +161,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .HasOne(c => c.R_ConcentratesOn)
                         .WithOne(c => c.R_ConcentratedOnByCharacter)
                         .HasForeignKey<Character>(c => c.R_ConcentratesOnId)
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired(false);
 
                 builder.Entity<Character>()

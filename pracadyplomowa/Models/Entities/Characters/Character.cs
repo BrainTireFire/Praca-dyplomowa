@@ -1357,7 +1357,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             effectGroup.Name = power.Name;
             if (power.RequiresConcentration)
             {
-                effectGroup.R_ConcentratedOnByCharacter = this;
+                StartConcentration(effectGroup);
             }
             foreach (Character target in targetsToHitSuccessMap.Keys)
             {
@@ -1419,10 +1419,17 @@ namespace pracadyplomowa.Models.Entities.Characters
             foreach(var effect in generatedEffects){
                 effect.Resolve();
             }
-            foreach(var group in generatedEffects.Where(x => x.R_OwnedByGroup != null).Select(x => x.R_OwnedByGroup).Distinct()){
-                group?.TickDuration();
-            }
+            // foreach(var group in generatedEffects.Where(x => x.R_OwnedByGroup != null).Select(x => x.R_OwnedByGroup).Distinct()){
+            //     group?.TickDuration();
+            // }
             return Outcome.Success;
+        }
+
+        
+        public void StartConcentration(EffectGroup effectGroup){
+            effectGroup.R_ConcentratedOnByCharacter = this;
+            effectGroup.R_ConcentratedOnByCharacterId = effectGroup.R_ConcentratedOnByCharacter.Id;
+            this.R_ConcentratesOn = effectGroup;
         }
 
         public bool HasAllMaterialComponentsForPower(Power power){

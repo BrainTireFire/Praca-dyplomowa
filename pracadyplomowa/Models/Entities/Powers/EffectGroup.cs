@@ -77,5 +77,6 @@ namespace pracadyplomowa.Models.Entities.Powers
             DeleteOnSave = true;
             R_ConcentratedOnByCharacter = null;
         }
+
     }
 }

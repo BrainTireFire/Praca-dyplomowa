@@ -20,7 +20,7 @@ namespace pracadyplomowa.Data
 
                 foreach (var entry in entries)
                 {
-                    if (entry.State == EntityState.Modified && entry.Entity.DeleteOnSave)
+                    if (entry.Entity.DeleteOnSave)
                     {
                         entry.State = EntityState.Deleted;
                     }

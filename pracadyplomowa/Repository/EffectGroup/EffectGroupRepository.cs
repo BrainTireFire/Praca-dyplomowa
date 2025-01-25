@@ -24,5 +24,9 @@ namespace pracadyplomowa.Repository
             .AsSplitQuery()
             .ToListAsync();
         }
+
+        public Task<EffectGroup?> GetEffectGroupConcentratedOn(int characterId){
+            return _context.EffectGroups.FirstOrDefaultAsync(x => x.R_ConcentratedOnByCharacterId == characterId);
+        }
     }
 }

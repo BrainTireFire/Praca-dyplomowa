@@ -685,5 +685,26 @@ namespace pracadyplomowa.Controllers
             }
             return result;
         }
+
+        [HttpGet("{characterId}/concentration")]
+        public async Task<ActionResult<ConcentrationDataDto>> GetPowerConcentratedOn([FromRoute] int characterId)
+        {
+            var effectGroup = await _unitOfWork.EffectGroupRepository.GetEffectGroupConcentratedOn(characterId);
+            var result = new ConcentrationDataDto(){
+                EffectGroupId = effectGroup?.Id,
+                EffectGroupName = effectGroup?.Name,
+                EffectGroupDurationLeft = effectGroup?.DurationLeft,
+            };
+            return Ok(result);
+        }
+
+        [HttpDelete("{characterId}/concentration")]
+        public async Task<ActionResult> DropConcentration([FromRoute] int characterId)
+        {
+            var effectGroup = await _unitOfWork.EffectGroupRepository.GetEffectGroupConcentratedOn(characterId);
+            effectGroup?.Disperse();
+            await _unitOfWork.SaveChangesAsync();
+            return Ok();
+        }
     }
 }

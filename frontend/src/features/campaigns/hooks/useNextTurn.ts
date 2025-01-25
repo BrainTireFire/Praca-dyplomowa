@@ -13,6 +13,14 @@ function useNextTurn(encounterId: number, onSuccess: () => void) {
       queryClient.invalidateQueries({
         queryKey: ["isItMyTurn", encounterId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["concentration"],
+        exact: false,
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["participance", encounterId],
+        exact: false,
+      });
       toast.success("Next turn!");
       onSuccess();
     },

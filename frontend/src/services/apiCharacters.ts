@@ -488,3 +488,35 @@ export type CharacterEquipmentAndSlotsDto_Item = {
   slots: Slot[];
   equippableInSlots: Slot[];
 };
+
+export async function getPowerConcentratedOn(
+  characterId: number
+): Promise<ConcentrationData> {
+  const response = await customFetch(
+    `${BASE_URL}/api/character/${characterId}/concentration`
+  );
+
+  console.log(response);
+
+  return response;
+}
+
+export type ConcentrationData = {
+  effectGroupId: number;
+  effectGroupName: string;
+  effectGroupDurationLeft: number;
+};
+
+export async function dropConcentration(characterId: number): Promise<void> {
+  const options: RequestInit = {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/character/${characterId}/concentration`,
+    options
+  );
+}

@@ -968,7 +968,7 @@ export default function PowerForm({
                     payload: x as SavingThrowRoll,
                   });
                 }}
-                name="savingThrowBehaviour"
+                name="savingThrowRollMoment"
                 label="Saving throw roll moment"
                 currentValue={state.savingThrowRoll}
                 customStyles={css`

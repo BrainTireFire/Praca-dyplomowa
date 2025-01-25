@@ -160,7 +160,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                 builder.Entity<Character>()
                         .HasOne(c => c.R_ConcentratesOn)
                         .WithOne(c => c.R_ConcentratedOnByCharacter)
-                        .HasForeignKey<Character>(c => c.R_ConcentratesOnId)
+                        .HasForeignKey<EffectGroup>(c => c.R_ConcentratedOnByCharacterId)
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired(false);
 

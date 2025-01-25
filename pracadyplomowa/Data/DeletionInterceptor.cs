@@ -25,6 +25,16 @@ namespace pracadyplomowa.Data
                         entry.State = EntityState.Deleted;
                     }
                 }
+
+                var effectInstanceEntries = context.ChangeTracker.Entries<EffectInstance>();
+
+                foreach (var entry in effectInstanceEntries)
+                {
+                    if (entry.Entity.DeleteOnSave)
+                    {
+                        entry.State = EntityState.Deleted;
+                    }
+                }
             }
 
             await base.SavingChangesAsync(eventData, result, cancellationToken);

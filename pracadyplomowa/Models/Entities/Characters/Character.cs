@@ -699,7 +699,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             effectGroupsForSavingThrowChecks.ForEach(eg => {
                 var result = SavingThrowRoll((Ability)eg!.SavingThrow!);
                 if(result >= eg.DifficultyClassToBreak){
-                    eg.Disperse();
+                    eg.DisperseOnTarget(this);
                 }
             });
             var resources = AllImmaterialResourceInstances.Where(x => x.NeedsRefresh && x.R_Blueprint.RefreshesOn == RefreshType.TurnStart).ToList();

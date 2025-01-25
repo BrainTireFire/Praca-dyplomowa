@@ -78,5 +78,12 @@ namespace pracadyplomowa.Models.Entities.Powers
             R_ConcentratedOnByCharacter = null;
         }
 
+        public void DisperseOnTarget(Character target) {
+            var effects = R_OwnedEffects.Where(x => x.R_TargetedCharacter == target).ToList();
+            foreach(var effect in effects){
+                effect.Unlink();
+            }
+        }
+
     }
 }

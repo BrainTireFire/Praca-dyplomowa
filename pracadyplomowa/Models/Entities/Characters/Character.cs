@@ -1239,6 +1239,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             //calculate total damage coming from effects applied to weapon and wielder
             Dictionary<DamageType, int> totalEffectDamage = weaponEffectDamageRollResults.ToDictionary(g => g.Key, g => g.Value.Aggregate(0, (sum, current) => sum + current.result));
 
+            int initialHealth = target._Hitpoints + target._TemporaryHitpoints;
             //check for targets damage resistance and apply damage
             var weaponHitResult = new WeaponHitResult();
             weaponHitResult.DamageTaken.Add(weapon.DamageType, target.TakeDamage(totalWeaponDamage, weapon.DamageType));
@@ -1246,6 +1247,12 @@ namespace pracadyplomowa.Models.Entities.Characters
             {
                 weaponHitResult.DamageTaken.Add(pair.Key, target.TakeDamage(pair.Value, pair.Key));
             }
+            int damageTaken = initialHealth - (target._Hitpoints + target._TemporaryHitpoints);
+            if(damageTaken > 0){
+                target.MakeConcentrationSavingThrow(damageTaken);
+            }
+
+
             // foreach (var power in weapon.R_EquipItemGrantsAccessToPower.Where(x => x.CastableBy == CastableBy.OnWeaponHit))
             // {
             //     weapon.CheckIfPowerHitSuccessfull(encounter, power, [target]).TryGetValue(target.Id, out HitType outcome);
@@ -1416,8 +1423,18 @@ namespace pracadyplomowa.Models.Entities.Characters
                     effectGroup.AddEffect(effect);
                 }
             }
+            Dictionary<Character, int> initialHealthMap = [];
+            foreach(var target in targetsToHitSuccessMap.Keys){
+                initialHealthMap.Add(target, target._Hitpoints + target._TemporaryHitpoints);
+            }
             foreach(var effect in generatedEffects){
                 effect.Resolve();
+            }
+            foreach(var target in initialHealthMap.Keys){
+                int damageTaken = initialHealthMap[target] - (target._Hitpoints + target._TemporaryHitpoints);
+                if(damageTaken > 0){
+                    target.MakeConcentrationSavingThrow(damageTaken);
+                }
             }
             // foreach(var group in generatedEffects.Where(x => x.R_OwnedByGroup != null).Select(x => x.R_OwnedByGroup).Distinct()){
             //     group?.TickDuration();
@@ -1430,6 +1447,20 @@ namespace pracadyplomowa.Models.Entities.Characters
             effectGroup.R_ConcentratedOnByCharacter = this;
             effectGroup.R_ConcentratedOnByCharacterId = effectGroup.R_ConcentratedOnByCharacter.Id;
             this.R_ConcentratesOn = effectGroup;
+        }
+
+        public void DropConcentration(){
+            R_ConcentratesOn?.Disperse();
+        }
+
+        public void MakeConcentrationSavingThrow(int damageTaken){
+            if(this.R_ConcentratesOn !=  null){
+                int difficultyClass = Math.Max(10, damageTaken/2);
+                int roll = (this.ConstitutionSavingThrowValue + new DiceSet(){d20 = 1}).Roll(this);
+                if(roll <= difficultyClass){
+                    DropConcentration();
+                }
+            }
         }
 
         public bool HasAllMaterialComponentsForPower(Power power){

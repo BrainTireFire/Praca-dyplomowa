@@ -364,7 +364,7 @@ public class EncounterService : IEncounterService
         if(fieldIds.Count == 0){
             return fieldIds;
         }
-        var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId);
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummaryWithFieldPowers(encounterId);
         foreach(var characterIdInLoop in encounter.R_Participances.Select(x => x.R_CharacterId).ToList()){
             await _unitOfWork.CharacterRepository.GetByIdWithAll(characterIdInLoop);
         }
@@ -375,8 +375,12 @@ public class EncounterService : IEncounterService
             fields.Add(encounter.R_Board.R_ConsistsOfFields.First(x => x.Id == fieldId));
         }
         var traversableFields = character.CanTraversePath(fields);
+        var easilyTraversableFields = traversableFields.Where(x => x.ActualMovementCost == FieldMovementCostType.Low).ToList();
+        var difficultTraversableFields = traversableFields.Where(x => x.ActualMovementCost == FieldMovementCostType.High).ToList();
+        var impassableFields = traversableFields.Where(x => x.ActualMovementCost == FieldMovementCostType.Impassable).ToList();
         var remainingMovementCapacityInFeet = character.Speed - participance.DistanceTraveled;
-        var missingMovementCapacity = remainingMovementCapacityInFeet / 5 - traversableFields.Count;
+        var movementCost = easilyTraversableFields.Count + difficultTraversableFields.Count * 2;
+        var missingMovementCapacity = remainingMovementCapacityInFeet / 5 - movementCost;
         if(missingMovementCapacity <= 0){
             missingMovementCapacity *= -1;
         }
@@ -384,14 +388,18 @@ public class EncounterService : IEncounterService
             missingMovementCapacity = 0;
         }
         for(int i = 0; i < missingMovementCapacity; i++){
-            traversableFields.RemoveAt(traversableFields.Count - 1);
+            if(traversableFields.Count != 0){
+                traversableFields.RemoveAt(traversableFields.Count - 1);
+            }
         }
         var traversableIds = traversableFields.Select(x => x.Id).ToList();
         if(traversableFields.Count == fields.Count){
-            character.Move(encounter, traversableFields.Last());
-            participance.DistanceTraveled += traversableFields.Count * 5;
+            foreach(var field in traversableFields){
+                character.Move(encounter, field);
+            }
+            participance.DistanceTraveled += movementCost * 5;
+            await _unitOfWork.SaveChangesAsync();
         }
-        await _unitOfWork.SaveChangesAsync();
         return traversableIds;
     }
 

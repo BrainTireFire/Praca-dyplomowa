@@ -124,6 +124,9 @@ public class EncounterController : BaseApiController
     public async Task<ActionResult<List<int>>> MoveCharacter(int encounterId, int characterId, [FromBody] List<int> fieldIds)
     {
         var result = await _encounterService.MoveCharacter(encounterId, characterId, fieldIds);
+        if(result.Count != fieldIds.Count){
+            return BadRequest("Movement not possible");
+        }
         return Ok(result);
     }
 

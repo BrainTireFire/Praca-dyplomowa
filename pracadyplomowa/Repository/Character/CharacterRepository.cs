@@ -315,6 +315,8 @@ namespace pracadyplomowa.Repository
             return _context.Characters
             .Where(i => ids.Contains(i.Id))
             .Include(c => c.R_Campaign)
+                .ThenInclude(c => c!.R_CampaignHasCharacters)
+            .AsSplitQuery()
             .ToDictionary(i => i.Id, i => i);
         }
     }

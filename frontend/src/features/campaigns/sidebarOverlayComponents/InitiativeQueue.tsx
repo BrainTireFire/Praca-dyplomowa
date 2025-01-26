@@ -16,6 +16,9 @@ import useRollInitiative from "../hooks/useRollInitiative";
 import ButtonGroup from "../../../ui/interactive/ButtonGroup";
 import useDeleteParticipanceData from "../hooks/useDeleteParticipanceData";
 import useMoveInQueue from "../hooks/useMoveInQueue";
+import Modal from "../../../ui/containers/Modal";
+import { CharacterIdContext } from "../../characters/contexts/CharacterIdContext";
+import CharactersSheet from "../../characters/CharactersSheet";
 
 type characterInitiative = {
   id: number;
@@ -170,7 +173,20 @@ function InititativeTile({
         </Button>
       </TileCell2>
       <TileCell3>
-        <Button size="small">Display character sheet</Button>
+        <Modal>
+          <Modal.Open opens="CharactersSheet">
+            <Button size="small">Display character sheet</Button>
+          </Modal.Open>
+          <Modal.Window name="CharactersSheet">
+            <CharacterIdContext.Provider
+              value={{ characterId: item.characterId }}
+            >
+              <Container>
+                <CharactersSheet />
+              </Container>
+            </CharacterIdContext.Provider>
+          </Modal.Window>
+        </Modal>
       </TileCell3>
       <TileCell4>
         {isGM && (
@@ -222,4 +238,12 @@ const TileCell3 = styled.div`
 const TileCell4 = styled.div`
   grid-column: 2;
   grid-row: 2;
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  width: 80vw;
+  overflow-y: hidden;
 `;

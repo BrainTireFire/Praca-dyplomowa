@@ -853,7 +853,12 @@ namespace pracadyplomowa.Models.Entities.Characters
                     AccessLevels.Delete
                 ];
             }
-            else if (this.R_Campaign!.R_CampaignHasCharacters.Any(x => x.R_OwnerId == userId)){
+            else if(this.R_CharactersParticipatesInEncounters.SelectMany(x => x.R_Encounter.R_Participances).Any(x => x.R_Character.R_OwnerId == userId)){
+                accessLevels = [
+                    AccessLevels.Read
+                ];
+            }
+            else if (this.R_Campaign?.R_CampaignHasCharacters.Any(x => x.R_OwnerId == userId) ?? false){
                 accessLevels = [
                     AccessLevels.Read
                 ];

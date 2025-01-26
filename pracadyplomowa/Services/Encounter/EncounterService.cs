@@ -274,16 +274,16 @@ public class EncounterService : IEncounterService
 
     public async Task NextTurn(int encounterId){
         var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipances(encounterId);
-
-        var x = encounter.R_Participances.SkipWhile(x => !x.ActiveTurn);
+        var participances = encounter.R_Participances.OrderBy(x => x.InitiativeOrder);
+        var x = participances.SkipWhile(x => !x.ActiveTurn);
         ParticipanceData participanceData;
         if(x.Count() > 1){
             participanceData = x.Skip(1).First();
         }
         else{
-            participanceData = encounter.R_Participances.First();
+            participanceData = participances.First();
         }
-        encounter.R_Participances.ToList().ForEach(x => x.ActiveTurn = false);
+        participances.ToList().ForEach(x => x.ActiveTurn = false);
         participanceData.ActiveTurn = true;
         participanceData.NumberOfActionsTaken = 0;
         participanceData.NumberOfBonusActionsTaken = 0;
@@ -291,6 +291,12 @@ public class EncounterService : IEncounterService
         participanceData.DistanceTraveled = 0;
         var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(participanceData.R_CharacterId);
         character.StartNextTurn();
+        if(participanceData == participances.First()){
+            List<EffectGroup> effectGroups = await _unitOfWork.EffectGroupRepository.GetAllEffectGroupsPresentInEncounter(encounterId);
+            foreach(var effectGroup in effectGroups){
+                effectGroup.TickDuration();
+            }
+        }
 
         await _unitOfWork.SaveChangesAsync();
         return;
@@ -353,12 +359,22 @@ public class EncounterService : IEncounterService
         character.TemporaryHitpoints = participanceDataDto.TemporaryHitpoints;
         await _unitOfWork.SaveChangesAsync();
     }
+
+    public async Task DeleteParticipanceData(int encounterId, int characterId, int userId){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipance(encounterId, characterId);
+        if(encounter.R_OwnerId != userId){
+            throw new SessionBadRequestException("You are not Dungeon Master");
+        }
+        var participance = encounter.R_Participances.Where(i => i.R_CharacterId == characterId).First() ?? throw new SessionBadRequestException("Specified character does not take part in the encounter");
+        _unitOfWork.ParticipanceDataRepository.Delete(participance.Id);
+        await _unitOfWork.SaveChangesAsync();
+    }
     
     public async Task<List<int>> MoveCharacter(int encounterId, int characterId, List<int> fieldIds){
         if(fieldIds.Count == 0){
             return fieldIds;
         }
-        var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId);
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummaryWithFieldPowers(encounterId);
         foreach(var characterIdInLoop in encounter.R_Participances.Select(x => x.R_CharacterId).ToList()){
             await _unitOfWork.CharacterRepository.GetByIdWithAll(characterIdInLoop);
         }
@@ -369,8 +385,12 @@ public class EncounterService : IEncounterService
             fields.Add(encounter.R_Board.R_ConsistsOfFields.First(x => x.Id == fieldId));
         }
         var traversableFields = character.CanTraversePath(fields);
+        var easilyTraversableFields = traversableFields.Where(x => x.ActualMovementCost == FieldMovementCostType.Low).ToList();
+        var difficultTraversableFields = traversableFields.Where(x => x.ActualMovementCost == FieldMovementCostType.High).ToList();
+        var impassableFields = traversableFields.Where(x => x.ActualMovementCost == FieldMovementCostType.Impassable).ToList();
         var remainingMovementCapacityInFeet = character.Speed - participance.DistanceTraveled;
-        var missingMovementCapacity = remainingMovementCapacityInFeet / 5 - traversableFields.Count;
+        var movementCost = easilyTraversableFields.Count + difficultTraversableFields.Count * 2;
+        var missingMovementCapacity = remainingMovementCapacityInFeet / 5 - movementCost;
         if(missingMovementCapacity <= 0){
             missingMovementCapacity *= -1;
         }
@@ -378,14 +398,18 @@ public class EncounterService : IEncounterService
             missingMovementCapacity = 0;
         }
         for(int i = 0; i < missingMovementCapacity; i++){
-            traversableFields.RemoveAt(traversableFields.Count - 1);
+            if(traversableFields.Count != 0){
+                traversableFields.RemoveAt(traversableFields.Count - 1);
+            }
         }
         var traversableIds = traversableFields.Select(x => x.Id).ToList();
         if(traversableFields.Count == fields.Count){
-            character.Move(encounter, traversableFields.Last());
-            participance.DistanceTraveled += traversableFields.Count * 5;
+            foreach(var field in traversableFields){
+                character.Move(encounter, field);
+            }
+            participance.DistanceTraveled += movementCost * 5;
+            await _unitOfWork.SaveChangesAsync();
         }
-        await _unitOfWork.SaveChangesAsync();
         return traversableIds;
     }
 
@@ -493,6 +517,79 @@ public class EncounterService : IEncounterService
                 EffectDescription = x.Description
             })]
         };
+        return result;
+    }
+
+    public async Task<ConditionalEffectsSetForManyTargetsDto> GetConditionalEffects(int encounterId, int characterId, List<int> targetIds){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipances(encounterId) ?? throw new SessionNotFoundException("Encounter with specified Id does not exist");
+        foreach (var x in encounter.R_Participances.Select(x => x.R_Character)){
+            await _unitOfWork.CharacterRepository.GetByIdWithAll(x.Id);
+        }
+        var character = (encounter.R_Participances.FirstOrDefault(x => x.R_CharacterId == characterId)?.R_Character) ?? throw new SessionBadRequestException("Attacking character does not take part in specified encounter");
+        var targetList = new List<Character>();
+        foreach(var id in targetIds){
+            var target = encounter.R_Participances.First(x => x.R_CharacterId == id).R_Character ?? throw new SessionBadRequestException("Target character does not take part in specified encounter");
+            targetList.Add(target);
+        }
+
+        var result = new ConditionalEffectsSetForManyTargetsDto()
+        {
+            CasterConditionalEffects = [.. character.AllEffects
+            .Select(x => new ConditionalEffectsSetForManyTargetsDto.ConditionalEffectDto(){
+                EffectId = x.Id,
+                EffectName = x.Name,
+                EffectDescription = x.Description
+            })]
+        };
+        foreach(var target in targetList){
+            result.TargetData.Add(new ConditionalEffectsSetForManyTargetsDto.TargetDataDto(){
+                TargetId = target.Id,
+                TargetName = target.Name,
+                TargetConditionalEffects = [.. target.AllEffects
+                                                .Select(x => new ConditionalEffectsSetForManyTargetsDto.ConditionalEffectDto(){
+                                                    EffectId = x.Id,
+                                                    EffectName = x.Name,
+                                                    EffectDescription = x.Description
+                                                })]});
+        }
+        return result;
+    }
+
+    public async Task<PowerDataForResolutionDto> GetPowerData(int encounterId, int characterId, int powerId){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipances(encounterId) ?? throw new SessionNotFoundException("Encounter with specified Id does not exist");
+        foreach (var x in encounter.R_Participances.Select(x => x.R_Character)){
+            await _unitOfWork.CharacterRepository.GetByIdWithAll(x.Id);
+        }
+        var character = (encounter.R_Participances.FirstOrDefault(x => x.R_CharacterId == characterId)?.R_Character) ?? throw new SessionBadRequestException("Attacking character does not take part in specified encounter");
+        Power power = character.AllPowers.FirstOrDefault(x => x.Id == powerId) ?? throw new SessionBadRequestException("Specified weapon is not equipped by attacking character");
+        await _unitOfWork.PowerRepository.GetAllByIdsWithEffectBlueprintsAndMaterialResources([power.Id]);
+        List<int> availableImmaterialResourceLevels = character.AllImmaterialResourceInstances
+                                                            .Where(x => x.R_BlueprintId == power.R_UsesImmaterialResourceId && !x.NeedsRefresh)
+                                                            .Select(x => x.Level)
+                                                            .Where(x => power.R_EffectBlueprints.Select(y => y.Level).Contains(x))
+                                                            .ToList();
+        var result = new PowerDataForResolutionDto
+        {
+            PowerId = power.Id,
+            PowerName = power.Name,
+            AvailableImmaterialResourceLevels = availableImmaterialResourceLevels,
+            ResourceName = power.R_UsesImmaterialResource?.Name! 
+        };
+        foreach (var levelGroup in power.R_EffectBlueprints.GroupBy(x => x.Level).ToList()){
+            var level = levelGroup.Key;
+            result.PowerEffects.Add(level, []);
+            foreach(var savedGroup in levelGroup.GroupBy(x => x.Saved).ToList()){
+                var saved = savedGroup.Key ? 1 : 0;
+                result.PowerEffects.GetValueOrDefault(level)!.Add(saved, []);
+                foreach(var effect in savedGroup){
+                    result.PowerEffects.GetValueOrDefault(level)!.GetValueOrDefault(saved)!.Add(new PowerDataForResolutionDto.PowerEffectDto(){
+                        PowerEffectId = effect.Id,
+                        PowerEffectName = effect.Name,
+                        PowerEffectDescription = effect.Description,
+                    });
+                }
+            }
+        }
         return result;
     }
 
@@ -715,9 +812,130 @@ public class EncounterService : IEncounterService
         foreach(var effect in generatedEffects){
             effect.Resolve();
         }
-        foreach(var group in generatedEffects.Where(x => x.R_OwnedByGroup != null).Select(x => x.R_OwnedByGroup).Distinct()){
-            group?.TickDuration();
-        }
+        // foreach(var group in generatedEffects.Where(x => x.R_OwnedByGroup != null).Select(x => x.R_OwnedByGroup).Distinct()){
+        //     group?.TickDuration();
+        // }
         return;
     }
+
+    public async Task<CastPowerResultDto> CastPower(int encounterId, int characterId, int powerId, CastPowerIncomingDataDto incomingDataDto){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId) ?? throw new SessionNotFoundException("Encounter with specified Id does not exist");
+        foreach (var x in encounter.R_Participances.Select(x => x.R_Character)){
+            await _unitOfWork.CharacterRepository.GetByIdWithAll(x.Id);
+        }
+        var character = (encounter.R_Participances.FirstOrDefault(x => x.R_CharacterId == characterId)?.R_Character) ?? throw new SessionBadRequestException("Attacking character does not take part in specified encounter");
+        var participance = encounter.R_Participances.First(x => x.R_CharacterId == characterId);
+        Dictionary<int, Character> targetMap = new();
+        foreach(var targetId in incomingDataDto.ConditionalEffects.TargetConditionalEffects.Keys){
+            if(encounter.R_Participances.Select(x => x.R_CharacterId).Contains(targetId)){
+                targetMap.Add(targetId, encounter.R_Participances.First(x => x.R_CharacterId == targetId).R_Character);
+            }   
+            else{
+                throw new SessionBadRequestException("Target character does not take part in specified encounter");
+            }
+        }
+        Power power = (character.AllPowers.FirstOrDefault(x => x.Id == powerId)) ?? throw new SessionBadRequestException("Specified power is not available to casting character");
+        var bonusActionsAvailable = character.TotalBonusActionsPerTurn - participance.NumberOfBonusActionsTaken;
+        var actionsAvailable = character.TotalActionsPerTurn - participance.NumberOfActionsTaken;
+        var attacksAvailable = character.TotalAttacksPerTurn - participance.NumberOfAttacksTaken;
+
+        //Action analysis
+        if(power.RequiredActionType == ActionType.Action && character.TotalActionsPerTurn - participance.NumberOfActionsTaken <= 0){
+            throw new SessionBadRequestException("No actions left");
+        }
+        if(power.RequiredActionType == ActionType.Action && character.TotalActionsPerTurn - participance.NumberOfActionsTaken > 0){
+            participance.NumberOfActionsTaken++;
+        }
+
+        if(power.RequiredActionType == ActionType.BonusAction && character.TotalBonusActionsPerTurn - participance.NumberOfBonusActionsTaken <= 0){
+
+            throw new SessionBadRequestException("No bonus actions left");
+        }
+        if(power.RequiredActionType == ActionType.BonusAction && character.TotalBonusActionsPerTurn - participance.NumberOfBonusActionsTaken > 0){
+            participance.NumberOfBonusActionsTaken++;
+        }
+
+        if(power.RequiredActionType == ActionType.WeaponAttack && character.TotalAttacksPerTurn - participance.NumberOfAttacksTaken <= 0){
+            if(character.TotalActionsPerTurn - participance.NumberOfActionsTaken <= 0){
+                throw new SessionBadRequestException("No actions left");
+            }
+            else if(character.TotalActionsPerTurn - participance.NumberOfActionsTaken > 0){
+                participance.NumberOfActionsTaken++;
+                participance.NumberOfAttacksTaken = 0;
+            }
+        }
+        if(power.RequiredActionType == ActionType.WeaponAttack && character.TotalAttacksPerTurn - participance.NumberOfAttacksTaken > 0){
+            participance.NumberOfAttacksTaken++;
+            throw new SessionBadRequestException("No attacks left");
+        }
+
+        //set approved effects
+        foreach(var effect in character.AllEffects){
+            effect.ConditionalApproved = incomingDataDto.ConditionalEffects.CasterConditionalEffects.Contains(effect.Id);
+        }
+        foreach(var targetId in incomingDataDto.ConditionalEffects.TargetConditionalEffects.Keys){
+            foreach(var effect in targetMap[targetId].AllEffects){
+                effect.ConditionalApproved = incomingDataDto.ConditionalEffects.TargetConditionalEffects[targetId].Contains(effect.Id);
+            }
+        }
+
+
+        var hitMap = character.CheckIfPowerHitSuccessfull(encounter, power, targetMap.Values.ToList());
+        Dictionary<Character, HitType> characterToHitMap = new ();
+        foreach(var hit in hitMap){
+            characterToHitMap.Add(targetMap[hit.Key], hit.Value);
+        }
+        var outcome = character.ApplyPowerEffects(power, characterToHitMap, incomingDataDto.SpellSlotLevel, out var generatedEffects);
+        if(outcome == Models.Entities.Interfaces.Outcome.ImmaterialResourceUnavailable){
+            throw new SessionBadRequestException("Character doesn't have immaterial resource of specified level");
+        }
+        if(outcome == Models.Entities.Interfaces.Outcome.InsufficientMaterialComponents){
+            throw new SessionBadRequestException("Character doesn't have enough material resources");
+        }
+        await _unitOfWork.SaveChangesAsync();
+        CastPowerResultDto result = new();
+        result.HitMap = hitMap;
+        foreach(var target in targetMap.Values){
+            result.NameMap.Add(target.Id, target.Name);
+        }
+        return result;
+    }
+
+    public async Task MoveUpQueue(int encounterId, int characterId, int userId){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipancesAndCampaign(encounterId) ?? throw new SessionNotFoundException("Encounter not found");
+        if(encounter.R_OwnerId != userId){
+            throw new SessionBadRequestException("You are not Dungeon Master");
+        }
+        // Find the index of the item with the given id
+        var participanceList = encounter.R_Participances.OrderBy(x => x.InitiativeOrder).ToList();
+        int currentIndex = participanceList.FindIndex(p => p.R_CharacterId == characterId);
+
+        if (currentIndex == -1) throw new SessionNotFoundException("Character not found");
+
+        int predecessorIndex = currentIndex == 0 ? participanceList.Count - 1 : currentIndex - 1;
+
+        (participanceList[predecessorIndex].InitiativeOrder, participanceList[currentIndex].InitiativeOrder) = (participanceList[currentIndex].InitiativeOrder, participanceList[predecessorIndex].InitiativeOrder);
+
+        await _unitOfWork.SaveChangesAsync();
+    }
+
+        public async Task MoveDownQueue(int encounterId, int characterId, int userId){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipancesAndCampaign(encounterId) ?? throw new SessionNotFoundException("Encounter not found");
+        if(encounter.R_OwnerId != userId){
+            throw new SessionBadRequestException("You are not Dungeon Master");
+        }
+        // Find the index of the item with the given id
+        var participanceList = encounter.R_Participances.OrderBy(x => x.InitiativeOrder).ToList();
+        int currentIndex = participanceList.FindIndex(p => p.R_CharacterId == characterId);
+
+        if (currentIndex == -1) throw new SessionNotFoundException("Character not found");
+
+        int successorIndex = (currentIndex == participanceList.Count - 1) ? 0 : currentIndex + 1;
+
+        (participanceList[successorIndex].InitiativeOrder, participanceList[currentIndex].InitiativeOrder) = (participanceList[currentIndex].InitiativeOrder, participanceList[successorIndex].InitiativeOrder);
+
+        await _unitOfWork.SaveChangesAsync();
+    }
+
+
 }

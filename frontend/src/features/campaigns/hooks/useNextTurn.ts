@@ -13,7 +13,15 @@ function useNextTurn(encounterId: number, onSuccess: () => void) {
       queryClient.invalidateQueries({
         queryKey: ["isItMyTurn", encounterId],
       });
-      toast.success("Changed active character");
+      queryClient.invalidateQueries({
+        queryKey: ["concentration"],
+        exact: false,
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["participance", encounterId],
+        exact: false,
+      });
+      toast.success("Next turn!");
       onSuccess();
     },
     onError: (err) => toast.error(err.message),

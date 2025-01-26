@@ -661,7 +661,7 @@ namespace pracadyplomowa.Controllers
                 var spellcastingFocusHeld = character.R_EquippedItems.Where(x => x.R_Item.IsSpellFocus && x.R_Slots.Where(y => y.Type == SlotType.MainHand || y.Type == SlotType.MainHand).Any()).Any();
                 bool somaticComponentRequirementSatisfied = mainHandsPossesed - mainHandsOccupied > 0 || offHandsOccupied - offHandsPossesed > 0 || spellcastingFocusHeld || !power.SomaticComponent;
                 bool vocalComponentSatisfied = !character.HasAnyCondition([Condition.Muffled, Condition.Petrified]) || !power.VerbalComponent;
-                bool requiredResourceAvailable = character.AllImmaterialResourceInstances.Where(x => !x.NeedsRefresh && x.Level >= minimumResourceLevel && x.R_BlueprintId == power.R_UsesImmaterialResource?.Id).Any();
+                bool requiredResourceAvailable = power.RequiredResourceAvailable(character, minimumResourceLevel);
                 result.Add(new PowerForEncounterDto(){
                     Id = power.Id,
                     Name = power.Name,
@@ -684,6 +684,27 @@ namespace pracadyplomowa.Controllers
                 });
             }
             return result;
+        }
+
+        [HttpGet("{characterId}/concentration")]
+        public async Task<ActionResult<ConcentrationDataDto>> GetPowerConcentratedOn([FromRoute] int characterId)
+        {
+            var effectGroup = await _unitOfWork.EffectGroupRepository.GetEffectGroupConcentratedOn(characterId);
+            var result = new ConcentrationDataDto(){
+                EffectGroupId = effectGroup?.Id,
+                EffectGroupName = effectGroup?.Name,
+                EffectGroupDurationLeft = effectGroup?.DurationLeft,
+            };
+            return Ok(result);
+        }
+
+        [HttpDelete("{characterId}/concentration")]
+        public async Task<ActionResult> DropConcentration([FromRoute] int characterId)
+        {
+            var effectGroup = await _unitOfWork.EffectGroupRepository.GetEffectGroupConcentratedOn(characterId);
+            effectGroup?.Disperse();
+            await _unitOfWork.SaveChangesAsync();
+            return Ok();
         }
     }
 }

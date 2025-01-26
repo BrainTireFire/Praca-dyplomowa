@@ -9,5 +9,6 @@ namespace pracadyplomowa.Repository
         public Task<List<Campaign>> GetCampaigns(int OwnerId);
         public Task<Campaign> GetCampaign(int campaignId);
         public Task RemoveCampaign(int campaignId);
+        public Task<Campaign?> GetCampaignWithCharacters(int campaignId);
     }
 }

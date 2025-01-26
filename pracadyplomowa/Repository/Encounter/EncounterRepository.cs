@@ -56,12 +56,44 @@ public class EncounterRepository : BaseRepository<Models.Entities.Campaign.Encou
         
         return encounter;
     }
+
+    public Task<Models.Entities.Campaign.Encounter> GetEncounterSummaryWithFieldPowers(int encounterId)
+    {
+        var encounter = _context.Encounters
+            .Where(e => e.Id == encounterId)
+            .Include(e => e.R_Campaign)
+                .ThenInclude(c => c.R_CampaignHasCharacters)
+            .Include(e => e.R_Board)
+                .ThenInclude(b => b.R_ConsistsOfFields)
+                    .ThenInclude(b => b.R_CasterPowers)
+                        .ThenInclude(p => p.R_EffectBlueprints)
+            .Include(e => e.R_Participances)
+                .ThenInclude(p => p.R_Character)
+                    .ThenInclude(c => c.R_Owner)
+            .Include(e => e.R_Participances)
+                .ThenInclude(p => p.R_OccupiedField)
+            .AsSplitQuery()
+            .FirstAsync();
+        
+        return encounter;
+    }
     public Task<Models.Entities.Campaign.Encounter> GetEncounterWithParticipances(int encounterId)
     {
         var encounter = _context.Encounters
             .Where(e => e.Id == encounterId)
             .Include(e => e.R_Participances)
                 .ThenInclude(p => p.R_Character)
+            .FirstAsync();
+        
+        return encounter;
+    }
+    public Task<Models.Entities.Campaign.Encounter> GetEncounterWithParticipancesAndCampaign(int encounterId)
+    {
+        var encounter = _context.Encounters
+            .Where(e => e.Id == encounterId)
+            .Include(e => e.R_Participances)
+                .ThenInclude(p => p.R_Character)
+            .Include(e => e.R_Campaign)
             .FirstAsync();
         
         return encounter;

@@ -1,6 +1,11 @@
 import { EffectBlueprint } from "../features/effects/EffectBlueprintForm";
 import { CoinPurse } from "../features/items/models/coinPurse";
-import { AreaShape } from "../features/powers/models/power";
+import {
+  AreaShape,
+  CastableBy,
+  PowerType,
+  TargetType,
+} from "../features/powers/models/power";
 import {
   CharacterItem,
   Character,
@@ -413,9 +418,9 @@ export type PowerForEncounterDto = {
   maxTargets: number | null;
   areaShape: AreaShape | null;
   areaSize: number | null;
-  castableBy: string | null;
-  powerType: string | null;
-  targetType: string | null;
+  castableBy: CastableBy;
+  powerType: PowerType;
+  targetType: TargetType;
 };
 
 export type MaterialComponentDto = {
@@ -483,3 +488,35 @@ export type CharacterEquipmentAndSlotsDto_Item = {
   slots: Slot[];
   equippableInSlots: Slot[];
 };
+
+export async function getPowerConcentratedOn(
+  characterId: number
+): Promise<ConcentrationData> {
+  const response = await customFetch(
+    `${BASE_URL}/api/character/${characterId}/concentration`
+  );
+
+  console.log(response);
+
+  return response;
+}
+
+export type ConcentrationData = {
+  effectGroupId: number;
+  effectGroupName: string;
+  effectGroupDurationLeft: number;
+};
+
+export async function dropConcentration(characterId: number): Promise<void> {
+  const options: RequestInit = {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/character/${characterId}/concentration`,
+    options
+  );
+}

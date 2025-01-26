@@ -66,6 +66,7 @@ export type Character = {
   isNpc: boolean;
   accessLevels: CharacterAccessLevels[];
   xp: number;
+  canLevelUp: boolean;
 };
 
 export type CharacterInsertDto = {

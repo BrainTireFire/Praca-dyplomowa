@@ -4,7 +4,7 @@ import {
   ControlStateActions,
   Mode,
 } from "../../features/campaigns/session/SessionLayout";
-import { AreaShape } from "../../features/powers/models/power";
+import { AreaShape, TargetType } from "../../features/powers/models/power";
 
 export type VirtualBoardProps = {
   connection: HubConnection | null;
@@ -16,6 +16,7 @@ export type VirtualBoardProps = {
   otherPath: number[];
   weaponAttack: WeaponAttack;
   power: Power;
+  selectedTargets: number[];
 };
 
 export type WeaponAttack = {
@@ -30,4 +31,5 @@ export type Power = {
   maxTargets: number | null;
   areaShape: AreaShape | null;
   areaSize: number | null;
+  targetType: TargetType;
 };

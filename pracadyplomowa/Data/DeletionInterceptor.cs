@@ -10,7 +10,7 @@ namespace pracadyplomowa.Data
 {
     public class DeletionInterceptor : SaveChangesInterceptor
     {
-        public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
+        public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
         {
             var context = eventData.Context;
 
@@ -20,14 +20,25 @@ namespace pracadyplomowa.Data
 
                 foreach (var entry in entries)
                 {
-                    if (entry.State == EntityState.Modified && entry.Entity.DeleteOnSave)
+                    if (entry.Entity.DeleteOnSave)
+                    {
+                        entry.State = EntityState.Deleted;
+                    }
+                }
+
+                var effectInstanceEntries = context.ChangeTracker.Entries<EffectInstance>();
+
+                foreach (var entry in effectInstanceEntries)
+                {
+                    if (entry.Entity.DeleteOnSave)
                     {
                         entry.State = EntityState.Deleted;
                     }
                 }
             }
 
-            return base.SavingChanges(eventData, result);
+            await base.SavingChangesAsync(eventData, result, cancellationToken);
+            return result;
         }
     }
 }

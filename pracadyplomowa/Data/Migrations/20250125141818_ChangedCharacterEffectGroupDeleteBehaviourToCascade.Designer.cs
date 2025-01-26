@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using pracadyplomowa;
@@ -11,9 +12,11 @@ using pracadyplomowa;
 namespace pracadyplomowa.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250125141818_ChangedCharacterEffectGroupDeleteBehaviourToCascade")]
+    partial class ChangedCharacterEffectGroupDeleteBehaviourToCascade
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1017,9 +1020,6 @@ namespace pracadyplomowa.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("R_ConcentratedOnByCharacterId")
-                        .IsUnique();
-
                     b.HasIndex("R_GeneratesAuraId")
                         .IsUnique();
 
@@ -1414,6 +1414,9 @@ namespace pracadyplomowa.Data.Migrations
                     b.HasIndex("R_CharacterBelongsToRaceId");
 
                     b.HasIndex("R_CharacterHasBackpackId")
+                        .IsUnique();
+
+                    b.HasIndex("R_ConcentratesOnId")
                         .IsUnique();
 
                     b.HasIndex("R_SpawnedByPowerId");
@@ -2278,8 +2281,7 @@ namespace pracadyplomowa.Data.Migrations
 
                     b.HasOne("pracadyplomowa.Models.Entities.Campaign.ParticipanceData", "R_OccupiedBy")
                         .WithOne("R_OccupiedField")
-                        .HasForeignKey("pracadyplomowa.Models.Entities.Campaign.Field", "R_OccupiedById")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("pracadyplomowa.Models.Entities.Campaign.Field", "R_OccupiedById");
 
                     b.Navigation("R_Board");
 
@@ -2590,16 +2592,9 @@ namespace pracadyplomowa.Data.Migrations
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectGroup", b =>
                 {
-                    b.HasOne("pracadyplomowa.Models.Entities.Characters.Character", "R_ConcentratedOnByCharacter")
-                        .WithOne("R_ConcentratesOn")
-                        .HasForeignKey("pracadyplomowa.Models.Entities.Powers.EffectGroup", "R_ConcentratedOnByCharacterId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("pracadyplomowa.Models.Entities.Powers.Aura", "R_GeneratesAura")
                         .WithOne("R_GeneratedBy")
                         .HasForeignKey("pracadyplomowa.Models.Entities.Powers.EffectGroup", "R_GeneratesAuraId");
-
-                    b.Navigation("R_ConcentratedOnByCharacter");
 
                     b.Navigation("R_GeneratesAura");
                 });
@@ -2776,6 +2771,11 @@ namespace pracadyplomowa.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("pracadyplomowa.Models.Entities.Powers.EffectGroup", "R_ConcentratesOn")
+                        .WithOne("R_ConcentratedOnByCharacter")
+                        .HasForeignKey("pracadyplomowa.Models.Entities.Characters.Character", "R_ConcentratesOnId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("pracadyplomowa.Models.Entities.Powers.Power", "R_SpawnedByPower")
                         .WithMany("R_SpawnedCharacters")
                         .HasForeignKey("R_SpawnedByPowerId");
@@ -2795,6 +2795,8 @@ namespace pracadyplomowa.Data.Migrations
                     b.Navigation("R_CharacterBelongsToRace");
 
                     b.Navigation("R_CharacterHasBackpack");
+
+                    b.Navigation("R_ConcentratesOn");
 
                     b.Navigation("R_SpawnedByPower");
 
@@ -3792,6 +3794,8 @@ namespace pracadyplomowa.Data.Migrations
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectGroup", b =>
                 {
+                    b.Navigation("R_ConcentratedOnByCharacter");
+
                     b.Navigation("R_OwnedEffects");
                 });
 
@@ -3848,8 +3852,6 @@ namespace pracadyplomowa.Data.Migrations
                     b.Navigation("R_AuraCenteredAtCharacter");
 
                     b.Navigation("R_CharactersParticipatesInEncounters");
-
-                    b.Navigation("R_ConcentratesOn");
 
                     b.Navigation("R_EquippedItems");
 

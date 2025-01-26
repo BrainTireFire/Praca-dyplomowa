@@ -74,6 +74,28 @@ public class EncounterController : BaseApiController
     {
         return await _encounterService.ModifyInitiativeQueueAsync(encounterId, newQueue);
     }
+    [HttpPatch("{encounterId}/initiative/{characterId}/up")]
+    public async Task<ActionResult> MoveUpQueue(int encounterId, int characterId)
+    {
+        try{
+            await _encounterService.MoveUpQueue(encounterId, characterId, User.GetUserId());
+        }
+        catch(SessionBadRequestException ex){
+            return BadRequest(ex.Message);
+        }
+        return Ok();
+    }
+    [HttpPatch("{encounterId}/initiative/{characterId}/down")]
+    public async Task<ActionResult> MoveDownQueue(int encounterId, int characterId)
+    {
+        try{
+            await _encounterService.MoveDownQueue(encounterId, characterId, User.GetUserId());
+        }
+        catch(SessionBadRequestException ex){
+            return BadRequest(ex.Message);
+        }
+        return Ok();
+    }
     [HttpGet("{encounterId}/gmCheck")]
     public ActionResult<List<InitiativeQueueItemDto>> CheckIfIsGM(int encounterId)
     {
@@ -120,10 +142,25 @@ public class EncounterController : BaseApiController
         await _encounterService.UpdateParticipanceData(encounterId, characterId, participanceDataDto);
         return Ok();
     }
+    [HttpDelete("{encounterId}/participanceData/{characterId}")]
+    public async Task<ActionResult> RemoveParticipanceData(int encounterId, int characterId){
+        try{
+            await _encounterService.DeleteParticipanceData(encounterId, characterId, User.GetUserId());
+        }
+        catch(SessionBadRequestException ex){
+            return BadRequest(ex.Message);
+        }
+        return Ok();
+    }
+
+
     [HttpPost("{encounterId}/movement/{characterId}")]
     public async Task<ActionResult<List<int>>> MoveCharacter(int encounterId, int characterId, [FromBody] List<int> fieldIds)
     {
         var result = await _encounterService.MoveCharacter(encounterId, characterId, fieldIds);
+        if(result.Count != fieldIds.Count){
+            return BadRequest("Movement not possible");
+        }
         return Ok(result);
     }
 
@@ -233,12 +270,47 @@ public class EncounterController : BaseApiController
             return BadRequest(ex.Message);
         }
     }
+    [HttpGet("{encounterId}/powerCastData")]
+    public async Task<ActionResult<PowerDataAndConditionalEffectsDto>> GetPowerCastConditionalEffects(int encounterId, [FromQuery] int characterId, [FromQuery] int powerId, [FromQuery] List<int> targetIds){
+        
+        try{
+            var powerData = await _encounterService.GetPowerData(encounterId, characterId, powerId);
+            var conditionalEffects = await _encounterService.GetConditionalEffects(encounterId, characterId, targetIds);
+            var result = new PowerDataAndConditionalEffectsDto
+            {
+                PowerData = powerData,
+                ConditionalEffects = conditionalEffects
+            };
+            return Ok(result);
+        }
+        catch(SessionNotFoundException ex){
+            return NotFound(ex.Message);
+        }
+        catch(SessionBadRequestException ex){
+            return BadRequest(ex.Message);
+        }
+    }
 
     [HttpPost("{encounterId}/makeWeaponAttack")]
     public async Task<ActionResult<WeaponAttackResultDto>> MakeWeaponAttack(int encounterId, [FromQuery] int characterId, [FromQuery] int weaponId, [FromQuery] int targetId, [FromQuery] bool isRanged, [FromBody] WeaponAttackIncomingDataDto approvedConditionalEffects){
         
         try{
             var result = await _encounterService.MakeWeaponAttack(encounterId, characterId, weaponId, targetId, isRanged, approvedConditionalEffects);
+            return Ok(result);
+        }
+        catch(SessionNotFoundException ex){
+            return NotFound(ex.Message);
+        }
+        catch(SessionBadRequestException ex){
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPost("{encounterId}/castPower")]
+    public async Task<ActionResult<CastPowerResultDto>> CastPower(int encounterId, [FromQuery] int characterId, [FromQuery] int powerId, [FromBody] CastPowerIncomingDataDto incomingDataDto){
+        
+        try{
+            var result = await _encounterService.CastPower(encounterId, characterId, powerId, incomingDataDto);
             return Ok(result);
         }
         catch(SessionNotFoundException ex){

@@ -36,7 +36,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         public int? R_GeneratesAuraId { get; set; }
         public virtual ICollection<Field> R_EffectOnField { get; set; } = [];
 
-        public void AddEffectOnCharacter(EffectInstance effectInstance){
+        public void AddEffect(EffectInstance effectInstance){
             this.R_OwnedEffects.Add(effectInstance);
             effectInstance.R_OwnedByGroup = this;
         }
@@ -77,5 +77,13 @@ namespace pracadyplomowa.Models.Entities.Powers
             DeleteOnSave = true;
             R_ConcentratedOnByCharacter = null;
         }
+
+        public void DisperseOnTarget(Character target) {
+            var effects = R_OwnedEffects.Where(x => x.R_TargetedCharacter == target).ToList();
+            foreach(var effect in effects){
+                effect.Unlink();
+            }
+        }
+
     }
 }

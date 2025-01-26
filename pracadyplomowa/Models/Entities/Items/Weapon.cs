@@ -213,7 +213,7 @@ namespace pracadyplomowa.Models.Entities.Items
                             if(outcome == HitType.CriticalHit && effectInstance is DamageEffectInstance damageEffectInstance){
                                 damageEffectInstance.CriticalHit = true;
                             }
-                            effectGroup.AddEffectOnCharacter(effectInstance);
+                            effectGroup.AddEffect(effectInstance);
                         }
                     }
                 }

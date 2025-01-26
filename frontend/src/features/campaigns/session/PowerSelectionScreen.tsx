@@ -157,6 +157,7 @@ function PowerRow({
               maxTargets: power.maxTargets,
               areaShape: power.areaShape,
               areaSize: power.areaSize,
+              targetType: power.targetType,
             },
           });
           onCloseModal();

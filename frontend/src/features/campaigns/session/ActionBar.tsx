@@ -22,6 +22,8 @@ import useNextTurn from "../hooks/useNextTurn";
 import Modal from "../../../ui/containers/Modal";
 import { AttackSelectionScreen } from "./AttackSelectionScreen";
 import { PowerSelectionScreen } from "./PowerSelectionScreen";
+import { useGetPowerConcentratedOn } from "../hooks/useGetPowerConcentratedOn";
+import useDropConcentration from "../hooks/useDropConcentration";
 
 const initialParticipanceData: ParticipanceData = {
   actionsTaken: 0,
@@ -132,16 +134,24 @@ export default function ActionBar({
       dispatch({ type: "SET_PATH", payload: [] });
     }
   );
+
+  const { isLoading: isLoadingConcentrationData, concentrationData } =
+    useGetPowerConcentratedOn(controlledCharacterId);
+  const { isPending: isPendingConcentrationDrop, dropConcentration } =
+    useDropConcentration(encounter.id, controlledCharacterId, () => {});
   if (
     isLoadingIsGM ||
     isLoadingIsItMyTurn ||
     isLoadingParticipanceData ||
     isPendingParticipanceDataUpdate ||
     isPendingNextTurnSetting ||
-    isPendingMove
+    isPendingMove ||
+    isLoadingConcentrationData ||
+    isPendingConcentrationDrop
   ) {
     return <Spinner></Spinner>;
   }
+  console.log(concentrationData);
   return (
     <>
       {!controlledCharacterId && (
@@ -237,16 +247,24 @@ export default function ActionBar({
               </FormRowVertical>
             </Cell>
             <Cell>
-              <span>Concentrates on: powerName</span>
-              <Button
-                size="small"
-                customStyles={css`
-                  height: 50px;
-                `}
-                disabled={!isItMyTurn}
-              >
-                Drop concentration
-              </Button>
+              {!!concentrationData?.effectGroupId && (
+                <>
+                  <span>
+                    Concentrates on {concentrationData.effectGroupName} for{" "}
+                    {concentrationData.effectGroupDurationLeft} turns
+                  </span>
+                  <Button
+                    size="small"
+                    customStyles={css`
+                      height: 50px;
+                    `}
+                    disabled={!isItMyTurn}
+                    onClick={() => dropConcentration()}
+                  >
+                    Drop concentration
+                  </Button>
+                </>
+              )}
             </Cell>
             <Cell>
               <FormRowVertical label={"Movement used"}>
@@ -386,6 +404,27 @@ export default function ActionBar({
               {controlState.mode === "Movement" && (
                 <Button onClick={() => moveCharacter(controlState.path)}>
                   Confirm movement
+                </Button>
+              )}
+              {controlState.mode === "PowerCast" && (
+                <Button
+                  disabled={
+                    controlState.powerSelected
+                      ? controlState.powerSelected.maxTargets! -
+                          controlState.powerTargets.length <
+                          0 || controlState.powerTargets.length === 0
+                      : true
+                  }
+                  onClick={() =>
+                    dispatch({
+                      type: "POWER_CAST_OVERLAY_DATA",
+                      payload: { targetIds: controlState.powerTargets },
+                    })
+                  }
+                >
+                  Confirm power target selection (targets:{" "}
+                  {controlState.powerTargets.length}/
+                  {controlState.powerSelected?.maxTargets})
                 </Button>
               )}
               <Button

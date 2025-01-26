@@ -90,3 +90,14 @@ export async function getMyCharacter(campaignId: number): Promise<Character> {
 
   return response;
 }
+
+export async function longRest(campaignId: number): Promise<Response> {
+  const options: RequestInit = {
+    method: "PATCH",
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/campaign/${campaignId}/longRest`,
+    options
+  );
+}

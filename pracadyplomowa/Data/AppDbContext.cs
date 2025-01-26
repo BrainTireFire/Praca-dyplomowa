@@ -160,8 +160,8 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                 builder.Entity<Character>()
                         .HasOne(c => c.R_ConcentratesOn)
                         .WithOne(c => c.R_ConcentratedOnByCharacter)
-                        .HasForeignKey<Character>(c => c.R_ConcentratesOnId)
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasForeignKey<EffectGroup>(c => c.R_ConcentratedOnByCharacterId)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired(false);
 
                 builder.Entity<Character>()
@@ -212,11 +212,12 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .IsRequired(false)
                         .OnDelete(DeleteBehavior.Cascade);
                 
-                builder.Entity<Field>()
+                builder.Entity<Field>() //Should probably be reversed so that when board is deleted then participance data is removed
                         .HasOne(c => c.R_OccupiedBy)
                         .WithOne(c => c.R_OccupiedField)
                         .HasForeignKey<Field>(c => c.R_OccupiedById)
-                        .IsRequired(false);
+                        .IsRequired(false)
+                        .OnDelete(DeleteBehavior.SetNull);
 
                 // builder.Entity<EffectGroup>()
                 //         .HasOne(c => c.R_OriginatesFromAura)

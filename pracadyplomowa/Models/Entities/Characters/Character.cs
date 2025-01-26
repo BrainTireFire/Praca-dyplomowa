@@ -580,7 +580,12 @@ namespace pracadyplomowa.Models.Entities.Characters
             {
                 int baseArmorClass = 10;
                 int dexterityModifier = this.DexterityModifier;
-                IEnumerable<Apparel> apparel = this.R_EquippedItems.Where(ed => ed.R_Slots.Select(s => s.Type).Contains(SlotType.Apparel)).Select(aed => aed.R_Item).OfType<Apparel>();
+                List<Apparel> apparel = this.R_EquippedItems.Where(ed => ed.R_Slots.Select(s => s.Type).Contains(SlotType.Apparel)).Select(aed => aed.R_Item).OfType<Apparel>().Distinct().ToList();
+                int armor = 0;
+                if(apparel.Any())
+                {
+                    armor = apparel.Sum(x => x.ArmorClass);
+                }
                 bool wearsHeavyArmor = apparel.Where(a => a.R_ItemInItemsFamily.ItemType == ItemType.HeavyArmor).Any();
                 if (wearsHeavyArmor)
                 {
@@ -597,14 +602,8 @@ namespace pracadyplomowa.Models.Entities.Characters
                 int armorClassFromEffects = this.AffectedByApprovedEffects
                                 .OfType<ArmorClassEffectInstance>()
                                 .Sum(m => m.DiceSet);
-                int armorClassFromItems = this.R_EquippedItems
-                                .Where(ei => ei.R_Slots.Select(s => s.Type).Contains(SlotType.Apparel))
-                                .Select(ei => ei.R_Item)
-                                .OfType<Apparel>()
-                                .Distinct()
-                                .Sum(i => i.ArmorClass);
 
-                return baseArmorClass + dexterityModifier + armorClassFromItems + armorClassFromEffects;
+                return Math.Max(armor, baseArmorClass) + dexterityModifier + armorClassFromEffects;
             }
         }
 

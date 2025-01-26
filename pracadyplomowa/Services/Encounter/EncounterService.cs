@@ -274,16 +274,16 @@ public class EncounterService : IEncounterService
 
     public async Task NextTurn(int encounterId){
         var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipances(encounterId);
-
-        var x = encounter.R_Participances.SkipWhile(x => !x.ActiveTurn);
+        var participances = encounter.R_Participances.OrderBy(x => x.InitiativeOrder);
+        var x = participances.SkipWhile(x => !x.ActiveTurn);
         ParticipanceData participanceData;
         if(x.Count() > 1){
             participanceData = x.Skip(1).First();
         }
         else{
-            participanceData = encounter.R_Participances.First();
+            participanceData = participances.First();
         }
-        encounter.R_Participances.ToList().ForEach(x => x.ActiveTurn = false);
+        participances.ToList().ForEach(x => x.ActiveTurn = false);
         participanceData.ActiveTurn = true;
         participanceData.NumberOfActionsTaken = 0;
         participanceData.NumberOfBonusActionsTaken = 0;
@@ -291,7 +291,7 @@ public class EncounterService : IEncounterService
         participanceData.DistanceTraveled = 0;
         var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(participanceData.R_CharacterId);
         character.StartNextTurn();
-        if(participanceData == encounter.R_Participances.First()){
+        if(participanceData == participances.First()){
             List<EffectGroup> effectGroups = await _unitOfWork.EffectGroupRepository.GetAllEffectGroupsPresentInEncounter(encounterId);
             foreach(var effectGroup in effectGroups){
                 effectGroup.TickDuration();

@@ -586,8 +586,8 @@ namespace pracadyplomowa.Models.Entities.Characters
                 {
                     armor = apparel.Sum(x => x.ArmorClass);
                 }
-                bool wearsHeavyArmor = apparel.Where(a => a.R_ItemInItemsFamily.ItemType == ItemType.HeavyArmor).Any();
-                if (wearsHeavyArmor)
+                bool wearsLightArmor = apparel.Where(a => a.R_ItemInItemsFamily.ItemType == ItemType.LightArmor).Any();
+                if (wearsLightArmor)
                 {
                     dexterityModifier = Math.Max(dexterityModifier, 0);
                 }
@@ -596,7 +596,10 @@ namespace pracadyplomowa.Models.Entities.Characters
                     bool wearsMediumArmor = apparel.Where(a => a.R_ItemInItemsFamily.ItemType == ItemType.MediumArmor).Any();
                     if (wearsMediumArmor)
                     {
-                        dexterityModifier = Math.Min(dexterityModifier, 2);
+                        dexterityModifier = Math.Max(dexterityModifier, 0);
+                        if(dexterityModifier > 2){
+                            dexterityModifier = 2;
+                        }
                     }
                 }
                 int armorClassFromEffects = this.AffectedByApprovedEffects

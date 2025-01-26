@@ -15,6 +15,7 @@ import useNextTurn from "../hooks/useNextTurn";
 import useRollInitiative from "../hooks/useRollInitiative";
 import ButtonGroup from "../../../ui/interactive/ButtonGroup";
 import useDeleteParticipanceData from "../hooks/useDeleteParticipanceData";
+import useMoveInQueue from "../hooks/useMoveInQueue";
 
 type characterInitiative = {
   id: number;
@@ -131,6 +132,11 @@ function InititativeTile({
   );
   const { isPending: isPendingRemoval, deleteParticipanceData } =
     useDeleteParticipanceData(Number(groupName), item.characterId, () => {});
+  const { isPending: isPendingOrderChange, moveInQueue } = useMoveInQueue(
+    Number(groupName),
+    item.characterId,
+    () => {}
+  );
   return (
     <Tile IsActive={item.activeTurn}>
       <TileCell1>
@@ -145,14 +151,18 @@ function InititativeTile({
       <TileCell2>
         {isGM && (
           <>
-            <Button size="small">Move up</Button>
+            <Button size="small" onClick={() => moveInQueue(true)}>
+              Move up
+            </Button>
             <Button
               size="small"
               onClick={() => handleChangeActiveTurn(item.characterId)}
             >
               Set active turn
             </Button>
-            <Button size="small">Move down</Button>
+            <Button size="small" onClick={() => moveInQueue(false)}>
+              Move down
+            </Button>
           </>
         )}
         <Button onClick={() => setControlledCharacterId(item.characterId)}>

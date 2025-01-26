@@ -212,7 +212,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .IsRequired(false)
                         .OnDelete(DeleteBehavior.Cascade);
                 
-                builder.Entity<Field>()
+                builder.Entity<Field>() //Should probably be reversed so that when board is deleted then participance data is removed
                         .HasOne(c => c.R_OccupiedBy)
                         .WithOne(c => c.R_OccupiedField)
                         .HasForeignKey<Field>(c => c.R_OccupiedById)

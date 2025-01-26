@@ -901,5 +901,41 @@ public class EncounterService : IEncounterService
         return result;
     }
 
+    public async Task MoveUpQueue(int encounterId, int characterId, int userId){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipancesAndCampaign(encounterId) ?? throw new SessionNotFoundException("Encounter not found");
+        if(encounter.R_OwnerId != userId){
+            throw new SessionBadRequestException("You are not Dungeon Master");
+        }
+        // Find the index of the item with the given id
+        var participanceList = encounter.R_Participances.OrderBy(x => x.InitiativeOrder).ToList();
+        int currentIndex = participanceList.FindIndex(p => p.R_CharacterId == characterId);
+
+        if (currentIndex == -1) throw new SessionNotFoundException("Character not found");
+
+        int predecessorIndex = currentIndex == 0 ? participanceList.Count - 1 : currentIndex - 1;
+
+        (participanceList[predecessorIndex].InitiativeOrder, participanceList[currentIndex].InitiativeOrder) = (participanceList[currentIndex].InitiativeOrder, participanceList[predecessorIndex].InitiativeOrder);
+
+        await _unitOfWork.SaveChangesAsync();
+    }
+
+        public async Task MoveDownQueue(int encounterId, int characterId, int userId){
+        var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipancesAndCampaign(encounterId) ?? throw new SessionNotFoundException("Encounter not found");
+        if(encounter.R_OwnerId != userId){
+            throw new SessionBadRequestException("You are not Dungeon Master");
+        }
+        // Find the index of the item with the given id
+        var participanceList = encounter.R_Participances.OrderBy(x => x.InitiativeOrder).ToList();
+        int currentIndex = participanceList.FindIndex(p => p.R_CharacterId == characterId);
+
+        if (currentIndex == -1) throw new SessionNotFoundException("Character not found");
+
+        int successorIndex = (currentIndex == participanceList.Count - 1) ? 0 : currentIndex + 1;
+
+        (participanceList[successorIndex].InitiativeOrder, participanceList[currentIndex].InitiativeOrder) = (participanceList[currentIndex].InitiativeOrder, participanceList[successorIndex].InitiativeOrder);
+
+        await _unitOfWork.SaveChangesAsync();
+    }
+
 
 }

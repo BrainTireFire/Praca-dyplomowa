@@ -121,6 +121,27 @@ export async function modifyInitiative(
 
   return;
 }
+export async function moveInQueue(
+  encounterId: number,
+  characterId: number,
+  up: boolean
+): Promise<void> {
+  const options: RequestInit = {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  await customFetch(
+    `${BASE_URL}/api/encounter/${encounterId}/initiative/${characterId}/${
+      up ? "up" : "down"
+    }`,
+    options
+  );
+
+  return;
+}
 export type InitiativeOrderItem = {
   characterId: number;
   placeInQueue: number;

@@ -74,6 +74,28 @@ public class EncounterController : BaseApiController
     {
         return await _encounterService.ModifyInitiativeQueueAsync(encounterId, newQueue);
     }
+    [HttpPatch("{encounterId}/initiative/{characterId}/up")]
+    public async Task<ActionResult> MoveUpQueue(int encounterId, int characterId)
+    {
+        try{
+            await _encounterService.MoveUpQueue(encounterId, characterId, User.GetUserId());
+        }
+        catch(SessionBadRequestException ex){
+            return BadRequest(ex.Message);
+        }
+        return Ok();
+    }
+    [HttpPatch("{encounterId}/initiative/{characterId}/down")]
+    public async Task<ActionResult> MoveDownQueue(int encounterId, int characterId)
+    {
+        try{
+            await _encounterService.MoveDownQueue(encounterId, characterId, User.GetUserId());
+        }
+        catch(SessionBadRequestException ex){
+            return BadRequest(ex.Message);
+        }
+        return Ok();
+    }
     [HttpGet("{encounterId}/gmCheck")]
     public ActionResult<List<InitiativeQueueItemDto>> CheckIfIsGM(int encounterId)
     {

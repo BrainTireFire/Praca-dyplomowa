@@ -34,4 +34,6 @@ public interface IEncounterService
     Task<WeaponAttackResultDto> MakeWeaponAttack(int encounterId, [FromQuery] int characterId, [FromQuery] int weaponId, [FromQuery] int targetId, [FromQuery] bool isRanged, [FromBody] WeaponAttackIncomingDataDto approvedConditionalEffects);
     Task<PowerDataForResolutionDto> GetPowerData(int encounterId, int characterId, int powerId);
     Task<CastPowerResultDto> CastPower(int encounterId, int characterId, int powerId, CastPowerIncomingDataDto incomingDataDto);
+    Task MoveUpQueue(int encounterId, int characterId, int userId);
+    Task MoveDownQueue(int encounterId, int characterId, int userId);
 }

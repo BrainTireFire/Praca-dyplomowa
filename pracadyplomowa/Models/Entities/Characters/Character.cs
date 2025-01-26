@@ -589,7 +589,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                 bool wearsHeavyArmor = apparel.Where(a => a.R_ItemInItemsFamily.ItemType == ItemType.HeavyArmor).Any();
                 if (wearsHeavyArmor)
                 {
-                    dexterityModifier = Math.Min(dexterityModifier, 0);
+                    dexterityModifier = Math.Max(dexterityModifier, 0);
                 }
                 else
                 {

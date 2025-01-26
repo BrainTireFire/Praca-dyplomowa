@@ -9,6 +9,7 @@ import { Character } from "../../../models/character";
 import { EquipmentSheet } from "./EquipmentSheet";
 import { SpellSheet } from "./SpellSheet";
 import { InitiativeQueue } from "./InitiativeQueue";
+import { CharacterIdContext } from "../../characters/contexts/CharacterIdContext";
 
 // Keyframes for the sliding animation
 const slideIn = keyframes`
@@ -79,7 +80,9 @@ export function SidebarOverlay({
         <>
           <OverlayContent>
             {character && (
-              <>
+              <CharacterIdContext.Provider
+                value={{ characterId: character.id }}
+              >
                 {activeComponent === "Component1" && (
                   <CharacterMiniSheet
                     character={character as Character}
@@ -93,7 +96,7 @@ export function SidebarOverlay({
                 {activeComponent === "Component3" && (
                   <SpellSheet character={character as Character}></SpellSheet>
                 )}
-              </>
+              </CharacterIdContext.Provider>
             )}
             {isError && (
               <>

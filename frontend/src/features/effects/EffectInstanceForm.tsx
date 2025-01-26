@@ -92,6 +92,7 @@ import { EffectContext } from "./contexts/BlueprintOrInstanceContext";
 import { EffectParentObjectIdContext } from "../../context/EffectParentObjectIdContext";
 import { useCreateEffectInstance } from "./hooks/useCreateEffectInstance";
 import { EditModeContext } from "../../context/EditModeContext";
+import FormRowLabelRight from "../../ui/forms/FormRowLabelRight";
 
 const effectTypes = [
   "movementEffect",
@@ -179,6 +180,7 @@ type Action = {
     | "setResourceLevel"
     | "setDurationLeft"
     | "setSavingThrowSuccess"
+    | "setConditional"
     | "setEffectType"
     | "setEffectTypeBody"
     | "resetState";
@@ -219,6 +221,9 @@ const effectReducer = (
       break;
     case "setSavingThrowSuccess":
       newState = { ...state, savingThrowSuccess: action.payload };
+      break;
+    case "setConditional":
+      newState = { ...state, conditional: action.payload };
       break;
     case "setEffectType":
       newState = { ...state, effectType: action.payload };
@@ -351,6 +356,19 @@ export default function EffectInstanceForm({
                 ></Input>
               </FormRowVertical>
             )}
+            <FormRowLabelRight label="Is conditional">
+              <Input
+                disabled={disableForm}
+                type="checkbox"
+                checked={state.conditional}
+                onChange={(x) =>
+                  dispatch({
+                    type: "setConditional",
+                    payload: x.target.checked,
+                  })
+                }
+              ></Input>
+            </FormRowLabelRight>
           </Div1>
           <Div2>
             <RadioGroup

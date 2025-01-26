@@ -16,19 +16,33 @@ namespace pracadyplomowa.Data
 
             if (context != null)
             {
-                var entries = context.ChangeTracker.Entries<EffectGroup>();
-
-                foreach (var entry in entries)
+                //Mark entity state as deleted if DeleteOnSave flag is set
+                var effectInstanceEntries = context.ChangeTracker.Entries<EffectInstance>();
+                var deletedEffectInstances = new List<EffectInstance>();
+                foreach (var entry in effectInstanceEntries)
                 {
                     if (entry.Entity.DeleteOnSave)
                     {
                         entry.State = EntityState.Deleted;
+                        deletedEffectInstances.Add(entry.Entity);
                     }
                 }
-
-                var effectInstanceEntries = context.ChangeTracker.Entries<EffectInstance>();
-
-                foreach (var entry in effectInstanceEntries)
+                //Find all effect groups related to the effects with DeleteOnSave == true, and load all of their related effects
+                var effectGroups = context.Set<EffectGroup>()
+                                            .Where(e => e.R_OwnedEffects
+                                                                .Where(x => deletedEffectInstances.Contains(x))
+                                                                .Select(x => x.R_OwnedByGroupId)
+                                                                .Contains(e.Id)
+                                            ).Include(e => e.R_OwnedEffects).ToList();
+                //If all of the effects related to the effect group are marked for deletion, then mark entire Effect Group for deletion by setting DeleteOnSave = true
+                foreach(var effectGroup in effectGroups){
+                    if(effectGroup.R_OwnedEffects.Count > 0 && !effectGroup.R_OwnedEffects.Any(x => x.DeleteOnSave == false)){
+                        effectGroup.DeleteOnSave = true;
+                    }
+                }
+                //If EffectGroup has DeleteOnSave == true, mark entity state as Deleted
+                var entries = context.ChangeTracker.Entries<EffectGroup>();
+                foreach (var entry in entries)
                 {
                     if (entry.Entity.DeleteOnSave)
                     {

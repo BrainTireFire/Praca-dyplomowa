@@ -12,10 +12,13 @@ namespace pracadyplomowa.Repository
     {
         public Task<List<EffectGroup>> GetAllEffectGroupsPresentInEncounter(int encounterId){
             return _context.EffectGroups.Where(x => 
-                x.IsConstant == false && x.R_OwnedEffects.Any(ei => 
+                x.IsConstant == false
+                && (x.R_OwnedEffects.Any(ei => 
                     ei.R_TargetedCharacterId != null && ei.R_TargetedCharacter!.R_CharactersParticipatesInEncounters.Any(y => 
                         y.R_EncounterId == encounterId
-                    )
+                        )
+                    ) 
+                    || (x.R_ConcentratedOnByCharacter != null && x.R_ConcentratedOnByCharacter.R_CharactersParticipatesInEncounters.Any(y => y.R_EncounterId == encounterId))
                 )
             )
             .Include(x => x.R_OwnedEffects)

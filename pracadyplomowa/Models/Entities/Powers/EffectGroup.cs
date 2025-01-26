@@ -73,9 +73,11 @@ namespace pracadyplomowa.Models.Entities.Powers
         public void Disperse() {
             if(R_ConcentratedOnByCharacter != null){
                 R_ConcentratedOnByCharacter.R_ConcentratesOn = null;
+                R_ConcentratedOnByCharacter.R_ConcentratesOnId = null;
             }
             DeleteOnSave = true;
             R_ConcentratedOnByCharacter = null;
+            R_ConcentratedOnByCharacterId = null;
         }
 
         public void DisperseOnTarget(Character target) {

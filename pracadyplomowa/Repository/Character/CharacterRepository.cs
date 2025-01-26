@@ -161,6 +161,7 @@ namespace pracadyplomowa.Repository
 
             .Include(c => c.R_ImmaterialResourceInstances)
                 .ThenInclude(iri => iri.R_Blueprint)
+            .Include(c => c.R_ConcentratesOn)
 
             .AsSplitQuery() // IMPORTANT !!!!! https://learn.microsoft.com/en-us/ef/core/querying/single-split-queries
             .FirstAsync();

@@ -664,6 +664,7 @@ public class MappingProfiles : Profile
                 IsSpellFocus = src.IsSpellFocus,
                 OccupiesAllSlots = src.OccupiesAllSlots,
                 MinimumStrength = src.StrengthRequirement,
+                ArmorClass = src.ArmorClass,
                 DisadvantageOnStealth = src.StealthDisadvantage,
                 EffectsOnWearer = src.R_EffectsOnEquip.Select(effect => new EquippableItemFormDto.Body.EffectBlueprintDto(){
                         Id = effect.Id,
@@ -692,7 +693,7 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.OccupiesAllSlots, opt => opt.MapFrom(src => src.ItemTypeBody.OccupiesAllSlots))
             .ForMember(dest => dest.StrengthRequirement, opt => opt.MapFrom(src => src.ItemTypeBody.MinimumStrength))
             .ForMember(dest => dest.StealthDisadvantage, opt => opt.MapFrom(src => src.ItemTypeBody.DisadvantageOnStealth))
-            .ForMember(dest => dest.StrengthRequirement, opt => opt.MapFrom(src => src.ItemTypeBody.MinimumStrength));
+            .ForMember(dest => dest.ArmorClass, opt => opt.MapFrom(src => src.ItemTypeBody.ArmorClass));
 
         CreateMap<MeleeWeapon, MeleeWeaponFormDto>()
             .IncludeBase<Item, ItemFormDto>()

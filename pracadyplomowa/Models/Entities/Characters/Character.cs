@@ -1457,6 +1457,7 @@ namespace pracadyplomowa.Models.Entities.Characters
 
         
         public void StartConcentration(EffectGroup effectGroup){
+            DropConcentration();
             effectGroup.R_ConcentratedOnByCharacter = this;
             effectGroup.R_ConcentratedOnByCharacterId = effectGroup.R_ConcentratedOnByCharacter.Id;
             this.R_ConcentratesOn = effectGroup;

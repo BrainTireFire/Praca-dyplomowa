@@ -33,22 +33,21 @@ export default function EquipmentSlotScreen({
   const onDragEnd = (result: any) => {
     setHoverDroppableId("");
     setDraggableId("");
+    console.log(result.reason);
     if (result.reason === "DROP") {
+      console.log(result.destination.droppableId);
       if (
         result.destination.droppableId === "equipmentColumn" &&
         result.source.droppableId !== "equipmentColumn"
       ) {
         unequipItemInSlot({
-          characterId,
+          characterId: characterId as number,
           slotId: result.source.droppableId,
           itemId: result.draggableId,
         });
-      } else if (
-        result.destination.droppableId !== "equipmentColumn" &&
-        result.source.droppableId === "equipmentColumn"
-      ) {
+      } else if (result.destination.droppableId !== "equipmentColumn") {
         equipItemInSlot({
-          characterId,
+          characterId: characterId as number,
           slotId: result.destination.droppableId,
           itemId: result.draggableId,
         });

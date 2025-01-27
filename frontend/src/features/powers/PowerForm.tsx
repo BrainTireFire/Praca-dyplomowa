@@ -603,7 +603,7 @@ export default function PowerForm({
         </Row1>
         <Row2>
           <Column1>
-            <FormRowLabelRight label="Is implemented">
+            {/* <FormRowLabelRight label="Is implemented">
               <Input
                 type="checkbox"
                 checked={state.isImplemented}
@@ -614,7 +614,7 @@ export default function PowerForm({
                   })
                 }
               ></Input>
-            </FormRowLabelRight>
+            </FormRowLabelRight> */}
             <FormRowLabelRight label="Is magic">
               <Input
                 type="checkbox"

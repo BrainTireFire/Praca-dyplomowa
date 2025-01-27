@@ -504,13 +504,13 @@ public class EncounterService : IEncounterService
 
         var result = new ConditionalEffectsSetDto
         {
-            CasterConditionalEffects = [.. character.AllEffects
+            CasterConditionalEffects = [.. character.AllEffects.Where(x => x.Conditional == true)
             .Select(x => new ConditionalEffectsSetDto.ConditionalEffectDto(){
                 EffectId = x.Id,
                 EffectName = x.Name,
                 EffectDescription = x.Description
             })],
-            TargetConditionalEffects = [.. target.AllEffects
+            TargetConditionalEffects = [.. target.AllEffects.Where(x => x.Conditional == true)
             .Select(x => new ConditionalEffectsSetDto.ConditionalEffectDto(){
                 EffectId = x.Id,
                 EffectName = x.Name,
@@ -534,7 +534,7 @@ public class EncounterService : IEncounterService
 
         var result = new ConditionalEffectsSetForManyTargetsDto()
         {
-            CasterConditionalEffects = [.. character.AllEffects
+            CasterConditionalEffects = [.. character.AllEffects.Where(x => x.Conditional == true)
             .Select(x => new ConditionalEffectsSetForManyTargetsDto.ConditionalEffectDto(){
                 EffectId = x.Id,
                 EffectName = x.Name,
@@ -545,7 +545,7 @@ public class EncounterService : IEncounterService
             result.TargetData.Add(new ConditionalEffectsSetForManyTargetsDto.TargetDataDto(){
                 TargetId = target.Id,
                 TargetName = target.Name,
-                TargetConditionalEffects = [.. target.AllEffects
+                TargetConditionalEffects = [.. target.AllEffects.Where(x => x.Conditional == true)
                                                 .Select(x => new ConditionalEffectsSetForManyTargetsDto.ConditionalEffectDto(){
                                                     EffectId = x.Id,
                                                     EffectName = x.Name,

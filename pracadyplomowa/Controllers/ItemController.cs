@@ -124,7 +124,7 @@ namespace pracadyplomowa.Controllers
                 return actionResult;
             }
 
-            var itemLoaded = (MeleeWeapon)await _unitOfWork.ItemRepository.GetByIdWithSlotsPowersEffectsResources((int)apparelDto.Id);
+            var itemLoaded = (Apparel)await _unitOfWork.ItemRepository.GetByIdWithSlotsPowersEffectsResources((int)apparelDto.Id);
             var item = _mapper.Map(apparelDto, itemLoaded);
             _unitOfWork.ItemRepository.Update(item);
             await _unitOfWork.SaveChangesAsync();

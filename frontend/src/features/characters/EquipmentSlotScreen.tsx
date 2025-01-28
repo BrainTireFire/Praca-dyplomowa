@@ -33,9 +33,7 @@ export default function EquipmentSlotScreen({
   const onDragEnd = (result: any) => {
     setHoverDroppableId("");
     setDraggableId("");
-    console.log(result.reason);
     if (result.reason === "DROP") {
-      console.log(result.destination.droppableId);
       if (
         result.destination.droppableId === "equipmentColumn" &&
         result.source.droppableId !== "equipmentColumn"

@@ -20,6 +20,7 @@ export type CharacterItem = {
   description: string;
   class: string;
   race: string;
+  size: Size;
   campaignId: number | null;
   isNpc: boolean;
   xp: number;

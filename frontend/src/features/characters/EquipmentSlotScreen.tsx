@@ -39,16 +39,13 @@ export default function EquipmentSlotScreen({
         result.source.droppableId !== "equipmentColumn"
       ) {
         unequipItemInSlot({
-          characterId,
+          characterId: characterId as number,
           slotId: result.source.droppableId,
           itemId: result.draggableId,
         });
-      } else if (
-        result.destination.droppableId !== "equipmentColumn" &&
-        result.source.droppableId === "equipmentColumn"
-      ) {
+      } else if (result.destination.droppableId !== "equipmentColumn") {
         equipItemInSlot({
-          characterId,
+          characterId: characterId as number,
           slotId: result.destination.droppableId,
           itemId: result.draggableId,
         });

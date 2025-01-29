@@ -210,7 +210,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
             var occupiedDirectly = enc.R_Participances.Where(par => par.R_Character != characterExcluded).Select(p => p.R_OccupiedField).ToList();
             foreach(var occupiedField in occupiedDirectly){
                 var size = occupiedField.R_OccupiedBy.R_Character.Size;
-                occupiedCoordinates = occupiedField.GetOccupiedCoordinates(size);
+                occupiedCoordinates.AddRange(occupiedField.GetOccupiedCoordinates(size));
             }
             return occupiedCoordinates.Contains(new Tuple<int, int>(PositionX, PositionY));
         }

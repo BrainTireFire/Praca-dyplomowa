@@ -97,7 +97,16 @@ public class MappingProfiles : Profile
                     src => src.R_CampaignHasCharacters
                 )
             );
-        CreateMap<Character, ParticipanceCharacterSummaryDto>();
+        CreateMap<Character, ParticipanceCharacterSummaryDto>()
+            .ForMember(
+                dest => dest.Size,
+                opt => opt.MapFrom(
+                    src => new SizeItem(){
+                        Order = (int)src.Size,
+                        Name = src.Size
+                    }
+                )
+            );
         CreateMap<ParticipanceData, ParticipanceDataDto>()
             .ForMember(
                 dest => dest.Character,

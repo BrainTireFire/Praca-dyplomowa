@@ -150,14 +150,14 @@ export default function VirtualBoard({
             field,
             encounter.board.sizeX,
             encounter.board.sizeY,
-            ActiveCharacterSize
+            matchingParticipance.character.size.name
           );
           drawTextName(
             ctx,
             field,
             encounter.board.sizeX,
             encounter.board.sizeY,
-            ActiveCharacterSize
+            matchingParticipance.character.size.name
           );
         }
 
@@ -171,31 +171,28 @@ export default function VirtualBoard({
         }
       });
     }
-
+    let controlledCharacter = encounter.participances.find(
+      (x) => x.character.id === controlledCharacterId
+    );
+    let occupiedField = controlledCharacter?.occupiedField;
     if (mode === "WeaponAttack") {
-      let occupiedField = encounter.participances.find(
-        (x) => x.character.id === controlledCharacterId
-      )?.occupiedField;
       drawAttackRange(
         ctx,
         { x: occupiedField!.positionX, y: occupiedField!.positionY },
         weaponAttack.range,
-        ActiveCharacterSize,
+        controlledCharacter?.character.size.name!,
         encounter.board.sizeX,
         encounter.board.sizeY
       );
     }
     if (mode === "PowerCast") {
-      let occupiedField = encounter.participances.find(
-        (x) => x.character.id === controlledCharacterId
-      )?.occupiedField;
       if (power.targetType === "Caster" || power.targetType == "Character") {
         let range = power.range ? power.range : 0;
         drawAttackRange(
           ctx,
           { x: occupiedField!.positionX, y: occupiedField!.positionY },
           range,
-          ActiveCharacterSize,
+          controlledCharacter?.character.size.name!,
           encounter.board.sizeX,
           encounter.board.sizeY
         );
@@ -204,11 +201,12 @@ export default function VirtualBoard({
       encounter.participances.forEach((element) => {
         if (selectedTargets.find((x) => x === element.character.id)) {
           let occupiedField = element.occupiedField;
+          let targetedCharacter = element.character;
           drawSelectedTargetMarker(
             ctx,
             { x: occupiedField!.positionX, y: occupiedField!.positionY },
             0,
-            ActiveCharacterSize,
+            targetedCharacter.size.name,
             encounter.board.sizeX,
             encounter.board.sizeY
           );

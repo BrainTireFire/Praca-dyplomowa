@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using pracadyplomowa.Models.Entities.Powers;
 
 namespace pracadyplomowa.Repository.Encounter;
 
@@ -49,6 +50,12 @@ public class EncounterRepository : BaseRepository<Models.Entities.Campaign.Encou
             .Include(e => e.R_Participances)
                 .ThenInclude(p => p.R_Character)
                     .ThenInclude(c => c.R_Owner)
+            .Include(e => e.R_Participances)
+                .ThenInclude(p => p.R_Character)
+                    .ThenInclude(c => c.R_CharacterBelongsToRace)
+            .Include(e => e.R_Participances)
+                .ThenInclude(p => p.R_Character)
+                    .ThenInclude(c => c.R_AffectedBy.Where(x => x is SizeEffectInstance))
             .Include(e => e.R_Participances)
                 .ThenInclude(p => p.R_OccupiedField)
             .AsSplitQuery()

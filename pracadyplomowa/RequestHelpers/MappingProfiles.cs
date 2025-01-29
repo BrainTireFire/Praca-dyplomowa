@@ -198,7 +198,7 @@ public class MappingProfiles : Profile
                 src is HealingEffectBlueprint ? "healing" :
                 src is ActionEffectBlueprint ? "actions" :
                 src is MagicEffectBlueprint ? "magicItemStatus" :
-                src is SizeEffectBlueprint ? "sizeCheck" :
+                src is SizeEffectBlueprint ? "size" :
                 src is InitiativeEffectBlueprint ? "initiative" :
                 src is DamageEffectBlueprint ? "damage" :
                 src is HitpointEffectBlueprint ? "hitpoints" :
@@ -905,7 +905,7 @@ public class MappingProfiles : Profile
                 src is HealingEffectInstance ? "healing" :
                 src is ActionEffectInstance ? "actions" :
                 src is MagicEffectInstance ? "magicItemStatus" :
-                src is SizeEffectInstance ? "sizeCheck" :
+                src is SizeEffectInstance ? "size" :
                 src is InitiativeEffectInstance ? "initiative" :
                 src is DamageEffectInstance ? "damage" :
                 src is HitpointEffectInstance ? "hitpoints" :

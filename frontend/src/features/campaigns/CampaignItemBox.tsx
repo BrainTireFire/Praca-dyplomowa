@@ -14,6 +14,15 @@ import Spinner from "../../ui/interactive/Spinner";
 const BoxCustomStyles = css`
   display: grid;
   grid-template-rows: 0.5fr 0.5fr 1.5fr 0.5fr;
+
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    background: var(--color-navbar-hover);
+  }
 `;
 
 const StyledElementBox = styled.div`
@@ -29,24 +38,23 @@ export default function CampaignItemBox({ campaign }: { campaign: Campaign }) {
   }
 
   return (
-    <Box radius="tiny" customStyles={BoxCustomStyles}>
+    <Box
+      radius="tiny"
+      customStyles={BoxCustomStyles}
+      onClick={() => navigate(`/campaigns/${campaign.id}`)}
+    >
       <Heading as="h1">{campaign.name}</Heading>
       <StyledElementBox>
         {campaign.gameMaster?.name ?? "GameMaster"}
       </StyledElementBox>
       <StyledElementBox>{campaign.description}</StyledElementBox>
-      <div>
+      <div onClick={(e) => e.stopPropagation()}>
         <ButtonGroup justify="center">
-          <Button
-            variation="primary"
-            size="large"
-            onClick={() => navigate(`/campaigns/${campaign.id}`)}
-          >
-            View
-          </Button>
           <Modal>
             <Modal.Open opens="ConfirmDelete">
-              <Button size="large">Remove</Button>
+              <Button size="large" onClick={(e) => e.stopPropagation()}>
+                Remove
+              </Button>
             </Modal.Open>
             <Modal.Window name="ConfirmDelete">
               <ConfirmDelete

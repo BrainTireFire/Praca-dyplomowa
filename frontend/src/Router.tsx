@@ -25,11 +25,12 @@ import HomebrewMap from "./pages/homebrew/maps/HomebrewMap";
 import MapInstance from "./features/homebrew/maps/MapInstance";
 import MapUpdateBoardForm from "./features/homebrew/maps/MapUpdateBoardForm";
 import CampaignJoin from "./pages/campaign/CampaignJoin";
-import Encounter from "./pages/campaign/encounter/Encounter";
+import CreateEncounter from "./pages/campaign/encounter/CreateEncounter";
 import Items from "./pages/items/Items";
 import Powers from "./pages/powers/Powers";
 import NpcCharacter from "./pages/NpcCharacter";
 import MainSession from "./pages/campaign/session/MainSession";
+import Encounter from "./pages/campaign/encounter/Encounter";
 
 export default function Router() {
   return (
@@ -59,7 +60,14 @@ export default function Router() {
           path="campaigns/:campaignId/session/:groupName"
           element={<MainSession />}
         />
-        <Route path="campaigns/:campaignId/encounter" element={<Encounter />} />
+        <Route
+          path="campaigns/:campaignId/createEncounter"
+          element={<CreateEncounter />}
+        />
+        <Route
+          path="campaigns/:campaignId/encounters"
+          element={<Encounter />}
+        />
         <Route path="characters" element={<Characters />} />
         <Route path="npc" element={<NpcCharacter />} />
         <Route path="items" element={<Items />} />

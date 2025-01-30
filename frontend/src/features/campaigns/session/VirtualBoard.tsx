@@ -28,12 +28,9 @@ import {
 } from "./CanvasUtils";
 import { VirtualBoardProps } from "./../../../models/session/VirtualBoardProps";
 import { Coordinate } from "../../../models/session/Coordinate";
-import VirtualBoardMenu from "../../../ui/containers/VirtualBoardMenu";
-import { PiPathLight } from "react-icons/pi";
 import { ControlledCharacterContext } from "./context/ControlledCharacterContext";
 import { useParticipanceData } from "../hooks/useParticipanceData";
 import { size } from "../../effects/sizes";
-import { useConditionalEffectsForAttackRoll } from "../hooks/useConditionalEffectsForAttackRoll";
 
 const CanvasContainer = styled.div`
   display: flex;
@@ -142,7 +139,7 @@ export default function VirtualBoard({
         if (matchingParticipance && field.fieldMovementCost !== "Impassable") {
           field.memberName = matchingParticipance.character.name;
           field.avatarUrl = matchingParticipance.character.isNpc
-            ? "https://s3.amazonaws.com/files.d20.io/images/390056921/JkAY2BnZBWR-IYsYkqx3_Q/original.png"
+            ? "https://pbs.twimg.com/profile_images/1810521561352617985/ornocKLB_400x400.jpg"
             : "https://s3.amazonaws.com/files.d20.io/images/390056921/JkAY2BnZBWR-IYsYkqx3_Q/original.png";
 
           // Call drawAvatar and drawTextName separately, ensuring drawAvatar finishes first
@@ -180,17 +177,6 @@ export default function VirtualBoard({
       let occupiedField = encounter.participances.find(
         (x) => x.character.id === controlledCharacterId
       )?.occupiedField;
-
-      if (occupiedField) {
-        drawWeaponAttackRange(
-          ctx,
-          { x: occupiedField.positionX, y: occupiedField.positionY },
-          weaponAttack.range,
-          ActiveCharacterSize,
-          16,
-          9
-        );
-      }
       drawAttackRange(
         ctx,
         { x: occupiedField!.positionX, y: occupiedField!.positionY },
@@ -634,12 +620,12 @@ export default function VirtualBoard({
       >
         Canvas
       </Canvas>
-      {contextMenu.isVisible && (
+      {/* {contextMenu.isVisible && (
         <VirtualBoardMenu
           position={{ x: contextMenu.x, y: contextMenu.y }}
           // onColorSelect={handleColorChange}
         />
-      )}
+      )} */}
     </CanvasContainer>
   );
 }

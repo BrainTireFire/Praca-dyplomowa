@@ -1,7 +1,10 @@
 ﻿using System.Transactions;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using pracadyplomowa.DTOs.Session;
 using pracadyplomowa.Errors;
+using pracadyplomowa.Hubs;
 using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.DTOs.Encounter;
 using pracadyplomowa.Models.DTOs.Session;
@@ -25,16 +28,19 @@ public class EncounterService : IEncounterService
     private readonly IUnitOfWork _unitOfWork;
     private readonly IAccountRepository _accountRepository;
     private readonly IMapper _mapper;
+    private readonly IHubContext<SessionHub> _hubContext;
     
     public EncounterService(
         IUnitOfWork unitOfWork,
         IAccountRepository accountRepository,
-        IMapper mapper
+        IMapper mapper,
+        IHubContext<SessionHub> hubContext
    )
     {
         _unitOfWork = unitOfWork;
         _accountRepository = accountRepository;
         _mapper = mapper;
+        _hubContext = hubContext;
     }
     
     public async Task<PagedList<EncounterShortDto>> GetEncountersAsync(int ownedId, int campaignId, EncounterParams encounterParams)
@@ -92,6 +98,7 @@ public class EncounterService : IEncounterService
             var encounter = new Models.Entities.Campaign.Encounter
             {
                 R_Owner = user,
+                R_OwnerId = user.Id,
                 Name = createEncounterDto.Name,
                 R_Campaign = campaign,
                 R_Board = board
@@ -115,23 +122,45 @@ public class EncounterService : IEncounterService
         }
     }
 
-    public async Task<ActionResult> UpdateEncounterAsync(int ownerId, int encounterId, UpdateEncounterDto updateEncounterDto)
+    public async Task<ActionResult> ToogleEncounterActiveAsync(int ownerId, int encounterId)
     {
         try
         {
             var encounter = _unitOfWork.EncounterRepository.GetById(encounterId);
+                
+            if (encounter == null)
+            {
+                return new NotFoundObjectResult(new ApiResponse(400, "Encounter with Id " + encounterId + " does not exist"));
+            }
+            
+            encounter.IsActive = !encounter.IsActive;
+            
+            await _unitOfWork.SaveChangesAsync();
+            return new NoContentResult();
+        }
+        catch (Exception e)
+        {
+            return new BadRequestObjectResult(new ApiResponse(400, e.Message));
+        }
+    }
+
+    public async Task<ActionResult> SetEncounterPositionAsync(int ownerId, int encounterId, SetEncounterPositionDto setEncounterPositionDto)
+    {
+        try
+        {
+            var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId);
             
             if (encounter == null)
             {
                 return new NotFoundObjectResult(new ApiResponse(400, "Encounter with Id " + encounterId + " does not exist"));
             }
             
-            // if (encounter.R_Owner.Id != ownerId)
-            // {
-            //     return new UnauthorizedObjectResult(new ApiResponse(401, "You are not the owner of this encounter"));
-            // }
+            if (encounter.R_Owner.Id != ownerId)
+            {
+                return new UnauthorizedObjectResult(new ApiResponse(401, "You are not the owner of this encounter"));
+            }
             
-            foreach (var fieldUpdate in updateEncounterDto.FieldsToUpdate)
+            foreach (var fieldUpdate in setEncounterPositionDto.FieldsToUpdate)
             {
                 if (fieldUpdate.ParticipanceDataId == null)
                 {
@@ -142,37 +171,42 @@ public class EncounterService : IEncounterService
                         return new NotFoundObjectResult(new ApiResponse(400, "Character with Id " + fieldUpdate.CharacterId + " does not exist"));
                     }
 
-                    var newParticipance = encounter.AddParticipance(character);
-
+                    
+                    var existingParticipient = encounter.R_Participances.FirstOrDefault(x => x.R_CharacterId == fieldUpdate.CharacterId);
+                    
                     var field = _unitOfWork.FieldRepository.GetById(fieldUpdate.FieldId);
                     if (field == null)
                     {
                         return new NotFoundObjectResult(new ApiResponse(400, $"Field with Id {fieldUpdate.FieldId} does not exist"));
                     }
-
+                    
                     if (field.FieldMovementCost == FieldMovementCostType.Impassable)
                     {
                         return new BadRequestObjectResult(new ApiResponse(400, $"Field is impassable {field.Id}"));
                     }
-
-                    field.UpdateParticipanceData(newParticipance);
+                    
+                    if (existingParticipient?.R_Character != null)
+                    {
+                        field.UpdateParticipanceData(existingParticipient);
+                    }
+                    else
+                    {
+                        var newParticipance = encounter.AddParticipance(character);
+                        field.UpdateParticipanceData(newParticipance);
+                    }
                 }
                 else
                 {
                     // Update existing participance and field
-                    var participanceData = _unitOfWork.ParticipanceDataRepository.GetById(fieldUpdate.ParticipanceDataId.Value);
+                    var participanceData = encounter.R_Participances.FirstOrDefault(x => x.Id == fieldUpdate.ParticipanceDataId.Value);
                     if (participanceData == null)
                     {
                         return new NotFoundObjectResult(new ApiResponse(400, "ParticipanceData with Id " + fieldUpdate.ParticipanceDataId.Value + " does not exist"));
                     }
 
-                    var character = _unitOfWork.CharacterRepository.GetById(fieldUpdate.CharacterId);
-                    if (character == null)
-                    {
-                        return new NotFoundObjectResult(new ApiResponse(400, "Character with Id " + fieldUpdate.CharacterId + " does not exist"));
-                    }
-
-                    participanceData.UpdateCharacter(character);
+                    if (participanceData.R_Character.Id != fieldUpdate.CharacterId) continue;
+                    
+                    participanceData.UpdateCharacter(participanceData.R_Character);
 
                     var field = _unitOfWork.FieldRepository.GetById(fieldUpdate.FieldId);
                     if (field == null)
@@ -196,6 +230,61 @@ public class EncounterService : IEncounterService
         }
         catch (Exception e)
         {
+            return new BadRequestObjectResult(new ApiResponse(400, e.Message));
+        }
+    }
+    
+    public async Task<ActionResult> RemoveEncounterAsync(int ownerId, int encounterId)
+    {
+        try
+        {
+            var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId);
+            
+            if (encounter == null)
+            {
+                return new NotFoundObjectResult(new ApiResponse(400, "Encounter with Id " + encounterId + " does not exist"));
+            }
+            
+            if (encounter.R_Owner == null || encounter.R_Owner.Id != ownerId)
+            {
+                return new UnauthorizedObjectResult(new ApiResponse(401, "You are not the owner of this encounter"));
+            }
+            
+            await _unitOfWork.BeginTransactionAsync();
+            
+            foreach (var participance in encounter.R_Participances)
+            {
+                if (participance.R_OccupiedField != null)
+                {
+                    participance.R_OccupiedField.R_OccupiedBy = null;
+                }
+                _unitOfWork.ParticipanceDataRepository.Delete(participance.Id);
+            }
+                
+            var campaign = _unitOfWork.CampaignRepository.GetById(encounter.R_Campaign.Id);
+            
+            if (campaign != null)
+            {
+                campaign.R_CampaignHasEncounters.Remove(encounter);
+            }
+            
+            var board = _unitOfWork.BoardRepository.GetById(encounter.R_Board.Id);
+            
+            if (board != null)
+            {
+                board.R_Encounter = null;
+            }
+            
+            _unitOfWork.EncounterRepository.Delete(encounterId);
+            
+            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.CommitTransactionAsync();
+
+            return new NoContentResult();
+        }
+        catch (Exception e)
+        {
+            await _unitOfWork.RollbackTransactionAsync();
             return new BadRequestObjectResult(new ApiResponse(400, e.Message));
         }
     }
@@ -735,6 +824,20 @@ public class EncounterService : IEncounterService
         result.TotalDamage = initialTargetHealth - finalTargetHealth;
         result.HitpointsLeft = target.Hitpoints;
         await _unitOfWork.SaveChangesAsync();
+        
+        var systemMessage = new MessageDto()
+        {
+            Username = "System",
+            Message = $"Casting Time: {DateTime.Now}\n\n" +
+                      $"Target: {target.Name}\n" +
+                      $"Initial Health: {initialTargetHealth} HP\n" +
+                      $"Final Health: {finalTargetHealth} HP (After Temporary HP)\n" +
+                      $"Total Damage Dealt: {result.TotalDamage} HP\n" +
+                      $"Hitpoints Left: {result.HitpointsLeft} HP\n"
+        };
+
+        await _hubContext.Clients.Group(encounterId.ToString()).SendAsync("ReceiveMessage", systemMessage);
+        
         return result;
     }
 
@@ -898,6 +1001,22 @@ public class EncounterService : IEncounterService
         foreach(var target in targetMap.Values){
             result.NameMap.Add(target.Id, target.Name);
         }
+        
+        var systemMessage = new MessageDto()
+        {
+            Username = "System",
+            Message = $"Power Casted: {power.Name}\n" +
+                      $"Encounter ID: {encounterId}\n" +
+                      $"Casting Time: {DateTime.Now}\n\n" +
+                      $"Targets Affected: {targetMap.Count}\n" +
+                      $"Hit Map Information:\n" +
+                      string.Join("\n", result.HitMap.Select(hit => $"  - Target {hit.Key}: {hit.Value}")) +
+                      $"\nTarget Map Details:\n" +
+                      string.Join("\n", targetMap.Values.Select(target => $"  - Target ID: {target.Id}, Name: {target.Name}"))
+        };
+
+        await _hubContext.Clients.Group(encounterId.ToString()).SendAsync("ReceiveMessage", systemMessage);
+        
         return result;
     }
 
@@ -936,6 +1055,4 @@ public class EncounterService : IEncounterService
 
         await _unitOfWork.SaveChangesAsync();
     }
-
-
 }

@@ -50,11 +50,29 @@ public class EncounterController : BaseApiController
     }
     
     [HttpPut("placeEncounter/{encounterId}")]
-    public async Task<ActionResult> UpdateEncounter(int encounterId, [FromBody] UpdateEncounterDto updateEncounterDto)
+    public async Task<ActionResult> SetEncounterPosition(int encounterId, [FromBody] SetEncounterPositionDto setEncounterPositionDto)
     {
         var ownerId = User.GetUserId();
-        var result = await _encounterService.UpdateEncounterAsync(ownerId, encounterId, updateEncounterDto);
+        var result = await _encounterService.SetEncounterPositionAsync(ownerId, encounterId, setEncounterPositionDto);
 
+        return result;
+    }
+    
+    [HttpPut("toggleActive/{encounterId}")]
+    public async Task<ActionResult> ToggleEncounterActive(int encounterId)
+    {
+        var ownerId = User.GetUserId();
+        var result = await _encounterService.ToogleEncounterActiveAsync(ownerId, encounterId);
+    
+        return result;
+    }
+    
+    [HttpDelete("{encounterId}")]
+    public async Task<ActionResult> RemoveEncounter(int encounterId)
+    {
+        var ownerId = User.GetUserId();
+        var result = await _encounterService.RemoveEncounterAsync(ownerId, encounterId);
+    
         return result;
     }
     

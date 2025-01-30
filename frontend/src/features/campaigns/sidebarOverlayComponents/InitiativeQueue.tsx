@@ -11,6 +11,14 @@ import useSetActiveTurn from "../hooks/useSetActiveTurn";
 import { useContext } from "react";
 import { ControlledCharacterContext } from "../session/context/ControlledCharacterContext";
 import { useControlledCharacters } from "../hooks/useControlledCharacters";
+import useNextTurn from "../hooks/useNextTurn";
+import useRollInitiative from "../hooks/useRollInitiative";
+import ButtonGroup from "../../../ui/interactive/ButtonGroup";
+import useDeleteParticipanceData from "../hooks/useDeleteParticipanceData";
+import useMoveInQueue from "../hooks/useMoveInQueue";
+import Modal from "../../../ui/containers/Modal";
+import { CharacterIdContext } from "../../characters/contexts/CharacterIdContext";
+import CharactersSheet from "../../characters/CharactersSheet";
 
 type characterInitiative = {
   id: number;
@@ -65,11 +73,18 @@ export function InitiativeQueue() {
     isLoading: isLoadingControllerCharacters,
     characterIds: controlledCharacterIds,
   } = useControlledCharacters(Number(groupName));
+  const { isPending: isPendingNextTurn, nextTurn } = useNextTurn(
+    Number(groupName),
+    () => {}
+  );
+  const { isPending: isPendingRollInitiative, rollInitiative } =
+    useRollInitiative(Number(groupName), () => {});
   if (
     isLoading ||
     isLoadingIsGM ||
     isPending ||
-    isLoadingControllerCharacters
+    isLoadingControllerCharacters ||
+    isPendingRollInitiative
   ) {
     return <Spinner />;
   }
@@ -89,6 +104,16 @@ export function InitiativeQueue() {
             }
           ></InititativeTile>
         ))}
+      {isGM && (
+        <ButtonGroup style={{ paddingTop: "5px" }}>
+          <Button disabled={!isGM} onClick={() => nextTurn()}>
+            Next turn
+          </Button>
+          <Button onClick={() => rollInitiative()} disabled={!isGM}>
+            Roll initiative
+          </Button>
+        </ButtonGroup>
+      )}
     </>
   );
 }
@@ -104,8 +129,16 @@ function InititativeTile({
   handleChangeActiveTurn: (characterId: number) => void;
   controlled: boolean;
 }) {
+  const { groupName } = useParams<{ groupName: string }>();
   const [controlledCharacterId, setControlledCharacterId] = useContext(
     ControlledCharacterContext
+  );
+  const { isPending: isPendingRemoval, deleteParticipanceData } =
+    useDeleteParticipanceData(Number(groupName), item.characterId, () => {});
+  const { isPending: isPendingOrderChange, moveInQueue } = useMoveInQueue(
+    Number(groupName),
+    item.characterId,
+    () => {}
   );
   return (
     <Tile IsActive={item.activeTurn}>
@@ -121,27 +154,47 @@ function InititativeTile({
       <TileCell2>
         {isGM && (
           <>
-            <Button size="small">Move up</Button>
+            <Button size="small" onClick={() => moveInQueue(true)}>
+              Move up
+            </Button>
             <Button
               size="small"
               onClick={() => handleChangeActiveTurn(item.characterId)}
             >
               Set active turn
             </Button>
-            <Button size="small">Move down</Button>
+            <Button size="small" onClick={() => moveInQueue(false)}>
+              Move down
+            </Button>
           </>
         )}
         <Button onClick={() => setControlledCharacterId(item.characterId)}>
           {controlled || isGM ? "Take control" : "Set focus"}
         </Button>
-        {controlledCharacterId}
       </TileCell2>
       <TileCell3>
-        <Button size="small">Display character sheet</Button>
+        <Modal>
+          <Modal.Open opens="CharactersSheet">
+            <Button size="small">Display character sheet</Button>
+          </Modal.Open>
+          <Modal.Window name="CharactersSheet">
+            <CharacterIdContext.Provider
+              value={{ characterId: item.characterId }}
+            >
+              <Container>
+                <CharactersSheet />
+              </Container>
+            </CharacterIdContext.Provider>
+          </Modal.Window>
+        </Modal>
       </TileCell3>
       <TileCell4>
         {isGM && (
-          <Button size="small" variation="danger">
+          <Button
+            size="small"
+            variation="danger"
+            onClick={() => deleteParticipanceData()}
+          >
             Remove
           </Button>
         )}
@@ -185,4 +238,12 @@ const TileCell3 = styled.div`
 const TileCell4 = styled.div`
   grid-column: 2;
   grid-row: 2;
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  width: 80vw;
+  overflow-y: hidden;
 `;

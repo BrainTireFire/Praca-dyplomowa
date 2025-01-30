@@ -248,7 +248,12 @@ export default function CharactersSheet() {
               }}
             >
               <EditModeContext.Provider
-                value={{ editMode: editMode && EditLevelingUpPermission }}
+                value={{
+                  editMode:
+                    editMode &&
+                    EditLevelingUpPermission &&
+                    character.canLevelUp,
+                }}
               >
                 <ClassTable
                   characterClasses={character.classes}

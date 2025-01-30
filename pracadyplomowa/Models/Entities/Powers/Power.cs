@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using pracadyplomowa.Models.Entities.Campaign;
@@ -69,6 +70,10 @@ namespace pracadyplomowa.Models.Entities.Powers
                 .Union(this.R_ItemsGrantingPower.Where(i => i.R_EquipData?.R_CharacterId == usingCharacterId).Select(i => i.R_EquipData?.R_Item.Name)).ToList();
             if(source == null) return [];
             return source;
+        }
+
+        public bool RequiredResourceAvailable(Character caster, int minimumResourceLevel) {
+            return caster.AllImmaterialResourceInstances.Where(x => !x.NeedsRefresh && x.Level >= minimumResourceLevel && x.R_BlueprintId == this.R_UsesImmaterialResource?.Id).Any();
         }
 
     }

@@ -116,7 +116,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
                         outcome
                     );
                 }
-                else if (power.PowerType == PowerType.Saveable && power.OverrideCastersDC)
+                else if (power.PowerType == PowerType.Saveable)
                 {
                     int roll = targetedCharacter.SavingThrowRoll((Ability)power.SavingThrowAbility);
                     HitType outcome = HitType.Miss;
@@ -168,6 +168,9 @@ namespace pracadyplomowa.Models.Entities.Campaign
                                 shouldAdd = true;
                             }
                         }
+                        else if(power.PowerType == PowerType.PassiveEffect){
+                            shouldAdd = true;
+                        }
 
                         if (shouldAdd)
                         {
@@ -176,7 +179,8 @@ namespace pracadyplomowa.Models.Entities.Campaign
                             {
                                 damageEffectInstance.CriticalHit = true;
                             }
-                            effectGroup.AddEffectOnCharacter(effectInstance);
+                            generatedEffects.Add(effectInstance);
+                            effectGroup.AddEffect(effectInstance);
                         }
                     }
                 }
@@ -206,7 +210,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
             var occupiedDirectly = enc.R_Participances.Where(par => par.R_Character != characterExcluded).Select(p => p.R_OccupiedField).ToList();
             foreach(var occupiedField in occupiedDirectly){
                 var size = occupiedField.R_OccupiedBy.R_Character.Size;
-                occupiedCoordinates = occupiedField.GetOccupiedCoordinates(size);
+                occupiedCoordinates.AddRange(occupiedField.GetOccupiedCoordinates(size));
             }
             return occupiedCoordinates.Contains(new Tuple<int, int>(PositionX, PositionY));
         }
@@ -254,6 +258,26 @@ namespace pracadyplomowa.Models.Entities.Campaign
                 }
             }
             return occupiedCoordinates;
+        }
+
+        public void Enter(ParticipanceData participance){
+            var character = participance.R_Character;
+            foreach(var power in R_CasterPowers){
+                var outcome = this.CheckIfPowerHitSuccessfull(null!, power, [character]).GetValueOrDefault(character.Id);
+                this.ApplyPowerEffects(power, new Dictionary<Character, HitType>() { { character, outcome } }, null, out var generatedEffects);
+                foreach(var effect in generatedEffects){
+                    effect.Resolve();
+                }
+            }
+            participance.R_OccupiedField.Leave(participance);
+            participance.R_OccupiedField = this;
+            this.R_OccupiedBy = participance;
+        }
+
+        public void Leave(ParticipanceData participance){
+            if(this.R_OccupiedBy == participance){
+                this.R_OccupiedBy = null;
+            }
         }
     }
 }

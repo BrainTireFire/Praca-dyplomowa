@@ -50,6 +50,7 @@ namespace pracadyplomowa.Models.DTOs
         public List<Character.AccessLevels> AccessLevels { get; set; } = [];
         [JsonPropertyName("xp")]
         public int ExperiencePoints { get; set; }
+        public bool CanLevelUp {get; set;}
 
         public CharacterFullDto(Character character)
         {
@@ -90,6 +91,7 @@ namespace pracadyplomowa.Models.DTOs
             ChoiceGroups = GetChoiceGroups(character);
             ProficiencyBonus = character.ProficiencyBonus;
             ExperiencePoints = character.ExperiencePoints;
+            CanLevelUp = character.CanLevelUp;
         }
 
 

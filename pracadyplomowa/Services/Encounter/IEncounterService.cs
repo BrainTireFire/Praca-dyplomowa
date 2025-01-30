@@ -23,11 +23,17 @@ public interface IEncounterService
     Task<List<int>> GetControlledCharacters(int encounterId, int userId);
     Task<Models.DTOs.Session.ParticipanceDataDto> GetParticipanceData(int encounterId, int characterId);
     Task UpdateParticipanceData(int encounterId, int characterId, Models.DTOs.Session.ParticipanceDataDto participanceDataDto);
+    Task DeleteParticipanceData(int encounterId, int characterId, int userId);
     Task<List<int>> MoveCharacter(int encounterId, int characterId, List<int> fieldIds);
     Task<ConditionalEffectsSetDto> GetConditionalEffects(int encounterId, int characterId, int targetId);
+    Task<ConditionalEffectsSetForManyTargetsDto> GetConditionalEffects(int encounterId, int characterId, List<int> targetId);
     Task<HitType> MakeWeaponAttackRoll(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds);
     Task<WeaponDamageAndPowersDto> GetWeaponData(int encounterId, int characterId, int weaponId);
     Task<Character.WeaponHitResult> ApplyWeaponHit(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, bool criticalHit, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds);
     Task<AttackRollAndDamageResultDto> AttackRollAndDamage(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds);
     Task<WeaponAttackResultDto> MakeWeaponAttack(int encounterId, [FromQuery] int characterId, [FromQuery] int weaponId, [FromQuery] int targetId, [FromQuery] bool isRanged, [FromBody] WeaponAttackIncomingDataDto approvedConditionalEffects);
+    Task<PowerDataForResolutionDto> GetPowerData(int encounterId, int characterId, int powerId);
+    Task<CastPowerResultDto> CastPower(int encounterId, int characterId, int powerId, CastPowerIncomingDataDto incomingDataDto);
+    Task MoveUpQueue(int encounterId, int characterId, int userId);
+    Task MoveDownQueue(int encounterId, int characterId, int userId);
 }

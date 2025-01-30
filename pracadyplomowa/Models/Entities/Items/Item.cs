@@ -29,6 +29,7 @@ namespace pracadyplomowa.Models.Entities.Items
             Description = item.Description;
             Weight = item.Weight;
             IsSpellFocus = item.IsSpellFocus;
+            OccupiesAllSlots = item.OccupiesAllSlots;
             R_ItemIsEquippableInSlots = [.. item.R_ItemIsEquippableInSlots];
             R_ItemInItemsFamily = item.R_ItemInItemsFamily;
             R_ItemInItemsFamilyId = item.R_ItemInItemsFamilyId;

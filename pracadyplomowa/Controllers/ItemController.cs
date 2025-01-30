@@ -50,6 +50,21 @@ namespace pracadyplomowa.Controllers
             return Ok(itemDto);
         }
 
+        [HttpDelete("{itemId}")]
+        public async Task<ActionResult> DeleteItem(int itemId){
+            var item = _unitOfWork.ItemRepository.GetById(itemId);
+            if(item == null){
+                return NotFound(itemId);
+            }
+            _unitOfWork.ItemRepository.GetItemsForEditabilityAnalysis([itemId]);
+            if(!item.HasEditAccess(User.GetUserId())){
+                return BadRequest("You cannot delete this item");
+            }
+            _unitOfWork.ItemRepository.Delete(itemId);
+            await _unitOfWork.SaveChangesAsync();
+            return Ok();
+        }
+
         [HttpPost("meleeWeapon")]
         public async Task<ActionResult<int>> PostMeleeWeapon(MeleeWeaponFormDto meleeWeaponDto){
             var item = _mapper.Map<MeleeWeapon>(meleeWeaponDto);
@@ -124,7 +139,7 @@ namespace pracadyplomowa.Controllers
                 return actionResult;
             }
 
-            var itemLoaded = (MeleeWeapon)await _unitOfWork.ItemRepository.GetByIdWithSlotsPowersEffectsResources((int)apparelDto.Id);
+            var itemLoaded = (Apparel)await _unitOfWork.ItemRepository.GetByIdWithSlotsPowersEffectsResources((int)apparelDto.Id);
             var item = _mapper.Map(apparelDto, itemLoaded);
             _unitOfWork.ItemRepository.Update(item);
             await _unitOfWork.SaveChangesAsync();

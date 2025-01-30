@@ -16,6 +16,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { WeaponAttack, Power } from "../../../models/session/VirtualBoardProps";
 import ModalNoButton from "../../../ui/containers/ModalNoButton";
 import { WeaponAttackResolution } from "./WeaponAttackResolution";
+import { PowerCastResolution } from "./PowerCastResolution";
 
 const GridContainer = styled.div`
   grid-row: 1 / 2;
@@ -94,7 +95,8 @@ export type Mode =
   | "Movement"
   | "WeaponAttack"
   | "PowerCast"
-  | "WeaponAttackOverlay";
+  | "WeaponAttackOverlay"
+  | "PowerCastOverlay";
 
 export type ControlState = {
   mode: Mode;
@@ -115,6 +117,7 @@ const SET_WEAPON_ATTACK = "SET_WEAPON_ATTACK";
 const SET_POWER = "SET_POWER";
 const TOGGLE_POWER_TARGET = "TOGGLE_POWER_TARGET";
 const WEAPON_ATTACK_OVERLAY_DATA = "WEAPON_ATTACK_OVERLAY_DATA";
+const POWER_CAST_OVERLAY_DATA = "POWER_CAST_OVERLAY_DATA";
 
 // Define action interfaces
 export interface ChangeModeAction {
@@ -157,10 +160,17 @@ export interface TogglePowerTarget {
   type: typeof TOGGLE_POWER_TARGET;
   payload: number; // characterId
 }
+export interface PowerCastOverlay {
+  type: typeof POWER_CAST_OVERLAY_DATA;
+  payload: PowerCastOverlayData;
+}
 
 type WeaponAttackOverlayData = {
   targetId: number;
   sourceId: number;
+};
+type PowerCastOverlayData = {
+  targetIds: number[];
 };
 
 // Union type for all actions
@@ -173,7 +183,8 @@ export type ControlStateActions =
   | SetWeaponAttack
   | SetPower
   | WeaponAttackOverlay
-  | TogglePowerTarget;
+  | TogglePowerTarget
+  | PowerCastOverlay;
 
 // Reducer function
 const controlStateReducer = (
@@ -190,6 +201,7 @@ const controlStateReducer = (
           action.payload !== "WeaponAttack" ? null : state.weaponAttackSelected,
         powerSelected:
           action.payload !== "PowerCast" ? null : state.powerSelected,
+        powerTargets: [],
       };
     case APPEND_PATH:
       return {
@@ -233,12 +245,24 @@ const controlStateReducer = (
         mode: "PowerCast",
       };
     case TOGGLE_POWER_TARGET:
+      console.log(action.payload);
+      console.log(state.powerTargets);
       const foundIndex = state.powerTargets.findIndex(
         (x) => x === action.payload
       );
       if (foundIndex === -1) {
-        let newPowerTargets = state.powerTargets;
+        let newPowerTargets = [...state.powerTargets];
         newPowerTargets.push(action.payload);
+        if (
+          newPowerTargets.length >
+          (state.powerSelected?.maxTargets
+            ? state.powerSelected?.maxTargets
+            : 1)
+        ) {
+          return state;
+        }
+        console.log(state.powerTargets);
+        console.log(newPowerTargets);
         return {
           ...state,
           powerTargets: newPowerTargets,
@@ -254,6 +278,11 @@ const controlStateReducer = (
         ...state,
         weaponAttackRollOverlayData: action.payload,
         mode: "WeaponAttackOverlay",
+      };
+    case POWER_CAST_OVERLAY_DATA:
+      return {
+        ...state,
+        mode: "PowerCastOverlay",
       };
     default:
       return state;
@@ -458,6 +487,7 @@ export default function SessionLayout({ encounter }: any) {
           weaponAttack={controlState.weaponAttackSelected!}
           power={controlState.powerSelected!}
           onWeaponAttackOverlay={handleWeaponAttackOverlay}
+          selectedTargets={controlState.powerTargets}
         />
       </GridContainer>
       <RightPanel>
@@ -501,6 +531,12 @@ export default function SessionLayout({ encounter }: any) {
         <WeaponAttackResolution
           controlState={controlState}
         ></WeaponAttackResolution>
+      </ModalNoButton>
+      <ModalNoButton
+        open={controlState.mode === "PowerCastOverlay"}
+        handleClose={() => dispatch({ type: "CHANGE_MODE", payload: "Idle" })}
+      >
+        <PowerCastResolution controlState={controlState}></PowerCastResolution>
       </ModalNoButton>
     </>
   );

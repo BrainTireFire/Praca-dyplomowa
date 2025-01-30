@@ -178,6 +178,7 @@ type Action = {
     | "setDescription"
     | "setResourceLevel"
     | "setSavingThrowSuccess"
+    | "setConditional"
     | "setEffectType"
     | "setEffectTypeBody"
     | "resetState";
@@ -210,10 +211,13 @@ const effectReducer = (
       newState = { ...state, description: action.payload };
       break;
     case "setResourceLevel":
-      newState = { ...state, resourceLevel: action.payload };
+      newState = { ...state, resourceLevel: Number(action.payload) };
       break;
     case "setSavingThrowSuccess":
       newState = { ...state, savingThrowSuccess: action.payload };
+      break;
+    case "setConditional":
+      newState = { ...state, conditional: action.payload };
       break;
     case "setEffectType":
       newState = { ...state, effectType: action.payload };
@@ -345,6 +349,19 @@ export default function EffectBlueprintForm({
                 onChange={(x) =>
                   dispatch({
                     type: "setSavingThrowSuccess",
+                    payload: x.target.checked,
+                  })
+                }
+              ></Input>
+            </FormRowLabelRight>
+            <FormRowLabelRight label="Is conditional">
+              <Input
+                disabled={disableForm}
+                type="checkbox"
+                checked={state.conditional}
+                onChange={(x) =>
+                  dispatch({
+                    type: "setConditional",
                     payload: x.target.checked,
                   })
                 }

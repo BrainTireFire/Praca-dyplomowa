@@ -14,6 +14,7 @@ namespace pracadyplomowa.Models.DTOs
         public string Description { get; set; } = null!;
         public string? ResourceName { get; set; }
         public int? MinimumResourceLevel { get; set; }
+        public List<int> AvailableResourceLevels { get; set; } = [];
         public ActionType? ActionTypeRequired { get; set; }
         public bool RequiredResourceAvailable { get; set;}
         public List<MaterialComponentDto> MaterialComponents { get; set; } = null!;

@@ -1,4 +1,9 @@
 import {
+  ConditionalEffectSelection,
+  ConditionalEffectsSelectionSet,
+  StateType,
+} from "../features/campaigns/session/PowerCastConditionalEffectsReducer";
+import {
   conditionalEffectSet,
   conditionalEffectType,
   stateType,
@@ -111,6 +116,27 @@ export async function modifyInitiative(
 
   await customFetch(
     `${BASE_URL}/api/encounter/${encounterId}/initiative`,
+    options
+  );
+
+  return;
+}
+export async function moveInQueue(
+  encounterId: number,
+  characterId: number,
+  up: boolean
+): Promise<void> {
+  const options: RequestInit = {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  await customFetch(
+    `${BASE_URL}/api/encounter/${encounterId}/initiative/${characterId}/${
+      up ? "up" : "down"
+    }`,
     options
   );
 
@@ -247,6 +273,23 @@ export async function updateParticipanceData(
       "Content-Type": "application/json",
     },
     body: JSON.stringify(participanceData),
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/encounter/${encounterId}/participanceData/${characterId}`,
+    options
+  );
+}
+
+export async function deleteParticipanceData(
+  encounterId: number,
+  characterId: number
+): Promise<void> {
+  const options: RequestInit = {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
   };
 
   return await customFetch(
@@ -476,3 +519,149 @@ interface PowerUsageResultDto {
   powerName: string;
   success: boolean;
 }
+
+/**
+ * Generates a query string for an array of integers.
+ * @param {string} paramName - The name of the query parameter (e.g., "ids").
+ * @param {number[]} values - The array of integers to include in the query string.
+ * @returns {string} - The generated query string.
+ */
+function generateQueryString(
+  paramName: string,
+  values: (number | string | boolean)[]
+) {
+  if (!Array.isArray(values) || values.length === 0) {
+    return "";
+  }
+
+  // Map the array into repeated key=value pairs and join them with "&"
+  const queryString = values
+    .map(
+      (value) => `${encodeURIComponent(paramName)}=${encodeURIComponent(value)}`
+    )
+    .join("&");
+  return `${queryString}`;
+}
+
+export async function getPowerData(
+  encounterId: number,
+  characterId: number,
+  powerId: number,
+  targetIds: number[]
+): Promise<PowerDataAndConditionalEffectsDto> {
+  const options: RequestInit = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/encounter/${encounterId}/powerCastData?characterId=${characterId}&powerId=${powerId}&${generateQueryString(
+      "targetIds",
+      targetIds
+    )}`,
+    options
+  );
+}
+
+export type PowerDataForResolutionDto = {
+  powerId: number;
+  powerName: string;
+  resourceName: string;
+  powerEffects: Record<number, Record<number, PowerEffectDto[]>>;
+  availableImmaterialResourceLevels: number[];
+};
+
+export type PowerDataAndConditionalEffectsDto = {
+  powerData: PowerDataForResolutionDto;
+  conditionalEffects: ConditionalEffectsSetForManyTargetsDto;
+};
+
+export type ConditionalEffectsSetForManyTargetsDto = {
+  casterConditionalEffects: ConditionalEffectDto[];
+  targetData: TargetDataDto[];
+};
+
+export type TargetDataDto = {
+  targetId: number;
+  targetName: string;
+  targetConditionalEffects: ConditionalEffectDto[];
+};
+
+export async function castPower(
+  encounterId: number,
+  characterId: number,
+  powerId: number,
+  approvedConditionalEffects: StateType
+): Promise<CastPowerResultDto> {
+  /**
+   * Transforms a stateType object by keeping only `effectId` where `selected === true`.
+   * @param {stateType} state - The state object to transform.
+   * @returns {stateType} - A new state object with transformed conditional effects.
+   */
+  function transformState(state: StateType) {
+    if (!state) {
+      throw new Error("Invalid state object");
+    }
+
+    // Helper function to filter and map conditionalEffectType arrays
+    const filterEffectIds = (effects: ConditionalEffectSelection[]) =>
+      effects
+        .filter((effect) => effect.selected)
+        .map((effect) => effect.effectId);
+
+    function cleanConditionalEffectSelection(
+      input: Record<number, ConditionalEffectSelection[]>
+    ): Record<number, number[]> {
+      const result: Record<number, number[]> = {};
+
+      for (const [key, value] of Object.entries(input)) {
+        const filtered = filterEffectIds(value);
+
+        result[Number(key)] = filtered;
+      }
+
+      return result;
+    }
+    // Transform a conditionalEffectSet
+    const transformConditionalEffectSet = (
+      effectSet: ConditionalEffectsSelectionSet
+    ) => ({
+      casterConditionalEffects: filterEffectIds(
+        effectSet.casterConditionalEffects
+      ),
+      targetConditionalEffects: cleanConditionalEffectSelection(
+        effectSet.targetConditionalEffects
+      ),
+    });
+
+    // Transform the state object
+    return {
+      spellSlotLevel: state.spellSlotLevel,
+      conditionalEffects: transformConditionalEffectSet(
+        state.conditionalEffects
+      ),
+    };
+  }
+
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(transformState(approvedConditionalEffects)),
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/encounter/${encounterId}/castPower?characterId=${characterId}&powerId=${powerId}`,
+    options
+  );
+}
+
+export type CastPowerResultDto = {
+  hitMap: Record<number, HitType>; // HitType is serialized to a string
+  nameMap: Record<number, string>;
+};
+
+export type HitType = "CriticalHit" | "Hit" | "Miss" | "CriticalMiss";

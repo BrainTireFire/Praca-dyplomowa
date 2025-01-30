@@ -43,6 +43,11 @@ export type ItemAction =
       field: keyof RangedWeaponBody;
       value: any;
     }
+  | {
+      type: "UPDATE_EQUIPPABLE_ITEM_BODY";
+      field: keyof EquippableItemBody;
+      value: any;
+    }
   | { type: "UPDATE_GOLD"; value: number }
   | { type: "UPDATE_SILVER"; value: number }
   | { type: "UPDATE_COPPER"; value: number };
@@ -86,6 +91,11 @@ export const itemReducer: Reducer<Item, ItemAction> = (state, action) => {
         itemTypeBody: { ...state.itemTypeBody, [action.field]: action.value },
       };
     case "UPDATE_APPAREL_BODY":
+      return {
+        ...state,
+        itemTypeBody: { ...state.itemTypeBody, [action.field]: action.value },
+      };
+    case "UPDATE_EQUIPPABLE_ITEM_BODY":
       return {
         ...state,
         itemTypeBody: { ...state.itemTypeBody, [action.field]: action.value },
@@ -285,6 +295,7 @@ export default function ItemForm({
                       state.itemType === "Apparel") && (
                       <EquippableItemForm
                         body={state.itemTypeBody as EquippableItemBody}
+                        dispatch={dispatch}
                       ></EquippableItemForm>
                     )}
                   </>

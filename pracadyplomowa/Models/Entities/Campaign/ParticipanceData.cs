@@ -21,10 +21,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
         //Relationship
         public virtual Encounter R_Encounter { get; set; } = null!;
         public int R_EncounterId { get; set; }
-        
         public virtual Field R_OccupiedField { get; set; }
-        
-        public int R_OccupiedFieldId { get; set; }
         public virtual Character R_Character { get; set; } = null!;
         public int R_CharacterId { get; set; }
 

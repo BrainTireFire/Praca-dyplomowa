@@ -65,6 +65,9 @@ namespace pracadyplomowa.Models.Entities.Powers
             }
         }
 
+        [NotMapped]
+        public bool DeleteOnSave {get; set;}
+
         public abstract EffectInstance Clone();
 
         public virtual void Resolve(){
@@ -75,7 +78,10 @@ namespace pracadyplomowa.Models.Entities.Powers
             R_TargetedCharacter?.R_AffectedBy.Remove(this);
             R_TargetedItem?.R_AffectedBy.Remove(this);
             this.R_TargetedCharacter = null;
+            this.R_TargetedCharacterId = null;
             this.R_TargetedItem = null;
+            this.R_TargetedItemId = null;
+            this.DeleteOnSave = true;
         }
 
         public virtual void Link(Character character){

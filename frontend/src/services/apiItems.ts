@@ -73,6 +73,17 @@ export async function updateItem(itemDto: Item): Promise<void> {
   return;
 }
 
+export async function deleteItem(itemId: number): Promise<void> {
+  const options: RequestInit = {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  await customFetch(`${BASE_URL}/api/item/${itemId}`, options);
+  return;
+}
+
 export async function addSlot(slotId: number, itemId: number): Promise<void> {
   const options: RequestInit = {
     method: "POST",

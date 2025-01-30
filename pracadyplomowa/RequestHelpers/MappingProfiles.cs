@@ -97,7 +97,16 @@ public class MappingProfiles : Profile
                     src => src.R_CampaignHasCharacters
                 )
             );
-        CreateMap<Character, ParticipanceCharacterSummaryDto>();
+        CreateMap<Character, ParticipanceCharacterSummaryDto>()
+            .ForMember(
+                dest => dest.Size,
+                opt => opt.MapFrom(
+                    src => new SizeItem(){
+                        Order = (int)src.Size,
+                        Name = src.Size
+                    }
+                )
+            );
         CreateMap<ParticipanceData, ParticipanceDataDto>()
             .ForMember(
                 dest => dest.Character,
@@ -189,7 +198,7 @@ public class MappingProfiles : Profile
                 src is HealingEffectBlueprint ? "healing" :
                 src is ActionEffectBlueprint ? "actions" :
                 src is MagicEffectBlueprint ? "magicItemStatus" :
-                src is SizeEffectBlueprint ? "sizeCheck" :
+                src is SizeEffectBlueprint ? "size" :
                 src is InitiativeEffectBlueprint ? "initiative" :
                 src is DamageEffectBlueprint ? "damage" :
                 src is HitpointEffectBlueprint ? "hitpoints" :
@@ -664,6 +673,7 @@ public class MappingProfiles : Profile
                 IsSpellFocus = src.IsSpellFocus,
                 OccupiesAllSlots = src.OccupiesAllSlots,
                 MinimumStrength = src.StrengthRequirement,
+                ArmorClass = src.ArmorClass,
                 DisadvantageOnStealth = src.StealthDisadvantage,
                 EffectsOnWearer = src.R_EffectsOnEquip.Select(effect => new EquippableItemFormDto.Body.EffectBlueprintDto(){
                         Id = effect.Id,
@@ -692,7 +702,7 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.OccupiesAllSlots, opt => opt.MapFrom(src => src.ItemTypeBody.OccupiesAllSlots))
             .ForMember(dest => dest.StrengthRequirement, opt => opt.MapFrom(src => src.ItemTypeBody.MinimumStrength))
             .ForMember(dest => dest.StealthDisadvantage, opt => opt.MapFrom(src => src.ItemTypeBody.DisadvantageOnStealth))
-            .ForMember(dest => dest.StrengthRequirement, opt => opt.MapFrom(src => src.ItemTypeBody.MinimumStrength));
+            .ForMember(dest => dest.ArmorClass, opt => opt.MapFrom(src => src.ItemTypeBody.ArmorClass));
 
         CreateMap<MeleeWeapon, MeleeWeaponFormDto>()
             .IncludeBase<Item, ItemFormDto>()
@@ -895,7 +905,7 @@ public class MappingProfiles : Profile
                 src is HealingEffectInstance ? "healing" :
                 src is ActionEffectInstance ? "actions" :
                 src is MagicEffectInstance ? "magicItemStatus" :
-                src is SizeEffectInstance ? "sizeCheck" :
+                src is SizeEffectInstance ? "size" :
                 src is InitiativeEffectInstance ? "initiative" :
                 src is DamageEffectInstance ? "damage" :
                 src is HitpointEffectInstance ? "hitpoints" :

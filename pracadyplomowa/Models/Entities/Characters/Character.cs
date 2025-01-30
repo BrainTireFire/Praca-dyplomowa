@@ -580,31 +580,33 @@ namespace pracadyplomowa.Models.Entities.Characters
             {
                 int baseArmorClass = 10;
                 int dexterityModifier = this.DexterityModifier;
-                IEnumerable<Apparel> apparel = this.R_EquippedItems.Where(ed => ed.R_Slots.Select(s => s.Type).Contains(SlotType.Apparel)).Select(aed => aed.R_Item).OfType<Apparel>();
-                bool wearsHeavyArmor = apparel.Where(a => a.R_ItemInItemsFamily.ItemType == ItemType.HeavyArmor).Any();
-                if (wearsHeavyArmor)
+                List<Apparel> apparel = this.R_EquippedItems.Where(ed => ed.R_Slots.Select(s => s.Type).Contains(SlotType.Apparel)).Select(aed => aed.R_Item).OfType<Apparel>().Distinct().ToList();
+                int armor = 0;
+                if(apparel.Any())
                 {
-                    dexterityModifier = Math.Min(dexterityModifier, 0);
+                    armor = apparel.Sum(x => x.ArmorClass);
+                }
+                bool wearsLightArmor = apparel.Where(a => a.R_ItemInItemsFamily.ItemType == ItemType.LightArmor).Any();
+                if (wearsLightArmor)
+                {
+                    dexterityModifier = Math.Max(dexterityModifier, 0);
                 }
                 else
                 {
                     bool wearsMediumArmor = apparel.Where(a => a.R_ItemInItemsFamily.ItemType == ItemType.MediumArmor).Any();
                     if (wearsMediumArmor)
                     {
-                        dexterityModifier = Math.Min(dexterityModifier, 2);
+                        dexterityModifier = Math.Max(dexterityModifier, 0);
+                        if(dexterityModifier > 2){
+                            dexterityModifier = 2;
+                        }
                     }
                 }
                 int armorClassFromEffects = this.AffectedByApprovedEffects
                                 .OfType<ArmorClassEffectInstance>()
                                 .Sum(m => m.DiceSet);
-                int armorClassFromItems = this.R_EquippedItems
-                                .Where(ei => ei.R_Slots.Select(s => s.Type).Contains(SlotType.Apparel))
-                                .Select(ei => ei.R_Item)
-                                .OfType<Apparel>()
-                                .Distinct()
-                                .Sum(i => i.ArmorClass);
 
-                return baseArmorClass + dexterityModifier + armorClassFromItems + armorClassFromEffects;
+                return Math.Max(armor, baseArmorClass) + dexterityModifier + armorClassFromEffects;
             }
         }
 
@@ -694,15 +696,20 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
 
         public void StartNextTurn() {
+            RollDeathSavingThrow();
             ResolveAffectingEffects();
             var effectGroupsForSavingThrowChecks = AllEffects.Where(e => e.R_OwnedByGroup != null && e.R_OwnedByGroup.DifficultyClassToBreak != null && e.R_OwnedByGroup.SavingThrow != null).Select(e => e.R_OwnedByGroup).Distinct().ToList();
             effectGroupsForSavingThrowChecks.ForEach(eg => {
                 var result = SavingThrowRoll((Ability)eg!.SavingThrow!);
                 if(result >= eg.DifficultyClassToBreak){
-                    eg.Disperse();
+                    eg.DisperseOnTarget(this);
                 }
             });
-            R_ConcentratesOn?.TickDuration();
+            var resources = AllImmaterialResourceInstances.Where(x => x.NeedsRefresh && x.R_Blueprint.RefreshesOn == RefreshType.TurnStart).ToList();
+            foreach(var resource in resources){
+                resource.NeedsRefresh = false;
+            }
+            // R_ConcentratesOn?.TickDuration();
         }
 
         public void StopConcentrating(){
@@ -846,6 +853,16 @@ namespace pracadyplomowa.Models.Entities.Characters
                     AccessLevels.EditPowersKnown,
                     AccessLevels.EditSpellbook,
                     AccessLevels.Delete
+                ];
+            }
+            else if(this.R_CharactersParticipatesInEncounters.SelectMany(x => x.R_Encounter.R_Participances).Any(x => x.R_Character.R_OwnerId == userId)){
+                accessLevels = [
+                    AccessLevels.Read
+                ];
+            }
+            else if (this.R_Campaign?.R_CampaignHasCharacters.Any(x => x.R_OwnerId == userId) ?? false){
+                accessLevels = [
+                    AccessLevels.Read
                 ];
             }
             return accessLevels.Count > 0;
@@ -1235,6 +1252,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             //calculate total damage coming from effects applied to weapon and wielder
             Dictionary<DamageType, int> totalEffectDamage = weaponEffectDamageRollResults.ToDictionary(g => g.Key, g => g.Value.Aggregate(0, (sum, current) => sum + current.result));
 
+            int initialHealth = target._Hitpoints + target._TemporaryHitpoints;
             //check for targets damage resistance and apply damage
             var weaponHitResult = new WeaponHitResult();
             weaponHitResult.DamageTaken.Add(weapon.DamageType, target.TakeDamage(totalWeaponDamage, weapon.DamageType));
@@ -1242,6 +1260,12 @@ namespace pracadyplomowa.Models.Entities.Characters
             {
                 weaponHitResult.DamageTaken.Add(pair.Key, target.TakeDamage(pair.Value, pair.Key));
             }
+            int damageTaken = initialHealth - (target._Hitpoints + target._TemporaryHitpoints);
+            if(damageTaken > 0){
+                target.MakeConcentrationSavingThrow(damageTaken);
+            }
+
+
             // foreach (var power in weapon.R_EquipItemGrantsAccessToPower.Where(x => x.CastableBy == CastableBy.OnWeaponHit))
             // {
             //     weapon.CheckIfPowerHitSuccessfull(encounter, power, [target]).TryGetValue(target.Id, out HitType outcome);
@@ -1353,7 +1377,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             effectGroup.Name = power.Name;
             if (power.RequiresConcentration)
             {
-                effectGroup.R_ConcentratedOnByCharacter = this;
+                StartConcentration(effectGroup);
             }
             foreach (Character target in targetsToHitSuccessMap.Keys)
             {
@@ -1366,9 +1390,9 @@ namespace pracadyplomowa.Models.Entities.Characters
                         {
                             bool shouldAdd = false;
                             if (power.UpcastBy == UpcastBy.NotUpcasted
-                            || (power.UpcastBy == UpcastBy.ResourceLevel && immaterialResourceLevel >= effectBlueprint.Level)
-                            || (power.UpcastBy == UpcastBy.CharacterLevel && this.Level >= effectBlueprint.Level)
-                            || (power.UpcastBy == UpcastBy.ClassLevel && this.GetLevelInClass((int)power.R_ClassForUpcastingId) >= effectBlueprint.Level)
+                            || (power.UpcastBy == UpcastBy.ResourceLevel && immaterialResourceLevel == effectBlueprint.Level)
+                            || (power.UpcastBy == UpcastBy.CharacterLevel && this.Level == effectBlueprint.Level)
+                            || (power.UpcastBy == UpcastBy.ClassLevel && this.GetLevelInClass((int)power.R_ClassForUpcastingId) == effectBlueprint.Level)
                             )
                             {
                                 if (power.PowerType == PowerType.Attack && outcome == HitType.Hit || outcome == HitType.CriticalHit)
@@ -1385,6 +1409,9 @@ namespace pracadyplomowa.Models.Entities.Characters
                                     {
                                         shouldAdd = true;
                                     }
+                                }
+                                else if(power.PowerType == PowerType.PassiveEffect){
+                                    shouldAdd = true;
                                 }
 
                                 if (shouldAdd)
@@ -1406,10 +1433,48 @@ namespace pracadyplomowa.Models.Entities.Characters
                 }
                 foreach (var effect in generatedEffects)
                 {
-                    effectGroup.AddEffectOnCharacter(effect);
+                    effectGroup.AddEffect(effect);
                 }
             }
+            Dictionary<Character, int> initialHealthMap = [];
+            foreach(var target in targetsToHitSuccessMap.Keys){
+                initialHealthMap.Add(target, target._Hitpoints + target._TemporaryHitpoints);
+            }
+            foreach(var effect in generatedEffects){
+                effect.Resolve();
+            }
+            foreach(var target in initialHealthMap.Keys){
+                int damageTaken = initialHealthMap[target] - (target._Hitpoints + target._TemporaryHitpoints);
+                if(damageTaken > 0){
+                    target.MakeConcentrationSavingThrow(damageTaken);
+                }
+            }
+            // foreach(var group in generatedEffects.Where(x => x.R_OwnedByGroup != null).Select(x => x.R_OwnedByGroup).Distinct()){
+            //     group?.TickDuration();
+            // }
             return Outcome.Success;
+        }
+
+        
+        public void StartConcentration(EffectGroup effectGroup){
+            DropConcentration();
+            effectGroup.R_ConcentratedOnByCharacter = this;
+            effectGroup.R_ConcentratedOnByCharacterId = effectGroup.R_ConcentratedOnByCharacter.Id;
+            this.R_ConcentratesOn = effectGroup;
+        }
+
+        public void DropConcentration(){
+            R_ConcentratesOn?.Disperse();
+        }
+
+        public void MakeConcentrationSavingThrow(int damageTaken){
+            if(this.R_ConcentratesOn !=  null){
+                int difficultyClass = Math.Max(10, damageTaken/2);
+                int roll = (this.ConstitutionSavingThrowValue + new DiceSet(){d20 = 1}).Roll(this);
+                if(roll <= difficultyClass){
+                    DropConcentration();
+                }
+            }
         }
 
         public bool HasAllMaterialComponentsForPower(Power power){
@@ -1472,8 +1537,8 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
         public void Move(Encounter encounter, Field field){
             var participance = encounter.R_Participances.First(x => x.R_CharacterId == this.Id);
-            participance.R_OccupiedField = encounter.R_Board.R_ConsistsOfFields.First(x => x == field);
-            field.R_OccupiedBy = participance;
+            field = encounter.R_Board.R_ConsistsOfFields.First(x => x == field);
+            field.Enter(participance);
         }
 
         public List<Field> CanTraversePath(List<Field> path){ //returns achieveable part of the path
@@ -1513,9 +1578,10 @@ namespace pracadyplomowa.Models.Entities.Characters
         [NotMapped]
         public int TotalMovementPerTurn{
             get {
-                var bonus = AffectedByApprovedEffects.OfType<MovementEffectInstance>().Where(x => x.EffectType.MovementEffect == MovementEffect.Bonus).Select(x => x.DiceSet.flat).Sum();
+                var effectsBonus = AffectedByApprovedEffects.OfType<MovementEffectInstance>().Where(x => x.EffectType.MovementEffect == MovementEffect.Bonus).Select(x => x.DiceSet.flat);
+                var bonus = effectsBonus.Any() ? effectsBonus.Sum() : 0;
                 var multiplierEffects = AffectedByApprovedEffects.OfType<MovementEffectInstance>().Where(x => x.EffectType.MovementEffect == MovementEffect.Multiplier);
-                var multiplier = multiplierEffects.Select(x => x.DiceSet.flat).Sum();
+                var multiplier = multiplierEffects.Any() ? multiplierEffects.Select(x => x.DiceSet.flat).Sum() : 0;
                 var numberOfMultipliers = multiplierEffects.Count();
                 return R_CharacterBelongsToRace.Speed * (multiplier - (numberOfMultipliers - 1)) + bonus;
             }
@@ -1525,10 +1591,87 @@ namespace pracadyplomowa.Models.Entities.Characters
         public int TotalAttacksPerTurn{
             get {
                 int baseNumber = 1;
-                int maxFromEffects = AffectedByApprovedEffects.OfType<AttackPerAttackActionEffectInstance>().Where(x => x.EffectType.AttackPerActionEffect == AttackPerActionEffect.AttacksTotal).Select(x => x.DiceSet.flat).Max();
-                int additional = AffectedByApprovedEffects.OfType<AttackPerAttackActionEffectInstance>().Where(x => x.EffectType.AttackPerActionEffect == AttackPerActionEffect.AdditionalAttacks).Select(x => x.DiceSet.flat).Sum();
+                var effectsMax = AffectedByApprovedEffects.OfType<AttackPerAttackActionEffectInstance>().Where(x => x.EffectType.AttackPerActionEffect == AttackPerActionEffect.AttacksTotal).Select(x => x.DiceSet.flat);
+                int maxFromEffects = effectsMax.Any() ? effectsMax.Max() : 0;
+                var effectsAdditinal = AffectedByApprovedEffects.OfType<AttackPerAttackActionEffectInstance>().Where(x => x.EffectType.AttackPerActionEffect == AttackPerActionEffect.AdditionalAttacks).Select(x => x.DiceSet.flat);
+                int additional = effectsAdditinal.Any() ? effectsAdditinal.Max() : 0;
                 return Math.Max(baseNumber, maxFromEffects) + additional;
             }
         }
+
+        [NotMapped]
+        public int CurrentLevel{
+            get{
+                return R_CharacterHasLevelsInClass.Count;
+            }
+        }
+
+        [NotMapped]
+        public bool CanLevelUp {
+            get{
+                var experienceRequiredForNextLevel = new Dictionary<int, int>
+                {
+                    { 1, 0 },
+                    { 2, 300 },
+                    { 3, 900 },
+                    { 4, 2700 },
+                    { 5, 6500 },
+                    { 6, 14000 },
+                    { 7, 23000 },
+                    { 8, 34000 },
+                    { 9, 48000 },
+                    { 10, 64000 },
+                    { 11, 85000 },
+                    { 12, 100000 },
+                    { 13, 120000 },
+                    { 14, 140000 },
+                    { 15, 165000 },
+                    { 16, 195000 },
+                    { 17, 225000 },
+                    { 18, 265000 },
+                    { 19, 305000 },
+                    { 20, 355000 }
+                };
+
+                if (CurrentLevel < 20)
+                {
+                    int requiredExperience = experienceRequiredForNextLevel[CurrentLevel + 1];
+
+                    return ExperiencePoints >= requiredExperience;
+                }
+                return false;
+            }
+        }
+
+        public void RollDeathSavingThrow() {
+            if(_Hitpoints < 1){
+                var roll = new DiceSet(){d20 = 1}.Roll(this);
+                if(roll < 10){
+                    FailedDeathSavingThrows++;
+                }
+                else{
+                    SucceededDeathSavingThrows++;
+                }
+            }
+        }
+
+        public void PerformLongRest(){
+            StopConcentrating();
+            var resourcesToRefresh = AllImmaterialResourceInstances
+                                    .Where(i => i.NeedsRefresh && (i.R_Blueprint.RefreshesOn == RefreshType.LongRest || i.R_Blueprint.RefreshesOn == RefreshType.ShortRest || i.R_Blueprint.RefreshesOn == RefreshType.TurnStart))
+                                    .ToList();
+            foreach(var resource in resourcesToRefresh){
+                resource.NeedsRefresh = false;
+            }
+            _Hitpoints = MaxHealth;
+            _TemporaryHitpoints = 0;
+            foreach(var effect in AllEffects.Where(x => x.R_OwnedByGroup != null && x.R_OwnedByGroup.IsConstant == false).ToList()){
+                effect.Unlink();
+            }
+            SucceededDeathSavingThrows = 0;
+            FailedDeathSavingThrows = 0;
+        }
+
+
     }
 }

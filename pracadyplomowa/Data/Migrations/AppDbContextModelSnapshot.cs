@@ -452,9 +452,6 @@ namespace pracadyplomowa.Data.Migrations
                     b.Property<int>("R_EncounterId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("R_OccupiedFieldId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("R_CharacterId");
@@ -1017,6 +1014,9 @@ namespace pracadyplomowa.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("R_ConcentratedOnByCharacterId")
+                        .IsUnique();
+
                     b.HasIndex("R_GeneratesAuraId")
                         .IsUnique();
 
@@ -1411,9 +1411,6 @@ namespace pracadyplomowa.Data.Migrations
                     b.HasIndex("R_CharacterBelongsToRaceId");
 
                     b.HasIndex("R_CharacterHasBackpackId")
-                        .IsUnique();
-
-                    b.HasIndex("R_ConcentratesOnId")
                         .IsUnique();
 
                     b.HasIndex("R_SpawnedByPowerId");
@@ -2278,7 +2275,8 @@ namespace pracadyplomowa.Data.Migrations
 
                     b.HasOne("pracadyplomowa.Models.Entities.Campaign.ParticipanceData", "R_OccupiedBy")
                         .WithOne("R_OccupiedField")
-                        .HasForeignKey("pracadyplomowa.Models.Entities.Campaign.Field", "R_OccupiedById");
+                        .HasForeignKey("pracadyplomowa.Models.Entities.Campaign.Field", "R_OccupiedById")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("R_Board");
 
@@ -2589,9 +2587,16 @@ namespace pracadyplomowa.Data.Migrations
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectGroup", b =>
                 {
+                    b.HasOne("pracadyplomowa.Models.Entities.Characters.Character", "R_ConcentratedOnByCharacter")
+                        .WithOne("R_ConcentratesOn")
+                        .HasForeignKey("pracadyplomowa.Models.Entities.Powers.EffectGroup", "R_ConcentratedOnByCharacterId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("pracadyplomowa.Models.Entities.Powers.Aura", "R_GeneratesAura")
                         .WithOne("R_GeneratedBy")
                         .HasForeignKey("pracadyplomowa.Models.Entities.Powers.EffectGroup", "R_GeneratesAuraId");
+
+                    b.Navigation("R_ConcentratedOnByCharacter");
 
                     b.Navigation("R_GeneratesAura");
                 });
@@ -2768,11 +2773,6 @@ namespace pracadyplomowa.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("pracadyplomowa.Models.Entities.Powers.EffectGroup", "R_ConcentratesOn")
-                        .WithOne("R_ConcentratedOnByCharacter")
-                        .HasForeignKey("pracadyplomowa.Models.Entities.Characters.Character", "R_ConcentratesOnId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("pracadyplomowa.Models.Entities.Powers.Power", "R_SpawnedByPower")
                         .WithMany("R_SpawnedCharacters")
                         .HasForeignKey("R_SpawnedByPowerId");
@@ -2792,8 +2792,6 @@ namespace pracadyplomowa.Data.Migrations
                     b.Navigation("R_CharacterBelongsToRace");
 
                     b.Navigation("R_CharacterHasBackpack");
-
-                    b.Navigation("R_ConcentratesOn");
 
                     b.Navigation("R_SpawnedByPower");
 
@@ -3791,8 +3789,6 @@ namespace pracadyplomowa.Data.Migrations
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectGroup", b =>
                 {
-                    b.Navigation("R_ConcentratedOnByCharacter");
-
                     b.Navigation("R_OwnedEffects");
                 });
 
@@ -3849,6 +3845,8 @@ namespace pracadyplomowa.Data.Migrations
                     b.Navigation("R_AuraCenteredAtCharacter");
 
                     b.Navigation("R_CharactersParticipatesInEncounters");
+
+                    b.Navigation("R_ConcentratesOn");
 
                     b.Navigation("R_EquippedItems");
 

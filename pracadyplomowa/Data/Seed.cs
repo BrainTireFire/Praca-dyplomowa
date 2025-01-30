@@ -406,9 +406,12 @@ public class Seed
             ChoiceGroup fightingStyle = new("Fighting style");
             fightingStyle.R_Effects.Add(new AttackRollEffectBlueprint("Archery", 2, RollMoment.OnCast, AttackRollEffect_Type.Bonus, AttackRollEffect_Source.Weapon, AttackRollEffect_Range.Ranged){Description = "You gain a +2 bonus to attack rolls you make with ranged weapons."});
             fightingStyle.R_Effects.Add(new ArmorClassEffectBlueprint("Defense", 1, RollMoment.OnCast){Conditional = true, Description = "While you are wearing armor, you gain a +1 bonus to AC."});
-            fightingStyle.R_Effects.Add(new DamageEffectBlueprint("Dueling", 1, RollMoment.OnCast){Conditional = true, Description = @"When you are wielding a melee weapon in one hand and 
+            var dueling = new DamageEffectBlueprint("Dueling", 1, RollMoment.OnCast){Conditional = true, Description = @"When you are wielding a melee weapon in one hand and 
                                                                                                                         no other weapons, you gain a +2 bonus to damage rolls 
-                                                                                                                        with that weapon."});
+                                                                                                                        with that weapon."};
+            dueling.DamageEffectType.DamageEffect_DamageType = null;
+            dueling.DamageEffectType.DamageEffect = DamageEffect.ExtraWeaponDamage;
+            fightingStyle.R_Effects.Add(dueling);
             fightingStyle.R_Effects.Add(new AttackRollEffectBlueprint("Great Weapon Fighting", 3, RollMoment.OnCast, AttackRollEffect_Type.RerollLowerThan, AttackRollEffect_Source.Weapon, AttackRollEffect_Range.Melee){
                 Conditional = true,
                 Description = @"When you roll a 1 or 2 on a damage die for an attack you 

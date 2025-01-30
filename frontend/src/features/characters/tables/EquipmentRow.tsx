@@ -12,6 +12,9 @@ import styled from "styled-components";
 import RadioButton from "../../../ui/containers/RadioButton";
 import { Item } from "../../../models/item";
 import { Cell } from "../../../ui/containers/Cell";
+import ConfirmDelete from "../../../ui/containers/ConfirmDelete";
+import { useDeleteItem } from "../hooks/useDeleteItem";
+import ItemForm from "../../items/ItemForm";
 
 const Stacked = styled.div`
   display: flex;
@@ -29,6 +32,7 @@ const Stacked = styled.div`
 `;
 
 export default function EquipmentRow({ equipment }: { equipment: Item }) {
+  const { isPending, deleteItem } = useDeleteItem(() => {});
   return (
     <Table.Row>
       <Cell>{equipment.name}</Cell>
@@ -51,37 +55,29 @@ export default function EquipmentRow({ equipment }: { equipment: Item }) {
         <Menus.Menu>
           <Menus.Toggle id={equipment.id} />
           <Menus.List id={equipment.id}>
-            <Menus.Button icon={<HiEye />} onClick={() => alert("Test")}>
-              Test 1
-            </Menus.Button>
-
-            <Menus.Button
-              icon={<HiArrowDownOnSquare />}
-              onClick={() => alert("Test")}
-            >
-              Test 2
-            </Menus.Button>
-
-            <Menus.Button
-              icon={<HiArrowUpOnSquare />}
-              onClick={() => alert("Test")}
-            >
-              Test 3
-            </Menus.Button>
-
+            <Modal.Open opens="open">
+              <Menus.Button icon={<HiEye />} onClick={() => {}}>
+                Open
+              </Menus.Button>
+            </Modal.Open>
             <Modal.Open opens="delete">
-              <Menus.Button icon={<HiTrash />}>Test 4</Menus.Button>
+              <Menus.Button icon={<HiTrash />} onClick={() => {}}>
+                Delete
+              </Menus.Button>
             </Modal.Open>
           </Menus.List>
         </Menus.Menu>
         <Modal.Window name="delete">
-          {/* <ConfirmDelete
-            resourceName="equipment"
-            disabled={isDeleting}
+          <ConfirmDelete
+            resourceName="effect instance"
+            disabled={isPending}
             onConfirm={() => {
-              deleteBooking(bookingId);
+              deleteItem(equipment.id);
             }}
-          /> */}
+          />
+        </Modal.Window>
+        <Modal.Window name="open">
+          <ItemForm itemId={equipment.id}></ItemForm>
         </Modal.Window>
       </Modal>
     </Table.Row>

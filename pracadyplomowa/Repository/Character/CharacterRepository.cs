@@ -161,6 +161,7 @@ namespace pracadyplomowa.Repository
 
             .Include(c => c.R_ImmaterialResourceInstances)
                 .ThenInclude(iri => iri.R_Blueprint)
+            .Include(c => c.R_ConcentratesOn)
 
             .AsSplitQuery() // IMPORTANT !!!!! https://learn.microsoft.com/en-us/ef/core/querying/single-split-queries
             .FirstAsync();
@@ -315,6 +316,12 @@ namespace pracadyplomowa.Repository
             return _context.Characters
             .Where(i => ids.Contains(i.Id))
             .Include(c => c.R_Campaign)
+                .ThenInclude(c => c!.R_CampaignHasCharacters)
+            .Include(c => c.R_CharactersParticipatesInEncounters)
+                .ThenInclude(c => c.R_Encounter)
+                    .ThenInclude(c => c.R_Participances)
+                        .ThenInclude(c => c.R_Character)
+            .AsSplitQuery()
             .ToDictionary(i => i.Id, i => i);
         }
     }

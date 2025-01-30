@@ -23,10 +23,10 @@ public class NotificationHub : Hub
         var userId = Context.User?.GetUserId();
         if (userId.HasValue)
         {
-            var users = await _unitOfWork.CharacterRepository
+            var characters = await _unitOfWork.CharacterRepository
                 .GetCharactersByUserId(userId.Value);
                 
-            foreach (var campaign in users.Select(character => character.R_Campaign).OfType<Campaign>())
+            foreach (var campaign in characters.Select(character => character.R_Campaign).OfType<Campaign>())
             {
                 await Groups.AddToGroupAsync(Context.ConnectionId, $"Campaign_{campaign.Id}");
             }
@@ -48,10 +48,10 @@ public class NotificationHub : Hub
         var userId = Context.User?.GetUserId();
         if (userId.HasValue)
         {
-            var users = await _unitOfWork.CharacterRepository
+            var characters = await _unitOfWork.CharacterRepository
                 .GetCharactersByUserId(userId.Value);
                 
-            foreach (var campaign in users.Select(character => character.R_Campaign).OfType<Campaign>())
+            foreach (var campaign in characters.Select(character => character.R_Campaign).OfType<Campaign>())
             {
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"Campaign_{campaign.Id}");
             }

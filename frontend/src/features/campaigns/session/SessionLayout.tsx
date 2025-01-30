@@ -343,7 +343,9 @@ export default function SessionLayout({ encounter }: any) {
   useEffect(() => {
     if (groupName) {
       const hubConnection = new HubConnectionBuilder()
-        .withUrl(`${BASE_URL}/session?groupName=${groupName}`)
+        .withUrl(
+          `${BASE_URL}/session?groupName=${groupName}&campaignId=${encounter.campaign.id}`
+        )
         .configureLogging(LogLevel.Information)
         .withAutomaticReconnect()
         .build();

@@ -19,6 +19,7 @@ using pracadyplomowa.Repository;
 using pracadyplomowa.Repository.Board;
 using pracadyplomowa.Repository.Encounter;
 using pracadyplomowa.Repository.UnitOfWork;
+using pracadyplomowa.Services.Websockets.Notification;
 
 namespace pracadyplomowa.Services.Encounter;
 
@@ -29,18 +30,21 @@ public class EncounterService : IEncounterService
     private readonly IAccountRepository _accountRepository;
     private readonly IMapper _mapper;
     private readonly IHubContext<SessionHub> _hubContext;
+    private readonly INotificationService _notificationService;
     
     public EncounterService(
         IUnitOfWork unitOfWork,
         IAccountRepository accountRepository,
         IMapper mapper,
-        IHubContext<SessionHub> hubContext
+        IHubContext<SessionHub> hubContext,
+        INotificationService notificationService
    )
     {
         _unitOfWork = unitOfWork;
         _accountRepository = accountRepository;
         _mapper = mapper;
         _hubContext = hubContext;
+        _notificationService = notificationService;
     }
     
     public async Task<PagedList<EncounterShortDto>> GetEncountersAsync(int ownedId, int campaignId, EncounterParams encounterParams)

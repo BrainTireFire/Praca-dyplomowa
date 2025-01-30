@@ -6,6 +6,7 @@ using pracadyplomowa.Models.DTOs.Session;
 using pracadyplomowa.Models.Entities.Campaign;
 using pracadyplomowa.Repository.AuctionLog;
 using pracadyplomowa.Repository.UnitOfWork;
+using pracadyplomowa.Services.Websockets.Notification;
 
 namespace pracadyplomowa.Hubs;
 
@@ -13,6 +14,7 @@ namespace pracadyplomowa.Hubs;
 public class SessionHub  : Hub
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly INotificationService _notificationService;
     
     //TODO the same users is connecting!
     //
@@ -21,9 +23,10 @@ public class SessionHub  : Hub
     private static readonly ConcurrentDictionary<string, ConcurrentDictionary<string, Coordinate>> UserCursors = new();
     private static readonly ConcurrentDictionary<string, List<int>> SelectedPath = new();
    
-    public SessionHub(IUnitOfWork unitOfWork)
+    public SessionHub(IUnitOfWork unitOfWork, INotificationService notificationService)
     {
         _unitOfWork = unitOfWork;
+        _notificationService = notificationService;
     }
     
     public override async Task OnConnectedAsync()
@@ -72,6 +75,15 @@ public class SessionHub  : Hub
                 foreach (var campaign in campaigns)
                 {
                     await Groups.AddToGroupAsync(Context.ConnectionId, $"Campaign_{campaign.Id}_GM");
+
+                    if (!int.TryParse(GetCampaignId(), out int campainId)) continue;
+        
+                    if (!int.TryParse(groupName, out int encounterId)) continue;
+
+                    if (campaign.Id != campainId) continue;
+                    
+                    await _notificationService.SendNotificationSessionStarted(userId.Value, campainId, encounterId);
+
                 }
             }
         }
@@ -164,6 +176,11 @@ public class SessionHub  : Hub
     private string? GetGroupName()
     {
         return Context.GetHttpContext()?.Request.Query["groupName"].ToString();
+    }
+    
+    private string? GetCampaignId()
+    {
+        return Context.GetHttpContext()?.Request.Query["campaignId"].ToString();
     }
     
     /*

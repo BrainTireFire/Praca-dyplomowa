@@ -66,6 +66,7 @@ export default function VirtualBoard({
   otherPath,
   weaponAttack,
   power,
+  onWeaponAttackOverlay,
   selectedTargets,
 }: VirtualBoardProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -176,6 +177,20 @@ export default function VirtualBoard({
     );
     let occupiedField = controlledCharacter?.occupiedField;
     if (mode === "WeaponAttack") {
+      let occupiedField = encounter.participances.find(
+        (x) => x.character.id === controlledCharacterId
+      )?.occupiedField;
+
+      if (occupiedField) {
+        drawWeaponAttackRange(
+          ctx,
+          { x: occupiedField.positionX, y: occupiedField.positionY },
+          weaponAttack.range,
+          ActiveCharacterSize,
+          16,
+          9
+        );
+      }
       drawAttackRange(
         ctx,
         { x: occupiedField!.positionX, y: occupiedField!.positionY },
@@ -356,10 +371,14 @@ export default function VirtualBoard({
           if (inRange) {
             console.log("In range");
             // setTargetId(clickedCharacter.character.id);
-            dispatch({
-              type: "WEAPON_ATTACK_OVERLAY_DATA",
-              payload: { targetId: clickedCharacter.character.id },
-            });
+            onWeaponAttackOverlay(
+              clickedCharacter.character.id,
+              controlledCharacterId,
+              encounter.campaign.id,
+              weaponAttack.weaponId,
+              weaponAttack.isRanged,
+              weaponAttack.range
+            );
           } else {
             console.log("Not in range");
           }

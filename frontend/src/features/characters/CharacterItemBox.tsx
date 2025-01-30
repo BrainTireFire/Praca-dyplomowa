@@ -3,10 +3,21 @@ import Box from "../../ui/containers/Box";
 import Heading from "../../ui/text/Heading";
 import ButtonGroup from "../../ui/interactive/ButtonGroup";
 import Button from "../../ui/interactive/Button";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { CharacterItem } from "../../models/character";
 import { useDeleteCharacter } from "./hooks/useDeleteCharacter";
 import { useNavigate } from "react-router-dom";
+
+const BoxCustomStyles = css`
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    background: var(--color-navbar-hover);
+  }
+`;
 
 const StyledElementBox = styled.div`
   text-align: center;
@@ -26,7 +37,11 @@ export default function CharacterItemBox({
     onClick(null)
   );
   return (
-    <Box radius="tiny" onClick={() => onClick(character.id)}>
+    <Box
+      radius="tiny"
+      onClick={() => onClick(character.id)}
+      customStyles={BoxCustomStyles}
+    >
       <Heading as="h3">{character.name}</Heading>
       <StyledElementBox>
         {character.class} & {character.race}

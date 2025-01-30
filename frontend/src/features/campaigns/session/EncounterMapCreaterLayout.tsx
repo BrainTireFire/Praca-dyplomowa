@@ -9,6 +9,7 @@ import { Coordinate } from "../../../models/session/Coordinate";
 import Heading from "../../../ui/text/Heading";
 import Button from "../../../ui/interactive/Button";
 import { useUpdatePlaceEncounter } from "../hooks/useUpdatePlaceEncounter";
+import { FaTimes } from "react-icons/fa";
 
 const Container = styled.div`
   padding-top: 20px;
@@ -58,6 +59,18 @@ const Label = styled.label`
   margin-bottom: 5px;
 `;
 
+const StyledFaTimes = styled(FaTimes)`
+  font-size: 2.1rem;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-image-hover);
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* pointer-events: auto; */
+`;
+
 const FieldSet = styled.div`
   position: relative;
   width: 250px;
@@ -65,7 +78,7 @@ const FieldSet = styled.div`
   padding: 10px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   background-color: var(--color-button-primary);
   border: 1px solid var(--color-border);
   border-radius: 5px;
@@ -74,8 +87,13 @@ const FieldSet = styled.div`
 
   &:hover {
     background-color: var(--color-button-danger);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-lg);
   }
+
+  /* & > ${StyledFaTimes}:hover + & {
+    background-color: inherit;
+    box-shadow: inherit;
+  } */
 `;
 
 const FieldContainerStyled = styled.div`
@@ -85,12 +103,19 @@ const FieldContainerStyled = styled.div`
 `;
 
 type FieldEncounterMap = Field & {
-  memberId: number;
-  avatarUrl: string;
-  memberName: string;
+  memberId?: number;
+  avatarUrl?: string;
+  memberName?: string;
+  size?: string;
 };
 
-export default function EncounterMapCreaterLayout({ encounterId, onToggle }) {
+export default function EncounterMapCreaterLayout({
+  encounterId,
+  onToggle,
+}: {
+  encounterId: number;
+  onToggle?: Function;
+}) {
   const { isLoading, encounter } = useEncounter(encounterId);
   const [selectedBox, setSelectedBox] = useState<Coordinate>({});
   const [fields, setFields] = useState<FieldEncounterMap[]>([]);
@@ -99,9 +124,32 @@ export default function EncounterMapCreaterLayout({ encounterId, onToggle }) {
 
   useEffect(() => {
     if (encounter?.board) {
-      setFields(encounter.board.fields);
+      // setFields(encounter.board.fields);
+      const occupiedMap = new Map(
+        encounter.participances.map((p) => [p.occupiedField?.id, p])
+      );
+
+      const fields = encounter.board.fields.map((field) => {
+        const participance = occupiedMap.get(field.id);
+
+        if (!participance) {
+          return field;
+        }
+
+        return {
+          ...field,
+          size: participance?.character.size.name,
+          memberName: participance?.character.name,
+          memberId: participance?.character.id,
+          avatarUrl: participance?.character.isNpc
+            ? "https://pbs.twimg.com/profile_images/1810521561352617985/ornocKLB_400x400.jpg"
+            : "https://s3.amazonaws.com/files.d20.io/images/390056921/JkAY2BnZBWR-IYsYkqx3_Q/original.png",
+        };
+      });
+
+      setFields(fields);
     }
-  }, [encounter?.board]);
+  }, [encounter?.board, encounter?.participances]);
 
   const handleFieldUpdate = useCallback(
     (updatedField: {
@@ -112,30 +160,33 @@ export default function EncounterMapCreaterLayout({ encounterId, onToggle }) {
       avatarUrl: string;
     }) => {
       setFields((prevFields) => {
-        // Find the field that already has the same memberName
         const existingFieldWithMember = prevFields.find(
           (field) =>
-            field.memberName === updatedField.memberName &&
-            field.memberId === updatedField.memberId
+            field.memberId === updatedField.memberId &&
+            (field.memberName === updatedField.memberName || !field.memberName)
         );
 
-        // If the field exists, clear its memberName
         let fieldsToUpdate = prevFields;
         if (existingFieldWithMember) {
           fieldsToUpdate = prevFields.map((field) =>
             field === existingFieldWithMember
-              ? { ...field, memberName: null }
+              ? {
+                  ...field,
+                  memberName: undefined,
+                  memberId: undefined,
+                  avatarUrl: undefined,
+                }
               : field
           );
         }
 
-        // Update or add the target field
         return fieldsToUpdate.map((field) =>
           field.positionX === updatedField.positionX &&
           field.positionY === updatedField.positionY
             ? {
                 ...field,
                 memberName: updatedField.memberName,
+                memberId: updatedField.memberId,
                 avatarUrl: updatedField.avatarUrl,
               }
             : field
@@ -144,6 +195,21 @@ export default function EncounterMapCreaterLayout({ encounterId, onToggle }) {
     },
     [setFields]
   );
+
+  const handleMemberRemove = useCallback((character: CharacterItem) => {
+    setFields((prevFields) =>
+      prevFields.map((field) =>
+        field.memberId === character.id
+          ? {
+              ...field,
+              memberName: undefined,
+              memberId: undefined,
+              avatarUrl: undefined,
+            }
+          : field
+      )
+    );
+  }, []);
 
   const handleMemberClick = useCallback(
     (character: CharacterItem) => {
@@ -160,7 +226,7 @@ export default function EncounterMapCreaterLayout({ encounterId, onToggle }) {
 
       const avatarUrl = character.isNpc
         ? "https://pbs.twimg.com/profile_images/1810521561352617985/ornocKLB_400x400.jpg"
-        : "https://i1.sndcdn.com/avatars-000012078220-stfi4o-t1080x1080.jpg";
+        : "https://s3.amazonaws.com/files.d20.io/images/390056921/JkAY2BnZBWR-IYsYkqx3_Q/original.png";
 
       handleFieldUpdate({
         positionX: selectedBox.x,
@@ -221,7 +287,7 @@ export default function EncounterMapCreaterLayout({ encounterId, onToggle }) {
   return (
     <Container>
       <HeaderStyled>
-        <Button onClick={() => onToggle(false)}>Back</Button>
+        {onToggle && <Button onClick={() => onToggle(false)}>Back</Button>}
         <Heading as="h2">Create encounter map</Heading>
         <Button onClick={handleSubmit}>Save</Button>
       </HeaderStyled>
@@ -243,6 +309,12 @@ export default function EncounterMapCreaterLayout({ encounterId, onToggle }) {
                 onClick={() => handleMemberClick(member)}
               >
                 {member.name}
+                <StyledFaTimes
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleMemberRemove(member);
+                  }}
+                />
               </FieldSet>
             ))}
           </FieldContainerStyled>
@@ -256,6 +328,12 @@ export default function EncounterMapCreaterLayout({ encounterId, onToggle }) {
                     onClick={() => handleMemberClick(participance.character)}
                   >
                     {participance.character.name}
+                    <StyledFaTimes
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleMemberRemove(participance.character);
+                      }}
+                    />
                   </FieldSet>
                 )
             )}

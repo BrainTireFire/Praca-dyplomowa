@@ -506,8 +506,8 @@ export const drawTextName = (
   const numericCharacterSize = getSizeMultiplier(characterSize);
   const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
 
-  ctx.fillStyle = "white";
-  ctx.font = `${squareSize * 0.2}px Poppins`;
+  ctx.fillStyle = "#011b84";
+  ctx.font = `${squareSize * 0.3}px Poppins`;
 
   const textWidth = ctx.measureText(field.memberName).width;
 

@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore.Storage;
+using pracadyplomowa.Repository.AuctionLog;
 using pracadyplomowa.Repository.Board;
 using pracadyplomowa.Repository.Class;
 using pracadyplomowa.Repository.Encounter;
@@ -12,6 +14,8 @@ public class UnitOfWork : IUnitOfWork
 {
     private readonly AppDbContext _context;
     private readonly IMapper _mapper;
+    private IDbContextTransaction _transaction;
+    
     public UnitOfWork(AppDbContext context, IMapper mapper)
     {
         _mapper = mapper;
@@ -37,6 +41,7 @@ public class UnitOfWork : IUnitOfWork
     public IPowerRepository PowerRepository => new PowerRepository(_context);
     public IRaceRepository RaceRepository => new RaceRepository(_context);
     public IShopRepository ShopRepository => new ShopRepository(_context);
+    public IAuctionLogRepository AuctionLogRepository => new AuctionLogRepository(_context);
 
     public async Task<int> SaveChangesAsync()
     {
@@ -46,5 +51,51 @@ public class UnitOfWork : IUnitOfWork
     public bool HasChanges()
     {
         return _context.ChangeTracker.HasChanges();
+    }
+    
+    public async Task BeginTransactionAsync()
+    {
+        if (_transaction != null)
+        {
+            throw new InvalidOperationException("A transaction is already in progress.");
+        }
+
+        _transaction = await _context.Database.BeginTransactionAsync();
+    }
+    
+    public async Task CommitTransactionAsync()
+    {
+        if (_transaction == null)
+        {
+            throw new InvalidOperationException("No transaction in progress.");
+        }
+
+        try
+        {
+            await _context.SaveChangesAsync();
+            await _transaction.CommitAsync();
+        }
+        catch
+        {
+            await _transaction.RollbackAsync();
+            throw;
+        }
+        finally
+        {
+            await _transaction.DisposeAsync();
+            _transaction = null;
+        }
+    }
+    
+    public async Task RollbackTransactionAsync()
+    {
+        if (_transaction == null)
+        {
+            throw new InvalidOperationException("No transaction in progress.");
+        }
+
+        await _transaction.RollbackAsync();
+        await _transaction.DisposeAsync();
+        _transaction = null;
     }
 }

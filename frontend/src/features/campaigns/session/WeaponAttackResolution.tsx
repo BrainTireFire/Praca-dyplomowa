@@ -76,7 +76,7 @@ export function WeaponAttackResolution({
   if (isLoadingWeaponDamage || isPendingAttack) {
     return <Spinner></Spinner>;
   }
-  console.log(weaponAttackData);
+  console.log("controlState", controlState);
 
   // const resultPayload: ApprovedConditionalEffectsDto = {
   //   CasterConditionalEffects: conditionalEffects.casterConditionalEffects

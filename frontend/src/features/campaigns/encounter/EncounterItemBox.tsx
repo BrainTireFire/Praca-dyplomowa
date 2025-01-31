@@ -10,6 +10,7 @@ import ConfirmDelete from "../../../ui/containers/ConfirmDelete";
 import useToggleEncounterActive from "../hooks/useToggleEncounterActive";
 import Spinner from "../../../ui/interactive/Spinner";
 import useDeleteEncounter from "../hooks/useDeleteEncounter";
+import { useNavigate } from "react-router-dom";
 
 const StyledBox = styled(Box)`
   display: grid;
@@ -43,11 +44,14 @@ const ButtonContainer = styled.div`
 
 export default function EncounterItemBox({
   encounter,
+  campaignId,
 }: {
   encounter: Encounter;
+  campaignId: number;
 }) {
   const { isPending, toggleEncounterActive } = useToggleEncounterActive();
   const { deleteEncounter, isDeleting } = useDeleteEncounter(encounter.id);
+  const navigate = useNavigate();
 
   if (isPending || isDeleting) {
     return <Spinner />;
@@ -72,7 +76,11 @@ export default function EncounterItemBox({
             </Button>
           ) : null}
 
-          <Button variation="primary" size="large">
+          <Button
+            variation="primary"
+            size="large"
+            onClick={() => navigate(`${encounter.id}/editEncounter`)}
+          >
             Edit
           </Button>
 

@@ -26,12 +26,14 @@ export default function EncounterList({ campaignId }: { campaignId: string }) {
     return <div>There are no encounters</div>;
   }
 
-  console.log(encounters);
-
   return (
     <EncounterListLayout>
       {encounters.map((encounter: Encounter) => (
-        <EncounterItemBox key={encounter.id} encounter={encounter} />
+        <EncounterItemBox
+          key={encounter.id}
+          encounter={encounter}
+          campaignId={parseInt(campaignId)}
+        />
       ))}
     </EncounterListLayout>
   );

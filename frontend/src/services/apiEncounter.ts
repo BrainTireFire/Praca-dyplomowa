@@ -33,19 +33,21 @@ export async function createEncounter(
   return data;
 }
 
+type SetEncounterPositionDto = {
+  IsActive: boolean;
+  FieldsToUpdate: EncounterUpdateDto[];
+};
+
 export async function updatePlaceEncounter(
   encounterId: number,
-  encounterUpdateDto: EncounterUpdateDto[]
+  setEncounterPositionDto: SetEncounterPositionDto
 ): Promise<null> {
   const options: RequestInit = {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      IsActive: true,
-      FieldsToUpdate: encounterUpdateDto,
-    }),
+    body: JSON.stringify(setEncounterPositionDto),
   };
 
   await customFetch(

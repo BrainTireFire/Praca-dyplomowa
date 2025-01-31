@@ -174,7 +174,6 @@ public class EncounterService : IEncounterService
                     {
                         return new NotFoundObjectResult(new ApiResponse(400, "Character with Id " + fieldUpdate.CharacterId + " does not exist"));
                     }
-
                     
                     var existingParticipient = encounter.R_Participances.FirstOrDefault(x => x.R_CharacterId == fieldUpdate.CharacterId);
                     
@@ -227,7 +226,7 @@ public class EncounterService : IEncounterService
                 }
             }
             
-            encounter.IsActive = true;
+            encounter.IsActive = setEncounterPositionDto.IsActive;
             await _unitOfWork.SaveChangesAsync();
 
             return new NoContentResult();

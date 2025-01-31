@@ -102,6 +102,13 @@ const FieldContainerStyled = styled.div`
   align-items: center;
 `;
 
+const ButtonContainer = styled.div`
+  margin-top: auto;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+`;
+
 type FieldEncounterMap = Field & {
   memberId?: number;
   avatarUrl?: string;
@@ -112,15 +119,19 @@ type FieldEncounterMap = Field & {
 export default function EncounterMapCreaterLayout({
   encounterId,
   onToggle,
+  startEncounter,
 }: {
   encounterId: number;
   onToggle?: Function;
+  startEncounter?: boolean;
 }) {
   const { isLoading, encounter } = useEncounter(encounterId);
   const [selectedBox, setSelectedBox] = useState<Coordinate>({});
   const [fields, setFields] = useState<FieldEncounterMap[]>([]);
-  const { updatePlaceEncounter, isUpdating } =
-    useUpdatePlaceEncounter(encounterId);
+  const { updatePlaceEncounter, isUpdating } = useUpdatePlaceEncounter(
+    encounterId,
+    startEncounter
+  );
 
   useEffect(() => {
     if (encounter?.board) {
@@ -200,6 +211,21 @@ export default function EncounterMapCreaterLayout({
     setFields((prevFields) =>
       prevFields.map((field) =>
         field.memberId === character.id
+          ? {
+              ...field,
+              memberName: undefined,
+              memberId: undefined,
+              avatarUrl: undefined,
+            }
+          : field
+      )
+    );
+  }, []);
+
+  const handleResetAllMemebers = useCallback(() => {
+    setFields((prevFields) =>
+      prevFields.map((field) =>
+        field.memberId
           ? {
               ...field,
               memberName: undefined,
@@ -338,6 +364,9 @@ export default function EncounterMapCreaterLayout({
                 )
             )}
           </FieldContainerStyled>
+          <ButtonContainer>
+            <Button onClick={handleResetAllMemebers}>Reset all members</Button>
+          </ButtonContainer>
         </LeftPanel>
       </MainGrid>
     </Container>

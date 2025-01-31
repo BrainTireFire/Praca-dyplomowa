@@ -31,6 +31,7 @@ import Powers from "./pages/powers/Powers";
 import NpcCharacter from "./pages/NpcCharacter";
 import MainSession from "./pages/campaign/session/MainSession";
 import Encounter from "./pages/campaign/encounter/Encounter";
+import EncounterEditForm from "./features/campaigns/encounter/EncounterEditForm";
 
 export default function Router() {
   return (
@@ -63,6 +64,10 @@ export default function Router() {
         <Route
           path="campaigns/:campaignId/createEncounter"
           element={<CreateEncounter />}
+        />
+        <Route
+          path="campaigns/:campaignId/encounters/:encounterId/editEncounter"
+          element={<EncounterEditForm />}
         />
         <Route
           path="campaigns/:campaignId/encounters"

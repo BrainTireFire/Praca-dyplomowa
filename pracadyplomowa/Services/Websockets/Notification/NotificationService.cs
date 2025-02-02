@@ -41,8 +41,29 @@ public class NotificationService : INotificationService
         }
         
         var notificationMessage = $"{characterName} has been successfully removed from the campaign \"{campaignName}\".";
-        await _hubContext.Clients.Group($"Campaign_{campaignId}").SendAsync("ReceiveNotification", notificationMessage, campaignId);
+        var isKick = true;
+        await _hubContext.Clients.Group($"Campaign_{campaignId}").SendAsync("ReceiveNotification", notificationMessage, campaignId, isKick);
         //await _hubContext.Clients.Group($"Global").SendAsync("ReceiveNotification", notificationMessage, campaignId);
+    }
+
+    public async Task SendNotificationSessionStarted(int ownerId, int? campaignId, int encounteId)
+    {
+        if (campaignId != null)
+        {
+            var campaignGroup = $"Campaign_{campaignId}";
+            var ownerConnectionId = _connectionService.GetConnectionIdByUserId(ownerId);
+
+            if (ownerConnectionId != null)
+            {
+                await _hubContext.Clients.GroupExcept(campaignGroup, ownerConnectionId)
+                    .SendAsync("SessionHasBeenStarted", "Session has been started. Have fun!", campaignId, encounteId);
+            }
+            else
+            {
+                await _hubContext.Clients.Group(campaignGroup)
+                    .SendAsync("SessionHasBeenStarted", "Session has been started. Have fun!", campaignId, encounteId);
+            }
+        }
     }
 
 }

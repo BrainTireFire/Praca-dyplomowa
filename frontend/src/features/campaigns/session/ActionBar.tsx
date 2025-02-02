@@ -92,11 +92,13 @@ export default function ActionBar({
   encounter,
   dispatch,
   connection,
+  onPowerCastOverlay,
 }: {
   controlState: ControlState;
   encounter: Encounter;
   dispatch: React.Dispatch<ControlStateActions>;
   connection: HubConnection;
+  onPowerCastOverlay: any;
 }) {
   const { rollInitiative, isPending } = useRollInitiative(encounter.id, () =>
     connection.invoke("SendRequeryInitiative")
@@ -416,10 +418,12 @@ export default function ActionBar({
                       : true
                   }
                   onClick={() =>
-                    dispatch({
-                      type: "POWER_CAST_OVERLAY_DATA",
-                      payload: { targetIds: controlState.powerTargets },
-                    })
+                    onPowerCastOverlay(
+                      controlledCharacterId,
+                      encounter.campaign.id,
+                      controlState.powerTargets,
+                      controlState.powerSelected
+                    )
                   }
                 >
                   Confirm power target selection (targets:{" "}

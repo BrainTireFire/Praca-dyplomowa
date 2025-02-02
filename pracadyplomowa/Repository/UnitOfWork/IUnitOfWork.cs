@@ -1,4 +1,5 @@
-﻿using pracadyplomowa.Repository.Board;
+﻿using pracadyplomowa.Repository.AuctionLog;
+using pracadyplomowa.Repository.Board;
 using pracadyplomowa.Repository.Class;
 using pracadyplomowa.Repository.Encounter;
 using pracadyplomowa.Repository.Field;
@@ -27,6 +28,10 @@ public interface IUnitOfWork
     IPowerRepository PowerRepository { get; }
     IRaceRepository RaceRepository { get; }
     IShopRepository ShopRepository { get; }
+    IActionLogRepository ActionLogRepository { get; }
     Task<int> SaveChangesAsync();
     bool HasChanges();
+    Task BeginTransactionAsync();
+    Task CommitTransactionAsync();
+    Task RollbackTransactionAsync();
 }

@@ -37,8 +37,8 @@ namespace pracadyplomowa.UnitTests.CharacterTests
             };
             slot2.R_Races.Add(race);
             race.R_EquipmentSlots.AddRange([slot1, slot2]);
-            Character character = new("Test", false, 14, 8, 6, 4, 2, 12, testClass.R_ClassLevels[0], race, -1);
-            Character target = new("Test", false, 14, 8, 6, 4, 2, 12, testClass.R_ClassLevels[0], race, -1);
+            Character character = new("Test", false, 14, 8, 6, 4, 2, 12, testClass.R_ClassLevels[0], race, -1, 0);
+            Character target = new("Test", false, 14, 8, 6, 4, 2, 12, testClass.R_ClassLevels[0], race, -1, 0);
             Encounter enc = new Encounter(){
                 Id = 1,
             };

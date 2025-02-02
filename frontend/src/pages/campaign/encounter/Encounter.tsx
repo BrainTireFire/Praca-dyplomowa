@@ -1,9 +1,10 @@
 import React from "react";
 import styled from "styled-components";
-import Line from "../../../ui/separators/Line";
 import Heading from "../../../ui/text/Heading";
-import { useTranslation } from "react-i18next";
-import EncounterForm from "../../../features/campaigns/encounter/EncounterForm";
+import Line from "../../../ui/separators/Line";
+import EncounterList from "../../../features/campaigns/encounter/EncounterList";
+import Button from "../../../ui/interactive/Button";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -12,16 +13,33 @@ const Container = styled.div`
   height: 100%;
 `;
 
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+`;
+
 export default function Encounter() {
-  const { t } = useTranslation();
+  const { campaignId } = useParams<{ campaignId: string }>();
+  const navigate = useNavigate();
 
   return (
-    <Container>
-      <Heading as="h1" style={{ padding: "15px" }}>
-        {"Encounter Creator"}
-      </Heading>
-      <Line size="large" bold="medium" />
-      <EncounterForm />
-    </Container>
+    <>
+      <Container>
+        <Heading as="h1" style={{ padding: "15px" }}>
+          {"Encounters "}
+        </Heading>
+        <Line size="large" bold="medium" />
+        <EncounterList campaignId={campaignId} />
+        <ButtonContainer>
+          <Button
+            size="large"
+            onClick={() => navigate(`/campaigns/${campaignId}/createEncounter`)}
+          >
+            Create encounter
+          </Button>
+        </ButtonContainer>
+      </Container>
+    </>
   );
 }

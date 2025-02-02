@@ -124,7 +124,8 @@ namespace pracadyplomowa.UnitTests.CharacterTests
             
             power.R_EffectBlueprints.Add(effectBlueprint);
             
-            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Hit}}, 1);
+            
+            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Hit}}, 1, out var effects);
             
             var effectInstances = target.R_AffectedBy;
             Assert.True(effectInstances.Count == 1);
@@ -242,7 +243,7 @@ namespace pracadyplomowa.UnitTests.CharacterTests
             
             power.R_EffectBlueprints.Add(effectBlueprint);
             
-            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Hit}}, 1);
+            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Hit}}, 1, out var effects);
             
             var effectInstances = target.R_AffectedBy;
             Assert.True(effectInstances.Count == 0);
@@ -359,7 +360,8 @@ namespace pracadyplomowa.UnitTests.CharacterTests
             
             power.R_EffectBlueprints.Add(effectBlueprint);
             
-            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Hit}}, 1);
+            
+            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Hit}}, 1, out var effects);
             
             var effectInstances = target.R_AffectedBy;
             Assert.True(effectInstances.Count == 0);
@@ -479,7 +481,8 @@ namespace pracadyplomowa.UnitTests.CharacterTests
             
             power.R_EffectBlueprints.Add(effectBlueprint);
             
-            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Hit}}, 1);
+            
+            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Hit}}, 1, out var effects);
             
             var effectInstances = target.R_AffectedBy;
             Assert.True(effectInstances.Count == 1);
@@ -610,7 +613,8 @@ namespace pracadyplomowa.UnitTests.CharacterTests
             power.R_EffectBlueprints.Add(effectBlueprint);
             power.R_EffectBlueprints.Add(effectBlueprint2);
             
-            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Hit}}, 2);
+            
+            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Hit}}, 2, out var effects);
             
             var effectInstances = target.R_AffectedBy;
             Assert.True(effectInstances.Count == 2);
@@ -740,7 +744,8 @@ namespace pracadyplomowa.UnitTests.CharacterTests
             power.R_EffectBlueprints.Add(effectBlueprint);
             power.R_EffectBlueprints.Add(effectBlueprint2);
             
-            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Hit}}, 1);
+            
+            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Hit}}, 1, out var effects);
             
             var effectInstances = target.R_AffectedBy;
             Assert.Equal(Outcome.Success, outcome);
@@ -871,7 +876,8 @@ namespace pracadyplomowa.UnitTests.CharacterTests
             power.R_EffectBlueprints.Add(effectBlueprint);
             power.R_EffectBlueprints.Add(effectBlueprint2);
             
-            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Miss}}, 1);
+            
+            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Miss}}, 1, out var effects);
             
             var effectInstances = target.R_AffectedBy;
             Assert.Equal(Outcome.Success, outcome);

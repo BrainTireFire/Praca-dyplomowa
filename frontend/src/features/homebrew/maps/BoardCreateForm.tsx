@@ -9,6 +9,7 @@ import Heading from "../../../ui/text/Heading";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import FormContainer from "../../../ui/forms/FormContainer";
 import MapCreatorLayout from "./MapCreatorLayout";
+import Dropdown from "../../../ui/forms/Dropdown";
 
 const Label = styled.label`
   font-weight: bold;
@@ -48,7 +49,17 @@ type MapFormProps = {
   sizeX: number;
   sizeY: number;
   description: string;
+  boardSize: string;
 };
+
+const BOARD_SIZES = [
+  { value: "16 x 9", label: "16 x 9" },
+  { value: "32 x 18", label: "32 x 18" },
+  { value: "48 x 27", label: "48 x 27" },
+  { value: "64 x 36", label: "64 x 36" },
+  { value: "80 x 45", label: "80 x 45" },
+  { value: "96 x 54", label: "96 x 54" },
+];
 
 export default function BoardCreateForm() {
   const {
@@ -68,6 +79,29 @@ export default function BoardCreateForm() {
     setData(dataForm);
     setToggleMap(!toggleMap);
   }
+
+  const handleDropdownChange = (value: string | null) => {
+    console.log(value);
+
+    if (value === null) {
+      return;
+    }
+
+    setData((prevData) => ({
+      ...prevData,
+      boardSize: value,
+      name: prevData?.name ?? "",
+      sizeX: prevData?.sizeX ?? 0,
+      sizeY: prevData?.sizeY ?? 0,
+      description: prevData?.description ?? "",
+    }));
+
+    setValue("boardSize", value);
+
+    const [width, height] = value.split(" x ").map(Number);
+    setValue("sizeX", width);
+    setValue("sizeY", height);
+  };
 
   return (
     <>
@@ -98,24 +132,10 @@ export default function BoardCreateForm() {
             <FieldContainerStyled>
               <FieldSet>
                 <Label>Board Size: </Label>
-                <Input
-                  id="sizeX"
-                  type="text"
-                  placeholder="X"
-                  {...register("sizeX", {
-                    required: "This field is required",
-                  })}
-                  style={{ width: "70px" }}
-                />
-                <Span> x </Span>
-                <Input
-                  id="sizeY"
-                  type="text"
-                  placeholder="Y"
-                  {...register("sizeY", {
-                    required: "This field is required",
-                  })}
-                  style={{ width: "70px" }}
+                <Dropdown
+                  valuesList={BOARD_SIZES}
+                  chosenValue={data?.boardSize ?? "16 x 9"}
+                  setChosenValue={(value) => handleDropdownChange(value)}
                 />
               </FieldSet>
               {formState.errors.sizeX && (

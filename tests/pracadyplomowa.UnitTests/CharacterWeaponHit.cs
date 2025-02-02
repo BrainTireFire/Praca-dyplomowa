@@ -39,8 +39,8 @@ namespace pracadyplomowa.UnitTests.CharacterTests
             };
             slot2.R_Races.Add(race);
             race.R_EquipmentSlots.AddRange([slot1, slot2]);
-            Character character = new("Test", false, 14, 8, 6, 4, 2, 12, testClass.R_ClassLevels[0], race, -1);
-            Character target = new("Test", false, 14, 8, 6, 4, 2, 12, testClass.R_ClassLevels[0], race, -1);
+            Character character = new("Test", false, 14, 8, 6, 4, 2, 12, testClass.R_ClassLevels[0], race, -1, 0);
+            Character target = new("Test", false, 14, 8, 6, 4, 2, 12, testClass.R_ClassLevels[0], race, -1, 0);
             EffectInstance proficiencyEffectInstance = new ProficiencyEffectBlueprint(ItemType.MartialWeapon).Generate(null, character);
             EffectInstance bonusDamageInstance = new DamageEffectBlueprint("test", 2, RollMoment.OnCast, Models.Enums.EffectOptions.DamageEffect.ExtraWeaponDamage, null).Generate(null, character);
             EffectInstance thunderDamageInstance = new DamageEffectBlueprint("test", 2, RollMoment.OnCast, Models.Enums.EffectOptions.DamageEffect.DamageDealt, DamageType.thunder).Generate(null, character);

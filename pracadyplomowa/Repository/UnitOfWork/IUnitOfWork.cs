@@ -28,7 +28,7 @@ public interface IUnitOfWork
     IPowerRepository PowerRepository { get; }
     IRaceRepository RaceRepository { get; }
     IShopRepository ShopRepository { get; }
-    IAuctionLogRepository AuctionLogRepository { get; }
+    IActionLogRepository ActionLogRepository { get; }
     Task<int> SaveChangesAsync();
     bool HasChanges();
     Task BeginTransactionAsync();

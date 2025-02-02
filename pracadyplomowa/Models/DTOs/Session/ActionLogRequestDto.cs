@@ -2,7 +2,7 @@
 
 namespace pracadyplomowa.Models.DTOs.Session;
 
-public class AuctionLogRequestDto
+public class ActionLogRequestDto
 {
     [Required]
     public string GroupName { get; set; }

@@ -2,9 +2,9 @@
 
 namespace pracadyplomowa.Repository.AuctionLog;
 
-public class AuctionLogRepository  : BaseRepository<Models.Entities.Campaign.ActionLog>, IAuctionLogRepository
+public class ActionLogRepository  : BaseRepository<Models.Entities.Campaign.ActionLog>, IActionLogRepository
 {
-    public AuctionLogRepository(AppDbContext context) : base(context)
+    public ActionLogRepository(AppDbContext context) : base(context)
     {
     }
 

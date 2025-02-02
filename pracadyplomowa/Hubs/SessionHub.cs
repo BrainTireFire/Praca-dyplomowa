@@ -233,23 +233,14 @@ public class SessionHub  : Hub
     /*
      * Message management
      */
-    public async Task SendMessageToGroup(AuctionLogRequestDto request)
+    public async Task SendMessageToGroup(ActionLogRequestDto request)
     {
         var username = Context.User?.GetUsername();
-            
-        var messageDto = new MessageDto()
-        {
-            Username = username,
-            Message = request.Content
-        };
-            
-        await Clients.Group(request.GroupName).SendAsync("ReceiveMessage", messageDto);
-
         var campaign = _unitOfWork.CampaignRepository.GetById(request.CampaignId);
 
         if (campaign != null)
         {
-            var auctionLog = new ActionLog()
+            var actionLog = new ActionLog()
             {
                 Content =  request.Content,
                 Source = username,
@@ -258,9 +249,17 @@ public class SessionHub  : Hub
                 EncounterId = request.EncounterId
             };
             
-            _unitOfWork.AuctionLogRepository.Add(auctionLog);
+            _unitOfWork.ActionLogRepository.Add(actionLog);
             await _unitOfWork.SaveChangesAsync();
         }
+        
+        var messageDto = new MessageDto()
+        {
+            Username = username,
+            Message = request.Content
+        };
+            
+        await Clients.Group(request.GroupName).SendAsync("ReceiveMessage", messageDto);
     }
     
     public async Task SendSelectedPath(List<int> fieldIds)

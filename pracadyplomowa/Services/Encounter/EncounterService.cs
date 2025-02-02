@@ -826,7 +826,6 @@ public class EncounterService : IEncounterService
         int finalTargetHealth = target.Hitpoints + target.TemporaryHitpoints;
         result.TotalDamage = initialTargetHealth - finalTargetHealth;
         result.HitpointsLeft = target.Hitpoints;
-        await _unitOfWork.SaveChangesAsync();
         
         var systemMessage = new MessageDto()
         {
@@ -838,7 +837,20 @@ public class EncounterService : IEncounterService
                       $"Total Damage Dealt: {result.TotalDamage} HP\n" +
                       $"Hitpoints Left: {result.HitpointsLeft} HP\n"
         };
-
+        
+        var actionLog = new ActionLog()
+        {
+            Content =  systemMessage.Message,
+            Source = systemMessage.Username,
+            Time = DateTime.Now,
+            R_Campaign = encounter.R_Campaign,
+            EncounterId = encounterId
+        };
+        
+        _unitOfWork.ActionLogRepository.Add(actionLog);
+        await _unitOfWork.SaveChangesAsync();
+        
+        // Notify all clients in the encounter group
         await _hubContext.Clients.Group(encounterId.ToString()).SendAsync("ReceiveMessage", systemMessage);
         
         return result;

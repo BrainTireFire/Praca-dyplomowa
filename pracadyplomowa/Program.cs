@@ -74,7 +74,7 @@ builder.Services.AddScoped<IItemCostRequirementRepository, ItemCostRequirementRe
 builder.Services.AddScoped<IEquipmentSlotRepository, EquipmentSlotRepository>();
 builder.Services.AddScoped<IEncounterRepository, EncounterRepository>();
 builder.Services.AddScoped<IParticipanceDataRepository, ParticipanceDataRepository>();
-builder.Services.AddScoped<IAuctionLogRepository, AuctionLogRepository>();
+builder.Services.AddScoped<IActionLogRepository, ActionLogRepository>();
 
 builder.Services.AddScoped<IAuthorizationHandler, OwnershipHandler>();
 // builder.Services.AddHttpContextAccessor();

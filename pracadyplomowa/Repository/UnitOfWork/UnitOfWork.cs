@@ -41,7 +41,7 @@ public class UnitOfWork : IUnitOfWork
     public IPowerRepository PowerRepository => new PowerRepository(_context);
     public IRaceRepository RaceRepository => new RaceRepository(_context);
     public IShopRepository ShopRepository => new ShopRepository(_context);
-    public IAuctionLogRepository AuctionLogRepository => new AuctionLogRepository(_context);
+    public IActionLogRepository ActionLogRepository => new ActionLogRepository(_context);
 
     public async Task<int> SaveChangesAsync()
     {

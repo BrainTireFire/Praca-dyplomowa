@@ -17,6 +17,7 @@ import { WeaponAttack, Power } from "../../../models/session/VirtualBoardProps";
 import ModalNoButton from "../../../ui/containers/ModalNoButton";
 import { WeaponAttackResolution } from "./WeaponAttackResolution";
 import { PowerCastResolution } from "./PowerCastResolution";
+import { WeaponAttackOverlayDto } from "../../../models/encounter/WeaponAttackOverlayDto";
 
 const GridContainer = styled.div`
   grid-row: 1 / 2;
@@ -381,7 +382,13 @@ export default function SessionLayout({ encounter }: any) {
 
           hubConnection.on(
             "WeaponAttackOverlay",
-            ({ targetId, sourceId, weaponId, isRanged, range }: any) => {
+            ({
+              targetId,
+              sourceId,
+              weaponId,
+              isRanged,
+              range,
+            }: WeaponAttackOverlayDto) => {
               console.log("WeaponAttackOverlay triggered");
 
               dispatch({
@@ -434,7 +441,7 @@ export default function SessionLayout({ encounter }: any) {
     } else {
       console.error("Group name is not defined.");
     }
-  }, [groupName]);
+  }, [groupName, encounter.campaign.id]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();

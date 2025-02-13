@@ -24,6 +24,7 @@ import { AttackSelectionScreen } from "./AttackSelectionScreen";
 import { PowerSelectionScreen } from "./PowerSelectionScreen";
 import { useGetPowerConcentratedOn } from "../hooks/useGetPowerConcentratedOn";
 import useDropConcentration from "../hooks/useDropConcentration";
+import { Power } from "../../../models/session/VirtualBoardProps";
 
 const initialParticipanceData: ParticipanceData = {
   actionsTaken: 0,
@@ -98,7 +99,12 @@ export default function ActionBar({
   encounter: Encounter;
   dispatch: React.Dispatch<ControlStateActions>;
   connection: HubConnection;
-  onPowerCastOverlay: any;
+  onPowerCastOverlay: (
+    sourceId: number,
+    campaignId: number,
+    powerTargetIds: number[],
+    power: Power
+  ) => Promise<void>;
 }) {
   const { rollInitiative, isPending } = useRollInitiative(encounter.id, () =>
     connection.invoke("SendRequeryInitiative")
@@ -417,14 +423,18 @@ export default function ActionBar({
                           0 || controlState.powerTargets.length === 0
                       : true
                   }
-                  onClick={() =>
+                  onClick={() => {
+                    if (controlState.powerSelected === null) {
+                      return;
+                    }
+
                     onPowerCastOverlay(
                       controlledCharacterId,
                       encounter.campaign.id,
                       controlState.powerTargets,
                       controlState.powerSelected
-                    )
-                  }
+                    );
+                  }}
                 >
                   Confirm power target selection (targets:{" "}
                   {controlState.powerTargets.length}/

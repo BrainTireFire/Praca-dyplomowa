@@ -33,23 +33,54 @@ export async function createEncounter(
   return data;
 }
 
+type SetEncounterPositionDto = {
+  IsActive: boolean;
+  FieldsToUpdate: EncounterUpdateDto[];
+};
+
 export async function updatePlaceEncounter(
   encounterId: number,
-  encounterUpdateDto: EncounterUpdateDto[]
+  setEncounterPositionDto: SetEncounterPositionDto
 ): Promise<null> {
   const options: RequestInit = {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      IsActive: true,
-      FieldsToUpdate: encounterUpdateDto,
-    }),
+    body: JSON.stringify(setEncounterPositionDto),
   };
 
   await customFetch(
     `${BASE_URL}/api/encounter/placeEncounter/${encounterId}`,
+    options
+  );
+
+  return null;
+}
+
+export async function deleteEncounter(encounterId: number): Promise<void> {
+  const options: RequestInit = {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  return await customFetch(`${BASE_URL}/api/encounter/${encounterId}`, options);
+}
+
+export async function toggleEncounterActive(
+  encounterId: number
+): Promise<null> {
+  const options: RequestInit = {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  await customFetch(
+    `${BASE_URL}/api/encounter/toggleActive/${encounterId}`,
     options
   );
 

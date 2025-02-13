@@ -17,6 +17,7 @@ import { WeaponAttack, Power } from "../../../models/session/VirtualBoardProps";
 import ModalNoButton from "../../../ui/containers/ModalNoButton";
 import { WeaponAttackResolution } from "./WeaponAttackResolution";
 import { PowerCastResolution } from "./PowerCastResolution";
+import { WeaponAttackOverlayDto } from "../../../models/encounter/WeaponAttackOverlayDto";
 
 const GridContainer = styled.div`
   grid-row: 1 / 2;
@@ -104,6 +105,7 @@ export type ControlState = {
   weaponAttackSelected: WeaponAttack | null;
   powerSelected: Power | null;
   weaponAttackRollOverlayData: WeaponAttackOverlayData | null;
+  powerCastOverlayData: PowerCastOverlayData | null;
   powerTargets: number[];
 };
 
@@ -115,6 +117,7 @@ const TOGGLE_PATH = "TOGGLE_PATH";
 const SET_PATH = "SET_PATH";
 const SET_WEAPON_ATTACK = "SET_WEAPON_ATTACK";
 const SET_POWER = "SET_POWER";
+const SET_POWER_ID = "SET_POWER_ID";
 const TOGGLE_POWER_TARGET = "TOGGLE_POWER_TARGET";
 const WEAPON_ATTACK_OVERLAY_DATA = "WEAPON_ATTACK_OVERLAY_DATA";
 const POWER_CAST_OVERLAY_DATA = "POWER_CAST_OVERLAY_DATA";
@@ -152,6 +155,10 @@ export interface SetPower {
   type: typeof SET_POWER;
   payload: Power;
 }
+export interface SetPowerId {
+  type: typeof SET_POWER_ID;
+  payload: number;
+}
 export interface WeaponAttackOverlay {
   type: typeof WEAPON_ATTACK_OVERLAY_DATA;
   payload: WeaponAttackOverlayData;
@@ -171,6 +178,7 @@ type WeaponAttackOverlayData = {
 };
 type PowerCastOverlayData = {
   targetIds: number[];
+  sourceId: number;
 };
 
 // Union type for all actions
@@ -184,7 +192,8 @@ export type ControlStateActions =
   | SetPower
   | WeaponAttackOverlay
   | TogglePowerTarget
-  | PowerCastOverlay;
+  | PowerCastOverlay
+  | SetPowerId;
 
 // Reducer function
 const controlStateReducer = (
@@ -244,6 +253,15 @@ const controlStateReducer = (
         powerSelected: action.payload,
         mode: "PowerCast",
       };
+    case SET_POWER_ID:
+      return {
+        ...state,
+        powerSelected: {
+          ...state.powerSelected,
+          powerId: action.payload,
+        },
+        mode: "PowerCast",
+      };
     case TOGGLE_POWER_TARGET:
       console.log(action.payload);
       console.log(state.powerTargets);
@@ -282,6 +300,7 @@ const controlStateReducer = (
     case POWER_CAST_OVERLAY_DATA:
       return {
         ...state,
+        powerCastOverlayData: action.payload,
         mode: "PowerCastOverlay",
       };
     default:
@@ -296,6 +315,7 @@ const initialState: ControlState = {
   weaponAttackSelected: null,
   powerSelected: null,
   weaponAttackRollOverlayData: null,
+  powerCastOverlayData: null,
   powerTargets: [],
 };
 
@@ -324,7 +344,9 @@ export default function SessionLayout({ encounter }: any) {
   useEffect(() => {
     if (groupName) {
       const hubConnection = new HubConnectionBuilder()
-        .withUrl(`${BASE_URL}/session?groupName=${groupName}`)
+        .withUrl(
+          `${BASE_URL}/session?groupName=${groupName}&campaignId=${encounter.campaign.id}`
+        )
         .configureLogging(LogLevel.Information)
         .withAutomaticReconnect()
         .build();
@@ -360,20 +382,20 @@ export default function SessionLayout({ encounter }: any) {
 
           hubConnection.on(
             "WeaponAttackOverlay",
-            (
-              targetId: number,
-              sourceId: number,
-              weaponId: number,
-              isRange: boolean,
-              range: number
-            ) => {
+            ({
+              targetId,
+              sourceId,
+              weaponId,
+              isRanged,
+              range,
+            }: WeaponAttackOverlayDto) => {
               console.log("WeaponAttackOverlay triggered");
 
               dispatch({
                 type: "SET_WEAPON_ATTACK",
                 payload: {
                   weaponId: weaponId,
-                  isRanged: isRange,
+                  isRanged: isRanged,
                   range: range,
                 },
               });
@@ -381,6 +403,28 @@ export default function SessionLayout({ encounter }: any) {
               dispatch({
                 type: "WEAPON_ATTACK_OVERLAY_DATA",
                 payload: { targetId: targetId, sourceId },
+              });
+            }
+          );
+
+          hubConnection.on(
+            "PowerCastOverlay",
+            ({ sourceId, powerId, powerTargetIds }: any) => {
+              console.log("PowerCastOverlay triggered");
+
+              dispatch({
+                type: "SET_POWER_ID",
+                payload: powerId,
+              });
+
+              dispatch({
+                type: "TOGGLE_POWER_TARGET",
+                payload: powerTargetIds,
+              });
+
+              dispatch({
+                type: "POWER_CAST_OVERLAY_DATA",
+                payload: { targetIds: powerTargetIds, sourceId },
               });
             }
           );
@@ -397,14 +441,21 @@ export default function SessionLayout({ encounter }: any) {
     } else {
       console.error("Group name is not defined.");
     }
-  }, [groupName]);
+  }, [groupName, encounter.campaign.id]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (connection && groupName && messageInput.trim()) {
+      var request = {
+        groupName: groupName,
+        content: messageInput,
+        campaignId: encounter.campaign.id,
+        encounterId: encounter.id,
+      };
+
       try {
         await connection
-          .invoke("SendMessageToGroup", groupName, messageInput)
+          .invoke("SendMessageToGroup", request)
           .catch((err) => console.error("Error while sending message", err));
         setMessageInput("");
       } catch (error) {
@@ -423,16 +474,41 @@ export default function SessionLayout({ encounter }: any) {
   ) => {
     if (connection) {
       try {
+        const weaponAttackOverlayRequest = {
+          targetId: targetId,
+          sourceId: sourceId,
+          campaignId: campaignId,
+          weaponId: weaponId,
+          isRange: isRange,
+          range: range,
+        };
+
         await connection
-          .invoke(
-            "TriggerWeaponAttackOverlay",
-            campaignId,
-            targetId,
-            sourceId,
-            weaponId,
-            isRange,
-            range
-          )
+          .invoke("TriggerWeaponAttackOverlay", weaponAttackOverlayRequest)
+          .catch((err) => console.error("Error while sending message", err));
+      } catch (error) {
+        console.error("Error sending message:", error);
+      }
+    }
+  };
+
+  const handlePowerCastOverlay = async (
+    sourceId: number,
+    campaignId: number,
+    powerTargetIds: number[],
+    power: Power
+  ) => {
+    if (connection) {
+      try {
+        const powerCastOverlayRequest = {
+          sourceId: sourceId,
+          campaignId: campaignId,
+          powerTargetIds: powerTargetIds,
+          powerId: power.powerId,
+        };
+
+        await connection
+          .invoke("TriggerPowerCastOverlay", powerCastOverlayRequest)
           .catch((err) => console.error("Error while sending message", err));
       } catch (error) {
         console.error("Error sending message:", error);
@@ -522,6 +598,7 @@ export default function SessionLayout({ encounter }: any) {
           dispatch={dispatch}
           encounter={encounter}
           connection={connection as HubConnection}
+          onPowerCastOverlay={handlePowerCastOverlay}
         ></ActionBar>
       </BottomPanel2>
       <ModalNoButton

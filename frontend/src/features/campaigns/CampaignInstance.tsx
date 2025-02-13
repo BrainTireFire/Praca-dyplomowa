@@ -63,6 +63,8 @@ export default function CampaignInstance() {
     return <div>{t("campaign.error.notFound")}</div>;
   }
 
+  console.log(campaign);
+
   const { id, name, description, members }: Campaign = campaign;
 
   return (
@@ -101,24 +103,25 @@ export default function CampaignInstance() {
           </Button>
           <Button
             size="large"
-            onClick={() => navigate(`/campaigns/${id}/encounter`)}
+            onClick={() => navigate(`/campaigns/${id}/encounters`)}
           >
-            {t("campaignInstance.createEncounter")}
+            Manage encounters
           </Button>
         </HeaderButtons>
       </div>
       <Line size="percantage" />
-
       <Heading as="h2">Description</Heading>
-      <div style={{ width: "73%", textAlign: "justify" }}>{description}</div>
-
+      {description === "" ? (
+        <p>No description</p>
+      ) : (
+        <div style={{ width: "73%", textAlign: "justify" }}>{description}</div>
+      )}
       <Line size="percantage" />
       <div>
         <Heading as="h2">Game Master</Heading>
         {/* {gameMaster.name} - {gameMaster.description} */}
       </div>
       <Line size="percantage" />
-
       <Heading as="h2">Members</Heading>
       <CharacterContainer>
         {members.length > 0 ? (
@@ -131,10 +134,9 @@ export default function CampaignInstance() {
             </CharacterDetailBox>
           ))
         ) : (
-          <Heading as="h2">There are no members in this campaign</Heading>
+          <p>There are no members in this campaign</p>
         )}
       </CharacterContainer>
-
       <Line size="percantage" />
       <div
         style={{

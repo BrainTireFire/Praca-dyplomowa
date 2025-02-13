@@ -2,8 +2,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using pracadyplomowa.DTOs.Session;
+using pracadyplomowa.Models.DTOs.Session;
 using pracadyplomowa.Models.Entities.Campaign;
+using pracadyplomowa.Repository.AuctionLog;
 using pracadyplomowa.Repository.UnitOfWork;
+using pracadyplomowa.Services.Websockets.Notification;
 
 namespace pracadyplomowa.Hubs;
 
@@ -11,6 +14,7 @@ namespace pracadyplomowa.Hubs;
 public class SessionHub  : Hub
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly INotificationService _notificationService;
     
     //TODO the same users is connecting!
     //
@@ -19,9 +23,10 @@ public class SessionHub  : Hub
     private static readonly ConcurrentDictionary<string, ConcurrentDictionary<string, Coordinate>> UserCursors = new();
     private static readonly ConcurrentDictionary<string, List<int>> SelectedPath = new();
    
-    public SessionHub(IUnitOfWork unitOfWork)
+    public SessionHub(IUnitOfWork unitOfWork, INotificationService notificationService)
     {
         _unitOfWork = unitOfWork;
+        _notificationService = notificationService;
     }
     
     public override async Task OnConnectedAsync()
@@ -70,6 +75,15 @@ public class SessionHub  : Hub
                 foreach (var campaign in campaigns)
                 {
                     await Groups.AddToGroupAsync(Context.ConnectionId, $"Campaign_{campaign.Id}_GM");
+
+                    if (!int.TryParse(GetCampaignId(), out int campainId)) continue;
+        
+                    if (!int.TryParse(groupName, out int encounterId)) continue;
+
+                    if (campaign.Id != campainId) continue;
+                    
+                    await _notificationService.SendNotificationSessionStarted(userId.Value, campainId, encounterId);
+
                 }
             }
         }
@@ -164,6 +178,11 @@ public class SessionHub  : Hub
         return Context.GetHttpContext()?.Request.Query["groupName"].ToString();
     }
     
+    private string? GetCampaignId()
+    {
+        return Context.GetHttpContext()?.Request.Query["campaignId"].ToString();
+    }
+    
     /*
      * Board management=
      */
@@ -214,17 +233,33 @@ public class SessionHub  : Hub
     /*
      * Message management
      */
-    public async Task SendMessageToGroup(string groupName, string message)
+    public async Task SendMessageToGroup(ActionLogRequestDto request)
     {
         var username = Context.User?.GetUsername();
+        var campaign = _unitOfWork.CampaignRepository.GetById(request.CampaignId);
+
+        if (campaign != null)
+        {
+            var actionLog = new ActionLog()
+            {
+                Content =  request.Content,
+                Source = username,
+                Time = DateTime.Now,
+                R_Campaign = campaign,
+                EncounterId = request.EncounterId
+            };
             
+            _unitOfWork.ActionLogRepository.Add(actionLog);
+            await _unitOfWork.SaveChangesAsync();
+        }
+        
         var messageDto = new MessageDto()
         {
             Username = username,
-            Message = message
+            Message = request.Content
         };
             
-        await Clients.Group(groupName).SendAsync("ReceiveMessage", messageDto);
+        await Clients.Group(request.GroupName).SendAsync("ReceiveMessage", messageDto);
     }
     
     public async Task SendSelectedPath(List<int> fieldIds)
@@ -258,17 +293,18 @@ public class SessionHub  : Hub
         await Clients.GroupExcept(groupName, Context.ConnectionId).SendAsync("RequeryInitiative");
     }
     
-    public async Task TriggerWeaponAttackOverlay(
-        int campaignId, 
-        int targetId, 
-        int sourceId, 
-        int weaponId, 
-        bool isRanged, 
-        int range)
+    public async Task TriggerWeaponAttackOverlay(WeaponAttackOverlayDto weaponAttackOverlayDto)
     {
-        var groupName = $"Campaign_{campaignId}_GM";
+        var groupName = $"Campaign_{weaponAttackOverlayDto.CampaignId}_GM";
         await Clients.Group(groupName)
-            .SendAsync("WeaponAttackOverlay", targetId, sourceId, weaponId, isRanged, range);
+            .SendAsync("WeaponAttackOverlay", weaponAttackOverlayDto);
+    }
+    
+    public async Task TriggerPowerCastOverlay(PowerCastOverlayDto powerCastOverlayDto)
+    {
+        var groupName = $"Campaign_{powerCastOverlayDto.CampaignId}_GM";
+        await Clients.Group(groupName)
+            .SendAsync("PowerCastOverlay", powerCastOverlayDto);
     }
     
     public class Coordinate

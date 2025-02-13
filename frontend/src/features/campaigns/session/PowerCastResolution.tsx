@@ -40,10 +40,10 @@ export function PowerCastResolution({
   controlState: ControlState;
 }) {
   const { groupName } = useParams<{ groupName: string }>();
-  const [controlledCharacterId] = useContext(ControlledCharacterContext);
+
   const { isLoading: isLoadingPowerData, powerCastData } = useGetPowerCastData(
     Number(groupName),
-    controlledCharacterId,
+    controlState.powerCastOverlayData!.sourceId,
     controlState.powerSelected?.powerId!,
     controlState.powerTargets
   );
@@ -75,7 +75,7 @@ export function PowerCastResolution({
 
   const { isPending: isPendingPowerCast, castPower } = useCastPower(
     Number(groupName),
-    controlledCharacterId,
+    controlState.powerCastOverlayData!.sourceId,
     controlState.powerSelected?.powerId!,
     () => {}
   );
@@ -83,7 +83,8 @@ export function PowerCastResolution({
   if (isLoadingPowerData || !hasEffectRun || isPendingPowerCast) {
     return <Spinner></Spinner>;
   }
-  console.log(powerCastData);
+
+  console.log("powerCastData " + powerCastData);
 
   let spellSlotLevel = state.spellSlotLevel;
   if (

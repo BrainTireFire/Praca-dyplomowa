@@ -12,7 +12,8 @@ public interface IEncounterService
     Task<PagedList<EncounterShortDto>> GetEncountersAsync(int ownedId, int campaignId, EncounterParams encounterParams);
     Task<EncounterSummaryDto> GetEncounterAsync(int encounterId, int userId);
     Task<ActionResult> CreateEncounterAsync(int ownerId, CreateEncounterDto createEncounterDto);
-    Task<ActionResult> UpdateEncounterAsync(int ownerId, int encounterId, UpdateEncounterDto updateEncounterDto);
+    Task<ActionResult> ToogleEncounterActiveAsync(int ownerId, int encounterId);
+    Task<ActionResult> SetEncounterPositionAsync(int ownerId, int encounterId, SetEncounterPositionDto setEncounterPositionDto);
     Task<ActionResult> RollInitiativeAsync(int encounterId);
     Task<ActionResult> GetInitiativeQueueAsync(int encounterId);
     Task<ActionResult> ModifyInitiativeQueueAsync(int encounterId, List<ModifyInitiativeQueueOrderItem> newQueue);
@@ -36,4 +37,5 @@ public interface IEncounterService
     Task<CastPowerResultDto> CastPower(int encounterId, int characterId, int powerId, CastPowerIncomingDataDto incomingDataDto);
     Task MoveUpQueue(int encounterId, int characterId, int userId);
     Task MoveDownQueue(int encounterId, int characterId, int userId);
+    Task<ActionResult> RemoveEncounterAsync(int ownerId, int encounterId);
 }

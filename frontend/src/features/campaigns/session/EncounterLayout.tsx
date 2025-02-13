@@ -235,6 +235,7 @@ export default function EncounterLayout() {
       <EncounterMapCreaterLayout
         encounterId={selectedEncounter?.id}
         onToggle={setToggleMap}
+        startEncounter={true}
       />
     );
   }

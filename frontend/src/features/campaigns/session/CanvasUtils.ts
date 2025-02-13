@@ -446,16 +446,9 @@ export const drawAvatar = async (
   if (!field.avatarUrl) return;
   const numericCharacterSize = getSizeMultiplier(characterSize);
   const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
-  const avatarSize = squareSize * 1 * numericCharacterSize;
-
-  const avatarX =
-    field.positionX * squareSize +
-    (squareSize / 2) * numericCharacterSize -
-    avatarSize / 2;
-  const avatarY =
-    field.positionY * squareSize +
-    (squareSize / 2) * numericCharacterSize -
-    avatarSize / 2;
+  const avatarSize = squareSize * numericCharacterSize;
+  const avatarX = field.positionX * squareSize;
+  const avatarY = field.positionY * squareSize;
 
   // Check if the image is already in cache
   let avatarImage = avatarCache[field.avatarUrl];

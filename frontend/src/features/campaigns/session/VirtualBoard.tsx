@@ -132,6 +132,17 @@ export default function VirtualBoard({
           encounter.board.sizeY
         );
 
+        if (field.fieldMovementCost === "Impassable") {
+          drawFieldCross(
+            ctx,
+            field,
+            encounter.board.sizeX,
+            encounter.board.sizeY
+          );
+        }
+      });
+
+      encounter.board.fields.forEach(async (field) => {
         const matchingParticipance = encounter.participances?.find(
           (participance) => participance?.occupiedField?.id === field.id
         );
@@ -156,15 +167,6 @@ export default function VirtualBoard({
             encounter.board.sizeX,
             encounter.board.sizeY,
             matchingParticipance.character.size.name
-          );
-        }
-
-        if (field.fieldMovementCost === "Impassable") {
-          drawFieldCross(
-            ctx,
-            field,
-            encounter.board.sizeX,
-            encounter.board.sizeY
           );
         }
       });

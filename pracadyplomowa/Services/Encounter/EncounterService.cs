@@ -2,6 +2,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.IdentityModel.Tokens;
 using pracadyplomowa.DTOs.Session;
 using pracadyplomowa.Errors;
 using pracadyplomowa.Hubs;
@@ -382,7 +383,8 @@ public class EncounterService : IEncounterService
         participanceData.NumberOfAttacksTaken = 0;
         participanceData.DistanceTraveled = 0;
         var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(participanceData.R_CharacterId);
-        character.StartNextTurn();
+        List<string> messages = [];
+        character.StartNextTurn(messages);
         if(participanceData == participances.First()){
             List<EffectGroup> effectGroups = await _unitOfWork.EffectGroupRepository.GetAllEffectGroupsPresentInEncounter(encounterId);
             foreach(var effectGroup in effectGroups){
@@ -390,7 +392,7 @@ public class EncounterService : IEncounterService
             }
         }
 
-        await _unitOfWork.SaveChangesAsync();
+        await CommitAndReport(encounter, messages);
         return;
     }
 
@@ -494,13 +496,14 @@ public class EncounterService : IEncounterService
                 traversableFields.RemoveAt(traversableFields.Count - 1);
             }
         }
+        List<string> messages = [];
         var traversableIds = traversableFields.Select(x => x.Id).ToList();
         if(traversableFields.Count == fields.Count){
             foreach(var field in traversableFields){
-                character.Move(encounter, field);
+                character.Move(encounter, field, messages);
             }
             participance.DistanceTraveled += movementCost * 5;
-            await _unitOfWork.SaveChangesAsync();
+            await CommitAndReport(encounter, messages);
         }
         return traversableIds;
     }
@@ -524,7 +527,7 @@ public class EncounterService : IEncounterService
             throw new SessionBadRequestException("Can't perform a ranged attack with this weapon");
         }
 
-        var attackRollResult = await MakeWeaponAttackRoll(encounter, character, weapon, target, rangedAttack, casterApprovedEffectIds, targetApprovedEffectIds);
+        var attackRollResult = await MakeWeaponAttackRoll(encounter, character, weapon, target, rangedAttack, casterApprovedEffectIds, targetApprovedEffectIds, []);
         return attackRollResult;
     }
     public async Task<Character.WeaponHitResult> ApplyWeaponHit(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, bool criticalHit, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds){
@@ -546,7 +549,7 @@ public class EncounterService : IEncounterService
             effect.ConditionalApproved = true;
         }
 
-        var result = character.ApplyWeaponHitEffects(encounter, weapon, target, criticalHit);
+        var result = character.ApplyWeaponHitEffects(encounter, weapon, target, criticalHit, []);
         await _unitOfWork.SaveChangesAsync();
         return result;
     }
@@ -568,13 +571,13 @@ public class EncounterService : IEncounterService
         foreach(var effect in target.AllEffects.Where(x => targetApprovedEffectIds.Contains(x.Id))){
             effect.ConditionalApproved = true;
         }
-        var attackRollResult = character.CheckIfWeaponHitSuccessfull(encounter, weapon, target, rangedAttack ? Models.Enums.EffectOptions.AttackRollEffect_Range.Ranged : Models.Enums.EffectOptions.AttackRollEffect_Range.Melee);
+        var attackRollResult = character.CheckIfWeaponHitSuccessfull(encounter, weapon, target, rangedAttack ? Models.Enums.EffectOptions.AttackRollEffect_Range.Ranged : Models.Enums.EffectOptions.AttackRollEffect_Range.Melee, []);
         AttackRollAndDamageResultDto attackRollAndDamageResult = new()
         {
             HitType = attackRollResult
         };
         if (attackRollResult == HitType.Hit || attackRollResult == HitType.CriticalHit){
-            attackRollAndDamageResult.WeaponHitResult =  character.ApplyWeaponHitEffects(encounter, weapon, target, attackRollResult == HitType.CriticalHit);
+            attackRollAndDamageResult.WeaponHitResult =  character.ApplyWeaponHitEffects(encounter, weapon, target, attackRollResult == HitType.CriticalHit, []);
         }
         await _unitOfWork.SaveChangesAsync();
         return attackRollAndDamageResult;
@@ -764,7 +767,7 @@ public class EncounterService : IEncounterService
         return result;
     }
 
-    public async Task<WeaponAttackResultDto> MakeWeaponAttack(int encounterId, [FromQuery] int characterId, [FromQuery] int weaponId, [FromQuery] int targetId, [FromQuery] bool isRanged, [FromBody] WeaponAttackIncomingDataDto approvedConditionalEffects){
+    public async Task<WeaponAttackResultDto> MakeWeaponAttack(int encounterId, int characterId, int weaponId, int targetId, bool isRanged, WeaponAttackIncomingDataDto approvedConditionalEffects){
         var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId) ?? throw new SessionNotFoundException("Encounter with specified Id does not exist");
         foreach (var x in encounter.R_Participances.Select(x => x.R_Character)){
             await _unitOfWork.CharacterRepository.GetByIdWithAll(x.Id);
@@ -804,61 +807,37 @@ public class EncounterService : IEncounterService
             throw new SessionBadRequestException("Can't perform a ranged attack with this weapon");
         }
         await _unitOfWork.ItemRepository.GetByIdWithSlotsPowersWithEffectsEffectsResources(weapon.Id);
-        var attackRollResult = await MakeWeaponAttackRoll(encounter, character, weapon, target, isRanged, approvedConditionalEffects.WeaponAttackConditionalEffects.CasterConditionalEffects, approvedConditionalEffects.WeaponAttackConditionalEffects.TargetConditionalEffects);
+        List<string> messages = [];
+        var attackRollResult = await MakeWeaponAttackRoll(encounter, character, weapon, target, isRanged, approvedConditionalEffects.WeaponAttackConditionalEffects.CasterConditionalEffects, approvedConditionalEffects.WeaponAttackConditionalEffects.TargetConditionalEffects, messages);
         var result = new WeaponAttackResultDto(){
             AttackRollResult = attackRollResult
         };
         if(attackRollResult == HitType.Hit || attackRollResult == HitType.CriticalHit){
-            var damageRollResult = await ApplyWeaponHit(encounter, character, weapon, target, isRanged, attackRollResult == HitType.CriticalHit, approvedConditionalEffects.WeaponAttackConditionalEffects.CasterConditionalEffects, approvedConditionalEffects.WeaponAttackConditionalEffects.TargetConditionalEffects);
+            var damageRollResult = await ApplyWeaponHit(encounter, character, weapon, target, isRanged, attackRollResult == HitType.CriticalHit, approvedConditionalEffects.WeaponAttackConditionalEffects.CasterConditionalEffects, approvedConditionalEffects.WeaponAttackConditionalEffects.TargetConditionalEffects, messages);
             foreach (var power in weapon.R_EquipItemGrantsAccessToPower.Where(x => x.CastableBy == CastableBy.OnWeaponHit))
             {
                 var conditionalEffectsForPower = approvedConditionalEffects.Powers.Find(x => x.PowerId == power.Id)!.PowerConditionalEffects;
-                var powerRollResult = await CheckWeaponPowerHit(encounter, character, weapon, power, target, conditionalEffectsForPower.CasterConditionalEffects, conditionalEffectsForPower.TargetConditionalEffects);
+                var powerRollResult = await CheckWeaponPowerHit(encounter, character, weapon, power, target, conditionalEffectsForPower.CasterConditionalEffects, conditionalEffectsForPower.TargetConditionalEffects, messages);
                 result.PowerResult.Add(new WeaponAttackResultDto.PowerUsageResultDto(){
                     PowerName = power.Name,
                     Success = powerRollResult == HitType.Hit || powerRollResult == HitType.CriticalHit
                 });
                 if(powerRollResult == HitType.Hit || powerRollResult == HitType.CriticalHit){
-                    await ApplyWeaponPowerHit(encounter, character, weapon, power, target, powerRollResult, conditionalEffectsForPower.CasterConditionalEffects, conditionalEffectsForPower.TargetConditionalEffects);
+                    await ApplyWeaponPowerHit(encounter, character, weapon, power, target, powerRollResult, conditionalEffectsForPower.CasterConditionalEffects, conditionalEffectsForPower.TargetConditionalEffects, messages);
                 }
             }
         }
         int finalTargetHealth = target.Hitpoints + target.TemporaryHitpoints;
         result.TotalDamage = initialTargetHealth - finalTargetHealth;
         result.HitpointsLeft = target.Hitpoints;
-        
-        var systemMessage = new MessageDto()
-        {
-            Username = "System",
-            Message = $"Casting Time: {DateTime.Now}\n\n" +
-                      $"Target: {target.Name}\n" +
-                      $"Initial Health: {initialTargetHealth} HP\n" +
-                      $"Final Health: {finalTargetHealth} HP (After Temporary HP)\n" +
-                      $"Total Damage Dealt: {result.TotalDamage} HP\n" +
-                      $"Hitpoints Left: {result.HitpointsLeft} HP\n"
-        };
-        
-        var actionLog = new ActionLog()
-        {
-            Content =  systemMessage.Message,
-            Source = systemMessage.Username,
-            Time = DateTime.Now,
-            R_Campaign = encounter.R_Campaign,
-            EncounterId = encounterId
-        };
-        
-        _unitOfWork.ActionLogRepository.Add(actionLog);
-        await _unitOfWork.SaveChangesAsync();
-        
-        // Notify all clients in the encounter group
-        await _hubContext.Clients.Group(encounterId.ToString()).SendAsync("ReceiveMessage", systemMessage);
+        await CommitAndReport(encounter, messages);
         
         return result;
     }
 
 
 
-    private async Task<HitType> MakeWeaponAttackRoll(Models.Entities.Campaign.Encounter encounter, Character character, Weapon weapon, Character target, bool rangedAttack, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds){
+    private async Task<HitType> MakeWeaponAttackRoll(Models.Entities.Campaign.Encounter encounter, Character character, Weapon weapon, Character target, bool rangedAttack, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds, List<string> messages){
         foreach(var effect in character.AllEffects.Where(x => !casterApprovedEffectIds.Contains(x.Id))){
             effect.ConditionalApproved = false;
         }
@@ -872,11 +851,11 @@ public class EncounterService : IEncounterService
             effect.ConditionalApproved = true;
         }
 
-        var result = character.CheckIfWeaponHitSuccessfull(encounter, weapon, target, rangedAttack ? Models.Enums.EffectOptions.AttackRollEffect_Range.Ranged : Models.Enums.EffectOptions.AttackRollEffect_Range.Melee);
+        var result = character.CheckIfWeaponHitSuccessfull(encounter, weapon, target, rangedAttack ? Models.Enums.EffectOptions.AttackRollEffect_Range.Ranged : Models.Enums.EffectOptions.AttackRollEffect_Range.Melee, messages);
         return result;
     }
 
-    private async Task<Character.WeaponHitResult> ApplyWeaponHit(Models.Entities.Campaign.Encounter encounter, Character character, Weapon weapon, Character target, bool rangedAttack, bool criticalHit, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds){
+    private async Task<Character.WeaponHitResult> ApplyWeaponHit(Models.Entities.Campaign.Encounter encounter, Character character, Weapon weapon, Character target, bool rangedAttack, bool criticalHit, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds, List<string> messages){
         foreach(var effect in character.AllEffects.Where(x => !casterApprovedEffectIds.Contains(x.Id))){
             effect.ConditionalApproved = false;
         }
@@ -890,11 +869,11 @@ public class EncounterService : IEncounterService
             effect.ConditionalApproved = true;
         }
 
-        var result = character.ApplyWeaponHitEffects(encounter, weapon, target, criticalHit);
+        var result = character.ApplyWeaponHitEffects(encounter, weapon, target, criticalHit, messages);
         return result;
     }
 
-    private async Task<HitType> CheckWeaponPowerHit(Models.Entities.Campaign.Encounter encounter, Character character, Weapon weapon, Power power, Character target, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds){
+    private async Task<HitType> CheckWeaponPowerHit(Models.Entities.Campaign.Encounter encounter, Character character, Weapon weapon, Power power, Character target, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds, List<string> messages){
         foreach(var effect in character.AllEffects.Where(x => !casterApprovedEffectIds.Contains(x.Id))){
             effect.ConditionalApproved = false;
         }
@@ -908,11 +887,11 @@ public class EncounterService : IEncounterService
             effect.ConditionalApproved = true;
         }
 
-        var result = weapon.CheckIfPowerHitSuccessfull(encounter, power, [target]);
+        var result = weapon.CheckIfPowerHitSuccessfull(encounter, power, [target], messages);
         return result[target.Id];
     }
 
-    private async Task ApplyWeaponPowerHit(Models.Entities.Campaign.Encounter encounter, Character character, Weapon weapon, Power power, Character target, HitType hitType, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds){
+    private async Task ApplyWeaponPowerHit(Models.Entities.Campaign.Encounter encounter, Character character, Weapon weapon, Power power, Character target, HitType hitType, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds, List<string> messages){
         foreach(var effect in character.AllEffects.Where(x => !casterApprovedEffectIds.Contains(x.Id))){
             effect.ConditionalApproved = false;
         }
@@ -926,9 +905,9 @@ public class EncounterService : IEncounterService
             effect.ConditionalApproved = true;
         }
 
-        var result = weapon.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, hitType}}, null, out var generatedEffects);
+        var result = weapon.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, hitType}}, null, out var generatedEffects, messages);
         foreach(var effect in generatedEffects){
-            effect.Resolve();
+            effect.Resolve(messages);
         }
         // foreach(var group in generatedEffects.Where(x => x.R_OwnedByGroup != null).Select(x => x.R_OwnedByGroup).Distinct()){
         //     group?.TickDuration();
@@ -953,6 +932,7 @@ public class EncounterService : IEncounterService
             }
         }
         Power power = (character.AllPowers.FirstOrDefault(x => x.Id == powerId)) ?? throw new SessionBadRequestException("Specified power is not available to casting character");
+        power = await _unitOfWork.PowerRepository.GetByIdWithEffectBlueprintsAndMaterialResources(powerId);
         var bonusActionsAvailable = character.TotalBonusActionsPerTurn - participance.NumberOfBonusActionsTaken;
         var actionsAvailable = character.TotalActionsPerTurn - participance.NumberOfActionsTaken;
         var attacksAvailable = character.TotalAttacksPerTurn - participance.NumberOfAttacksTaken;
@@ -997,40 +977,26 @@ public class EncounterService : IEncounterService
             }
         }
 
-
-        var hitMap = character.CheckIfPowerHitSuccessfull(encounter, power, targetMap.Values.ToList());
+        List<string> messages = [];
+        var hitMap = character.CheckIfPowerHitSuccessfull(encounter, power, targetMap.Values.ToList(), messages);
         Dictionary<Character, HitType> characterToHitMap = new ();
         foreach(var hit in hitMap){
             characterToHitMap.Add(targetMap[hit.Key], hit.Value);
         }
-        var outcome = character.ApplyPowerEffects(power, characterToHitMap, incomingDataDto.SpellSlotLevel, out var generatedEffects);
+        var outcome = character.ApplyPowerEffects(power, characterToHitMap, incomingDataDto.SpellSlotLevel, out var generatedEffects, messages);
         if(outcome == Models.Entities.Interfaces.Outcome.ImmaterialResourceUnavailable){
             throw new SessionBadRequestException("Character doesn't have immaterial resource of specified level");
         }
         if(outcome == Models.Entities.Interfaces.Outcome.InsufficientMaterialComponents){
             throw new SessionBadRequestException("Character doesn't have enough material resources");
         }
-        await _unitOfWork.SaveChangesAsync();
         CastPowerResultDto result = new();
         result.HitMap = hitMap;
         foreach(var target in targetMap.Values){
             result.NameMap.Add(target.Id, target.Name);
         }
         
-        var systemMessage = new MessageDto()
-        {
-            Username = "System",
-            Message = $"Power Casted: {power.Name}\n" +
-                      $"Encounter ID: {encounterId}\n" +
-                      $"Casting Time: {DateTime.Now}\n\n" +
-                      $"Targets Affected: {targetMap.Count}\n" +
-                      $"Hit Map Information:\n" +
-                      string.Join("\n", result.HitMap.Select(hit => $"  - Target {hit.Key}: {hit.Value}")) +
-                      $"\nTarget Map Details:\n" +
-                      string.Join("\n", targetMap.Values.Select(target => $"  - Target ID: {target.Id}, Name: {target.Name}"))
-        };
-
-        await _hubContext.Clients.Group(encounterId.ToString()).SendAsync("ReceiveMessage", systemMessage);
+        await CommitAndReport(encounter, messages);
         
         return result;
     }
@@ -1069,5 +1035,26 @@ public class EncounterService : IEncounterService
         (participanceList[successorIndex].InitiativeOrder, participanceList[currentIndex].InitiativeOrder) = (participanceList[currentIndex].InitiativeOrder, participanceList[successorIndex].InitiativeOrder);
 
         await _unitOfWork.SaveChangesAsync();
+    }
+
+    private async Task CommitAndReport(Models.Entities.Campaign.Encounter encounter, List<string> messages){
+        string finalMessage = messages.Aggregate( "", (acc, current) => acc += current + "\n");
+        if(!finalMessage.IsNullOrEmpty()){
+            _unitOfWork.ActionLogRepository.Add(new ActionLog(){
+                Content =  finalMessage,
+                Source = "System",
+                Time = DateTime.Now,
+                R_CampaignId = (int)encounter.R_CampaignId!,
+                EncounterId = encounter.Id
+            });
+        }
+        await _unitOfWork.SaveChangesAsync();
+        
+        if(!finalMessage.IsNullOrEmpty()){
+            await _hubContext.Clients.Group(encounter.Id.ToString()).SendAsync("ReceiveMessage", new MessageDto(){
+                Username = "System",
+                Message = finalMessage,
+            });
+        }
     }
 }

@@ -573,7 +573,9 @@ export default function SessionLayout({ encounter }: any) {
               <Heading as="h3" align="left">
                 {message.username}
               </Heading>
-              <p>{message.message}</p>
+              {message.message.split("\n").map((line, i) => (
+                <p key={i}>{line}</p>
+              ))}
             </ChatMessageBox>
           ))}
         </ChatContentMessage>

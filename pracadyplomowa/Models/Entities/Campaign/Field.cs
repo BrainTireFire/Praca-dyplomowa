@@ -88,7 +88,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
             return Math.Abs(field.PositionX - this.PositionX) <= 1 || Math.Abs(field.PositionY - this.PositionY) <= 1;
         }
 
-        public Dictionary<int, HitType> CheckIfPowerHitSuccessfull(Encounter encounter, Power power, List<Character> targets)
+        public Dictionary<int, HitType> CheckIfPowerHitSuccessfull(Encounter encounter, Power power, List<Character> targets, List<string> messages)
         {
             //retrieve data
             Dictionary<int, HitType> hitMap = [];
@@ -140,7 +140,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
             return hitMap;
         }
 
-        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel, out List<EffectInstance> generatedEffects)
+        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel, out List<EffectInstance> generatedEffects, List<string> messages)
         {
             EffectGroup effectGroup = new();
             generatedEffects = [];
@@ -260,13 +260,14 @@ namespace pracadyplomowa.Models.Entities.Campaign
             return occupiedCoordinates;
         }
 
-        public void Enter(ParticipanceData participance){
+        public void Enter(ParticipanceData participance, List<string> messages){
             var character = participance.R_Character;
             foreach(var power in R_CasterPowers){
-                var outcome = this.CheckIfPowerHitSuccessfull(null!, power, [character]).GetValueOrDefault(character.Id);
-                this.ApplyPowerEffects(power, new Dictionary<Character, HitType>() { { character, outcome } }, null, out var generatedEffects);
+                var outcome = this.CheckIfPowerHitSuccessfull(null!, power, [character], messages).GetValueOrDefault(character.Id);
+                messages.Add($"{character.Name} triggers {power.Name}: {outcome}");
+                this.ApplyPowerEffects(power, new Dictionary<Character, HitType>() { { character, outcome } }, null, out var generatedEffects, messages);
                 foreach(var effect in generatedEffects){
-                    effect.Resolve();
+                    effect.Resolve(messages);
                 }
             }
             participance.R_OccupiedField.Leave(participance);

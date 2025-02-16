@@ -462,8 +462,6 @@ public class Seed
 
             features.R_Effects.AddRange([extraAttack]);
             features.R_PowersAlwaysAvailable.AddRange([secondWind, actionSurge]);
-            features.R_PowersToPrepare.Add(secondWind);
-            features.R_PowersToPrepare.Add(actionSurge);
             features.R_Resources.AddRange([secondWindResourceAmount, actionSurgeAmount]);
 
             fighterClass.R_ClassLevels.Where(cl => cl.Level == 1).First().R_ChoiceGroups.AddRange(

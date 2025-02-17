@@ -156,16 +156,19 @@ namespace pracadyplomowa.Models.Entities.Items
             return GetBaseEquippedAttackBonus() + GetEffectRelatedEquippedAttackBonus();
         }
 
-        public Dictionary<int, HitType> CheckIfPowerHitSuccessfull(Encounter encounter, Power power, List<Character> targets){
+        public Dictionary<int, HitType> CheckIfPowerHitSuccessfull(Encounter encounter, Power power, List<Character> targets, List<string> messages){
             Dictionary<int, HitType> hitMap = [];
 
             foreach(var targetedCharacter in targets){
                 if(power.PowerType == PowerType.Saveable){
                     int roll = targetedCharacter.SavingThrowRoll((Ability)power.SavingThrowAbility);
+                    var dc = Wielder?.DifficultyClass(power);
+                    var success = roll <= dc;
                     hitMap.Add(
                         targetedCharacter.Id,
-                        roll <= Wielder?.DifficultyClass(power) && roll != 20 ? HitType.Hit : HitType.Miss
+                        success ? HitType.Hit : HitType.Miss
                     );
+                    messages.Add($"{targetedCharacter.Name} {(success ? "passed" : "failed")} saving throw against {power.Name} (rolled {roll} against DC{dc})");
                 }
                 else
                 {
@@ -173,12 +176,13 @@ namespace pracadyplomowa.Models.Entities.Items
                         targetedCharacter.Id,
                         HitType.Hit
                     );
+                    messages.Add($"{targetedCharacter.Name} is targeted by {power.Name}");
                 }
             }
             return hitMap;
         }
 
-        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel, out List<EffectInstance> generatedEffects)
+        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel, out List<EffectInstance> generatedEffects, List<string> messages)
         {
             EffectGroup effectGroup = new();
             generatedEffects = [];

@@ -18,18 +18,23 @@ public class HitpointEffectInstance : ValueEffectInstance
         return new HitpointEffectInstance(this);
     }
 
-    public override void Resolve()
+    public override void Resolve(List<string> messages)
     {
+        ResolutionMessage(messages);
         if(EffectType.HitpointEffect == Enums.EffectOptions.HitpointEffect.TemporaryHitpoints){
             int tempHitPoints;
+            List<DiceSet.Dice> diceResult;
             if(Roller == null){
-                tempHitPoints = this.DiceSet.RollPrototype(false, false, null).Aggregate(0, (sum, next) => sum += next.result);
+                diceResult = this.DiceSet.RollPrototype(false, false, null);
             }
             else{
-                tempHitPoints = this.DiceSet.RollPrototype(Roller, false, false, null).Aggregate(0, (sum, next) => sum += next.result);
+                diceResult = this.DiceSet.RollPrototype(Roller, false, false, null);
             }
             if(R_TargetedCharacter != null){
+                GenerateRollMessage(diceResult, "Temporary hitpoints", messages);
+                tempHitPoints = diceResult.Aggregate(0, (sum, next) => sum += next.result);
                 this.R_TargetedCharacter.TemporaryHitpoints = tempHitPoints; // you can only have temporary hitpoints from a single source so we always overwrite the value during assignment
+                messages.Add($"Granting {this.R_TargetedCharacter} {tempHitPoints} temporary points.");
             }
         }
     }

@@ -70,8 +70,17 @@ namespace pracadyplomowa.Models.Entities.Powers
 
         public abstract EffectInstance Clone();
 
-        public virtual void Resolve(){
-            
+        public virtual void Resolve(List<string> messages){
+
+        }
+
+        protected void ResolutionMessage(List<string> messages){
+            if(this.R_TargetedCharacter != null) {
+                messages.Add($"Resolving {this.Name} on {this.R_TargetedCharacter.Name}");
+            }
+            else if(this.R_TargetedItem != null){
+                messages.Add($"Resolving {this.Name} on {this.R_TargetedItem.Name}");
+            }
         }
 
         public virtual void Unlink(){ //unlink only from targeted objects, not sources!

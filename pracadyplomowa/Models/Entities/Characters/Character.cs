@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
+using System.Text;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Expressions;
 using pracadyplomowa.Models.ComplexTypes.Effects;
@@ -691,20 +692,25 @@ namespace pracadyplomowa.Models.Entities.Characters
         public List<EffectInstance> EffectsFromItems => this.R_EquippedItems.SelectMany(ed => ed.R_Item.R_EffectsOnEquip).Intersect(AllEffects)
         .ToList();
 
-        public void ResolveAffectingEffects() {
-            AllEffects.ForEach(x => x.Resolve());
+        public void ResolveAffectingEffects(List<string> messages) {
+            AllEffects.ForEach(x => x.Resolve(messages));
         }
 
-        public void StartNextTurn() {
-            RollDeathSavingThrow();
-            ResolveAffectingEffects();
+        public void StartNextTurn(List<string> messages) {
+            RollDeathSavingThrow(messages);
             var effectGroupsForSavingThrowChecks = AllEffects.Where(e => e.R_OwnedByGroup != null && e.R_OwnedByGroup.DifficultyClassToBreak != null && e.R_OwnedByGroup.SavingThrow != null).Select(e => e.R_OwnedByGroup).Distinct().ToList();
             effectGroupsForSavingThrowChecks.ForEach(eg => {
                 var result = SavingThrowRoll((Ability)eg!.SavingThrow!);
-                if(result >= eg.DifficultyClassToBreak){
+                var shouldBreak = result >= eg.DifficultyClassToBreak;
+                if(shouldBreak){
+                    messages.Add($"{this.Name} succeeded on {eg!.SavingThrow} saving throw against {eg!.Name}.");
                     eg.DisperseOnTarget(this);
                 }
+                else{
+                    messages.Add($"{this.Name} failed a {eg!.SavingThrow} saving throw against {eg!.Name}.");
+                }
             });
+            ResolveAffectingEffects(messages);
             var resources = AllImmaterialResourceInstances.Where(x => x.NeedsRefresh && x.R_Blueprint.RefreshesOn == RefreshType.TurnStart).ToList();
             foreach(var resource in resources){
                 resource.NeedsRefresh = false;
@@ -996,7 +1002,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             return bonusRollResults.Concat([baseRollResult]).Aggregate(0, (sum, current) => sum + current.result) + (proficiencyEffectPresent ? ProficiencyBonus : 0);
         }
 
-        public Dictionary<int, HitType> CheckIfPowerHitSuccessfull(Encounter encounter, Power power, List<Character> targets)
+        public Dictionary<int, HitType> CheckIfPowerHitSuccessfull(Encounter encounter, Power power, List<Character> targets, List<string> messages)
         {
             //retrieve data
             Dictionary<int, HitType> hitMap = [];
@@ -1028,7 +1034,8 @@ namespace pracadyplomowa.Models.Entities.Characters
                 {
                     int roll = targetedCharacter.SavingThrowRoll((Ability)power.SavingThrowAbility);
                     HitType outcome = HitType.Miss;
-                    if (roll <= this.DifficultyClass(power) && roll != 20)
+                    var dc = this.DifficultyClass(power);
+                    if (roll <= dc && roll != 20)
                     {
                         outcome = HitType.Hit;
                     }
@@ -1036,6 +1043,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                         targetedCharacter.Id,
                         outcome
                     );
+                    messages.Add($"{targetedCharacter.Name} {(outcome == HitType.Miss ? "passed" : "failed")} a {(Ability)power.SavingThrowAbility} saving throw against {power.Name} (rolled total of {roll} against DC{dc})");
                 }
                 else
                 {
@@ -1043,6 +1051,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                         targetedCharacter.Id,
                         HitType.Hit
                     );
+                    messages.Add($"{targetedCharacter.Name} is targeted by {power.Name}");
                 }
             }
             return hitMap;
@@ -1077,8 +1086,9 @@ namespace pracadyplomowa.Models.Entities.Characters
                 return bonusRollResults.Concat([baseRollResult]).Aggregate(0, (sum, current) => sum + current.result) >= target.ArmorClass ? HitType.Hit : HitType.Miss;
             }
         }
-        public HitType CheckIfWeaponHitSuccessfull(Encounter encounter, Weapon weapon, Character target, AttackRollEffect_Range attacksRange)
+        public HitType CheckIfWeaponHitSuccessfull(Encounter encounter, Weapon weapon, Character target, AttackRollEffect_Range attacksRange, List<string> messages)
         {
+            StringBuilder messageBuilder = new();
             if (weapon is MeleeWeapon meleeWeapon && !meleeWeapon.Thrown && attacksRange == AttackRollEffect_Range.Ranged)
             {
                 return HitType.CriticalMiss;
@@ -1094,21 +1104,48 @@ namespace pracadyplomowa.Models.Entities.Characters
 
             //roll the dice
             List<DiceSet.Dice> bonusRollResults = weapon.GetTotalAttackBonus().RollPrototype(false, false, null);
-            DiceSet.Dice baseRollResult = new DiceSet() { d20 = 1 }.RollPrototype(advantage, disadvantage, rerollLowerThan).First();
+            DiceSet.Dice baseRollResult = new DiceSet() { d20 = 1 }.RollPrototype(advantage, disadvantage, rerollEffectPresent ? rerollLowerThan : null).First();
+
+            messageBuilder.Append(this.Name + " attack roll:\n");
+            messageBuilder.Append(baseRollResult.result + "(d" + baseRollResult.size + ")");
 
             //check for hit
+            HitType result;
             if (baseRollResult.result == 20)
             {
-                return HitType.CriticalHit;
+                result = HitType.CriticalHit;
             }
             else if (baseRollResult.result == 1)
             {
-                return HitType.CriticalMiss;
+                result = HitType.CriticalMiss;
             }
             else
             {
-                return bonusRollResults.Concat([baseRollResult]).Aggregate(0, (sum, current) => sum + current.result) >= target.ArmorClass ? HitType.Hit : HitType.Miss;
+                int sum = bonusRollResults.Concat([baseRollResult]).Aggregate(0, (sum, current) => sum + current.result);
+                result = sum >= target.ArmorClass ? HitType.Hit : HitType.Miss;
+
+                foreach(var dice in bonusRollResults){
+                    messageBuilder.Append(" + " + dice.result + "(d" + dice.size + ")");
+                }
+                messageBuilder.AppendLine();
+                messageBuilder.AppendLine("Sum: " + sum);
+                messageBuilder.AppendLine("Against Armor Class: " + target.ArmorClass);
             }
+
+            if(result == HitType.CriticalHit){
+                messageBuilder.AppendLine("Critical hit!");
+            }
+            else if(result == HitType.Hit){
+                messageBuilder.AppendLine("Hit!");
+            }
+            else if(result == HitType.Miss){
+                messageBuilder.AppendLine("Miss...");
+            }
+            else if(result == HitType.CriticalMiss){
+                messageBuilder.AppendLine("Critical miss...");
+            }
+            messages.Add(messageBuilder.ToString());
+            return result;
         }
 
         public bool RerollOnAttackRoll(AttackRollEffect_Source source, AttackRollEffect_Range range, out int rerollLowerThan)
@@ -1220,7 +1257,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             damageTypeToDiceSetMap = extraDamageEffectMap.ToDictionary(element => element.Key, element => element.Value.Aggregate(new DiceSet(), (sum, current) => sum + current.DiceSet.getPersonalizedSet(this)));
         }
 
-        public WeaponHitResult ApplyWeaponHitEffects(Encounter encounter, Weapon weapon, Character target, bool criticalHit)
+        public WeaponHitResult ApplyWeaponHitEffects(Encounter encounter, Weapon weapon, Character target, bool criticalHit, List<string> messages)
         {
             //get weapon damage
             var weaponBaseDamage = weapon.GetBaseEquippedDamageDiceSet();
@@ -1255,14 +1292,14 @@ namespace pracadyplomowa.Models.Entities.Characters
             int initialHealth = target._Hitpoints + target._TemporaryHitpoints;
             //check for targets damage resistance and apply damage
             var weaponHitResult = new WeaponHitResult();
-            weaponHitResult.DamageTaken.Add(weapon.DamageType, target.TakeDamage(totalWeaponDamage, weapon.DamageType));
+            weaponHitResult.DamageTaken.Add(weapon.DamageType, target.TakeDamage(totalWeaponDamage, weapon.DamageType, messages));
             foreach (var pair in totalEffectDamage)
             {
-                weaponHitResult.DamageTaken.Add(pair.Key, target.TakeDamage(pair.Value, pair.Key));
+                weaponHitResult.DamageTaken.Add(pair.Key, target.TakeDamage(pair.Value, pair.Key, messages));
             }
             int damageTaken = initialHealth - (target._Hitpoints + target._TemporaryHitpoints);
             if(damageTaken > 0){
-                target.MakeConcentrationSavingThrow(damageTaken);
+                target.MakeConcentrationSavingThrow(damageTaken, messages);
             }
 
 
@@ -1280,7 +1317,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             // public Dictionary<int, HitType> PowerIdToHitStatus { get; set; } = [];
         }
 
-        public int TakeDamage(int damage, DamageType damageType)
+        public int TakeDamage(int damage, DamageType damageType, List<string> messages)
         { // returns damage actually taken after resistance/vulnerability analysis
             //check for targets damage resistance
             List<ResistanceEffectInstance> resistanceEffectInstances = this.AffectedByApprovedEffects
@@ -1305,7 +1342,7 @@ namespace pracadyplomowa.Models.Entities.Characters
 
             if (immunityEffectPresent)
             {
-                return 0;
+                damage = 0;
             }
             if (resistanceEffectPresent)
             {
@@ -1324,6 +1361,18 @@ namespace pracadyplomowa.Models.Entities.Characters
                 this.TemporaryHitpoints = 0;
                 this.Hitpoints += damageOvershoot; // its going to be negative so +
             }
+            StringBuilder messageBuilder = new();
+            if(immunityEffectPresent){
+                messageBuilder.AppendLine($"{this.Name} is immune to {damageType.ToString()} damage.");
+            }
+            else if(vulnerabilityEffectPresent && !resistanceEffectPresent){
+                messageBuilder.AppendLine($"{this.Name} is vulnerable to {damageType.ToString()} damage.");
+            }
+            else if(resistanceEffectPresent && !vulnerabilityEffectPresent){
+                messageBuilder.AppendLine($"{this.Name} is resistant to {damageType.ToString()} damage.");
+            }
+            messageBuilder.AppendLine($"{this.Name} takes {damage} points of {damageType.ToString()} damage.");
+            messages.Add(messageBuilder.ToString());
 
             return damage;
         }
@@ -1342,7 +1391,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             return this.R_CharacterHasLevelsInClass.Where(c => c.R_ClassId == classId).Count();
         }
 
-        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel, out List<EffectInstance> generatedEffects)
+        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel, out List<EffectInstance> generatedEffects, List<string> messages)
         {
             generatedEffects = [];
             // check for available immaterial resource
@@ -1377,7 +1426,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             effectGroup.Name = power.Name;
             if (power.RequiresConcentration)
             {
-                StartConcentration(effectGroup);
+                StartConcentration(effectGroup, messages);
             }
             foreach (Character target in targetsToHitSuccessMap.Keys)
             {
@@ -1441,12 +1490,12 @@ namespace pracadyplomowa.Models.Entities.Characters
                 initialHealthMap.Add(target, target._Hitpoints + target._TemporaryHitpoints);
             }
             foreach(var effect in generatedEffects){
-                effect.Resolve();
+                effect.Resolve(messages);
             }
             foreach(var target in initialHealthMap.Keys){
                 int damageTaken = initialHealthMap[target] - (target._Hitpoints + target._TemporaryHitpoints);
                 if(damageTaken > 0){
-                    target.MakeConcentrationSavingThrow(damageTaken);
+                    target.MakeConcentrationSavingThrow(damageTaken, messages);
                 }
             }
             // foreach(var group in generatedEffects.Where(x => x.R_OwnedByGroup != null).Select(x => x.R_OwnedByGroup).Distinct()){
@@ -1456,23 +1505,31 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
 
         
-        public void StartConcentration(EffectGroup effectGroup){
-            DropConcentration();
+        public void StartConcentration(EffectGroup effectGroup, List<string> messages){
+            DropConcentration(messages);
+            messages.Add($"{this.Name} concentrates on {effectGroup.Name}");
             effectGroup.R_ConcentratedOnByCharacter = this;
             effectGroup.R_ConcentratedOnByCharacterId = effectGroup.R_ConcentratedOnByCharacter.Id;
             this.R_ConcentratesOn = effectGroup;
         }
 
-        public void DropConcentration(){
-            R_ConcentratesOn?.Disperse();
+        public void DropConcentration(List<string> messages){
+            if(R_ConcentratesOn != null){
+                messages.Add($"{this.Name} stops concentrating on {R_ConcentratesOn?.Name}");
+                R_ConcentratesOn?.Disperse();
+            }
         }
 
-        public void MakeConcentrationSavingThrow(int damageTaken){
+        public void MakeConcentrationSavingThrow(int damageTaken, List<string> messages){
             if(this.R_ConcentratesOn !=  null){
                 int difficultyClass = Math.Max(10, damageTaken/2);
                 int roll = (this.ConstitutionSavingThrowValue + new DiceSet(){d20 = 1}).Roll(this);
                 if(roll <= difficultyClass){
-                    DropConcentration();
+                    messages.Add($"{this.Name}'s concentration broken");
+                    DropConcentration(messages);
+                }
+                else{
+                    messages.Add($"{this.Name} maintains concentration");
                 }
             }
         }
@@ -1535,10 +1592,10 @@ namespace pracadyplomowa.Models.Entities.Characters
             }
             return occupiedFields;
         }
-        public void Move(Encounter encounter, Field field){
+        public void Move(Encounter encounter, Field field, List<string> messages){
             var participance = encounter.R_Participances.First(x => x.R_CharacterId == this.Id);
             field = encounter.R_Board.R_ConsistsOfFields.First(x => x == field);
-            field.Enter(participance);
+            field.Enter(participance, messages);
         }
 
         public List<Field> CanTraversePath(List<Field> path){ //returns achieveable part of the path
@@ -1643,14 +1700,16 @@ namespace pracadyplomowa.Models.Entities.Characters
             }
         }
 
-        public void RollDeathSavingThrow() {
+        public void RollDeathSavingThrow(List<string> messages) {
             if(_Hitpoints < 1){
                 var roll = new DiceSet(){d20 = 1}.Roll(this);
                 if(roll < 10){
                     FailedDeathSavingThrows++;
+                    messages.Add($"{this.Name} failed <{FailedDeathSavingThrows}> death saving throws");
                 }
                 else{
                     SucceededDeathSavingThrows++;
+                    messages.Add($"{this.Name} succeeded on <{SucceededDeathSavingThrows}> death saving throws");
                 }
             }
         }

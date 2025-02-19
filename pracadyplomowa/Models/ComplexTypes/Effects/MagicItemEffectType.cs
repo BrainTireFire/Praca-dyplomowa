@@ -11,5 +11,13 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     [Owned]
     public class MagicItemEffectType
     {
+        public MagicItemEffectType(MagicItemEffectType cloned){
+        }
+        public MagicItemEffectType(){
+        }
+
+        public MagicItemEffectType Clone(){
+            return new MagicItemEffectType(this);
+        }
     }
 }

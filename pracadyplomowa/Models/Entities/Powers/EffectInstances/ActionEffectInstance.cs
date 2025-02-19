@@ -10,10 +10,10 @@ public class ActionEffectInstance : ValueEffectInstance
     private ActionEffectInstance() : base("EF", 0){}
     public ActionEffectInstance(string name) : base(name, 0){}
     public ActionEffectInstance(ActionEffectBlueprint actionEffectBlueprint, Character? roller, Character target) : base(actionEffectBlueprint, roller, target){
-        EffectType = actionEffectBlueprint.ActionEffectType;
+        EffectType = actionEffectBlueprint.ActionEffectType.Clone();
     }
     public ActionEffectInstance(ActionEffectInstance effectInstance) : base(effectInstance){
-        EffectType  = effectInstance.EffectType;
+        EffectType  = effectInstance.EffectType.Clone();
     }
     public override EffectInstance Clone(){
         return new ActionEffectInstance(this);

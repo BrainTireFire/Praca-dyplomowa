@@ -11,5 +11,13 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     [Owned]
     public class InitiativeEffectType
     {
+        public InitiativeEffectType(InitiativeEffectType cloned){
+        }
+        public InitiativeEffectType(){
+        }
+
+        public InitiativeEffectType Clone(){
+            return new InitiativeEffectType(this);
+        }
     }
 }

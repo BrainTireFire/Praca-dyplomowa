@@ -10,9 +10,10 @@ public class HitpointEffectInstance : ValueEffectInstance
     private HitpointEffectInstance() : base("EF", 0){}
     public HitpointEffectInstance(string name) : base(name, 0){}
     public HitpointEffectInstance(HitpointEffectBlueprint hitpointEffectBlueprint, Character? roller, Character target) : base(hitpointEffectBlueprint, roller, target){
-        EffectType = hitpointEffectBlueprint.HitpointEffectType;
+        EffectType = hitpointEffectBlueprint.HitpointEffectType.Clone();
     }
     public HitpointEffectInstance(HitpointEffectInstance effectInstance) : base(effectInstance){
+        EffectType = effectInstance.EffectType.Clone();
     }
     public override EffectInstance Clone(){
         return new HitpointEffectInstance(this);

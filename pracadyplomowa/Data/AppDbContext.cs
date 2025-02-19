@@ -241,6 +241,11 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .WithOne(ei => ei.R_TargetedItem)
                         .HasForeignKey(ei => ei.R_TargetedItemId)
                         .IsRequired(false);
+                builder.Entity<Item>()
+                        .HasMany(c => c.R_EffectsOnEquip)
+                        .WithOne(ei => ei.R_GrantedByEquippingItem)
+                        .HasForeignKey(ei => ei.R_GrantedByEquippingItemId)
+                        .OnDelete(DeleteBehavior.Cascade);
                 builder.Entity<Item>().Navigation(i => i.R_ItemInItemsFamily).AutoInclude();
                 builder.Entity<EquipData>().Navigation(ed => ed.R_Slots).AutoInclude();
                 // builder.Entity<Item>()

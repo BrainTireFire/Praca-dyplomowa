@@ -15,5 +15,16 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     {
         public DamageEffect DamageEffect { get; set; }
         public DamageType? DamageEffect_DamageType { get; set; }
+
+        public DamageEffectType(DamageEffectType cloned){
+            this.DamageEffect = cloned.DamageEffect;
+            this.DamageEffect_DamageType = cloned.DamageEffect_DamageType;
+        }
+        public DamageEffectType(){
+        }
+
+        public DamageEffectType Clone(){
+            return new DamageEffectType(this);
+        }
     }
 }

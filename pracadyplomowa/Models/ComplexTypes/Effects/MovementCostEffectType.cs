@@ -12,5 +12,14 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     public class MovementCostEffectType
     {
         public MovementCost MovementCostEffect { get; set; }
+        public MovementCostEffectType(MovementCostEffectType cloned){
+            this.MovementCostEffect = cloned.MovementCostEffect;
+        }
+        public MovementCostEffectType(){
+        }
+
+        public MovementCostEffectType Clone(){
+            return new MovementCostEffectType(this);
+        }
     }
 }

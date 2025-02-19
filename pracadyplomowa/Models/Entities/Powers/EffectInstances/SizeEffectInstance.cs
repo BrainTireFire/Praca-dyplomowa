@@ -10,10 +10,10 @@ public class SizeEffectInstance : ValueEffectInstance
     private SizeEffectInstance() : base("EF", 0){}
     public SizeEffectInstance(string name) : base(name, 0){}
     public SizeEffectInstance(SizeEffectBlueprint sizeEffectBlueprint, Character? roller, Character target) : base(sizeEffectBlueprint, roller, target){
-        EffectType = sizeEffectBlueprint.SizeEffectType;
+        EffectType = sizeEffectBlueprint.SizeEffectType.Clone();
     }
     public SizeEffectInstance(SizeEffectInstance effectInstance) : base(effectInstance){
-        EffectType  = effectInstance.EffectType;
+        EffectType  = effectInstance.EffectType.Clone();
     }
     public override EffectInstance Clone(){
         return new SizeEffectInstance(this);

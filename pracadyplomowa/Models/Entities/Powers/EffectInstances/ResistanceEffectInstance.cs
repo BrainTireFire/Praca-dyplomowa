@@ -10,10 +10,10 @@ public class ResistanceEffectInstance : EffectInstance
     private ResistanceEffectInstance() : base("EF"){}
     public ResistanceEffectInstance(string name) : base(name){}
     public ResistanceEffectInstance(ResistanceEffectBlueprint resistanceEffectBlueprint, Character target) : base(resistanceEffectBlueprint, target){
-        EffectType = resistanceEffectBlueprint.ResistanceEffectType;
+        EffectType = resistanceEffectBlueprint.ResistanceEffectType.Clone();
     }
     public ResistanceEffectInstance(ResistanceEffectInstance effectInstance) : base(effectInstance){
-        EffectType  = effectInstance.EffectType;
+        EffectType  = effectInstance.EffectType.Clone();
     }
     public override EffectInstance Clone(){
         return new ResistanceEffectInstance(this);

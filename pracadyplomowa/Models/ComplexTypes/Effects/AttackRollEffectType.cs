@@ -15,5 +15,16 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
         public AttackRollEffect_Range AttackRollEffect_Range { get; set; }
         public AttackRollEffect_Source AttackRollEffect_Source { get; set; }
         public AttackRollEffect_Type AttackRollEffect_Type { get; set; }
+        public AttackRollEffectType(AttackRollEffectType cloned){
+            this.AttackRollEffect_Range = cloned.AttackRollEffect_Range;
+            this.AttackRollEffect_Source = cloned.AttackRollEffect_Source;
+            this.AttackRollEffect_Type = cloned.AttackRollEffect_Type;
+        }
+        public AttackRollEffectType(){
+        }
+
+        public AttackRollEffectType Clone(){
+            return new AttackRollEffectType(this);
+        }
     }
 }

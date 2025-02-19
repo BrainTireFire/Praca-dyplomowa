@@ -16,5 +16,15 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
         public AbilityEffect AbilityEffect { get; set; }
         public Ability AbilityEffect_Ability { get; set; }
 
+        public AbilityEffectType(AbilityEffectType cloned){
+            this.AbilityEffect = cloned.AbilityEffect;
+            this.AbilityEffect_Ability = cloned.AbilityEffect_Ability;
+        }
+        public AbilityEffectType(){
+        }
+
+        public AbilityEffectType Clone(){
+            return new AbilityEffectType(this);
+        }
     }
 }

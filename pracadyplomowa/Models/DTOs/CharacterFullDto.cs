@@ -384,8 +384,8 @@ namespace pracadyplomowa.Models.DTOs
                 Damage = new DiceSet(w.GetBaseEquippedDamageDiceSet()),
                 AttackBonus = new DiceSet(w.GetBaseEquippedAttackBonus()),
                 DamageType = (int)w.DamageType,
-                Range = w is IRangedWeapon weapon ? weapon.Range : null,
-                Reach = w is MeleeWeapon meleeWeapon ? (meleeWeapon.Reach ? 10 : 5) : null,
+                Range = w is RangedWeapon || (w is MeleeWeapon meleeWeapon && meleeWeapon.Thrown) ? w.Range : null,
+                Reach = w is MeleeWeapon meleeWeapon2 ? (meleeWeapon2.Reach ? 10 : 5) : null,
             }).ToList();
         }
         // public static List<WeaponAttack> GetAttacks(Character character){

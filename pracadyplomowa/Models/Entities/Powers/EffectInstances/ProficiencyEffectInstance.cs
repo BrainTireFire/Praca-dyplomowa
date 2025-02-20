@@ -19,14 +19,12 @@ public class ProficiencyEffectInstance : EffectInstance
     public ProficiencyEffectInstance(ProficiencyEffectBlueprint proficiencyEffectBlueprint, Character target) : base(proficiencyEffectBlueprint, target){
         R_GrantsProficiencyInItemFamily = proficiencyEffectBlueprint.R_GrantsProficiencyInItemFamily;
         R_GrantsProficiencyInItemFamilyId = R_GrantsProficiencyInItemFamily?.Id;
-        ProficiencyEffectType.ProficiencyEffect = proficiencyEffectBlueprint.ProficiencyEffectType.ProficiencyEffect;
-        ProficiencyEffectType.ItemType = proficiencyEffectBlueprint.ProficiencyEffectType.ItemType;
+        ProficiencyEffectType = proficiencyEffectBlueprint.ProficiencyEffectType.Clone();
     }        
     public ProficiencyEffectInstance(ProficiencyEffectInstance effectInstance) : base(effectInstance){
         R_GrantsProficiencyInItemFamily  = effectInstance.R_GrantsProficiencyInItemFamily;
         R_GrantsProficiencyInItemFamilyId  = effectInstance.R_GrantsProficiencyInItemFamilyId;
-        ProficiencyEffectType.ProficiencyEffect = effectInstance.ProficiencyEffectType.ProficiencyEffect;
-        ProficiencyEffectType.ItemType = effectInstance.ProficiencyEffectType.ItemType;
+        ProficiencyEffectType = effectInstance.ProficiencyEffectType.Clone();
     }
     public override EffectInstance Clone(){
         return new ProficiencyEffectInstance(this);

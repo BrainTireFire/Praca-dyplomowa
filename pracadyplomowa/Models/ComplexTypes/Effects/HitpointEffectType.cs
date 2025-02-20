@@ -13,5 +13,14 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     public class HitpointEffectType
     {
         public HitpointEffect HitpointEffect { get; set; }
+        public HitpointEffectType(HitpointEffectType cloned){
+            this.HitpointEffect = cloned.HitpointEffect;
+        }
+        public HitpointEffectType(){
+        }
+
+        public HitpointEffectType Clone(){
+            return new HitpointEffectType(this);
+        }
     }
 }

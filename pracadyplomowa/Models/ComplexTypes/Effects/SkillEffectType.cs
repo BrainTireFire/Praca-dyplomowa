@@ -15,5 +15,15 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     {
         public SkillEffect SkillEffect { get; set; }
         public Skill SkillEffect_Skill { get; set; }
+        public SkillEffectType(SkillEffectType cloned){
+            this.SkillEffect = cloned.SkillEffect;
+            this.SkillEffect_Skill = cloned.SkillEffect_Skill;
+        }
+        public SkillEffectType(){
+        }
+
+        public SkillEffectType Clone(){
+            return new SkillEffectType(this);
+        }
     }
 }

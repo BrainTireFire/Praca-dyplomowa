@@ -10,9 +10,10 @@ public class MovementEffectInstance : ValueEffectInstance
     private MovementEffectInstance() : base("EF", 0){}
     public MovementEffectInstance(string name) : base(name, 0){}
     public MovementEffectInstance(MovementEffectBlueprint movementEffectBlueprint, Character? roller, Character target) : base(movementEffectBlueprint, roller, target){
+        EffectType = movementEffectBlueprint.MovementEffectType.Clone();
     }
     public MovementEffectInstance(MovementEffectInstance effectInstance) : base(effectInstance){
-        EffectType  = effectInstance.EffectType;
+        EffectType  = effectInstance.EffectType.Clone();
     }
     public override EffectInstance Clone(){
         return new MovementEffectInstance(this);

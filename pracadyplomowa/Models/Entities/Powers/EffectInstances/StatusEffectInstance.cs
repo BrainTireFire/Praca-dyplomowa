@@ -10,10 +10,10 @@ public class StatusEffectInstance : EffectInstance
     private StatusEffectInstance() : base("EF"){}
     public StatusEffectInstance(string name) : base(name){}
     public StatusEffectInstance(StatusEffectBlueprint statusEffectBlueprint, Character target) : base(statusEffectBlueprint, target){
-        EffectType = statusEffectBlueprint.StatusEffectType;
+        EffectType = statusEffectBlueprint.StatusEffectType.Clone();
     }
     public StatusEffectInstance(StatusEffectInstance effectInstance) : base(effectInstance){
-        EffectType  = effectInstance.EffectType;
+        EffectType  = effectInstance.EffectType.Clone();
     }
     public override EffectInstance Clone(){
         return new StatusEffectInstance(this);

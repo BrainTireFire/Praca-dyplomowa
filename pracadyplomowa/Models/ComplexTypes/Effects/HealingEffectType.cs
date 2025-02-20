@@ -11,5 +11,13 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     [Owned]
     public class HealingEffectType
     {
+        public HealingEffectType(HealingEffectType cloned){
+        }
+        public HealingEffectType(){
+        }
+
+        public HealingEffectType Clone(){
+            return new HealingEffectType(this);
+        }
     }
 }

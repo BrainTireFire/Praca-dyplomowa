@@ -14,5 +14,15 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     {
         public ProficiencyEffect ProficiencyEffect { get; set; }
         public ItemType ItemType { get; set;}
+        public ProficiencyEffectType(ProficiencyEffectType cloned){
+            this.ProficiencyEffect = cloned.ProficiencyEffect;
+            this.ItemType = cloned.ItemType;
+        }
+        public ProficiencyEffectType(){
+        }
+
+        public ProficiencyEffectType Clone(){
+            return new ProficiencyEffectType(this);
+        }
     }
 }

@@ -18,13 +18,13 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
         public LanguageEffectInstance(string name) : base(name){}
         [System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute]
         public LanguageEffectInstance(LanguageEffectBlueprint languageEffectBlueprint, Character target) : base(languageEffectBlueprint, target){
-            EffectType = languageEffectBlueprint.LanguageEffectType;
+            EffectType = languageEffectBlueprint.LanguageEffectType.Clone();
             R_Language = languageEffectBlueprint.R_Language;
             R_LanguageId = languageEffectBlueprint.R_LanguageId;
         }
         [System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute]
         public LanguageEffectInstance(LanguageEffectInstance effectInstance) : base(effectInstance){
-            EffectType  = effectInstance.EffectType;
+            EffectType  = effectInstance.EffectType.Clone();
             R_Language = effectInstance.R_Language;
             R_LanguageId = R_LanguageId;
         }

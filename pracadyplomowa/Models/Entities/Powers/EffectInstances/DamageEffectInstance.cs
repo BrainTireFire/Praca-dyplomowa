@@ -15,7 +15,7 @@ public class DamageEffectInstance : ValueEffectInstance
         EffectType = damageEffectBlueprint.DamageEffectType;
     }
     public DamageEffectInstance(DamageEffectInstance effectInstance) : base(effectInstance){
-        EffectType  = effectInstance.EffectType;
+        EffectType  = effectInstance.EffectType.Clone();
     }
     public override EffectInstance Clone(){
         return new DamageEffectInstance(this);

@@ -13,5 +13,14 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     public class AttackPerAttackActionEffectType
     {
         public AttackPerActionEffect AttackPerActionEffect { get; set; }
+        public AttackPerAttackActionEffectType(AttackPerAttackActionEffectType cloned){
+            this.AttackPerActionEffect = cloned.AttackPerActionEffect;
+        }
+        public AttackPerAttackActionEffectType(){
+        }
+
+        public AttackPerAttackActionEffectType Clone(){
+            return new AttackPerAttackActionEffectType(this);
+        }
     }
 }

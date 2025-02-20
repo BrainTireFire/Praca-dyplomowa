@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore.Update.Internal;
 using Npgsql.Replication;
+using pracadyplomowa.Const;
 using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Models.Entities.Items;
 using pracadyplomowa.Models.Entities.Powers;
@@ -384,8 +385,8 @@ namespace pracadyplomowa.Models.DTOs
                 Damage = new DiceSet(w.GetBaseEquippedDamageDiceSet()),
                 AttackBonus = new DiceSet(w.GetBaseEquippedAttackBonus()),
                 DamageType = (int)w.DamageType,
-                Range = w is IRangedWeapon weapon ? weapon.Range : null,
-                Reach = w is MeleeWeapon meleeWeapon ? (meleeWeapon.Reach ? 10 : 5) : null,
+                Range = w is RangedWeapon || (w is MeleeWeapon meleeWeapon && meleeWeapon.Thrown) ? w.Range : null,
+                Reach = w is MeleeWeapon meleeWeapon2 ? (meleeWeapon2.Reach ? ConstVariables.MELEE_RANGE_REACH : ConstVariables.MELEE_RANGE_DEFAULT) : null,
             }).ToList();
         }
         // public static List<WeaponAttack> GetAttacks(Character character){

@@ -277,21 +277,61 @@ export default function EffectBlueprintForm({
   const handleChildStateUpdate = useCallback((x: EffectBody) => {
     dispatch({ type: "setEffectTypeBody", payload: x });
   }, []);
+
+  const bodyValueEffect = state.effectTypeBody as ValueEffect;
+  const bodyDamageEffect = state.effectTypeBody as DamageEffect;
+  const bodyValueEffectDisable_Level =
+    bodyValueEffect.value?.additionalValues?.some(
+      (value) =>
+        value.levelsInClassId === null &&
+        (value.additionalValueType === "LevelsInClass" ||
+          value.additionalValueType === "TotalLevel")
+    ) || false;
+  const bodyValueEffectDisable_Skill =
+    bodyValueEffect.value?.additionalValues?.some(
+      (value) =>
+        value.skill === null && value.additionalValueType === "SkillBonus"
+    ) || false;
+  const bodyValueEffectDisable_Ability =
+    bodyValueEffect.value?.additionalValues?.some(
+      (value) =>
+        value.ability === null &&
+        value.additionalValueType === "AbilityScoreModifier"
+    ) || false;
+  const bodyDamageEffectDisable_DamageType =
+    bodyDamageEffect.effectType?.damageEffect !== "ExtraWeaponDamage" &&
+    bodyDamageEffect.effectType?.damageEffect_DamageType === null;
+
   const disableUpdateButton = () => {
-    let body = state.effectTypeBody as ValueEffect;
     return (
-      body.value?.additionalValues?.some(
-        (value) =>
-          (value.levelsInClassId === null &&
-            (value.additionalValueType === "LevelsInClass" ||
-              value.additionalValueType === "TotalLevel")) ||
-          (value.skill === null &&
-            value.additionalValueType === "SkillBonus") ||
-          (value.ability === null &&
-            value.additionalValueType === "AbilityScoreModifier")
-      ) || false
+      bodyValueEffectDisable_Level ||
+      bodyValueEffectDisable_Skill ||
+      bodyValueEffectDisable_Ability ||
+      bodyDamageEffectDisable_DamageType
     );
   };
+  const disableReason = [];
+  if (bodyValueEffectDisable_Level) {
+    disableReason.push(
+      "One of Additional Values in effect requires Class selection"
+    );
+  }
+  if (bodyValueEffectDisable_Skill) {
+    disableReason.push(
+      "One of Additional Values in effect requires Skill selection"
+    );
+  }
+  if (bodyValueEffectDisable_Ability) {
+    disableReason.push(
+      "One of Additional Values in effect requires Ability selection"
+    );
+  }
+  if (bodyDamageEffectDisable_DamageType) {
+    disableReason.push(
+      "One of Additional Values in effect requires Damage Type selection"
+    );
+  }
+  const disableReasonJoined = disableReason.join("; ");
   if (
     isLoading ||
     isPending ||
@@ -512,22 +552,24 @@ export default function EffectBlueprintForm({
           </Div3>
         </Container>
       </ScrollContainer>
-      {effectBlueprint && (
-        <Button
-          onClick={() => updateEffectBlueprint(state)}
-          disabled={disableUpdateButton() || disableForm}
-        >
-          Update
-        </Button>
-      )}
-      {!effectBlueprint && (
-        <Button
-          onClick={() => createEffectBlueprint(state)}
-          disabled={disableUpdateButton() || disableForm}
-        >
-          Save
-        </Button>
-      )}
+      <FormRowVertical error={disableReasonJoined}>
+        {effectBlueprint && (
+          <Button
+            onClick={() => updateEffectBlueprint(state)}
+            disabled={disableUpdateButton() || disableForm}
+          >
+            Update
+          </Button>
+        )}
+        {!effectBlueprint && (
+          <Button
+            onClick={() => createEffectBlueprint(state)}
+            disabled={disableUpdateButton() || disableForm}
+          >
+            Save
+          </Button>
+        )}
+      </FormRowVertical>
     </EffectContext.Provider>
   );
 }

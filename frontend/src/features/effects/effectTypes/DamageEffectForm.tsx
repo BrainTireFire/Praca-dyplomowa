@@ -45,7 +45,12 @@ const damageTypesDropdown = [
   { value: "thunder", label: "Thunder" },
 ];
 
-const effectTypes = ["DamageDealt", "RerollLowerThan", "DamageTaken"] as const;
+const effectTypes = [
+  "DamageDealt",
+  "RerollLowerThan",
+  "DamageTaken",
+  "ExtraWeaponDamage",
+] as const;
 
 type effectType = (typeof effectTypes)[number];
 type damageType = (typeof damageTypes)[number];
@@ -126,6 +131,7 @@ export default function DamageEffectForm({
           { label: "Damage dealt", value: "DamageDealt" },
           { label: "Reroll lower than", value: "RerollLowerThan" },
           { label: "Damage taken", value: "DamageTaken" },
+          { label: "Extra weapon damage", value: "ExtraWeaponDamage" },
         ]}
         label="Damage effect"
         name="damageEffect"
@@ -136,7 +142,10 @@ export default function DamageEffectForm({
       ></RadioGroup>
       <FormRowVertical label="Damage type">
         <Dropdown
-          disabled={disableUpdate}
+          disabled={
+            disableUpdate ||
+            state.effectType.damageEffect === "ExtraWeaponDamage"
+          }
           chosenValue={state.effectType.damageEffect_DamageType}
           setChosenValue={(e) =>
             dispatch({ type: "setDamageType", payload: e as damageType })

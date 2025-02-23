@@ -5,6 +5,7 @@ import Button from "../../../ui/interactive/Button";
 import Form from "../../../ui/forms/Form";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
+import { useUpdatePassword } from "./hooks/useUpdatePassword";
 
 const StyledFormRow = styled.div`
   display: grid;
@@ -13,12 +14,30 @@ const StyledFormRow = styled.div`
   gap: 3rem;
 `;
 
+const ErrorText = styled.p`
+  color: var(--color-button-danger);
+  font-size: 14px;
+  margin-top: 5px;
+`;
+
 export default function UserChangesPasswordForm() {
   const { t } = useTranslation();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const { updatePassword, isUpdating } = useUpdatePassword();
 
-  function handleSubmit() {}
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    setError("");
+    updatePassword({ newPassword: password });
+  }
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -30,6 +49,7 @@ export default function UserChangesPasswordForm() {
             placeholder={t("account.forms.login.password.input.placeholder")}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            disabled={isUpdating}
           />
         </FormRowVertical>
       </StyledFormRow>
@@ -43,9 +63,16 @@ export default function UserChangesPasswordForm() {
             )}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            disabled={isUpdating}
           />
+          {error && <ErrorText>{error}</ErrorText>}
         </FormRowVertical>
-        <Button size="medium" variation="primary">
+        <Button
+          size="medium"
+          variation="primary"
+          onClick={handleSubmit}
+          disabled={isUpdating}
+        >
           {t("account.profile.change.user.password")}
         </Button>
       </StyledFormRow>

@@ -32,21 +32,21 @@ export default function Statistics() {
           <Heading as="h3" align="left">
             {t("account.profile.statistics.games.played")}
           </Heading>
-          3000
+          none
         </StyledStatisticsRow>
 
         <StyledStatisticsRow>
           <Heading as="h3" align="left">
             {t("account.profile.statistics.games.won")}
           </Heading>
-          200
+          none
         </StyledStatisticsRow>
 
         <StyledStatisticsRow>
           <Heading as="h3" align="left">
             {t("account.profile.statistics.account.created")}
           </Heading>
-          1000
+          none
         </StyledStatisticsRow>
       </StyledStatistics>
     </>

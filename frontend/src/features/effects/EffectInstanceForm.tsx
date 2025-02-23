@@ -358,7 +358,9 @@ export default function EffectInstanceForm({
   }
   let disableForm = !editMode;
   return (
-    <EffectContext.Provider value={{ effect: "Instance" }}>
+    <EffectContext.Provider
+      value={{ effect: "Instance", effectId: actualEffectId }}
+    >
       <ScrollContainer>
         <Container>
           <Div1>

@@ -346,7 +346,9 @@ export default function EffectBlueprintForm({
   }
   let disableForm = !editMode;
   return (
-    <EffectContext.Provider value={{ effect: "Blueprint" }}>
+    <EffectContext.Provider
+      value={{ effect: "Blueprint", effectId: actualEffectId }}
+    >
       <ScrollContainer>
         <Container>
           <Div1>

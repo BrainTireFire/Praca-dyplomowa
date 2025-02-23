@@ -26,6 +26,7 @@ import RangedWeaponForm from "./subforms/RangedWeaponForm";
 import { ItemIdContext } from "./contexts/ItemIdContext";
 import EquippableItemForm from "./subforms/EquippableItemForm";
 import { EditModeContext } from "../../context/EditModeContext";
+import { identityToTypeMapping } from "../../pages/items/itemTypes";
 
 export type ItemAction =
   | { type: "SET_ITEM"; payload: Item }
@@ -133,8 +134,14 @@ export default function ItemForm({
     isLoading: isLoadingItemFamilies,
     itemFamilies,
     error: errorItemFamilies,
-  } = useItemFamilies();
-  console.log(state);
+  } = useItemFamilies(
+    itemId,
+    identityToTypeMapping[
+      itemId !== null && resetHappened
+        ? state.itemType
+        : initialFormValues.itemType
+    ]
+  );
 
   const isSavingChangesDisallowed = () => {
     return state.itemFamilyId === null || !state.name;
@@ -206,7 +213,7 @@ export default function ItemForm({
                       itemFamilies?.map((family) => {
                         return {
                           label: family.name,
-                          value: family.id.toString(),
+                          value: family.id!.toString(),
                         };
                       }) ?? []
                     }

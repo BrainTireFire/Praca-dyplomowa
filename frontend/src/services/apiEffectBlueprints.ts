@@ -3,9 +3,13 @@ import { ItemFamily } from "../models/itemfamily";
 import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
 
-export async function getItemFamilies(): Promise<ItemFamily[]> {
+export async function getItemFamilies(
+  effectId: number | null
+): Promise<ItemFamily[]> {
   const response = await customFetch(
-    `${BASE_URL}/api/effectBlueprint/itemFamilies`
+    `${BASE_URL}/api/effectBlueprint/itemFamilies${
+      !!effectId ? `?effectId=${effectId}` : ""
+    }`
   );
 
   console.log(response);

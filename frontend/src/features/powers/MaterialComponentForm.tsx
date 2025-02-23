@@ -16,7 +16,7 @@ export default function MaterialComponentForm({
   materialComponent: MaterialComponent;
 }) {
   const { powerId } = useContext(PowerIdContext);
-  const { isLoading, itemFamilies, error } = useItemFamilies();
+  const { isLoading, itemFamilies, error } = useItemFamilies(powerId);
 
   const [goldPieces, setGoldPieces] = useState(
     materialComponent.worth.goldPieces

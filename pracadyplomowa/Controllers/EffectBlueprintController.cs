@@ -27,9 +27,9 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpGet("itemFamilies")]
-        public async Task<ActionResult<List<ItemFamilyDto>>> GetItemFamilies()
+        public async Task<ActionResult<List<ItemFamilyDto>>> GetItemFamilies([FromQuery] int? effectId)
         {
-            var itemFamilies = await _unitOfWork.ItemFamilyRepository.GetAll();
+            var itemFamilies = await _unitOfWork.ItemFamilyRepository.GetOwnedAndDefaultAndCurrentForEffectBlueprint(effectId, User.GetUserId());
 
 
             List<ItemFamilyDto> itemFamiliesDto = _mapper.Map<List<ItemFamilyDto>>(itemFamilies);

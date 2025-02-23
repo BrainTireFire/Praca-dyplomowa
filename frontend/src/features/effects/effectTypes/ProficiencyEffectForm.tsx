@@ -3,9 +3,10 @@ import Box from "../../../ui/containers/Box";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import RadioGroup from "../../../ui/forms/RadioGroup";
 import Dropdown from "../../../ui/forms/Dropdown";
-import { useItemFamilies } from "../hooks/useItemFamilies";
+import { useItemFamiliesForEffect } from "../hooks/useItemFamiliesForEffect";
 import Spinner from "../../../ui/interactive/Spinner";
 import { EditModeContext } from "../../../context/EditModeContext";
+import { EffectContext } from "../contexts/BlueprintOrInstanceContext";
 
 const proficiencyEffects = ["ItemType", "SpecificItemFamily"] as const;
 
@@ -53,7 +54,9 @@ export default function ProficiencyEffectForm({
   onChange: (updatedState: Effect) => void;
   effect: Effect;
 }) {
-  const { isLoading, itemFamilies, error } = useItemFamilies();
+  const effectContext = useContext(EffectContext);
+  const { isLoading, itemFamilies, error } =
+    useItemFamiliesForEffect(effectContext);
   const localItemFamilies = itemFamilies?.map((x) => {
     return { id: x.id, name: x.name };
   });

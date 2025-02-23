@@ -77,14 +77,6 @@ namespace pracadyplomowa.Controllers
 
         [HttpPost]
         public async Task<ActionResult> CreateItemFamily([FromBody] ItemFamilyDtoInsert itemFamilyDto){
-            // var item = _unitOfWork.ItemFamilyRepository.GetById(itemFamilyId);
-            // if(item == null){
-            //     return NotFound(itemFamilyId);
-            // }
-            // // _unitOfWork.ItemRepository.GetItemsForEditabilityAnalysis([itemId]);
-            // // if(!item.HasEditAccess(User.GetUserId())){
-            // //     return BadRequest("You cannot delete this item");
-            // // }
             ItemFamily newItemFamily = new ItemFamily(){
                 Name = itemFamilyDto.Name,
                 ItemType = itemFamilyDto.ItemType,

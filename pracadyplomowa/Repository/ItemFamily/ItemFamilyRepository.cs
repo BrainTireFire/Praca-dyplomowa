@@ -31,5 +31,13 @@ namespace pracadyplomowa.Repository.Item
         public Task<List<ItemFamily>> GetOwnedAndDefaultAndCurrent(int? itemId, int userId){
             return _context.ItemFamilies.Where(iFamily => iFamily.R_OwnerId == userId || iFamily.R_OwnerId == null || iFamily.R_ItemFamilyInItems.Any(item => item.Id == itemId)).ToListAsync();
         }
+
+        public Task<List<ItemFamily>> GetOwnedAndDefaultAndCurrentForEffectBlueprint(int? effectId, int userId){
+            return _context.ItemFamilies.Where(iFamily => iFamily.R_OwnerId == userId || iFamily.R_OwnerId == null || iFamily.R_ProficiencyGrantedByEffectBlueprint.Any(effect => effect.Id == effectId)).ToListAsync();
+        }
+
+        public Task<List<ItemFamily>> GetOwnedAndDefaultAndCurrentForEffectInstance(int? effectId, int userId){
+            return _context.ItemFamilies.Where(iFamily => iFamily.R_OwnerId == userId || iFamily.R_OwnerId == null || iFamily.R_ProficiencyGrantedByEffectInstance.Any(effect => effect.Id == effectId)).ToListAsync();
+        }
     }
 }

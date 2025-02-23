@@ -1,6 +1,7 @@
 import { EffectBlueprint } from "../features/effects/EffectBlueprintForm";
 import { MaterialComponent, Power } from "../features/powers/models/power";
 import { ImmaterialResourceBlueprint } from "../models/immaterialResourceBlueprint";
+import { ItemFamily } from "../models/itemfamily";
 import { PowerListItem } from "../models/power";
 import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
@@ -152,4 +153,17 @@ export async function updateMaterialComponent(
     options
   );
   return;
+}
+export async function getItemFamilies(
+  powerId: number | null
+): Promise<ItemFamily[]> {
+  const response = await customFetch(
+    `${BASE_URL}/api/power/itemFamilies${
+      !!powerId ? `?effectId=${powerId}` : ""
+    }`
+  );
+
+  console.log(response);
+
+  return response;
 }

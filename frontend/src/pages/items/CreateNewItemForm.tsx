@@ -7,11 +7,11 @@ import {
 } from "../../features/items/models/item";
 import Button from "../../ui/interactive/Button";
 import { useCreateItem } from "../../features/items/hooks/useCreateItem";
-import { ItemType } from "./itemTypes";
+import { ItemIdentity, ItemType } from "./itemTypes";
 import ItemForm from "../../features/items/ItemForm";
 
 export default function CreateNewItemForm() {
-  const [itemType, setItemType] = useState<ItemType | null>(null);
+  const [itemType, setItemType] = useState<ItemIdentity | null>(null);
   return (
     <>
       {itemType === null && (

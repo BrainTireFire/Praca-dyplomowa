@@ -13,5 +13,8 @@ namespace pracadyplomowa.Repository.Item
         public Task<List<ItemFamily>> GetOwnedAndDefault(int userId);
         public Dictionary<int, ItemFamily> GetItemFamiliesForEditabilityAnalysis(List<int> ids);
         Task<List<ItemFamily>> GetOwnedAndDefaultAndCurrent(int? itemFamilyId, int userId);
+        Task<List<ItemFamily>> GetOwnedAndDefaultAndCurrentForEffectBlueprint(int? effectId, int userId);
+
+        Task<List<ItemFamily>> GetOwnedAndDefaultAndCurrentForEffectInstance(int? effectId, int userId);
     }
 }

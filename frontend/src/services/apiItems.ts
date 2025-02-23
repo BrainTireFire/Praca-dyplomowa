@@ -2,8 +2,10 @@ import { EffectBlueprint } from "../features/effects/EffectBlueprintForm";
 import { Item } from "../features/items/models/item";
 import { ImmaterialResourceAmount } from "../models/immaterialResourceAmount";
 import { ItemListItem } from "../models/item";
+import { ItemFamily } from "../models/itemfamily";
 import { PowerListItem } from "../models/power";
 import { Slot } from "../models/slot";
+import { ItemType } from "../pages/items/itemTypes";
 import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
 
@@ -196,4 +198,19 @@ export async function addEffectInstance(
     body: JSON.stringify(effectBlueprintDto),
   };
   return await customFetch(`${BASE_URL}/api/item/${itemId}/effects`, options);
+}
+
+export async function getItemFamilies(
+  itemId: number | null,
+  itemIdentities: ItemType[]
+): Promise<ItemFamily[]> {
+  const response = await customFetch(
+    `${BASE_URL}/api/item/itemFamilies?${
+      itemIdentities.length > 0
+        ? `&itemType=` + itemIdentities.join("&itemType=")
+        : ""
+    }${!!itemId ? `&itemId=${itemId}` : ""}`
+  );
+
+  return response;
 }

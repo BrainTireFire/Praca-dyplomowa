@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.Entities.Items;
 using pracadyplomowa.Models.Entities.Powers;
+using pracadyplomowa.Models.Enums;
 using pracadyplomowa.Repository;
 using pracadyplomowa.Repository.Item;
 using pracadyplomowa.Repository.UnitOfWork;
@@ -237,6 +238,17 @@ namespace pracadyplomowa.Controllers
             _unitOfWork.EffectInstanceRepository.Add(effectInstance);
             await _unitOfWork.SaveChangesAsync();
             return Ok(effectInstance.Id);
+        }
+
+        [HttpGet("itemFamilies")]
+        public async Task<ActionResult> GetItemFamilies([FromQuery] int? itemId, [FromQuery] List<ItemType> itemType){
+            var itemFamilies = await _unitOfWork.ItemFamilyRepository.GetOwnedAndDefaultAndCurrent(itemId, User.GetUserId());
+
+
+            List<ItemFamilyDto> itemFamiliesDto = _mapper.Map<List<ItemFamilyDto>>(itemFamilies.Where(x => itemType.Contains(x.ItemType)));
+
+
+            return Ok(itemFamiliesDto);
         }
 
     }

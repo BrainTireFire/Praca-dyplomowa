@@ -1,9 +1,8 @@
 import { DiceSet, DiceSetDefaultValue } from "../../../models/diceset";
 import { ImmaterialResourceAmount } from "../../../models/immaterialResourceAmount";
-import { ImmaterialResourceBlueprint } from "../../../models/immaterialResourceBlueprint";
 import { PowerListItem } from "../../../models/power";
 import { Slot } from "../../../models/slot";
-import { ItemType } from "../../../pages/items/itemTypes";
+import { ItemIdentity } from "../../../pages/items/itemTypes";
 import { damageType } from "../../effects/damageTypes";
 import { skill } from "../../effects/skills";
 import { EffectBlueprintListItem } from "../../powers/models/effectBlueprint";
@@ -17,7 +16,7 @@ export type Item = {
   editable: boolean;
   weight: number;
   price: CoinPurse;
-  itemType: ItemType;
+  itemType: ItemIdentity;
   itemFamilyId: number | null;
   itemTypeBody:
     | MundaneItemBody

@@ -20,10 +20,12 @@ using System.Text.Json.Serialization;
 using pracadyplomowa.Repository.AuctionLog;
 using pracadyplomowa.Repository.Encounter;
 using pracadyplomowa.Repository.UnitOfWork;
+using pracadyplomowa.Repository.User;
 using pracadyplomowa.RequestHelpers;
 using pracadyplomowa.Services.Encounter;
 using pracadyplomowa.Services.Item;
 using pracadyplomowa.Services;
+using pracadyplomowa.Services.User;
 using pracadyplomowa.Services.Websockets;
 using pracadyplomowa.Services.Websockets.Connection;
 using pracadyplomowa.Services.Websockets.Notification;
@@ -54,6 +56,7 @@ builder.Services.AddScoped<ICharacterService, CharacterService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IConnectionService, ConnectionService>();
 builder.Services.AddScoped<ISessionService, SessionService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
@@ -75,6 +78,7 @@ builder.Services.AddScoped<IEquipmentSlotRepository, EquipmentSlotRepository>();
 builder.Services.AddScoped<IEncounterRepository, EncounterRepository>();
 builder.Services.AddScoped<IParticipanceDataRepository, ParticipanceDataRepository>();
 builder.Services.AddScoped<IActionLogRepository, ActionLogRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<IAuthorizationHandler, OwnershipHandler>();
 // builder.Services.AddHttpContextAccessor();

@@ -25,7 +25,7 @@ export default function ProfileDashboard() {
         <ChangeUserData />
       </FormContainer>
       <RightSide>
-        <FormContainer>up</FormContainer>
+        <FormContainer>Coming soon!</FormContainer>
         <FormContainer>
           <Statistics />
         </FormContainer>

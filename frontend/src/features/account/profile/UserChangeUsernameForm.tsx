@@ -5,6 +5,7 @@ import Button from "../../../ui/interactive/Button";
 import Form from "../../../ui/forms/Form";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
+import { useUpdateUsername } from "./hooks/useUpdateUsername";
 
 const StyledFormRow = styled.div`
   display: grid;
@@ -17,8 +18,16 @@ const StyledFormRow = styled.div`
 export default function UserChangeUsernameForm() {
   const { t } = useTranslation();
   const [username, setUsername] = useState("");
+  const { updateUsername, isUpdating } = useUpdateUsername();
 
-  function handleSubmit() {}
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (!username) {
+      return;
+    }
+
+    updateUsername({ newUsername: username });
+  }
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -30,9 +39,15 @@ export default function UserChangeUsernameForm() {
             placeholder={t("account.forms.login.username.input.placeholder")}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            disabled={isUpdating}
           />
         </FormRowVertical>
-        <Button size="medium" variation="primary">
+        <Button
+          size="medium"
+          variation="primary"
+          onClick={handleSubmit}
+          disabled={isUpdating}
+        >
           {t("account.profile.change.user.username")}
         </Button>
       </StyledFormRow>

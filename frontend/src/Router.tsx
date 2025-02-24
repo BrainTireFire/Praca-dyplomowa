@@ -33,6 +33,7 @@ import MainSession from "./pages/campaign/session/MainSession";
 import Encounter from "./pages/campaign/encounter/Encounter";
 import EncounterEditForm from "./features/campaigns/encounter/EncounterEditForm";
 import ItemFamilies from "./pages/items/ItemFamilies";
+import CampaginsAttend from "./pages/campaign/CampaginsAttend";
 
 export default function Router() {
   return (
@@ -48,6 +49,7 @@ export default function Router() {
         <Route path="main" element={<MainDashboard />} />
         <Route path="join/:campaignId" element={<CampaignJoin />} />
         <Route path="campaigns" element={<Campagins />} />
+        <Route path="campaignAttend" element={<CampaginsAttend />} />
         <Route path="campaigns/:campaignId" element={<CampaignInstance />} />
         <Route path="campaigns/:campaignId/shops" element={<Shops />} />
         <Route

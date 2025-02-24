@@ -1,14 +1,12 @@
 import Heading from "../../ui/text/Heading";
 import Box from "../../ui/containers/Box";
 import styled from "styled-components";
-import { useCampaign } from "../../features/campaigns/hooks/useCampaign";
-import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Spinner from "../../ui/interactive/Spinner";
 import CharacterItemBox from "../../features/characters/CharacterItemBox";
 import { useCharacters } from "../../features/characters/hooks/useCharacters";
-import { addCharacterToCampaign } from "../../services/apiCampaigns";
 import useCampaignJoin from "../../features/campaigns/hooks/useCampaignJoin";
+import { useCampaignJoinInfo } from "../../features/campaigns/hooks/useCampaignJoinInfo";
 
 const Container = styled.div`
   display: flex;
@@ -34,7 +32,7 @@ const CharacterListLayout = styled.div`
 `;
 
 function CampaignJoin() {
-  const { campaign } = useCampaign();
+  const { campaign } = useCampaignJoinInfo();
   const { isLoading, characters, error } = useCharacters();
   const { joinCampaign, isPending } = useCampaignJoin();
   const { t } = useTranslation();

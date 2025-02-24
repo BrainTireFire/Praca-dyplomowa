@@ -13,6 +13,12 @@ import ConfirmDelete from "../../../ui/containers/ConfirmDelete";
 const BoxCustomStyles = css`
   display: grid;
   grid-template-rows: 0.5fr 0.5fr 1.5fr 0.5fr;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    background: var(--color-navbar-hover);
+  }
 `;
 
 const StyledElementBox = styled.div`
@@ -28,21 +34,18 @@ export default function MapItemBox({ board }: Props) {
   const { isDeleting, deleteBoard } = useDeleteBoard();
 
   return (
-    <Box radius="tiny" customStyles={BoxCustomStyles}>
+    <Box
+      radius="tiny"
+      customStyles={BoxCustomStyles}
+      onClick={() => navigate(`/homebrew/map/${board.id}`)}
+    >
       <Heading as="h2">{board.name}</Heading>
       <StyledElementBox>{board.description}</StyledElementBox>
       <StyledElementBox>
         {board.sizeX} x {board.sizeY}
       </StyledElementBox>
-      <div>
+      <div onClick={(e) => e.stopPropagation()}>
         <ButtonGroup justify="center">
-          <Button
-            variation="primary"
-            size="large"
-            onClick={() => navigate(`/homebrew/map/${board.id}`)}
-          >
-            View
-          </Button>
           <Button
             variation="primary"
             size="large"
@@ -51,13 +54,12 @@ export default function MapItemBox({ board }: Props) {
             Edit
           </Button>
           <Modal>
-            <Modal.Open opens="delete">
+            <Modal.Open opens="deleteBoard">
               <Button variation="primary" size="large">
                 Remove
               </Button>
             </Modal.Open>
-
-            <Modal.Window name="delete">
+            <Modal.Window name="deleteBoard">
               <ConfirmDelete
                 resourceName="boards"
                 disabled={isDeleting}

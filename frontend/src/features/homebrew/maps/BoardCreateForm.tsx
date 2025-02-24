@@ -134,7 +134,7 @@ export default function BoardCreateForm() {
                 <Label>Board Size: </Label>
                 <Dropdown
                   valuesList={BOARD_SIZES}
-                  chosenValue={data?.boardSize ?? "16 x 9"}
+                  chosenValue={data?.boardSize ?? null}
                   setChosenValue={(value) => handleDropdownChange(value)}
                 />
               </FieldSet>

@@ -36,6 +36,13 @@ public class AccountRepository : IAccountRepository
     {
         return await _userManager.Users.SingleOrDefaultAsync(x => x.Id == userId);
     }
+    
+    public async Task<User> GetUserWithAttendCampaignById(int userId)
+    {
+        return await _userManager.Users
+            .Include(u => u.R_UserAttendsAsPlayerToCamgains)
+            .SingleOrDefaultAsync(x => x.Id == userId);
+    }
 
     public async Task<User> GetUserByUsername(string username)
     {

@@ -26,7 +26,7 @@ export default function Campaigns() {
         <Button
           size="large"
           variation="primary"
-          onClick={() => navigate(`/campaigns`)}
+          onClick={() => navigate(`/campaignAttend`)}
         >
           Campaigns I attend
         </Button>

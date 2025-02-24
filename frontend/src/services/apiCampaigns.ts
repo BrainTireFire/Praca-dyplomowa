@@ -13,6 +13,19 @@ export async function getCampaigns(): Promise<Campaign[]> {
   return data;
 }
 
+export async function getCampaignsAttend(): Promise<Campaign[]> {
+  const options: RequestInit = {
+    method: "GET",
+  };
+
+  const data = await customFetch(
+    `${BASE_URL}/api/campaign/attendCampaigns`,
+    options
+  );
+
+  return data;
+}
+
 export async function getCampaign(campaignId: number): Promise<Campaign> {
   const options: RequestInit = {
     method: "GET",
@@ -20,6 +33,21 @@ export async function getCampaign(campaignId: number): Promise<Campaign> {
 
   const data = await customFetch(
     `${BASE_URL}/api/campaign/${campaignId}`,
+    options
+  );
+
+  return data;
+}
+
+export async function getCampaignJoinInfo(
+  campaignId: number
+): Promise<Campaign> {
+  const options: RequestInit = {
+    method: "GET",
+  };
+
+  const data = await customFetch(
+    `${BASE_URL}/api/campaign/joinInfo/${campaignId}`,
     options
   );
 

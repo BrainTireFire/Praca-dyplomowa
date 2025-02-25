@@ -6,7 +6,7 @@ using pracadyplomowa.Models.Enums;
 
 namespace pracadyplomowa.Models.Entities.Powers
 {
-    public class ImmaterialResourceBlueprint : ObjectWithId
+    public class ImmaterialResourceBlueprint : ObjectWithOwner
     {
         public string Name { get; set; } = null!;
         public RefreshType RefreshesOn { get; set; }
@@ -17,5 +17,9 @@ namespace pracadyplomowa.Models.Entities.Powers
         public ICollection<ImmaterialResourceInstance> R_Instances {get; set; } = [];
         public ICollection<ImmaterialResourceAmount> R_Amounts {get; set; } = [];
         
+        public bool HasEditAccess(int userId)
+        {
+            return this.R_OwnerId == userId;
+        }
     }
 }

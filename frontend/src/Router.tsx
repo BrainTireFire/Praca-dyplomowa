@@ -33,6 +33,7 @@ import MainSession from "./pages/campaign/session/MainSession";
 import Encounter from "./pages/campaign/encounter/Encounter";
 import EncounterEditForm from "./features/campaigns/encounter/EncounterEditForm";
 import ItemFamilies from "./pages/items/ItemFamilies";
+import ImmaterialResources from "./pages/powers/ImmaterialResources";
 
 export default function Router() {
   return (
@@ -78,6 +79,7 @@ export default function Router() {
         <Route path="npc" element={<NpcCharacter />} />
         <Route path="items" element={<Items />} />
         <Route path="itemFamilies" element={<ItemFamilies />} />
+        <Route path="immaterialResources" element={<ImmaterialResources />} />
         <Route path="powers" element={<Powers />} />
         <Route path="homebrew" element={<Homebrew />} />
         <Route path="homebrew/createPower" element={<HomebrewCreatePower />} />

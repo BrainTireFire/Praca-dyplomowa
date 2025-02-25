@@ -21,5 +21,11 @@ namespace pracadyplomowa.Repository.Item
         public Task<List<ImmaterialResourceBlueprint>> GetAllByIds(List<int> Ids){
             return _context.ImmaterialResourceBlueprints.Where(i => Ids.Contains(i.Id)).ToListAsync();
         }
+        public Dictionary<int, ImmaterialResourceBlueprint> GetItemFamiliesForEditabilityAnalysis(List<int> ids){
+            
+            return _context.ImmaterialResourceBlueprints
+            .Where(i => ids.Contains(i.Id))
+            .ToDictionary(i => i.Id, i => i);
+        }
     }
 }

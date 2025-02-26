@@ -4,6 +4,7 @@ import { useCampaigns } from "./hooks/useCampaigns";
 import Spinner from "../../ui/interactive/Spinner";
 import { Campaign } from "../../models/campaign";
 import Heading from "../../ui/text/Heading";
+import { useCampaignsAttend } from "./hooks/useCampaignsAttend";
 
 const CampaignListLayout = styled.div`
   display: grid;
@@ -20,8 +21,8 @@ const ConatinerCenter = styled.div`
   align-items: center;
 `;
 
-export default function CampaignList() {
-  const { isLoading, campaigns } = useCampaigns();
+export default function CampaignListAttends() {
+  const { isLoading, campaigns } = useCampaignsAttend();
 
   if (isLoading) {
     return <Spinner />;

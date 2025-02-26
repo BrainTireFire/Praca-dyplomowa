@@ -44,10 +44,8 @@ export default function CampaignItemBox({ campaign }: { campaign: Campaign }) {
       onClick={() => navigate(`/campaigns/${campaign.id}`)}
     >
       <Heading as="h1">{campaign.name}</Heading>
-      <StyledElementBox>
-        {campaign.gameMaster?.name ?? "GameMaster"}
-      </StyledElementBox>
-      <StyledElementBox>{campaign.description}</StyledElementBox>
+      <StyledElementBox>GM: {campaign.gameMaster}</StyledElementBox>
+      <StyledElementBox>Description: {campaign.description}</StyledElementBox>
       <div onClick={(e) => e.stopPropagation()}>
         <ButtonGroup justify="center">
           <Modal>

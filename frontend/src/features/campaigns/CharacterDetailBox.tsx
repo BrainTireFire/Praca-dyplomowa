@@ -29,9 +29,11 @@ const BoxCustomStyles = css`
 export default function CharacterDetailBox({
   children,
   handleKickCharacter,
+  gameMaster,
 }: {
   children: CharacterItem;
   handleKickCharacter: Function;
+  gameMaster: boolean;
 }) {
   return (
     <Modal>
@@ -47,15 +49,17 @@ export default function CharacterDetailBox({
           </div>
           <div style={{ gridColumn: "1/3", gridRow: "2/3" }}>
             {/* TODO: Implement View button !*/}
-            <ButtonGroup justify="center">
-              <Button
-                variation="primary"
-                size="large"
-                onClick={() => handleKickCharacter(children.id)}
-              >
-                Kick
-              </Button>
-            </ButtonGroup>
+            {gameMaster && (
+              <ButtonGroup justify="center">
+                <Button
+                  variation="primary"
+                  size="large"
+                  onClick={() => handleKickCharacter(children.id)}
+                >
+                  Kick
+                </Button>
+              </ButtonGroup>
+            )}
           </div>
         </Box>
       </Modal.Open>

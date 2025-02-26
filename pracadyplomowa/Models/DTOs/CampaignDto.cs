@@ -11,6 +11,8 @@ namespace pracadyplomowa.Models.DTOs
         [MaxLength(50)]
         public string Name { get; set; }
         public string Description { get; set; } = null!;
+        
+        public string GameMaster { get; set; } = null!;
         public List<CharacterSummaryDto> Members { get; set; } = null!;
 
         public CampaignDto(Campaign campaign)
@@ -18,6 +20,7 @@ namespace pracadyplomowa.Models.DTOs
             Id = campaign.Id;
             Name = campaign.Name;
             Description = campaign.Description;
+            GameMaster = campaign.R_Owner?.UserName ?? "Unknown";
 
             var characterSummaries = campaign.R_CampaignHasCharacters.Select(c => new CharacterSummaryDto(c)).ToList();
             Members = new List<CharacterSummaryDto>(characterSummaries);

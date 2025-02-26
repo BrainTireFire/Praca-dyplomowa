@@ -5,7 +5,7 @@ const Menu = styled.div`
   display: none;
   position: absolute;
   background-color: var(--color-navbar);
-  min-width: 160px;
+  min-width: 180px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
 `;
@@ -59,7 +59,7 @@ const StyledDropdown = styled.li`
   position: relative;
   display: inline-block;
   margin-left: auto;
-  padding-left: 50px;
+  padding-left: 15px;
 
   &:hover ${Menu} {
     display: block;

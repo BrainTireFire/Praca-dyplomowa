@@ -27,9 +27,9 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpGet("immaterialResourceBlueprints")]
-        public async Task<ActionResult<List<ImmaterialResourceBlueprintDto>>> GetImmaterialResourceBlueprints()
+        public async Task<ActionResult<List<ImmaterialResourceBlueprintDto>>> GetImmaterialResourceBlueprints([FromQuery] int? powerId)
         {
-            var immaterialResourceBlueprints = await _unitOfWork.ImmaterialResourceBlueprintRepository.GetAll();
+            var immaterialResourceBlueprints = await _unitOfWork.ImmaterialResourceBlueprintRepository.GetOwnedAndDefaultAndCurrent(powerId, User.GetUserId());
 
 
             List<ImmaterialResourceBlueprintDto> immaterialResourceBlueprintDtos = _mapper.Map<List<ImmaterialResourceBlueprintDto>>(immaterialResourceBlueprints);

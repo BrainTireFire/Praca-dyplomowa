@@ -10,11 +10,13 @@ import {
   ImmaterialResourceBlueprint,
   ImmaterialResourceBlueprintWithOwner,
   immaterialResourceInitialValue,
+  refreshTypeOptions,
 } from "../../models/immaterialResourceBlueprint";
 import { useImmaterialResource } from "./hooks/useImmaterialResource";
 import { useCreateImmaterialResource } from "./hooks/useCreateImmaterialResource";
 import { useUpdateImmaterialResource } from "./hooks/useUpdateImmaterialResource";
 import { useDeleteImmaterialResource } from "./hooks/useDeleteImmaterialResource";
+import Dropdown from "../../ui/forms/Dropdown";
 
 export type ResourceAction =
   | { type: "SET_ITEM"; payload: ImmaterialResourceBlueprintWithOwner }
@@ -110,6 +112,19 @@ export default function ImmaterialResourceForm({
               })
             }
           ></Input>
+        </FormRowVertical>
+        <FormRowVertical label="Refreshes on">
+          <Dropdown
+            valuesList={refreshTypeOptions}
+            chosenValue={state.refreshesOn}
+            setChosenValue={(e) =>
+              dispatch({
+                type: "UPDATE_FIELD",
+                field: "refreshesOn",
+                value: e,
+              })
+            }
+          ></Dropdown>
         </FormRowVertical>
       </Container>
       {immaterialResourceId === null && (

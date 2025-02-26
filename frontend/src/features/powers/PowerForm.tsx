@@ -474,7 +474,7 @@ export default function PowerForm({
     isLoading: isLoadingImmaterialResources,
     immaterialResourceBlueprints,
     error: errorImmaterialResources,
-  } = useImmaterialResourceBlueprints();
+  } = useImmaterialResourceBlueprints(powerId);
   // const {
   //   isLoading: isLoadingMaterialResources,
   //   materialComponents: materialResources,
@@ -500,7 +500,8 @@ export default function PowerForm({
     isLoadingImmaterialResources ||
     isPending ||
     isPendingCreate ||
-    isLoadingPower
+    isLoadingPower ||
+    isLoadingClasses
   ) {
     return <Spinner></Spinner>;
   }

@@ -12,5 +12,7 @@ namespace pracadyplomowa.Repository.Item
 
         public Task<List<ImmaterialResourceBlueprint>> GetAllByIds(List<int> Ids);
         public Dictionary<int, ImmaterialResourceBlueprint> GetItemFamiliesForEditabilityAnalysis(List<int> ids);
+        public Task<List<ImmaterialResourceBlueprint>> GetOwnedAndDefault(int userId);
+        public Task<List<ImmaterialResourceBlueprint>> GetOwnedAndDefaultAndCurrent(int? powerId, int userId);
     }
 }

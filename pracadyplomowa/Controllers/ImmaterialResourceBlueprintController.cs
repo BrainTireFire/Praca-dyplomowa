@@ -31,12 +31,20 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ImmaterialResourceBlueprintDto>> GetAll()
+        public async Task<ActionResult<ImmaterialResourceBlueprintWithOwnerDto>> GetAll()
         {
-            var resources = await _unitOfWork.ImmaterialResourceBlueprintRepository.GetAll();
-            List<ImmaterialResourceBlueprintDto> resourceDTOs = _mapper.Map<List<ImmaterialResourceBlueprintDto>>(resources);
+            var resources = await _unitOfWork.ImmaterialResourceBlueprintRepository.GetOwnedAndDefault(User.GetUserId());
+            List<ImmaterialResourceBlueprintWithOwnerDto> resourceDtos = [];
+            foreach (var resource in resources){
+                resourceDtos.Add(new ImmaterialResourceBlueprintWithOwnerDto(){
+                    Id = resource.Id,
+                    Name = resource.Name,
+                    OwnerName = resource.R_OwnerId == User.GetUserId() ? User.GetUsername() : "",
+                    Editable = resource.HasEditAccess(User.GetUserId())
+                });
+            }
             
-            return Ok(resourceDTOs);
+            return Ok(resourceDtos);
         }
 
         [HttpGet("{resourceId}")]
@@ -51,7 +59,8 @@ namespace pracadyplomowa.Controllers
                     Id = resource.Id,
                     Name = resource.Name,
                     OwnerName = resource.R_OwnerId == User.GetUserId() ? User.GetUsername() : "",
-                    Editable = resource.HasEditAccess(User.GetUserId())
+                    Editable = resource.HasEditAccess(User.GetUserId()),
+                    RefreshesOn = resource.RefreshesOn
                 };
 
 
@@ -72,6 +81,7 @@ namespace pracadyplomowa.Controllers
         public async Task<ActionResult> CreateResource([FromBody] ImmaterialResourceBlueprintDto_ForInsert resourceDto){
             ImmaterialResourceBlueprint resource = new ImmaterialResourceBlueprint(){
                 Name = resourceDto.Name,
+                RefreshesOn = resourceDto.RefreshesOn,
                 R_OwnerId = User.GetUserId(),
             };
             _unitOfWork.ImmaterialResourceBlueprintRepository.Add(resource);
@@ -86,6 +96,7 @@ namespace pracadyplomowa.Controllers
             }
             var resource = _unitOfWork.ImmaterialResourceBlueprintRepository.GetById(resourceDto.Id);
             resource!.Name = resourceDto.Name;
+            resource!.RefreshesOn = resourceDto.RefreshesOn;
             await _unitOfWork.SaveChangesAsync();
             return Ok();
         }

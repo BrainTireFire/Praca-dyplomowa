@@ -27,5 +27,12 @@ namespace pracadyplomowa.Repository.Item
             .Where(i => ids.Contains(i.Id))
             .ToDictionary(i => i.Id, i => i);
         }
+        public Task<List<ImmaterialResourceBlueprint>> GetOwnedAndDefault(int userId){
+            return _context.ImmaterialResourceBlueprints.Where(resource => resource.R_OwnerId == userId || resource.R_OwnerId == null).ToListAsync();
+        }
+
+        public Task<List<ImmaterialResourceBlueprint>> GetOwnedAndDefaultAndCurrent(int? powerId, int userId){
+            return _context.ImmaterialResourceBlueprints.Where(resource => resource.R_OwnerId == userId || resource.R_OwnerId == null || resource.R_PowersRequiringThis.Any(power => power.Id == powerId)).ToListAsync();
+        }
     }
 }

@@ -90,7 +90,9 @@ namespace pracadyplomowa.Models.Entities.Powers
             this.R_TargetedCharacterId = null;
             this.R_TargetedItem = null;
             this.R_TargetedItemId = null;
-            this.DeleteOnSave = true;
+            if(this.R_GrantedByEquippingItemId == null && this.R_GrantedThroughId == null){
+                this.DeleteOnSave = true;
+            }
         }
 
         public virtual void Link(Character character){

@@ -230,10 +230,21 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpPost("{itemId}/effects")]
-        public async Task<ActionResult> AddNewEffectInstance([FromBody] EffectBlueprintFormDto effectDto, [FromRoute] int itemId)
+        public async Task<ActionResult> AddNewEffectInstanceOnWearer([FromBody] EffectBlueprintFormDto effectDto, [FromRoute] int itemId)
         {
             var effectInstance = _mapper.Map<EffectInstance>(effectDto);
             effectInstance.R_GrantedByEquippingItemId = itemId;
+
+            _unitOfWork.EffectInstanceRepository.Add(effectInstance);
+            await _unitOfWork.SaveChangesAsync();
+            return Ok(effectInstance.Id);
+        }
+
+        [HttpPost("{itemId}/effects2")]
+        public async Task<ActionResult> AddNewEffectInstanceOnItem([FromBody] EffectBlueprintFormDto effectDto, [FromRoute] int itemId)
+        {
+            var effectInstance = _mapper.Map<EffectInstance>(effectDto);
+            effectInstance.R_TargetedItemId = itemId;
 
             _unitOfWork.EffectInstanceRepository.Add(effectInstance);
             await _unitOfWork.SaveChangesAsync();

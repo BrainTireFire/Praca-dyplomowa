@@ -39,6 +39,7 @@ export const toolBodyInitialValue: ToolBody = {
 
 export type EquippableItemBody = {
   effectsOnWearer: EffectBlueprintListItem[];
+  effectsOnItem: EffectBlueprintListItem[];
   powers: PowerListItem[];
   //   resources: (ImmaterialResourceBlueprint & { charges: number })[];
   resourcesOnEquip: ImmaterialResourceAmount[];

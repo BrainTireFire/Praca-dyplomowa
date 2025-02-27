@@ -185,7 +185,7 @@ export async function updateItemResources(
   return;
 }
 
-export async function addEffectInstance(
+export async function addEffectInstanceOnWearer(
   effectBlueprintDto: EffectBlueprint,
   itemId: number
 ): Promise<number> {
@@ -198,6 +198,20 @@ export async function addEffectInstance(
     body: JSON.stringify(effectBlueprintDto),
   };
   return await customFetch(`${BASE_URL}/api/item/${itemId}/effects`, options);
+}
+export async function addEffectInstanceOnItem(
+  effectBlueprintDto: EffectBlueprint,
+  itemId: number
+): Promise<number> {
+  console.log(effectBlueprintDto);
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(effectBlueprintDto),
+  };
+  return await customFetch(`${BASE_URL}/api/item/${itemId}/effects2`, options);
 }
 
 export async function getItemFamilies(

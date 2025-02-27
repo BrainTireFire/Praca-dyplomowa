@@ -3,7 +3,7 @@ import { createContext } from "react";
 export const EffectParentObjectIdContext =
   createContext<EffectParentObjectIdContextType>({
     objectId: null,
-    objectType: "Item",
+    objectType: "ItemWearer",
   });
 
 export type EffectParentObjectIdContextType = {
@@ -12,7 +12,8 @@ export type EffectParentObjectIdContextType = {
 };
 
 export type EffectParentObjectIdContextTypeObjectType =
-  | "Item"
+  | "ItemWearer"
+  | "ItemItself"
   | "CharacterConstant"
   | "CharacterTemporary"
   | "FieldConstant"

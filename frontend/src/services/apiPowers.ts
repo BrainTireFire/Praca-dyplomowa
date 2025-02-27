@@ -7,11 +7,13 @@ import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
 import queryString from "query-string";
 
-export async function getImmaterialResourceBlueprints(): Promise<
-  ImmaterialResourceBlueprint[]
-> {
+export async function getImmaterialResourceBlueprints(
+  powerId: number | null
+): Promise<ImmaterialResourceBlueprint[]> {
   const response = await customFetch(
-    `${BASE_URL}/api/power/immaterialResourceBlueprints`
+    `${BASE_URL}/api/power/immaterialResourceBlueprints${
+      !!powerId ? `?powerId=${powerId}` : ""
+    }`
   );
 
   console.log(response);

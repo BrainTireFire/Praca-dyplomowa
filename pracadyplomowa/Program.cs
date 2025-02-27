@@ -54,6 +54,7 @@ builder.Services.AddScoped<IBoardService, BoardService>();
 builder.Services.AddScoped<IEncounterService, EncounterService>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<IItemFamilyService, ItemFamilyService>();
+builder.Services.AddScoped<IImmaterialResourceBlueprintService, ImmaterialResourceBlueprintService>();
 builder.Services.AddScoped<ICharacterService, CharacterService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IConnectionService, ConnectionService>();

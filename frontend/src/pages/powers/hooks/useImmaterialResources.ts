@@ -1,15 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { getImmaterialResourceBlueprints } from "../../../services/apiImmaterialResourceBlueprints";
 
-export function useImmaterialResourceBlueprints() {
+export function useImmaterialResources() {
   const {
     isLoading,
-    data: immaterialResourceBlueprints,
+    data: immaterialResources,
     error,
   } = useQuery({
     queryKey: ["immaterialResourceBlueprints"],
     queryFn: getImmaterialResourceBlueprints,
   });
 
-  return { isLoading, immaterialResourceBlueprints, error };
+  return { isLoading, immaterialResources, error };
 }

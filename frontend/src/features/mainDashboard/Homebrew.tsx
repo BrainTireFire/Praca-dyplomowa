@@ -52,6 +52,15 @@ export default function Homebrew() {
           My custom item families
         </Button>
       </StyledElementBox>
+      <StyledElementBox>
+        <Button
+          size="large"
+          variation="primary"
+          onClick={() => navigate(`/immaterialResources`)}
+        >
+          My custom immaterial resources
+        </Button>
+      </StyledElementBox>
       <StyledElementBoxWithSpace>
         <StyledElementBox>
           <Button

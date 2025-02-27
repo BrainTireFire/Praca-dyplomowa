@@ -24,7 +24,7 @@ namespace pracadyplomowa.Models.Entities.Items
             R_ItemInItemsFamilyId = itemFamily.Id;
         }
 
-        public Item(Item item){
+        public Item(Item item): base(item){
             Name = item.Name;
             Description = item.Description;
             Weight = item.Weight;
@@ -43,7 +43,6 @@ namespace pracadyplomowa.Models.Entities.Items
             Price.GoldPieces = item.Price.GoldPieces;
             Price.SilverPieces = item.Price.SilverPieces;
             Price.CopperPieces = item.Price.CopperPieces;
-            R_OwnerId = item.R_OwnerId;
         }
 
         public bool IsBlueprint { get; set; } = true;

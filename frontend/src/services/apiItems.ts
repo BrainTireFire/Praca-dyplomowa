@@ -197,7 +197,10 @@ export async function addEffectInstanceOnWearer(
     },
     body: JSON.stringify(effectBlueprintDto),
   };
-  return await customFetch(`${BASE_URL}/api/item/${itemId}/effects`, options);
+  return await customFetch(
+    `${BASE_URL}/api/item/${itemId}/effectsOnWearer`,
+    options
+  );
 }
 export async function addEffectInstanceOnItem(
   effectBlueprintDto: EffectBlueprint,
@@ -211,7 +214,10 @@ export async function addEffectInstanceOnItem(
     },
     body: JSON.stringify(effectBlueprintDto),
   };
-  return await customFetch(`${BASE_URL}/api/item/${itemId}/effects2`, options);
+  return await customFetch(
+    `${BASE_URL}/api/item/${itemId}/effectsOnItem`,
+    options
+  );
 }
 
 export async function getItemFamilies(

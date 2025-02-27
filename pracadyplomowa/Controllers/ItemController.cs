@@ -229,7 +229,7 @@ namespace pracadyplomowa.Controllers
             return Ok();
         }
 
-        [HttpPost("{itemId}/effects")]
+        [HttpPost("{itemId}/effectsOnWearer")]
         public async Task<ActionResult> AddNewEffectInstanceOnWearer([FromBody] EffectBlueprintFormDto effectDto, [FromRoute] int itemId)
         {
             var effectInstance = _mapper.Map<EffectInstance>(effectDto);
@@ -240,7 +240,7 @@ namespace pracadyplomowa.Controllers
             return Ok(effectInstance.Id);
         }
 
-        [HttpPost("{itemId}/effects2")]
+        [HttpPost("{itemId}/effectsOnItem")]
         public async Task<ActionResult> AddNewEffectInstanceOnItem([FromBody] EffectBlueprintFormDto effectDto, [FromRoute] int itemId)
         {
             var effectInstance = _mapper.Map<EffectInstance>(effectDto);

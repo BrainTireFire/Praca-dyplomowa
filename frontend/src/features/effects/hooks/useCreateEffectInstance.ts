@@ -1,7 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { EffectBlueprint } from "../../effects/EffectBlueprintForm";
-import { addEffectInstance as addItemEffectInstance } from "../../../services/apiItems";
+import {
+  addEffectInstanceOnItem,
+  addEffectInstanceOnWearer,
+} from "../../../services/apiItems";
 import { EffectParentObjectIdContextTypeObjectType } from "../../../context/EffectParentObjectIdContext";
 import {
   addConstantEffectInstance,
@@ -14,12 +17,17 @@ export function useCreateEffectInstance(
   objectType: EffectParentObjectIdContextTypeObjectType,
   isConstant: boolean
 ) {
-  const queryKey = objectType === "Item" ? "item" : "character";
+  const queryKey =
+    objectType === "ItemWearer" || objectType === "ItemItself"
+      ? "item"
+      : "character";
   const queryClient = useQueryClient();
   const { mutate: createEffectInstance, isPending } = useMutation({
     mutationFn: (effectInstance: EffectBlueprint) =>
-      objectType === "Item"
-        ? addItemEffectInstance(effectInstance, objectId)
+      objectType === "ItemWearer"
+        ? addEffectInstanceOnWearer(effectInstance, objectId)
+        : objectType === "ItemItself"
+        ? addEffectInstanceOnItem(effectInstance, objectId)
         : isConstant
         ? addConstantEffectInstance(effectInstance, objectId)
         : addTemporaryEffectInstance(effectInstance, objectId),

@@ -2,8 +2,10 @@ import { EffectBlueprint } from "../features/effects/EffectBlueprintForm";
 import { Item } from "../features/items/models/item";
 import { ImmaterialResourceAmount } from "../models/immaterialResourceAmount";
 import { ItemListItem } from "../models/item";
+import { ItemFamily } from "../models/itemfamily";
 import { PowerListItem } from "../models/power";
 import { Slot } from "../models/slot";
+import { ItemType } from "../pages/items/itemTypes";
 import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
 
@@ -70,6 +72,17 @@ export async function updateItem(itemDto: Item): Promise<void> {
     endpointName = "apparel";
   } else throw new Error("Unknown item type");
   await customFetch(`${BASE_URL}/api/item/${endpointName}`, options);
+  return;
+}
+
+export async function deleteItem(itemId: number): Promise<void> {
+  const options: RequestInit = {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  await customFetch(`${BASE_URL}/api/item/${itemId}`, options);
   return;
 }
 
@@ -172,7 +185,7 @@ export async function updateItemResources(
   return;
 }
 
-export async function addEffectInstance(
+export async function addEffectInstanceOnWearer(
   effectBlueprintDto: EffectBlueprint,
   itemId: number
 ): Promise<number> {
@@ -184,5 +197,40 @@ export async function addEffectInstance(
     },
     body: JSON.stringify(effectBlueprintDto),
   };
-  return await customFetch(`${BASE_URL}/api/item/${itemId}/effects`, options);
+  return await customFetch(
+    `${BASE_URL}/api/item/${itemId}/effectsOnWearer`,
+    options
+  );
+}
+export async function addEffectInstanceOnItem(
+  effectBlueprintDto: EffectBlueprint,
+  itemId: number
+): Promise<number> {
+  console.log(effectBlueprintDto);
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(effectBlueprintDto),
+  };
+  return await customFetch(
+    `${BASE_URL}/api/item/${itemId}/effectsOnItem`,
+    options
+  );
+}
+
+export async function getItemFamilies(
+  itemId: number | null,
+  itemIdentities: ItemType[]
+): Promise<ItemFamily[]> {
+  const response = await customFetch(
+    `${BASE_URL}/api/item/itemFamilies?${
+      itemIdentities.length > 0
+        ? `&itemType=` + itemIdentities.join("&itemType=")
+        : ""
+    }${!!itemId ? `&itemId=${itemId}` : ""}`
+  );
+
+  return response;
 }

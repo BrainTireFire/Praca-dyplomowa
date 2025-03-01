@@ -50,12 +50,13 @@ export default function MapBoard({
     drawGrid(ctx, width, height, board.sizeX, board.sizeY);
 
     if (fields) {
-      fields.forEach((field) => {
+      fields.forEach(async (field) => {
         fillSelectedBox(ctx, field, board.sizeX, board.sizeY);
 
         if (field.memberName) {
-          drawTextName(ctx, field, board.sizeX, board.sizeY);
-          drawAvatar(ctx, field, board.sizeX, board.sizeY);
+          await drawAvatar(ctx, field, board.sizeX, board.sizeY, field.size);
+
+          drawTextName(ctx, field, board.sizeX, board.sizeY, field.size);
         }
 
         if (field.fieldMovementCost === "Impassable") {

@@ -40,9 +40,15 @@ const variations = {
   primary: css`
     color: var(--color-button-text);
     background-color: var(--color-button-primary);
+    &:disabled {
+      background-color: var(--color-button-primary-disabled);
+    }
 
     &:hover {
       background-color: var(--color-button-hover-primary);
+    }
+    &:hover:disabled {
+      background-color: var(--color-button-primary-disabled);
     }
   `,
   secondary: css`

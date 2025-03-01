@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using pracadyplomowa.Models.Entities.Campaign;
@@ -29,7 +30,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         public int? AuraSize { get; set; }
         public bool OverrideCastersDC { get; set; } = false;
         public int? DifficultyClass { get; set; }
-        public Ability? SavingThrow { get; set; }
+        public Ability? SavingThrowAbility { get; set; }
         public bool RequiresConcentration { get; set; }
         public SavingThrowBehaviour? SavingThrowBehaviour { get; set; }
         public SavingThrowRoll? SavingThrowRoll { get; set; }
@@ -44,7 +45,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         public virtual List<PowerSelection> R_CharacterPreparedPowers { get; set; } = []; // list of selected powers out of all available from 
         public virtual List<Character> R_CharacterKnownsPowers { get; set; } = []; // always available powers
         public virtual List<Item> R_ItemsGrantingPower { get; set; } = [];
-        public virtual List<Weapon> R_WeaponsCastingOnHit { get; set; } = [];
+        // public virtual List<Weapon> R_WeaponsCastingOnHit { get; set; } = [];
 
         public virtual List<Class> R_ClassesWithAccess { get; set; } = [];
         public virtual ImmaterialResourceBlueprint? R_UsesImmaterialResource { get; set; }
@@ -69,6 +70,10 @@ namespace pracadyplomowa.Models.Entities.Powers
                 .Union(this.R_ItemsGrantingPower.Where(i => i.R_EquipData?.R_CharacterId == usingCharacterId).Select(i => i.R_EquipData?.R_Item.Name)).ToList();
             if(source == null) return [];
             return source;
+        }
+
+        public bool RequiredResourceAvailable(Character caster, int minimumResourceLevel) {
+            return caster.AllImmaterialResourceInstances.Where(x => !x.NeedsRefresh && x.Level >= minimumResourceLevel && x.R_BlueprintId == this.R_UsesImmaterialResource?.Id).Any();
         }
 
     }

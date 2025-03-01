@@ -56,6 +56,14 @@ namespace pracadyplomowa.Repository
 
             return await PagedList<CharacterSummaryDto>.CreateAsync(charactersSumaries, characterParams.PageNumber, characterParams.PageSize);
         }
+        
+        public Task<List<Character>> GetCharactersByUserId(int userId)
+        {
+            return _context.Characters
+                .Where(c => c.R_OwnerId == userId)
+                .Include(c => c.R_Campaign)
+                .ToListAsync();
+        }
 
         public Task<Character> GetByIdWithAll(int Id)
         {
@@ -150,9 +158,13 @@ namespace pracadyplomowa.Repository
             .Include(c => c.R_EquippedItems)
                 .ThenInclude(ed => ed.R_Item)
                     .ThenInclude(b => b.R_ItemIsEquippableInSlots)
+            .Include(c => c.R_EquippedItems)
+                .ThenInclude(ed => ed.R_Item)
+                    .ThenInclude(b => b.R_ItemGrantsResources)
 
             .Include(c => c.R_ImmaterialResourceInstances)
                 .ThenInclude(iri => iri.R_Blueprint)
+            .Include(c => c.R_ConcentratesOn)
 
             .AsSplitQuery() // IMPORTANT !!!!! https://learn.microsoft.com/en-us/ef/core/querying/single-split-queries
             .FirstAsync();
@@ -235,12 +247,18 @@ namespace pracadyplomowa.Repository
                     .ThenInclude(i => i.R_ItemIsEquippableInSlots)
             .Include(c => c.R_CharacterHasBackpack)
                 .ThenInclude(b => b.R_BackpackHasItems)
+                    .ThenInclude(i => i.R_AffectedBy)
+            .Include(c => c.R_CharacterHasBackpack)
+                .ThenInclude(b => b.R_BackpackHasItems)
+                    .ThenInclude(i => i.R_EffectsOnEquip)
+            .Include(c => c.R_CharacterHasBackpack)
+                .ThenInclude(b => b.R_BackpackHasItems)
                     .ThenInclude(i => i.R_EquipData)
             .Include(c => c.R_CharacterHasBackpack)
                 .ThenInclude(b => b.R_BackpackHasItems)
                     .ThenInclude(i => i.R_ItemInItemsFamily)
             .Include(c => c.R_CharacterBelongsToRace)
-                .ThenInclude(r => r.R_EquipmentSlots)
+                .ThenInclude(r => r.R_EquipmentSlots).AsSplitQuery()
             .FirstAsync();
             return character;
         }
@@ -307,6 +325,12 @@ namespace pracadyplomowa.Repository
             return _context.Characters
             .Where(i => ids.Contains(i.Id))
             .Include(c => c.R_Campaign)
+                .ThenInclude(c => c!.R_CampaignHasCharacters)
+            .Include(c => c.R_CharactersParticipatesInEncounters)
+                .ThenInclude(c => c.R_Encounter)
+                    .ThenInclude(c => c.R_Participances)
+                        .ThenInclude(c => c.R_Character)
+            .AsSplitQuery()
             .ToDictionary(i => i.Id, i => i);
         }
     }

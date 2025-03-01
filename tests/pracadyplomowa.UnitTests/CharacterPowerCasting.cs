@@ -11,7 +11,7 @@ using pracadyplomowa.Models.Entities.Powers.EffectBlueprints;
 using pracadyplomowa.Models.Enums;
 using Xunit;
 
-namespace pracadyplomowa.UnitTests.obj.CharacterTests
+namespace pracadyplomowa.UnitTests.CharacterTests
 {
     public class CharacterPowerCasting
     {
@@ -124,7 +124,8 @@ namespace pracadyplomowa.UnitTests.obj.CharacterTests
             
             power.R_EffectBlueprints.Add(effectBlueprint);
             
-            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Hit}}, 1);
+            
+            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Hit}}, 1, out var effects);
             
             var effectInstances = target.R_AffectedBy;
             Assert.True(effectInstances.Count == 1);
@@ -242,7 +243,7 @@ namespace pracadyplomowa.UnitTests.obj.CharacterTests
             
             power.R_EffectBlueprints.Add(effectBlueprint);
             
-            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Hit}}, 1);
+            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Hit}}, 1, out var effects);
             
             var effectInstances = target.R_AffectedBy;
             Assert.True(effectInstances.Count == 0);
@@ -359,7 +360,8 @@ namespace pracadyplomowa.UnitTests.obj.CharacterTests
             
             power.R_EffectBlueprints.Add(effectBlueprint);
             
-            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Hit}}, 1);
+            
+            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Hit}}, 1, out var effects);
             
             var effectInstances = target.R_AffectedBy;
             Assert.True(effectInstances.Count == 0);
@@ -423,7 +425,7 @@ namespace pracadyplomowa.UnitTests.obj.CharacterTests
             backpack.R_BackpackHasItems.Add(item);
             backpack.R_BackpackHasItems.Add(item2);
             Power power = new("Test power", Models.Enums.ActionType.Action, Models.Enums.CastableBy.Character, Models.Enums.PowerType.Saveable, Models.Enums.TargetType.Character){
-                SavingThrow = Ability.STRENGTH,
+                SavingThrowAbility = Ability.STRENGTH,
                 SavingThrowBehaviour = SavingThrowBehaviour.Breaks,
                 SavingThrowRoll = SavingThrowRoll.TakenOnce,
             };
@@ -479,7 +481,8 @@ namespace pracadyplomowa.UnitTests.obj.CharacterTests
             
             power.R_EffectBlueprints.Add(effectBlueprint);
             
-            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Hit}}, 1);
+            
+            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Hit}}, 1, out var effects);
             
             var effectInstances = target.R_AffectedBy;
             Assert.True(effectInstances.Count == 1);
@@ -544,7 +547,7 @@ namespace pracadyplomowa.UnitTests.obj.CharacterTests
             backpack.R_BackpackHasItems.Add(item);
             backpack.R_BackpackHasItems.Add(item2);
             Power power = new("Test power", Models.Enums.ActionType.Action, Models.Enums.CastableBy.Character, Models.Enums.PowerType.Saveable, Models.Enums.TargetType.Character){
-                SavingThrow = Ability.STRENGTH,
+                SavingThrowAbility = Ability.STRENGTH,
                 SavingThrowBehaviour = SavingThrowBehaviour.Breaks,
                 SavingThrowRoll = SavingThrowRoll.TakenOnce,
                 UpcastBy = UpcastBy.ResourceLevel
@@ -610,7 +613,8 @@ namespace pracadyplomowa.UnitTests.obj.CharacterTests
             power.R_EffectBlueprints.Add(effectBlueprint);
             power.R_EffectBlueprints.Add(effectBlueprint2);
             
-            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Hit}}, 2);
+            
+            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Hit}}, 2, out var effects);
             
             var effectInstances = target.R_AffectedBy;
             Assert.True(effectInstances.Count == 2);
@@ -674,7 +678,7 @@ namespace pracadyplomowa.UnitTests.obj.CharacterTests
             backpack.R_BackpackHasItems.Add(item);
             backpack.R_BackpackHasItems.Add(item2);
             Power power = new("Test power", Models.Enums.ActionType.Action, Models.Enums.CastableBy.Character, Models.Enums.PowerType.Saveable, Models.Enums.TargetType.Character){
-                SavingThrow = Ability.STRENGTH,
+                SavingThrowAbility = Ability.STRENGTH,
                 SavingThrowBehaviour = SavingThrowBehaviour.Breaks,
                 SavingThrowRoll = SavingThrowRoll.TakenOnce,
                 UpcastBy = UpcastBy.ResourceLevel
@@ -740,7 +744,8 @@ namespace pracadyplomowa.UnitTests.obj.CharacterTests
             power.R_EffectBlueprints.Add(effectBlueprint);
             power.R_EffectBlueprints.Add(effectBlueprint2);
             
-            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Hit}}, 1);
+            
+            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Hit}}, 1, out var effects);
             
             var effectInstances = target.R_AffectedBy;
             Assert.Equal(Outcome.Success, outcome);
@@ -805,7 +810,7 @@ namespace pracadyplomowa.UnitTests.obj.CharacterTests
             backpack.R_BackpackHasItems.Add(item);
             backpack.R_BackpackHasItems.Add(item2);
             Power power = new("Test power", Models.Enums.ActionType.Action, Models.Enums.CastableBy.Character, Models.Enums.PowerType.Saveable, Models.Enums.TargetType.Character){
-                SavingThrow = Ability.STRENGTH,
+                SavingThrowAbility = Ability.STRENGTH,
                 SavingThrowBehaviour = SavingThrowBehaviour.Modifies,
                 SavingThrowRoll = SavingThrowRoll.TakenOnce,
                 UpcastBy = UpcastBy.ResourceLevel
@@ -871,7 +876,8 @@ namespace pracadyplomowa.UnitTests.obj.CharacterTests
             power.R_EffectBlueprints.Add(effectBlueprint);
             power.R_EffectBlueprints.Add(effectBlueprint2);
             
-            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Miss}}, 1);
+            
+            var outcome = character.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, HitType.Miss}}, 1, out var effects);
             
             var effectInstances = target.R_AffectedBy;
             Assert.Equal(Outcome.Success, outcome);

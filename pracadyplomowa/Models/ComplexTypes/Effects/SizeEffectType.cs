@@ -15,5 +15,15 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     {
         public SizeEffect SizeEffect { get; set; }
         public Size SizeEffect_SizeToSet { get; set; }
+        public SizeEffectType(SizeEffectType cloned){
+            this.SizeEffect = cloned.SizeEffect;
+            this.SizeEffect_SizeToSet = cloned.SizeEffect_SizeToSet;
+        }
+        public SizeEffectType(){
+        }
+
+        public SizeEffectType Clone(){
+            return new SizeEffectType(this);
+        }
     }
 }

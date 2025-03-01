@@ -300,7 +300,7 @@ export default function MapCreatorForm({ state, onSubmit }: any) {
           <Modal>
             <Modal.Open opens="mapCreateNewPowerField">
               <Button size="small" variation="primary" type="button">
-                New Power
+                Change selection
               </Button>
             </Modal.Open>
             <Modal.Window name="mapCreateNewPowerField">

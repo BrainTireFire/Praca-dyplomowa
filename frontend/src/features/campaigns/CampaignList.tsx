@@ -13,6 +13,13 @@ const CampaignListLayout = styled.div`
   padding-right: 1.5vw;
 `;
 
+const ConatinerCenter = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
 export default function CampaignList() {
   const { isLoading, campaigns } = useCampaigns();
 
@@ -21,7 +28,7 @@ export default function CampaignList() {
   }
 
   if (!campaigns || campaigns.length === 0) {
-    return <Heading as="h1">No campaigns available.</Heading>;
+    return <ConatinerCenter>No campaigns available.</ConatinerCenter>;
   }
 
   return (

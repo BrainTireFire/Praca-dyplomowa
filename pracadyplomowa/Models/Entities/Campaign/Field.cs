@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using pracadyplomowa.Models.Entities.Characters;
@@ -56,6 +57,13 @@ namespace pracadyplomowa.Models.Entities.Campaign
             powers.ForEach(power => this.R_CasterPowers.Add(power));
         }
         
+        [NotMapped]
+        public FieldMovementCostType ActualMovementCost {
+            get {
+                return this.FieldMovementCost;
+            }
+        }
+
         public void AssignToBoard(Board board)
         {
             R_Board = board ?? throw new ArgumentNullException(nameof(board));
@@ -80,7 +88,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
             return Math.Abs(field.PositionX - this.PositionX) <= 1 || Math.Abs(field.PositionY - this.PositionY) <= 1;
         }
 
-        public Dictionary<int, HitType> CheckIfPowerHitSuccessfull(Encounter encounter, Power power, List<Character> targets)
+        public Dictionary<int, HitType> CheckIfPowerHitSuccessfull(Encounter encounter, Power power, List<Character> targets, List<string> messages)
         {
             //retrieve data
             Dictionary<int, HitType> hitMap = [];
@@ -108,9 +116,9 @@ namespace pracadyplomowa.Models.Entities.Campaign
                         outcome
                     );
                 }
-                else if (power.PowerType == PowerType.Saveable && power.OverrideCastersDC)
+                else if (power.PowerType == PowerType.Saveable)
                 {
-                    int roll = targetedCharacter.SavingThrowRoll((Ability)power.SavingThrow);
+                    int roll = targetedCharacter.SavingThrowRoll((Ability)power.SavingThrowAbility);
                     HitType outcome = HitType.Miss;
                     if (roll <= power.DifficultyClass && roll != 20)
                     {
@@ -132,10 +140,10 @@ namespace pracadyplomowa.Models.Entities.Campaign
             return hitMap;
         }
 
-        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel)
+        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel, out List<EffectInstance> generatedEffects, List<string> messages)
         {
             EffectGroup effectGroup = new();
-
+            generatedEffects = [];
             //generate effects
             foreach (Character target in targetsToHitSuccessMap.Keys)
             {
@@ -160,6 +168,9 @@ namespace pracadyplomowa.Models.Entities.Campaign
                                 shouldAdd = true;
                             }
                         }
+                        else if(power.PowerType == PowerType.PassiveEffect){
+                            shouldAdd = true;
+                        }
 
                         if (shouldAdd)
                         {
@@ -168,7 +179,8 @@ namespace pracadyplomowa.Models.Entities.Campaign
                             {
                                 damageEffectInstance.CriticalHit = true;
                             }
-                            effectGroup.AddEffectOnCharacter(effectInstance);
+                            generatedEffects.Add(effectInstance);
+                            effectGroup.AddEffect(effectInstance);
                         }
                     }
                 }
@@ -179,10 +191,94 @@ namespace pracadyplomowa.Models.Entities.Campaign
             if (power.PowerType == PowerType.Saveable && power.SavingThrowRoll == Enums.SavingThrowRoll.RetakenEveryTurn)
             {
                 effectGroup.DifficultyClassToBreak = power.DifficultyClass;
-                effectGroup.SavingThrow = (Ability)power.SavingThrow;
+                effectGroup.SavingThrow = (Ability)power.SavingThrowAbility;
             }
             effectGroup.Name = power.Name;
             return Outcome.Success;
+        }
+        
+        // public bool IsOccupied(Character? characterExcluded = null){
+        //     return this.R_OccupiedBy != null && this.R_OccupiedBy.R_Character != characterExcluded; //version if occupying multiple fields indeed generates multiple relationships
+        // }
+
+        public bool IsOccupiedAlternative(Character? characterExcluded = null){
+            var enc = this.R_Board?.R_Encounter;
+            if(enc == null){
+                return false;
+            }
+            List<Tuple<int, int>> occupiedCoordinates = [];
+            var occupiedDirectly = enc.R_Participances.Where(par => par.R_Character != characterExcluded).Select(p => p.R_OccupiedField).ToList();
+            foreach(var occupiedField in occupiedDirectly){
+                var size = occupiedField.R_OccupiedBy.R_Character.Size;
+                occupiedCoordinates.AddRange(occupiedField.GetOccupiedCoordinates(size));
+            }
+            return occupiedCoordinates.Contains(new Tuple<int, int>(PositionX, PositionY));
+        }
+
+        public bool CanBeEnteredBy(Character character){
+            var willOccupyCoordinatesIfEnters = GetOccupiedCoordinates(character.Size);
+            foreach(var field in this.R_Board.R_ConsistsOfFields){
+                if(willOccupyCoordinatesIfEnters.Contains(new Tuple<int, int>(field.PositionX, field.PositionY))){
+                    if(field.IsOccupiedAlternative(character) || field.FieldMovementCost == FieldMovementCostType.Impassable){
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+
+        public List<Tuple<int, int>> GetOccupiedCoordinates(Size size){
+            List<Tuple<int, int>> occupiedCoordinates = [];
+            if(size <= Size.Medium ){
+                occupiedCoordinates.Add(new Tuple<int, int>(this.PositionX, this.PositionY));
+            }
+            else{
+                if(size >= Size.Large){
+                    occupiedCoordinates.Add(new Tuple<int, int>(this.PositionX, this.PositionY));
+                    occupiedCoordinates.Add(new Tuple<int, int>(this.PositionX + 1, this.PositionY));
+                    occupiedCoordinates.Add(new Tuple<int, int>(this.PositionX, this.PositionY + 1));
+                    occupiedCoordinates.Add(new Tuple<int, int>(this.PositionX + 1, this.PositionY + 1));
+                }
+                if(size >= Size.Huge){
+                    occupiedCoordinates.Add(new Tuple<int, int>(this.PositionX + 2, this.PositionY));
+                    occupiedCoordinates.Add(new Tuple<int, int>(this.PositionX + 2, this.PositionY + 1));
+                    occupiedCoordinates.Add(new Tuple<int, int>(this.PositionX, this.PositionY + 2));
+                    occupiedCoordinates.Add(new Tuple<int, int>(this.PositionX + 1, this.PositionY + 2));
+                    occupiedCoordinates.Add(new Tuple<int, int>(this.PositionX + 2, this.PositionY + 2));
+                }
+                if(size == Size.Gargantuan){
+                    occupiedCoordinates.Add(new Tuple<int, int>(this.PositionX + 3, this.PositionY));
+                    occupiedCoordinates.Add(new Tuple<int, int>(this.PositionX + 3, this.PositionY + 1));
+                    occupiedCoordinates.Add(new Tuple<int, int>(this.PositionX + 3, this.PositionY + 2));
+                    occupiedCoordinates.Add(new Tuple<int, int>(this.PositionX + 3, this.PositionY + 3));
+                    occupiedCoordinates.Add(new Tuple<int, int>(this.PositionX, this.PositionY + 3));
+                    occupiedCoordinates.Add(new Tuple<int, int>(this.PositionX + 1, this.PositionY + 3));
+                    occupiedCoordinates.Add(new Tuple<int, int>(this.PositionX + 2, this.PositionY + 3));
+                }
+            }
+            return occupiedCoordinates;
+        }
+
+        public void Enter(ParticipanceData participance, List<string> messages){
+            var character = participance.R_Character;
+            foreach(var power in R_CasterPowers){
+                var outcome = this.CheckIfPowerHitSuccessfull(null!, power, [character], messages).GetValueOrDefault(character.Id);
+                messages.Add($"{character.Name} triggers {power.Name}: {outcome}");
+                this.ApplyPowerEffects(power, new Dictionary<Character, HitType>() { { character, outcome } }, null, out var generatedEffects, messages);
+                foreach(var effect in generatedEffects){
+                    effect.Resolve(messages);
+                }
+            }
+            participance.R_OccupiedField.Leave(participance);
+            participance.R_OccupiedField = this;
+            this.R_OccupiedBy = participance;
+        }
+
+        public void Leave(ParticipanceData participance){
+            if(this.R_OccupiedBy == participance){
+                this.R_OccupiedBy = null;
+            }
         }
     }
 }

@@ -17,12 +17,20 @@ const StyledSidebar = styled.aside`
 
 function Sidebar({
   setActiveComponent,
+  handleClose,
+  activeComponent,
 }: {
   setActiveComponent: (name: string | null) => void;
+  handleClose: () => void;
+  activeComponent: string;
 }) {
   return (
     <StyledSidebar>
-      <MainSidebar setActiveComponent={setActiveComponent} />
+      <MainSidebar
+        setActiveComponent={setActiveComponent}
+        handleClose={handleClose}
+        activeComponent={activeComponent}
+      />
     </StyledSidebar>
   );
 }

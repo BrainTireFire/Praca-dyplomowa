@@ -6,6 +6,7 @@ using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Models.Entities.Items;
 using pracadyplomowa.Models.Enums;
 using pracadyplomowa.Models.Entities.Campaign;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace pracadyplomowa.Models.Entities.Powers
 {
@@ -35,7 +36,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         public int? R_GeneratesAuraId { get; set; }
         public virtual ICollection<Field> R_EffectOnField { get; set; } = [];
 
-        public void AddEffectOnCharacter(EffectInstance effectInstance){
+        public void AddEffect(EffectInstance effectInstance){
             this.R_OwnedEffects.Add(effectInstance);
             effectInstance.R_OwnedByGroup = this;
         }
@@ -51,5 +52,40 @@ namespace pracadyplomowa.Models.Entities.Powers
             this.R_GeneratesAura = aura;
             aura.R_GeneratedBy = this;
         }
+
+        [NotMapped]
+        public bool DeleteOnSave { get; set; }
+
+        public void TickDuration(){
+            if(!IsConstant){
+                if(DurationLeft != null){
+                    DurationLeft -= 1;
+                }
+                if(DurationLeft == null || DurationLeft <= 0){
+                    R_OwnedEffects.ToList().ForEach(e => {
+                        e.Unlink();
+                    });
+                    Disperse();
+                }
+            }
+        }
+
+        public void Disperse() {
+            if(R_ConcentratedOnByCharacter != null){
+                R_ConcentratedOnByCharacter.R_ConcentratesOn = null;
+                R_ConcentratedOnByCharacter.R_ConcentratesOnId = null;
+            }
+            DeleteOnSave = true;
+            R_ConcentratedOnByCharacter = null;
+            R_ConcentratedOnByCharacterId = null;
+        }
+
+        public void DisperseOnTarget(Character target) {
+            var effects = R_OwnedEffects.Where(x => x.R_TargetedCharacter == target).ToList();
+            foreach(var effect in effects){
+                effect.Unlink();
+            }
+        }
+
     }
 }

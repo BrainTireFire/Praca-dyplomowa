@@ -10,10 +10,10 @@ public class SavingThrowEffectInstance : ValueEffectInstance
     private SavingThrowEffectInstance() : base("EF", 0){}
     public SavingThrowEffectInstance(string name) : base(name, 0){}
     public SavingThrowEffectInstance(SavingThrowEffectBlueprint savingThrowEffectBlueprint, Character? roller, Character target) : base(savingThrowEffectBlueprint, roller, target){
-        EffectType = savingThrowEffectBlueprint.SavingThrowEffectType;
+        EffectType = savingThrowEffectBlueprint.SavingThrowEffectType.Clone();
     }
     public SavingThrowEffectInstance(SavingThrowEffectInstance effectInstance) : base(effectInstance){
-        EffectType  = effectInstance.EffectType;
+        EffectType  = effectInstance.EffectType.Clone();
     }
     public override EffectInstance Clone(){
         return new SavingThrowEffectInstance(this);

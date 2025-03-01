@@ -160,8 +160,8 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                 builder.Entity<Character>()
                         .HasOne(c => c.R_ConcentratesOn)
                         .WithOne(c => c.R_ConcentratedOnByCharacter)
-                        .HasForeignKey<Character>(c => c.R_ConcentratesOnId)
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasForeignKey<EffectGroup>(c => c.R_ConcentratedOnByCharacterId)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired(false);
 
                 builder.Entity<Character>()
@@ -184,9 +184,9 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .HasForeignKey(c => c.R_SpawnedByPowerId)
                         .IsRequired(false);
 
-                builder.Entity<Weapon>()
-                        .HasMany(c => c.R_PowersCastedOnHit)
-                        .WithMany(c => c.R_WeaponsCastingOnHit);
+                // builder.Entity<Weapon>()
+                //         .HasMany(c => c.R_PowersCastedOnHit)
+                //         .WithMany(c => c.R_WeaponsCastingOnHit);
 
                 builder.Entity<EffectBlueprint>()
                         .HasOne(c => c.R_CastedOnCharactersByAura)
@@ -205,12 +205,19 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .WithOne(c => c.R_GeneratedBy)
                         .HasForeignKey<EffectGroup>(c => c.R_GeneratesAuraId)
                         .IsRequired(false);
+                builder.Entity<EffectGroup>()
+                        .HasMany(c => c.R_OwnedEffects)
+                        .WithOne(e => e.R_OwnedByGroup)
+                        .HasForeignKey(c => c.R_OwnedByGroupId)
+                        .IsRequired(false)
+                        .OnDelete(DeleteBehavior.Cascade);
                 
-                builder.Entity<Field>()
+                builder.Entity<Field>() //Should probably be reversed so that when board is deleted then participance data is removed
                         .HasOne(c => c.R_OccupiedBy)
                         .WithOne(c => c.R_OccupiedField)
                         .HasForeignKey<Field>(c => c.R_OccupiedById)
-                        .IsRequired(false);
+                        .IsRequired(false)
+                        .OnDelete(DeleteBehavior.SetNull);
 
                 // builder.Entity<EffectGroup>()
                 //         .HasOne(c => c.R_OriginatesFromAura)
@@ -234,6 +241,11 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .WithOne(ei => ei.R_TargetedItem)
                         .HasForeignKey(ei => ei.R_TargetedItemId)
                         .IsRequired(false);
+                builder.Entity<Item>()
+                        .HasMany(c => c.R_EffectsOnEquip)
+                        .WithOne(ei => ei.R_GrantedByEquippingItem)
+                        .HasForeignKey(ei => ei.R_GrantedByEquippingItemId)
+                        .OnDelete(DeleteBehavior.Cascade);
                 builder.Entity<Item>().Navigation(i => i.R_ItemInItemsFamily).AutoInclude();
                 builder.Entity<EquipData>().Navigation(ed => ed.R_Slots).AutoInclude();
                 // builder.Entity<Item>()
@@ -290,4 +302,10 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                 builder.Entity<MeleeWeapon>().Navigation(i => i.VersatileDamageValue).AutoInclude();
                 builder.Entity<EquipData>().Navigation(i => i.R_Slots).AutoInclude();
         }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.AddInterceptors(new Data.DeletionInterceptor());
+        base.OnConfiguring(optionsBuilder);
+    }
 }

@@ -30,7 +30,7 @@ namespace pracadyplomowa.Models.Entities.Items
             DamageType = weapon.DamageType;
             DamageValue = new DiceSet(weapon.DamageValue);
             Range = weapon.Range;
-            R_PowersCastedOnHit = [.. weapon.R_PowersCastedOnHit];
+            // R_PowersCastedOnHit = [.. weapon.R_PowersCastedOnHit];
         }
 
         public WeaponWeight WeaponWeight { get; set; }
@@ -40,7 +40,7 @@ namespace pracadyplomowa.Models.Entities.Items
         public int Range { get; set; } // for ranged or thrown weapons
         
         //Relationship
-        public virtual ICollection<Power> R_PowersCastedOnHit { get; set; } = [];
+        // public virtual ICollection<Power> R_PowersCastedOnHit { get; set; } = [];
 
         [NotMapped]
         protected Character? Wielder {
@@ -156,16 +156,19 @@ namespace pracadyplomowa.Models.Entities.Items
             return GetBaseEquippedAttackBonus() + GetEffectRelatedEquippedAttackBonus();
         }
 
-        public Dictionary<int, HitType> CheckIfPowerHitSuccessfull(Encounter encounter, Power power, List<Character> targets){
+        public Dictionary<int, HitType> CheckIfPowerHitSuccessfull(Encounter encounter, Power power, List<Character> targets, List<string> messages){
             Dictionary<int, HitType> hitMap = [];
 
             foreach(var targetedCharacter in targets){
                 if(power.PowerType == PowerType.Saveable){
-                    int roll = targetedCharacter.SavingThrowRoll((Ability)power.SavingThrow);
+                    int roll = targetedCharacter.SavingThrowRoll((Ability)power.SavingThrowAbility);
+                    var dc = Wielder?.DifficultyClass(power);
+                    var success = roll <= dc;
                     hitMap.Add(
                         targetedCharacter.Id,
-                        roll <= Wielder?.DifficultyClass(power) && roll != 20 ? HitType.Hit : HitType.Miss
+                        success ? HitType.Hit : HitType.Miss
                     );
+                    messages.Add($"{targetedCharacter.Name} {(success ? "passed" : "failed")} saving throw against {power.Name} (rolled {roll} against DC{dc})");
                 }
                 else
                 {
@@ -173,15 +176,16 @@ namespace pracadyplomowa.Models.Entities.Items
                         targetedCharacter.Id,
                         HitType.Hit
                     );
+                    messages.Add($"{targetedCharacter.Name} is targeted by {power.Name}");
                 }
             }
             return hitMap;
         }
 
-        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel)
+        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel, out List<EffectInstance> generatedEffects, List<string> messages)
         {
             EffectGroup effectGroup = new();
-            
+            generatedEffects = [];
             //generate effects
             foreach(Character target in targetsToHitSuccessMap.Keys){
                 if (targetsToHitSuccessMap.TryGetValue(target, out var outcome))
@@ -209,10 +213,11 @@ namespace pracadyplomowa.Models.Entities.Items
                         if (shouldAdd)
                         {
                             var effectInstance = effectBlueprint.Generate(Wielder, target);
+                            generatedEffects.Add(effectInstance);
                             if(outcome == HitType.CriticalHit && effectInstance is DamageEffectInstance damageEffectInstance){
                                 damageEffectInstance.CriticalHit = true;
                             }
-                            effectGroup.AddEffectOnCharacter(effectInstance);
+                            effectGroup.AddEffect(effectInstance);
                         }
                     }
                 }
@@ -222,7 +227,7 @@ namespace pracadyplomowa.Models.Entities.Items
             effectGroup.IsConstant = false;
             if(power.PowerType == PowerType.Saveable && power.SavingThrowRoll == Enums.SavingThrowRoll.RetakenEveryTurn){
                 effectGroup.DifficultyClassToBreak = Wielder?.DifficultyClass(power);
-                effectGroup.SavingThrow = (Ability)power.SavingThrow;
+                effectGroup.SavingThrow = (Ability)power.SavingThrowAbility;
             }
             effectGroup.Name = power.Name;
             return Outcome.Success;

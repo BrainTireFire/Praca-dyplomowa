@@ -21,13 +21,13 @@ export default function EffectTable({
   return (
     <Menus>
       <Table
-        header="Effects"
+        header="Effects on wearer"
         button="Add new"
         columns="1fr 0.01rem"
         // buttonOnClick={() => createEffectInstance(initialState)}
         modal={
           <EffectParentObjectIdContext.Provider
-            value={{ objectId: itemId, objectType: "Item" }}
+            value={{ objectId: itemId, objectType: "ItemWearer" }}
           >
             <EffectInstanceForm effectId={null}></EffectInstanceForm>
           </EffectParentObjectIdContext.Provider>
@@ -86,7 +86,7 @@ function EffectRow({ effect }: { effect: EffectBlueprintListItem }) {
         </Modal.Window>
         <Modal.Window name="open">
           <EffectParentObjectIdContext.Provider
-            value={{ objectId: itemId, objectType: "Item" }}
+            value={{ objectId: itemId, objectType: "ItemWearer" }}
           >
             <EffectInstanceForm effectId={effect.id}></EffectInstanceForm>
           </EffectParentObjectIdContext.Provider>

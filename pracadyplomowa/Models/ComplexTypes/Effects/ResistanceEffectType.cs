@@ -14,5 +14,15 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     {
         public ResistanceEffect ResistanceEffect { get; set; }
         public DamageType ResistanceEffect_DamageType { get; set; }
+        public ResistanceEffectType(ResistanceEffectType cloned){
+            this.ResistanceEffect = cloned.ResistanceEffect;
+            this.ResistanceEffect_DamageType = cloned.ResistanceEffect_DamageType;
+        }
+        public ResistanceEffectType(){
+        }
+
+        public ResistanceEffectType Clone(){
+            return new ResistanceEffectType(this);
+        }
     }
 }

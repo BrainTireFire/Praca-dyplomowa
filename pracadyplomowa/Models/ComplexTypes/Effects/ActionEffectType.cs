@@ -13,5 +13,14 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     public class ActionEffectType
     {
         public ActionEffect ActionEffect { get; set; }
+        public ActionEffectType(ActionEffectType cloned){
+            this.ActionEffect = cloned.ActionEffect;
+        }
+        public ActionEffectType(){
+        }
+
+        public ActionEffectType Clone(){
+            return new ActionEffectType(this);
+        }
     }
 }

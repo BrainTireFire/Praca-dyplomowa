@@ -65,10 +65,39 @@ namespace pracadyplomowa.Models.Entities.Powers
             }
         }
 
+        [NotMapped]
+        public bool DeleteOnSave {get; set;}
+
         public abstract EffectInstance Clone();
 
-        public virtual void Resolve(){
-            
+        public virtual void Resolve(List<string> messages){
+
+        }
+
+        protected void ResolutionMessage(List<string> messages){
+            if(this.R_TargetedCharacter != null) {
+                messages.Add($"Resolving {this.Name} on {this.R_TargetedCharacter.Name}");
+            }
+            else if(this.R_TargetedItem != null){
+                messages.Add($"Resolving {this.Name} on {this.R_TargetedItem.Name}");
+            }
+        }
+
+        public virtual void Unlink(){ //unlink only from targeted objects, not sources!
+            R_TargetedCharacter?.R_AffectedBy.Remove(this);
+            R_TargetedItem?.R_AffectedBy.Remove(this);
+            this.R_TargetedCharacter = null;
+            this.R_TargetedCharacterId = null;
+            this.R_TargetedItem = null;
+            this.R_TargetedItemId = null;
+            if(this.R_GrantedByEquippingItemId == null && this.R_GrantedThroughId == null){
+                this.DeleteOnSave = true;
+            }
+        }
+
+        public virtual void Link(Character character){
+            R_TargetedCharacter = character;
+            character.R_AffectedBy.Add(this);
         }
     }
 }

@@ -27,9 +27,9 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpGet("immaterialResourceBlueprints")]
-        public async Task<ActionResult<List<ImmaterialResourceBlueprintDto>>> GetImmaterialResourceBlueprints()
+        public async Task<ActionResult<List<ImmaterialResourceBlueprintDto>>> GetImmaterialResourceBlueprints([FromQuery] int? powerId)
         {
-            var immaterialResourceBlueprints = await _unitOfWork.ImmaterialResourceBlueprintRepository.GetAll();
+            var immaterialResourceBlueprints = await _unitOfWork.ImmaterialResourceBlueprintRepository.GetOwnedAndDefaultAndCurrent(powerId, User.GetUserId());
 
 
             List<ImmaterialResourceBlueprintDto> immaterialResourceBlueprintDtos = _mapper.Map<List<ImmaterialResourceBlueprintDto>>(immaterialResourceBlueprints);
@@ -139,5 +139,17 @@ namespace pracadyplomowa.Controllers
             return Ok("Resource deleted");
         }
 
+
+        [HttpGet("itemFamilies")]
+        public async Task<ActionResult<List<ItemFamilyDto>>> GetItemFamilies([FromQuery] int? powerId)
+        {
+            var itemFamilies = await _unitOfWork.ItemFamilyRepository.GetOwnedAndDefault(User.GetUserId());
+
+
+            List<ItemFamilyDto> itemFamiliesDto = _mapper.Map<List<ItemFamilyDto>>(itemFamilies);
+
+
+            return Ok(itemFamiliesDto);
+        }
     }
 }

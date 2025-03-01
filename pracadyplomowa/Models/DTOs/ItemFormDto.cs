@@ -41,6 +41,7 @@ namespace pracadyplomowa.Models.DTOs
     public abstract class EquippableItemFormDto : ItemFormDto {
         public new class Body : ItemFormDto.Body {
             public List<EffectBlueprintDto> EffectsOnWearer {get; set;} 
+            public List<EffectBlueprintDto> EffectsOnItem {get; set;} 
             public List<PowerDto> Powers {get; set;}
             public List<ResourceDto> ResourcesOnEquip {get; set;}
             public List<SlotDto> Slots {get; set;}

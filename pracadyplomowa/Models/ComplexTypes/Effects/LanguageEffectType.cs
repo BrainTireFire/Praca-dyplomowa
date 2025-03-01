@@ -12,5 +12,13 @@ namespace pracadyplomowa.Models.ComplexTypes.Effects
     public class LanguageEffectType
     {
         
+        public LanguageEffectType(LanguageEffectType cloned){
+        }
+        public LanguageEffectType(){
+        }
+
+        public LanguageEffectType Clone(){
+            return new LanguageEffectType(this);
+        }
     }
 }

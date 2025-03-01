@@ -1,4 +1,11 @@
 import { EffectBlueprint } from "../features/effects/EffectBlueprintForm";
+import { CoinPurse } from "../features/items/models/coinPurse";
+import {
+  AreaShape,
+  CastableBy,
+  PowerType,
+  TargetType,
+} from "../features/powers/models/power";
 import {
   CharacterItem,
   Character,
@@ -25,6 +32,7 @@ export async function getNpcCharacters(): Promise<CharacterItem[]> {
 }
 
 export async function getCharacter(characterId: number): Promise<Character> {
+  console.log(`getCharacter api. Id: ${characterId}`);
   const response = await customFetch(
     `${BASE_URL}/api/character/${characterId}`
   );
@@ -382,6 +390,45 @@ export async function addToEquipment(
   );
 }
 
+export async function getPowers(
+  characterId: number
+): Promise<PowerForEncounterDto[]> {
+  const response = await customFetch(
+    `${BASE_URL}/api/character/${characterId}/allPowersForEncounter`
+  );
+
+  console.log(response);
+
+  return response;
+}
+
+export type PowerForEncounterDto = {
+  id: number;
+  name: string;
+  description: string;
+  resourceName: string | null;
+  minimumResourceLevel: number | null;
+  actionTypeRequired: string | null;
+  requiredResourceAvailable: boolean;
+  materialComponents: MaterialComponentDto[];
+  requiredMaterialComponentsAvailable: boolean;
+  somaticComponentRequirementSatisfied: boolean;
+  vocalComponentRequirementSatisfied: boolean;
+  range: number | null;
+  maxTargets: number | null;
+  areaShape: AreaShape | null;
+  areaSize: number | null;
+  castableBy: CastableBy;
+  powerType: PowerType;
+  targetType: TargetType;
+};
+
+export type MaterialComponentDto = {
+  id: number;
+  name: string;
+  cost: CoinPurse;
+};
+
 export type ChoiceGroup = {
   id: number;
   name: string;
@@ -441,3 +488,35 @@ export type CharacterEquipmentAndSlotsDto_Item = {
   slots: Slot[];
   equippableInSlots: Slot[];
 };
+
+export async function getPowerConcentratedOn(
+  characterId: number
+): Promise<ConcentrationData> {
+  const response = await customFetch(
+    `${BASE_URL}/api/character/${characterId}/concentration`
+  );
+
+  console.log(response);
+
+  return response;
+}
+
+export type ConcentrationData = {
+  effectGroupId: number;
+  effectGroupName: string;
+  effectGroupDurationLeft: number;
+};
+
+export async function dropConcentration(characterId: number): Promise<void> {
+  const options: RequestInit = {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/character/${characterId}/concentration`,
+    options
+  );
+}

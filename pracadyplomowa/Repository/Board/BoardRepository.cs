@@ -42,6 +42,7 @@ public class BoardRepository: BaseRepository<Models.Entities.Campaign.Board>, IB
     {
         var query = _context.Boards
             .Where(b => b.R_OwnerId == ownerId)
+            .Where(b => b.R_Encounter == null)
             .AsQueryable();
 
         // Filtering

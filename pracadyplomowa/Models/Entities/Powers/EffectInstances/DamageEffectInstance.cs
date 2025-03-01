@@ -1,4 +1,5 @@
-﻿using pracadyplomowa.Models.ComplexTypes.Effects;
+﻿using System.Text;
+using pracadyplomowa.Models.ComplexTypes.Effects;
 using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Models.Entities.Powers.EffectBlueprints;
 
@@ -14,15 +15,16 @@ public class DamageEffectInstance : ValueEffectInstance
         EffectType = damageEffectBlueprint.DamageEffectType;
     }
     public DamageEffectInstance(DamageEffectInstance effectInstance) : base(effectInstance){
-        EffectType  = effectInstance.EffectType;
+        EffectType  = effectInstance.EffectType.Clone();
     }
     public override EffectInstance Clone(){
         return new DamageEffectInstance(this);
     }
 
-    public override void Resolve()
+    public override void Resolve(List<string> messages)
     {
         if(EffectType.DamageEffect == Enums.EffectOptions.DamageEffect.DamageTaken){
+            ResolutionMessage(messages);
             int damage;
             var diceSetForResolve = new DiceSet(this.DiceSet);
             if(CriticalHit){
@@ -34,14 +36,17 @@ public class DamageEffectInstance : ValueEffectInstance
                 diceSetForResolve.d6 *= 2;
                 diceSetForResolve.d4 *= 2;
             }
+            List<DiceSet.Dice> diceResult;
             if(Roller == null){
-                damage = diceSetForResolve.RollPrototype(false, false, null).Aggregate(0, (sum, next) => sum += next.result);
+                diceResult = diceSetForResolve.RollPrototype(false, false, null);
             }
             else{
-                damage = diceSetForResolve.RollPrototype(Roller, false, false, null).Aggregate(0, (sum, next) => sum += next.result);
+                diceResult = diceSetForResolve.RollPrototype(Roller, false, false, null);
             }
             if(R_TargetedCharacter != null && EffectType.DamageEffect_DamageType != null){
-                this.R_TargetedCharacter.TakeDamage(damage, (Enums.DamageType)EffectType.DamageEffect_DamageType);
+                GenerateRollMessage(diceResult, "Damage", messages);
+                damage = diceResult.Aggregate(0, (sum, next) => sum += next.result);
+                this.R_TargetedCharacter.TakeDamage(damage, (Enums.DamageType)EffectType.DamageEffect_DamageType, messages);
             }
         }
     }

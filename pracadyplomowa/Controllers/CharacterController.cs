@@ -399,11 +399,10 @@ namespace pracadyplomowa.Controllers
         [HttpPost("{characterId}/equipment")]
         public async Task<ActionResult> AddItemToCharacterEquipment(int characterId, [FromBody] int itemId)
         {
-            var character = _unitOfWork.CharacterRepository.GetCharacterEquipment(characterId);
-            var item = _unitOfWork.ItemRepository.GetById(itemId);
+            var character = await _unitOfWork.CharacterRepository.GetCharacterEquipment(characterId);
+            var item = await _unitOfWork.ItemRepository.GetByIdWithSlotsPowersEffectsResources(itemId);
             if (item != null)
             {
-                await character;
                 if (character == null)
                 {
                     return NotFound("Character with id: ${characterId} was not found");
@@ -412,7 +411,7 @@ namespace pracadyplomowa.Controllers
                 {
                     item = item.CloneInstance();
                 }
-                (await character).R_CharacterHasBackpack.R_BackpackHasItems.Add(item);
+                character.R_CharacterHasBackpack.R_BackpackHasItems.Add(item);
                 await _unitOfWork.SaveChangesAsync();
             }
             else
@@ -624,6 +623,85 @@ namespace pracadyplomowa.Controllers
             }
             character!.ExperiencePoints = xp;
 
+            await _unitOfWork.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpGet("{characterId}/allPowersForEncounter")]
+        public async Task<ActionResult<List<PowerForEncounterDto>>> GetPowersForEncounter(int characterId){
+            if (!_characterService.CheckExistenceAndReadEditAccess(characterId, User.GetUserId(), [Character.AccessLevels.Read], out var errorResult, out var grantedAccessLevels, out var character))
+            {
+                return errorResult;
+            }
+            character = await _unitOfWork.CharacterRepository.GetByIdWithAll(characterId);
+            await _unitOfWork.PowerRepository.GetAllByIdsWithEffectBlueprintsAndMaterialResources(character.AllPowers.Select(x => x.Id).ToList());
+
+            var result = new List<PowerForEncounterDto>();
+            foreach(var power in character.AllPowers){
+                var minimumResourceLevel = 0;
+                if(power.R_EffectBlueprints.Count != 0)
+                {
+                    minimumResourceLevel = power.R_EffectBlueprints.Select(x => x.Level).Min();
+                }
+                var materialComponentsRequired = power.R_ItemsCostRequirement.Select(x => new PowerForEncounterDto.MaterialComponentDto(){
+                    Id = x.R_ItemFamilyId,
+                    Name = x.R_ItemFamily.Name,
+                    Cost = x.Worth
+                }).ToList();
+                var materialComponentsSatisfied = character.HasAllMaterialComponentsForPower(power);
+                var mainHandsOccupied = character.R_EquippedItems.SelectMany(x => x.R_Slots)
+                                                                         .Where(x => x.Type == SlotType.MainHand)
+                                                                         .Count();
+                var offHandsOccupied = character.R_EquippedItems.SelectMany(x => x.R_Slots)
+                                                                         .Where(x => x.Type == SlotType.OffHand)
+                                                                         .Count();
+                var mainHandsPossesed = character.R_CharacterBelongsToRace.R_EquipmentSlots.Where(x => x.Type == SlotType.MainHand).Count();
+                var offHandsPossesed = character.R_CharacterBelongsToRace.R_EquipmentSlots.Where(x => x.Type == SlotType.OffHand).Count();
+                var spellcastingFocusHeld = character.R_EquippedItems.Where(x => x.R_Item.IsSpellFocus && x.R_Slots.Where(y => y.Type == SlotType.MainHand || y.Type == SlotType.MainHand).Any()).Any();
+                bool somaticComponentRequirementSatisfied = mainHandsPossesed - mainHandsOccupied > 0 || offHandsOccupied - offHandsPossesed > 0 || spellcastingFocusHeld || !power.SomaticComponent;
+                bool vocalComponentSatisfied = !character.HasAnyCondition([Condition.Muffled, Condition.Petrified]) || !power.VerbalComponent;
+                bool requiredResourceAvailable = power.RequiredResourceAvailable(character, minimumResourceLevel);
+                result.Add(new PowerForEncounterDto(){
+                    Id = power.Id,
+                    Name = power.Name,
+                    Description = power.Description,
+                    ResourceName = power.R_UsesImmaterialResource?.Name,
+                    MinimumResourceLevel = minimumResourceLevel,
+                    ActionTypeRequired = power.RequiredActionType,
+                    RequiredResourceAvailable = requiredResourceAvailable,
+                    MaterialComponents = materialComponentsRequired,
+                    RequiredMaterialComponentsAvailable = materialComponentsSatisfied,
+                    SomaticComponentRequirementSatisfied = somaticComponentRequirementSatisfied,
+                    VocalComponentRequirementSatisfied = vocalComponentSatisfied,
+                    Range = power.Range,
+                    MaxTargets = power.MaxTargets,
+                    AreaShape = power.AreaShape,
+                    AreaSize = power.AreaSize,
+                    CastableBy = power.CastableBy,
+                    PowerType = power.PowerType,
+                    TargetType = power.TargetType
+                });
+            }
+            return result;
+        }
+
+        [HttpGet("{characterId}/concentration")]
+        public async Task<ActionResult<ConcentrationDataDto>> GetPowerConcentratedOn([FromRoute] int characterId)
+        {
+            var effectGroup = await _unitOfWork.EffectGroupRepository.GetEffectGroupConcentratedOn(characterId);
+            var result = new ConcentrationDataDto(){
+                EffectGroupId = effectGroup?.Id,
+                EffectGroupName = effectGroup?.Name,
+                EffectGroupDurationLeft = effectGroup?.DurationLeft,
+            };
+            return Ok(result);
+        }
+
+        [HttpDelete("{characterId}/concentration")]
+        public async Task<ActionResult> DropConcentration([FromRoute] int characterId)
+        {
+            var effectGroup = await _unitOfWork.EffectGroupRepository.GetEffectGroupConcentratedOn(characterId);
+            effectGroup?.Disperse();
             await _unitOfWork.SaveChangesAsync();
             return Ok();
         }

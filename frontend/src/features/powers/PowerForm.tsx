@@ -474,7 +474,7 @@ export default function PowerForm({
     isLoading: isLoadingImmaterialResources,
     immaterialResourceBlueprints,
     error: errorImmaterialResources,
-  } = useImmaterialResourceBlueprints();
+  } = useImmaterialResourceBlueprints(powerId);
   // const {
   //   isLoading: isLoadingMaterialResources,
   //   materialComponents: materialResources,
@@ -500,7 +500,8 @@ export default function PowerForm({
     isLoadingImmaterialResources ||
     isPending ||
     isPendingCreate ||
-    isLoadingPower
+    isLoadingPower ||
+    isLoadingClasses
   ) {
     return <Spinner></Spinner>;
   }
@@ -603,7 +604,7 @@ export default function PowerForm({
         </Row1>
         <Row2>
           <Column1>
-            <FormRowLabelRight label="Is implemented">
+            {/* <FormRowLabelRight label="Is implemented">
               <Input
                 type="checkbox"
                 checked={state.isImplemented}
@@ -614,7 +615,7 @@ export default function PowerForm({
                   })
                 }
               ></Input>
-            </FormRowLabelRight>
+            </FormRowLabelRight> */}
             <FormRowLabelRight label="Is magic">
               <Input
                 type="checkbox"
@@ -968,7 +969,7 @@ export default function PowerForm({
                     payload: x as SavingThrowRoll,
                   });
                 }}
-                name="savingThrowBehaviour"
+                name="savingThrowRollMoment"
                 label="Saving throw roll moment"
                 currentValue={state.savingThrowRoll}
                 customStyles={css`

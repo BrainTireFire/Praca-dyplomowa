@@ -4,12 +4,12 @@ import { getImmaterialResourceBlueprints } from "../../../services/apiImmaterial
 export function useImmaterialResourceBlueprints() {
   const {
     isLoading,
-    data: resources,
+    data: immaterialResourceBlueprints,
     error,
   } = useQuery({
     queryKey: ["immaterialResourceBlueprints"],
     queryFn: getImmaterialResourceBlueprints,
   });
 
-  return { isLoading, resources, error };
+  return { isLoading, immaterialResourceBlueprints, error };
 }

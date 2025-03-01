@@ -20,6 +20,7 @@ export type CharacterItem = {
   description: string;
   class: string;
   race: string;
+  size: Size;
   campaignId: number | null;
   isNpc: boolean;
   xp: number;
@@ -66,6 +67,7 @@ export type Character = {
   isNpc: boolean;
   accessLevels: CharacterAccessLevels[];
   xp: number;
+  canLevelUp: boolean;
 };
 
 export type CharacterInsertDto = {

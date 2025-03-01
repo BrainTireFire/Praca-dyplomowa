@@ -56,11 +56,16 @@ const BottomContainer = styled.nav`
 
 function MainSidebar({
   setActiveComponent,
+  handleClose,
+  activeComponent,
 }: {
   setActiveComponent: (name: string | null) => void;
+  handleClose: () => void;
+  activeComponent: string;
 }) {
   const { campaignId } = useParams<{ campaignId: string }>();
   const { groupName } = useParams<{ groupName: string }>();
+
   return (
     <>
       <nav>
@@ -68,17 +73,41 @@ function MainSidebar({
           {campaignId && (
             <>
               <li>
-                <IconContainer onClick={() => setActiveComponent("Component1")}>
+                <IconContainer
+                  onClick={() => {
+                    if (activeComponent === "Component1") {
+                      handleClose();
+                      return;
+                    }
+                    setActiveComponent("Component1");
+                  }}
+                >
                   <FaRegAddressBook />
                 </IconContainer>
               </li>
               <li>
-                <IconContainer onClick={() => setActiveComponent("Component2")}>
+                <IconContainer
+                  onClick={() => {
+                    if (activeComponent === "Component2") {
+                      handleClose();
+                      return;
+                    }
+                    setActiveComponent("Component2");
+                  }}
+                >
                   <PiSwordDuotone />
                 </IconContainer>
               </li>
               <li>
-                <IconContainer onClick={() => setActiveComponent("Component3")}>
+                <IconContainer
+                  onClick={() => {
+                    if (activeComponent === "Component3") {
+                      handleClose();
+                      return;
+                    }
+                    setActiveComponent("Component3");
+                  }}
+                >
                   <AiOutlineThunderbolt />
                 </IconContainer>
               </li>
@@ -87,7 +116,15 @@ function MainSidebar({
           {groupName && (
             <>
               <li>
-                <IconContainer onClick={() => setActiveComponent("Component4")}>
+                <IconContainer
+                  onClick={() => {
+                    if (activeComponent === "Component4") {
+                      handleClose();
+                      return;
+                    }
+                    setActiveComponent("Component4");
+                  }}
+                >
                   <PiClock />
                 </IconContainer>
               </li>

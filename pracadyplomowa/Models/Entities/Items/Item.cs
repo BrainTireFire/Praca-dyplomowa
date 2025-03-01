@@ -24,11 +24,12 @@ namespace pracadyplomowa.Models.Entities.Items
             R_ItemInItemsFamilyId = itemFamily.Id;
         }
 
-        public Item(Item item){
+        public Item(Item item): base(item){
             Name = item.Name;
             Description = item.Description;
             Weight = item.Weight;
             IsSpellFocus = item.IsSpellFocus;
+            OccupiesAllSlots = item.OccupiesAllSlots;
             R_ItemIsEquippableInSlots = [.. item.R_ItemIsEquippableInSlots];
             R_ItemInItemsFamily = item.R_ItemInItemsFamily;
             R_ItemInItemsFamilyId = item.R_ItemInItemsFamilyId;
@@ -71,6 +72,9 @@ namespace pracadyplomowa.Models.Entities.Items
         public void Unequip(Character character){
             character.R_EquippedItems.RemoveAll(ed => ed.R_Character == character && ed.R_Item == this);
             this.R_EquipData = null;
+            foreach(var effect in R_EffectsOnEquip){
+                effect.Unlink();
+            }
         }
 // powersAlwaysAvailable.Intersect(this.R_PowersAlwaysAvailable).Count() == powersAlwaysAvailable.Count
         public void Equip(Character character, EquipmentSlot slot){
@@ -84,6 +88,9 @@ namespace pracadyplomowa.Models.Entities.Items
                     }
                     else{
                         EquipInAllSlots(character);
+                    }
+                    foreach(var effect in R_EffectsOnEquip){
+                        effect.Link(character);
                     }
                 }
                 else{

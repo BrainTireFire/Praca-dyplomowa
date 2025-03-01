@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.Entities.Items;
 using pracadyplomowa.Models.Entities.Powers;
+using pracadyplomowa.Models.Enums;
 using pracadyplomowa.Repository;
 using pracadyplomowa.Repository.Item;
 using pracadyplomowa.Repository.UnitOfWork;
@@ -48,6 +49,21 @@ namespace pracadyplomowa.Controllers
             _unitOfWork.ItemRepository.GetItemsForEditabilityAnalysis([itemId]);
             var itemDto = _mapper.Map<Item, ItemFormDto>(item, opt => opt.AfterMap((src, dest) => dest.Editable = src.HasEditAccess(User.GetUserId())));
             return Ok(itemDto);
+        }
+
+        [HttpDelete("{itemId}")]
+        public async Task<ActionResult> DeleteItem(int itemId){
+            var item = _unitOfWork.ItemRepository.GetById(itemId);
+            if(item == null){
+                return NotFound(itemId);
+            }
+            _unitOfWork.ItemRepository.GetItemsForEditabilityAnalysis([itemId]);
+            if(!item.HasEditAccess(User.GetUserId())){
+                return BadRequest("You cannot delete this item");
+            }
+            _unitOfWork.ItemRepository.Delete(itemId);
+            await _unitOfWork.SaveChangesAsync();
+            return Ok();
         }
 
         [HttpPost("meleeWeapon")]
@@ -124,7 +140,7 @@ namespace pracadyplomowa.Controllers
                 return actionResult;
             }
 
-            var itemLoaded = (MeleeWeapon)await _unitOfWork.ItemRepository.GetByIdWithSlotsPowersEffectsResources((int)apparelDto.Id);
+            var itemLoaded = (Apparel)await _unitOfWork.ItemRepository.GetByIdWithSlotsPowersEffectsResources((int)apparelDto.Id);
             var item = _mapper.Map(apparelDto, itemLoaded);
             _unitOfWork.ItemRepository.Update(item);
             await _unitOfWork.SaveChangesAsync();
@@ -213,8 +229,8 @@ namespace pracadyplomowa.Controllers
             return Ok();
         }
 
-        [HttpPost("{itemId}/effects")]
-        public async Task<ActionResult> AddNewEffectInstance([FromBody] EffectBlueprintFormDto effectDto, [FromRoute] int itemId)
+        [HttpPost("{itemId}/effectsOnWearer")]
+        public async Task<ActionResult> AddNewEffectInstanceOnWearer([FromBody] EffectBlueprintFormDto effectDto, [FromRoute] int itemId)
         {
             var effectInstance = _mapper.Map<EffectInstance>(effectDto);
             effectInstance.R_GrantedByEquippingItemId = itemId;
@@ -222,6 +238,28 @@ namespace pracadyplomowa.Controllers
             _unitOfWork.EffectInstanceRepository.Add(effectInstance);
             await _unitOfWork.SaveChangesAsync();
             return Ok(effectInstance.Id);
+        }
+
+        [HttpPost("{itemId}/effectsOnItem")]
+        public async Task<ActionResult> AddNewEffectInstanceOnItem([FromBody] EffectBlueprintFormDto effectDto, [FromRoute] int itemId)
+        {
+            var effectInstance = _mapper.Map<EffectInstance>(effectDto);
+            effectInstance.R_TargetedItemId = itemId;
+
+            _unitOfWork.EffectInstanceRepository.Add(effectInstance);
+            await _unitOfWork.SaveChangesAsync();
+            return Ok(effectInstance.Id);
+        }
+
+        [HttpGet("itemFamilies")]
+        public async Task<ActionResult> GetItemFamilies([FromQuery] int? itemId, [FromQuery] List<ItemType> itemType){
+            var itemFamilies = await _unitOfWork.ItemFamilyRepository.GetOwnedAndDefaultAndCurrent(itemId, User.GetUserId());
+
+
+            List<ItemFamilyDto> itemFamiliesDto = _mapper.Map<List<ItemFamilyDto>>(itemFamilies.Where(x => itemType.Contains(x.ItemType)));
+
+
+            return Ok(itemFamiliesDto);
         }
 
     }

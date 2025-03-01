@@ -92,6 +92,7 @@ import { EffectContext } from "./contexts/BlueprintOrInstanceContext";
 import { EffectParentObjectIdContext } from "../../context/EffectParentObjectIdContext";
 import { useCreateEffectInstance } from "./hooks/useCreateEffectInstance";
 import { EditModeContext } from "../../context/EditModeContext";
+import FormRowLabelRight from "../../ui/forms/FormRowLabelRight";
 
 const effectTypes = [
   "movementEffect",
@@ -179,6 +180,7 @@ type Action = {
     | "setResourceLevel"
     | "setDurationLeft"
     | "setSavingThrowSuccess"
+    | "setConditional"
     | "setEffectType"
     | "setEffectTypeBody"
     | "resetState";
@@ -212,13 +214,16 @@ const effectReducer = (
       newState = { ...state, description: action.payload };
       break;
     case "setDurationLeft":
-      newState = { ...state, durationLeft: action.payload };
+      newState = { ...state, durationLeft: Number(action.payload) };
       break;
     case "setResourceLevel":
-      newState = { ...state, resourceLevel: action.payload };
+      newState = { ...state, resourceLevel: Number(action.payload) };
       break;
     case "setSavingThrowSuccess":
       newState = { ...state, savingThrowSuccess: action.payload };
+      break;
+    case "setConditional":
+      newState = { ...state, conditional: action.payload };
       break;
     case "setEffectType":
       newState = { ...state, effectType: action.payload };
@@ -284,21 +289,61 @@ export default function EffectInstanceForm({
   const handleChildStateUpdate = useCallback((x: EffectBody) => {
     dispatch({ type: "setEffectTypeBody", payload: x });
   }, []);
+
+  const bodyValueEffect = state.effectTypeBody as ValueEffect;
+  const bodyDamageEffect = state.effectTypeBody as DamageEffect;
+  const bodyValueEffectDisable_Level =
+    bodyValueEffect.value?.additionalValues?.some(
+      (value) =>
+        value.levelsInClassId === null &&
+        (value.additionalValueType === "LevelsInClass" ||
+          value.additionalValueType === "TotalLevel")
+    ) || false;
+  const bodyValueEffectDisable_Skill =
+    bodyValueEffect.value?.additionalValues?.some(
+      (value) =>
+        value.skill === null && value.additionalValueType === "SkillBonus"
+    ) || false;
+  const bodyValueEffectDisable_Ability =
+    bodyValueEffect.value?.additionalValues?.some(
+      (value) =>
+        value.ability === null &&
+        value.additionalValueType === "AbilityScoreModifier"
+    ) || false;
+  const bodyDamageEffectDisable_DamageType =
+    bodyDamageEffect.effectType?.damageEffect !== "ExtraWeaponDamage" &&
+    bodyDamageEffect.effectType?.damageEffect_DamageType === null;
+
   const disableUpdateButton = () => {
-    let body = state.effectTypeBody as ValueEffect;
     return (
-      body.value?.additionalValues?.some(
-        (value) =>
-          (value.levelsInClassId === null &&
-            (value.additionalValueType === "LevelsInClass" ||
-              value.additionalValueType === "TotalLevel")) ||
-          (value.skill === null &&
-            value.additionalValueType === "SkillBonus") ||
-          (value.ability === null &&
-            value.additionalValueType === "AbilityScoreModifier")
-      ) || false
+      bodyValueEffectDisable_Level ||
+      bodyValueEffectDisable_Skill ||
+      bodyValueEffectDisable_Ability ||
+      bodyDamageEffectDisable_DamageType
     );
   };
+  const disableReason = [];
+  if (bodyValueEffectDisable_Level) {
+    disableReason.push(
+      "One of Additional Values in effect requires Class selection"
+    );
+  }
+  if (bodyValueEffectDisable_Skill) {
+    disableReason.push(
+      "One of Additional Values in effect requires Skill selection"
+    );
+  }
+  if (bodyValueEffectDisable_Ability) {
+    disableReason.push(
+      "One of Additional Values in effect requires Ability selection"
+    );
+  }
+  if (bodyDamageEffectDisable_DamageType) {
+    disableReason.push(
+      "One of Additional Values in effect requires Damage Type selection"
+    );
+  }
+  const disableReasonJoined = disableReason.join("; ");
   if (
     isLoading ||
     isPendingUpdate ||
@@ -313,7 +358,9 @@ export default function EffectInstanceForm({
   }
   let disableForm = !editMode;
   return (
-    <EffectContext.Provider value={{ effect: "Instance" }}>
+    <EffectContext.Provider
+      value={{ effect: "Instance", effectId: actualEffectId }}
+    >
       <ScrollContainer>
         <Container>
           <Div1>
@@ -351,6 +398,19 @@ export default function EffectInstanceForm({
                 ></Input>
               </FormRowVertical>
             )}
+            <FormRowLabelRight label="Is conditional">
+              <Input
+                disabled={disableForm}
+                type="checkbox"
+                checked={state.conditional}
+                onChange={(x) =>
+                  dispatch({
+                    type: "setConditional",
+                    payload: x.target.checked,
+                  })
+                }
+              ></Input>
+            </FormRowLabelRight>
           </Div1>
           <Div2>
             <RadioGroup
@@ -496,22 +556,24 @@ export default function EffectInstanceForm({
           </Div3>
         </Container>
       </ScrollContainer>
-      {effectInstance && (
-        <Button
-          onClick={() => updateEffectInstance(state)}
-          disabled={disableUpdateButton() || disableForm}
-        >
-          Update
-        </Button>
-      )}
-      {!effectInstance && (
-        <Button
-          onClick={() => createEffectInstance(state)}
-          disabled={disableUpdateButton() || disableForm}
-        >
-          Save
-        </Button>
-      )}
+      <FormRowVertical error={disableReasonJoined}>
+        {effectInstance && (
+          <Button
+            onClick={() => updateEffectInstance(state)}
+            disabled={disableUpdateButton() || disableForm}
+          >
+            Update
+          </Button>
+        )}
+        {!effectInstance && (
+          <Button
+            onClick={() => createEffectInstance(state)}
+            disabled={disableUpdateButton() || disableForm}
+          >
+            Save
+          </Button>
+        )}
+      </FormRowVertical>
     </EffectContext.Provider>
   );
 }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using pracadyplomowa.Models.Enums;
 
 namespace pracadyplomowa.Models.DTOs.Encounter;
 
@@ -25,4 +26,11 @@ public record ParticipanceCharacterSummaryDto
     [Required]
     [MaxLength(50)]
     public string Race { get; set; }
+
+    public SizeItem Size { get; set; }
+}
+
+public class SizeItem {
+    public int Order { get; set; }
+    public Size Name { get; set; }
 }

@@ -1,16 +1,16 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { ParentObjectIdContext } from "../../context/ParentObjectIdContext";
-import { useImmaterialResourceBlueprints } from "../powers/hooks/useImmaterialResourceBlueprints";
 import { useObjectResources } from "../../hooks/useObjectResources";
 import { useUpdateObjectResources } from "../../hooks/useUpdateObjectResources";
 import { ImmaterialResourceAmount } from "../../models/immaterialResourceAmount";
-import { ImmaterialResourceBlueprint } from "../../models/immaterialResourceBlueprint";
+import { ImmaterialResourceBlueprintWithOwner } from "../../models/immaterialResourceBlueprint";
 import { ReusableTable } from "../../ui/containers/ReusableTable2";
 import Spinner from "../../ui/interactive/Spinner";
 import Button from "../../ui/interactive/Button";
 import FormRowVertical from "../../ui/forms/FormRowVertical";
 import Input from "../../ui/forms/Input";
 import styled, { css } from "styled-components";
+import { useImmaterialResourceBlueprints } from "../items/hooks/useImmaterialResourceBlueprints";
 
 export function ResourceSelectionForm() {
   const { objectId, objectType } = useContext(ParentObjectIdContext);
@@ -52,7 +52,8 @@ export function ResourceSelectionForm() {
 
   const handleSelectAllResources = (row: { id: number; name: string }) => {
     let selectedItem = allResources?.find(
-      (_value: ImmaterialResourceBlueprint, index: number) => index === row.id
+      (_value: ImmaterialResourceBlueprintWithOwner, index: number) =>
+        index === row.id
     );
     setSelectedResourceIdFromAll(selectedItem ? selectedItem.id : null);
     setSelectedResourceIdFromItem(null);

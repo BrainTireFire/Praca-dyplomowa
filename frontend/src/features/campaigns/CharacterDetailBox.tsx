@@ -15,49 +15,69 @@ const BoxCustomStyles = css`
   grid-gap: 10px;
   justify-content: center;
   text-align: center;
+
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    background: var(--color-navbar-hover);
+  }
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  width: 80vw;
+  overflow-y: hidden;
 `;
 
 export default function CharacterDetailBox({
   children,
   handleKickCharacter,
+  gameMaster,
 }: {
   children: CharacterItem;
   handleKickCharacter: Function;
+  gameMaster: boolean;
 }) {
   return (
-    <Box customStyles={BoxCustomStyles} style={{ borderRadius: "10px" }}>
-      <div style={{ gridColumn: "1/3" }}>
-        <Heading as="h3">{children.name}</Heading>
-        {/* <p>Level: {level}</p> */}
-        {/* <p>XP: {xp}</p> */}
-        <p>Race: {children.race}</p>
-        <p>Class: {children.class}</p>
-        {/* <p>Rest: {rest ? "true" : "false"}</p> */}
-      </div>
-      <div style={{ gridColumn: "1/3", gridRow: "2/3" }}>
-        {/* TODO: Implement View button !*/}
-        <ButtonGroup justify="center">
-          <Modal>
-            <Modal.Open opens="CharactersSheet">
-              <Button variation="primary" size="large">
-                View
-              </Button>
-            </Modal.Open>
-            <Modal.Window name="CharactersSheet">
-              <CharacterIdContext.Provider value={{ characterId: children.id }}>
-                <CharactersSheet />
-              </CharacterIdContext.Provider>
-            </Modal.Window>
-          </Modal>
-          <Button
-            variation="primary"
-            size="large"
-            onClick={() => handleKickCharacter(children.id)}
-          >
-            Kick
-          </Button>
-        </ButtonGroup>
-      </div>
-    </Box>
+    <Modal>
+      <Modal.Open opens="CharactersSheet">
+        <Box customStyles={BoxCustomStyles} style={{ borderRadius: "10px" }}>
+          <div style={{ gridColumn: "1/3" }}>
+            <Heading as="h3">{children.name}</Heading>
+            {/* <p>Level: {level}</p> */}
+            {/* <p>XP: {xp}</p> */}
+            <p>Race: {children.race}</p>
+            <p>Class: {children.class}</p>
+            {/* <p>Rest: {rest ? "true" : "false"}</p> */}
+          </div>
+          <div style={{ gridColumn: "1/3", gridRow: "2/3" }}>
+            {/* TODO: Implement View button !*/}
+            {gameMaster && (
+              <ButtonGroup justify="center">
+                <Button
+                  variation="primary"
+                  size="large"
+                  onClick={() => handleKickCharacter(children.id)}
+                >
+                  Kick
+                </Button>
+              </ButtonGroup>
+            )}
+          </div>
+        </Box>
+      </Modal.Open>
+      <Modal.Window name="CharactersSheet">
+        <CharacterIdContext.Provider value={{ characterId: children.id }}>
+          <Container>
+            <CharactersSheet />
+          </Container>
+        </CharacterIdContext.Provider>
+      </Modal.Window>
+    </Modal>
   );
 }

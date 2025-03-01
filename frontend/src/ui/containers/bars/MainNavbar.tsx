@@ -11,6 +11,7 @@ const NavList = styled.ul`
   display: flex;
   flex-direction: row;
   gap: 0.8rem;
+  z-index: 999;
 
   /* @media (max-width: 768px) {
     flex-direction: column;
@@ -121,6 +122,10 @@ const MainNavbarStyled = styled.nav`
   align-items: center;
 `;
 
+const StyledConteinerLeftPadding = styled.div`
+  padding-left: 20px;
+`;
+
 export default function MainNavbar() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
@@ -143,47 +148,83 @@ export default function MainNavbar() {
             <img src="https://via.placeholder.com/25" alt="logo" />
           </StyledNavLink>
         </li>
-        <li>
+        <DropdownNav>
           <StyledNavLink to="/campaigns">
-            <span>{t("main.navbar.link.my.campaigns")}</span>
+            <LinkWithIconContainer>Campaigns</LinkWithIconContainer>
           </StyledNavLink>
-        </li>
-        <li>
+          <DropdownNav.Menu>
+            <DropdownNav.Link to="/campaigns">
+              <LinkWithIconContainer>My Campaigns</LinkWithIconContainer>
+            </DropdownNav.Link>
+            <DropdownNav.Link to="/campaignAttend">
+              <LinkWithIconContainer>Campaigns Attend</LinkWithIconContainer>
+            </DropdownNav.Link>
+          </DropdownNav.Menu>
+        </DropdownNav>
+        <DropdownNav>
           <StyledNavLink to="/characters">
-            <span>{t("main.navbar.link.my.characters")}</span>
+            <LinkWithIconContainer>
+              {t("main.navbar.link.my.characters")}
+            </LinkWithIconContainer>
           </StyledNavLink>
-        </li>
-        <li>
-          <StyledNavLink to="/homebrew">
-            <span>{t("main.navbar.link.homebrew")}</span>
+          <DropdownNav.Menu>
+            <DropdownNav.Link to="/characters">
+              <LinkWithIconContainer>Characters</LinkWithIconContainer>
+            </DropdownNav.Link>
+            <DropdownNav.Link to="/npc">
+              <LinkWithIconContainer>NPC Characters</LinkWithIconContainer>
+            </DropdownNav.Link>
+          </DropdownNav.Menu>
+        </DropdownNav>
+        <DropdownNav>
+          <StyledNavLink to="/campaigns">
+            <LinkWithIconContainer>
+              {t("main.navbar.link.homebrew")}
+            </LinkWithIconContainer>
           </StyledNavLink>
-        </li>
+          <DropdownNav.Menu>
+            <DropdownNav.Link to="/items">
+              <LinkWithIconContainer>Items</LinkWithIconContainer>
+            </DropdownNav.Link>
+            <DropdownNav.Link to="/powers">
+              <LinkWithIconContainer>Powers</LinkWithIconContainer>
+            </DropdownNav.Link>
+            <DropdownNav.Link to="/itemFamilies">
+              <LinkWithIconContainer>Item Families</LinkWithIconContainer>
+            </DropdownNav.Link>
+            <DropdownNav.Link to="/homebrew/map">
+              <LinkWithIconContainer>Maps</LinkWithIconContainer>
+            </DropdownNav.Link>
+          </DropdownNav.Menu>
+        </DropdownNav>
         <li>
           <StyledNavLink to="/contact">
             <span>{t("main.navbar.link.concact")}</span>
           </StyledNavLink>
         </li>
 
-        <DropdownNav>
-          <StyledNavLink to="/profile">
-            <LinkWithIconContainer>
-              <RxAvatar />
-              {user?.username || "Nickname"}
-            </LinkWithIconContainer>
-          </StyledNavLink>
-          <DropdownNav.Menu>
-            <DropdownNav.Link to="/profile">
+        <StyledConteinerLeftPadding>
+          <DropdownNav>
+            <StyledNavLink to="/profile">
               <LinkWithIconContainer>
-                <IoSettingsOutline /> {t("main.navbar.link.profile")}
+                <RxAvatar />
+                {user?.username || "Nickname"}
               </LinkWithIconContainer>
-            </DropdownNav.Link>
-            <DropdownNav.Button onClick={logout} disabled={isLoading}>
-              <LinkWithIconContainer>
-                <IoLogOutOutline /> {t("main.navbar.link.signout")}
-              </LinkWithIconContainer>
-            </DropdownNav.Button>
-          </DropdownNav.Menu>
-        </DropdownNav>
+            </StyledNavLink>
+            <DropdownNav.Menu>
+              <DropdownNav.Link to="/profile">
+                <LinkWithIconContainer>
+                  <IoSettingsOutline /> {t("main.navbar.link.profile")}
+                </LinkWithIconContainer>
+              </DropdownNav.Link>
+              <DropdownNav.Button onClick={logout} disabled={isLoading}>
+                <LinkWithIconContainer>
+                  <IoLogOutOutline /> {t("main.navbar.link.signout")}
+                </LinkWithIconContainer>
+              </DropdownNav.Button>
+            </DropdownNav.Menu>
+          </DropdownNav>
+        </StyledConteinerLeftPadding>
       </NavList>
     </MainNavbarStyled>
   );

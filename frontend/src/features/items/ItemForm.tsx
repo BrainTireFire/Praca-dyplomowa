@@ -26,6 +26,7 @@ import RangedWeaponForm from "./subforms/RangedWeaponForm";
 import { ItemIdContext } from "./contexts/ItemIdContext";
 import EquippableItemForm from "./subforms/EquippableItemForm";
 import { EditModeContext } from "../../context/EditModeContext";
+import { identityToTypeMapping } from "../../pages/items/itemTypes";
 
 export type ItemAction =
   | { type: "SET_ITEM"; payload: Item }
@@ -41,6 +42,11 @@ export type ItemAction =
   | {
       type: "UPDATE_RANGED_WEAPON_BODY";
       field: keyof RangedWeaponBody;
+      value: any;
+    }
+  | {
+      type: "UPDATE_EQUIPPABLE_ITEM_BODY";
+      field: keyof EquippableItemBody;
       value: any;
     }
   | { type: "UPDATE_GOLD"; value: number }
@@ -90,6 +96,11 @@ export const itemReducer: Reducer<Item, ItemAction> = (state, action) => {
         ...state,
         itemTypeBody: { ...state.itemTypeBody, [action.field]: action.value },
       };
+    case "UPDATE_EQUIPPABLE_ITEM_BODY":
+      return {
+        ...state,
+        itemTypeBody: { ...state.itemTypeBody, [action.field]: action.value },
+      };
 
     default:
       throw new Error(`Unhandled action type: ${action["type"]}`);
@@ -123,8 +134,14 @@ export default function ItemForm({
     isLoading: isLoadingItemFamilies,
     itemFamilies,
     error: errorItemFamilies,
-  } = useItemFamilies();
-  console.log(state);
+  } = useItemFamilies(
+    itemId,
+    identityToTypeMapping[
+      itemId !== null && resetHappened
+        ? state.itemType
+        : initialFormValues.itemType
+    ]
+  );
 
   const isSavingChangesDisallowed = () => {
     return state.itemFamilyId === null || !state.name;
@@ -196,7 +213,7 @@ export default function ItemForm({
                       itemFamilies?.map((family) => {
                         return {
                           label: family.name,
-                          value: family.id.toString(),
+                          value: family.id!.toString(),
                         };
                       }) ?? []
                     }
@@ -285,6 +302,7 @@ export default function ItemForm({
                       state.itemType === "Apparel") && (
                       <EquippableItemForm
                         body={state.itemTypeBody as EquippableItemBody}
+                        dispatch={dispatch}
                       ></EquippableItemForm>
                     )}
                   </>

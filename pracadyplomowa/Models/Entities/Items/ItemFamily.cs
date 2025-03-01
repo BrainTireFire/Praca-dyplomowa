@@ -9,7 +9,7 @@ using pracadyplomowa.Models.Enums.EffectOptions;
 
 namespace pracadyplomowa.Models.Entities.Items
 {
-    public class ItemFamily : ObjectWithId
+    public class ItemFamily : ObjectWithOwner
     {
         public string Name { get; set; } = null!;
         public ItemType ItemType {get; set;}
@@ -21,5 +21,10 @@ namespace pracadyplomowa.Models.Entities.Items
         public virtual ICollection<EffectInstance> R_ProficiencyGrantedByEffectInstance { get; set; } = [];
 
         public virtual ICollection<ItemCostRequirement> R_RequiredAmountsForPowers { get; set; } = [];
+
+        public bool HasEditAccess(int userId)
+        {
+            return this.R_OwnerId == userId;
+        }
     }
 }

@@ -1,3 +1,5 @@
+import { size } from "../../effects/sizes";
+
 const getCssVariable = (variableName: string): string => {
   return getComputedStyle(document.documentElement)
     .getPropertyValue(variableName)
@@ -126,6 +128,179 @@ export const drawSelectedBox = (
   );
 
   ctx.restore();
+};
+
+export const drawWeaponAttackRange = (
+  ctx: CanvasRenderingContext2D,
+  origin: { x: number; y: number },
+  range: number,
+  characterSize: size,
+  columns: number,
+  rows: number
+) => {
+  drawBoundingBoxOverCharacter(
+    ctx,
+    origin,
+    range,
+    characterSize,
+    columns,
+    rows,
+    "#2212AC",
+    2
+  );
+};
+
+export const drawSelectedTargetMarker = (
+  ctx: CanvasRenderingContext2D,
+  origin: { x: number; y: number },
+  range: number,
+  characterSize: size,
+  columns: number,
+  rows: number
+) => {
+  drawBoundingBoxOverCharacter(
+    ctx,
+    origin,
+    range,
+    characterSize,
+    columns,
+    rows,
+    "#ce1313",
+    10
+  );
+};
+
+export const drawBoundingBoxOverCharacter = (
+  ctx: CanvasRenderingContext2D,
+  origin: { x: number; y: number },
+  range: number,
+  characterSize: size,
+  columns: number,
+  rows: number,
+  color: string,
+  lineWidth: number
+) => {
+  const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
+
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth;
+
+  let originOccupiedCoordinates = getOccupiedCoordinatesForSize(
+    origin.x,
+    origin.y,
+    characterSize
+  );
+  let paddedOriginOccupiedCoordinates = padOccupiedCoordinates(
+    originOccupiedCoordinates,
+    range / 5
+  );
+
+  paddedOriginOccupiedCoordinates.forEach((box) => {
+    ctx.strokeRect(
+      box.x * squareSize, // X position of the selected square
+      box.y * squareSize, // Y position of the selected square
+      squareSize, // Width of the square
+      squareSize // Height of the square
+    );
+  });
+
+  ctx.restore();
+};
+
+export const getSizeMultiplier = (size: size) => {
+  if (size === "Tiny") {
+    return 1;
+  }
+  if (size === "Small") {
+    return 1;
+  }
+  if (size === "Medium") {
+    return 1;
+  }
+  if (size === "Large") {
+    return 2;
+  }
+  if (size === "Huge") {
+    return 3;
+  }
+  if (size === "Gargantuan") {
+    return 4;
+  }
+  return 1;
+};
+
+export const checkIfTargetInWeaponAttackRange = (
+  originX: number,
+  originY: number,
+  originSize: size,
+  targetX: number,
+  targetY: number,
+  targetSize: size,
+  range: number
+) => {
+  let originOccupiedCoordinates = getOccupiedCoordinatesForSize(
+    originX,
+    originY,
+    originSize
+  );
+  let paddedOriginOccupiedCoordinates = padOccupiedCoordinates(
+    originOccupiedCoordinates,
+    range / 5
+  );
+  let targetOccupiedCoordinates = getOccupiedCoordinatesForSize(
+    targetX,
+    targetY,
+    targetSize
+  );
+
+  for (let originCoord of paddedOriginOccupiedCoordinates) {
+    for (let targetCoord of targetOccupiedCoordinates) {
+      if (originCoord.x === targetCoord.x && originCoord.y === targetCoord.y) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+};
+
+export const getOccupiedCoordinatesForSize = (
+  x: number,
+  y: number,
+  size: size
+) => {
+  let multiplier = getSizeMultiplier(size);
+  let occupiedCoordinates = [];
+  for (let i = 0; i < multiplier; i++) {
+    for (let j = 0; j < multiplier; j++) {
+      occupiedCoordinates.push({ x: x + i, y: y + j });
+    }
+  }
+  return occupiedCoordinates;
+};
+
+const padOccupiedCoordinates = (
+  occupiedCoordinates: { x: number; y: number }[],
+  padding: number
+) => {
+  let paddedCoordinates = new Set<string>();
+
+  occupiedCoordinates.forEach(({ x, y }) => {
+    for (let dx = -padding; dx <= padding; dx++) {
+      let paddedCoordinatesLocal = new Set<string>();
+      for (let dy = -padding; dy <= padding; dy++) {
+        paddedCoordinates.add(`${x + dx},${y + dy}`);
+        paddedCoordinatesLocal.add(`${x + dx},${y + dy}`);
+      }
+    }
+  });
+
+  // Convert the set of strings back to an array of coordinate objects
+  return Array.from(paddedCoordinates).map((coord) => {
+    const [x, y] = coord.split(",").map(Number);
+    return { x, y };
+  });
 };
 
 export const drawSelectedBoxes = (
@@ -265,17 +440,15 @@ export const drawAvatar = async (
     avatarUrl?: string;
   },
   columns: number,
-  rows: number
+  rows: number,
+  characterSize: size
 ) => {
   if (!field.avatarUrl) return;
-
+  const numericCharacterSize = getSizeMultiplier(characterSize);
   const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
-  const avatarSize = squareSize * 0.6;
-
-  const avatarX =
-    field.positionX * squareSize + squareSize / 2 - avatarSize / 2;
-  const avatarY =
-    field.positionY * squareSize + squareSize / 2 - avatarSize / 1.4;
+  const avatarSize = squareSize * numericCharacterSize;
+  const avatarX = field.positionX * squareSize;
+  const avatarY = field.positionY * squareSize;
 
   // Check if the image is already in cache
   let avatarImage = avatarCache[field.avatarUrl];
@@ -318,20 +491,27 @@ export const drawTextName = (
     memberName?: string;
   },
   columns: number,
-  rows: number
+  rows: number,
+  characterSize: size
 ) => {
   if (!field.memberName) return;
 
+  const numericCharacterSize = getSizeMultiplier(characterSize);
   const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
 
-  ctx.fillStyle = "white";
-  ctx.font = `${squareSize * 0.2}px Poppins`;
+  ctx.fillStyle = "#011b84";
+  ctx.font = `${squareSize * 0.3}px Poppins`;
 
   const textWidth = ctx.measureText(field.memberName).width;
 
-  const textX = field.positionX * squareSize + squareSize / 2 - textWidth / 2;
+  const textX =
+    field.positionX * squareSize +
+    (squareSize / 2) * numericCharacterSize -
+    textWidth / 2;
   const textY =
-    field.positionY * squareSize + squareSize / 2 + (squareSize * 0.6) / 1.5;
+    field.positionY * squareSize +
+    (squareSize / 2) * numericCharacterSize +
+    (squareSize * 0.6) / 1.5;
 
   ctx.fillText(field.memberName, textX, textY);
 

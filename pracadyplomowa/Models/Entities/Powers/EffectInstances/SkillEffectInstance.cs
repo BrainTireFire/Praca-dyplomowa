@@ -11,13 +11,13 @@ public class SkillEffectInstance : ValueEffectInstance
     private SkillEffectInstance() : base("EF", 0){}
     public SkillEffectInstance(string name) : base(name, 0){}
     public SkillEffectInstance(SkillEffectBlueprint skillEffectBlueprint, Character? roller, Character target) : base(skillEffectBlueprint, roller, target){
-        EffectType = skillEffectBlueprint.SkillEffectType;
+        EffectType = skillEffectBlueprint.SkillEffectType.Clone();
         if(EffectType.SkillEffect == SkillEffect.UpgradeToExpertise && !target.SkillProficiency(EffectType.SkillEffect_Skill)){
             throw new ExpertiseException("Invalid expertise selection");
         }
     }
     public SkillEffectInstance(SkillEffectInstance effectInstance) : base(effectInstance){
-        EffectType  = effectInstance.EffectType;
+        EffectType  = effectInstance.EffectType.Clone();
     }
     public override EffectInstance Clone(){
         return new SkillEffectInstance(this);

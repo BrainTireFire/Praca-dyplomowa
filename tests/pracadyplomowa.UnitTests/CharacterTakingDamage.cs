@@ -11,7 +11,7 @@ using pracadyplomowa.Models.Entities.Powers.EffectBlueprints;
 using pracadyplomowa.Models.Enums;
 using Xunit;
 
-namespace pracadyplomowa.UnitTests.obj.CharacterTests
+namespace pracadyplomowa.UnitTests.CharacterTests
 {
     public class CharacterTakingDamage
     {
@@ -25,7 +25,7 @@ namespace pracadyplomowa.UnitTests.obj.CharacterTests
             for (int i = 0; i < 20; i++){
                 testClass.R_ClassLevels.Add(new ClassLevel(i){Id = i, R_Class = testClass, R_ClassId = testClass.Id, HitPoints = 5});
             }
-            Character character = new("Test", false, 5, 5, 5, 5, 5, 5, testClass.R_ClassLevels[0], new Race(){Name = "test", Size = Size.Medium, Speed = 30}, -1);
+            Character character = new("Test", false, 5, 5, 5, 5, 5, 5, testClass.R_ClassLevels[0], new Race(){Name = "test", Size = Size.Medium, Speed = 30}, -1, 0);
 
             EffectGroup effectGroup = new(){
                 IsConstant = true,
@@ -52,7 +52,7 @@ namespace pracadyplomowa.UnitTests.obj.CharacterTests
             for (int i = 0; i < 20; i++){
                 testClass.R_ClassLevels.Add(new ClassLevel(i){Id = i, R_Class = testClass, R_ClassId = testClass.Id, HitPoints = 5});
             }
-            Character character = new("Test", false, 5, 5, 5, 5, 5, 5, testClass.R_ClassLevels[0], new Race(){Name = "test", Size = Size.Medium, Speed = 30}, -1);
+            Character character = new("Test", false, 5, 5, 5, 5, 5, 5, testClass.R_ClassLevels[0], new Race(){Name = "test", Size = Size.Medium, Speed = 30}, -1, 0);
 
             EffectGroup effectGroup = new(){
                 IsConstant = true,
@@ -83,7 +83,7 @@ namespace pracadyplomowa.UnitTests.obj.CharacterTests
             for (int i = 0; i < 20; i++){
                 testClass.R_ClassLevels.Add(new ClassLevel(i){Id = i, R_Class = testClass, R_ClassId = testClass.Id, HitPoints = 5});
             }
-            Character character = new("Test", false, 5, 5, 5, 5, 5, 5, testClass.R_ClassLevels[0], new Race(){Name = "test", Size = Size.Medium, Speed = 30}, -1);
+            Character character = new("Test", false, 5, 5, 5, 5, 5, 5, testClass.R_ClassLevels[0], new Race(){Name = "test", Size = Size.Medium, Speed = 30}, -1, 0);
 
             EffectGroup effectGroup = new(){
                 IsConstant = true,
@@ -114,7 +114,7 @@ namespace pracadyplomowa.UnitTests.obj.CharacterTests
             for (int i = 0; i < 20; i++){
                 testClass.R_ClassLevels.Add(new ClassLevel(i){Id = i, R_Class = testClass, R_ClassId = testClass.Id, HitPoints = 5});
             }
-            Character character = new("Test", false, 5, 5, 5, 5, 5, 5, testClass.R_ClassLevels[0], new Race(){Name = "test", Size = Size.Medium, Speed = 30}, -1);
+            Character character = new("Test", false, 5, 5, 5, 5, 5, 5, testClass.R_ClassLevels[0], new Race(){Name = "test", Size = Size.Medium, Speed = 30}, -1, 0);
 
             EffectGroup effectGroup = new(){
                 IsConstant = true,
@@ -145,7 +145,7 @@ namespace pracadyplomowa.UnitTests.obj.CharacterTests
             for (int i = 0; i < 20; i++){
                 testClass.R_ClassLevels.Add(new ClassLevel(i){Id = i, R_Class = testClass, R_ClassId = testClass.Id, HitPoints = 5});
             }
-            Character character = new("Test", false, 5, 5, 5, 5, 5, 5, testClass.R_ClassLevels[0], new Race(){Name = "test", Size = Size.Medium, Speed = 30}, -1);
+            Character character = new("Test", false, 5, 5, 5, 5, 5, 5, testClass.R_ClassLevels[0], new Race(){Name = "test", Size = Size.Medium, Speed = 30}, -1, 0);
 
             EffectGroup effectGroup = new(){
                 IsConstant = true,

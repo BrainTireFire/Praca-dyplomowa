@@ -5,7 +5,7 @@ export type Campaign = {
   id: number;
   name: string;
   description: string;
-  gameMaster: GameMaster;
+  gameMaster: string;
   members: CharacterItem[];
   shops: Shop[];
 };

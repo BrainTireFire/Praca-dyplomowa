@@ -82,6 +82,7 @@ public class EncounterController : BaseApiController
     {
         return await _encounterService.RollInitiativeAsync(encounterId);
     }
+    
     [HttpGet("{encounterId}/initiative")]
     public async Task<ActionResult<List<InitiativeQueueItemDto>>> InitiativeQueue(int encounterId)
     {

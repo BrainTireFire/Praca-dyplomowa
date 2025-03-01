@@ -36,6 +36,7 @@ export async function createEncounter(
 type SetEncounterPositionDto = {
   IsActive: boolean;
   FieldsToUpdate: EncounterUpdateDto[];
+  ParticipanceToDelete: number[];
 };
 
 export async function updatePlaceEncounter(

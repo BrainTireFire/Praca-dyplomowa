@@ -106,6 +106,21 @@ public class MappingProfiles : Profile
                         Name = src.Size
                     }
                 )
+            )
+            .ForMember(
+                dest => dest.Race,
+                opt => opt.MapFrom(
+                    src => src.R_CharacterBelongsToRace.Name
+                )
+            )
+            .ForMember(dest => dest.Class,
+                opt => opt.MapFrom(src => 
+                    src.R_CharacterHasLevelsInClass
+                        .OrderByDescending(l => l.Level)
+                        .FirstOrDefault() != null ? src.R_CharacterHasLevelsInClass
+                        .OrderByDescending(l => l.Level)
+                        .FirstOrDefault().R_Class.Name : null
+                )
             );
         CreateMap<ParticipanceData, ParticipanceDataDto>()
             .ForMember(

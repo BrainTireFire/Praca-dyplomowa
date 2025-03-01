@@ -11,7 +11,7 @@ const NavList = styled.ul`
   display: flex;
   flex-direction: row;
   gap: 0.8rem;
-  z-index: 10000;
+  z-index: 999;
 
   /* @media (max-width: 768px) {
     flex-direction: column;

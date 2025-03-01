@@ -26,6 +26,14 @@ const BoxCustomStyles = css`
   }
 `;
 
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  width: 80vw;
+  overflow-y: hidden;
+`;
+
 export default function CharacterDetailBox({
   children,
   handleKickCharacter,
@@ -65,7 +73,9 @@ export default function CharacterDetailBox({
       </Modal.Open>
       <Modal.Window name="CharactersSheet">
         <CharacterIdContext.Provider value={{ characterId: children.id }}>
-          <CharactersSheet />
+          <Container>
+            <CharactersSheet />
+          </Container>
         </CharacterIdContext.Provider>
       </Modal.Window>
     </Modal>

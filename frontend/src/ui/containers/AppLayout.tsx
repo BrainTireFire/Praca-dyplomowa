@@ -60,7 +60,11 @@ export default function AppLayout() {
         value={[controlledCharacterId, setControlledCharacterId]}
       >
         <Navbar />
-        <Sidebar setActiveComponent={handleOpen} />
+        <Sidebar
+          setActiveComponent={handleOpen}
+          handleClose={handleClose}
+          activeComponent={activeComponent}
+        />
         <Main>
           <Container>
             <Outlet />

@@ -82,16 +82,19 @@ public class EncounterController : BaseApiController
     {
         return await _encounterService.RollInitiativeAsync(encounterId);
     }
+    
     [HttpGet("{encounterId}/initiative")]
     public async Task<ActionResult<List<InitiativeQueueItemDto>>> InitiativeQueue(int encounterId)
     {
         return await _encounterService.GetInitiativeQueueAsync(encounterId);
     }
+    
     [HttpPatch("{encounterId}/initiative")]
     public async Task<ActionResult> ModifyInitiativeQueue(int encounterId, List<ModifyInitiativeQueueOrderItem> newQueue)
     {
         return await _encounterService.ModifyInitiativeQueueAsync(encounterId, newQueue);
     }
+    
     [HttpPatch("{encounterId}/initiative/{characterId}/up")]
     public async Task<ActionResult> MoveUpQueue(int encounterId, int characterId)
     {
@@ -103,6 +106,7 @@ public class EncounterController : BaseApiController
         }
         return Ok();
     }
+    
     [HttpPatch("{encounterId}/initiative/{characterId}/down")]
     public async Task<ActionResult> MoveDownQueue(int encounterId, int characterId)
     {
@@ -114,18 +118,21 @@ public class EncounterController : BaseApiController
         }
         return Ok();
     }
+    
     [HttpGet("{encounterId}/gmCheck")]
     public ActionResult<List<InitiativeQueueItemDto>> CheckIfIsGM(int encounterId)
     {
         var result = _encounterService.CheckIfIsGM(encounterId, User.GetUserId());
         return Ok(result);
     }
+    
     [HttpGet("{encounterId}/turnCheck/{characterId}")]
     public async Task<ActionResult<List<InitiativeQueueItemDto>>> CheckIfItsMyTurn(int encounterId, int characterId)
     {
         var result = await _encounterService.CheckIfItsMyTurn(encounterId, characterId, User.GetUserId());
         return Ok(result);
     }
+    
     [HttpPost("{encounterId}/initiative/{characterId}")]
     public async Task<ActionResult<List<InitiativeQueueItemDto>>> SetActiveTurn(int encounterId, int characterId)
     {
@@ -136,30 +143,35 @@ public class EncounterController : BaseApiController
         await _encounterService.SetActiveTurn(encounterId, characterId);
         return Ok();
     }
+    
     [HttpPost("{encounterId}/nextTurn")]
     public async Task<ActionResult<List<InitiativeQueueItemDto>>> NextTurn(int encounterId, int characterId)
     {
         await _encounterService.NextTurn(encounterId);
         return Ok();
     }
+    
     [HttpGet("{encounterId}/controlledCharacters")]
     public async Task<ActionResult<List<int>>> GetControlledCharacters(int encounterId)
     {
         var result = await _encounterService.GetControlledCharacters(encounterId, User.GetUserId());
         return Ok(result);
     }
+    
     [HttpGet("{encounterId}/participanceData/{characterId}")]
     public async Task<ActionResult<Models.DTOs.Session.ParticipanceDataDto>> GetParticipanceData(int encounterId, int characterId)
     {
         var result = await _encounterService.GetParticipanceData(encounterId, characterId);
         return Ok(result);
     }
+    
     [HttpPatch("{encounterId}/participanceData/{characterId}")]
     public async Task<ActionResult<Models.DTOs.Session.ParticipanceDataDto>> GetParticipanceData(int encounterId, int characterId, [FromBody] Models.DTOs.Session.ParticipanceDataDto participanceDataDto)
     {
         await _encounterService.UpdateParticipanceData(encounterId, characterId, participanceDataDto);
         return Ok();
     }
+    
     [HttpDelete("{encounterId}/participanceData/{characterId}")]
     public async Task<ActionResult> RemoveParticipanceData(int encounterId, int characterId){
         try{
@@ -196,6 +208,7 @@ public class EncounterController : BaseApiController
             return BadRequest(ex.Message);
         }
     }
+    
     [HttpPost("{encounterId}/weaponHit")]
     public async Task<ActionResult<Dictionary<DamageType, int>>> ApplyWeaponHit(int encounterId, [FromQuery] int characterId, [FromQuery] int targetId, [FromQuery] int weaponId, [FromQuery] bool isRanged, [FromQuery] bool isCritical, [FromBody] ApprovedConditionalEffectsDto conditionalEffectsDtos)
     {
@@ -210,6 +223,7 @@ public class EncounterController : BaseApiController
             return BadRequest(ex.Message);
         }
     }
+    
     [HttpPost("{encounterId}/weaponAttack")]
     public async Task<ActionResult<AttackRollAndDamageResultDto>> MakeAttackRollAndApplyDamage(int encounterId, [FromQuery] int characterId, [FromQuery] int targetId, [FromQuery] int weaponId, [FromQuery] bool isRanged, [FromBody] ApprovedConditionalEffectsDto conditionalEffectsDtos)
     {
@@ -239,6 +253,7 @@ public class EncounterController : BaseApiController
             return BadRequest(ex.Message);
         }
     }
+    
     [HttpGet("{encounterId}/conditionalEffects")]
     public async Task<ActionResult<ConditionalEffectsSetDto>> GetConditionalEffects(int encounterId, [FromQuery] int characterId, [FromQuery] int targetId)
     {
@@ -253,6 +268,7 @@ public class EncounterController : BaseApiController
             return BadRequest(ex.Message);
         }
     }
+    
     [HttpGet("{encounterId}/registerAttackMade")]
     public async Task<ActionResult<ConditionalEffectsSetDto>> RegisterAttackMade(int encounterId, [FromQuery] int characterId, [FromQuery] int targetId)
     {
@@ -288,6 +304,7 @@ public class EncounterController : BaseApiController
             return BadRequest(ex.Message);
         }
     }
+    
     [HttpGet("{encounterId}/powerCastData")]
     public async Task<ActionResult<PowerDataAndConditionalEffectsDto>> GetPowerCastConditionalEffects(int encounterId, [FromQuery] int characterId, [FromQuery] int powerId, [FromQuery] List<int> targetIds){
         

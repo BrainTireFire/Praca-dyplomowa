@@ -44,6 +44,7 @@ const GlobalStyles = createGlobalStyle`
 
 
   --backdrop-color: rgba(255, 255, 255, 0.1);
+  --backdrop-color-hover: rgba(255, 255, 255, 0.2);
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-md: 0px 0.6rem 2.4rem rgba(0, 0, 0, 0.06);

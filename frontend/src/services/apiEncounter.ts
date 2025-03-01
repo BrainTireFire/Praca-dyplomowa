@@ -194,6 +194,7 @@ export async function getInitiativeQueue(
 }
 export type InitiativeQueueItem = {
   characterId: number;
+  isNpc: boolean;
   name: string;
   playerName: string;
   placeInQueue: number;

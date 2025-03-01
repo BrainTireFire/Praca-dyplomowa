@@ -29,6 +29,7 @@ namespace pracadyplomowa.Repository.Item
             .Include(i => i.R_EquipItemGrantsAccessToPower)
             .Include(i => i.R_ItemGrantsResources)
             .Include(i => i.R_EffectsOnEquip)
+            .Include(i => i.R_AffectedBy)
             .FirstAsync();
         }
         public async Task<Models.Entities.Items.Item> GetByIdWithSlotsPowersWithEffectsEffectsResources(int id)

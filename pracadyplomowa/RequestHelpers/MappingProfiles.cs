@@ -679,6 +679,10 @@ public class MappingProfiles : Profile
                         Id = effect.Id,
                         Name = effect.Name
                     }).ToList(),
+                EffectsOnItem = src.R_AffectedBy.Select(effect => new EquippableItemFormDto.Body.EffectBlueprintDto(){
+                        Id = effect.Id,
+                        Name = effect.Name
+                    }).ToList(),
                 Powers = src.R_EquipItemGrantsAccessToPower.Select(effect => new EquippableItemFormDto.Body.PowerDto(){
                         Id = effect.Id,
                         Name = effect.Name
@@ -737,6 +741,10 @@ public class MappingProfiles : Profile
                 Thrown = src.Thrown,
                 RangeThrown = src.Range,
                 EffectsOnWearer = src.R_EffectsOnEquip.Select(effect => new MeleeWeaponFormDto.Body.EffectBlueprintDto(){
+                        Id = effect.Id,
+                        Name = effect.Name
+                    }).ToList(),
+                EffectsOnItem = src.R_AffectedBy.Select(effect => new MeleeWeaponFormDto.Body.EffectBlueprintDto(){
                         Id = effect.Id,
                         Name = effect.Name
                     }).ToList(),
@@ -806,6 +814,10 @@ public class MappingProfiles : Profile
                 Range = src.Range,
                 Loaded = src.Loaded,
                 EffectsOnWearer = src.R_EffectsOnEquip.Select(effect => new RangedWeaponFormDto.Body.EffectBlueprintDto(){
+                        Id = effect.Id,
+                        Name = effect.Name
+                    }).ToList(),
+                EffectsOnItem = src.R_AffectedBy.Select(effect => new RangedWeaponFormDto.Body.EffectBlueprintDto(){
                         Id = effect.Id,
                         Name = effect.Name
                     }).ToList(),

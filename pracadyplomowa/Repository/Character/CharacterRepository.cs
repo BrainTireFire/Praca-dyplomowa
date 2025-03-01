@@ -247,12 +247,18 @@ namespace pracadyplomowa.Repository
                     .ThenInclude(i => i.R_ItemIsEquippableInSlots)
             .Include(c => c.R_CharacterHasBackpack)
                 .ThenInclude(b => b.R_BackpackHasItems)
+                    .ThenInclude(i => i.R_AffectedBy)
+            .Include(c => c.R_CharacterHasBackpack)
+                .ThenInclude(b => b.R_BackpackHasItems)
+                    .ThenInclude(i => i.R_EffectsOnEquip)
+            .Include(c => c.R_CharacterHasBackpack)
+                .ThenInclude(b => b.R_BackpackHasItems)
                     .ThenInclude(i => i.R_EquipData)
             .Include(c => c.R_CharacterHasBackpack)
                 .ThenInclude(b => b.R_BackpackHasItems)
                     .ThenInclude(i => i.R_ItemInItemsFamily)
             .Include(c => c.R_CharacterBelongsToRace)
-                .ThenInclude(r => r.R_EquipmentSlots)
+                .ThenInclude(r => r.R_EquipmentSlots).AsSplitQuery()
             .FirstAsync();
             return character;
         }

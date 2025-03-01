@@ -24,7 +24,7 @@ namespace pracadyplomowa.Models.Entities.Items
             R_ItemInItemsFamilyId = itemFamily.Id;
         }
 
-        public Item(Item item){
+        public Item(Item item): base(item){
             Name = item.Name;
             Description = item.Description;
             Weight = item.Weight;

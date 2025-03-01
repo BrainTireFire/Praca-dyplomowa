@@ -8,5 +8,9 @@ namespace pracadyplomowa.Models.Entities
                 public ObjectWithOwner()
                 {
                 }
+
+                public ObjectWithOwner(ObjectWithOwner self){
+                        R_OwnerId = self.R_OwnerId;
+                }
         }
 }

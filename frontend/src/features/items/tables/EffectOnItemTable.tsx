@@ -12,7 +12,7 @@ import EffectInstanceForm from "../../effects/EffectInstanceForm";
 import { EffectParentObjectIdContext } from "../../../context/EffectParentObjectIdContext";
 import { EditModeContext } from "../../../context/EditModeContext";
 
-export default function EffectTable({
+export default function EffectOnItemTable({
   effects,
 }: {
   effects: EffectBlueprintListItem[];
@@ -21,13 +21,13 @@ export default function EffectTable({
   return (
     <Menus>
       <Table
-        header="Effects on wearer"
+        header="Effects on item itself"
         button="Add new"
         columns="1fr 0.01rem"
         // buttonOnClick={() => createEffectInstance(initialState)}
         modal={
           <EffectParentObjectIdContext.Provider
-            value={{ objectId: itemId, objectType: "ItemWearer" }}
+            value={{ objectId: itemId, objectType: "ItemItself" }}
           >
             <EffectInstanceForm effectId={null}></EffectInstanceForm>
           </EffectParentObjectIdContext.Provider>

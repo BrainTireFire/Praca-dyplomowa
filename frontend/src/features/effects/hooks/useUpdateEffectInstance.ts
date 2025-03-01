@@ -10,7 +10,10 @@ export function useUpdateEffectInstance(
   objectId: number,
   objectType: EffectParentObjectIdContextTypeObjectType
 ) {
-  const queryKey = objectType === "Item" ? "item" : "character";
+  const queryKey =
+    objectType === "ItemWearer" || objectType === "ItemItself"
+      ? "item"
+      : "character";
   const queryClient = useQueryClient();
   const { mutate: updateEffectInstance, isPending } = useMutation({
     mutationFn: (effectBlueprint: EffectBlueprint) =>

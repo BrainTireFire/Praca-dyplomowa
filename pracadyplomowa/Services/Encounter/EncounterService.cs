@@ -325,6 +325,7 @@ public class EncounterService : IEncounterService
         }
         var result = encounter.R_Participances.OrderBy(x => x.InitiativeOrder).Select(participance => new InitiativeQueueItemDto(){
             CharacterId = participance.R_CharacterId,
+            IsNpc = participance.R_Character.IsNpc,
             Name = participance.R_Character.Name,
             PlayerName = participance.R_Character.R_Owner!.UserName ?? "Unknown",
             PlaceInQueue = participance.InitiativeOrder,

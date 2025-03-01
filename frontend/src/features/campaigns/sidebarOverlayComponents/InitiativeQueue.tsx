@@ -27,39 +27,6 @@ type characterInitiative = {
   placeInQueue: number;
 };
 
-const testData = [
-  {
-    id: 1,
-    name: "Thaldrin",
-    playerName: "Alice",
-    placeInQueue: 1,
-  },
-  {
-    id: 2,
-    name: "Kael'thas",
-    playerName: "Bob",
-    placeInQueue: 2,
-  },
-  {
-    id: 3,
-    name: "Arwen",
-    playerName: "Charlie",
-    placeInQueue: 3,
-  },
-  {
-    id: 4,
-    name: "Drogon",
-    playerName: "Diana",
-    placeInQueue: 4,
-  },
-  {
-    id: 5,
-    name: "Fenrir",
-    playerName: "Eve",
-    placeInQueue: 5,
-  },
-];
-
 export function InitiativeQueue() {
   const { groupName } = useParams<{ groupName: string }>();
   console.log("group name: " + groupName);
@@ -141,8 +108,14 @@ function InititativeTile({
     () => {}
   );
   return (
-    <Tile IsActive={item.activeTurn}>
+    <Tile IsActive={item.activeTurn} IsNpc={item.isNpc}>
       <TileCell1>
+        {item.isNpc ? (
+          <SpanStyled>NPC Character</SpanStyled>
+        ) : (
+          <SpanStyled>PC Character</SpanStyled>
+        )}
+        <br></br>
         <span>Name: {item.name}</span>
         <br></br>
         <span>Controlled by: {item.playerName}</span>
@@ -203,6 +176,11 @@ function InititativeTile({
   );
 }
 
+const SpanStyled = styled.span`
+  color: var(--color-header-text);
+  font-weight: bold;
+`;
+
 const Tile = styled(Box)<TileProperties>`
   display: grid;
   grid-template-columns: 60% auto;
@@ -210,6 +188,9 @@ const Tile = styled(Box)<TileProperties>`
   gap: 10px;
   border: ${(props) =>
     props.IsActive ? css`3px solid red` : css`1px solid var(--color-border)`};
+
+  background-color: ${(props) =>
+    props.IsNpc ? css`var(--backdrop-color-hover)` : ""};
 `;
 // border-color: ${(props) =>
 //  props.IsActive
@@ -218,6 +199,7 @@ const Tile = styled(Box)<TileProperties>`
 
 type TileProperties = {
   IsActive: boolean;
+  IsNpc: boolean;
 };
 
 const TileCell1 = styled.div`

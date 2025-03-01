@@ -158,6 +158,9 @@ namespace pracadyplomowa.Repository
             .Include(c => c.R_EquippedItems)
                 .ThenInclude(ed => ed.R_Item)
                     .ThenInclude(b => b.R_ItemIsEquippableInSlots)
+            .Include(c => c.R_EquippedItems)
+                .ThenInclude(ed => ed.R_Item)
+                    .ThenInclude(b => b.R_ItemGrantsResources)
 
             .Include(c => c.R_ImmaterialResourceInstances)
                 .ThenInclude(iri => iri.R_Blueprint)

@@ -113,7 +113,7 @@ namespace pracadyplomowa.Controllers
                 return actionResult;
             }
 
-            var itemLoaded = (MeleeWeapon)await _unitOfWork.ItemRepository.GetByIdWithSlotsPowersEffectsResources((int)rangedWeaponDto.Id);
+            var itemLoaded = (RangedWeapon)await _unitOfWork.ItemRepository.GetByIdWithSlotsPowersEffectsResources((int)rangedWeaponDto.Id);
             var item = _mapper.Map(rangedWeaponDto, itemLoaded);
             _unitOfWork.ItemRepository.Update(item);
             await _unitOfWork.SaveChangesAsync();

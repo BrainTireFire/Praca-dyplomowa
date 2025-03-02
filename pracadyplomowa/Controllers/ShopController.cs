@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using pracadyplomowa.Errors;
 using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.Entities.Campaign;
 using pracadyplomowa.Repository.UnitOfWork;
@@ -44,7 +45,7 @@ namespace pracadyplomowa.Controllers
             var shop = _unitOfWork.ShopRepository.GetById(shopId);
 
             if (shop == null)
-                return NotFound();
+                return NotFound(new ApiResponse(404, $"Shop not found: {shopId}"));
 
             ShopDto shopsDto = new(shop);
 

@@ -56,6 +56,7 @@ export type ApparelBody = EquippableItemBody & {
 
 export const apparelBodyInitialValue: ApparelBody = {
   effectsOnWearer: [],
+  effectsOnItem: [],
   powers: [],
   resourcesOnEquip: [],
   slots: [],
@@ -83,6 +84,7 @@ export type MeleeWeaponBody = WeaponBody & {
 
 export const meleeWeaponBodyInitialValue: MeleeWeaponBody = {
   effectsOnWearer: [],
+  effectsOnItem: [],
   powers: [],
   // powersOnHit: [],
   resourcesOnEquip: [],
@@ -104,6 +106,7 @@ export type RangedWeaponBody = WeaponBody & { range: number; loaded: boolean };
 
 export const rangedWeaponBodyInitialValue: RangedWeaponBody = {
   effectsOnWearer: [],
+  effectsOnItem: [],
   powers: [],
   // powersOnHit: [],
   resourcesOnEquip: [],

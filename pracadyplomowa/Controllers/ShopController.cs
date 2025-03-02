@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using pracadyplomowa.Errors;
 using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.Entities.Campaign;
 using pracadyplomowa.Repository.UnitOfWork;
@@ -28,14 +29,35 @@ namespace pracadyplomowa.Controllers
             return Ok(shop.Id);
         }
 
-        [HttpGet("{campaignId}")]
-        public async Task<ActionResult<Shop>> GetShops(int campaignId)
+        [HttpGet("campaign/{campaignId}")]
+        public async Task<ActionResult<ICollection<Shop>>> GetShops(int campaignId)
         {
             List<Shop> shops = await _unitOfWork.ShopRepository.GetShops(campaignId);
 
             List<ShopDto> shopsDto = shops.Select(e => new ShopDto(e)).ToList();
 
             return Ok(shopsDto);
+        }
+
+        [HttpGet("{shopId}")]
+        public ActionResult<Shop> GetShop(int shopId)
+        {
+            var shop = _unitOfWork.ShopRepository.GetById(shopId);
+
+            if (shop == null)
+                return NotFound(new ApiResponse(404, $"Shop not found: {shopId}"));
+
+            ShopDto shopsDto = new(shop);
+
+            return Ok(shopsDto);
+        }
+
+        [HttpDelete("{shopId}")]
+        public async Task<ActionResult> RemoveShop(int shopId)
+        {
+            _unitOfWork.ShopRepository.Delete(shopId);
+            await _unitOfWork.SaveChangesAsync();
+            return Ok();
         }
     }
 }

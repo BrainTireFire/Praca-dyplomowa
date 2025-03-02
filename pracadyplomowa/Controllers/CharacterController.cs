@@ -621,7 +621,6 @@ namespace pracadyplomowa.Controllers
             {
                 return errorResult;
             }
-            Console.WriteLine($"characterId: + {characterId} + xp: = {xp}");
             character!.ExperiencePoints = xp;
 
             await _unitOfWork.SaveChangesAsync();

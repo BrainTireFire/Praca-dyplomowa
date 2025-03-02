@@ -13,13 +13,16 @@ export function useUpdatePlaceEncounter(id: number, startEncounter?: boolean) {
     mutationFn: ({
       encounterId,
       encounterUpdateDto,
+      participanceToDelete,
     }: {
       encounterId: number;
       encounterUpdateDto: EncounterUpdateDto[];
+      participanceToDelete: number[];
     }) => {
       var setEncounterPositionDto = {
         IsActive: startEncounter ? true : false,
         FieldsToUpdate: encounterUpdateDto,
+        ParticipanceToDelete: participanceToDelete,
       };
 
       return updatePlaceEncounterAPI(encounterId, setEncounterPositionDto);

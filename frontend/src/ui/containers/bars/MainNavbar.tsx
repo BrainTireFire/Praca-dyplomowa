@@ -172,7 +172,9 @@ export default function MainNavbar() {
               <LinkWithIconContainer>Characters</LinkWithIconContainer>
             </DropdownNav.Link>
             <DropdownNav.Link to="/npc">
-              <LinkWithIconContainer>NPC Characters</LinkWithIconContainer>
+              <LinkWithIconContainer>
+                Non Playable Character
+              </LinkWithIconContainer>
             </DropdownNav.Link>
           </DropdownNav.Menu>
         </DropdownNav>

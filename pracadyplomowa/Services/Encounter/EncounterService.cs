@@ -160,7 +160,7 @@ public class EncounterService : IEncounterService
                 return new NotFoundObjectResult(new ApiResponse(400, "Encounter with Id " + encounterId + " does not exist"));
             }
             
-            if (encounter.R_Owner.Id != ownerId)
+            if (encounter.R_OwnerId != ownerId)
             {
                 return new UnauthorizedObjectResult(new ApiResponse(401, "You are not the owner of this encounter"));
             }
@@ -225,6 +225,12 @@ public class EncounterService : IEncounterService
 
                     field.UpdateParticipanceData(participanceData);
                 }
+            }
+
+            foreach (var characterId in setEncounterPositionDto.ParticipanceToDelete)
+            {
+                _unitOfWork.ParticipanceDataRepository.RemoveByCharacterId(characterId);
+                encounter.RemoveParticipanceByCharacterId(characterId);
             }
             
             encounter.IsActive = setEncounterPositionDto.IsActive;

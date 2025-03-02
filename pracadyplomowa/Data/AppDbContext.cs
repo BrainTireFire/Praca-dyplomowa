@@ -306,6 +306,9 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.AddInterceptors(new Data.DeletionInterceptor());
+        optionsBuilder.AddInterceptors(new Data.ValidationInterceptor());
         base.OnConfiguring(optionsBuilder);
     }
+
+        
 }

@@ -5,7 +5,6 @@ import Input from "../../../ui/forms/Input";
 import Button from "../../../ui/interactive/Button";
 import Dropdown from "../../../ui/forms/Dropdown";
 import { useRaces } from ".././hooks/useRaces";
-import { useClasses } from ".././hooks/useClass";
 import Spinner from "../../../ui/interactive/Spinner";
 import { CharacterInsertDto } from "../../../models/character";
 import toast from "react-hot-toast";
@@ -14,7 +13,6 @@ import FormRowVertical from "../../../ui/forms/FormRowVertical";
 
 const initialState: CharacterInsertDto = {
   name: "",
-  startingClassId: null,
   raceId: null,
   strength: 1,
   dexterity: 1,
@@ -27,7 +25,6 @@ const initialState: CharacterInsertDto = {
 
 type NumericActions = {
   type:
-    | "setClass"
     | "setRace"
     | "setStr"
     | "setDex"
@@ -53,9 +50,6 @@ const characterReducer = (
   switch (action.type) {
     case "setName":
       newState = { ...state, name: action.value };
-      break;
-    case "setClass":
-      newState = { ...state, startingClassId: action.value };
       break;
     case "setRace":
       newState = { ...state, raceId: action.value };
@@ -92,11 +86,6 @@ function NewNpcCharacter({ onCloseModal }) {
 
   //query
   const { isLoading: isLoadingRaces, races, error: errorRaces } = useRaces();
-  const {
-    isLoading: isLoadingClasses,
-    classes,
-    error: errorClasses,
-  } = useClasses();
 
   //mutation
   const { createNpcCharacter, isPending } = useCreateNpcCharacter(() => {
@@ -112,12 +101,7 @@ function NewNpcCharacter({ onCloseModal }) {
         label: race.name,
       }))
     : [];
-  const classList = classes
-    ? classes.map((characterClass) => ({
-        value: characterClass.id.toString(),
-        label: characterClass.name,
-      }))
-    : [];
+
   const isInBounds = useCallback(
     (ability: number) => ability <= 0 || ability > 20,
     []
@@ -126,7 +110,6 @@ function NewNpcCharacter({ onCloseModal }) {
     return (
       !state.name ||
       !state.raceId ||
-      !state.startingClassId ||
       isInBounds(state.charisma) ||
       isInBounds(state.wisdom) ||
       isInBounds(state.intelligence) ||
@@ -142,15 +125,14 @@ function NewNpcCharacter({ onCloseModal }) {
     state.intelligence,
     state.name,
     state.raceId,
-    state.startingClassId,
     state.strength,
     state.wisdom,
   ]);
 
-  if (errorRaces || errorClasses) {
+  if (errorRaces) {
     return "Error";
   }
-  if (isLoadingRaces || isLoadingClasses || isPending) {
+  if (isLoadingRaces || isPending) {
     return <Spinner />;
   }
   return (
@@ -166,18 +148,6 @@ function NewNpcCharacter({ onCloseModal }) {
               dispatch({ type: "setName", value: e.target.value })
             }
           ></Input>
-        </FormRow>
-        <FormRow
-          label="Starting class"
-          error={!state.startingClassId ? "Select class" : undefined}
-        >
-          <Dropdown
-            chosenValue={state.startingClassId?.toString() || null}
-            setChosenValue={(e) =>
-              dispatch({ type: "setClass", value: Number(e) })
-            }
-            valuesList={classList}
-          ></Dropdown>
         </FormRow>
         <FormRow label="Race" error={!state.raceId ? "Select race" : undefined}>
           <Dropdown

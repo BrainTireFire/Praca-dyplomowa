@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import Input from "../../../ui/forms/Input";
 import TextArea from "../../../ui/forms/TextArea";
-import { set, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import Button from "../../../ui/interactive/Button";
 import Form from "../../../ui/forms/Form";
-import Heading from "../../../ui/text/Heading";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import FormContainer from "../../../ui/forms/FormContainer";
 import MapCreatorLayout from "./MapCreatorLayout";
@@ -19,18 +18,18 @@ const Label = styled.label`
 const FieldSet = styled.div`
   position: relative;
   width: 100%;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
   display: flex;
   align-items: center;
   //justify-content: space-between;
   gap: 10px;
-  padding-bottom: 10px;
+  padding-bottom: 2px;
 `;
 
 const FieldContainerStyled = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: left;
 `;
 
 const Span = styled.span`
@@ -39,9 +38,10 @@ const Span = styled.span`
 `;
 
 const ErrorMessage = styled.p`
+  font-size: 1.4rem;
   color: var(--color-form-error);
-  margin-top: 5px;
-  font-size: 0.875rem;
+  margin-top: 0.2rem;
+  padding-bottom: 5px;
 `;
 
 type MapFormProps = {
@@ -81,8 +81,6 @@ export default function BoardCreateForm() {
   }
 
   const handleDropdownChange = (value: string | null) => {
-    console.log(value);
-
     if (value === null) {
       return;
     }
@@ -113,7 +111,7 @@ export default function BoardCreateForm() {
               <Input
                 id="name"
                 placeholder="Name"
-                {...register("name")}
+                {...register("name", { required: "Name is required" })}
                 style={{ width: "100%" }}
               />
             </FormRowVertical>
@@ -132,17 +130,24 @@ export default function BoardCreateForm() {
             <FieldContainerStyled>
               <FieldSet>
                 <Label>Board Size: </Label>
-                <Dropdown
-                  valuesList={BOARD_SIZES}
-                  chosenValue={data?.boardSize ?? null}
-                  setChosenValue={(value) => handleDropdownChange(value)}
+                <Controller
+                  name="boardSize"
+                  control={control}
+                  rules={{ required: "Board size is required" }}
+                  render={({ field }) => (
+                    <Dropdown
+                      valuesList={BOARD_SIZES}
+                      chosenValue={field.value ?? null}
+                      setChosenValue={(value) => {
+                        field.onChange(value);
+                        handleDropdownChange(value);
+                      }}
+                    />
+                  )}
                 />
               </FieldSet>
-              {formState.errors.sizeX && (
-                <ErrorMessage>{formState.errors.sizeX.message}</ErrorMessage>
-              )}
-              {formState.errors.sizeY && (
-                <ErrorMessage>{formState.errors.sizeY.message}</ErrorMessage>
+              {errors.boardSize && (
+                <ErrorMessage>{errors.boardSize.message}</ErrorMessage>
               )}
             </FieldContainerStyled>
 

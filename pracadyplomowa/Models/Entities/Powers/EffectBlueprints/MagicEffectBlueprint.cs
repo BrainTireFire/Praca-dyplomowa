@@ -10,7 +10,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class MagicEffectBlueprint(string name, DiceSet value, RollMoment rollMoment) : ValueEffectBlueprint(name, value, rollMoment)
     {
-        private MagicEffectBlueprint(): this("EF", 0, 0){}
+        protected MagicEffectBlueprint(): this("EF", 0, 0){}
         //methods
         public override EffectInstance Generate(Character? roller, Character target){
             return new MagicEffectInstance(this, roller, target);

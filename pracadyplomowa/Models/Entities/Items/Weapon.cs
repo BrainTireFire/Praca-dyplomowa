@@ -35,7 +35,7 @@ namespace pracadyplomowa.Models.Entities.Items
 
         public WeaponWeight WeaponWeight { get; set; }
         public DamageType DamageType { get; set; }
-        public DiceSet DamageValue { get; set; } = new DiceSet();
+        public virtual DiceSet DamageValue { get; set; } = new DiceSet();
         public int DamageValueId { get; set; }
         public int Range { get; set; } // for ranged or thrown weapons
         

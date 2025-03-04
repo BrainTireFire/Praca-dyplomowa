@@ -11,7 +11,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
     public class AbilityEffectBlueprint(string name, DiceSet value, RollMoment rollMoment) : ValueEffectBlueprint(name, value, rollMoment)
     {
         public AbilityEffectType AbilityEffectType{ get; set; } = new AbilityEffectType();
-        private AbilityEffectBlueprint() : this("EF", 0, 0){}
+        protected AbilityEffectBlueprint() : this("EF", 0, 0){}
 
         public override EffectInstance Generate(Character? roller, Character target){
             return new AbilityEffectInstance(this, roller, target);

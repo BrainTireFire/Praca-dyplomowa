@@ -14,7 +14,7 @@ public class ProficiencyEffectInstance : EffectInstance
     public virtual ItemFamily? R_GrantsProficiencyInItemFamily { get; set; } = null!;
     public int? R_GrantsProficiencyInItemFamilyId { get; set; }
     public ProficiencyEffectType ProficiencyEffectType { get; set; } = new ProficiencyEffectType();
-    private ProficiencyEffectInstance() : base("EF"){}
+    protected ProficiencyEffectInstance() : base("EF"){}
     public ProficiencyEffectInstance(string name) : base(name){}
     public ProficiencyEffectInstance(ProficiencyEffectBlueprint proficiencyEffectBlueprint, Character target) : base(proficiencyEffectBlueprint, target){
         R_GrantsProficiencyInItemFamily = proficiencyEffectBlueprint.R_GrantsProficiencyInItemFamily;

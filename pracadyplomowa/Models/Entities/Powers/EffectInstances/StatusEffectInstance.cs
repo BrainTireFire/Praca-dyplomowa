@@ -7,7 +7,7 @@ namespace pracadyplomowa.Models.Entities.Powers;
 public class StatusEffectInstance : EffectInstance
 {
     public StatusEffectType EffectType { get; set; } = new StatusEffectType();
-    private StatusEffectInstance() : base("EF"){}
+    protected StatusEffectInstance() : base("EF"){}
     public StatusEffectInstance(string name) : base(name){}
     public StatusEffectInstance(StatusEffectBlueprint statusEffectBlueprint, Character target) : base(statusEffectBlueprint, target){
         EffectType = statusEffectBlueprint.StatusEffectType.Clone();

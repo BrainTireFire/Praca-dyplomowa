@@ -11,7 +11,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
     public class HitpointEffectBlueprint(string name, DiceSet value, RollMoment rollMoment) : ValueEffectBlueprint(name, value, rollMoment)
     {
         public HitpointEffectType HitpointEffectType{ get; set; } = new HitpointEffectType();
-        private HitpointEffectBlueprint(): this("EF", 0, 0){}
+        protected HitpointEffectBlueprint(): this("EF", 0, 0){}
         //methods
         public override EffectInstance Generate(Character? roller, Character target){
             return new HitpointEffectInstance(this, roller, target);

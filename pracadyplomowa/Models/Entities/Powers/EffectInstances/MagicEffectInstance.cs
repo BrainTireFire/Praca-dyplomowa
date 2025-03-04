@@ -9,7 +9,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class MagicEffectInstance : ValueEffectInstance
     {
-        private MagicEffectInstance() : base("EF", 0){}
+        protected MagicEffectInstance() : base("EF", 0){}
         public MagicEffectInstance(string name, DiceSet diceSet) : base(name, diceSet){}
         public MagicEffectInstance(MagicEffectBlueprint magicEffectBlueprint, Character? roller, Character target) : base(magicEffectBlueprint, roller, target){
         }

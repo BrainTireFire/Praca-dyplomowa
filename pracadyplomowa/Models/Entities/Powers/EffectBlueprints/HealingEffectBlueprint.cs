@@ -11,7 +11,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class HealingEffectBlueprint(string name, DiceSet value, RollMoment rollMoment) : ValueEffectBlueprint(name, value, rollMoment)
     {
-        private HealingEffectBlueprint(): this("EF", 0, 0){}
+        protected HealingEffectBlueprint(): this("EF", 0, 0){}
         //methods
         public override EffectInstance Generate(Character? roller, Character target){
             return new HealingEffectInstance(this, roller, target);

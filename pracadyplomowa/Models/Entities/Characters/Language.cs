@@ -10,8 +10,8 @@ namespace pracadyplomowa.Models.Entities.Characters
     public class Language: ObjectWithOwner
     {
         public required string Name {get; set;}
-        public ICollection<LanguageEffectInstance> R_EffectInstances {get; set;} = [];
-        public ICollection<LanguageEffectBlueprint> R_EffectBlueprints {get; set;} = [];
+        public virtual ICollection<LanguageEffectInstance> R_EffectInstances {get; set;} = [];
+        public virtual ICollection<LanguageEffectBlueprint> R_EffectBlueprints {get; set;} = [];
 
     }
 }

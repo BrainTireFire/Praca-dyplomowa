@@ -9,7 +9,7 @@ namespace pracadyplomowa.Models.Entities.Characters
 {
     public class EquipData : ObjectWithId
     {
-        public List<EquipmentSlot> R_Slots { get; set; } = [];
+        public virtual List<EquipmentSlot> R_Slots { get; set; } = [];
 
         //Relationship
         public virtual Character R_Character { get; set; } = null!;

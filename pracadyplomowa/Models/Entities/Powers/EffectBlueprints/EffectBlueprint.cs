@@ -37,7 +37,7 @@ namespace pracadyplomowa.Models.Entities.Powers
 
         public virtual ICollection<ChoiceGroup> R_ChoiceGroups { get; set; } = [];
         //constructors
-        private EffectBlueprint() : this("EF"){}
+        protected EffectBlueprint() : this("EF"){}
         //methods
         public abstract EffectInstance Generate(Character? roller, Character target); //roller added to parameter list as it will be used by overriding methods
         //     return new EffectInstance(this, target);

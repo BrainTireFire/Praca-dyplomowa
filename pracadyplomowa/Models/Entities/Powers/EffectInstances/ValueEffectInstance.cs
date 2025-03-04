@@ -10,7 +10,7 @@ public abstract class ValueEffectInstance : EffectInstance
     public DiceSet DiceSet { get; set; }
     public Character? Roller { get; set; }
 
-    private ValueEffectInstance() : base("EF"){
+    protected ValueEffectInstance() : base("EF"){
         DiceSet = new DiceSet();
     }
     public ValueEffectInstance(string name, DiceSet diceSet) : base(name){

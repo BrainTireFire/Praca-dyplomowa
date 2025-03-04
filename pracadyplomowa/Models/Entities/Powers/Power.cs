@@ -129,10 +129,10 @@ namespace pracadyplomowa.Models.Entities.Powers
         }
         public int Duration {get; set;} = 1;
         public UpcastBy UpcastBy {get; set;} = UpcastBy.NotUpcasted;
-        public Class? R_ClassForUpcasting {get; set;}
+        // Relationships
+        public virtual Class? R_ClassForUpcasting {get; set;}
         public int? R_ClassForUpcastingId {get; set;}
 
-        // Relationships
         public virtual List<PowerSelection> R_CharacterPreparedPowers { get; set; } = []; // list of selected powers out of all available from 
         public virtual List<Character> R_CharacterKnownsPowers { get; set; } = []; // always available powers
         public virtual List<Item> R_ItemsGrantingPower { get; set; } = [];

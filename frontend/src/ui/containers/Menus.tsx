@@ -50,13 +50,14 @@ const StyledButton = styled.button`
   padding: 1.2rem 2.4rem;
   font-size: 1.4rem;
   transition: all 0.2s;
+  border-radius: var(--border-radius-md);
 
   display: flex;
   align-items: center;
   gap: 1.6rem;
 
   &:hover {
-    background-color: var(--color-button-primary);
+    background-color: var(--color-button-hover-primary);
   }
 
   & svg {

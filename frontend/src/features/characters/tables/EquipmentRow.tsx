@@ -31,6 +31,14 @@ const Stacked = styled.div`
   }
 `;
 
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  width: 80vw;
+  overflow-y: hidden;
+`;
+
 export default function EquipmentRow({ equipment }: { equipment: Item }) {
   const { isPending, deleteItem } = useDeleteItem(() => {});
   return (
@@ -77,7 +85,9 @@ export default function EquipmentRow({ equipment }: { equipment: Item }) {
           />
         </Modal.Window>
         <Modal.Window name="open">
-          <ItemForm itemId={equipment.id}></ItemForm>
+          <Container>
+            <ItemForm itemId={equipment.id}></ItemForm>
+          </Container>
         </Modal.Window>
       </Modal>
     </Table.Row>

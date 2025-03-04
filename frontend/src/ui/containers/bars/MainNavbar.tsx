@@ -179,7 +179,7 @@ export default function MainNavbar() {
           </DropdownNav.Menu>
         </DropdownNav>
         <DropdownNav>
-          <StyledNavLink to="/campaigns">
+          <StyledNavLink to="/homebrew">
             <LinkWithIconContainer>
               {t("main.navbar.link.homebrew")}
             </LinkWithIconContainer>
@@ -193,6 +193,11 @@ export default function MainNavbar() {
             </DropdownNav.Link>
             <DropdownNav.Link to="/itemFamilies">
               <LinkWithIconContainer>Item Families</LinkWithIconContainer>
+            </DropdownNav.Link>
+            <DropdownNav.Link to="/immaterialResources">
+              <LinkWithIconContainer>
+                Immaterial resources
+              </LinkWithIconContainer>
             </DropdownNav.Link>
             <DropdownNav.Link to="/homebrew/map">
               <LinkWithIconContainer>Maps</LinkWithIconContainer>

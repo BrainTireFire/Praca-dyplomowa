@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { EncounterCreateDto } from "../../../models/encounter/EncounterCreateDto";
 import { useNavigate } from "react-router-dom";
 
-export function useCreateEncounter() {
+export function useCreateEncounter(campaignId: number | undefined) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -14,7 +14,12 @@ export function useCreateEncounter() {
     onSuccess: () => {
       toast.success("Encounter created");
       queryClient.invalidateQueries({ queryKey: ["encounters"] });
-      navigate("/campaigns", { replace: true });
+
+      if (campaignId) {
+        navigate(`/campaigns/${campaignId}/encounters`, { replace: true });
+      } else {
+        navigate(`/campaigns`, { replace: true });
+      }
     },
     onError: (error) => {
       //console.error(error);

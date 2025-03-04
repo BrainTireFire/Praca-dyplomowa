@@ -52,7 +52,7 @@ type EncounterFormProps = {
 
 export default function EncounterForm() {
   const { isLoading, campaign } = useCampaign();
-  const { createEncounter, isPending } = useCreateEncounter();
+  const { createEncounter, isPending } = useCreateEncounter(campaign?.id);
   const [selectedMap, setSelectedMap] = useState<Board | null>(null);
   const [selectedNpcs, setSelectedNpcs] = useState<CharacterItem[]>([]);
   const { register, formState, handleSubmit, reset } =

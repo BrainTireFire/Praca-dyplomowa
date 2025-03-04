@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { BoardUpdateDto } from "../../../models/map/BoardUpdate";
 
 export function useUpdateBoard() {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { boardId } = useParams<{ boardId: string }>();
   const numberboardId = Number(boardId);
@@ -14,6 +15,9 @@ export function useUpdateBoard() {
       updateBoardApi(numberboardId, updateData),
     onSuccess: (board) => {
       toast.success("Board updated successfully.");
+      queryClient.invalidateQueries({
+        queryKey: ["board", boardId],
+      });
       navigate("/homebrew/map", { replace: true });
     },
     onError: (error) => {

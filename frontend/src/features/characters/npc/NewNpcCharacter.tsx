@@ -5,7 +5,6 @@ import Input from "../../../ui/forms/Input";
 import Button from "../../../ui/interactive/Button";
 import Dropdown from "../../../ui/forms/Dropdown";
 import { useRaces } from ".././hooks/useRaces";
-import { useClasses } from ".././hooks/useClass";
 import Spinner from "../../../ui/interactive/Spinner";
 import { CharacterInsertDto } from "../../../models/character";
 import toast from "react-hot-toast";
@@ -26,7 +25,6 @@ const initialState: CharacterInsertDto = {
 
 type NumericActions = {
   type:
-    | "setClass"
     | "setRace"
     | "setStr"
     | "setDex"
@@ -88,11 +86,6 @@ function NewNpcCharacter({ onCloseModal }) {
 
   //query
   const { isLoading: isLoadingRaces, races, error: errorRaces } = useRaces();
-  // const {
-  //   isLoading: isLoadingClasses,
-  //   classes,
-  //   error: errorClasses,
-  // } = useClasses();
 
   //mutation
   const { createNpcCharacter, isPending } = useCreateNpcCharacter(() => {
@@ -108,12 +101,7 @@ function NewNpcCharacter({ onCloseModal }) {
         label: race.name,
       }))
     : [];
-  // const classList = classes
-  //   ? classes.map((characterClass) => ({
-  //       value: characterClass.id.toString(),
-  //       label: characterClass.name,
-  //     }))
-  //   : [];
+
   const isInBounds = useCallback(
     (ability: number) => ability <= 0 || ability > 20,
     []
@@ -161,18 +149,6 @@ function NewNpcCharacter({ onCloseModal }) {
             }
           ></Input>
         </FormRow>
-        {/* <FormRow
-          label="Starting class"
-          error={!state.startingClassId ? "Select class" : undefined}
-        >
-          <Dropdown
-            chosenValue={state.startingClassId?.toString() || null}
-            setChosenValue={(e) =>
-              dispatch({ type: "setClass", value: Number(e) })
-            }
-            valuesList={classList}
-          ></Dropdown>
-        </FormRow> */}
         <FormRow label="Race" error={!state.raceId ? "Select race" : undefined}>
           <Dropdown
             chosenValue={state.raceId?.toString() || null}

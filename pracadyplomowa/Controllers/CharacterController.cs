@@ -80,10 +80,21 @@ namespace pracadyplomowa.Controllers
             {
                 return BadRequest(new ApiResponse(400, "Race with Id " + characterDto.RaceId + " does not exist"));
             }
-            ClassLevel? classLevel = await _unitOfWork.ClassRepository.GetClassLevelWithChoiceGroups(characterDto.StartingClassId, 1);
-            if (classLevel == null)
+            
+            ClassLevel? classLevel = null;
+
+            if (!characterDto.IsNpc)
             {
-                return BadRequest(new ApiResponse(400, "First level of Class with Id " + characterDto.StartingClassId + " does not exist"));
+                if (characterDto.StartingClassId == null)
+                {
+                    return BadRequest(new ApiResponse(400, "StartingClassId is required for non-NPC characters."));
+                }
+
+                classLevel = await _unitOfWork.ClassRepository.GetClassLevelWithChoiceGroups(characterDto.StartingClassId.Value, 1);
+                if (classLevel == null)
+                {
+                    return BadRequest(new ApiResponse(400, $"First level of Class with Id {characterDto.StartingClassId} does not exist"));
+                }
             }
 
             var ownerId = User.GetUserId();
@@ -621,7 +632,6 @@ namespace pracadyplomowa.Controllers
             {
                 return errorResult;
             }
-            Console.WriteLine($"characterId: + {characterId} + xp: = {xp}");
             character!.ExperiencePoints = xp;
 
             await _unitOfWork.SaveChangesAsync();

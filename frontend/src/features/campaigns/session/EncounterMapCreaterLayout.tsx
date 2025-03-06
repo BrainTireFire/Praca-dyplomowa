@@ -10,6 +10,8 @@ import Heading from "../../../ui/text/Heading";
 import Button from "../../../ui/interactive/Button";
 import { useUpdatePlaceEncounter } from "../hooks/useUpdatePlaceEncounter";
 import { FaTimes } from "react-icons/fa";
+import Modal from "../../../ui/containers/Modal";
+import { NPCSelectionForm } from "../encounter/NPCSelectionForm";
 
 const Container = styled.div`
   padding-top: 20px;
@@ -100,13 +102,20 @@ const FieldContainerStyled = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-y: auto;
 `;
 
 const ButtonContainer = styled.div`
   margin-top: auto;
   width: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  gap: 10px;
+`;
+
+const ParagraphStyled = styled.p`
+  text-align: center;
 `;
 
 type FieldEncounterMap = Field & {
@@ -131,6 +140,10 @@ export default function EncounterMapCreaterLayout({
   const { updatePlaceEncounter, isUpdating } = useUpdatePlaceEncounter(
     encounterId,
     startEncounter
+  );
+  const [npcList, setNpcList] = useState<CharacterItem[]>([]);
+  const [participanceToDelete, setParticipanceToDelete] = useState<number[]>(
+    []
   );
 
   useEffect(() => {
@@ -159,6 +172,14 @@ export default function EncounterMapCreaterLayout({
       });
 
       setFields(fields);
+    }
+
+    if (encounter?.participances) {
+      setNpcList(
+        encounter.participances
+          .filter((p) => p.character.isNpc)
+          .map((p) => p.character)
+      );
     }
   }, [encounter?.board, encounter?.participances]);
 
@@ -203,6 +224,10 @@ export default function EncounterMapCreaterLayout({
             : field
         );
       });
+
+      setParticipanceToDelete((prevIds) =>
+        prevIds.filter((id) => id !== updatedField.memberId)
+      );
     },
     [setFields]
   );
@@ -220,6 +245,12 @@ export default function EncounterMapCreaterLayout({
           : field
       )
     );
+
+    setNpcList((prevNpcList) =>
+      prevNpcList.filter((npc) => npc.id !== character.id)
+    );
+
+    setParticipanceToDelete((prevIds) => [...prevIds, character.id]);
   }, []);
 
   const handleResetAllMemebers = useCallback(() => {
@@ -277,10 +308,21 @@ export default function EncounterMapCreaterLayout({
 
   const handleSubmit = () => {
     const fieldsToUpdate = getFieldsToUpdate();
+
     updatePlaceEncounter({
       encounterId: encounter.id,
       encounterUpdateDto: fieldsToUpdate,
+      participanceToDelete,
     });
+  };
+
+  const handleNpcFormSubmit = (selectedCharacters: CharacterItem[]) => {
+    setNpcList((prevNpcList) => [
+      ...prevNpcList,
+      ...selectedCharacters.filter(
+        (newCharacter) => !prevNpcList.some((npc) => npc.id === newCharacter.id)
+      ),
+    ]);
   };
 
   const getFieldsToUpdate = () => {
@@ -292,13 +334,22 @@ export default function EncounterMapCreaterLayout({
         const matchedParticipance = encounter.participances.find(
           (participance) => participance.character.name === field.memberName
         );
+
+        const newParticipance = npcList.find(
+          (npc) =>
+            npc.id !== matchedParticipance?.character.id &&
+            npc.name === field.memberName
+        );
+
         const matchedMember = encounter.campaign.members.find(
           (member) => member.name === field.memberName
         );
 
-        const characterId = matchedParticipance
-          ? matchedParticipance.character.id
-          : matchedMember?.id || null;
+        const characterId =
+          newParticipance?.id ??
+          matchedParticipance?.character?.id ??
+          matchedMember?.id ??
+          null;
 
         return {
           fieldId: field.id,
@@ -314,7 +365,7 @@ export default function EncounterMapCreaterLayout({
     <Container>
       <HeaderStyled>
         {onToggle && <Button onClick={() => onToggle(false)}>Back</Button>}
-        <Heading as="h2">Create encounter map</Heading>
+        <Heading as="h2">Edit encounter map</Heading>
         <Button onClick={handleSubmit}>Save</Button>
       </HeaderStyled>
       <MainGrid>
@@ -346,26 +397,42 @@ export default function EncounterMapCreaterLayout({
           </FieldContainerStyled>
           <FieldContainerStyled>
             <Label>Npc</Label>
-            {encounter.participances.map(
-              (participance) =>
-                participance.character.isNpc && (
-                  <FieldSet
-                    key={participance.id}
-                    onClick={() => handleMemberClick(participance.character)}
-                  >
-                    {participance.character.name}
-                    <StyledFaTimes
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleMemberRemove(participance.character);
-                      }}
-                    />
-                  </FieldSet>
-                )
-            )}
+            {npcList.map((npc) => (
+              <FieldSet key={npc.id} onClick={() => handleMemberClick(npc)}>
+                {npc.name}
+                <StyledFaTimes
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleMemberRemove(npc);
+                  }}
+                />
+              </FieldSet>
+            ))}
           </FieldContainerStyled>
           <ButtonContainer>
-            <Button onClick={handleResetAllMemebers}>Reset all members</Button>
+            <ParagraphStyled>
+              <Label>Options</Label>
+            </ParagraphStyled>
+            <Modal>
+              <Modal.Open opens="selection">
+                <Button
+                  onClick={(event) => {
+                    event.preventDefault();
+                  }}
+                >
+                  Add npc
+                </Button>
+              </Modal.Open>
+              <Modal.Window name="selection">
+                <NPCSelectionForm
+                  initialNpcList={npcList}
+                  onConfirm={handleNpcFormSubmit}
+                ></NPCSelectionForm>
+              </Modal.Window>
+            </Modal>
+            <Button onClick={handleResetAllMemebers}>
+              Reset all positions
+            </Button>
           </ButtonContainer>
         </LeftPanel>
       </MainGrid>

@@ -35,5 +35,14 @@ namespace pracadyplomowa.Models.Entities.Campaign
             
             return participanceData;
         }
+        
+        public void RemoveParticipanceByCharacterId(int characterId)
+        {
+            var participanceData = R_Participances.FirstOrDefault(pd => pd.R_Character.Id == characterId);
+            if (participanceData != null)
+            {
+                R_Participances.Remove(participanceData);
+            }
+        }
     }
 }

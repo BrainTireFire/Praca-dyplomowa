@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Input from "../../../ui/forms/Input";
 import TextArea from "../../../ui/forms/TextArea";
-import { set, useForm } from "react-hook-form";
+import { Controller, set, useForm } from "react-hook-form";
 import Button from "../../../ui/interactive/Button";
 import Form from "../../../ui/forms/Form";
 import Heading from "../../../ui/text/Heading";
@@ -33,7 +33,7 @@ const FieldSet = styled.div`
 const FieldContainerStyled = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: left;
 `;
 
 const Span = styled.span`
@@ -42,9 +42,10 @@ const Span = styled.span`
 `;
 
 const ErrorMessage = styled.p`
+  font-size: 1.4rem;
   color: var(--color-form-error);
-  margin-top: 5px;
-  font-size: 0.875rem;
+  margin-top: 0.2rem;
+  padding-bottom: 5px;
 `;
 
 type MapFormProps = {
@@ -80,6 +81,16 @@ export default function MapUpdateBoardForm() {
   const [data, setData] = useState<MapFormProps>();
   const { isLoading, board } = useBoard();
 
+  useEffect(() => {
+    if (board) {
+      setValue("name", board.name);
+      setValue("description", board.description);
+      setValue("sizeX", board.sizeX);
+      setValue("sizeY", board.sizeY);
+      setValue("boardSize", board.sizeX + " x " + board.sizeY);
+    }
+  }, [board, setValue, getValues]);
+
   if (isLoading) {
     return <Spinner />;
   }
@@ -88,32 +99,24 @@ export default function MapUpdateBoardForm() {
     return <div>Board is null</div>;
   }
 
-  setValue("name", board.name);
-  setValue("description", board.description);
-  setValue("sizeX", board.sizeX);
-  setValue("sizeY", board.sizeY);
-
   const handleDropdownChange = (value: string | null) => {
-    console.log(value);
-
     if (value === null) {
       return;
     }
+
+    const [width, height] = value.split(" x ").map(Number);
+    setValue("sizeX", width);
+    setValue("sizeY", height);
+    setValue("boardSize", value);
 
     setData((prevData) => ({
       ...prevData,
       boardSize: value,
       name: prevData?.name ?? "",
-      sizeX: prevData?.sizeX ?? 0,
-      sizeY: prevData?.sizeY ?? 0,
+      sizeX: width ?? prevData?.sizeX ?? 0,
+      sizeY: height ?? prevData?.sizeY ?? 0,
       description: prevData?.description ?? "",
     }));
-
-    setValue("boardSize", value);
-
-    const [width, height] = value.split(" x ").map(Number);
-    setValue("sizeX", width);
-    setValue("sizeY", height);
   };
 
   function onSubmit(dataForm: MapFormProps) {
@@ -150,17 +153,24 @@ export default function MapUpdateBoardForm() {
             <FieldContainerStyled>
               <FieldSet>
                 <Label>Board Size: </Label>
-                <Dropdown
-                  valuesList={BOARD_SIZES}
-                  chosenValue={data?.boardSize ?? "16 x 9"}
-                  setChosenValue={(value) => handleDropdownChange(value)}
+                <Controller
+                  name="boardSize"
+                  control={control}
+                  rules={{ required: "Board size is required" }}
+                  render={({ field }) => (
+                    <Dropdown
+                      valuesList={BOARD_SIZES}
+                      chosenValue={field.value ?? null}
+                      setChosenValue={(value) => {
+                        field.onChange(value);
+                        handleDropdownChange(value);
+                      }}
+                    />
+                  )}
                 />
               </FieldSet>
-              {formState.errors.sizeX && (
-                <ErrorMessage>{formState.errors.sizeX.message}</ErrorMessage>
-              )}
-              {formState.errors.sizeY && (
-                <ErrorMessage>{formState.errors.sizeY.message}</ErrorMessage>
+              {errors.boardSize && (
+                <ErrorMessage>{errors.boardSize.message}</ErrorMessage>
               )}
             </FieldContainerStyled>
 

@@ -13,15 +13,3 @@ export function useNpcs() {
 
   return { isLoading, npcs, error };
 }
-// export function useNpcsExtended() {
-//   const {
-//     isLoading,
-//     data: npcs,
-//     error,
-//   } = useQuery({
-//     queryKey: ["npcsExtended"],
-//     queryFn: getNpcCharactersExtended,
-//   });
-
-//   return { isLoading, npcs, error };
-// }

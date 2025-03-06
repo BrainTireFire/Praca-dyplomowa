@@ -6,4 +6,5 @@ public class SetEncounterPositionDto
 {
     public bool IsActive { get; set; }
     public ICollection<UpdateFieldDto> FieldsToUpdate { get; set; } = new List<UpdateFieldDto>();
+    public ICollection<int> ParticipanceToDelete { get; set; } = new List<int>();
 }

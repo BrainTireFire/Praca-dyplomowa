@@ -129,6 +129,8 @@ namespace pracadyplomowa.Controllers
             campaign.R_UsersAttendsCampaigns.Remove(user);
             campaign.R_CampaignHasCharacters.Remove(character);
             user.R_UserAttendsAsPlayerToCamgains.Remove(campaign);
+
+            _unitOfWork.ParticipanceDataRepository.RemoveByCharacterId(character.Id);
             
             await _unitOfWork.SaveChangesAsync();
             

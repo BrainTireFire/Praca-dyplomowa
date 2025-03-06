@@ -76,14 +76,18 @@ namespace pracadyplomowa.Models.Entities.Characters
         {
 
         }
-        public Character(string name, bool isNpc, int strengthValue, int dexterityValue, int constitutionValue, int intelligenceValue, int wisdomValue, int charismaValue, ClassLevel classLevel, Race race, int ownerId, int xp)
+        public Character(string name, bool isNpc, int strengthValue, int dexterityValue, int constitutionValue, int intelligenceValue, int wisdomValue, int charismaValue, ClassLevel? classLevel, Race race, int ownerId, int xp)
         {
 
             this.Name = name;
             this.IsNpc = isNpc;
             this.ExperiencePoints = xp;
 
-            this.R_CharacterHasLevelsInClass.Add(classLevel);
+            if (classLevel != null)
+            {
+                this.R_CharacterHasLevelsInClass.Add(classLevel);
+            }
+            
             this.R_CharacterBelongsToRace = race;
 
             AbilityEffectInstance strength = new("Strength base")

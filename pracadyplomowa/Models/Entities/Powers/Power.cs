@@ -181,7 +181,7 @@ namespace pracadyplomowa.Models.Entities.Powers
                     [nameof(CastableBy), nameof(VerbalComponent)]
                 );
             }
-            if(CastableBy == CastableBy.Character && SomaticComponent == false){
+            if(CastableBy != CastableBy.Character && SomaticComponent == false){
                 yield return new ValidationResult(
                     "Powers not castable by 'Character' cannot have somatic component",
                     [nameof(CastableBy), nameof(SomaticComponent)]

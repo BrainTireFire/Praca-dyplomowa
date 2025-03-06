@@ -17,7 +17,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
             DamageEffectType.DamageEffect_DamageType = damageType;
         }
         public DamageEffectType DamageEffectType{ get; set;} = new DamageEffectType();
-        private DamageEffectBlueprint(): this("EF", 0, 0){}
+        protected DamageEffectBlueprint(): this("EF", 0, 0){}
         //methods
         public override EffectInstance Generate(Character? roller, Character target){
             EffectInstance instance = new DamageEffectInstance(this, roller, target);

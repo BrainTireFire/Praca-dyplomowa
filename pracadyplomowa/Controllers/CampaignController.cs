@@ -40,7 +40,7 @@ namespace pracadyplomowa.Controllers
         [HttpGet]
         public async Task<ActionResult<List<CampaignDto>>> GetCampaigns()
         {
-            List<Campaign> campaigns = await _unitOfWork.CampaignRepository.GetCampaigns(User.GetUserId());
+            List<Campaign> campaigns = await _unitOfWork.CampaignRepository.GetCampaignsForMenu(User.GetUserId());
 
             List<CampaignDto> campaignsDto = campaigns.Select(c => new CampaignDto(c)).ToList();
 
@@ -51,7 +51,7 @@ namespace pracadyplomowa.Controllers
         public async Task<ActionResult<List<CampaignDto>>> GetAttendCampaigns()
         {
             var userId = User.GetUserId();
-            List<Campaign> campaigns = await _unitOfWork.CampaignRepository.GetAttendCampaigns(userId);
+            List<Campaign> campaigns = await _unitOfWork.CampaignRepository.GetAttendedCampaignsForMenu(userId);
 
             List<CampaignDto> campaignsDto = campaigns.Select(c => new CampaignDto(c)).ToList();
 

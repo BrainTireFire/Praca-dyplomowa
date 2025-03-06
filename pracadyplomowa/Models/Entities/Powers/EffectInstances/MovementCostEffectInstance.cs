@@ -7,7 +7,7 @@ namespace pracadyplomowa.Models.Entities.Powers;
 public class MovementCostEffectInstance : EffectInstance
 {
     public MovementCostEffectType EffectType { get; set; } = new MovementCostEffectType();
-    private MovementCostEffectInstance() : base("EF"){}
+    protected MovementCostEffectInstance() : base("EF"){}
     public MovementCostEffectInstance(string name) : base(name){}
     public MovementCostEffectInstance(MovementCostEffectBlueprint movementCostEffectBlueprint, Character target) : base(movementCostEffectBlueprint, target){
         EffectType = movementCostEffectBlueprint.MovementCostEffectType.Clone();

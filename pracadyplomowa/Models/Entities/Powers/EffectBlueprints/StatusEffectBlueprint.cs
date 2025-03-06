@@ -9,7 +9,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class StatusEffectBlueprint(string name) : EffectBlueprint(name)
     {
-        private StatusEffectBlueprint() : this("EF"){}
+        protected StatusEffectBlueprint() : this("EF"){}
         public StatusEffectType StatusEffectType{ get; set; } = new StatusEffectType();
         //methods
         public override EffectInstance Generate(Character? roller, Character target){

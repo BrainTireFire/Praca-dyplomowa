@@ -9,7 +9,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectInstances
 {
     public class OffHandAttackEffectInstance : EffectInstance
     {
-        private OffHandAttackEffectInstance() : base("EF"){}
+        protected OffHandAttackEffectInstance() : base("EF"){}
         public OffHandAttackEffectInstance(string name) : base(name){}
         public OffHandAttackEffectInstance(OffHandAttackEffectBlueprint offHandAttackEffectBlueprint, Character target) : base(offHandAttackEffectBlueprint, target){}
         public OffHandAttackEffectInstance(OffHandAttackEffectInstance effectInstance) : base(effectInstance){

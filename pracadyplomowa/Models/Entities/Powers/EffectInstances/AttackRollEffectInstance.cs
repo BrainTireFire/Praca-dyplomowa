@@ -7,7 +7,7 @@ namespace pracadyplomowa.Models.Entities.Powers;
 public class AttackRollEffectInstance : ValueEffectInstance
 {
     public AttackRollEffectType EffectType { get; set; } = new AttackRollEffectType();
-    private AttackRollEffectInstance() : base("EF", 0){}
+    protected AttackRollEffectInstance() : base("EF", 0){}
     public AttackRollEffectInstance(string name) : base(name, 0){}
     public AttackRollEffectInstance(AttackRollEffectBlueprint attackRollEffectBlueprint, Character? roller, Character target) : base(attackRollEffectBlueprint, roller, target){
         EffectType = attackRollEffectBlueprint.AttackRollEffectType.Clone();

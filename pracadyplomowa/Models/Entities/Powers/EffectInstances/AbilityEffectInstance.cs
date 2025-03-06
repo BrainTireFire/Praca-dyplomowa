@@ -8,7 +8,7 @@ public class AbilityEffectInstance : ValueEffectInstance
 {
     public AbilityEffectType EffectType { get; set; } = new AbilityEffectType();
 
-    private AbilityEffectInstance() : base("EF", 0){}
+    protected AbilityEffectInstance() : base("EF", 0){}
     public AbilityEffectInstance(string name) : base(name, 0){}
     public AbilityEffectInstance(AbilityEffectBlueprint abilityEffectBlueprint, Character? roller, Character target) : base(abilityEffectBlueprint, roller, target){
         EffectType = abilityEffectBlueprint.AbilityEffectType.Clone();

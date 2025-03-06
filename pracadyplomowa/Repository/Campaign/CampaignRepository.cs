@@ -23,6 +23,17 @@ namespace pracadyplomowa.Repository
 
             return campaigns;
         }
+        public async Task<List<Campaign>> GetCampaignsForMenu(int OwnerId)
+        {
+            List<Campaign> campaigns = await _context.Campaigns
+                .Where(c => c.R_OwnerId == OwnerId)
+                .Include(c => c.R_Owner)
+                .Include(c => c.R_CampaignHasCharacters).ThenInclude(c => c.R_CharacterHasLevelsInClass).ThenInclude(c => c.R_Class)
+                .Include(c => c.R_CampaignHasCharacters).ThenInclude(c => c.R_CharacterBelongsToRace)
+                .ToListAsync();
+
+            return campaigns;
+        }
         
         public async Task<Campaign> GetCampaign(int userId, int campaignId)
         {
@@ -58,6 +69,16 @@ namespace pracadyplomowa.Repository
             return await _context.Campaigns
                 .Where(c => c.R_UsersAttendsCampaigns.Any(u => u.Id == userId))
                 .Include(c => c.R_Owner)
+                .ToListAsync();
+        }
+
+        public async Task<List<Campaign>> GetAttendedCampaignsForMenu(int userId)
+        {
+            return await _context.Campaigns
+                .Where(c => c.R_UsersAttendsCampaigns.Any(u => u.Id == userId))
+                .Include(c => c.R_Owner)
+                .Include(c => c.R_CampaignHasCharacters).ThenInclude(c => c.R_CharacterHasLevelsInClass).ThenInclude(c => c.R_Class)
+                .Include(c => c.R_CampaignHasCharacters).ThenInclude(c => c.R_CharacterBelongsToRace)
                 .ToListAsync();
         }
 

@@ -7,7 +7,7 @@ namespace pracadyplomowa.Models.Entities.Powers;
 public class ActionEffectInstance : ValueEffectInstance
 {
     public ActionEffectType EffectType { get; set; } = new ActionEffectType();
-    private ActionEffectInstance() : base("EF", 0){}
+    protected ActionEffectInstance() : base("EF", 0){}
     public ActionEffectInstance(string name) : base(name, 0){}
     public ActionEffectInstance(ActionEffectBlueprint actionEffectBlueprint, Character? roller, Character target) : base(actionEffectBlueprint, roller, target){
         EffectType = actionEffectBlueprint.ActionEffectType.Clone();

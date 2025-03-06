@@ -12,7 +12,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
     public class ActionEffectBlueprint : ValueEffectBlueprint
     {
         public ActionEffectType ActionEffectType{ get; set; } = new ActionEffectType();
-        private ActionEffectBlueprint() : this("EF", 0, 0, 0){}
+        protected ActionEffectBlueprint() : this("EF", 0, 0, 0){}
         public ActionEffectBlueprint(string name, DiceSet value, RollMoment rollMoment, ActionEffect effectType) : base(name, value, rollMoment){
             ActionEffectType.ActionEffect = effectType;
         }

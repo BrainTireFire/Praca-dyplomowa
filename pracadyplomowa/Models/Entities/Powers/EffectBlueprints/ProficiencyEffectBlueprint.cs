@@ -12,7 +12,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class ProficiencyEffectBlueprint : EffectBlueprint
     {
-        private ProficiencyEffectBlueprint() : this(new ItemFamily(){Name = "EF", ItemType = ItemType.Item}){}
+        protected ProficiencyEffectBlueprint() : this(new ItemFamily(){Name = "EF", ItemType = ItemType.Item}){}
         public ProficiencyEffectBlueprint(ItemFamily itemFamily) : this(itemFamily.ItemType){
             Name = itemFamily.Name + " proficiency";
             R_GrantsProficiencyInItemFamily = itemFamily;

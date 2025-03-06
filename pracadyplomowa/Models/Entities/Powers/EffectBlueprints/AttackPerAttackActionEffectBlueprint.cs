@@ -14,7 +14,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
         //props
         public AttackPerAttackActionEffectType AttackPerAttackActionEffectType{get; set; } = new AttackPerAttackActionEffectType();
         //constructors
-        private AttackPerAttackActionEffectBlueprint(): this("EF", 0, 0, 0){}
+        protected AttackPerAttackActionEffectBlueprint(): this("EF", 0, 0, 0){}
         public AttackPerAttackActionEffectBlueprint(string name, DiceSet value, RollMoment rollMoment, AttackPerActionEffect effectType) : base(name, value, rollMoment){
             AttackPerAttackActionEffectType.AttackPerActionEffect = effectType;
         }

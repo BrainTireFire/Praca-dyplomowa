@@ -14,10 +14,10 @@ namespace pracadyplomowa.Models.Entities.Items
         public CoinSack Worth {get; set;}
 
         //Relationships
-        public Power R_Power { get; set; } = null!;
+        public virtual Power R_Power { get; set; } = null!;
         public int PowerId { get; set; }
 
-        public ItemFamily R_ItemFamily { get; set; } = null!;
+        public virtual ItemFamily R_ItemFamily { get; set; } = null!;
         public int R_ItemFamilyId { get; set; }
     }
 }

@@ -10,7 +10,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectInstances
 {
     public class HealingEffectInstance : ValueEffectInstance
     {
-        private HealingEffectInstance() : base("EF", 0){}
+        protected HealingEffectInstance() : base("EF", 0){}
         public HealingEffectInstance(string name) : base(name, 0){}
         public HealingEffectInstance(HealingEffectBlueprint initiativeEffectBlueprint, Character? roller, Character target) : base(initiativeEffectBlueprint, roller, target){
         }

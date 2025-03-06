@@ -10,7 +10,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class MovementEffectBlueprint(string name, DiceSet value, RollMoment rollMoment) : ValueEffectBlueprint(name, value, rollMoment)
     {
-        private MovementEffectBlueprint(): this("EF", 0, 0){}
+        protected MovementEffectBlueprint(): this("EF", 0, 0){}
         public MovementEffectType MovementEffectType{ get; set; } = new MovementEffectType();
         //methods
         public override EffectInstance Generate(Character? roller, Character target){

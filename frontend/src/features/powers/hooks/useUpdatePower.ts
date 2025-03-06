@@ -14,7 +14,7 @@ export function useUpdatePower(onSuccess: () => void) {
     },
     onError: (error) => {
       console.error(error);
-      toast.error("Power creation failed");
+      toast.error("Power update failed: " + error.message);
     },
   });
 

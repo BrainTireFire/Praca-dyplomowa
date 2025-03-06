@@ -10,7 +10,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class SizeEffectBlueprint(string name) : ValueEffectBlueprint(name, 0, RollMoment.OnCast)
     {
-        private SizeEffectBlueprint() : this("EF"){}
+        protected SizeEffectBlueprint() : this("EF"){}
         public SizeEffectType SizeEffectType{ get; set; } = new SizeEffectType();
         //methods
         public override EffectInstance Generate(Character? roller, Character target){

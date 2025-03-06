@@ -94,18 +94,16 @@ export const powerTypeOptions = (
   label: PowerTypeLabels[key],
 }));
 
-export type TargetType =
-  | "Caster"
-  | "Character"
-  | "Weapon"
-  | "Armor"
-  | "MapTiles";
+export type TargetType = "Caster" | "Character";
+// | "Weapon"
+// | "Armor"
+// | "MapTiles";
 export const TargetTypeLabels: { [key in TargetType]: string } = {
   Caster: "Caster",
   Character: "Character",
-  Weapon: "Weapon",
-  Armor: "Armor",
-  MapTiles: "Map Tiles",
+  // Weapon: "Weapon",
+  // Armor: "Armor",
+  // MapTiles: "Map Tiles",
 };
 export const targetTypeOptions = (
   Object.keys(TargetTypeLabels) as TargetType[]

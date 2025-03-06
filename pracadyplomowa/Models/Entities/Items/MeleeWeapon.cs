@@ -40,7 +40,7 @@ namespace pracadyplomowa.Models.Entities.Items
         public bool Reach { get; set;}
         public bool Thrown { get; set;}
         public bool Versatile { get; set;}
-        public DiceSet VersatileDamageValue { get; set; } = new DiceSet();
+        public virtual DiceSet VersatileDamageValue { get; set; } = new DiceSet();
         public int VersatileDamageValueId { get; set; }
         protected override int GetAbilityBonus(){
             return R_EquipData != null && R_EquipData.R_Slots.Select(s => s.Type).Contains(Enums.SlotType.MainHand) ? (Finesse ? (Wielder.StrengthModifier > Wielder.DexterityModifier ? Wielder.StrengthModifier : Wielder.DexterityModifier) : Wielder.StrengthModifier) : 0;

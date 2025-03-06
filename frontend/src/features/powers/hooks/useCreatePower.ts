@@ -13,7 +13,7 @@ export function useCreatePower(onSuccess: (id: number) => void) {
     },
     onError: (error) => {
       console.error(error);
-      toast.error("Power creation failed");
+      toast.error("Power creation failed: " + error.message);
     },
   });
 

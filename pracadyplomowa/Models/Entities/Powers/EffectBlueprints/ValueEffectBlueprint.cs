@@ -9,7 +9,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public abstract class ValueEffectBlueprint(string name, DiceSet value, RollMoment rollMoment) : EffectBlueprint(name)
     {
-        private ValueEffectBlueprint(): this("EF", 0, 0){}
+        protected ValueEffectBlueprint(): this("EF", 0, 0){}
         public RollMoment RollMoment { get; set; } = rollMoment;
         public DiceSet DiceSet {get; set;} = value;
         public int DiceSetId {get; set;} = value.Id;

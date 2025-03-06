@@ -11,7 +11,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class InitiativeEffectBlueprint(string name, DiceSet value, RollMoment rollMoment) : ValueEffectBlueprint(name, value, rollMoment)
     {
-        private InitiativeEffectBlueprint(): this("EF", 0, 0){}
+        protected InitiativeEffectBlueprint(): this("EF", 0, 0){}
         //methods
         public override EffectInstance Generate(Character? roller, Character target){
             return new InitiativeEffectInstance(this, roller, target);

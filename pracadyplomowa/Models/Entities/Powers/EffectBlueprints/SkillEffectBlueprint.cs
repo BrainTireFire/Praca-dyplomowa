@@ -13,7 +13,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
     {
         public SkillEffectType SkillEffectType{ get; set; } = new SkillEffectType();
         //constructors
-        private SkillEffectBlueprint() : this("EF", 0, 0, 0, 0){}
+        protected SkillEffectBlueprint() : this("EF", 0, 0, 0, 0){}
         public SkillEffectBlueprint(string name, DiceSet value, RollMoment rollMoment, SkillEffect skillEffect, Skill skill) : base(name, value, rollMoment){
             SkillEffectType.SkillEffect = skillEffect;
             SkillEffectType.SkillEffect_Skill = skill;

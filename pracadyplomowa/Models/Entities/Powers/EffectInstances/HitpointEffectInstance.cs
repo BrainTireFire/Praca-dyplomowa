@@ -7,7 +7,7 @@ namespace pracadyplomowa.Models.Entities.Powers;
 public class HitpointEffectInstance : ValueEffectInstance
 {
     public HitpointEffectType EffectType { get; set; } = new HitpointEffectType();
-    private HitpointEffectInstance() : base("EF", 0){}
+    protected HitpointEffectInstance() : base("EF", 0){}
     public HitpointEffectInstance(string name) : base(name, 0){}
     public HitpointEffectInstance(HitpointEffectBlueprint hitpointEffectBlueprint, Character? roller, Character target) : base(hitpointEffectBlueprint, roller, target){
         EffectType = hitpointEffectBlueprint.HitpointEffectType.Clone();

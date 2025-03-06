@@ -11,7 +11,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class ResistanceEffectBlueprint : EffectBlueprint
     {
-        private ResistanceEffectBlueprint() : this("EF", 0, 0){}
+        protected ResistanceEffectBlueprint() : this("EF", 0, 0){}
         public ResistanceEffectType ResistanceEffectType{ get; set;} = new ResistanceEffectType();
 
         public ResistanceEffectBlueprint(string name, ResistanceEffect resistanceEffect, DamageType damageType) : base(name){

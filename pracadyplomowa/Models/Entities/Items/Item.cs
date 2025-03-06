@@ -33,9 +33,9 @@ namespace pracadyplomowa.Models.Entities.Items
             R_ItemIsEquippableInSlots = [.. item.R_ItemIsEquippableInSlots];
             R_ItemInItemsFamily = item.R_ItemInItemsFamily;
             R_ItemInItemsFamilyId = item.R_ItemInItemsFamilyId;
-            R_BackpackHasItem = item.R_BackpackHasItem;
-            R_BackpackHasItemId = item.R_BackpackHasItemId;
-            R_EquipData = item.R_EquipData;
+            // R_BackpackHasItem = item.R_BackpackHasItem;
+            // R_BackpackHasItemId = item.R_BackpackHasItemId;
+            // R_EquipData = item.R_EquipData;
             R_ItemGrantsResources = item.R_ItemGrantsResources.Select(x => new ImmaterialResourceInstance(x)).ToList();
             R_AffectedBy = item.R_AffectedBy.Select(x => x.Clone()).ToList();
             R_EffectsOnEquip = item.R_EffectsOnEquip.Select(x => x.Clone()).ToList();

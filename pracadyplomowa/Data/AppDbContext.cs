@@ -302,6 +302,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                 builder.Entity<Weapon>().Navigation(i => i.DamageValue).AutoInclude();
                 builder.Entity<MeleeWeapon>().Navigation(i => i.VersatileDamageValue).AutoInclude();
                 builder.Entity<EquipData>().Navigation(i => i.R_Slots).AutoInclude();
+                builder.Entity<Character>().HasMany(c => c.R_CharactersParticipatesInEncounters).WithOne(p => p.R_Character).HasForeignKey(p => p.R_CharacterId).OnDelete(DeleteBehavior.Cascade);
         }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -316,7 +317,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                 CoreEventId.LazyLoadOnDisposedContextWarning,
         };
         #if DEBUG
-        optionsBuilder.ConfigureWarnings(w => w.Throw(lazyLoadEvents));  //Lazyload now throws in DEBUG
+        optionsBuilder.ConfigureWarnings(w => w.Throw(lazyLoadEvents));
         #else
         if (sp.GetService<IHostEnvironment>()?.IsEnvironment("PRD") ?? false)
         {   //logs LazyLoad events as error everywhere else

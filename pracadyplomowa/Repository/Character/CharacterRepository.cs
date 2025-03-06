@@ -307,6 +307,41 @@ namespace pracadyplomowa.Repository
             return character;
         }
 
+        public Task<Character> GetByIdForChoice(int Id){
+            var characterLevel = _context.Characters
+            .Where(c => c.Id == Id).Include(c => c.R_CharacterHasLevelsInClass).Count();
+
+            var character = _context.Characters
+            .Where(c => c.Id == Id)
+            .Include(c => c.R_AffectedBy)
+            .Include(c => c.R_CharacterBelongsToRace).ThenInclude(r => r.R_RaceLevels.Where(rl => rl.Level <= characterLevel)).ThenInclude(rl => rl.R_ChoiceGroups).ThenInclude(cg => cg.R_Effects)
+            .Include(c => c.R_CharacterBelongsToRace).ThenInclude(r => r.R_RaceLevels.Where(rl => rl.Level <= characterLevel)).ThenInclude(rl => rl.R_ChoiceGroups).ThenInclude(cg => cg.R_PowersAlwaysAvailable)
+            .Include(c => c.R_CharacterBelongsToRace).ThenInclude(r => r.R_RaceLevels.Where(rl => rl.Level <= characterLevel)).ThenInclude(rl => rl.R_ChoiceGroups).ThenInclude(cg => cg.R_PowersToPrepare)
+            .Include(c => c.R_CharacterBelongsToRace).ThenInclude(r => r.R_RaceLevels.Where(rl => rl.Level <= characterLevel)).ThenInclude(rl => rl.R_ChoiceGroups).ThenInclude(cg => cg.R_Resources).ThenInclude(r => r.R_Blueprint)
+            .Include(c => c.R_CharacterBelongsToRace).ThenInclude(r => r.R_RaceLevels.Where(rl => rl.Level <= characterLevel)).ThenInclude(rl => rl.R_ChoiceGroups).ThenInclude(cg => cg.R_UsageInstances)
+
+            .Include(c => c.R_CharacterHasLevelsInClass.Where(rl => rl.Level <= characterLevel)).ThenInclude(cl => cl.R_Class)
+            .Include(c => c.R_CharacterHasLevelsInClass.Where(rl => rl.Level <= characterLevel)).ThenInclude(cl => cl.R_ChoiceGroups).ThenInclude(cg => cg.R_Effects)
+            .Include(c => c.R_CharacterHasLevelsInClass.Where(rl => rl.Level <= characterLevel)).ThenInclude(cl => cl.R_ChoiceGroups).ThenInclude(cg => cg.R_PowersAlwaysAvailable)
+            .Include(c => c.R_CharacterHasLevelsInClass.Where(rl => rl.Level <= characterLevel)).ThenInclude(cl => cl.R_ChoiceGroups).ThenInclude(cg => cg.R_PowersToPrepare)
+            .Include(c => c.R_CharacterHasLevelsInClass.Where(rl => rl.Level <= characterLevel)).ThenInclude(cl => cl.R_ChoiceGroups).ThenInclude(cg => cg.R_Resources).ThenInclude(r => r.R_Blueprint)
+            .Include(c => c.R_CharacterHasLevelsInClass.Where(rl => rl.Level <= characterLevel)).ThenInclude(cl => cl.R_ChoiceGroups).ThenInclude(cg => cg.R_UsageInstances)
+
+            .Include(c => c.R_UsedChoiceGroups).ThenInclude(cg => cg.R_ChoiceGroup).ThenInclude(cg => cg.R_Effects)
+            .Include(c => c.R_UsedChoiceGroups).ThenInclude(cg => cg.R_ChoiceGroup).ThenInclude(cg => cg.R_PowersAlwaysAvailable)
+            .Include(c => c.R_UsedChoiceGroups).ThenInclude(cg => cg.R_ChoiceGroup).ThenInclude(cg => cg.R_PowersToPrepare)
+            .Include(c => c.R_UsedChoiceGroups).ThenInclude(cg => cg.R_ChoiceGroup).ThenInclude(cg => cg.R_Resources).ThenInclude(r => r.R_Blueprint)
+
+            .Include(c => c.R_UsedChoiceGroups).ThenInclude(cg => cg.R_EffectsGranted)
+            .Include(c => c.R_UsedChoiceGroups).ThenInclude(cg => cg.R_PowersAlwaysAvailableGranted)
+            .Include(c => c.R_UsedChoiceGroups).ThenInclude(cg => cg.R_PowersToPrepareGranted)
+            .Include(c => c.R_UsedChoiceGroups).ThenInclude(cg => cg.R_ResourcesGranted).ThenInclude(r => r.R_Blueprint)
+
+            .AsSplitQuery() // IMPORTANT !!!!! https://learn.microsoft.com/en-us/ef/core/querying/single-split-queries
+            .FirstAsync();
+            return character;
+        }
+
         public Task<Character> GetByIdWithClassLevels(int Id)
         {
             var character = _context.Characters

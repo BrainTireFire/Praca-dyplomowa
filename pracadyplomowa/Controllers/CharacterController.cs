@@ -190,7 +190,7 @@ namespace pracadyplomowa.Controllers
             {
                 return BadRequest(new ApiResponse(400, "Character with Id " + characterId + " does not exist"));
             }
-            character = await _unitOfWork.CharacterRepository.GetByIdWithChoiceGroups(characterId);
+            character = await _unitOfWork.CharacterRepository.GetByIdForChoice(characterId);
             var choiceGroupsEnumerable = character.R_CharacterHasLevelsInClass.SelectMany(cl => cl.R_ChoiceGroups).Union(character.R_CharacterBelongsToRace.R_RaceLevels.SelectMany(cl => cl.R_ChoiceGroups));
             try
             {

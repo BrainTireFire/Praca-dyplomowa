@@ -336,7 +336,9 @@ public class EncounterService : IEncounterService
             PlayerName = participance.R_Character.R_Owner!.UserName ?? "Unknown",
             PlaceInQueue = participance.InitiativeOrder,
             InitiativeRollResult = participance.InitiativeRollResult,
-            ActiveTurn = participance.ActiveTurn
+            ActiveTurn = participance.ActiveTurn,
+            SucceededDeathSaves = participance.R_Character.SucceededDeathSavingThrows,
+            FailedDeathSaves = participance.R_Character.FailedDeathSavingThrows
         });
         return new OkObjectResult(result);
     }

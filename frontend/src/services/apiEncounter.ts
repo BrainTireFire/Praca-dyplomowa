@@ -201,6 +201,8 @@ export type InitiativeQueueItem = {
   placeInQueue: number;
   initiativeRollResult: number;
   activeTurn: boolean;
+  succeededDeathSaves: number;
+  failedDeathSaves: number;
 };
 export async function getIsGM(encounterId: number): Promise<boolean> {
   const options: RequestInit = {

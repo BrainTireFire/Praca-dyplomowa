@@ -14,5 +14,8 @@ namespace pracadyplomowa.Models.DTOs.Session
         public int PlaceInQueue { get; set; }
         public int InitiativeRollResult {get; set;}
         public bool ActiveTurn {get; set;}
+        public int SucceededDeathSaves {get; set;}
+        public int FailedDeathSaves {get; set;}
+
     }
 }

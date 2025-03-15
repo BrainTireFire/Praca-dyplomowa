@@ -444,7 +444,9 @@ public class EncounterService : IEncounterService
             TotalMovement = x.R_Character.TotalMovementPerTurn,
             Hitpoints = character.Hitpoints,
             MaxHitpoints = character.MaxHealth,
-            TemporaryHitpoints = character.TemporaryHitpoints
+            TemporaryHitpoints = character.TemporaryHitpoints,
+            SucceededDeathSaves = character.SucceededDeathSavingThrows,
+            FailedDeathSaves = character.FailedDeathSavingThrows
         }).First();
         return result;
     }
@@ -458,6 +460,8 @@ public class EncounterService : IEncounterService
         var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(characterId);
         character.Hitpoints = participanceDataDto.Hitpoints;
         character.TemporaryHitpoints = participanceDataDto.TemporaryHitpoints;
+        character.SucceededDeathSavingThrows = participanceDataDto.SucceededDeathSaves;
+        character.FailedDeathSavingThrows = participanceDataDto.FailedDeathSaves;
         await _unitOfWork.SaveChangesAsync();
     }
 

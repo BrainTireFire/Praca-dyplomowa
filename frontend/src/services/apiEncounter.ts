@@ -344,6 +344,8 @@ export type ParticipanceData = {
   hitpoints: number;
   maxHitpoints: number;
   temporaryHitpoints: number;
+  succeededDeathSaves: number;
+  failedDeathSaves: number;
 };
 
 export async function moveCharacter(

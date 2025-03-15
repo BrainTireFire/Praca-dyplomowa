@@ -20,5 +20,7 @@ namespace pracadyplomowa.Models.DTOs.Session
         public int Hitpoints { get; set; }
         public int MaxHitpoints { get; set; }
         public int TemporaryHitpoints { get; set; }
+        public int SucceededDeathSaves { get; set; }
+        public int FailedDeathSaves { get; set; }
     }
 }

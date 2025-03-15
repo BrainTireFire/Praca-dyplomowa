@@ -14,7 +14,7 @@ namespace pracadyplomowa.Models.Entities.Powers
 {
     public abstract class EffectInstance : ObjectWithId
     {
-        private EffectInstance() : this("EF"){}
+        protected EffectInstance() : this("EF"){}
         public EffectInstance(string name){
             Name = name;
         }

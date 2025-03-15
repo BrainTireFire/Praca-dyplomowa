@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -76,7 +77,12 @@ namespace pracadyplomowa.Controllers
         {
             var power = _mapper.Map<Power>(powerDto);
             _unitOfWork.PowerRepository.Update(power);
-            await _unitOfWork.SaveChangesAsync();
+            try{
+                await _unitOfWork.SaveChangesAsync();
+            }
+            catch(ValidationException valEx){
+                return BadRequest(valEx.Message);
+            }
             return Ok(_mapper.Map<PowerFormDto>(power));
         }
 

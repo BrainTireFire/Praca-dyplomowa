@@ -11,7 +11,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class ArmorClassEffectBlueprint(string name, DiceSet value, RollMoment rollMoment) : ValueEffectBlueprint(name, value, rollMoment)
     {
-        private ArmorClassEffectBlueprint(): this("EF", 0, 0){}
+        protected ArmorClassEffectBlueprint(): this("EF", 0, 0){}
 
         public override EffectInstance Generate(Character? roller, Character target){
             return new ArmorClassEffectInstance(this, roller, target);

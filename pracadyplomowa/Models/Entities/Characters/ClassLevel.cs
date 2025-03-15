@@ -9,7 +9,7 @@ namespace pracadyplomowa.Models.Entities.Characters
     public class ClassLevel(int Level) : ObjectWithId
     {
         public int Level { get; set; } = Level;
-        public DiceSet HitDie { get; set; } = new DiceSet();
+        public virtual DiceSet HitDie { get; set; } = new DiceSet();
         public int HitPoints { get; set; }
 
         // Relationships

@@ -15,7 +15,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
         public virtual required Language R_Language { get; set; }
         public int R_LanguageId { get; set; }
         //constructors
-        private LanguageEffectBlueprint(): this("EF"){}
+        protected LanguageEffectBlueprint(): this("EF"){}
         public LanguageEffectBlueprint(string name) : base(name){
             Description = "Knowledge of spoken and written language";
         }

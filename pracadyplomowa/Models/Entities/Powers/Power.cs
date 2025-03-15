@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,17 +11,81 @@ using pracadyplomowa.Models.Enums;
 
 namespace pracadyplomowa.Models.Entities.Powers
 {
-    public class Power(string name, ActionType requiredActionType, CastableBy castableBy, PowerType powerType, TargetType targetType) : ObjectWithOwner
+    public class Power : ObjectWithOwner, IValidatableObject
     {
+        public Power(string name, ActionType requiredActionType, CastableBy castableBy, PowerType powerType, TargetType targetType) : base() {
+            Name = name;
+            RequiredActionType = requiredActionType;
+            CastableBy = castableBy;
+            PowerType = powerType;
+            TargetType = targetType;
+        }
 
-        public string Name { get; set; } = name;
+        public string Name { get; set; }
         public string Description { get; set; } = "";
-        public ActionType RequiredActionType { get; set; } = requiredActionType;
+        private ActionType _RequiredActionType;
+        public ActionType RequiredActionType {
+            get {
+                return _RequiredActionType;
+            }
+            set {
+                if(CastableBy != CastableBy.Character){
+                    _RequiredActionType = ActionType.None;
+                }
+                else{
+                    _RequiredActionType = value;
+                }
+            }
+        }
         public bool IsImplemented { get; set; } = true;
         public bool IsMagic { get; set;} = true;
-        public CastableBy CastableBy { get; set; } = castableBy;
-        public PowerType PowerType { get; set; } = powerType;
-        public TargetType TargetType { get; set; } = targetType;
+        private CastableBy _CastableBy;
+        public CastableBy CastableBy {
+            get { 
+                return _CastableBy;
+            }
+            set { 
+                _CastableBy = value;
+                if(value != CastableBy.Character){
+                    this.RequiredActionType = ActionType.None;
+                    this.R_ItemsCostRequirement.Clear();
+                    this.VerbalComponent = false;
+                    this.SomaticComponent = false;
+                    this.TargetType = TargetType.Character;
+                }
+            }
+        }
+        private PowerType _PowerType;
+        public PowerType PowerType {
+            get {
+                return _PowerType;
+            }
+            set {
+                if(CastableBy != CastableBy.Character && value == PowerType.AuraCreator){
+                    _PowerType = PowerType.Attack; // substitute with another valid value since AuraCreator is only allowed for powers casted by character
+                }
+                else{
+                    _PowerType = value;
+                }
+            }
+        }
+        private TargetType _TargetType;
+        public TargetType TargetType { 
+            get {
+                return _TargetType;
+            }
+            set {
+                if(PowerType == PowerType.AuraCreator){
+                    _TargetType = TargetType.Caster; // substitute with another valid value
+                }
+                else if(CastableBy != CastableBy.Character) {
+                    _TargetType = TargetType.Character;
+                }
+                else{
+                    _TargetType = value;
+                }
+            }
+        }
         public bool IsRanged { get; set; } = false;
         public int? Range { get; set; }
         public int MaxTargets { get; set; } = 1;
@@ -34,14 +99,40 @@ namespace pracadyplomowa.Models.Entities.Powers
         public bool RequiresConcentration { get; set; }
         public SavingThrowBehaviour? SavingThrowBehaviour { get; set; }
         public SavingThrowRoll? SavingThrowRoll { get; set; }
-        public bool VerbalComponent { get; set; }
-        public bool SomaticComponent { get; set; }
+        private bool _VerbalComponent;
+        public bool VerbalComponent {
+            get {
+                return _VerbalComponent;
+            }
+            set{
+                if(CastableBy != CastableBy.Character){
+                    _VerbalComponent = false;
+                }
+                else{
+                    _VerbalComponent = value;
+                }
+            }
+        }
+        private bool _SomaticComponent;
+        public bool SomaticComponent {
+            get {
+                return _SomaticComponent;
+            }
+            set{
+                if(CastableBy != CastableBy.Character){
+                    _SomaticComponent = false;
+                }
+                else{
+                    _SomaticComponent = value;
+                }
+            }
+        }
         public int Duration {get; set;} = 1;
         public UpcastBy UpcastBy {get; set;} = UpcastBy.NotUpcasted;
-        public Class? R_ClassForUpcasting {get; set;}
+        // Relationships
+        public virtual Class? R_ClassForUpcasting {get; set;}
         public int? R_ClassForUpcastingId {get; set;}
 
-        // Relationships
         public virtual List<PowerSelection> R_CharacterPreparedPowers { get; set; } = []; // list of selected powers out of all available from 
         public virtual List<Character> R_CharacterKnownsPowers { get; set; } = []; // always available powers
         public virtual List<Item> R_ItemsGrantingPower { get; set; } = [];
@@ -76,5 +167,113 @@ namespace pracadyplomowa.Models.Entities.Powers
             return caster.AllImmaterialResourceInstances.Where(x => !x.NeedsRefresh && x.Level >= minimumResourceLevel && x.R_BlueprintId == this.R_UsesImmaterialResource?.Id).Any();
         }
 
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if(CastableBy != CastableBy.Character && RequiredActionType != ActionType.None){
+                yield return new ValidationResult(
+                    "Powers not castable by 'Character' must have 'None' action requirement",
+                    [nameof(CastableBy), nameof(RequiredActionType)]
+                );
+            }
+            if(CastableBy != CastableBy.Character && VerbalComponent != false){
+                yield return new ValidationResult(
+                    "Powers not castable by 'Character' cannot have verbal component",
+                    [nameof(CastableBy), nameof(VerbalComponent)]
+                );
+            }
+            if(CastableBy != CastableBy.Character && SomaticComponent == false){
+                yield return new ValidationResult(
+                    "Powers not castable by 'Character' cannot have somatic component",
+                    [nameof(CastableBy), nameof(SomaticComponent)]
+                );
+            }
+            if(CastableBy != CastableBy.Character && PowerType == PowerType.AuraCreator){
+                yield return new ValidationResult(
+                    "Powers of type AuraCreator can be only castable by Character",
+                    [nameof(CastableBy), nameof(PowerType)]
+                );
+            }
+            if(TargetType != TargetType.Caster && PowerType == PowerType.AuraCreator){
+                yield return new ValidationResult(
+                    "Powers of type AuraCreator can only target Caster",
+                    [nameof(CastableBy), nameof(PowerType)]
+                );
+            }
+            // if(CastableBy != CastableBy.Character && R_ItemsCostRequirement.Count > 0){
+            //     yield return new ValidationResult(
+            //         "Powers not castable by 'Character' cannot have material component",
+            //         [nameof(CastableBy), nameof(SomaticComponent)]
+            //     );
+            // }
+            if(CastableBy != CastableBy.Character && UpcastBy != UpcastBy.NotUpcasted){
+                yield return new ValidationResult(
+                    "Powers not castable by 'Character' cannot be upcasted",
+                    [nameof(CastableBy), nameof(UpcastBy)]
+                );
+            }
+            // if(UpcastBy != UpcastBy.ClassLevel && (
+            //     R_ClassForUpcasting == null || R_ClassForUpcastingId == null
+            //     )
+            // ){
+            //     yield return new ValidationResult(
+            //         "Powers not upcastable be class level cannot have class level defined",
+            //         [nameof(CastableBy), nameof(SomaticComponent)]
+            //     );
+            // }
+            if(UpcastBy == UpcastBy.ClassLevel && R_ClassForUpcasting == null && R_ClassForUpcastingId == null){
+                yield return new ValidationResult(
+                    "Powers upcastable by class level must have class defined",
+                    [nameof(CastableBy), nameof(R_ClassForUpcastingId), nameof(R_ClassForUpcasting)]
+                );
+            }
+            if(IsRanged && (CastableBy != CastableBy.Character || PowerType == PowerType.AuraCreator)){
+                yield return new ValidationResult(
+                    "Powers not castable by Character and aura creators cannot be ranged",
+                    [nameof(CastableBy), nameof(IsRanged), nameof(PowerType)]
+                );
+            }
+            if(IsRanged && !(Range > 0)){
+                yield return new ValidationResult(
+                    "Ranged powers must have positive range defined",
+                    [nameof(IsRanged), nameof(Range)]
+                );
+            }
+            // if(PowerType == PowerType.AuraCreator || AreaShape != Enums.AreaShape.None && MaxTargets != 0){
+            //     yield return new ValidationResult(
+            //         "Aura creators and are of effect powers must have 0 max targets",
+            //         [nameof(CastableBy), nameof(SomaticComponent)]
+            //     );
+            // }
+            if(!(AreaSize > 0) && AreaShape != Enums.AreaShape.None){
+                yield return new ValidationResult(
+                    "Area of effect powers must have area size defined",
+                    [nameof(AreaSize), nameof(AreaShape)]
+                );
+            }
+            if(!(AuraSize > 0) && PowerType == PowerType.AuraCreator){
+                yield return new ValidationResult(
+                    "Aura creators must have positive aura size defined",
+                    [nameof(CastableBy), nameof(SomaticComponent)]
+                );
+            }
+            if(OverrideCastersDC && !(DifficultyClass > 0)){
+                yield return new ValidationResult(
+                    "Must specify difficulty class if power overrides casters DC",
+                    [nameof(OverrideCastersDC), nameof(DifficultyClass)]
+                );
+            }
+            if(PowerType == PowerType.Saveable && SavingThrowAbility == null){
+                yield return new ValidationResult(
+                    "Must specify ability for saveable power",
+                    [nameof(PowerType), nameof(SavingThrowAbility)]
+                );
+            }
+            if(PowerType == PowerType.Saveable && SavingThrowRoll == Enums.SavingThrowRoll.None){
+                yield return new ValidationResult(
+                    "Must specify saving throw roll moment for saveable power",
+                    [nameof(PowerType), nameof(SavingThrowRoll)]
+                );
+            }
+        }
     }
 }

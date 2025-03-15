@@ -9,7 +9,7 @@ public class DamageEffectInstance : ValueEffectInstance
 {
     public DamageEffectType EffectType { get; set; } = new DamageEffectType();
     public bool CriticalHit {get; set;}
-    private DamageEffectInstance() : base("EF", 0){}
+    protected DamageEffectInstance() : base("EF", 0){}
     public DamageEffectInstance(string name) : base(name, 0){}
     public DamageEffectInstance(DamageEffectBlueprint damageEffectBlueprint, Character? roller, Character target) : base(damageEffectBlueprint, roller, target){
         EffectType = damageEffectBlueprint.DamageEffectType;

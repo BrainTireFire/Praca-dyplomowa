@@ -37,7 +37,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             this.flat = diceSet.flat;
             this.additionalValues = diceSet.additionalValues.Select(x => new AdditionalValue(x)).ToList();
         }
-        public ValueEffectBlueprint? R_ValueEffectBlueprint { get; set; }
+        public virtual ValueEffectBlueprint? R_ValueEffectBlueprint { get; set; }
         public int? R_ValueEffectBlueprintId { get; set; }
         public int d20 { get; set; }
         public int d12 { get; set; }
@@ -47,7 +47,7 @@ namespace pracadyplomowa.Models.Entities.Characters
         public int d4 { get; set; }
         public int d100 { get; set; }
         public int flat { get; set; }
-        public List<AdditionalValue> additionalValues { get; set; } = [];
+        public virtual List<AdditionalValue> additionalValues { get; set; } = [];
 
         public static implicit operator int(DiceSet d) => d.flat;
         public static implicit operator DiceSet(int d) => new() { flat = d };
@@ -105,7 +105,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                 ProficiencyBonus = 4,
             }
             public AdditionalValueType additionalValueType { get; set; }
-            public Class? R_LevelsInClass { get; set; }
+            public virtual Class? R_LevelsInClass { get; set; }
             public int? R_LevelsInClassId { get; set; }
             public Ability? Ability {get; set;}
             public Skill? Skill {get; set;}

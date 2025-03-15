@@ -9,7 +9,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectInstances
 {
     public class ArmorClassEffectInstance : ValueEffectInstance
     {
-        private ArmorClassEffectInstance() : base("EF", 0){}
+        protected ArmorClassEffectInstance() : base("EF", 0){}
         public ArmorClassEffectInstance(string name) : base(name, 0){}
         public ArmorClassEffectInstance(ArmorClassEffectBlueprint actionEffectBlueprint, Character? roller, Character target) : base(actionEffectBlueprint, roller, target){
             

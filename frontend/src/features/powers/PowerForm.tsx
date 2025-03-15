@@ -282,6 +282,7 @@ const powerReducer = (state: Power, action: PowerAction): Power => {
       let range = state.range;
       let requiresConcentration = state.requiresConcentration;
       let overrideCastersDC = state.overrideCastersDC;
+      let difficultyClass = state.difficultyClass;
       if (action.payload !== "Character") {
         immaterialResourceUsed = null;
         upcastBy = "NotUpcasted";
@@ -293,6 +294,7 @@ const powerReducer = (state: Power, action: PowerAction): Power => {
       }
       if (action.payload === "Terrain") {
         overrideCastersDC = true;
+        difficultyClass = 10;
       }
       return {
         ...state,
@@ -305,6 +307,7 @@ const powerReducer = (state: Power, action: PowerAction): Power => {
         isRanged: isRanged,
         requiresConcentration: requiresConcentration,
         overrideCastersDC: overrideCastersDC,
+        difficultyClass: difficultyClass,
       };
     case PowerActionTypes.UPDATE_POWER_TYPE:
       let savingThrowAbility = state.savingThrowAbility;
@@ -330,7 +333,11 @@ const powerReducer = (state: Power, action: PowerAction): Power => {
         savingThrowRoll: savingThrowRollMoment,
       };
     case PowerActionTypes.UPDATE_TARGET_TYPE:
-      return { ...state, targetType: action.payload };
+      let isRanged2 = state.isRanged;
+      if (action.payload === "Caster") {
+        isRanged2 = false;
+      }
+      return { ...state, targetType: action.payload, isRanged: isRanged2 };
     case PowerActionTypes.UPDATE_IS_RANGED:
       return { ...state, isRanged: action.payload };
     case PowerActionTypes.UPDATE_RANGE:
@@ -420,7 +427,7 @@ export const initialState: Power = {
   areaSize: 0,
   areaShape: "None",
   auraSize: 0,
-  difficultyClass: 0,
+  difficultyClass: 10,
   savingThrowAbility: null,
   requiresConcentration: false,
   savingThrowBehaviour: "Breaks",
@@ -461,7 +468,9 @@ export default function PowerForm({
       });
     }
   }, [power]);
-  const { updatePower, isPending } = useUpdatePower(() => {});
+  const { updatePower, isPending } = useUpdatePower(() => {
+    onUpdate(actualPowerId!);
+  });
   const { createPower, isPending: isPendingCreate } = useCreatePower(
     (id: number) => {
       setActualPowerId(id);
@@ -545,6 +554,7 @@ export default function PowerForm({
           </FormRowVertical>
           <FormRowVertical label="Action type">
             <Dropdown
+              disabled={state.castableBy !== "Character"}
               valuesList={actionTypeOptions}
               setChosenValue={(e) =>
                 dispatch({
@@ -579,6 +589,7 @@ export default function PowerForm({
           </FormRowVertical>
           <FormRowLabelRight label="Verbal component">
             <Input
+              disabled={state.castableBy !== "Character"}
               type="checkbox"
               checked={state.verbalComponent}
               onChange={(x) =>
@@ -591,6 +602,7 @@ export default function PowerForm({
           </FormRowLabelRight>
           <FormRowLabelRight label="Somatic component">
             <Input
+              disabled={state.castableBy !== "Character"}
               type="checkbox"
               checked={state.somaticComponent}
               onChange={(x) =>
@@ -681,10 +693,12 @@ export default function PowerForm({
               ></EffectTable> */}
               {power && (
                 <>
-                  <MaterialResourceTable
-                    materialComponents={state.materialResourcesUsed}
-                    powerId={powerId ?? -1}
-                  ></MaterialResourceTable>
+                  {state.castableBy === "Character" && (
+                    <MaterialResourceTable
+                      materialComponents={state.materialResourcesUsed}
+                      powerId={powerId ?? -1}
+                    ></MaterialResourceTable>
+                  )}
 
                   <EffectTable
                     effects={state.effectBlueprints}
@@ -743,7 +757,8 @@ export default function PowerForm({
                   <Input
                     disabled={
                       state.castableBy !== "Character" ||
-                      state.powerType === "AuraCreator"
+                      state.powerType === "AuraCreator" ||
+                      state.targetType === "Caster"
                     }
                     type="checkbox"
                     checked={state.isRanged}
@@ -781,7 +796,10 @@ export default function PowerForm({
                 `}
               >
                 <Input
-                  disabled={state.powerType === "AuraCreator"}
+                  disabled={
+                    state.powerType === "AuraCreator" ||
+                    state.areaShape !== "None"
+                  }
                   value={state.maxTargets}
                   type="number"
                   onChange={(e) =>
@@ -792,7 +810,7 @@ export default function PowerForm({
                   }
                 ></Input>
               </FormRowVertical>
-              <FormRowVertical
+              {/* <FormRowVertical
                 label="Max targets to exclude"
                 customStyles={css`
                   grid-column: 1;
@@ -810,7 +828,7 @@ export default function PowerForm({
                     })
                   }
                 ></Input>
-              </FormRowVertical>
+              </FormRowVertical> */}
               <FormRowVertical
                 label="Area size"
                 customStyles={css`
@@ -822,7 +840,8 @@ export default function PowerForm({
                   disabled={
                     state.powerType === "Attack" ||
                     state.powerType === "AuraCreator" ||
-                    state.areaShape === "None"
+                    state.areaShape === "None" ||
+                    state.castableBy === "OnWeaponHit"
                   }
                   value={state.areaSize}
                   type="number"
@@ -844,7 +863,8 @@ export default function PowerForm({
                 <Dropdown
                   disabled={
                     state.powerType === "Attack" ||
-                    state.powerType === "AuraCreator"
+                    state.powerType === "AuraCreator" ||
+                    state.castableBy === "OnWeaponHit"
                   }
                   valuesList={[...areaShapeOptions]}
                   setChosenValue={(e) =>

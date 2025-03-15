@@ -11,7 +11,7 @@ namespace pracadyplomowa.Models.Entities.Characters
     {
         public string Name { get; set; } = null!;
         public SlotType Type { get; set; }
-        public List<EquipData> Usages { get; set; } = [];
+        public virtual List<EquipData> Usages { get; set; } = [];
 
         //Relationship
         public virtual ICollection<Race> R_Races { get; set; } = [];

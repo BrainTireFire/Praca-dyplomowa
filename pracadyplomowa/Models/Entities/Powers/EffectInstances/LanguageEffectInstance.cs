@@ -14,7 +14,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
         
         public virtual required Language R_Language { get; set; }
         public int R_LanguageId { get; set; }
-        private LanguageEffectInstance() : base("EF"){}
+        protected LanguageEffectInstance() : base("EF"){}
         public LanguageEffectInstance(string name) : base(name){}
         [System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute]
         public LanguageEffectInstance(LanguageEffectBlueprint languageEffectBlueprint, Character target) : base(languageEffectBlueprint, target){

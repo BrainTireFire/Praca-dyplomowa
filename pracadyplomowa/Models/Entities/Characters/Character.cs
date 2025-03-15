@@ -45,7 +45,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             }
         }
         public bool IsNpc { get; set; } = false;
-        public DiceSet UsedHitDice { get; set; } = new DiceSet();
+        public virtual DiceSet UsedHitDice { get; set; } = new DiceSet();
         public int ExperiencePoints { get; set; }
         public int SucceededDeathSavingThrows { get; set; }
         public int FailedDeathSavingThrows { get; set; }

@@ -535,7 +535,7 @@ namespace pracadyplomowa.Models.DTOs
                 Target = "Character",
                 TurnsLeft = null
             }).ToList();
-            List<Effect> effectsOnItems = character.R_CharacterHasBackpack.R_BackpackHasItems.SelectMany(item => item.R_AffectedBy)
+            List<Effect> effectsOnItems = character.R_EquippedItems.Select(ed => ed.R_Item).SelectMany(item => item.R_AffectedBy)
             .Where(effect => effect.R_OwnedByGroup == null || effect.R_OwnedByGroup.IsConstant == true)
             .Select(effect => new Effect()
             {
@@ -543,7 +543,7 @@ namespace pracadyplomowa.Models.DTOs
                 Name = effect.Name,
                 Source = effect.Source,
                 Target = effect.R_TargetedItem.Name,
-                TurnsLeft = effect.R_OwnedByGroup.DurationLeft
+                TurnsLeft = effect.R_OwnedByGroup?.DurationLeft ?? null
             }).ToList();
 
             return effectsOnCharacter.Union(effectsOnItems).ToList();
@@ -561,7 +561,7 @@ namespace pracadyplomowa.Models.DTOs
                 Target = "Character",
                 TurnsLeft = effect.R_OwnedByGroup.DurationLeft
             }).ToList();
-            List<Effect> effectsOnItems = character.R_CharacterHasBackpack.R_BackpackHasItems.SelectMany(item => item.R_AffectedBy)
+            List<Effect> effectsOnItems = character.R_EquippedItems.Select(ed => ed.R_Item).SelectMany(item => item.R_AffectedBy)
             .Where(effect => effect.R_OwnedByGroup != null && effect.R_OwnedByGroup.IsConstant == false)
             .Select(effect => new Effect()
             {
@@ -569,7 +569,7 @@ namespace pracadyplomowa.Models.DTOs
                 Name = effect.Name,
                 Source = effect.Source,
                 Target = effect.R_TargetedItem.Name,
-                TurnsLeft = effect.R_OwnedByGroup.DurationLeft
+                TurnsLeft = effect.R_OwnedByGroup?.DurationLeft
             }).ToList();
 
             return effectsOnCharacter.Union(effectsOnItems).ToList();

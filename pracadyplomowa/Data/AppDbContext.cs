@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using pracadyplomowa.Models;
 using pracadyplomowa.Models.Entities;
@@ -301,11 +302,30 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                 builder.Entity<Weapon>().Navigation(i => i.DamageValue).AutoInclude();
                 builder.Entity<MeleeWeapon>().Navigation(i => i.VersatileDamageValue).AutoInclude();
                 builder.Entity<EquipData>().Navigation(i => i.R_Slots).AutoInclude();
+                builder.Entity<Character>().HasMany(c => c.R_CharactersParticipatesInEncounters).WithOne(p => p.R_Character).HasForeignKey(p => p.R_CharacterId).OnDelete(DeleteBehavior.Cascade);
         }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.AddInterceptors(new Data.DeletionInterceptor());
+        optionsBuilder.AddInterceptors(new Data.ValidationInterceptor());
+        optionsBuilder.UseLazyLoadingProxies();
+        var lazyLoadEvents = new[]
+        {
+                CoreEventId.NavigationLazyLoading,
+                CoreEventId.DetachedLazyLoadingWarning,
+                CoreEventId.LazyLoadOnDisposedContextWarning,
+        };
+        #if DEBUG
+        optionsBuilder.ConfigureWarnings(w => w.Throw(lazyLoadEvents));
+        #else
+        if (sp.GetService<IHostEnvironment>()?.IsEnvironment("PRD") ?? false)
+        {   //logs LazyLoad events as error everywhere else
+                optionsBuilder.ConfigureWarnings(w => w.Log(lazyLoadEvents.Select(lle => (lle, LogLevel.Error)).ToArray())); 
+        }
+        #endif
         base.OnConfiguring(optionsBuilder);
     }
+
+        
 }

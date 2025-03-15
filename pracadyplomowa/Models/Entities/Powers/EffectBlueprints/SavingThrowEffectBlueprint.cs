@@ -11,7 +11,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
 {
     public class SavingThrowEffectBlueprint : ValueEffectBlueprint
     {
-        private SavingThrowEffectBlueprint() : this("EF", 0, 0, 0){}
+        protected SavingThrowEffectBlueprint() : this("EF", 0, 0, 0){}
         public SavingThrowEffectBlueprint(string name, DiceSet value, RollMoment rollMoment, SavingThrowEffect effect, Ability? ability) : this(name, value, rollMoment, effect){
             SavingThrowEffectType.SavingThrowEffect_Ability = ability;
             // SavingThrowEffectType.SavingThrowEffect_Condition = condition;

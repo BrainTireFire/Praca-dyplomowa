@@ -153,7 +153,7 @@ public class EncounterService : IEncounterService
     {
         try
         {
-            var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId);
+            var encounter = await _unitOfWork.EncounterRepository.GetEncounterForPositionUpdate(encounterId);
             
             if (encounter == null)
             {
@@ -248,7 +248,7 @@ public class EncounterService : IEncounterService
     {
         try
         {
-            var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId);
+            var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummaryForDelete(encounterId);
             
             if (encounter == null)
             {

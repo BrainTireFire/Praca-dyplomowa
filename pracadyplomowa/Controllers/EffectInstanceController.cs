@@ -100,5 +100,17 @@ namespace pracadyplomowa.Controllers
             return Ok("Resource deleted");
         }
 
+        [HttpPatch("{effectId}/unlink")]
+        public async Task<ActionResult> UnlinkEffectInstance([FromRoute] int effectId)
+        {
+            var effect = await _unitOfWork.EffectInstanceRepository.GetByIdWithTargets(effectId);
+            if(effect == null){
+                return NotFound(effectId);
+            }
+            effect.Unlink();
+            await _unitOfWork.SaveChangesAsync();
+            return Ok();
+        }
+
     }
 }

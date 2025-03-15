@@ -7,12 +7,10 @@ import { Cell } from "../../../ui/containers/Cell";
 import ConfirmDelete from "../../../ui/containers/ConfirmDelete";
 import { CharacterIdContext } from "../contexts/CharacterIdContext";
 import { useContext } from "react";
-import { useDeleteConstantEffectInstance } from "../hooks/useDeleteConstantEffectInstance";
 import EffectInstanceForm from "../../effects/EffectInstanceForm";
-import { useCreateConstantEffectInstance } from "../hooks/useCreateConstantEffectInstance";
-import { initialState } from "../../effects/EffectBlueprintForm";
 import { EffectParentObjectIdContext } from "../../../context/EffectParentObjectIdContext";
 import { EditModeContext } from "../../../context/EditModeContext";
+import { useUnlinkConstantEffectInstance } from "../hooks/useUnlinkConstantEffectInstance";
 
 export default function ConstantEffectTable({
   effects,
@@ -25,7 +23,7 @@ export default function ConstantEffectTable({
       <Table
         header="Constant effects"
         button="Add new"
-        columns="1fr 1fr 0.01rem"
+        columns="1fr 1fr 1fr 0.01rem"
         // buttonOnClick={() => createConstantEffectInstance(initialState)}
         modal={
           <EffectParentObjectIdContext.Provider
@@ -38,6 +36,7 @@ export default function ConstantEffectTable({
         <Table.Header>
           <Cell>Name</Cell>
           <Cell>Source</Cell>
+          <Cell>Target</Cell>
           <Cell></Cell>
         </Table.Header>
         <Table.Body
@@ -56,7 +55,7 @@ export default function ConstantEffectTable({
 function ConstantEffectRow({ effect }: { effect: Effect }) {
   const { characterId } = useContext(CharacterIdContext);
   const { editMode } = useContext(EditModeContext);
-  const { deleteEffectInstance, isPending } = useDeleteConstantEffectInstance(
+  const { unlinkEffectInstance, isPending } = useUnlinkConstantEffectInstance(
     () => {},
     characterId as number
   );
@@ -65,6 +64,7 @@ function ConstantEffectRow({ effect }: { effect: Effect }) {
       <Cell>{effect.name}</Cell>
 
       <Cell>{effect.source}</Cell>
+      <Cell>{effect.target}</Cell>
 
       <Modal>
         <Menus.Menu>
@@ -89,7 +89,7 @@ function ConstantEffectRow({ effect }: { effect: Effect }) {
             resourceName="effect instance"
             disabled={isPending}
             onConfirm={() => {
-              deleteEffectInstance(effect.id);
+              unlinkEffectInstance(effect.id);
             }}
           />
         </Modal.Window>

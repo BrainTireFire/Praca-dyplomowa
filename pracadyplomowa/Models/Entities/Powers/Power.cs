@@ -163,8 +163,8 @@ namespace pracadyplomowa.Models.Entities.Powers
             return source;
         }
 
-        public bool RequiredResourceAvailable(Character caster, int minimumResourceLevel) {
-            return caster.AllImmaterialResourceInstances.Where(x => !x.NeedsRefresh && x.Level >= minimumResourceLevel && x.R_BlueprintId == this.R_UsesImmaterialResource?.Id).Any();
+        public bool RequiredResourceAvailable(Character caster, int resourceLevel) {
+            return caster.AllImmaterialResourceInstances.Where(x => !x.NeedsRefresh && x.Level == resourceLevel && x.R_BlueprintId == this.R_UsesImmaterialResource?.Id).Any();
         }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

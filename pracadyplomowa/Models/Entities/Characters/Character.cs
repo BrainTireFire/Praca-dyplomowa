@@ -1395,12 +1395,15 @@ namespace pracadyplomowa.Models.Entities.Characters
             return this.R_CharacterHasLevelsInClass.Where(c => c.R_ClassId == classId).Count();
         }
 
-        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel, out List<EffectInstance> generatedEffects, List<string> messages)
+        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel, int? powerLevel, out List<EffectInstance> generatedEffects, List<string> messages)
         {
             generatedEffects = [];
             // check for available immaterial resource
             if (power.R_UsesImmaterialResource != null)
             {
+                if(immaterialResourceLevel != null && powerLevel != null && immaterialResourceLevel < powerLevel){
+                    return Outcome.ResourceLevelLowerThanPowerLevelSelected;
+                }
                 var immaterialResourceInstance = this.AllImmaterialResourceInstances.FirstOrDefault(x => x.R_Blueprint == power.R_UsesImmaterialResource && !x.NeedsRefresh && x.Level == immaterialResourceLevel);
                 if (immaterialResourceInstance == null)
                 {
@@ -1443,7 +1446,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                         {
                             bool shouldAdd = false;
                             if (power.UpcastBy == UpcastBy.NotUpcasted
-                            || (power.UpcastBy == UpcastBy.ResourceLevel && immaterialResourceLevel == effectBlueprint.Level)
+                            || (power.UpcastBy == UpcastBy.ResourceLevel && powerLevel == effectBlueprint.Level)
                             || (power.UpcastBy == UpcastBy.CharacterLevel && this.Level == effectBlueprint.Level)
                             || (power.UpcastBy == UpcastBy.ClassLevel && this.GetLevelInClass((int)power.R_ClassForUpcastingId) == effectBlueprint.Level)
                             )

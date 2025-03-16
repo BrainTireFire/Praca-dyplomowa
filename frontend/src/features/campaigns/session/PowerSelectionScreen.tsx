@@ -1,12 +1,17 @@
+import { useState } from "react";
 import { DamageType } from "../../../models/damageType";
 import { DiceSetString } from "../../../models/diceset";
 import { Power } from "../../../models/session/VirtualBoardProps";
 import { WeaponAttack } from "../../../models/weaponattack";
-import { PowerForEncounterDto } from "../../../services/apiCharacters";
+import {
+  ImmaterialResourceSelection,
+  PowerForEncounterDto,
+} from "../../../services/apiCharacters";
 import { ParticipanceData } from "../../../services/apiEncounter";
 import { Cell } from "../../../ui/containers/Cell";
 import Menus from "../../../ui/containers/Menus";
 import Table from "../../../ui/containers/Table";
+import Dropdown from "../../../ui/forms/Dropdown";
 import Button from "../../../ui/interactive/Button";
 import Spinner from "../../../ui/interactive/Spinner";
 import { useCharacter } from "../../characters/hooks/useCharacter";
@@ -67,7 +72,6 @@ export default function SessionPowersTable({
           <div>Name</div>
           <div>Description</div>
           <div>Resource</div>
-          <div>Min Resource Level</div>
           <div>Action Type</div>
           <div>Range</div>
           <div>Max Targets</div>
@@ -76,6 +80,7 @@ export default function SessionPowersTable({
           <div>Castable By</div>
           <div>Power Type</div>
           <div>Target Type</div>
+          <div>Cast option</div>
           <div></div>
         </Table.Header>
         <Table.Body
@@ -107,6 +112,8 @@ function PowerRow({
   dispatch: React.Dispatch<SetPower>;
   onCloseModal: () => {};
 }) {
+  const [chosenLevel, setChosenLevel] =
+    useState<ImmaterialResourceSelection | null>(null);
   console.log(participanceData);
   console.log(power);
   const actionsLeft =
@@ -128,15 +135,26 @@ function PowerRow({
       power.somaticComponentRequirementSatisfied &&
       power.requiredResourceAvailable &&
       power.requiredMaterialComponentsAvailable
-    );
+    ) ||
+    (chosenLevel == null && power.availableLevels.length > 0);
   console.log(actionOrBonusAction ? !actionsLeft : !bonusActionsLeft);
+
+  let valuesList = power.availableLevels.map((x) => {
+    return {
+      value: `${x.powerLevel}/${x.resourceLevel}`,
+      label: `Power level: ${x.powerLevel} / Resource level: ${x.resourceLevel}`,
+    };
+  });
+
+  const stringifiedChosenLevel = chosenLevel
+    ? `${chosenLevel.powerLevel}/${chosenLevel.resourceLevel}`
+    : null;
 
   return (
     <Table.Row>
       <Cell>{power.name}</Cell>
       <Cell>{power.description}</Cell>
       <Cell>{power.resourceName ?? "-"}</Cell>
-      <Cell>{power.minimumResourceLevel ?? "-"}</Cell>
       <Cell>{power.actionTypeRequired ?? "-"}</Cell>
       <Cell>{power.range ?? "-"}</Cell>
       <Cell>{power.maxTargets ?? "-"}</Cell>
@@ -145,6 +163,22 @@ function PowerRow({
       <Cell>{power.castableBy ?? "-"}</Cell>
       <Cell>{power.powerType ?? "-"}</Cell>
       <Cell>{power.targetType ?? "-"}</Cell>
+      <Cell>
+        <Dropdown
+          valuesList={valuesList}
+          chosenValue={stringifiedChosenLevel}
+          setChosenValue={(e) =>
+            setChosenLevel(
+              e
+                ? {
+                    powerLevel: Number(e.split("/")[0]),
+                    resourceLevel: Number(e.split("/")[1]),
+                  }
+                : null
+            )
+          }
+        ></Dropdown>
+      </Cell>
 
       <Button
         disabled={disabled}
@@ -158,6 +192,7 @@ function PowerRow({
               areaShape: power.areaShape,
               areaSize: power.areaSize,
               targetType: power.targetType,
+              chosenLevel: chosenLevel,
             },
           });
           onCloseModal();

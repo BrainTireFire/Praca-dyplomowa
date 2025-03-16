@@ -407,7 +407,7 @@ export type PowerForEncounterDto = {
   name: string;
   description: string;
   resourceName: string | null;
-  minimumResourceLevel: number | null;
+  availableLevels: ImmaterialResourceSelection[];
   actionTypeRequired: string | null;
   requiredResourceAvailable: boolean;
   materialComponents: MaterialComponentDto[];
@@ -421,12 +421,18 @@ export type PowerForEncounterDto = {
   castableBy: CastableBy;
   powerType: PowerType;
   targetType: TargetType;
+  castableLevels: number[];
 };
 
 export type MaterialComponentDto = {
   id: number;
   name: string;
   cost: CoinPurse;
+};
+
+export type ImmaterialResourceSelection = {
+  powerLevel: number;
+  resourceLevel: number;
 };
 
 export type ChoiceGroup = {

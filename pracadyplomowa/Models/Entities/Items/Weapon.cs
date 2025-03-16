@@ -182,7 +182,7 @@ namespace pracadyplomowa.Models.Entities.Items
             return hitMap;
         }
 
-        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel, out List<EffectInstance> generatedEffects, List<string> messages)
+        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel, int? powerLevel, out List<EffectInstance> generatedEffects, List<string> messages)
         {
             EffectGroup effectGroup = new();
             generatedEffects = [];

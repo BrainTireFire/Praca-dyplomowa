@@ -6,4 +6,6 @@ public class PowerCastOverlayDto
     public int CampaignId { get; set; }
     public int PowerId { get; set; }
     public ICollection<int> PowerTargetIds { get; set; } = new List<int>();
+    public int PowerLevelSelected { get; set; }
+    public int ResourceLevelSelected { get; set; }
 }

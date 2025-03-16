@@ -5,7 +5,7 @@ import {
 } from "../../../services/apiEncounter";
 
 export type StateType = {
-  spellSlotLevel: number | null;
+  // spellSlotLevel: number | null;
   conditionalEffects: ConditionalEffectsSelectionSet;
 };
 
@@ -129,7 +129,7 @@ export const PowerCastConditionalEffectsReducer: Reducer<StateType, Action> = (
 
       return {
         ...state,
-        spellSlotLevel: data.powerData.availableImmaterialResourceLevels[0], // Reset spell slot level on sync
+        // spellSlotLevel: data.powerData.availableImmaterialResourceLevels[0], // Reset spell slot level on sync
         conditionalEffects: {
           casterConditionalEffects: syncEffects(
             state.conditionalEffects.casterConditionalEffects,
@@ -146,7 +146,7 @@ export const PowerCastConditionalEffectsReducer: Reducer<StateType, Action> = (
 };
 
 export const initialState: StateType = {
-  spellSlotLevel: 0,
+  // spellSlotLevel: 0,
   conditionalEffects: {
     casterConditionalEffects: [],
     targetConditionalEffects: {},

@@ -33,8 +33,8 @@ public interface IEncounterService
     Task<Character.WeaponHitResult> ApplyWeaponHit(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, bool criticalHit, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds);
     Task<AttackRollAndDamageResultDto> AttackRollAndDamage(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds);
     Task<WeaponAttackResultDto> MakeWeaponAttack(int encounterId, int characterId, int weaponId, int targetId, bool isRanged, WeaponAttackIncomingDataDto approvedConditionalEffects);
-    Task<PowerDataForResolutionDto> GetPowerData(int encounterId, int characterId, int powerId);
-    Task<CastPowerResultDto> CastPower(int encounterId, int characterId, int powerId, CastPowerIncomingDataDto incomingDataDto);
+    Task<PowerDataForResolutionDto> GetPowerData(int encounterId, int characterId, int powerId, int? powerLevel, int? resourceLevel);
+    Task<CastPowerResultDto> CastPower(int encounterId, int characterId, int powerId, int? powerLevel, int? immaterialResourceLevel, CastPowerIncomingDataDto incomingDataDto);
     Task MoveUpQueue(int encounterId, int characterId, int userId);
     Task MoveDownQueue(int encounterId, int characterId, int userId);
     Task<ActionResult> RemoveEncounterAsync(int ownerId, int encounterId);

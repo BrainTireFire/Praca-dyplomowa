@@ -696,8 +696,24 @@ public class EncounterService : IEncounterService
             ResourceName = power.R_UsesImmaterialResource?.Name! 
         };
 
+        int maximumApplicableEffectLevel = 0;
+        foreach(var effect in  power.R_EffectBlueprints){
+            int searchedLevel = 0;
+            if(power.UpcastBy == UpcastBy.ResourceLevel){
+                searchedLevel = (int)powerLevel!;
+            }
+            else if(power.UpcastBy == UpcastBy.CharacterLevel){
+                searchedLevel = character.Level;
+            }
+            else if(power.UpcastBy == UpcastBy.ClassLevel){
+                searchedLevel = character.GetLevelInClass((int)power.R_ClassForUpcastingId!);
+            }
 
-        foreach(var savedGroup in power.R_EffectBlueprints.Where(x => powerLevel == null || x.Level == powerLevel).GroupBy(x => x.Saved).ToList()){
+            if(effect.Level <= searchedLevel && effect.Level > maximumApplicableEffectLevel){
+                maximumApplicableEffectLevel = effect.Level;
+            }
+        }
+        foreach(var savedGroup in power.R_EffectBlueprints.Where(x => powerLevel == null || x.Level == maximumApplicableEffectLevel || power.UpcastBy == UpcastBy.NotUpcasted).GroupBy(x => x.Saved).ToList()){
             var saved = savedGroup.Key ? 1 : 0;
             result.PowerEffects.Add(saved, []);
             foreach(var effect in savedGroup){
@@ -778,12 +794,16 @@ public class EncounterService : IEncounterService
                 PowerName = power.Name,
                 PowerDescription = power.Description
             };
-            foreach(var effect in power.R_EffectBlueprints){
-                powerDto.PowerEffects.Add(new WeaponDamageAndPowersDto.PowersOnHitDto.PowerEffectDto(){
-                    PowerEffectId = effect.Id,
-                    PowerEffectName = effect.Name,
-                    PowerEffectDescription = effect.Description,
-                });
+            foreach(var savedGroup in power.R_EffectBlueprints.GroupBy(x => x.Saved).ToList()){
+                var saved = savedGroup.Key ? 1 : 0;
+                powerDto.PowerEffects.Add(saved, []);
+                foreach(var effect in savedGroup){
+                    powerDto.PowerEffects.GetValueOrDefault(saved)!.Add(new WeaponDamageAndPowersDto.PowersOnHitDto.PowerEffectDto(){
+                        PowerEffectId = effect.Id,
+                        PowerEffectName = effect.Name,
+                        PowerEffectDescription = effect.Description,
+                    });
+                }
             }
             result.PowersOnHit.Add(powerDto);
         }
@@ -846,9 +866,8 @@ public class EncounterService : IEncounterService
                     PowerName = power.Name,
                     Success = powerRollResult == HitType.Hit || powerRollResult == HitType.CriticalHit
                 });
-                if(powerRollResult == HitType.Hit || powerRollResult == HitType.CriticalHit){
-                    await ApplyWeaponPowerHit(encounter, character, weapon, power, target, powerRollResult, conditionalEffectsForPower.CasterConditionalEffects, conditionalEffectsForPower.TargetConditionalEffects, messages);
-                }
+                
+                await ApplyWeaponPowerHit(encounter, character, weapon, power, target, powerRollResult, conditionalEffectsForPower.CasterConditionalEffects, conditionalEffectsForPower.TargetConditionalEffects, messages);
             }
         }
         int finalTargetHealth = target.Hitpoints + target.TemporaryHitpoints;

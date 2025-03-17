@@ -691,7 +691,7 @@ namespace pracadyplomowa.Controllers
                     var powerLevels = power.R_EffectBlueprints.Select(x => x.Level).Distinct().Order().ToList();
                     levelsCastable.AddRange(power.R_EffectBlueprints.Select(x => x.Level).Distinct().Where(x => power.RequiredResourceAvailable(character, x)));
                     foreach(var level in powerLevels){
-                        foreach(var resourceLevel in character.AllImmaterialResourceInstances.Where(x => !x.NeedsRefresh && x.Level >= level && x.R_BlueprintId == power.R_UsesImmaterialResource?.Id).Select(x => x.Level).Order().ToList()){
+                        foreach(var resourceLevel in character.AllImmaterialResourceInstances.Where(x => !x.NeedsRefresh && x.Level >= level && x.R_BlueprintId == power.R_UsesImmaterialResource?.Id).Select(x => x.Level).Distinct().Order().ToList()){
                             powerDto.AvailableLevels.Add(new PowerForEncounterDto.ImmaterialResourceSelection(){
                                 PowerLevel = level,
                                 ResourceLevel = resourceLevel

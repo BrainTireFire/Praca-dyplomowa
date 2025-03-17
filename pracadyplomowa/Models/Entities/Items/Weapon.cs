@@ -168,7 +168,7 @@ namespace pracadyplomowa.Models.Entities.Items
                         targetedCharacter.Id,
                         success ? HitType.Hit : HitType.Miss
                     );
-                    messages.Add($"{targetedCharacter.Name} {(success ? "passed" : "failed")} saving throw against {power.Name} (rolled {roll} against DC{dc})");
+                    messages.Add($"{targetedCharacter.Name} {(!success ? "passed" : "failed")} a {(Ability)power.SavingThrowAbility} saving throw against {power.Name} (rolled total of {roll} against DC{dc})");
                 }
                 else
                 {
@@ -204,7 +204,7 @@ namespace pracadyplomowa.Models.Entities.Items
                             {
                                 shouldAdd = true;
                             }
-                            else if ((outcome == HitType.Hit || outcome == HitType.CriticalHit) && effectBlueprint.Saved && power.SavingThrowBehaviour == SavingThrowBehaviour.Modifies)
+                            else if (!(outcome == HitType.Hit || outcome == HitType.CriticalHit) && effectBlueprint.Saved && power.SavingThrowBehaviour == SavingThrowBehaviour.Modifies)
                             {
                                 shouldAdd = true;
                             }

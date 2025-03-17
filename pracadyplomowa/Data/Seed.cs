@@ -719,7 +719,7 @@ public class Seed
         Power arcaneRecoveryLevel = new("Arcane Recovery " + level, ActionType.Action, CastableBy.Character, PowerType.PassiveEffect, TargetType.Caster)
         {
             IsImplemented = false,
-            R_UsesImmaterialResource = arcaneRecoveryCharge
+            R_UsesImmaterialResource = arcaneRecoveryCharge,
         };
         DummyEffectBlueprint arcaneRecoveryEffect = new("Arcane Recovery " + level)
         {

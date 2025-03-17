@@ -458,7 +458,7 @@ export interface PowersOnHitDto {
   powerId: number;
   powerName: string;
   powerDescription: string;
-  powerEffects: PowerEffectDto[];
+  powerEffects: Record<number, PowerEffectDto[]>;
 }
 
 export interface PowerEffectDto {

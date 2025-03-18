@@ -532,7 +532,7 @@ namespace pracadyplomowa.Models.DTOs
                 Id = effect.Id,
                 Name = effect.Name,
                 Source = effect.Source,
-                Target = "Character",
+                Target = effect.TargetName,
                 TurnsLeft = null
             }).ToList();
             List<Effect> effectsOnItems = character.R_EquippedItems.Select(ed => ed.R_Item).SelectMany(item => item.R_AffectedBy)
@@ -542,7 +542,7 @@ namespace pracadyplomowa.Models.DTOs
                 Id = effect.Id,
                 Name = effect.Name,
                 Source = effect.Source,
-                Target = effect.R_TargetedItem.Name,
+                Target = effect.TargetName,
                 TurnsLeft = effect.R_OwnedByGroup?.DurationLeft ?? null
             }).ToList();
 
@@ -558,7 +558,7 @@ namespace pracadyplomowa.Models.DTOs
                 Id = effect.Id,
                 Name = effect.Name,
                 Source = effect.Source,
-                Target = "Character",
+                Target = effect.TargetName,
                 TurnsLeft = effect.R_OwnedByGroup.DurationLeft
             }).ToList();
             List<Effect> effectsOnItems = character.R_EquippedItems.Select(ed => ed.R_Item).SelectMany(item => item.R_AffectedBy)
@@ -568,7 +568,7 @@ namespace pracadyplomowa.Models.DTOs
                 Id = effect.Id,
                 Name = effect.Name,
                 Source = effect.Source,
-                Target = effect.R_TargetedItem.Name,
+                Target = effect.TargetName,
                 TurnsLeft = effect.R_OwnedByGroup?.DurationLeft
             }).ToList();
 

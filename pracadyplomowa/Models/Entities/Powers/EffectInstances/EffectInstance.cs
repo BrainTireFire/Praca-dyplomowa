@@ -64,6 +64,14 @@ namespace pracadyplomowa.Models.Entities.Powers
                 else return "Custom";
             }
         }
+        [NotMapped]
+        public string TargetName {
+            get {
+                if(R_TargetedCharacter != null) return R_TargetedCharacter.Name;
+                else if(R_TargetedItem != null) return R_TargetedItem.Name;
+                else return "No target";
+            }
+        }
 
         [NotMapped]
         public bool DeleteOnSave {get; set;}

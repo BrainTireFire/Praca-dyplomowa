@@ -9,5 +9,6 @@ namespace pracadyplomowa.Repository
     public interface IEffectInstanceRepository: IBaseRepository<EffectInstance>
     {
         public Task<EffectInstance> GetByIdWithGroup(int id);
+        public Task<EffectInstance> GetByIdWithTargets(int id);
     }
 }

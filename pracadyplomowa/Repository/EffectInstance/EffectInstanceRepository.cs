@@ -15,5 +15,11 @@ namespace pracadyplomowa.Repository
         public Task<EffectInstance> GetByIdWithGroup(int id){
             return _context.EffectInstances.Where(x => x.Id == id).Include(x => x.R_OwnedByGroup).FirstAsync();
         }
+
+        public Task<EffectInstance> GetByIdWithTargets(int id){
+            return _context.EffectInstances.Where(x => x.Id == id)
+            .Include(x => x.R_TargetedCharacter).ThenInclude(x => x.R_AffectedBy.Where(e => e.Id == id))
+            .Include(x => x.R_TargetedItem).ThenInclude(x => x.R_AffectedBy.Where(e => e.Id == id)).FirstAsync();
+        }
     }
 }

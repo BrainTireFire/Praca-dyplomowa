@@ -47,6 +47,7 @@ const Container = styled.div`
   overflow-y: hidden;
   display: flex;
   flex-direction: column;
+  height: 100%;
 `;
 
 const TabListWrapper = styled.nav`

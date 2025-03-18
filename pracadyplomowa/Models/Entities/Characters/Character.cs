@@ -971,6 +971,12 @@ namespace pracadyplomowa.Models.Entities.Characters
              .Where(effect =>
                 effect.EffectType.SavingThrowEffect_Ability == ability && effect.EffectType.SavingThrowEffect == SavingThrowEffect.Bonus
              ).Select(effect => effect.DiceSet)
+             .Union(
+                    this.AffectedByApprovedEffects.OfType<AbilityEffectInstance>()
+                    .Where(effect =>
+                        effect.EffectType.AbilityEffect_Ability == ability && effect.EffectType.AbilityEffect == AbilityEffect.Bonus
+                    ).Select(effect => effect.DiceSet)
+             )
             .Aggregate(new DiceSet(), (sum, next) => sum += next).getPersonalizedSet(this);
 
             DiceSet baseDiceSet = new DiceSet() { d20 = 1 };
@@ -1395,12 +1401,15 @@ namespace pracadyplomowa.Models.Entities.Characters
             return this.R_CharacterHasLevelsInClass.Where(c => c.R_ClassId == classId).Count();
         }
 
-        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel, out List<EffectInstance> generatedEffects, List<string> messages)
+        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel, int? powerLevel, out List<EffectInstance> generatedEffects, List<string> messages)
         {
             generatedEffects = [];
             // check for available immaterial resource
             if (power.R_UsesImmaterialResource != null)
             {
+                if(immaterialResourceLevel != null && powerLevel != null && immaterialResourceLevel < powerLevel){
+                    return Outcome.ResourceLevelLowerThanPowerLevelSelected;
+                }
                 var immaterialResourceInstance = this.AllImmaterialResourceInstances.FirstOrDefault(x => x.R_Blueprint == power.R_UsesImmaterialResource && !x.NeedsRefresh && x.Level == immaterialResourceLevel);
                 if (immaterialResourceInstance == null)
                 {
@@ -1432,6 +1441,23 @@ namespace pracadyplomowa.Models.Entities.Characters
             {
                 StartConcentration(effectGroup, messages);
             }
+            int maximumApplicableEffectLevel = 0;
+            foreach(var effect in  power.R_EffectBlueprints){
+                int searchedLevel = 0;
+                if(power.UpcastBy == UpcastBy.ResourceLevel){
+                    searchedLevel = (int)powerLevel!;
+                }
+                else if(power.UpcastBy == UpcastBy.CharacterLevel){
+                    searchedLevel = this.Level;
+                }
+                else if(power.UpcastBy == UpcastBy.ClassLevel){
+                    searchedLevel = this.GetLevelInClass((int)power.R_ClassForUpcastingId!);
+                }
+
+                if(effect.Level <= searchedLevel && effect.Level > maximumApplicableEffectLevel){
+                    maximumApplicableEffectLevel = effect.Level;
+                }
+            }
             foreach (Character target in targetsToHitSuccessMap.Keys)
             {
                 if (power.PowerType != PowerType.AuraCreator)
@@ -1443,9 +1469,9 @@ namespace pracadyplomowa.Models.Entities.Characters
                         {
                             bool shouldAdd = false;
                             if (power.UpcastBy == UpcastBy.NotUpcasted
-                            || (power.UpcastBy == UpcastBy.ResourceLevel && immaterialResourceLevel == effectBlueprint.Level)
-                            || (power.UpcastBy == UpcastBy.CharacterLevel && this.Level == effectBlueprint.Level)
-                            || (power.UpcastBy == UpcastBy.ClassLevel && this.GetLevelInClass((int)power.R_ClassForUpcastingId) == effectBlueprint.Level)
+                            || (power.UpcastBy == UpcastBy.ResourceLevel && maximumApplicableEffectLevel == effectBlueprint.Level)
+                            || (power.UpcastBy == UpcastBy.CharacterLevel && maximumApplicableEffectLevel == effectBlueprint.Level)
+                            || (power.UpcastBy == UpcastBy.ClassLevel && maximumApplicableEffectLevel == effectBlueprint.Level)
                             )
                             {
                                 if (power.PowerType == PowerType.Attack && outcome == HitType.Hit || outcome == HitType.CriticalHit)

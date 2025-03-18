@@ -168,7 +168,7 @@ namespace pracadyplomowa.Models.Entities.Items
                         targetedCharacter.Id,
                         success ? HitType.Hit : HitType.Miss
                     );
-                    messages.Add($"{targetedCharacter.Name} {(success ? "passed" : "failed")} saving throw against {power.Name} (rolled {roll} against DC{dc})");
+                    messages.Add($"{targetedCharacter.Name} {(!success ? "passed" : "failed")} a {(Ability)power.SavingThrowAbility} saving throw against {power.Name} (rolled total of {roll} against DC{dc})");
                 }
                 else
                 {
@@ -182,7 +182,7 @@ namespace pracadyplomowa.Models.Entities.Items
             return hitMap;
         }
 
-        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel, out List<EffectInstance> generatedEffects, List<string> messages)
+        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel, int? powerLevel, out List<EffectInstance> generatedEffects, List<string> messages)
         {
             EffectGroup effectGroup = new();
             generatedEffects = [];
@@ -204,7 +204,7 @@ namespace pracadyplomowa.Models.Entities.Items
                             {
                                 shouldAdd = true;
                             }
-                            else if ((outcome == HitType.Hit || outcome == HitType.CriticalHit) && effectBlueprint.Saved && power.SavingThrowBehaviour == SavingThrowBehaviour.Modifies)
+                            else if (!(outcome == HitType.Hit || outcome == HitType.CriticalHit) && effectBlueprint.Saved && power.SavingThrowBehaviour == SavingThrowBehaviour.Modifies)
                             {
                                 shouldAdd = true;
                             }

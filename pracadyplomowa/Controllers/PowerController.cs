@@ -67,7 +67,12 @@ namespace pracadyplomowa.Controllers
             power.R_OwnerId = User.GetUserId();
 
             _unitOfWork.PowerRepository.Add(power);
-            await _unitOfWork.SaveChangesAsync();
+            try{
+                await _unitOfWork.SaveChangesAsync();
+            }
+            catch(ValidationException valEx){
+                return BadRequest(valEx.Message);
+            }
             return Ok(power.Id);
         }
 

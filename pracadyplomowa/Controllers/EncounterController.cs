@@ -306,10 +306,10 @@ public class EncounterController : BaseApiController
     }
     
     [HttpGet("{encounterId}/powerCastData")]
-    public async Task<ActionResult<PowerDataAndConditionalEffectsDto>> GetPowerCastConditionalEffects(int encounterId, [FromQuery] int characterId, [FromQuery] int powerId, [FromQuery] List<int> targetIds){
+    public async Task<ActionResult<PowerDataAndConditionalEffectsDto>> GetPowerCastConditionalEffects(int encounterId, [FromQuery] int characterId, [FromQuery] int powerId, [FromQuery] int? powerLevel, [FromQuery] int? resourceLevel, [FromQuery] List<int> targetIds){
         
         try{
-            var powerData = await _encounterService.GetPowerData(encounterId, characterId, powerId);
+            var powerData = await _encounterService.GetPowerData(encounterId, characterId, powerId, powerLevel, resourceLevel);
             var conditionalEffects = await _encounterService.GetConditionalEffects(encounterId, characterId, targetIds);
             var result = new PowerDataAndConditionalEffectsDto
             {
@@ -342,10 +342,10 @@ public class EncounterController : BaseApiController
     }
 
     [HttpPost("{encounterId}/castPower")]
-    public async Task<ActionResult<CastPowerResultDto>> CastPower(int encounterId, [FromQuery] int characterId, [FromQuery] int powerId, [FromBody] CastPowerIncomingDataDto incomingDataDto){
+    public async Task<ActionResult<CastPowerResultDto>> CastPower(int encounterId, [FromQuery] int characterId, [FromQuery] int powerId, [FromQuery] int? powerLevel, [FromQuery] int? immaterialResourceLevel, [FromBody] CastPowerIncomingDataDto incomingDataDto){
         
         try{
-            var result = await _encounterService.CastPower(encounterId, characterId, powerId, incomingDataDto);
+            var result = await _encounterService.CastPower(encounterId, characterId, powerId, powerLevel, immaterialResourceLevel, incomingDataDto);
             return Ok(result);
         }
         catch(SessionNotFoundException ex){

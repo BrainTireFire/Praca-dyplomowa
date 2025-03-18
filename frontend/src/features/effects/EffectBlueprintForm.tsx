@@ -370,7 +370,7 @@ export default function EffectBlueprintForm({
                 }
               ></TextArea>
             </FormRowVertical>
-            <FormRowVertical label="Level of immaterial resource used">
+            <FormRowVertical label="Level (for upcasting)">
               <Input
                 disabled={disableForm}
                 type="number"
@@ -383,7 +383,7 @@ export default function EffectBlueprintForm({
                 }
               ></Input>
             </FormRowVertical>
-            <FormRowLabelRight label="Successful saving throw">
+            <FormRowLabelRight label="Successful saving throw (applies only for saveable powers)">
               <Input
                 disabled={disableForm}
                 type="checkbox"

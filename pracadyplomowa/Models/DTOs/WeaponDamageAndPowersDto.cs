@@ -22,7 +22,7 @@ namespace pracadyplomowa.Models.DTOs
             public int PowerId {get; set;}
             public string PowerName { get; set; } = null!;
             public string PowerDescription { get; set; } = null!;
-            public List<PowerEffectDto> PowerEffects { get; set; } = [];
+            public Dictionary<int, List<PowerEffectDto>> PowerEffects { get; set; } = [];
             public class PowerEffectDto {
                 public int PowerEffectId {get; set;}
                 public string PowerEffectName {get; set;} = null!;

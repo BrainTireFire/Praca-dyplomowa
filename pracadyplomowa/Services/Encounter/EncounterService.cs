@@ -336,7 +336,9 @@ public class EncounterService : IEncounterService
             PlayerName = participance.R_Character.R_Owner!.UserName ?? "Unknown",
             PlaceInQueue = participance.InitiativeOrder,
             InitiativeRollResult = participance.InitiativeRollResult,
-            ActiveTurn = participance.ActiveTurn
+            ActiveTurn = participance.ActiveTurn,
+            SucceededDeathSaves = participance.R_Character.SucceededDeathSavingThrows,
+            FailedDeathSaves = participance.R_Character.FailedDeathSavingThrows
         });
         return new OkObjectResult(result);
     }
@@ -444,7 +446,9 @@ public class EncounterService : IEncounterService
             TotalMovement = x.R_Character.TotalMovementPerTurn,
             Hitpoints = character.Hitpoints,
             MaxHitpoints = character.MaxHealth,
-            TemporaryHitpoints = character.TemporaryHitpoints
+            TemporaryHitpoints = character.TemporaryHitpoints,
+            SucceededDeathSaves = character.SucceededDeathSavingThrows,
+            FailedDeathSaves = character.FailedDeathSavingThrows
         }).First();
         return result;
     }
@@ -458,6 +462,8 @@ public class EncounterService : IEncounterService
         var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(characterId);
         character.Hitpoints = participanceDataDto.Hitpoints;
         character.TemporaryHitpoints = participanceDataDto.TemporaryHitpoints;
+        character.SucceededDeathSavingThrows = participanceDataDto.SucceededDeathSaves;
+        character.FailedDeathSavingThrows = participanceDataDto.FailedDeathSaves;
         await _unitOfWork.SaveChangesAsync();
     }
 

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using pracadyplomowa.Errors;
 using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.Entities.Powers;
 using pracadyplomowa.Repository;
@@ -105,11 +106,11 @@ namespace pracadyplomowa.Controllers
         {
             var effect = await _unitOfWork.EffectInstanceRepository.GetByIdWithTargets(effectId);
             if(effect == null){
-                return NotFound(effectId);
+                return NotFound(new ApiResponse(404, effectId.ToString()));
             }
             effect.Unlink();
             await _unitOfWork.SaveChangesAsync();
-            return Ok();
+            return Ok(new ApiResponse(200, effectId.ToString()));
         }
 
     }

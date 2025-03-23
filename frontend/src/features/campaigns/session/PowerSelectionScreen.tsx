@@ -114,8 +114,6 @@ function PowerRow({
 }) {
   const [chosenLevel, setChosenLevel] =
     useState<ImmaterialResourceSelection | null>(null);
-  console.log(participanceData);
-  console.log(power);
   const actionsLeft =
     participanceData.totalActions - participanceData.actionsTaken > 0;
   const bonusActionsLeft =

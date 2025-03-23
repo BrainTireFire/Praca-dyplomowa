@@ -13,7 +13,6 @@ namespace pracadyplomowa.Models.DTOs
         public string Name { get; set; } = null!;
         public string Description { get; set; } = null!;
         public string? ResourceName { get; set; }
-        // public int? MinimumResourceLevel { get; set; }
         public List<ImmaterialResourceSelection> AvailableLevels { get; set; } = [];
         public ActionType? ActionTypeRequired { get; set; }
         public bool RequiredResourceAvailable { get; set;}

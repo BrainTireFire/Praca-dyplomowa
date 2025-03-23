@@ -692,7 +692,6 @@ public class EncounterService : IEncounterService
         {
             PowerId = power.Id,
             PowerName = power.Name,
-            // AvailableImmaterialResourceLevels = availableImmaterialResourceLevels,
             ResourceName = power.R_UsesImmaterialResource?.Name! 
         };
 

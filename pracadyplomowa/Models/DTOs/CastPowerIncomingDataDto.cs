@@ -7,9 +7,6 @@ namespace pracadyplomowa.Models.DTOs
 {
     public class CastPowerIncomingDataDto
     {
-        // public int? SpellSlotLevel { get; set; }
-        // public int? PowerLevel { get; set; }
-
         public ConditionalEffects ConditionalEffects { get; set; } = new ConditionalEffects();
     }
 

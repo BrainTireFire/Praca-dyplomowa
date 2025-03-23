@@ -69,15 +69,6 @@ export function PowerCastResolution({
     }
   }, [powerCastData]);
 
-  // const { isPending: isPendingAttack, makeWeaponAttack } = useMakeWeaponAttack(
-  //   Number(groupName),
-  //   controlledCharacterId,
-  //   controlState.weaponAttackRollOverlayData?.targetId!,
-  //   controlState.weaponAttackSelected?.weaponId!,
-  //   controlState.weaponAttackSelected?.isRanged!,
-  //   () => {}
-  // );
-
   const { isPending: isPendingPowerCast, castPower } = useCastPower(
     Number(groupName),
     controlState.powerCastOverlayData!.sourceId,
@@ -91,18 +82,6 @@ export function PowerCastResolution({
     return <Spinner></Spinner>;
   }
 
-  console.log("powerCastData " + powerCastData);
-
-  // if (
-  //   (spellSlotLevel != null &&
-  //     powerCastData!.powerData.availableImmaterialResourceLevels.filter(
-  //       (x) => x === spellSlotLevel
-  //     ).length <= 0) ||
-  //   spellSlotLevel === null
-  // ) {
-  //   spellSlotLevel =
-  //     powerCastData!.powerData.availableImmaterialResourceLevels[0];
-  // }
   return (
     <Container>
       <Heading as="h1">Select element of the attack</Heading>
@@ -262,26 +241,6 @@ export function PowerCastResolution({
           ]}
         </TabList>
       </StyledTabListContainer>
-      {/* <FormRowVertical
-        label={`Level of ${powerCastData?.powerData.resourceName} selected`}
-      >
-        <Dropdown
-          valuesList={
-            powerCastData?.powerData.availableImmaterialResourceLevels.map(
-              (x) => {
-                return { value: x.toString(), label: x.toString() };
-              }
-            ) ?? []
-          }
-          chosenValue={state.spellSlotLevel?.toString() ?? null}
-          setChosenValue={(value) =>
-            dispatch({
-              type: "SET_SPELL_SLOT_LEVEL",
-              payload: { level: Number(value) },
-            })
-          }
-        ></Dropdown>
-      </FormRowVertical> */}
       <ButtonGroup>
         <Button onClick={() => castPower(state)}>Resolve</Button>
       </ButtonGroup>

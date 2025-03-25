@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using pracadyplomowa.Errors;
 using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.Entities.Powers;
 using pracadyplomowa.Repository;
@@ -98,6 +99,18 @@ namespace pracadyplomowa.Controllers
             _unitOfWork.EffectInstanceRepository.Delete(effectId);
             await _unitOfWork.SaveChangesAsync();
             return Ok("Resource deleted");
+        }
+
+        [HttpPatch("{effectId}/unlink")]
+        public async Task<ActionResult> UnlinkEffectInstance([FromRoute] int effectId)
+        {
+            var effect = await _unitOfWork.EffectInstanceRepository.GetByIdWithTargets(effectId);
+            if(effect == null){
+                return NotFound(new ApiResponse(404, effectId.ToString()));
+            }
+            effect.Unlink();
+            await _unitOfWork.SaveChangesAsync();
+            return Ok(new ApiResponse(200, effectId.ToString()));
         }
 
     }

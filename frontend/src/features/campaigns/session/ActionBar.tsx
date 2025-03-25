@@ -25,6 +25,7 @@ import { PowerSelectionScreen } from "./PowerSelectionScreen";
 import { useGetPowerConcentratedOn } from "../hooks/useGetPowerConcentratedOn";
 import useDropConcentration from "../hooks/useDropConcentration";
 import { Power } from "../../../models/session/VirtualBoardProps";
+import DisplayBox from "../../characters/DisplayBox";
 
 const initialParticipanceData: ParticipanceData = {
   actionsTaken: 0,
@@ -35,6 +36,12 @@ const initialParticipanceData: ParticipanceData = {
   totalBonusActions: 50,
   totalAttacksPerAction: 200,
   totalMovement: 100,
+  characterName: "",
+  hitpoints: 0,
+  maxHitpoints: 0,
+  temporaryHitpoints: 0,
+  succeededDeathSaves: 0,
+  failedDeathSaves: 0,
 };
 
 export type ParticipanceAction =
@@ -44,6 +51,8 @@ export type ParticipanceAction =
   | { type: "MOVEMENT_USED"; payload: number }
   | { type: "HITPOINTS_LEFT"; payload: number }
   | { type: "TEMPORARY_HITPOINTS_LEFT"; payload: number }
+  | { type: "SUCCESS_DEATH_SAVE"; payload: number }
+  | { type: "FAIL_DEATH_SAVE"; payload: number }
   | { type: "RESET_PARTICIPANCE_DATA"; payload: ParticipanceData };
 
 export function participanceReducer(
@@ -80,6 +89,16 @@ export function participanceReducer(
       return {
         ...state,
         temporaryHitpoints: action.payload,
+      };
+    case "SUCCESS_DEATH_SAVE":
+      return {
+        ...state,
+        succeededDeathSaves: action.payload,
+      };
+    case "FAIL_DEATH_SAVE":
+      return {
+        ...state,
+        failedDeathSaves: action.payload,
       };
     case "RESET_PARTICIPANCE_DATA":
       return { ...action.payload };
@@ -328,6 +347,46 @@ export default function ActionBar({
                     onChange={(e) =>
                       participanceStateDispatch({
                         type: "TEMPORARY_HITPOINTS_LEFT",
+                        payload: Number(e.target.value),
+                      })
+                    }
+                  />
+                  &nbsp;
+                </span>
+              </FormRowVertical>
+              <FormRowVertical label={"Passed death saves"}>
+                <span>
+                  <Input
+                    type="number"
+                    size="small"
+                    customStyles={css`
+                      width: 5em;
+                    `}
+                    disabled={!isGM}
+                    value={participanceState.succeededDeathSaves}
+                    onChange={(e) =>
+                      participanceStateDispatch({
+                        type: "SUCCESS_DEATH_SAVE",
+                        payload: Number(e.target.value),
+                      })
+                    }
+                  />
+                  &nbsp;
+                </span>
+              </FormRowVertical>
+              <FormRowVertical label={"Failed death saves"}>
+                <span>
+                  <Input
+                    type="number"
+                    size="small"
+                    customStyles={css`
+                      width: 5em;
+                    `}
+                    disabled={!isGM}
+                    value={participanceState.failedDeathSaves}
+                    onChange={(e) =>
+                      participanceStateDispatch({
+                        type: "FAIL_DEATH_SAVE",
                         payload: Number(e.target.value),
                       })
                     }

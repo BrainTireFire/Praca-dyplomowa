@@ -201,6 +201,8 @@ export type InitiativeQueueItem = {
   placeInQueue: number;
   initiativeRollResult: number;
   activeTurn: boolean;
+  succeededDeathSaves: number;
+  failedDeathSaves: number;
 };
 export async function getIsGM(encounterId: number): Promise<boolean> {
   const options: RequestInit = {
@@ -344,6 +346,8 @@ export type ParticipanceData = {
   hitpoints: number;
   maxHitpoints: number;
   temporaryHitpoints: number;
+  succeededDeathSaves: number;
+  failedDeathSaves: number;
 };
 
 export async function moveCharacter(

@@ -54,3 +54,16 @@ export async function deleteEffectInstance(id: number): Promise<void> {
   await customFetch(`${BASE_URL}/api/effectInstance/${id}`, options);
   return;
 }
+export async function unlinkEffectInstance(effectId: number): Promise<void> {
+  const options: RequestInit = {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  await customFetch(
+    `${BASE_URL}/api/effectInstance/${effectId}/unlink`,
+    options
+  );
+  return;
+}

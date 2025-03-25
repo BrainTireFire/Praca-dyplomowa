@@ -59,7 +59,7 @@ export function InitiativeQueue() {
     <>
       {initiativeQueue &&
         initiativeQueue.map((item) => (
-          <InititativeTile
+          <InitiativeTile
             item={item}
             key={item.characterId}
             isGM={isGM as boolean}
@@ -69,7 +69,7 @@ export function InitiativeQueue() {
                 (x) => item.characterId === x
               ) !== undefined
             }
-          ></InititativeTile>
+          ></InitiativeTile>
         ))}
       {isGM && (
         <ButtonGroup style={{ paddingTop: "5px" }}>
@@ -85,7 +85,7 @@ export function InitiativeQueue() {
   );
 }
 
-function InititativeTile({
+function InitiativeTile({
   item,
   isGM,
   handleChangeActiveTurn,
@@ -123,6 +123,10 @@ function InititativeTile({
         <span>Order: {item.placeInQueue}</span>
         <br></br>
         <span>Initiative roll: {item.initiativeRollResult}</span>
+        <br></br>
+        <span>Successful death saves: {item.succeededDeathSaves}</span>
+        <br></br>
+        <span>Failed death saves: {item.failedDeathSaves}</span>
       </TileCell1>
       <TileCell2>
         {isGM && (

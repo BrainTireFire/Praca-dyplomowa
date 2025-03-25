@@ -48,7 +48,7 @@ namespace pracadyplomowa.Models.Entities.Powers
                 _CastableBy = value;
                 if(value != CastableBy.Character){
                     this.RequiredActionType = ActionType.None;
-                    this.R_ItemsCostRequirement.Clear();
+                    // this.R_ItemsCostRequirement.Clear();
                     this.VerbalComponent = false;
                     this.SomaticComponent = false;
                     this.TargetType = TargetType.Character;
@@ -91,7 +91,7 @@ namespace pracadyplomowa.Models.Entities.Powers
         public int MaxTargets { get; set; } = 1;
         public int MaxTargetsToExclude { get; set; }
         public int? AreaSize { get; set; }
-        public AreaShape? AreaShape { get; set; }
+        public AreaShape AreaShape { get; set; }
         public int? AuraSize { get; set; }
         public bool OverrideCastersDC { get; set; } = false;
         public int? DifficultyClass { get; set; }
@@ -163,8 +163,8 @@ namespace pracadyplomowa.Models.Entities.Powers
             return source;
         }
 
-        public bool RequiredResourceAvailable(Character caster, int minimumResourceLevel) {
-            return caster.AllImmaterialResourceInstances.Where(x => !x.NeedsRefresh && x.Level >= minimumResourceLevel && x.R_BlueprintId == this.R_UsesImmaterialResource?.Id).Any();
+        public bool RequiredResourceAvailable(Character caster, int resourceLevel) {
+            return caster.AllImmaterialResourceInstances.Where(x => !x.NeedsRefresh && x.Level == resourceLevel && x.R_BlueprintId == this.R_UsesImmaterialResource?.Id).Any();
         }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
@@ -181,7 +181,7 @@ namespace pracadyplomowa.Models.Entities.Powers
                     [nameof(CastableBy), nameof(VerbalComponent)]
                 );
             }
-            if(CastableBy != CastableBy.Character && SomaticComponent == false){
+            if(CastableBy != CastableBy.Character && SomaticComponent == true){
                 yield return new ValidationResult(
                     "Powers not castable by 'Character' cannot have somatic component",
                     [nameof(CastableBy), nameof(SomaticComponent)]

@@ -462,7 +462,7 @@ export interface PowersOnHitDto {
   powerId: number;
   powerName: string;
   powerDescription: string;
-  powerEffects: PowerEffectDto[];
+  powerEffects: Record<number, PowerEffectDto[]>;
 }
 
 export interface PowerEffectDto {
@@ -584,6 +584,8 @@ export async function getPowerData(
   encounterId: number,
   characterId: number,
   powerId: number,
+  powerLevel: number | null,
+  resourceLevel: number | null,
   targetIds: number[]
 ): Promise<PowerDataAndConditionalEffectsDto> {
   const options: RequestInit = {
@@ -594,7 +596,7 @@ export async function getPowerData(
   };
 
   return await customFetch(
-    `${BASE_URL}/api/encounter/${encounterId}/powerCastData?characterId=${characterId}&powerId=${powerId}&${generateQueryString(
+    `${BASE_URL}/api/encounter/${encounterId}/powerCastData?characterId=${characterId}&powerId=${powerId}&powerLevel=${powerLevel}&resourceLevel=${resourceLevel}&${generateQueryString(
       "targetIds",
       targetIds
     )}`,
@@ -606,8 +608,8 @@ export type PowerDataForResolutionDto = {
   powerId: number;
   powerName: string;
   resourceName: string;
-  powerEffects: Record<number, Record<number, PowerEffectDto[]>>;
-  availableImmaterialResourceLevels: number[];
+  powerEffects: Record<number, PowerEffectDto[]>;
+  // availableImmaterialResourceLevels: number[];
 };
 
 export type PowerDataAndConditionalEffectsDto = {
@@ -630,6 +632,8 @@ export async function castPower(
   encounterId: number,
   characterId: number,
   powerId: number,
+  powerLevel: number | null,
+  immaterialResourceLevel: number | null,
   approvedConditionalEffects: StateType
 ): Promise<CastPowerResultDto> {
   /**
@@ -675,7 +679,6 @@ export async function castPower(
 
     // Transform the state object
     return {
-      spellSlotLevel: state.spellSlotLevel,
       conditionalEffects: transformConditionalEffectSet(
         state.conditionalEffects
       ),
@@ -691,7 +694,7 @@ export async function castPower(
   };
 
   return await customFetch(
-    `${BASE_URL}/api/encounter/${encounterId}/castPower?characterId=${characterId}&powerId=${powerId}`,
+    `${BASE_URL}/api/encounter/${encounterId}/castPower?characterId=${characterId}&powerId=${powerId}&powerLevel=${powerLevel}&immaterialResourceLevel=${immaterialResourceLevel}`,
     options
   );
 }

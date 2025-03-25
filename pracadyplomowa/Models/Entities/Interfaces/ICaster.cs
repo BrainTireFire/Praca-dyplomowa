@@ -12,12 +12,13 @@ namespace pracadyplomowa.Models.Entities.Interfaces
     public interface ICaster
     {
         public Dictionary<int, HitType> CheckIfPowerHitSuccessfull(Encounter encounter, Power power, List<Character> targets, List<string> messages);
-        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel, out List<EffectInstance> generatedEffects, List<string> messages); // returns true if power was succesfully used
+        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel, int? powerLevel, out List<EffectInstance> generatedEffects, List<string> messages); // returns true if power was succesfully used
     }
 
     public enum Outcome {
         Success,
         ImmaterialResourceUnavailable,
-        InsufficientMaterialComponents
+        InsufficientMaterialComponents,
+        ResourceLevelLowerThanPowerLevelSelected
     }
 }

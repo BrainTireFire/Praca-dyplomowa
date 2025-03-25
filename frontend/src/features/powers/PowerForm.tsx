@@ -283,6 +283,7 @@ const powerReducer = (state: Power, action: PowerAction): Power => {
       let requiresConcentration = state.requiresConcentration;
       let overrideCastersDC = state.overrideCastersDC;
       let difficultyClass = state.difficultyClass;
+      let maxTargets = state.maxTargets;
       if (action.payload !== "Character") {
         immaterialResourceUsed = null;
         upcastBy = "NotUpcasted";
@@ -296,6 +297,9 @@ const powerReducer = (state: Power, action: PowerAction): Power => {
         overrideCastersDC = true;
         difficultyClass = 10;
       }
+      if (action.payload === "OnWeaponHit") {
+        maxTargets = 1;
+      }
       return {
         ...state,
         castableBy: action.payload,
@@ -308,6 +312,7 @@ const powerReducer = (state: Power, action: PowerAction): Power => {
         requiresConcentration: requiresConcentration,
         overrideCastersDC: overrideCastersDC,
         difficultyClass: difficultyClass,
+        maxTargets: maxTargets,
       };
     case PowerActionTypes.UPDATE_POWER_TYPE:
       let savingThrowAbility = state.savingThrowAbility;
@@ -798,7 +803,9 @@ export default function PowerForm({
                 <Input
                   disabled={
                     state.powerType === "AuraCreator" ||
-                    state.areaShape !== "None"
+                    state.areaShape !== "None" ||
+                    state.castableBy === "OnWeaponHit" ||
+                    state.castableBy === "Terrain"
                   }
                   value={state.maxTargets}
                   type="number"

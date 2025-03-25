@@ -118,6 +118,7 @@ const SET_PATH = "SET_PATH";
 const SET_WEAPON_ATTACK = "SET_WEAPON_ATTACK";
 const SET_POWER = "SET_POWER";
 const SET_POWER_ID = "SET_POWER_ID";
+const SET_SELECTED_POWER_DATA = "SET_SELECTED_POWER_DATA";
 const TOGGLE_POWER_TARGET = "TOGGLE_POWER_TARGET";
 const WEAPON_ATTACK_OVERLAY_DATA = "WEAPON_ATTACK_OVERLAY_DATA";
 const POWER_CAST_OVERLAY_DATA = "POWER_CAST_OVERLAY_DATA";
@@ -159,6 +160,14 @@ export interface SetPowerId {
   type: typeof SET_POWER_ID;
   payload: number;
 }
+export interface SetSelectedPowerData {
+  type: typeof SET_SELECTED_POWER_DATA;
+  payload: {
+    powerId: number;
+    powerLevelSelected: number | null;
+    resourceLevelSelected: null;
+  };
+}
 export interface WeaponAttackOverlay {
   type: typeof WEAPON_ATTACK_OVERLAY_DATA;
   payload: WeaponAttackOverlayData;
@@ -193,7 +202,8 @@ export type ControlStateActions =
   | WeaponAttackOverlay
   | TogglePowerTarget
   | PowerCastOverlay
-  | SetPowerId;
+  | SetPowerId
+  | SetSelectedPowerData;
 
 // Reducer function
 const controlStateReducer = (
@@ -259,6 +269,23 @@ const controlStateReducer = (
         powerSelected: {
           ...state.powerSelected,
           powerId: action.payload,
+        },
+        mode: "PowerCast",
+      };
+    case SET_SELECTED_POWER_DATA:
+      return {
+        ...state,
+        powerSelected: {
+          ...state.powerSelected,
+          powerId: action.payload.powerId,
+          chosenLevel:
+            action.payload.powerLevelSelected !== null &&
+            action.payload.resourceLevelSelected !== null
+              ? {
+                  powerLevel: action.payload.powerLevelSelected,
+                  resourceLevel: action.payload.resourceLevelSelected,
+                }
+              : null,
         },
         mode: "PowerCast",
       };
@@ -409,12 +436,24 @@ export default function SessionLayout({ encounter }: any) {
 
           hubConnection.on(
             "PowerCastOverlay",
-            ({ sourceId, powerId, powerTargetIds }: any) => {
+            ({
+              sourceId,
+              powerId,
+              powerTargetIds,
+              powerLevelSelected,
+              resourceLevelSelected,
+            }: any) => {
               console.log("PowerCastOverlay triggered");
-
+              console.log({
+                sourceId,
+                powerId,
+                powerTargetIds,
+                powerLevelSelected,
+                resourceLevelSelected,
+              });
               dispatch({
-                type: "SET_POWER_ID",
-                payload: powerId,
+                type: "SET_SELECTED_POWER_DATA",
+                payload: { powerId, powerLevelSelected, resourceLevelSelected },
               });
 
               dispatch({
@@ -505,6 +544,8 @@ export default function SessionLayout({ encounter }: any) {
           campaignId: campaignId,
           powerTargetIds: powerTargetIds,
           powerId: power.powerId,
+          powerLevelSelected: power.chosenLevel?.powerLevel,
+          resourceLevelSelected: power.chosenLevel?.resourceLevel,
         };
 
         await connection

@@ -11,12 +11,21 @@ export function useCastPower(
   encounterId: number,
   characterId: number,
   powerId: number,
+  powerLevel: number | null,
+  immaterialResourceLevel: number | null,
   onSuccess: (result: CastPowerResultDto) => void
 ) {
   const queryClient = useQueryClient();
   const { mutate: castPower, isPending } = useMutation({
     mutationFn: (powerCastData: StateType) => {
-      return castPowerApi(encounterId, characterId, powerId, powerCastData);
+      return castPowerApi(
+        encounterId,
+        characterId,
+        powerId,
+        powerLevel,
+        immaterialResourceLevel,
+        powerCastData
+      );
     },
     onSuccess: (result: CastPowerResultDto) => {
       queryClient.invalidateQueries({

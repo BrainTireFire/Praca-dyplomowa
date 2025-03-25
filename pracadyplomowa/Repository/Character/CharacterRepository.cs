@@ -102,7 +102,6 @@ namespace pracadyplomowa.Repository
             .Include(c => c.R_UsedChoiceGroups).ThenInclude(cg => cg.R_ResourcesGranted).ThenInclude(cg => cg.R_Item)
             .Include(c => c.R_UsedChoiceGroups).ThenInclude(cg => cg.R_ResourcesGranted).ThenInclude(cg => cg.R_Blueprint)
 
-            
             .Include(c => c.R_PowersKnown).ThenInclude(p => p.R_EffectBlueprints) // is this needed?
             .Include(c => c.R_PowersKnown).ThenInclude(p => p.R_UsesImmaterialResource) // is this needed?
             .Include(c => c.R_PowersKnown).ThenInclude(p => p.R_AlwaysAvailableThroughChoiceGroupUsage.Where(cgu => cgu.R_CharacterId == Id))
@@ -140,6 +139,7 @@ namespace pracadyplomowa.Repository
             .Include(c => c.R_ImmaterialResourceInstances).ThenInclude(iri => iri.R_Blueprint)
             .Include(c => c.R_ImmaterialResourceInstances).ThenInclude(iri => iri.R_Item)
             .Include(c => c.R_ImmaterialResourceInstances).ThenInclude(iri => iri.R_ChoiceGroupUsage)
+            
             .Include(c => c.R_ConcentratesOn)
             .Include(c => c.UsedHitDice)
 
@@ -356,6 +356,9 @@ namespace pracadyplomowa.Repository
             .Include(c => c.R_CharacterHasLevelsInClass)
                 .ThenInclude(c => c.R_Class)
                     .ThenInclude(c => c.MaximumPreparedSpellsFormula)
+            // .Include(c => c.R_CharacterHasLevelsInClass)
+            //     .ThenInclude(c => c.R_Class)
+            //         .ThenInclude(c => c.R_ClassLevels.Where(x => x.R_Characters.Select(ch => ch.Id == Id).Any()))
             .Include(c => c.R_AffectedBy)
             .Include(c => c.R_EquippedItems)
                 .ThenInclude(c => c.R_Item)

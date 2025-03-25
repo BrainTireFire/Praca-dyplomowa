@@ -5,6 +5,8 @@ export function useGetPowerCastData(
   encounterId: number,
   characterId: number,
   powerId: number,
+  powerLevel: number | null,
+  resourceLevel: number | null,
   targetIds: number[]
 ) {
   const {
@@ -12,7 +14,15 @@ export function useGetPowerCastData(
     data: powerCastData,
     error,
   } = useQuery({
-    queryKey: ["powerCastData", encounterId, characterId, powerId, targetIds],
+    queryKey: [
+      "powerCastData",
+      encounterId,
+      characterId,
+      powerId,
+      powerLevel,
+      resourceLevel,
+      targetIds,
+    ],
     queryFn: () => {
       if (
         !!encounterId &&
@@ -21,7 +31,14 @@ export function useGetPowerCastData(
         !!targetIds &&
         targetIds.length > 0
       ) {
-        return getPowerData(encounterId, characterId, powerId, targetIds);
+        return getPowerData(
+          encounterId,
+          characterId,
+          powerId,
+          powerLevel,
+          resourceLevel,
+          targetIds
+        );
       }
       return Promise.reject(
         new Error("Encounter or character or target or power ID is not defined")

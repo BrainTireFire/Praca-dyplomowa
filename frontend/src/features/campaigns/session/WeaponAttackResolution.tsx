@@ -94,7 +94,7 @@ export function WeaponAttackResolution({
         {[
           <TabItem key={"weaponData"} label={"Base attack"}>
             <ContainerEffects>
-              <TabsContainer>
+              <TabsContainer1>
                 <TableContainer>
                   <ReusableTable
                     mainHeader={`Conditional effects for attacker`}
@@ -168,40 +168,42 @@ export function WeaponAttackResolution({
                     `}
                   ></ReusableTable>
                 </TableContainer>
-              </TabsContainer>
-              <TableContainer>
-                <ReusableTable
-                  mainHeader={`Expected applied damage`}
-                  tableRowsColomns={{
-                    Type: "damageType",
-                    Value: "damageValue",
-                    Source: "source",
-                  }}
-                  data={
-                    weaponAttackData?.weaponDamageAndPowers.damageValues!.map(
-                      (damage: DamageValueDto, index: number) => {
-                        return {
-                          id: index,
-                          damageType: damage.damageType,
-                          damageValue: DiceSetString(damage.damageValue),
-                          source: damage.damageSource,
-                        };
-                      }
-                    ) ?? []
-                  }
-                  isSelectable={false}
-                  isMultiSelect={false}
-                  // customTableContainer={css`
-                  //   height: 100%;
-                  // `}
-                ></ReusableTable>
-              </TableContainer>
+              </TabsContainer1>
+              <TabsContainer2>
+                <TableContainer>
+                  <ReusableTable
+                    mainHeader={`Expected applied damage`}
+                    tableRowsColomns={{
+                      Type: "damageType",
+                      Value: "damageValue",
+                      Source: "source",
+                    }}
+                    data={
+                      weaponAttackData?.weaponDamageAndPowers.damageValues!.map(
+                        (damage: DamageValueDto, index: number) => {
+                          return {
+                            id: index,
+                            damageType: damage.damageType,
+                            damageValue: DiceSetString(damage.damageValue),
+                            source: damage.damageSource,
+                          };
+                        }
+                      ) ?? []
+                    }
+                    isSelectable={false}
+                    isMultiSelect={false}
+                    // customTableContainer={css`
+                    //   height: 100%;
+                    // `}
+                  ></ReusableTable>
+                </TableContainer>
+              </TabsContainer2>
             </ContainerEffects>
           </TabItem>,
           ...weaponAttackData!.weaponDamageAndPowers.powersOnHit.map((x) => (
             <TabItem key={x.powerId} label={x.powerName}>
               <ContainerEffects>
-                <TabsContainer>
+                <TabsContainer1>
                   <TableContainer>
                     <ReusableTable
                       mainHeader={`Conditional effects for attacker`}
@@ -298,30 +300,55 @@ export function WeaponAttackResolution({
                       `}
                     ></ReusableTable>
                   </TableContainer>
-                </TabsContainer>
-                <TableContainer>
-                  <ReusableTable
-                    mainHeader={`Effects applied by power`}
-                    tableRowsColomns={{
-                      Name: "name",
-                      Description: "description",
-                    }}
-                    data={
-                      x.powerEffects.map((effect, index: number) => {
-                        return {
-                          id: index,
-                          name: effect.powerEffectName,
-                          description: effect.powerEffectDescription,
-                        };
-                      }) ?? []
-                    }
-                    isSelectable={false}
-                    isMultiSelect={false}
-                    // customTableContainer={css`
-                    //   height: 100%;
-                    // `}
-                  ></ReusableTable>
-                </TableContainer>
+                </TabsContainer1>
+                <TabsContainer2>
+                  <TableContainer>
+                    <ReusableTable
+                      mainHeader={`Effects applied by power on success`}
+                      tableRowsColomns={{
+                        Name: "name",
+                        Description: "description",
+                      }}
+                      data={
+                        x.powerEffects[0].map((effect, index: number) => {
+                          return {
+                            id: index,
+                            name: effect.powerEffectName,
+                            description: effect.powerEffectDescription,
+                          };
+                        }) ?? []
+                      }
+                      isSelectable={false}
+                      isMultiSelect={false}
+                      // customTableContainer={css`
+                      //   height: 100%;
+                      // `}
+                    ></ReusableTable>
+                  </TableContainer>
+                  <TableContainer>
+                    <ReusableTable
+                      mainHeader={`Effects applied by power on failure`}
+                      tableRowsColomns={{
+                        Name: "name",
+                        Description: "description",
+                      }}
+                      data={
+                        x.powerEffects[1].map((effect, index: number) => {
+                          return {
+                            id: index,
+                            name: effect.powerEffectName,
+                            description: effect.powerEffectDescription,
+                          };
+                        }) ?? []
+                      }
+                      isSelectable={false}
+                      isMultiSelect={false}
+                      // customTableContainer={css`
+                      //   height: 100%;
+                      // `}
+                    ></ReusableTable>
+                  </TableContainer>
+                </TabsContainer2>
               </ContainerEffects>
             </TabItem>
           )),
@@ -354,6 +381,19 @@ const TabsContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   flex: 1 1 auto;
+  overflow-y: hidden;
+`;
+
+const TabsContainer1 = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 60%;
+  overflow-y: hidden;
+`;
+const TabsContainer2 = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 40%;
   overflow-y: hidden;
 `;
 

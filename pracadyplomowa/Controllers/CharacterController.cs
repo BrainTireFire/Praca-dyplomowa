@@ -645,15 +645,10 @@ namespace pracadyplomowa.Controllers
                 return errorResult;
             }
             character = await _unitOfWork.CharacterRepository.GetByIdWithAll(characterId);
-            await _unitOfWork.PowerRepository.GetAllByIdsWithEffectBlueprintsAndMaterialResources(character.AllPowers.Select(x => x.Id).ToList());
+            var powers = await _unitOfWork.PowerRepository.GetAllByIdsWithEffectBlueprintsAndMaterialResources(character.AllPowers.Select(x => x.Id).ToList());
 
             var result = new List<PowerForEncounterDto>();
             foreach(var power in character.AllPowers){
-                var minimumResourceLevel = 0;
-                if(power.R_EffectBlueprints.Count != 0)
-                {
-                    minimumResourceLevel = power.R_EffectBlueprints.Select(x => x.Level).Min();
-                }
                 var materialComponentsRequired = power.R_ItemsCostRequirement.Select(x => new PowerForEncounterDto.MaterialComponentDto(){
                     Id = x.R_ItemFamilyId,
                     Name = x.R_ItemFamily.Name,
@@ -671,15 +666,14 @@ namespace pracadyplomowa.Controllers
                 var spellcastingFocusHeld = character.R_EquippedItems.Where(x => x.R_Item.IsSpellFocus && x.R_Slots.Where(y => y.Type == SlotType.MainHand || y.Type == SlotType.MainHand).Any()).Any();
                 bool somaticComponentRequirementSatisfied = mainHandsPossesed - mainHandsOccupied > 0 || offHandsOccupied - offHandsPossesed > 0 || spellcastingFocusHeld || !power.SomaticComponent;
                 bool vocalComponentSatisfied = !character.HasAnyCondition([Condition.Muffled, Condition.Petrified]) || !power.VerbalComponent;
-                bool requiredResourceAvailable = power.RequiredResourceAvailable(character, minimumResourceLevel);
-                result.Add(new PowerForEncounterDto(){
+                var powerDto = new PowerForEncounterDto(){
                     Id = power.Id,
                     Name = power.Name,
                     Description = power.Description,
                     ResourceName = power.R_UsesImmaterialResource?.Name,
-                    MinimumResourceLevel = minimumResourceLevel,
+                    AvailableLevels = [],
                     ActionTypeRequired = power.RequiredActionType,
-                    RequiredResourceAvailable = requiredResourceAvailable,
+                    RequiredResourceAvailable = true,
                     MaterialComponents = materialComponentsRequired,
                     RequiredMaterialComponentsAvailable = materialComponentsSatisfied,
                     SomaticComponentRequirementSatisfied = somaticComponentRequirementSatisfied,
@@ -691,7 +685,22 @@ namespace pracadyplomowa.Controllers
                     CastableBy = power.CastableBy,
                     PowerType = power.PowerType,
                     TargetType = power.TargetType
-                });
+                };
+                var levelsCastable = new List<int>();
+                if(power.UpcastBy == UpcastBy.ResourceLevel){
+                    var powerLevels = power.R_EffectBlueprints.Select(x => x.Level).Distinct().Order().ToList();
+                    levelsCastable.AddRange(power.R_EffectBlueprints.Select(x => x.Level).Distinct().Where(x => power.RequiredResourceAvailable(character, x)));
+                    foreach(var level in powerLevels){
+                        foreach(var resourceLevel in character.AllImmaterialResourceInstances.Where(x => !x.NeedsRefresh && x.Level >= level && x.R_BlueprintId == power.R_UsesImmaterialResource?.Id).Select(x => x.Level).Distinct().Order().ToList()){
+                            powerDto.AvailableLevels.Add(new PowerForEncounterDto.ImmaterialResourceSelection(){
+                                PowerLevel = level,
+                                ResourceLevel = resourceLevel
+                            });
+                        }
+                    }
+                    powerDto.RequiredResourceAvailable = powerDto.AvailableLevels.Count > 0;
+                }
+                result.Add(powerDto);
             }
             return result;
         }

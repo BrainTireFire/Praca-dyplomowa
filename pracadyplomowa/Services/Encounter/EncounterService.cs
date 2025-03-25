@@ -663,41 +663,73 @@ public class EncounterService : IEncounterService
         return result;
     }
 
-    public async Task<PowerDataForResolutionDto> GetPowerData(int encounterId, int characterId, int powerId){
+    public async Task<PowerDataForResolutionDto> GetPowerData(int encounterId, int characterId, int powerId, int? powerLevel, int? resourceLevel){
         var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipances(encounterId) ?? throw new SessionNotFoundException("Encounter with specified Id does not exist");
         foreach (var x in encounter.R_Participances.Select(x => x.R_Character)){
             await _unitOfWork.CharacterRepository.GetByIdWithAll(x.Id);
         }
         var character = (encounter.R_Participances.FirstOrDefault(x => x.R_CharacterId == characterId)?.R_Character) ?? throw new SessionBadRequestException("Attacking character does not take part in specified encounter");
-        Power power = character.AllPowers.FirstOrDefault(x => x.Id == powerId) ?? throw new SessionBadRequestException("Specified weapon is not equipped by attacking character");
+        Power power = character.AllPowers.FirstOrDefault(x => x.Id == powerId) ?? throw new SessionBadRequestException("Specified power is not available for this character");
+
         await _unitOfWork.PowerRepository.GetAllByIdsWithEffectBlueprintsAndMaterialResources([power.Id]);
-        List<int> availableImmaterialResourceLevels = character.AllImmaterialResourceInstances
-                                                            .Where(x => x.R_BlueprintId == power.R_UsesImmaterialResourceId && !x.NeedsRefresh)
-                                                            .Select(x => x.Level)
-                                                            .Where(x => power.R_EffectBlueprints.Select(y => y.Level).Contains(x))
-                                                            .ToList();
+        if(power.UpcastBy == UpcastBy.ResourceLevel && resourceLevel == null){
+            throw new SessionBadRequestException("Power upcastable by resource level must have the level of used resource specified");
+        }
+        if(power.UpcastBy == UpcastBy.ResourceLevel && resourceLevel == null){
+            bool resourceAvailable = character.AllImmaterialResourceInstances
+                                                    .Where(x => x.R_BlueprintId == power.R_UsesImmaterialResourceId && !x.NeedsRefresh)
+                                                    .Select(x => x.Level)
+                                                    .Where(x => x == resourceLevel)
+                                                    .Any();
+            if(!resourceAvailable){
+                throw new SessionBadRequestException("Resource of specified level not available");
+            }
+        }
+
+        if(power.UpcastBy == UpcastBy.CharacterLevel){
+            powerLevel = character.Level;
+        }
+        if(power.UpcastBy == UpcastBy.ClassLevel){
+            powerLevel = character.GetLevelInClass((int)power.R_ClassForUpcastingId);
+        }
+        
+
         var result = new PowerDataForResolutionDto
         {
             PowerId = power.Id,
             PowerName = power.Name,
-            AvailableImmaterialResourceLevels = availableImmaterialResourceLevels,
             ResourceName = power.R_UsesImmaterialResource?.Name! 
         };
-        foreach (var levelGroup in power.R_EffectBlueprints.GroupBy(x => x.Level).ToList()){
-            var level = levelGroup.Key;
-            result.PowerEffects.Add(level, []);
-            foreach(var savedGroup in levelGroup.GroupBy(x => x.Saved).ToList()){
-                var saved = savedGroup.Key ? 1 : 0;
-                result.PowerEffects.GetValueOrDefault(level)!.Add(saved, []);
-                foreach(var effect in savedGroup){
-                    result.PowerEffects.GetValueOrDefault(level)!.GetValueOrDefault(saved)!.Add(new PowerDataForResolutionDto.PowerEffectDto(){
-                        PowerEffectId = effect.Id,
-                        PowerEffectName = effect.Name,
-                        PowerEffectDescription = effect.Description,
-                    });
-                }
+
+        int maximumApplicableEffectLevel = 0;
+        foreach(var effect in  power.R_EffectBlueprints){
+            int searchedLevel = 0;
+            if(power.UpcastBy == UpcastBy.ResourceLevel){
+                searchedLevel = (int)powerLevel!;
+            }
+            else if(power.UpcastBy == UpcastBy.CharacterLevel){
+                searchedLevel = character.Level;
+            }
+            else if(power.UpcastBy == UpcastBy.ClassLevel){
+                searchedLevel = character.GetLevelInClass((int)power.R_ClassForUpcastingId!);
+            }
+
+            if(effect.Level <= searchedLevel && effect.Level > maximumApplicableEffectLevel){
+                maximumApplicableEffectLevel = effect.Level;
             }
         }
+        foreach(var savedGroup in power.R_EffectBlueprints.Where(x => powerLevel == null || x.Level == maximumApplicableEffectLevel || power.UpcastBy == UpcastBy.NotUpcasted).GroupBy(x => x.Saved).ToList()){
+            var saved = savedGroup.Key ? 1 : 0;
+            result.PowerEffects.Add(saved, []);
+            foreach(var effect in savedGroup){
+                result.PowerEffects.GetValueOrDefault(saved)!.Add(new PowerDataForResolutionDto.PowerEffectDto(){
+                    PowerEffectId = effect.Id,
+                    PowerEffectName = effect.Name,
+                    PowerEffectDescription = effect.Description,
+                });
+            }
+        }
+
         return result;
     }
 
@@ -767,12 +799,16 @@ public class EncounterService : IEncounterService
                 PowerName = power.Name,
                 PowerDescription = power.Description
             };
-            foreach(var effect in power.R_EffectBlueprints){
-                powerDto.PowerEffects.Add(new WeaponDamageAndPowersDto.PowersOnHitDto.PowerEffectDto(){
-                    PowerEffectId = effect.Id,
-                    PowerEffectName = effect.Name,
-                    PowerEffectDescription = effect.Description,
-                });
+            foreach(var savedGroup in power.R_EffectBlueprints.GroupBy(x => x.Saved).ToList()){
+                var saved = savedGroup.Key ? 1 : 0;
+                powerDto.PowerEffects.Add(saved, []);
+                foreach(var effect in savedGroup){
+                    powerDto.PowerEffects.GetValueOrDefault(saved)!.Add(new WeaponDamageAndPowersDto.PowersOnHitDto.PowerEffectDto(){
+                        PowerEffectId = effect.Id,
+                        PowerEffectName = effect.Name,
+                        PowerEffectDescription = effect.Description,
+                    });
+                }
             }
             result.PowersOnHit.Add(powerDto);
         }
@@ -835,9 +871,8 @@ public class EncounterService : IEncounterService
                     PowerName = power.Name,
                     Success = powerRollResult == HitType.Hit || powerRollResult == HitType.CriticalHit
                 });
-                if(powerRollResult == HitType.Hit || powerRollResult == HitType.CriticalHit){
-                    await ApplyWeaponPowerHit(encounter, character, weapon, power, target, powerRollResult, conditionalEffectsForPower.CasterConditionalEffects, conditionalEffectsForPower.TargetConditionalEffects, messages);
-                }
+                
+                await ApplyWeaponPowerHit(encounter, character, weapon, power, target, powerRollResult, conditionalEffectsForPower.CasterConditionalEffects, conditionalEffectsForPower.TargetConditionalEffects, messages);
             }
         }
         int finalTargetHealth = target.Hitpoints + target.TemporaryHitpoints;
@@ -918,7 +953,7 @@ public class EncounterService : IEncounterService
             effect.ConditionalApproved = true;
         }
 
-        var result = weapon.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, hitType}}, null, out var generatedEffects, messages);
+        var result = weapon.ApplyPowerEffects(power, new Dictionary<Character, HitType>(){{target, hitType}}, null, null, out var generatedEffects, messages);
         foreach(var effect in generatedEffects){
             effect.Resolve(messages);
         }
@@ -928,7 +963,7 @@ public class EncounterService : IEncounterService
         return;
     }
 
-    public async Task<CastPowerResultDto> CastPower(int encounterId, int characterId, int powerId, CastPowerIncomingDataDto incomingDataDto){
+    public async Task<CastPowerResultDto> CastPower(int encounterId, int characterId, int powerId, int? powerLevel, int? immaterialResourceLevel,  CastPowerIncomingDataDto incomingDataDto){
         var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId) ?? throw new SessionNotFoundException("Encounter with specified Id does not exist");
         foreach (var x in encounter.R_Participances.Select(x => x.R_Character)){
             await _unitOfWork.CharacterRepository.GetByIdWithAll(x.Id);
@@ -996,7 +1031,7 @@ public class EncounterService : IEncounterService
         foreach(var hit in hitMap){
             characterToHitMap.Add(targetMap[hit.Key], hit.Value);
         }
-        var outcome = character.ApplyPowerEffects(power, characterToHitMap, incomingDataDto.SpellSlotLevel, out var generatedEffects, messages);
+        var outcome = character.ApplyPowerEffects(power, characterToHitMap, immaterialResourceLevel, powerLevel,  out var generatedEffects, messages);
         if(outcome == Models.Entities.Interfaces.Outcome.ImmaterialResourceUnavailable){
             throw new SessionBadRequestException("Character doesn't have immaterial resource of specified level");
         }

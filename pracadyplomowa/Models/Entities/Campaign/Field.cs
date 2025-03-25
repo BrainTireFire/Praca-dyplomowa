@@ -140,7 +140,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
             return hitMap;
         }
 
-        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel, out List<EffectInstance> generatedEffects, List<string> messages)
+        public Outcome ApplyPowerEffects(Power power, Dictionary<Character, HitType> targetsToHitSuccessMap, int? immaterialResourceLevel, int? powerLevel, out List<EffectInstance> generatedEffects, List<string> messages)
         {
             EffectGroup effectGroup = new();
             generatedEffects = [];
@@ -265,7 +265,7 @@ namespace pracadyplomowa.Models.Entities.Campaign
             foreach(var power in R_CasterPowers){
                 var outcome = this.CheckIfPowerHitSuccessfull(null!, power, [character], messages).GetValueOrDefault(character.Id);
                 messages.Add($"{character.Name} triggers {power.Name}: {outcome}");
-                this.ApplyPowerEffects(power, new Dictionary<Character, HitType>() { { character, outcome } }, null, out var generatedEffects, messages);
+                this.ApplyPowerEffects(power, new Dictionary<Character, HitType>() { { character, outcome } }, null, null, out var generatedEffects, messages);
                 foreach(var effect in generatedEffects){
                     effect.Resolve(messages);
                 }

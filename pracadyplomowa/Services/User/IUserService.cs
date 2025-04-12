@@ -7,4 +7,5 @@ public interface IUserService
     Task<ActionResult?> UpdateUserEmailAsync(int userId, string newEmail);
     Task<ActionResult?> UpdateUsernameAsync(int userId, string newUsername);
     Task<ActionResult?> UpdatePasswordAsync(int userId, string newPassword);
+    Task<ActionResult?> DeleteUserAsync(int userId);
 }

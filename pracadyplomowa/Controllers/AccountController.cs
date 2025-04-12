@@ -79,6 +79,11 @@ public class AccountController : BaseApiController
             return Unauthorized(new ApiResponse(401));
         }
 
+        if (user.IsDeleted)
+        {
+            return Unauthorized(new ApiResponse(401));
+        }
+
         var result = await _accountRepository.LoginUserAsync(loginDto.Username, loginDto.Password);
 
         if (result.ErrorMessage != null)

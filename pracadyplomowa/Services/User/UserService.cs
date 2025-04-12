@@ -67,4 +67,19 @@ public class UserService : IUserService
 
         return null;
     }
+
+    public async Task<ActionResult?> DeleteUserAsync(int userId)
+    {
+        var user = _userRepository.GetById(userId);
+        if (user == null)
+        {
+            return new NotFoundObjectResult(new ApiResponse(404, $"User with id {userId} not found."));
+        }
+
+        user.IsDeleted = true;
+        _userRepository.Update(user);
+        await _userRepository.SaveChanges();
+        
+        return null;
+    }
 }

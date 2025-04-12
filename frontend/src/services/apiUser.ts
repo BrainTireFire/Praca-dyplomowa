@@ -47,3 +47,17 @@ export async function updateUsername(
 
   return null;
 }
+
+export async function deleteUser(): Promise<null> {
+  const options: RequestInit = {
+    method: "DELETE",
+  };
+  const optionLogout: RequestInit = {
+    method: "POST",
+  };
+
+  await customFetch(`${BASE_URL}/api/user/edit/delete`, options);
+  await customFetch(`${BASE_URL}/api/account/logout`, optionLogout);
+
+  return null;
+}

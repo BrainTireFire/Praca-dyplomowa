@@ -59,5 +59,20 @@ namespace pracadyplomowa.Controllers
             await _unitOfWork.SaveChangesAsync();
             return Ok();
         }
+
+        [HttpGet("items")]
+        public async Task<ActionResult<List<ItemFormDto>>> GetItems()
+        {
+            var items = await _unitOfWork.ItemRepository.GetOwnedItems(User.GetUserId(), new ItemParams { IsBlueprint = true });
+
+            var itemsList = items.Select(e => new ItemFormDto
+            {
+                Id = e.Id,
+                Name = e.Name,
+                Weight = e.Weight,
+                Description = e.Description,
+            });
+            return Ok(itemsList);
+        }
     }
 }

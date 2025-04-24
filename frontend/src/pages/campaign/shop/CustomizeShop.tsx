@@ -1,12 +1,16 @@
 import Heading from "../../../ui/text/Heading";
-import { useParams } from "react-router-dom";
 import Spinner from "../../../ui/interactive/Spinner";
-import { useTranslation } from "react-i18next";
 import { useShop } from "../../../features/campaigns/shop/hooks/useShop";
+import { useItems } from "../../items/hooks/useItems";
 import styled from "styled-components";
 import React, { useState } from "react";
 import Button from "../../../ui/interactive/Button";
 import Line from "../../../ui/separators/Line";
+import { Shop, ShopItem } from "../../../models/shop";
+import {
+  CoinPurse,
+  coinPursePrint,
+} from "../../../features/items/models/coinPurse";
 
 const Container = styled.div`
   display: grid;
@@ -72,7 +76,7 @@ const Td = styled.td`
   text-align: center;
 `;
 
-const ButtonContainer = styled.div`
+const MiddleContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -91,43 +95,24 @@ const Input = styled.input`
     -webkit-appearance: none;
     margin: 0;
   }
-
-  & {
-    -moz-appearance: textfield;
-  }
 `;
-
-const itemsData = [
-  { id: 1, name: "Name of armor", type: "Armor", dateCreated: "2/19/2024" },
-  { id: 2, name: "Name of weapon", type: "Weapon", dateCreated: "2/19/2024" },
-  { id: 3, name: "Name of potion", type: "Potion", dateCreated: "2/19/2024" },
-  { id: 4, name: "Name of ring", type: "Ring", dateCreated: "2/19/2024" },
-  { id: 5, name: "Name of helmet", type: "Helmet", dateCreated: "2/19/2024" },
-  { id: 6, name: "Name of armor", type: "Armor", dateCreated: "2/19/2024" },
-  { id: 7, name: "Name of weapon", type: "Weapon", dateCreated: "2/19/2024" },
-  { id: 8, name: "Name of potion", type: "Potion", dateCreated: "2/19/2024" },
-  { id: 9, name: "Name of ring", type: "Ring", dateCreated: "2/19/2024" },
-  { id: 10, name: "Name of helmet", type: "Helmet", dateCreated: "2/19/2024" },
-  { id: 11, name: "Name of armor", type: "Armor", dateCreated: "2/19/2024" },
-  { id: 12, name: "Name of weapon", type: "Weapon", dateCreated: "2/19/2024" },
-  { id: 13, name: "Name of potion", type: "Potion", dateCreated: "2/19/2024" },
-  { id: 14, name: "Name of ring", type: "Ring", dateCreated: "2/19/2024" },
-  { id: 15, name: "Name of helmet", type: "Helmet", dateCreated: "2/19/2024" },
-  { id: 16, name: "Name of armor", type: "Armor", dateCreated: "2/19/2024" },
-  { id: 17, name: "Name of weapon", type: "Weapon", dateCreated: "2/19/2024" },
-  { id: 18, name: "Name of potion", type: "Potion", dateCreated: "2/19/2024" },
-  { id: 19, name: "Name of ring", type: "Ring", dateCreated: "2/19/2024" },
-  { id: 20, name: "Name of helmet", type: "Helmet", dateCreated: "2/19/2024" },
-];
 
 function CustomizeShop() {
   const { shop, isPending } = useShop();
-  const { t } = useTranslation();
-  const [allItems, setAllItems] = useState(itemsData);
-  const [shopItems, setShopItems] = useState([]);
+  const { isLoading, items = [] } = useItems();
+  const [shopItems, setShopItems] = useState<ShopItem[]>([]);
+  const [selectedItem, setSelectedItem] = useState<ShopItem | undefined>(
+    undefined
+  );
+
+  const [price, setPrice] = useState<CoinPurse>({
+    goldPieces: 0,
+    silverPieces: 0,
+    copperPieces: 0,
+  });
   const [quantity, setQuantity] = useState(1);
 
-  if (isPending) {
+  if (isPending || isLoading) {
     return <Spinner />;
   }
 
@@ -135,21 +120,33 @@ function CustomizeShop() {
     return <div>shop not found</div>;
   }
 
-  const addToShop = (item) => {
-    const existingItem = shopItems.find((i) => i.id === item.id);
+  const handleClick = (item: ShopItem) => {
+    setSelectedItem((prev) => (prev?.id === item.id ? undefined : item));
+  };
+
+  const changePrice = (type: keyof CoinPurse, value: number) => {
+    setPrice((prev) => ({
+      ...prev,
+      [type]: value,
+    }));
+  };
+
+  const addToShop = (item: ShopItem) => {
+    const existingItem = shopItems.find((i: ShopItem) => i.id === item.id);
+
     if (existingItem) {
       setShopItems(
-        shopItems.map((i) =>
-          i.id === item.id ? { ...i, qty: i.qty + quantity } : i
+        shopItems.map((i: ShopItem) =>
+          i.id === item.id ? { ...i, qty: i.qty + quantity, price: price } : i
         )
       );
     } else {
-      setShopItems([...shopItems, { ...item, qty: quantity }]);
+      setShopItems([...shopItems, { ...item, qty: quantity, price: price }]);
     }
   };
 
-  const removeFromShop = (item) => {
-    setShopItems(shopItems.filter((i) => i.id !== item.id));
+  const removeFromShop = (item: ShopItem) => {
+    setShopItems(shopItems.filter((i: ShopItem) => i.id !== item.id));
   };
 
   return (
@@ -163,48 +160,91 @@ function CustomizeShop() {
             <Table>
               <thead>
                 <Th>Name</Th>
-                <Th>Type</Th>
-                <Th>Date Created</Th>
+                <Th>Weight</Th>
+                <Th>Description</Th>
               </thead>
               <tbody>
-                {allItems.map((item) => (
-                  <Tr key={item.id}>
+                {items?.map((item) => (
+                  <Tr
+                    key={item.id}
+                    onClick={() => handleClick(item)}
+                    style={{
+                      backgroundColor:
+                        item.id === selectedItem?.id
+                          ? "rgba(136, 213, 136, 0.59)"
+                          : undefined,
+                    }}
+                  >
                     <Td>{item.name}</Td>
-                    <Td>{item.type}</Td>
-                    <Td>{item.dateCreated}</Td>
+                    <Td>{item.weight}</Td>
+                    <Td>{item.description}</Td>
                   </Tr>
                 ))}
               </tbody>
             </Table>
           </TableWrapper>
         </TableContainer>
-
-        <ButtonContainer>
-          <Button onClick={() => addToShop(allItems[0])}> → </Button>
+        <MiddleContainer>
+          <p>Gold</p>
+          <Input
+            type="number"
+            value={price?.goldPieces || 0}
+            onChange={(e) =>
+              changePrice("goldPieces", parseInt(e.target.value))
+            }
+            disabled={!selectedItem}
+          />
+          <p>Silver</p>
+          <Input
+            type="number"
+            value={price?.silverPieces || 0}
+            onChange={(e) =>
+              changePrice("silverPieces", parseInt(e.target.value))
+            }
+            disabled={!selectedItem}
+          />
+          <p>Copper</p>
+          <Input
+            type="number"
+            value={price?.copperPieces || 0}
+            onChange={(e) =>
+              changePrice("copperPieces", parseInt(e.target.value))
+            }
+            disabled={!selectedItem}
+          />
+          <Button onClick={() => addToShop()}> → </Button>
+          <p>Quantity</p>
           <Input
             type="number"
             value={quantity}
             onChange={(e) => setQuantity(parseInt(e.target.value))}
+            disabled={!selectedItem}
           />
           <Button onClick={() => removeFromShop(shopItems[0])}> ← </Button>
-        </ButtonContainer>
-
+        </MiddleContainer>
         <TableContainer>
           <Heading as="h1">Shop Inventory</Heading>
           <TableWrapper>
             <Table>
               <thead>
                 <Th>Name</Th>
-                <Th>Type</Th>
-                <Th>Date Created</Th>
+                <Th>Price</Th>
                 <Th>Qty</Th>
               </thead>
               <tbody>
-                {shopItems.map((item) => (
-                  <Tr key={item.id}>
+                {shopItems.map((item: ShopItem) => (
+                  <Tr
+                    key={item.id}
+                    onClick={() => handleClick(item)}
+                    style={{
+                      backgroundColor:
+                        item.id === selectedItem?.id
+                          ? "rgba(136, 213, 136, 0.59)"
+                          : undefined,
+                    }}
+                  >
                     <Td>{item.name}</Td>
-                    <Td>{item.type}</Td>
-                    <Td>{item.dateCreated}</Td>
+                    <Td>{coinPursePrint(item.price)}</Td>
                     <Td>{item.qty}</Td>
                   </Tr>
                 ))}

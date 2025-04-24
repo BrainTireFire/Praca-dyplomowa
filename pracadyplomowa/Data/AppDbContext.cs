@@ -70,7 +70,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         public DbSet<ImmaterialResourceInstance> ImmaterialResourceInstances { get; set; }
         public DbSet<Power> Powers { get; set; }
 
-        
+
         public DbSet<AbilityEffectBlueprint> AbilityEffectBlueprints { get; set; }
         public DbSet<ActionEffectBlueprint> ActionEffectBlueprints { get; set; }
         public DbSet<ArmorClassEffectBlueprint> ArmorClassEffectBlueprints { get; set; }
@@ -93,7 +93,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         public DbSet<DummyEffectBlueprint> DummyEffectBlueprints { get; set; }
         public DbSet<OffHandAttackEffectBlueprint> OffHandEffectBlueprints { get; set; }
         public DbSet<LanguageEffectBlueprint> LanguageEffectBlueprints { get; set; }
-        
+
         public DbSet<AbilityEffectInstance> AbilityEffectInstances { get; set; }
         public DbSet<ActionEffectInstance> ActionEffectInstances { get; set; }
         public DbSet<ArmorClassEffectInstance> ArmorClassEffectInstances { get; set; }
@@ -114,23 +114,23 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         public DbSet<DummyEffectInstance> DummyEffectInstances { get; set; }
         public DbSet<OffHandAttackEffectInstance> OffHandEffectInstances { get; set; }
         public DbSet<LanguageEffectInstance> LanguageEffectInstances { get; set; }
-        public DbSet<ChoiceGroupUsage> ChoiceGroupUsages {get; set;}
-        public DbSet<Language> Languages {get; set;}
+        public DbSet<ChoiceGroupUsage> ChoiceGroupUsages { get; set; }
+        public DbSet<Language> Languages { get; set; }
         public DbSet<PowerSelection> PowerSelections { get; set; }
-        
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
                 foreach (var entityType in builder.Model.GetEntityTypes())
                 {
                         foreach (var property in entityType.GetProperties())
                         {
-                        if (property.ClrType == typeof(DateTime))
-                        {
-                                property.SetValueConverter(new ValueConverter<DateTime, DateTime>(
-                                v => v.ToUniversalTime(),
-                                v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
-                                ));
-                        }
+                                if (property.ClrType == typeof(DateTime))
+                                {
+                                        property.SetValueConverter(new ValueConverter<DateTime, DateTime>(
+                                        v => v.ToUniversalTime(),
+                                        v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
+                                        ));
+                                }
                         }
                 }
                 base.OnModelCreating(builder);
@@ -212,7 +212,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .HasForeignKey(c => c.R_OwnedByGroupId)
                         .IsRequired(false)
                         .OnDelete(DeleteBehavior.Cascade);
-                
+
                 builder.Entity<Field>() //Should probably be reversed so that when board is deleted then participance data is removed
                         .HasOne(c => c.R_OccupiedBy)
                         .WithOne(c => c.R_OccupiedField)
@@ -255,11 +255,11 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                 //         .HasForeignKey(ei => ei.R_CreatedByEquippingId)
                 //         .IsRequired(false);
 
-                
+
                 builder.Entity<Class>()
                         .HasMany(c => c.R_AccessiblePowers)
                         .WithMany(p => p.R_ClassesWithAccess);
-                
+
                 builder.Entity<Class>()
                         .HasMany(c => c.R_UsedForUpcastingOfPowers)
                         .WithOne(p => p.R_ClassForUpcasting)
@@ -275,23 +275,23 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .WithOne(ds => ds.R_ValueEffectBlueprint)
                         .HasForeignKey<DiceSet>(ds => ds.R_ValueEffectBlueprintId)
                         .OnDelete(DeleteBehavior.Cascade);
-                        
-                builder.Entity<ValueEffectInstance>().Navigation(e=>e.DiceSet).AutoInclude();
-                builder.Entity<ValueEffectBlueprint>().Navigation(e=>e.DiceSet).AutoInclude();
-                builder.Entity<DiceSet>().Navigation(e=>e.additionalValues).AutoInclude();
-                builder.Entity<DiceSet.AdditionalValue>().Navigation(e=>e.R_LevelsInClass).AutoInclude();
-                builder.Entity<LanguageEffectBlueprint>().Navigation(e=>e.R_Language).AutoInclude();
+
+                builder.Entity<ValueEffectInstance>().Navigation(e => e.DiceSet).AutoInclude();
+                builder.Entity<ValueEffectBlueprint>().Navigation(e => e.DiceSet).AutoInclude();
+                builder.Entity<DiceSet>().Navigation(e => e.additionalValues).AutoInclude();
+                builder.Entity<DiceSet.AdditionalValue>().Navigation(e => e.R_LevelsInClass).AutoInclude();
+                builder.Entity<LanguageEffectBlueprint>().Navigation(e => e.R_Language).AutoInclude();
                 builder.Entity<LanguageEffectBlueprint>()
                         .HasOne(lei => lei.R_Language)
                         .WithMany(l => l.R_EffectBlueprints)
                         .HasForeignKey(lei => lei.R_LanguageId);
-                builder.Entity<LanguageEffectInstance>().Navigation(e=>e.R_Language).AutoInclude();
+                builder.Entity<LanguageEffectInstance>().Navigation(e => e.R_Language).AutoInclude();
                 builder.Entity<LanguageEffectInstance>()
                         .HasOne(lei => lei.R_Language)
                         .WithMany(l => l.R_EffectInstances)
                         .HasForeignKey(lei => lei.R_LanguageId);
-                builder.Entity<ProficiencyEffectBlueprint>().Navigation(e=>e.R_GrantsProficiencyInItemFamily).AutoInclude();
-                builder.Entity<ProficiencyEffectInstance>().Navigation(e=>e.R_GrantsProficiencyInItemFamily).AutoInclude();
+                builder.Entity<ProficiencyEffectBlueprint>().Navigation(e => e.R_GrantsProficiencyInItemFamily).AutoInclude();
+                builder.Entity<ProficiencyEffectInstance>().Navigation(e => e.R_GrantsProficiencyInItemFamily).AutoInclude();
 
                 builder.Entity<ChoiceGroup>().HasMany(cg => cg.R_PowersAlwaysAvailable).WithMany(p => p.R_AlwaysAvailableThroughChoiceGroup);
                 builder.Entity<ChoiceGroup>().HasMany(cg => cg.R_PowersToPrepare).WithMany(p => p.R_ToPrepareThroughChoiceGroups);
@@ -305,27 +305,27 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                 builder.Entity<Character>().HasMany(c => c.R_CharactersParticipatesInEncounters).WithOne(p => p.R_Character).HasForeignKey(p => p.R_CharacterId).OnDelete(DeleteBehavior.Cascade);
         }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.AddInterceptors(new Data.DeletionInterceptor());
-        optionsBuilder.AddInterceptors(new Data.ValidationInterceptor());
-        // optionsBuilder.UseLazyLoadingProxies();
-        // var lazyLoadEvents = new[]
-        // {
-        //         CoreEventId.NavigationLazyLoading,
-        //         CoreEventId.DetachedLazyLoadingWarning,
-        //         CoreEventId.LazyLoadOnDisposedContextWarning,
-        // };
-        // #if DEBUG
-        // optionsBuilder.ConfigureWarnings(w => w.Throw(lazyLoadEvents));
-        // #else
-        // if (sp.GetService<IHostEnvironment>()?.IsEnvironment("PRD") ?? false)
-        // {   //logs LazyLoad events as error everywhere else
-        //         optionsBuilder.ConfigureWarnings(w => w.Log(lazyLoadEvents.Select(lle => (lle, LogLevel.Error)).ToArray())); 
-        // }
-        // #endif
-        base.OnConfiguring(optionsBuilder);
-    }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+                optionsBuilder.AddInterceptors(new Data.DeletionInterceptor());
+                optionsBuilder.AddInterceptors(new Data.ValidationInterceptor());
+                optionsBuilder.UseLazyLoadingProxies();
+                var lazyLoadEvents = new[]
+                {
+                CoreEventId.NavigationLazyLoading,
+                CoreEventId.DetachedLazyLoadingWarning,
+                CoreEventId.LazyLoadOnDisposedContextWarning,
+        };
+#if DEBUG
+                optionsBuilder.ConfigureWarnings(w => w.Throw(lazyLoadEvents));
+#else
+        if (sp.GetService<IHostEnvironment>()?.IsEnvironment("PRD") ?? false)
+        {   //logs LazyLoad events as error everywhere else
+                optionsBuilder.ConfigureWarnings(w => w.Log(lazyLoadEvents.Select(lle => (lle, LogLevel.Error)).ToArray())); 
+        }
+#endif
+                base.OnConfiguring(optionsBuilder);
+        }
 
-        
+
 }

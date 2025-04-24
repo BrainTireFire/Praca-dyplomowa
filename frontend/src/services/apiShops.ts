@@ -1,4 +1,4 @@
-import { Shop, ShopInsertDto } from "../models/shop";
+import { Shop, ShopInsertDto, ShopItem } from "../models/shop";
 import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
 
@@ -39,4 +39,13 @@ export async function getShop(shopId: number): Promise<Shop> {
 
 export async function removeShop(shopId: number): Promise<void> {
   await customFetch(`${BASE_URL}/api/shop/${shopId}`, { method: "DELETE" });
+}
+
+export async function getItems(): Promise<ShopItem[]> {
+  const data = await customFetch(
+    `${BASE_URL}/api/shop/items?IsBlueprint=true`,
+    { method: "GET" }
+  );
+
+  return data;
 }

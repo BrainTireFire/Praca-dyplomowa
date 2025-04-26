@@ -448,7 +448,8 @@ public class EncounterService : IEncounterService
             MaxHitpoints = character.MaxHealth,
             TemporaryHitpoints = character.TemporaryHitpoints,
             SucceededDeathSaves = character.SucceededDeathSavingThrows,
-            FailedDeathSaves = character.FailedDeathSavingThrows
+            FailedDeathSaves = character.FailedDeathSavingThrows,
+            Size = character.Size
         }).First();
         return result;
     }

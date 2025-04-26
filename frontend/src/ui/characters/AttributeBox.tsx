@@ -63,6 +63,7 @@ const Text = styled.p`
 function AttributeBox({ attribute }: { attribute: Attribute }) {
   let onSuccess = (roll: RollDto) => {
     if(roll.executed) toast.success(`Roll outcome: ${roll.roll + roll.modifier}`);
+    else toast.success(`Requested roll with DMs assistance`);
   }
   const { characterId } = useContext(CharacterIdContext);
   const {rollAbilityDice} = useRollAbilityDice(onSuccess, characterId!, attribute.name);

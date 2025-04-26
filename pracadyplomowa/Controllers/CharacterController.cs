@@ -739,16 +739,19 @@ namespace pracadyplomowa.Controllers
             }
             if(character.R_CampaignId != null){
                 await _notificationService.SendNotificationAbilityRollRequested(characterId, character.Name, (int)character.R_CampaignId!, ability);
-                return Ok();
+                RollDto result = new RollDto(){
+                    Executed = false,
+                };
+                return Ok(result);
             }
             else{
                 int roll = character.AbilityRoll(ability);
                 RollDto result = new RollDto(){
                     Executed = true,
                     Name = Enum.GetName(typeof(Ability), ability),
-                    
-                }
-                return Ok(roll);
+                    Roll = roll
+                };
+                return Ok(result);
             }
             
         }
@@ -806,11 +809,19 @@ namespace pracadyplomowa.Controllers
             }
             if(character.R_CampaignId != null){
                 await _notificationService.SendNotificationSkillRollRequested(characterId, character.Name, (int)character.R_CampaignId!, skill);
-                return Ok();
+                RollDto result = new RollDto(){
+                    Executed = false,
+                };
+                return Ok(result);
             }
             else{
                 int roll = character.SkillRoll(skill);
-                return Ok(roll);
+                RollDto result = new RollDto(){
+                    Executed = true,
+                    Name = Enum.GetName(typeof(Skill), skill),
+                    Roll = roll
+                };
+                return Ok(result);
             }
             
         }
@@ -879,11 +890,18 @@ namespace pracadyplomowa.Controllers
             }
             if(character.R_CampaignId != null){
                 await _notificationService.SendNotificationSavingThrowRollRequested(characterId, character.Name, (int)character.R_CampaignId!, ability);
-                return Ok();
-            }
+                RollDto result = new RollDto(){
+                    Executed = false,
+                };
+                return Ok(result);            }
             else{
                 int roll = character.SavingThrowRoll(ability);
-                return Ok(roll);
+                RollDto result = new RollDto(){
+                    Executed = true,
+                    Name = Enum.GetName(typeof(Ability), ability),
+                    Roll = roll
+                };
+                return Ok(result);
             }
             
         }

@@ -122,17 +122,10 @@ const ContainerEffects = styled.div`
 `;
 
 const TabsContainer1 = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  height: 60%;
+  height: 100%;
   overflow-y: hidden;
 `;
-const TabsContainer2 = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  height: 40%;
-  overflow-y: hidden;
-`;
+
 
 const TableContainer = styled.div`
   overflow-y: hidden;

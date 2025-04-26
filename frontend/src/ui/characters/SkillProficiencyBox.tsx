@@ -47,6 +47,7 @@ export default function SkillProficiencyBox({
 }) {
   let onSuccess = (roll: RollDto) => {
     if(roll.executed) toast.success(`Roll outcome: ${roll.roll + roll.modifier}`);
+    else toast.success(`Requested roll with DMs assistance`);
   }
   const { characterId } = useContext(CharacterIdContext);
   const {rollSkillDice} = useRollSkillDice(onSuccess, characterId!, item.name as skill);

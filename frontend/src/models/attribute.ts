@@ -1,5 +1,7 @@
+import { ability } from "../features/effects/abilities";
+
 export type Attribute = {
-  name: string;
+  name: ability;
   value: number;
   modifier: number;
 };

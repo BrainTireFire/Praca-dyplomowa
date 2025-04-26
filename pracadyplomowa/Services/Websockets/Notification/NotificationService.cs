@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.AspNetCore.SignalR;
 using pracadyplomowa.Hubs;
+using pracadyplomowa.Models.Enums;
 using pracadyplomowa.Services.Websockets.Connection;
 
 namespace pracadyplomowa.Services.Websockets.Notification;
@@ -64,6 +65,40 @@ public class NotificationService : INotificationService
                     .SendAsync("SessionHasBeenStarted", "Session has been started. Have fun!", campaignId, encounteId);
             }
         }
+    }
+
+    public async Task SendNotificationAbilityRollRequested(int characterId, string characterName, int campaignId, Ability ability){
+        var campaignDMGroup =  $"Campaign_{campaignId}_GM";
+        await _hubContext.Clients.Group(campaignDMGroup)
+                    .SendAsync("AbilityRollRequest", "Ability roll requested", characterId, characterName, Enum.GetName(typeof(Ability), ability));
+    }
+
+    public async Task SendNotificationAbilityRollPerformed(string characterName, int campaignId, Ability ability, int result){
+        var campaignGroup = $"Campaign_{campaignId}";
+        await _hubContext.Clients.Group(campaignGroup)
+                    .SendAsync("AbilityRollPerformed", "Ability roll performed", characterName, Enum.GetName(typeof(Ability), ability), result);
+    }
+    public async Task SendNotificationSkillRollRequested(int characterId, string characterName, int campaignId, Skill skill){
+        var campaignDMGroup =  $"Campaign_{campaignId}_GM";
+        await _hubContext.Clients.Group(campaignDMGroup)
+                    .SendAsync("SkillRollRequest", "Skill roll requested", characterId, characterName, Enum.GetName(typeof(Skill), skill));
+    }
+
+    public async Task SendNotificationSkillRollPerformed(string characterName, int campaignId, Skill skill, int result){
+        var campaignGroup = $"Campaign_{campaignId}";
+        await _hubContext.Clients.Group(campaignGroup)
+                    .SendAsync("SkillRollPerformed", "Skill roll performed", characterName, Enum.GetName(typeof(Skill), skill), result);
+    }
+    public async Task SendNotificationSavingThrowRollRequested(int characterId, string characterName, int campaignId, Ability ability){
+        var campaignDMGroup =  $"Campaign_{campaignId}_GM";
+        await _hubContext.Clients.Group(campaignDMGroup)
+                    .SendAsync("SavingThrowRollRequest", "Saving Throw roll requested", characterId, characterName, Enum.GetName(typeof(Ability), ability));
+    }
+
+    public async Task SendNotificationSavingThrowRollPerformed(string characterName, int campaignId, Ability ability, int result){
+        var campaignGroup = $"Campaign_{campaignId}";
+        await _hubContext.Clients.Group(campaignGroup)
+                    .SendAsync("SavingThrowRollPerformed", "Saving Throw roll performed", characterName, Enum.GetName(typeof(Ability), ability), result);
     }
 
 }

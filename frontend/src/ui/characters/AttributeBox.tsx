@@ -1,5 +1,11 @@
 import styled from "styled-components";
 import { Attribute } from "../../models/attribute";
+import { useRollAbilityDice } from "./hooks/useRollAbilityDice";
+import { useContext } from "react";
+import { CharacterIdContext } from "../../features/characters/contexts/CharacterIdContext";
+
+import toast from "react-hot-toast";
+import { RollDto } from "../../services/apiCharacters";
 
 const StyledDropdown = styled.div`
   display: flex;
@@ -21,6 +27,7 @@ const Box = styled.div`
   border-radius: var(--border-radius-sm);
   width: 5rem;
   height: 5rem;
+  cursor: pointer;
 `;
 
 const Header = styled.div`
@@ -54,10 +61,15 @@ const Text = styled.p`
 `;
 
 function AttributeBox({ attribute }: { attribute: Attribute }) {
+  let onSuccess = (roll: RollDto) => {
+    if(roll.executed) toast.success(`Roll outcome: ${roll.roll + roll.modifier}`);
+  }
+  const { characterId } = useContext(CharacterIdContext);
+  const {rollAbilityDice} = useRollAbilityDice(onSuccess, characterId!, attribute.name);
   return (
     <StyledDropdown>
       <Header>{attribute.name}</Header>
-      <Box>
+      <Box onClick={() => rollAbilityDice()}>
         <Text>{attribute.value}</Text>
         <Circle>
           {attribute.modifier >= 0

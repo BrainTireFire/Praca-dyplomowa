@@ -964,6 +964,90 @@ namespace pracadyplomowa.Models.Entities.Characters
 
             return bonusRollResults.Concat([baseRollResult]).Aggregate(0, (sum, current) => sum + current.result) + PowerCastBonus(power);
         }
+        
+        public int AbilityRoll(Ability ability)
+        {
+            DiceSet bonusDiceSet = this.AffectedByApprovedEffects.OfType<AbilityEffectInstance>()
+                    .Where(effect =>
+                        effect.EffectType.AbilityEffect_Ability == ability && effect.EffectType.AbilityEffect == AbilityEffect.Bonus
+                    ).Select(effect => effect.DiceSet)
+             
+            .Aggregate(new DiceSet(), (sum, next) => sum += next).getPersonalizedSet(this);
+
+            DiceSet baseDiceSet = new DiceSet() { d20 = 1 };
+
+            List<DiceSet.Dice> bonusRollResults = bonusDiceSet.RollPrototype(false, false, null);
+
+            //check for rerolls
+            List<AbilityEffectInstance> rerollEffectList = this.AffectedByApprovedEffects
+                                                                    .OfType<AbilityEffectInstance>()
+                                                                    .Where(x => x.EffectType.AbilityEffect == AbilityEffect.RerollLowerThan && x.EffectType.AbilityEffect_Ability == ability)
+                                                                    .ToList();
+            bool rerollEffectPresent = rerollEffectList.Count != 0;
+            int? rerollLowerThan = null;
+            if (rerollEffectPresent)
+            {
+                rerollLowerThan = rerollEffectList.Aggregate(0, (maximum, current) => current.DiceSet.flat > maximum ? current.DiceSet.flat : maximum);
+            }
+            //check for advantage
+            List<AbilityEffectInstance> advantageEffectList = this.AffectedByApprovedEffects
+                                                                        .OfType<AbilityEffectInstance>()
+                                                                        .Where(x => x.EffectType.AbilityEffect == AbilityEffect.Advantage && x.EffectType.AbilityEffect_Ability == ability)
+                                                                        .ToList();
+            bool advantageEffectPresent = advantageEffectList.Count != 0;
+
+            DiceSet.Dice baseRollResult = new DiceSet() { d20 = 1 }.RollPrototype(advantageEffectPresent, false, rerollLowerThan).First();
+
+            return bonusRollResults.Concat([baseRollResult]).Aggregate(0, (sum, current) => sum + current.result);
+        }
+
+        public int SkillRoll(Skill skill)
+        {
+            DiceSet bonusDiceSet = this.AffectedByApprovedEffects.OfType<SkillEffectInstance>()
+             .Where(effect =>
+                effect.EffectType.SkillEffect_Skill == skill && effect.EffectType.SkillEffect == SkillEffect.Bonus
+             ).Select(effect => effect.DiceSet)
+             .Union(
+                    this.AffectedByApprovedEffects.OfType<AbilityEffectInstance>()
+                    .Where(effect =>
+                        effect.EffectType.AbilityEffect_Ability == Utils.SkillToAbility(skill) && effect.EffectType.AbilityEffect == AbilityEffect.Bonus
+                    ).Select(effect => effect.DiceSet)
+             )
+            .Aggregate(new DiceSet(), (sum, next) => sum += next).getPersonalizedSet(this);
+
+            DiceSet baseDiceSet = new DiceSet() { d20 = 1 };
+
+            List<DiceSet.Dice> bonusRollResults = bonusDiceSet.RollPrototype(false, false, null);
+
+            //check for rerolls
+            List<SkillEffectInstance> rerollEffectList = this.AffectedByApprovedEffects
+                                                                    .OfType<SkillEffectInstance>()
+                                                                    .Where(x => x.EffectType.SkillEffect == SkillEffect.RerollLowerThan && x.EffectType.SkillEffect_Skill == skill)
+                                                                    .ToList();
+            bool rerollEffectPresent = rerollEffectList.Count != 0;
+            int? rerollLowerThan = null;
+            if (rerollEffectPresent)
+            {
+                rerollLowerThan = rerollEffectList.Aggregate(0, (maximum, current) => current.DiceSet.flat > maximum ? current.DiceSet.flat : maximum);
+            }
+            //check for advantage
+            List<SkillEffectInstance> advantageEffectList = this.AffectedByApprovedEffects
+                                                                        .OfType<SkillEffectInstance>()
+                                                                        .Where(x => x.EffectType.SkillEffect == SkillEffect.Advantage && x.EffectType.SkillEffect_Skill == skill)
+                                                                        .ToList();
+            bool advantageEffectPresent = advantageEffectList.Count != 0;
+
+            //check for proficiency
+            List<SkillEffectInstance> proficiencyEffectList = this.AffectedByApprovedEffects
+                                                                        .OfType<SkillEffectInstance>()
+                                                                        .Where(x => x.EffectType.SkillEffect == SkillEffect.Proficiency && x.EffectType.SkillEffect_Skill == skill)
+                                                                        .ToList();
+            bool proficiencyEffectPresent = advantageEffectList.Count != 0;
+
+            DiceSet.Dice baseRollResult = new DiceSet() { d20 = 1 }.RollPrototype(advantageEffectPresent, false, rerollLowerThan).First();
+
+            return bonusRollResults.Concat([baseRollResult]).Aggregate(0, (sum, current) => sum + current.result) + (proficiencyEffectPresent ? ProficiencyBonus : 0);
+        }
 
         public int SavingThrowRoll(Ability ability)
         {

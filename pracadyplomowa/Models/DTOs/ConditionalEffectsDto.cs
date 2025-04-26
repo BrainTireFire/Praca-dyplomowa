@@ -45,4 +45,11 @@ namespace pracadyplomowa.Models.DTOs
             public List<ConditionalEffectDto> TargetConditionalEffects { get; set; } = [];
         }
     }
+
+    public class ConditionalEffectDto {
+        public int EffectId { get; set; }
+        public string EffectName { get; set; } = null!;
+        public string EffectDescription { get; set; } = null!;
+        public bool Selected { get; set; } = false;
+    }
 }

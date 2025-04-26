@@ -1,7 +1,6 @@
 import styled, { css } from "styled-components";
 import StatsContainer from "../../ui/characters/StatsContainer";
 import EquipmentTable from "./tables/EquipmentTable";
-import ProficiencyBox from "../../ui/characters/ProficiencyBox";
 import Box from "../../ui/containers/Box";
 import FormRowVertical from "../../ui/forms/FormRowVertical";
 import Input from "../../ui/forms/Input";
@@ -21,14 +20,14 @@ import { useCharacter } from "./hooks/useCharacter";
 import Spinner from "../../ui/interactive/Spinner";
 import Modal from "../../ui/containers/Modal";
 import Button from "../../ui/interactive/Button";
-import NewCharacter from "./NewCharacter";
 import SelectFromChoiceGroupScreen from "./SelectFromChoiceGroupScreen";
 import { CharacterIdContext } from "./contexts/CharacterIdContext";
 import { useContext, useEffect, useState } from "react";
-import EquipmentSlotScreen from "./EquipmentSlotScreen";
 import AddEquipmentScreen from "./AddEquipmentScreen";
 import { EditModeContext } from "../../context/EditModeContext";
 import { useUpdateCharacter } from "./hooks/useUpdateCharacter";
+import SavingThrowProficiencyContainer from "../../ui/characters/SavingThrowProficiencyContainer";
+import SkillProficiencyContainer from "../../ui/characters/SkillProficiencyContainer";
 
 const MainGrid = styled.div`
   display: grid;
@@ -183,16 +182,16 @@ export default function CharactersSheet() {
                 )}
             </div>
             <div style={{ gridColumnStart: 3, gridRowStart: 1, gridRowEnd: 4 }}>
-              <ProficiencyBox
+              <SkillProficiencyContainer
                 data={character.skills}
                 header="Skills"
-              ></ProficiencyBox>
+              ></SkillProficiencyContainer>
             </div>
             <div style={{ gridColumnStart: 2, gridRowStart: 3, gridRowEnd: 4 }}>
-              <ProficiencyBox
+              <SavingThrowProficiencyContainer
                 data={character.savingThrows}
                 header="Saving throws"
-              ></ProficiencyBox>
+              ></SavingThrowProficiencyContainer>
             </div>
             <div
               style={{ gridColumnStart: 1, gridRowStart: 3, gridRowEnd: -1 }}

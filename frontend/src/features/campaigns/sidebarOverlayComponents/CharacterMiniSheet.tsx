@@ -2,7 +2,6 @@ import styled, { css } from "styled-components";
 import { Character } from "../../../models/character";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
 import Input from "../../../ui/forms/Input";
-import ProficiencyBox from "../../../ui/characters/ProficiencyBox";
 import { EditModeContext } from "../../../context/EditModeContext";
 import ClassTable from "../../characters/tables/ClassTable";
 import { useContext } from "react";
@@ -11,6 +10,8 @@ import AttributeBox from "../../../ui/characters/AttributeBox";
 import { DiceSetString } from "../../../models/diceset";
 import ConstantEffectTable from "../../characters/tables/ConstantEffectTable";
 import EffectTable from "../../characters/tables/EffectTable";
+import SavingThrowProficiencyContainer from "../../../ui/characters/SavingThrowProficiencyContainer";
+import SkillProficiencyContainer from "../../../ui/characters/SkillProficiencyContainer";
 
 const MainGrid = styled.div`
   display: grid;
@@ -73,16 +74,16 @@ export function CharacterMiniSheet({ character }: { character: Character }) {
           </FormRowVertical>
         </div>
         <div style={{ gridColumnStart: 1, gridRowStart: 2, gridRowEnd: 3 }}>
-          <ProficiencyBox
+          <SkillProficiencyContainer
             data={character.skills}
             header="Skills"
-          ></ProficiencyBox>
+          ></SkillProficiencyContainer>
         </div>
         <div style={{ gridColumnStart: 1, gridRowStart: 3, gridRowEnd: 4 }}>
-          <ProficiencyBox
+          <SavingThrowProficiencyContainer
             data={character.savingThrows}
             header="Saving throws"
-          ></ProficiencyBox>
+          ></SavingThrowProficiencyContainer>
         </div>
         <div
           style={{

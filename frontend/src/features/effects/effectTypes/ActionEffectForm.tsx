@@ -13,7 +13,7 @@ import { rollMoment, rollMomentDropdown } from "../rollMoment";
 import { EffectContext } from "../contexts/BlueprintOrInstanceContext";
 import { EditModeContext } from "../../../context/EditModeContext";
 
-const effectTypes = ["Action", "BonusAction", "Reaction"] as const;
+const effectTypes = ["Action", "BonusAction" /*, "Reaction"*/] as const;
 
 type effectType = (typeof effectTypes)[number];
 
@@ -85,7 +85,7 @@ export default function ActionEffectForm({
         values={[
           { label: "Action", value: "Action" },
           { label: "Bonus action", value: "BonusAction" },
-          { label: "Reaction", value: "Reaction" },
+          // { label: "Reaction", value: "Reaction" },
         ]}
         label="Action effect"
         name="actionEffect"

@@ -4,7 +4,7 @@ namespace pracadyplomowa.Models.Enums
     {
         Action = 0,
         BonusAction = 1,
-        Reaction = 2,
+        // Reaction = 2,
         WeaponAttack = 3,
         None = 4
     }

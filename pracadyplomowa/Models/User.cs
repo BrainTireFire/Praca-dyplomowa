@@ -9,6 +9,7 @@ public class User : IdentityUser<int>
 {
     public string? RefreshToken { get; set; }
     public DateTime RefreshTokenExpiryTime { get; set; }
+    public bool IsDeleted { get; set; }
     public virtual ICollection<UserRole> UserRoles { get; set; }
     public virtual ICollection<ObjectWithOwner> R_Objects { get; set; } = [];
 

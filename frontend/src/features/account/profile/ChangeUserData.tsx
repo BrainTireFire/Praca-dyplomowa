@@ -5,6 +5,7 @@ import UserChangeUsernameForm from "./UserChangeUsernameForm";
 import Heading from "../../../ui/text/Heading";
 import Button from "../../../ui/interactive/Button";
 import { useTranslation } from "react-i18next";
+import { useDeleteUser } from "./hooks/useDeleteUser";
 
 const StyledChangeUserData = styled.div`
   display: grid;
@@ -16,6 +17,11 @@ const StyledChangeUserData = styled.div`
 
 export default function ChangeUserData() {
   const { t } = useTranslation();
+  const { deleteUser, isDeleting } = useDeleteUser();
+
+  const handleDeleteUser = () => () => {
+    deleteUser();
+  };
 
   return (
     <StyledChangeUserData>
@@ -23,7 +29,12 @@ export default function ChangeUserData() {
       <UserChangesPasswordForm />
       <UserChangeEmailForm />
       <Heading>{t("account.profile.change.user.data")}</Heading>
-      <Button size="medium" variation="danger">
+      <Button
+        size="medium"
+        variation="danger"
+        disabled={isDeleting}
+        onClick={handleDeleteUser()}
+      >
         {t("account.profile.remove.account")}
       </Button>
     </StyledChangeUserData>

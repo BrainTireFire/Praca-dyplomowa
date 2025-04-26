@@ -60,4 +60,14 @@ public class UserController : BaseApiController
         var result = await _userService.UpdatePasswordAsync(userId, updateUserDto.NewPassword);
         return result ?? NoContent();
     }
+    
+    [Authorize]
+    [HttpDelete("edit/delete")]
+    public async Task<ActionResult> DeleteUser()
+    {
+        var userId = User.GetUserId();
+        var result = await _userService.DeleteUserAsync(userId);
+        return result ?? NoContent();
+    }
+  
 }

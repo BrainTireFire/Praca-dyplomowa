@@ -38,13 +38,13 @@ export type Power = {
 export type ActionType =
   | "Action"
   | "BonusAction"
-  | "Reaction"
+  // | "Reaction"
   | "WeaponAttack"
   | "None";
 export const ActionTypeLabels: { [key in ActionType]: string } = {
   Action: "Action",
   BonusAction: "Bonus Action",
-  Reaction: "Reaction",
+  // Reaction: "Reaction",
   WeaponAttack: "Weapon Attack",
   None: "None",
 };

@@ -4,6 +4,6 @@ namespace pracadyplomowa.Models.Enums.EffectOptions
     {
         Action,
         BonusAction,
-        Reaction
+        // Reaction
     }
 }

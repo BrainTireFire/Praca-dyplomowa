@@ -422,15 +422,15 @@ public class Seed
                                 this benefit."
                 }
             );
-            Power protection = new("Protection", ActionType.Reaction, CastableBy.Character, PowerType.PassiveEffect, TargetType.Character)
-            {
-                IsImplemented = false,
-                Description = @"When a creature you can see attacks a target other 
-                                than you that is within 5 feet of you, you can use your 
-                                reaction to impose disadvantage on the attack roll. You 
-                                must be wielding a shield."
-            };
-            fightingStyle.R_PowersAlwaysAvailable.Add(protection);
+            // Power protection = new("Protection", ActionType.Reaction, CastableBy.Character, PowerType.PassiveEffect, TargetType.Character)
+            // {
+            //     IsImplemented = false,
+            //     Description = @"When a creature you can see attacks a target other 
+            //                     than you that is within 5 feet of you, you can use your 
+            //                     reaction to impose disadvantage on the attack roll. You 
+            //                     must be wielding a shield."
+            // };
+            // fightingStyle.R_PowersAlwaysAvailable.Add(protection);
             fightingStyle.R_Effects.Add(new OffHandAttackEffectBlueprint("Two-Weapon Fighting"));
             fightingStyle.NumberToChoose = 1;
 

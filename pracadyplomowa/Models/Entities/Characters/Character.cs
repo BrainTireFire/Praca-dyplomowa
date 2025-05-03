@@ -1655,12 +1655,12 @@ namespace pracadyplomowa.Models.Entities.Characters
             }
         }
 
-        [NotMapped]
-        public int TotaReactionsPerTurn{
-            get {
-                return AffectedByApprovedEffects.OfType<ActionEffectInstance>().Where(x => x.EffectType.ActionEffect == ActionEffect.Reaction).Count() + 1;
-            }
-        }
+        // [NotMapped]
+        // public int TotaReactionsPerTurn{
+        //     get {
+        //         return AffectedByApprovedEffects.OfType<ActionEffectInstance>().Where(x => x.EffectType.ActionEffect == ActionEffect.Reaction).Count() + 1;
+        //     }
+        // }
 
         [NotMapped]
         public int TotalMovementPerTurn{

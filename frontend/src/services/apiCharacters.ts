@@ -1,4 +1,6 @@
+import { ability } from "../features/effects/abilities";
 import { EffectBlueprint } from "../features/effects/EffectBlueprintForm";
+import { skill } from "../features/effects/skills";
 import { CoinPurse } from "../features/items/models/coinPurse";
 import {
   AreaShape,
@@ -12,6 +14,7 @@ import {
   CharacterInsertDto,
 } from "../models/character";
 import { DiceSet } from "../models/diceset";
+import { ConditionalEffectDto } from "../models/DTOs/ConditionalEffectDto";
 import { ImmaterialResourceAmount } from "../models/immaterialResourceAmount";
 import { ItemFamily } from "../models/itemfamily";
 import { PowerListItem } from "../models/power";
@@ -525,4 +528,135 @@ export async function dropConcentration(characterId: number): Promise<void> {
     `${BASE_URL}/api/character/${characterId}/concentration`,
     options
   );
+}
+
+export async function rollAbilityDice(characterId: number, ability: ability): Promise<RollDto> {
+  const options: RequestInit = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/character/${characterId}/abilityRoll/${ability}`,
+    options
+  );
+}
+export async function rollSavingThrowDice(characterId: number, ability: ability): Promise<RollDto> {
+  const options: RequestInit = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/character/${characterId}/savingThrowRoll/${ability}`,
+    options
+  );
+}
+export async function rollSkillDice(characterId: number, skill: skill): Promise<RollDto> {
+  const options: RequestInit = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/character/${characterId}/skillRoll/${skill}`,
+    options
+  );
+}
+export interface RollDto {
+  roll: number;
+  modifier: number;
+  name: string;
+  executed: boolean;
+}
+
+export async function getAbilityRollConditionalEffects(characterId: number, ability: ability): Promise<ConditionalEffectDto[]> {
+  const options: RequestInit = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/character/${characterId}/abilityRoll/${ability}/conditionalEffects`,
+    options
+  );
+}
+export async function getSkillRollConditionalEffects(characterId: number, skill: skill): Promise<ConditionalEffectDto[]> {
+  const options: RequestInit = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/character/${characterId}/skillRoll/${skill}/conditionalEffects`,
+    options
+  );
+}
+export async function getSavingThrowRollConditionalEffects(characterId: number, savingThrow: ability): Promise<ConditionalEffectDto[]> {
+  const options: RequestInit = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/character/${characterId}/savingThrowRoll/${savingThrow}/conditionalEffects`,
+    options
+  );
+}
+
+export async function selectAbilityRollConditionalEffects(characterId: number, ability: ability, conditionalEffects: number[]): Promise<void> {
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(conditionalEffects)
+  };
+  await customFetch(
+    `${BASE_URL}/api/character/${characterId}/abilityRoll/${ability}/conditionalEffects`,
+    options
+  );
+  return;
+}
+
+export async function selectSkillRollConditionalEffects(characterId: number, skill: skill, conditionalEffects: number[]): Promise<void> {
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(conditionalEffects)
+  };
+  await customFetch(
+    `${BASE_URL}/api/character/${characterId}/skillRoll/${skill}/conditionalEffects`,
+    options
+  );
+  return;
+}
+
+export async function selectSavingThrowRollConditionalEffects(characterId: number, savingThrow: ability, conditionalEffects: number[]): Promise<void> {
+  const options: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(conditionalEffects)
+  };
+  await customFetch(
+    `${BASE_URL}/api/character/${characterId}/savingThrowRoll/${savingThrow}/conditionalEffects`,
+    options
+  );
+  return;
 }

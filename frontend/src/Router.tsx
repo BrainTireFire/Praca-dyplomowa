@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import Login from "./pages/account/Login";
 import Register from "./pages/account/Register";
 import Home from "./pages/Home";
@@ -35,74 +35,126 @@ import EncounterEditForm from "./features/campaigns/encounter/EncounterEditForm"
 import ItemFamilies from "./pages/items/ItemFamilies";
 import ImmaterialResources from "./pages/powers/ImmaterialResources";
 import CampaginsAttend from "./pages/campaign/CampaginsAttend";
+import ModalNoButton from "./ui/containers/ModalNoButton";
+import { AbilityRollResolution } from "./features/characters/rollResolution/AbilityRollResolution";
+import { ability } from "./features/effects/abilities";
+import { SkillRollResolution } from "./features/characters/rollResolution/SkillRollResolution";
+import { SavingThrowRollResolution } from "./features/characters/rollResolution/SavingThrowResolution";
+import { skill } from "./features/effects/skills";
 
 export default function Router() {
+  // const [searchParams, setSearchParams] = useSearchParams()
+  const location = useLocation();
+  const navigate = useNavigate();
+  const queryParams = new URLSearchParams(location.search);
   return (
-    <Routes>
-      <Route
-        element={
-          <ProtectedRoute>
-            <AppLayout />
-          </ProtectedRoute>
-        }
+    <>
+      <Routes>
+        <Route
+          element={
+            <ProtectedRoute>
+              <AppLayout />
+            </ProtectedRoute>
+          }
+          >
+          <Route index element={<Navigate replace to="main" />} />
+          <Route path="main" element={<MainDashboard />} />
+          <Route path="join/:campaignId" element={<CampaignJoin />} />
+          <Route path="campaigns" element={<Campagins />} />
+          <Route path="campaignAttend" element={<CampaginsAttend />} />
+          <Route path="campaigns/:campaignId" element={<CampaignInstance />} />
+          <Route path="campaigns/:campaignId/shops" element={<Shops />} />
+          <Route
+            path="campaigns/:campaignId/shops/:shopId"
+            element={<CustomizeShop />}
+            />
+          <Route
+            path="campaigns/:campaignId/createSession"
+            element={<MainBoard />}
+            />
+          <Route
+            path="campaigns/:campaignId/session/:groupName"
+            element={<MainSession />}
+            />
+          <Route
+            path="campaigns/:campaignId/createEncounter"
+            element={<CreateEncounter />}
+            />
+          <Route
+            path="campaigns/:campaignId/encounters/:encounterId/editEncounter"
+            element={<EncounterEditForm />}
+            />
+          <Route
+            path="campaigns/:campaignId/encounters"
+            element={<Encounter />}
+            />
+          <Route path="characters" element={<Characters />} />
+          <Route path="npc" element={<NpcCharacter />} />
+          <Route path="items" element={<Items />} />
+          <Route path="itemFamilies" element={<ItemFamilies />} />
+          <Route path="immaterialResources" element={<ImmaterialResources />} />
+          <Route path="powers" element={<Powers />} />
+          <Route path="homebrew" element={<Homebrew />} />
+          <Route path="homebrew/createPower" element={<HomebrewCreatePower />} />
+          <Route path="homebrew/createMap" element={<BoardCreateForm />} />
+          <Route
+            path="homebrew/updateMap/:boardId"
+            element={<MapUpdateBoardForm />}
+            />
+          <Route path="homebrew/map" element={<HomebrewMap />} />
+          <Route path="homebrew/map/:boardId" element={<MapInstance />} />
+          <Route path="contact" element={<Concact />} />
+          <Route path="profile" element={<Profile />} />
+        </Route>
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
+        <Route path="forgotPassword" element={<ForgotPassword />} />
+        <Route path="changedPassword" element={<PasswordChanged />} />
+        <Route path="home" element={<Home />} />
+        <Route path="forbidden" element={<Forbidden />} />
+        <Route path="serviceDown" element={<ServiceDown />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      
+      <ModalNoButton
+        open={!!queryParams.get('characterAbilityRoll')}
+        handleClose={() => {
+          queryParams.delete("characterAbilityRoll");
+          const newSearch = `?${queryParams.toString()}`;
+          navigate({ search: newSearch });
+        }}
       >
-        <Route index element={<Navigate replace to="main" />} />
-        <Route path="main" element={<MainDashboard />} />
-        <Route path="join/:campaignId" element={<CampaignJoin />} />
-        <Route path="campaigns" element={<Campagins />} />
-        <Route path="campaignAttend" element={<CampaginsAttend />} />
-        <Route path="campaigns/:campaignId" element={<CampaignInstance />} />
-        <Route path="campaigns/:campaignId/shops" element={<Shops />} />
-        <Route
-          path="campaigns/:campaignId/shops/:shopId"
-          element={<CustomizeShop />}
-        />
-        <Route
-          path="campaigns/:campaignId/createSession"
-          element={<MainBoard />}
-        />
-        <Route
-          path="campaigns/:campaignId/session/:groupName"
-          element={<MainSession />}
-        />
-        <Route
-          path="campaigns/:campaignId/createEncounter"
-          element={<CreateEncounter />}
-        />
-        <Route
-          path="campaigns/:campaignId/encounters/:encounterId/editEncounter"
-          element={<EncounterEditForm />}
-        />
-        <Route
-          path="campaigns/:campaignId/encounters"
-          element={<Encounter />}
-        />
-        <Route path="characters" element={<Characters />} />
-        <Route path="npc" element={<NpcCharacter />} />
-        <Route path="items" element={<Items />} />
-        <Route path="itemFamilies" element={<ItemFamilies />} />
-        <Route path="immaterialResources" element={<ImmaterialResources />} />
-        <Route path="powers" element={<Powers />} />
-        <Route path="homebrew" element={<Homebrew />} />
-        <Route path="homebrew/createPower" element={<HomebrewCreatePower />} />
-        <Route path="homebrew/createMap" element={<BoardCreateForm />} />
-        <Route
-          path="homebrew/updateMap/:boardId"
-          element={<MapUpdateBoardForm />}
-        />
-        <Route path="homebrew/map" element={<HomebrewMap />} />
-        <Route path="homebrew/map/:boardId" element={<MapInstance />} />
-        <Route path="contact" element={<Concact />} />
-        <Route path="profile" element={<Profile />} />
-      </Route>
-      <Route path="login" element={<Login />} />
-      <Route path="register" element={<Register />} />
-      <Route path="forgotPassword" element={<ForgotPassword />} />
-      <Route path="changedPassword" element={<PasswordChanged />} />
-      <Route path="home" element={<Home />} />
-      <Route path="forbidden" element={<Forbidden />} />
-      <Route path="serviceDown" element={<ServiceDown />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+        <AbilityRollResolution
+          characterId={Number(queryParams.get('characterAbilityRoll')?.split(':')[0])}
+          ability={queryParams.get('characterAbilityRoll')?.split(':')[1] as ability}>
+        </AbilityRollResolution>
+      </ModalNoButton>
+      <ModalNoButton
+        open={!!queryParams.get('characterSkillRoll')}
+        handleClose={() => {
+          queryParams.delete("characterSkillRoll");
+          const newSearch = `?${queryParams.toString()}`;
+          navigate({ search: newSearch });
+        }}
+      >
+        <SkillRollResolution
+          characterId={Number(queryParams.get('characterSkillRoll')?.split(':')[0])}
+          skill={queryParams.get('characterSkillRoll')?.split(':')[1] as skill}>
+        </SkillRollResolution>
+      </ModalNoButton>
+      <ModalNoButton
+        open={!!queryParams.get('characterSavingThrowRoll')}
+        handleClose={() => {
+          queryParams.delete("characterSavingThrowRoll");
+          const newSearch = `?${queryParams.toString()}`;
+          navigate({ search: newSearch });
+        }}
+      >
+        <SavingThrowRollResolution
+          characterId={Number(queryParams.get('characterSavingThrowRoll')?.split(':')[0])}
+          ability={queryParams.get('characterSavingThrowRoll')?.split(':')[1] as ability}>
+        </SavingThrowRollResolution>
+      </ModalNoButton>
+    </>
   );
 }

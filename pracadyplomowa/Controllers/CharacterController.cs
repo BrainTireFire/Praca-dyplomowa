@@ -26,15 +26,18 @@ using pracadyplomowa.Services;
 using pracadyplomowa.Repository.UnitOfWork;
 using static pracadyplomowa.Models.Entities.Characters.ChoiceGroup;
 using static pracadyplomowa.Models.Entities.Powers.SkillEffectInstance;
+using pracadyplomowa.Services.Websockets.Notification;
+using pracadyplomowa.Utility;
 
 namespace pracadyplomowa.Controllers
 {
     [Authorize]
-    public class CharacterController(IUnitOfWork unitOfWork, IMapper mapper, ICharacterService characterService) : BaseApiController
+    public class CharacterController(IUnitOfWork unitOfWork, IMapper mapper, ICharacterService characterService, INotificationService notificationService) : BaseApiController
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IMapper _mapper = mapper;
         private readonly ICharacterService _characterService = characterService;
+        private readonly INotificationService _notificationService = notificationService;
 
         [HttpGet("mycharacters")]
         public async Task<ActionResult<CharacterSummaryDto>> GetCharacters([FromQuery] CharacterParams characterParams)
@@ -724,6 +727,237 @@ namespace pracadyplomowa.Controllers
             effectGroup?.Disperse();
             await _unitOfWork.SaveChangesAsync();
             return Ok();
+        }
+
+        [HttpGet("{characterId}/abilityRoll/{ability}")]
+        public async Task<ActionResult<RollDto>> MakeAbilityRoll([FromRoute] int characterId, [FromRoute] Ability ability)
+        {
+            var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(characterId);
+            if (character == null)
+            {
+                return NotFound("Character with this Id does not exist");
+            }
+            if(character.R_CampaignId != null){
+                await _notificationService.SendNotificationAbilityRollRequested(characterId, character.Name, (int)character.R_CampaignId!, ability);
+                RollDto result = new RollDto(){
+                    Executed = false,
+                };
+                return Ok(result);
+            }
+            else{
+                int roll = character.AbilityRoll(ability);
+                RollDto result = new RollDto(){
+                    Executed = true,
+                    Name = Enum.GetName(typeof(Ability), ability),
+                    Roll = roll
+                };
+                return Ok(result);
+            }
+            
+        }
+
+        [HttpPost("{characterId}/abilityRoll/{ability}/conditionalEffects")]
+        public async Task<ActionResult> MakeAbilityRollWithConditionalEffects([FromRoute] int characterId, [FromRoute] Ability ability, [FromBody] List<int> conditionalEffectIds)
+        {
+            var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(characterId);
+            if (character == null)
+            {
+                return NotFound("Character with this Id does not exist");
+            }
+            foreach(EffectInstance effect in character.AllEffects){
+                if(conditionalEffectIds.Contains(effect.Id)){
+                    effect.ConditionalApproved = true;
+                }
+            }
+
+            int roll = character.AbilityRoll(ability);
+            await _notificationService.SendNotificationAbilityRollPerformed(character.Name, (int)character.R_CampaignId!, ability, roll);
+            return Ok();
+        }
+
+            
+        [HttpGet("{characterId}/abilityRoll/{ability}/conditionalEffects")]
+        public async Task<ActionResult<List<ConditionalEffectDto>>> GetAbilityRollConditionalEffects([FromRoute] int characterId, [FromRoute] Ability ability){
+            
+            var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(characterId);
+            if (character == null)
+            {
+                return NotFound("Character with this Id does not exist");
+            }
+            List<ConditionalEffectDto> conditionalEffects = [];
+            conditionalEffects = character.AllEffects
+                .Where(e => e.Conditional && e is AbilityEffectInstance)
+                .Cast<AbilityEffectInstance>()
+                .Where(e => e.EffectType.AbilityEffect_Ability == ability)
+                .Select(e => new ConditionalEffectDto(){
+                    EffectId = e.Id,
+                    EffectName = e.Name,
+                    EffectDescription = e.Description,
+                    Selected = false
+                })
+                .ToList();
+            return conditionalEffects;
+        }
+        
+        [HttpGet("{characterId}/skillRoll/{skill}")]
+        public async Task<ActionResult<RollDto>> MakeSkillRoll([FromRoute] int characterId, [FromRoute] Skill skill)
+        {
+            var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(characterId);
+            if (character == null)
+            {
+                return NotFound("Character with this Id does not exist");
+            }
+            if(character.R_CampaignId != null){
+                await _notificationService.SendNotificationSkillRollRequested(characterId, character.Name, (int)character.R_CampaignId!, skill);
+                RollDto result = new RollDto(){
+                    Executed = false,
+                };
+                return Ok(result);
+            }
+            else{
+                int roll = character.SkillRoll(skill);
+                RollDto result = new RollDto(){
+                    Executed = true,
+                    Name = Enum.GetName(typeof(Skill), skill),
+                    Roll = roll
+                };
+                return Ok(result);
+            }
+            
+        }
+        
+        [HttpPost("{characterId}/skillRoll/{skill}/conditionalEffects")]
+        public async Task<ActionResult> MakeSkillRollWithConditionalEffects([FromRoute] int characterId, [FromRoute] Skill skill, [FromBody] List<int> conditionalEffectIds)
+        {
+            var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(characterId);
+            if (character == null)
+            {
+                return NotFound("Character with this Id does not exist");
+            }
+            foreach(EffectInstance effect in character.AllEffects){
+                if(conditionalEffectIds.Contains(effect.Id)){
+                    effect.ConditionalApproved = true;
+                }
+            }
+
+            int roll = character.SkillRoll(skill);
+            await _notificationService.SendNotificationSkillRollPerformed(character.Name, (int)character.R_CampaignId!, skill, roll);
+            return Ok();
+        }
+            
+        [HttpGet("{characterId}/skillRoll/{skill}/conditionalEffects")]
+        public async Task<ActionResult<List<ConditionalEffectDto>>> GetSkillRollConditionalEffects([FromRoute] int characterId, [FromRoute] Skill skill){
+            
+            var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(characterId);
+            if (character == null)
+            {
+                return NotFound("Character with this Id does not exist");
+            }
+            List<ConditionalEffectDto> conditionalEffectsSkill = [];
+            conditionalEffectsSkill = character.AllEffects
+                .Where(e => e.Conditional && e is SkillEffectInstance)
+                .Cast<SkillEffectInstance>()
+                .Where(e => e.EffectType.SkillEffect_Skill == skill)
+                .Select(e => new ConditionalEffectDto(){
+                    EffectId = e.Id,
+                    EffectName = e.Name,
+                    EffectDescription = e.Description,
+                    Selected = false
+                })
+                .ToList();
+            List<ConditionalEffectDto> conditionalEffectsAbility = [];
+            conditionalEffectsAbility = character.AllEffects
+                .Where(e => e.Conditional && e is AbilityEffectInstance)
+                .Cast<AbilityEffectInstance>()
+                .Where(e => e.EffectType.AbilityEffect_Ability == Utils.SkillToAbility(skill))
+                .Select(e => new ConditionalEffectDto(){
+                    EffectId = e.Id,
+                    EffectName = e.Name,
+                    EffectDescription = e.Description,
+                    Selected = false
+                })
+                .ToList();
+            return conditionalEffectsSkill.Concat(conditionalEffectsAbility).ToList();
+        }
+        
+        [HttpGet("{characterId}/savingThrowRoll/{ability}")]
+        public async Task<ActionResult<RollDto>> MakeSavingThrowRoll([FromRoute] int characterId, [FromRoute] Ability ability)
+        {
+            var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(characterId);
+            if (character == null)
+            {
+                return NotFound("Character with this Id does not exist");
+            }
+            if(character.R_CampaignId != null){
+                await _notificationService.SendNotificationSavingThrowRollRequested(characterId, character.Name, (int)character.R_CampaignId!, ability);
+                RollDto result = new RollDto(){
+                    Executed = false,
+                };
+                return Ok(result);            }
+            else{
+                int roll = character.SavingThrowRoll(ability);
+                RollDto result = new RollDto(){
+                    Executed = true,
+                    Name = Enum.GetName(typeof(Ability), ability),
+                    Roll = roll
+                };
+                return Ok(result);
+            }
+            
+        }
+        
+        [HttpPost("{characterId}/savingThrowRoll/{ability}/conditionalEffects")]
+        public async Task<ActionResult> MakeSavingThrowRollWithConditionalEffects([FromRoute] int characterId, [FromRoute] Ability ability, [FromBody] List<int> conditionalEffectIds)
+        {
+            var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(characterId);
+            if (character == null)
+            {
+                return NotFound("Character with this Id does not exist");
+            }
+            foreach(EffectInstance effect in character.AllEffects){
+                if(conditionalEffectIds.Contains(effect.Id)){
+                    effect.ConditionalApproved = true;
+                }
+            }
+
+            int roll = character.SavingThrowRoll(ability);
+            await _notificationService.SendNotificationSavingThrowRollPerformed(character.Name, (int)character.R_CampaignId!, ability, roll);
+            return Ok();
+        }
+            
+        [HttpGet("{characterId}/savingThrowRoll/{ability}/conditionalEffects")]
+        public async Task<ActionResult<List<ConditionalEffectDto>>> GetSavingThrowRollConditionalEffects([FromRoute] int characterId, [FromRoute] Ability ability){
+            
+            var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(characterId);
+            if (character == null)
+            {
+                return NotFound("Character with this Id does not exist");
+            }
+            List<ConditionalEffectDto> conditionalEffectsThrow = [];
+            conditionalEffectsThrow = character.AllEffects
+                .Where(e => e.Conditional && e is SavingThrowEffectInstance)
+                .Cast<SavingThrowEffectInstance>()
+                .Where(e => e.EffectType.SavingThrowEffect_Ability == ability)
+                .Select(e => new ConditionalEffectDto(){
+                    EffectId = e.Id,
+                    EffectName = e.Name,
+                    EffectDescription = e.Description,
+                    Selected = false
+                })
+                .ToList();
+            List<ConditionalEffectDto> conditionalEffectsAbility = [];
+            conditionalEffectsAbility = character.AllEffects
+                .Where(e => e.Conditional && e is AbilityEffectInstance)
+                .Cast<AbilityEffectInstance>()
+                .Where(e => e.EffectType.AbilityEffect_Ability == ability)
+                .Select(e => new ConditionalEffectDto(){
+                    EffectId = e.Id,
+                    EffectName = e.Name,
+                    EffectDescription = e.Description,
+                    Selected = false
+                })
+                .ToList();
+            return conditionalEffectsThrow.Concat(conditionalEffectsAbility).ToList();
         }
     }
 }

@@ -11,11 +11,21 @@ import { BASE_URL } from "../services/constAPI";
 import JoinCampaignToast from "../features/notifications/JoinCampaignToast";
 import SessionStartedToast from "../features/notifications/SessionStartedToast";
 import KickCampaingToast from "../features/notifications/KickCampaingToast";
+import { ability } from "../features/effects/abilities";
+import AbilityRollRequestToast from "../features/notifications/rolls/request/AbilityRollRequestToast";
+import { useLocation, useSearchParams } from "react-router-dom";
+import AbilityRollResultToast from "../features/notifications/rolls/result/AbilityRollResultToast";
+import { skill } from "../features/effects/skills";
+import SkillRollRequestToast from "../features/notifications/rolls/request/SkillRollRequestToast";
+import SkillRollResultToast from "../features/notifications/rolls/result/SkillRollResultToast";
+import SavingThrowRollRequestToast from "../features/notifications/rolls/request/SavingThrowRollRequestToast";
+import SavingThrowRollResultToast from "../features/notifications/rolls/result/SavingThrowRollResultToast";
 
 interface Notification {
   id: string;
   message: string;
   campaignId: string;
+  characterId: string;
 }
 
 interface NotificationContextType {
@@ -35,6 +45,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
 }) => {
   const hubConnection = useRef<signalR.HubConnection | null>(null);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     hubConnection.current = new signalR.HubConnectionBuilder()
@@ -79,6 +90,174 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
                   link={`/campaigns/${campaignId}`}
                 />
               ),
+            error: (error) => `Notification failed: ${error}`,
+          },
+          { success: { duration: 5000, icon: null } }
+        );
+      }
+    );
+
+    hubConnection.current.on(
+      "AbilityRollRequest",
+      (message: string, characterId: string, characterName: string, ability: ability) => {
+
+        toast.promise(
+          new Promise<{ message: string; characterId: string }>(
+            (resolve, reject) => {
+              // Resolve with both message and campaignId
+              resolve({ message, characterId });
+            }
+          ),
+          {
+            loading: "Loading notification...",
+            success: ({ message, characterId }) => (
+              <AbilityRollRequestToast
+                message={message}
+                characterId={characterId}
+                characterName={characterName}
+                ability={ability}
+              />
+            ),
+            error: (error) => `Notification failed: ${error}`,
+          },
+          { success: { duration: 5000, icon: null } }
+        );
+      }
+    );
+
+    hubConnection.current.on(
+      "AbilityRollPerformed",
+      (message: string, characterName: string, ability: ability, roll: number) => {
+
+        toast.promise(
+          new Promise<{ message: string; characterName: string }>(
+            (resolve, reject) => {
+              // Resolve with both message and campaignId
+              resolve({ message, characterName });
+            }
+          ),
+          {
+            loading: "Loading notification...",
+            success: ({ message, characterName }) => (
+              <AbilityRollResultToast
+                message={message}
+                characterName={characterName}
+                ability={ability}
+                roll={roll}
+              />
+            ),
+            error: (error) => `Notification failed: ${error}`,
+          },
+          { success: { duration: 5000, icon: null } }
+        );
+      }
+    );
+
+    hubConnection.current.on(
+      "SkillRollRequest",
+      (message: string, characterId: string, characterName: string, skill: skill) => {
+
+        toast.promise(
+          new Promise<{ message: string; characterId: string }>(
+            (resolve, reject) => {
+              // Resolve with both message and campaignId
+              resolve({ message, characterId });
+            }
+          ),
+          {
+            loading: "Loading notification...",
+            success: ({ message, characterId }) => (
+              <SkillRollRequestToast
+                message={message}
+                characterId={characterId}
+                characterName={characterName}
+                skill={skill}
+              />
+            ),
+            error: (error) => `Notification failed: ${error}`,
+          },
+          { success: { duration: 5000, icon: null } }
+        );
+      }
+    );
+
+    hubConnection.current.on(
+      "SkillRollPerformed",
+      (message: string, characterName: string, skill: skill, roll: number) => {
+
+        toast.promise(
+          new Promise<{ message: string; characterName: string }>(
+            (resolve, reject) => {
+              // Resolve with both message and campaignId
+              resolve({ message, characterName });
+            }
+          ),
+          {
+            loading: "Loading notification...",
+            success: ({ message, characterName }) => (
+              <SkillRollResultToast
+                message={message}
+                characterName={characterName}
+                skill={skill}
+                roll={roll}
+              />
+            ),
+            error: (error) => `Notification failed: ${error}`,
+          },
+          { success: { duration: 5000, icon: null } }
+        );
+      }
+    );
+
+    hubConnection.current.on(
+      "SavingThrowRollRequest",
+      (message: string, characterId: string, characterName: string, ability: ability) => {
+
+        toast.promise(
+          new Promise<{ message: string; characterId: string }>(
+            (resolve, reject) => {
+              // Resolve with both message and campaignId
+              resolve({ message, characterId });
+            }
+          ),
+          {
+            loading: "Loading notification...",
+            success: ({ message, characterId }) => (
+              <SavingThrowRollRequestToast
+                message={message}
+                characterId={characterId}
+                characterName={characterName}
+                ability={ability}
+              />
+            ),
+            error: (error) => `Notification failed: ${error}`,
+          },
+          { success: { duration: 5000, icon: null } }
+        );
+      }
+    );
+
+    hubConnection.current.on(
+      "SavingThrowRollPerformed",
+      (message: string, characterName: string, ability: ability, roll: number) => {
+
+        toast.promise(
+          new Promise<{ message: string; characterName: string }>(
+            (resolve, reject) => {
+              // Resolve with both message and campaignId
+              resolve({ message, characterName });
+            }
+          ),
+          {
+            loading: "Loading notification...",
+            success: ({ message, characterName }) => (
+              <SavingThrowRollResultToast
+                message={message}
+                characterName={characterName}
+                ability={ability}
+                roll={roll}
+              />
+            ),
             error: (error) => `Notification failed: ${error}`,
           },
           { success: { duration: 5000, icon: null } }

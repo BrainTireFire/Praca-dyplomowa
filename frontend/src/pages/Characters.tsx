@@ -3,6 +3,7 @@ import CharactersSheet from "../features/characters/CharactersSheet";
 import CharacterList from "../features/characters/CharacterList";
 import { useState } from "react";
 import { CharacterIdContext } from "../features/characters/contexts/CharacterIdContext";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const Container = styled.div`
   display: flex; /* Enable flexbox layout */
@@ -23,12 +24,15 @@ const Column2 = styled.div`
 `;
 
 export default function Characters() {
-  const [chosenCharacterId, setChosenCharacterId] = useState<number>(null);
+  const navigate = useNavigate();
 
   const handleChangeCharacter = (chosenCharacterId: number) => {
     console.log(chosenCharacterId);
-    setChosenCharacterId(chosenCharacterId);
+    navigate(`/characters?id=${chosenCharacterId}`)
   };
+
+  const [searchParams] = useSearchParams();
+  const characterId = searchParams.get("id");
   return (
     <Container>
       <Column1>
@@ -37,10 +41,10 @@ export default function Characters() {
         ></CharacterList>
       </Column1>
       <Column2>
-        {chosenCharacterId && (
+        {!!Number(characterId) && (
           <CharacterIdContext.Provider
             value={{
-              characterId: chosenCharacterId,
+              characterId: Number(characterId),
               // setCharacterId: setChosenCharacterId,
             }}
           >

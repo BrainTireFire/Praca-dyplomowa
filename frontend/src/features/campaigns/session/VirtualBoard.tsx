@@ -109,7 +109,7 @@ export default function VirtualBoard({
     },
     [userCursors, sizeX, sizeY]
   );
-  const ActiveCharacterSize: size = "Medium";
+  const ActiveCharacterSize: size = participance?.size!;
   const drawCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -334,7 +334,7 @@ export default function VirtualBoard({
           let targetOccupiedCoordinates = getOccupiedCoordinatesForSize(
             targetX,
             targetY,
-            "Medium"
+            participance.character.size.name
           );
           for (var targetOccupiedCoordinate of targetOccupiedCoordinates) {
             if (
@@ -353,7 +353,7 @@ export default function VirtualBoard({
             ActiveCharacterSize,
             clickedCharacter!.occupiedField.positionX,
             clickedCharacter!.occupiedField.positionY,
-            "Medium",
+            clickedCharacter!.character.size.name,
             weaponAttack.range
           );
           if (inRange) {
@@ -381,7 +381,7 @@ export default function VirtualBoard({
           let targetOccupiedCoordinates = getOccupiedCoordinatesForSize(
             targetX,
             targetY,
-            "Medium"
+            participance!.character.size.name,
           );
           for (var targetOccupiedCoordinate of targetOccupiedCoordinates) {
             if (
@@ -400,7 +400,7 @@ export default function VirtualBoard({
             ActiveCharacterSize,
             clickedCharacter!.occupiedField.positionX,
             clickedCharacter!.occupiedField.positionY,
-            "Medium",
+            clickedCharacter!.character.size.name,
             power.range ? power.range : 0
           );
           if (inRange) {

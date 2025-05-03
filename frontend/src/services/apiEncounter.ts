@@ -8,6 +8,7 @@ import {
   conditionalEffectType,
   stateType,
 } from "../features/campaigns/session/WeaponAttackConditionalEffectsReducer";
+import { size } from "../features/effects/sizes";
 import { DiceSet } from "../models/diceset";
 import { Encounter } from "../models/encounter/Encounter";
 import { EncounterCreateDto } from "../models/encounter/EncounterCreateDto";
@@ -348,6 +349,7 @@ export type ParticipanceData = {
   temporaryHitpoints: number;
   succeededDeathSaves: number;
   failedDeathSaves: number;
+  size: size;
 };
 
 export async function moveCharacter(

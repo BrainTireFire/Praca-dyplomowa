@@ -1,3 +1,4 @@
+import { Coordinate } from "../../../models/session/Coordinate";
 import { size } from "../../effects/sizes";
 
 const getCssVariable = (variableName: string): string => {
@@ -5,6 +6,15 @@ const getCssVariable = (variableName: string): string => {
     .getPropertyValue(variableName)
     .trim();
 };
+
+const getSquareSize = (columns: number, rows: number) =>
+  Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
+
+function normalizeAngle(angle: number): number {
+  while (angle <= -Math.PI) angle += 2 * Math.PI;
+  while (angle > Math.PI) angle -= 2 * Math.PI;
+  return angle;
+}
 
 export const GRID_SIZE = 70;
 export const INITIAL_WIDTH = 1280;
@@ -69,6 +79,30 @@ export const highlightBox = (
   ctx.restore();
 };
 
+export const highlightArea = (
+  ctx: CanvasRenderingContext2D,
+  cells: { x: number; y: number }[],
+  columns: number,
+  rows: number
+) => {
+  const squareSize = getSquareSize(columns, rows);
+
+  ctx.save();
+  ctx.strokeStyle = getCssVariable("--color-button-hover-danger");
+  ctx.lineWidth = 2;
+
+  for (const cell of cells) {
+    ctx.strokeRect(
+      cell.x * squareSize,
+      cell.y * squareSize,
+      squareSize,
+      squareSize
+    );
+  }
+
+  ctx.restore();
+};
+
 export const drawCustomCursor = (
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -78,7 +112,7 @@ export const drawCustomCursor = (
   columns: number,
   rows: number
 ) => {
-  const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
+  const squareSize = getSquareSize(columns, rows);
 
   // Calculate the center position of the grid cell where the mouse is
   const centerX = x * squareSize + squareSize / 2;
@@ -105,6 +139,228 @@ export const drawCustomCursor = (
   ctx.restore();
 };
 
+export const getCircleAreaCells = (
+  origin: { x: number; y: number },
+  radiusInSquares: number
+): { x: number; y: number }[] => {
+  const cells: { x: number; y: number }[] = [];
+
+  for (let dx = -radiusInSquares; dx <= radiusInSquares; dx++) {
+    for (let dy = -radiusInSquares; dy <= radiusInSquares; dy++) {
+      const x = origin.x + dx;
+      const y = origin.y + dy;
+
+      // Sprawdź dystans do środka pola (środek siatki w kwadracie)
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance + 0.5 <= radiusInSquares) {
+        cells.push({ x, y });
+      }
+    }
+  }
+
+  return cells;
+};
+
+export const getSquareAreaCells = (
+  origin: { x: number; y: number },
+  size: number
+): { x: number; y: number }[] => {
+  const cells: { x: number; y: number }[] = [];
+
+  const half = Math.floor(size / 2);
+
+  for (let dx = -half; dx <= half; dx++) {
+    for (let dy = -half; dy <= half; dy++) {
+      const x = origin.x + dx;
+      const y = origin.y + dy;
+      cells.push({ x, y });
+    }
+  }
+
+  return cells;
+};
+
+export const getCubeAreaCells = (
+  origin: { x: number; y: number },
+  size: number
+): { x: number; y: number }[] => {
+  const cells: { x: number; y: number }[] = [];
+  const half = Math.floor(size / 2);
+
+  for (let dx = -half; dx <= half; dx++) {
+    for (let dy = -half; dy <= half; dy++) {
+      cells.push({ x: origin.x + dx, y: origin.y + dy });
+    }
+  }
+
+  return cells;
+};
+
+export const getCylinderAreaCells = (
+  origin: { x: number; y: number },
+  radius: number
+): { x: number; y: number }[] => {
+  const cells: { x: number; y: number }[] = [];
+
+  for (let dx = -radius; dx <= radius; dx++) {
+    for (let dy = -radius; dy <= radius; dy++) {
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist <= radius) {
+        cells.push({ x: origin.x + dx, y: origin.y + dy });
+      }
+    }
+  }
+
+  return cells;
+};
+
+export const getLineAreaCells = (
+  from: { x: number; y: number },
+  directionDeg: number,
+  range: number
+): { x: number; y: number }[] => {
+  const cells: { x: number; y: number }[] = [];
+
+  const angleRad = (directionDeg * Math.PI) / 180;
+
+  for (let i = 1; i <= range; i++) {
+    const dx = Math.round(Math.cos(angleRad) * i);
+    const dy = Math.round(Math.sin(angleRad) * i);
+
+    cells.push({ x: from.x + dx, y: from.y + dy });
+  }
+
+  return cells;
+};
+
+export const getConeAreaCells = (
+  origin: { x: number; y: number },
+  length: number,
+  angleDeg: number,
+  coneWidthDeg = 60
+): { x: number; y: number }[] => {
+  const cells: { x: number; y: number }[] = [];
+
+  const angleRad = (angleDeg * Math.PI) / 180;
+  const coneHalfRad = (coneWidthDeg / 2) * (Math.PI / 180);
+
+  for (let dx = -length; dx <= length; dx++) {
+    for (let dy = -length; dy <= length; dy++) {
+      const x = origin.x + dx;
+      const y = origin.y + dy;
+
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      if (distance > length + 0.5) continue; // za daleko
+
+      const angleToCell = Math.atan2(dy, dx);
+      let angleDiff = Math.abs(angleToCell - angleRad);
+
+      if (angleDiff > Math.PI) {
+        angleDiff = 2 * Math.PI - angleDiff; // wrap around
+      }
+
+      if (angleDiff <= coneHalfRad) {
+        cells.push({ x, y });
+      }
+    }
+  }
+
+  return cells;
+};
+
+export function getConeAreaCellsDeg(
+  from: Coordinate,
+  range: number,
+  directionDeg: number,
+  coneWidthDeg: number
+): Coordinate[] {
+  const cells: Coordinate[] = [];
+
+  for (let dx = -range; dx <= range; dx++) {
+    for (let dy = -range; dy <= range; dy++) {
+      const x = from.x + dx;
+      const y = from.y + dy;
+
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist > range || (dx === 0 && dy === 0)) continue;
+
+      const angleRad = Math.atan2(dy, dx);
+      let angleDeg = (angleRad * 180) / Math.PI;
+      if (angleDeg < 0) angleDeg += 360;
+
+      let diff = Math.abs(angleDeg - directionDeg);
+      if (diff > 180) diff = 360 - diff;
+
+      if (diff <= coneWidthDeg / 2) {
+        cells.push({ x, y });
+      }
+    }
+  }
+
+  return cells;
+}
+
+export function getConeAreaCells2(
+  from: Coordinate,
+  range: number,
+  angleRad: number,
+  coneAngleRad: number
+): Coordinate[] {
+  const cells: Coordinate[] = [];
+
+  for (let dx = -range; dx <= range; dx++) {
+    for (let dy = -range; dy <= range; dy++) {
+      const x = from.x + dx;
+      const y = from.y + dy;
+
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist > range) continue;
+
+      const cellAngle = Math.atan2(dy, dx);
+      const diff = Math.abs(normalizeAngle(cellAngle - angleRad));
+      if (diff <= coneAngleRad / 2) {
+        cells.push({ x, y });
+      }
+    }
+  }
+
+  return cells;
+}
+
+export function getAngleFromCharacterToCursor(
+  charX: number,
+  charY: number,
+  cursorX: number,
+  cursorY: number,
+  columns: number,
+  rows: number
+): number {
+  const squareSize = getSquareSize(columns, rows);
+
+  // Przeliczanie kursora na piksele (jeśli przekazujemy je w jednostkach kratkowych)
+  const cursorXInPixels = cursorX * squareSize;
+  const cursorYInPixels = cursorY * squareSize;
+
+  // Obliczanie środka postaci w pikselach
+  const charCenterX = (charX + 0.5) * squareSize;
+  const charCenterY = (charY + 0.5) * squareSize;
+
+  const dx = cursorXInPixels - charCenterX;
+  const dy = cursorYInPixels - charCenterY;
+
+  // Obliczanie kąta w radianach
+  const angleRad = Math.atan2(dy, dx);
+
+  // Przekształcenie na stopnie
+  let angleDeg = (angleRad * 180) / Math.PI;
+
+  // Upewnienie się, że kąt jest w zakresie [0, 360)
+  if (angleDeg < 0) angleDeg += 360;
+
+  return angleDeg;
+}
+
 export const drawSelectedBox = (
   ctx: CanvasRenderingContext2D,
   selectedBox: { x: number; y: number } | null,
@@ -113,7 +369,7 @@ export const drawSelectedBox = (
 ) => {
   if (!selectedBox) return;
 
-  const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
+  const squareSize = getSquareSize(columns, rows);
 
   ctx.save();
   ctx.strokeStyle = getCssVariable("--color-link");
@@ -180,7 +436,7 @@ export const drawBoundingBoxOverCharacter = (
   color: string,
   lineWidth: number
 ) => {
-  const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
+  const squareSize = getSquareSize(columns, rows);
 
   ctx.save();
   ctx.strokeStyle = color;
@@ -311,7 +567,7 @@ export const drawSelectedBoxes = (
 ) => {
   if (!selectedBoxes.length) return; // No boxes to draw
 
-  const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
+  const squareSize = getSquareSize(columns, rows);
 
   ctx.save();
   ctx.strokeStyle = getCssVariable("--color-link");
@@ -345,7 +601,7 @@ export const drawFieldBoxWithText = (
     return;
   }
 
-  const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
+  const squareSize = getSquareSize(columns, rows);
 
   ctx.save();
 
@@ -403,7 +659,7 @@ export const fillSelectedBox = (
     return;
   }
 
-  const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
+  const squareSize = getSquareSize(columns, rows);
 
   ctx.save();
 
@@ -445,7 +701,7 @@ export const drawAvatar = async (
 ) => {
   if (!field.avatarUrl) return;
   const numericCharacterSize = getSizeMultiplier(characterSize);
-  const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
+  const squareSize = getSquareSize(columns, rows);
   const avatarSize = squareSize * numericCharacterSize;
   const avatarX = field.positionX * squareSize;
   const avatarY = field.positionY * squareSize;
@@ -497,7 +753,7 @@ export const drawTextName = (
   if (!field.memberName) return;
 
   const numericCharacterSize = getSizeMultiplier(characterSize);
-  const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
+  const squareSize = getSquareSize(columns, rows);
 
   ctx.fillStyle = "#011b84";
   ctx.font = `${squareSize * 0.3}px Poppins`;
@@ -532,7 +788,7 @@ export const drawFieldCross = (
     return;
   }
 
-  const squareSize = Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
+  const squareSize = getSquareSize(columns, rows);
 
   const squareX = field.positionX * squareSize;
   const squareY = field.positionY * squareSize;

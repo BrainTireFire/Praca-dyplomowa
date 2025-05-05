@@ -25,12 +25,21 @@ import {
   checkIfTargetInWeaponAttackRange as checkIfTargetInAttackRange,
   getOccupiedCoordinatesForSize,
   drawSelectedTargetMarker,
+  getCircleAreaCells,
+  highlightArea,
+  getAngleFromCharacterToCursor,
+  getConeAreaCellsDeg,
+  getConeAreaCells2,
+  getCubeAreaCells,
+  getLineAreaCells,
+  getCylinderAreaCells,
 } from "./CanvasUtils";
 import { VirtualBoardProps } from "./../../../models/session/VirtualBoardProps";
 import { Coordinate } from "../../../models/session/Coordinate";
 import { ControlledCharacterContext } from "./context/ControlledCharacterContext";
 import { useParticipanceData } from "../hooks/useParticipanceData";
 import { size } from "../../effects/sizes";
+import { AreaShapeLabels } from "../../powers/models/power";
 
 const CanvasContainer = styled.div`
   display: flex;
@@ -73,6 +82,11 @@ export default function VirtualBoard({
   const [userCursors, setUserCursors] = useState<{
     [connectionId: string]: CursorInfo;
   }>({});
+  const [localCursorPosition, setLocalCursorPosition] = useState<Coordinate>({
+    x: 0,
+    y: 0,
+  });
+  const [selectedAreaPower, setSelectedAreaPower] = useState<Coordinate[]>([]);
 
   const [contextMenu, setContextMenu] = useState({
     x: 0,
@@ -191,11 +205,89 @@ export default function VirtualBoard({
     if (mode === "PowerCast") {
       if (power.targetType === "Caster" || power.targetType == "Character") {
         let range = power.range ? power.range : 0;
-        drawAttackRange(
+
+        // const connectionId = connection!.connectionId as string;
+        // const userCursor = userCursors[connectionId];
+
+        console.log("controlledCharacter", controlledCharacter);
+
+        let origin: Coordinate = {
+          x: occupiedField!.positionX,
+          y: occupiedField!.positionY,
+        };
+        let selected: { x: number; y: number }[] = [];
+
+        switch (power.areaShape) {
+          case AreaShapeLabels.Sphere:
+            selected = getCircleAreaCells(
+              localCursorPosition,
+              power.areaSize ?? 0
+            );
+            break;
+
+          case AreaShapeLabels.Cone:
+            let cursorAngle = 0;
+            if (localCursorPosition) {
+              cursorAngle = getAngleFromCharacterToCursor(
+                origin.x,
+                origin.y,
+                localCursorPosition.x,
+                localCursorPosition.y,
+                encounter.board.sizeX,
+                encounter.board.sizeY
+              );
+            }
+
+            selected = getConeAreaCellsDeg(
+              origin,
+              power.areaSize ?? 0,
+              cursorAngle,
+              90
+            );
+            break;
+
+          case AreaShapeLabels.Cube:
+            selected = getCubeAreaCells(
+              localCursorPosition,
+              power.areaSize ?? 0
+            );
+            break;
+
+          case AreaShapeLabels.Line:
+            let cursonLineAngle = 0;
+            if (localCursorPosition) {
+              cursonLineAngle = getAngleFromCharacterToCursor(
+                origin.x,
+                origin.y,
+                localCursorPosition.x,
+                localCursorPosition.y,
+                encounter.board.sizeX,
+                encounter.board.sizeY
+              );
+            }
+
+            selected = getLineAreaCells(
+              origin,
+              cursonLineAngle,
+              power.areaSize ?? 0
+            );
+            break;
+
+          case AreaShapeLabels.Cylinder:
+            selected = getCylinderAreaCells(
+              localCursorPosition,
+              power.areaSize ?? 0
+            );
+            break;
+
+          default:
+            break;
+        }
+
+        setSelectedAreaPower(selected);
+        highlightArea(
           ctx,
-          { x: occupiedField!.positionX, y: occupiedField!.positionY },
-          range,
-          controlledCharacter?.character.size.name!,
+          selected,
           encounter.board.sizeX,
           encounter.board.sizeY
         );
@@ -596,6 +688,8 @@ export default function VirtualBoard({
 
       const gridX = Math.floor(x / squareSize);
       const gridY = Math.floor(y / squareSize);
+
+      setLocalCursorPosition({ x: gridX, y: gridY });
 
       connection.invoke("SendCursorPosition", { x: gridX, y: gridY });
     };

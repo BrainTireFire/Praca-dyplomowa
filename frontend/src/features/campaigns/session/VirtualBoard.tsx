@@ -340,6 +340,8 @@ export default function VirtualBoard({
           ) {
             newIdsInPowerRange.push(targetedCharacter.id);
           }
+        } else {
+          charactersIdsInPowerRangeRef.current = [];
         }
 
         if (selectedTargets.find((x) => x === participance.character.id)) {
@@ -560,14 +562,20 @@ export default function VirtualBoard({
           }
         }
 
-        if (charactersIdsInPowerRangeRef.current.length > 0) {
-          console.log(
-            "charactersIdsInPowerRangeRef.current",
-            charactersIdsInPowerRangeRef.current
-          );
+        console.log(
+          "Power range characters",
+          charactersIdsInPowerRangeRef.current
+        );
 
-          charactersIdsInPowerRangeRef.current.forEach((characterId) => {
-            dispatch({ type: "TOGGLE_POWER_TARGET", payload: characterId });
+        if (charactersIdsInPowerRangeRef.current.length > 0) {
+          dispatch({
+            type: "TOGGLE_POWER_TARGET_ARRAY",
+            payload: charactersIdsInPowerRangeRef.current,
+          });
+        } else {
+          dispatch({
+            type: "TOGGLE_POWER_TARGET_ARRAY",
+            payload: [],
           });
         }
       } else {

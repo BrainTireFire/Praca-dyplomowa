@@ -473,7 +473,31 @@ export default function ActionBar({
                   Confirm movement
                 </Button>
               )}
-              {controlState.mode === "PowerCast" && (
+              {controlState.mode === "PowerCast" &&
+              controlState.powerSelected?.areaShape &&
+              controlState.powerSelected?.areaShape !== "None" ? (
+                <Button
+                  disabled={
+                    controlState.powerSelected
+                      ? controlState.powerTargets.length === 0
+                      : true
+                  }
+                  onClick={() => {
+                    if (controlState.powerSelected === null) {
+                      return;
+                    }
+
+                    onPowerCastOverlay(
+                      controlledCharacterId,
+                      encounter.campaign.id,
+                      controlState.powerTargets,
+                      controlState.powerSelected
+                    );
+                  }}
+                >
+                  Confirm power area selection
+                </Button>
+              ) : (
                 <Button
                   disabled={
                     controlState.powerSelected

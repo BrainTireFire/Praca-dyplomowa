@@ -34,7 +34,7 @@ const GlobalStyles = createGlobalStyle`
 
   --color-input-text: #000000;
   --color-input-focus: #001fe7;
-  --color-input-disable-background: #b2b6b4;
+  --color-input-disable-background: #828583;
 
   --color-navbar: #1D1D1D;
   --color-navbar-hover: #222222;
@@ -42,6 +42,7 @@ const GlobalStyles = createGlobalStyle`
 
   --color-button-green: #49A078;
 
+  --color-text-name-canvas: "#011b84";
 
   --backdrop-color: rgba(255, 255, 255, 0.1);
   --backdrop-color-hover: rgba(255, 255, 255, 0.2);

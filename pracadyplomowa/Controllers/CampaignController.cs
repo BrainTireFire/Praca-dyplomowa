@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using pracadyplomowa.Errors;
@@ -13,12 +14,15 @@ namespace pracadyplomowa.Controllers
 {
 
     public class CampaignController(IUnitOfWork unitOfWork, ICharacterService characterService, 
-        INotificationService notificationService, IAccountRepository accountRepository) : BaseApiController
+        INotificationService notificationService, 
+        IAccountRepository accountRepository,
+        IMapper mapper) : BaseApiController
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IAccountRepository _accountRepository = accountRepository;
         private readonly ICharacterService _characterService = characterService;
         private readonly INotificationService _notificationService = notificationService;
+        private readonly IMapper _mapper = mapper;
 
         [HttpPost]
         public async Task<ActionResult<int>> CreateCampaign(CampaignInsertDto campaignInsertDto)
@@ -70,6 +74,7 @@ namespace pracadyplomowa.Controllers
             }
 
             var campaignDto = new CampaignDto(campaign);
+            campaignDto.IsGameMaster = User.GetUserId() == campaign.R_OwnerId;
 
             return Ok(campaignDto);
         }
@@ -190,6 +195,43 @@ namespace pracadyplomowa.Controllers
             }
             await _unitOfWork.SaveChangesAsync();
             return Ok();
+        }
+
+        [HttpPatch("{campaignId}/shortRest")]
+        public async Task<ActionResult> PerformShortRest(int campaignId, Dictionary<int, DiceSetDto> characterHitDiceMap){
+            var campaign = await _unitOfWork.CampaignRepository.GetCampaignWithCharacters(campaignId);
+            if(campaign == null){
+                return NotFound();
+            }
+            if(campaign.R_OwnerId != User.GetUserId()){
+                return BadRequest("You are not the Dungeon Master");
+            }
+            List<ShortRestHitpointsRegained> hitpointsMap = [];
+            foreach(var character in campaign.R_CampaignHasCharacters.Where(x => characterHitDiceMap.ContainsKey(x.Id))){
+                await _unitOfWork.CharacterRepository.GetByIdWithAll(character.Id);
+                DiceSetDto diceSet = characterHitDiceMap.GetValueOrDefault(character.Id)!;
+                int hitpoints = character.PerformShortRest(_mapper.Map<DiceSet>(diceSet));
+                hitpointsMap.Add(new ShortRestHitpointsRegained(){CharacterName = character.Name, HitpointsRegained = hitpoints});
+            }
+            await _unitOfWork.SaveChangesAsync();
+            await _notificationService.SendNotificationShortRestConcluded(campaignId, hitpointsMap);
+            return Ok();
+        }
+
+        [HttpGet("{campaignId}/hitDice")]
+        public async Task<ActionResult<DiceSetDto>> GetHitDice(int campaignId){
+            var campaign = await _unitOfWork.CampaignRepository.GetCampaignWithCharacters(campaignId);
+            if(campaign == null){
+                return NotFound();
+            }
+            var character = campaign.R_CampaignHasCharacters.FirstOrDefault(x => x.R_OwnerId == User.GetUserId());
+            if (character == null)
+            {
+                return BadRequest("Campaign doesn't contain character with specified Id");
+            }
+            await _unitOfWork.CharacterRepository.GetByIdWithAll(character.Id);
+            var result = new DiceSetDto(character.HitDiceRemaining);
+            return Ok(result);
         }
     }
 }

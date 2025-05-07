@@ -1,4 +1,5 @@
-﻿using pracadyplomowa.Models.Enums;
+﻿using pracadyplomowa.Models.DTOs;
+using pracadyplomowa.Models.Enums;
 
 namespace pracadyplomowa.Services.Websockets.Notification;
 
@@ -13,4 +14,5 @@ public interface INotificationService
     Task SendNotificationSkillRollPerformed(string characterName, int campaignId, Skill skill, int result);
     Task SendNotificationSavingThrowRollRequested(int characterId, string characterName, int campaignId, Ability ability);
     Task SendNotificationSavingThrowRollPerformed(string characterName, int campaignId, Ability ability, int result);
+    Task SendNotificationShortRestConcluded(int campaignId, List<ShortRestHitpointsRegained> hitpointsRegained);
 }

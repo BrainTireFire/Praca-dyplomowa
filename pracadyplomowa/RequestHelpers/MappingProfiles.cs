@@ -20,6 +20,7 @@ public class MappingProfiles : Profile
 {
     public MappingProfiles()
     {
+        CreateMap<DiceSet, DiceSetDto>().ReverseMap();
         CreateMap<RegisterDto, User>();
         CreateMap<Class, ClassDTO>();
         CreateMap<Race, RaceDTO>();

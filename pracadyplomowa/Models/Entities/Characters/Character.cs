@@ -632,6 +632,12 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
 
         [NotMapped]
+        public DiceSet HitDiceRemaining
+        {
+            get => HitDiceTotal - UsedHitDice;
+        }
+
+        [NotMapped]
         public Size Size
         {
             get
@@ -1843,6 +1849,26 @@ namespace pracadyplomowa.Models.Entities.Characters
             }
             SucceededDeathSavingThrows = 0;
             FailedDeathSavingThrows = 0;
+            UsedHitDice = new DiceSet();
+        }
+
+        public int PerformShortRest(DiceSet hitDice){
+            StopConcentrating();
+            var resourcesToRefresh = AllImmaterialResourceInstances
+                                    .Where(i => i.NeedsRefresh && (i.R_Blueprint.RefreshesOn == RefreshType.ShortRest || i.R_Blueprint.RefreshesOn == RefreshType.TurnStart))
+                                    .ToList();
+            foreach(var resource in resourcesToRefresh){
+                resource.NeedsRefresh = false;
+            }
+            UsedHitDice += hitDice;
+            int hitpointsRegained = hitDice.RollPrototype(false, false, null).Select(x => x.result).Sum();
+            _Hitpoints += hitpointsRegained;
+            foreach(var effect in AllEffects.Where(x => x.R_OwnedByGroup != null && x.R_OwnedByGroup.IsConstant == false).ToList()){
+                effect.Unlink();
+            }
+            SucceededDeathSavingThrows = 0;
+            FailedDeathSavingThrows = 0;
+            return hitpointsRegained;
         }
 
 

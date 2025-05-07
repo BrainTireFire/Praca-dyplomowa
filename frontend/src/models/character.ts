@@ -24,6 +24,7 @@ export type CharacterItem = {
   campaignId: number | null;
   isNpc: boolean;
   xp: number;
+  restData: DiceSet;
 };
 
 export type Character = {

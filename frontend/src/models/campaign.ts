@@ -8,6 +8,7 @@ export type Campaign = {
   gameMaster: string;
   members: CharacterItem[];
   shops: Shop[];
+  isGameMaster: boolean;
 };
 
 export type CampaignInsertDto = {

@@ -16,6 +16,8 @@ import ConfirmDelete from "../../ui/containers/ConfirmDelete";
 import GiveXP from "./GiveXP";
 import useLongRest from "./hooks/useLongRest";
 import { useQueryClient } from "@tanstack/react-query";
+import ShortRestModalGM from "./ShortRestModalGM";
+import ShortRestModalCharacter from "./ShortRestModalCharacter";
 
 const Container = styled.div`
   display: grid;
@@ -48,7 +50,6 @@ const encode = (number: number): string => {
 export default function CampaignInstance() {
   const { isLoading, campaign } = useCampaign();
   const queryClient = useQueryClient();
-  const user = queryClient.getQueryData(["user"]);
   const { removeCampaign, isPending: isRemoving } = useRemoveCampaign();
   const { kickCharacter, isPending: isKicking } = useKickCharacter();
   const { isPending: isPendingLongRest, longRest } = useLongRest(
@@ -58,7 +59,6 @@ export default function CampaignInstance() {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const gameMaster = campaign?.gameMaster === user?.username;
 
   if (isLoading || isRemoving || isKicking) {
     return <Spinner />;
@@ -76,7 +76,7 @@ export default function CampaignInstance() {
     <Container>
       <Heading as="h1">{name}</Heading>
       <Line size="percantage" bold="large" />
-      {gameMaster && (
+      {campaign.isGameMaster && (
         <>
           <div>
             <HeaderButtons>
@@ -94,9 +94,9 @@ export default function CampaignInstance() {
                     {t("campaignInstance.shortRest")}
                   </Button>
                 </Modal.Open>
-                {/*    <Modal.Window name="ShortRestModal">
-                <ShortRest membersList={members} />
-              </Modal.Window>*/}
+                <Modal.Window name="ShortRestModal">
+                  <ShortRestModalGM membersList={members} onCloseModal={() => {}}/>
+                </Modal.Window>
               </Modal>
               <Button size="large" onClick={() => longRest()}>
                 {t("campaignInstance.longRest")}
@@ -122,6 +122,23 @@ export default function CampaignInstance() {
           <Line size="percantage" />
         </>
       )}
+      {!campaign.isGameMaster && 
+      <>
+      <div>
+        <HeaderButtons>
+          <Modal>
+            <Modal.Open opens="ShortRestModal">
+              <Button size="large">
+                {t("campaignInstance.shortRest")}
+              </Button>
+            </Modal.Open>
+            <Modal.Window name="ShortRestModal">
+              <ShortRestModalCharacter onCloseModal={()=>{}}/>
+            </Modal.Window>
+          </Modal>
+        </HeaderButtons>
+      </div>
+      </>}
       <Heading as="h2">Description</Heading>
       {description === "" ? (
         <p>No description</p>
@@ -141,7 +158,7 @@ export default function CampaignInstance() {
             <CharacterDetailBox
               key={e.id}
               handleKickCharacter={() => kickCharacter(e.id)}
-              gameMaster={gameMaster}
+              gameMaster={campaign.isGameMaster}
             >
               {e}
             </CharacterDetailBox>
@@ -150,7 +167,7 @@ export default function CampaignInstance() {
           <p>There are no members in this campaign</p>
         )}
       </CharacterContainer>
-      {gameMaster && (
+      {campaign.isGameMaster && (
         <>
           <Line size="percantage" />
           <div

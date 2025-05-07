@@ -1,5 +1,6 @@
 import { Campaign, CampaignInsertDto } from "../models/campaign";
 import { Character } from "../models/character";
+import { DiceSet } from "../models/diceset";
 import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
 
@@ -126,6 +127,32 @@ export async function longRest(campaignId: number): Promise<Response> {
 
   return await customFetch(
     `${BASE_URL}/api/campaign/${campaignId}/longRest`,
+    options
+  );
+}
+
+export async function getHitDice(campaignId: number): Promise<DiceSet> {
+  const options: RequestInit = {
+    method: "GET",
+  };
+
+  return await customFetch(
+    `${BASE_URL}/api/campaign/${campaignId}/hitDice`,
+    options
+  );
+}
+
+export async function performShortRest(campaignId: number, hitDiceMap: Record<number, DiceSet>) : Promise<Response> {
+  console.log(hitDiceMap);
+  const options: RequestInit = {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(hitDiceMap),
+  };
+  return await customFetch(
+    `${BASE_URL}/api/campaign/${campaignId}/shortRest`,
     options
   );
 }

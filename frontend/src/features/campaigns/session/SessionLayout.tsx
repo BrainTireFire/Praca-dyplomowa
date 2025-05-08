@@ -290,8 +290,6 @@ const controlStateReducer = (
         mode: "PowerCast",
       };
     case TOGGLE_POWER_TARGET:
-      console.log(action.payload);
-      console.log(state.powerTargets);
       const foundIndex = state.powerTargets.findIndex(
         (x) => x === action.payload
       );
@@ -306,8 +304,6 @@ const controlStateReducer = (
         ) {
           return state;
         }
-        console.log(state.powerTargets);
-        console.log(newPowerTargets);
         return {
           ...state,
           powerTargets: newPowerTargets,
@@ -348,6 +344,7 @@ const initialState: ControlState = {
 
 export default function SessionLayout({ encounter }: any) {
   const { groupName } = useParams();
+  const queryClient = useQueryClient();
 
   //TODO REACT QUERY OR STATE MANAGEMENT
   const [connection, setConnection] = useState<HubConnection | null>(null);
@@ -357,10 +354,6 @@ export default function SessionLayout({ encounter }: any) {
   >([]);
 
   const [messageInput, setMessageInput] = useState<string>("");
-
-  const [selectedCharacterId, setSelectedCharacterId] = useState<number | null>(
-    null
-  );
 
   const [controlState, dispatch] = useReducer(
     controlStateReducer,
@@ -557,14 +550,20 @@ export default function SessionLayout({ encounter }: any) {
     }
   };
 
-  const queryClient = useQueryClient();
   useEffect(() => {
     if (connection) {
       connection.on("UpdatePath", (incomingPath: number[]) => {
-        console.log("update");
-        console.log(incomingPath);
         setOtherPath(incomingPath);
         dispatch({ type: "SET_PATH", payload: [] });
+      });
+      connection.on("CharacterMoved", (request) => {
+        if (encounter.id !== request.encounterId) {
+          return;
+        }
+
+        queryClient.invalidateQueries({
+          queryKey: ["encounter", encounter.id],
+        });
       });
       connection.on("RequeryInitiative", () => {
         console.log("Requery initiative signal detected");

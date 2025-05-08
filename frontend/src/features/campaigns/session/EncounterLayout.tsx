@@ -324,11 +324,14 @@ export default function EncounterLayout() {
                       <HeaderStyled>Npc:</HeaderStyled>
                       <CharacterList>
                         {encounter.participances.length > 0
-                          ? encounter.participances.map((participant) => (
-                              <p key={participant.id}>
-                                {participant.character.name}
-                              </p>
-                            ))
+                          ? encounter.participances.map(
+                              (participant) =>
+                                participant.character.isNpc && (
+                                  <p key={participant.id}>
+                                    {participant.character.name}
+                                  </p>
+                                )
+                            )
                           : "No npc"}
                       </CharacterList>
                     </DetailSection>

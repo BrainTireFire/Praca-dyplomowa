@@ -20,6 +20,8 @@ import SkillRollRequestToast from "../features/notifications/rolls/request/Skill
 import SkillRollResultToast from "../features/notifications/rolls/result/SkillRollResultToast";
 import SavingThrowRollRequestToast from "../features/notifications/rolls/request/SavingThrowRollRequestToast";
 import SavingThrowRollResultToast from "../features/notifications/rolls/result/SavingThrowRollResultToast";
+import { ShortRestHealthpointsRegained } from "../models/shortRest/shortRestHealthpointsRegained";
+import ShortRestResultToast from "../features/notifications/shortRest/shortRestResult";
 
 interface Notification {
   id: string;
@@ -288,6 +290,31 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
               <SessionStartedToast
                 message={message}
                 link={`/campaigns/${campaignId}/session/${encounterId}`}
+              />
+            ),
+            error: (error) => `Notification failed: ${error}`,
+          },
+          { success: { duration: 5000, icon: null } }
+        );
+      }
+    );
+
+    hubConnection.current.on(
+      "ShortRestPerformed",
+      (data: ShortRestHealthpointsRegained[]) => {
+        console.log(data);
+        toast.promise(
+          new Promise<{ data: ShortRestHealthpointsRegained[] }>(
+            (resolve, reject) => {
+              // Resolve with both message and campaignId
+              resolve({ data });
+            }
+          ),
+          {
+            loading: "Loading notification...",
+            success: ({ data }) => (
+              <ShortRestResultToast
+                healthpointData={data}
               />
             ),
             error: (error) => `Notification failed: ${error}`,

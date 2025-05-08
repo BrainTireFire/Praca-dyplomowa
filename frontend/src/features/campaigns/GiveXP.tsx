@@ -60,6 +60,7 @@ function GiveXP({ membersList }: { membersList: CharacterItem[] }) {
             member={e}
             key={e.id}
             type="xp"
+            selected={!!(selectedMembers.find(x => x === e.id))}
           ></MemberSelect>
         ))}
       </Box>

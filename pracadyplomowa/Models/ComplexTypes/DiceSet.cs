@@ -64,6 +64,18 @@ namespace pracadyplomowa.Models.Entities.Characters
             flat = x.flat + y.flat,
             additionalValues = x.additionalValues.Union(y.additionalValues).ToList()
         };
+        public static DiceSet operator -(DiceSet x, DiceSet y) => new DiceSet()
+        {
+            d20 = x.d20 - y.d20,
+            d12 = x.d12 - y.d12,
+            d10 = x.d10 - y.d10,
+            d8 = x.d8 - y.d8,
+            d6 = x.d6 - y.d6,
+            d4 = x.d4 - y.d4,
+            d100 = x.d100 - y.d100,
+            flat = x.flat - y.flat,
+            additionalValues = []
+        };
 
         public DiceSet getPersonalizedSet(Character? roller)
         {

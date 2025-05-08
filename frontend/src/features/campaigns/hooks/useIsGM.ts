@@ -21,3 +21,25 @@ export function useIsGm(encounterId: number) {
 
   return { isLoading, isGM, error, isError };
 }
+
+
+// export function useIsGm_Campaign(campaignId: number) {
+//   const {
+//     isLoading,
+//     data: isGM,
+//     isError,
+//     error,
+//   } = useQuery({
+//     queryKey: ["isGM", campaignId],
+//     queryFn: () => {
+//       if (encounterId) {
+//         return getIsGM(encounterId);
+//       }
+//       return Promise.reject(new Error("Encounter ID is undefined"));
+//     },
+//     retry: false,
+//     enabled: !!encounterId,
+//   });
+
+//   return { isLoading, isGM, error, isError };
+// }

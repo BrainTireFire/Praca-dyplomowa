@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.AspNetCore.SignalR;
 using pracadyplomowa.Hubs;
+using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.Enums;
 using pracadyplomowa.Services.Websockets.Connection;
 
@@ -100,5 +101,10 @@ public class NotificationService : INotificationService
         await _hubContext.Clients.Group(campaignGroup)
                     .SendAsync("SavingThrowRollPerformed", "Saving Throw roll performed", characterName, Enum.GetName(typeof(Ability), ability), result);
     }
-
+    public async Task SendNotificationShortRestConcluded(int campaignId, List<ShortRestHitpointsRegained> hitpointsRegained)
+    {
+        var campaignGroup = $"Campaign_{campaignId}";
+        await _hubContext.Clients.Group(campaignGroup)
+            .SendAsync("ShortRestPerformed", hitpointsRegained);
+    }
 }

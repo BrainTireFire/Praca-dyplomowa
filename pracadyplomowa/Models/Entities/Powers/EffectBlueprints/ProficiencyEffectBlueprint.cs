@@ -15,6 +15,7 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
         protected ProficiencyEffectBlueprint() : this(new ItemFamily(){Name = "EF", ItemType = ItemType.Item}){}
         public ProficiencyEffectBlueprint(ItemFamily itemFamily) : this(itemFamily.ItemType){
             Name = itemFamily.Name + " proficiency";
+            ProficiencyEffectType.ProficiencyEffect = ProficiencyEffect.SpecificItemFamily;
             R_GrantsProficiencyInItemFamily = itemFamily;
             R_GrantsProficiencyInItemFamilyId = itemFamily.Id;
         }

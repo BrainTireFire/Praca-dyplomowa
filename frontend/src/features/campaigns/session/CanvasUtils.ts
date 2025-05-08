@@ -10,8 +10,11 @@ const getCssVariable = (variableName: string): string => {
 const getSquareSize = (columns: number, rows: number) =>
   Math.min(INITIAL_WIDTH / columns, INITIAL_HEIGHT / rows);
 
-const getDistance = (a: Coordinate, b: Coordinate) =>
+const getDistanceCircle = (a: Coordinate, b: Coordinate) =>
   Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
+
+const getDistance = (a: Coordinate, b: Coordinate) =>
+  Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y));
 
 function normalizeAngle(angle: number): number {
   while (angle <= -Math.PI) angle += 2 * Math.PI;
@@ -199,12 +202,10 @@ export const getCircleAreaCells = (
 ): Coordinate[] => {
   const cells: Coordinate[] = [];
 
-  const distToCaster = Math.sqrt(
-    (cursorPressPosition.x - casterPosition.x) ** 2 +
-      (cursorPressPosition.y - casterPosition.y) ** 2
-  );
+  const inRangeX = Math.abs(cursorPressPosition.x - casterPosition.x) <= range;
+  const inRangeY = Math.abs(cursorPressPosition.y - casterPosition.y) <= range;
 
-  if (distToCaster > range) {
+  if (!inRangeX || !inRangeY) {
     return [];
   }
 
@@ -481,6 +482,7 @@ export const drawBoundingBoxOverCharacter = (
     origin.y,
     characterSize
   );
+
   let paddedOriginOccupiedCoordinates = padOccupiedCoordinates(
     originOccupiedCoordinates,
     range / 5

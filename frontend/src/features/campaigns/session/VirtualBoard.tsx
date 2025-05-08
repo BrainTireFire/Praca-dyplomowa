@@ -316,10 +316,14 @@ export default function VirtualBoard({
 
         if (!occupiedField) return;
 
-        const isInSelectedArea = newPowerArea.some(
-          (cell) =>
-            cell.x === occupiedField.positionX &&
-            cell.y === occupiedField.positionY
+        let targetOccupiedCoordinates = getOccupiedCoordinatesForSize(
+          occupiedField.positionX,
+          occupiedField.positionY,
+          targetedCharacter.size.name
+        );
+
+        const isInSelectedArea = targetOccupiedCoordinates.some((coord) =>
+          newPowerArea.some((cell) => cell.x === coord.x && cell.y === coord.y)
         );
 
         if (isInSelectedArea) {

@@ -41,11 +41,19 @@ export async function removeShop(shopId: number): Promise<void> {
   await customFetch(`${BASE_URL}/api/shop/${shopId}`, { method: "DELETE" });
 }
 
-export async function getItems(): Promise<ShopItem[]> {
+export async function getAllItems(): Promise<ShopItem[]> {
   const data = await customFetch(
     `${BASE_URL}/api/shop/items?IsBlueprint=true`,
     { method: "GET" }
   );
+
+  return data;
+}
+
+export async function getShopItems(shopId: number): Promise<ShopItem[]> {
+  const data = await customFetch(`${BASE_URL}/api/shop/${shopId}/items`, {
+    method: "GET",
+  });
 
   return data;
 }

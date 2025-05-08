@@ -74,5 +74,22 @@ namespace pracadyplomowa.Controllers
             });
             return Ok(itemsList);
         }
+
+        [HttpGet("{shopId}/items")]
+        public async Task<ActionResult<List<ShopItemDto>>> GetShopItems(int shopId)
+        {
+            var items = await _unitOfWork.ShopRepository.GetShopItems(shopId);
+
+            var itemsDto = items.Select(e => new ShopItemDto(
+                e.Id,
+                e.R_ShopHasItem.Name,
+                e.R_ShopHasItem.Weight,
+                e.R_ShopHasItem.Description,
+                new CoinPurseDto(e.R_ShopHasItem.Price),
+                e.Quantity
+            ));
+
+            return Ok(itemsDto);
+        }
     }
 }

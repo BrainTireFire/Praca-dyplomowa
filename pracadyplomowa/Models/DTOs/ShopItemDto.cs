@@ -3,7 +3,7 @@ using pracadyplomowa.Models.Entities.Items;
 
 namespace pracadyplomowa.Models.DTOs
 {
-    public class ShopItemDto(int id, string name, int weight, string description, int gold, int silver, int copper, int campaignId)
+    public class ShopItemDto(int id, string name, int weight, string description, CoinPurseDto coinPurseDto, int quantity)
     {
         [Required]
         public int Id { get; set; } = id;
@@ -12,13 +12,8 @@ namespace pracadyplomowa.Models.DTOs
         public int Weight { get; set; } = weight;
         [MaxLength(50)]
         public string Description { get; set; } = description;
-        public CoinPurseDto Price { get; set; } = new CoinPurseDto
-        {
-            GoldPieces = gold,
-            SilverPieces = silver,
-            CopperPieces = copper
-        };
+        public CoinPurseDto Price { get; set; } = coinPurseDto;
         [Required]
-        public int CampaignId { get; set; } = campaignId;
+        public int Quantity { get; set; } = quantity;
     }
 }

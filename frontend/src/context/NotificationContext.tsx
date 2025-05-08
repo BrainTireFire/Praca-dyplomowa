@@ -22,6 +22,7 @@ import SavingThrowRollRequestToast from "../features/notifications/rolls/request
 import SavingThrowRollResultToast from "../features/notifications/rolls/result/SavingThrowRollResultToast";
 import { ShortRestHealthpointsRegained } from "../models/shortRest/shortRestHealthpointsRegained";
 import ShortRestResultToast from "../features/notifications/shortRest/shortRestResult";
+import { useAuth } from "./AuthContext";
 
 interface Notification {
   id: string;
@@ -48,6 +49,8 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   const hubConnection = useRef<signalR.HubConnection | null>(null);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const {isAuthorized} = useAuth();
 
   useEffect(() => {
     hubConnection.current = new signalR.HubConnectionBuilder()
@@ -327,7 +330,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     return () => {
       hubConnection.current?.stop();
     };
-  }, []);
+  }, [isAuthorized]);
 
   return (
     <NotificationContext.Provider value={{ notifications }}>

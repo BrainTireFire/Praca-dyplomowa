@@ -2,6 +2,7 @@ import { login as loginApi } from "../../services/apiAuth";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useAuth } from "../../context/AuthContext";
 
 type LoginData = {
   username: string;
@@ -11,6 +12,7 @@ type LoginData = {
 export function useLogin() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const {setIsAuthorized} = useAuth();
 
   const { mutate: login, isLoading } = useMutation({
     mutationFn: ({ username, password }: LoginData) =>
@@ -18,6 +20,7 @@ export function useLogin() {
     onSuccess: (data) => {
       console.log("data ", data);
       queryClient.setQueryData(["user"], data);
+      setIsAuthorized(true);
       navigate("/main", { replace: true });
     },
     onError: (error) => {

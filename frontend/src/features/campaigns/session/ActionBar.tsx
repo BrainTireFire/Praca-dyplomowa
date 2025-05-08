@@ -125,9 +125,7 @@ export default function ActionBar({
     power: Power
   ) => Promise<void>;
 }) {
-  const { rollInitiative, isPending } = useRollInitiative(encounter.id, () =>
-    connection.invoke("SendRequeryInitiative")
-  );
+  const { rollInitiative, isPending } = useRollInitiative(encounter.id, () => {});
   const [controlledCharacterId] = useContext(ControlledCharacterContext);
   const { isLoading: isLoadingIsItMyTurn, isItMyTurn } = useIsItMyTurn(
     encounter.id,

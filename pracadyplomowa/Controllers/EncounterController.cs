@@ -6,6 +6,7 @@ using pracadyplomowa.Models.DTOs.Encounter;
 using pracadyplomowa.Models.DTOs.Session;
 using pracadyplomowa.Models.Enums;
 using pracadyplomowa.Services.Encounter;
+using pracadyplomowa.Services.Websockets;
 using static pracadyplomowa.Services.Encounter.EncounterService;
 
 namespace pracadyplomowa.Controllers;
@@ -14,10 +15,12 @@ namespace pracadyplomowa.Controllers;
 public class EncounterController : BaseApiController
 {
     private readonly IEncounterService _encounterService;
+    private readonly ISessionService _sessionService;
 
-    public EncounterController(IEncounterService encounterService)
+    public EncounterController(IEncounterService encounterService, ISessionService sessionService)
     {
         _encounterService = encounterService;
+        _sessionService = sessionService;
     }
     
     [HttpGet("myEncounters/{campaignId}")]
@@ -80,19 +83,24 @@ public class EncounterController : BaseApiController
     [HttpPost("{encounterId}/initiative")]
     public async Task<ActionResult<EncounterSummaryDto>> RollInitiative(int encounterId)
     {
-        return await _encounterService.RollInitiativeAsync(encounterId);
+        var result = await _encounterService.RollInitiativeAsync(encounterId);
+        await _sessionService.RequeryInitiative(encounterId, User.GetUserId());
+        return result; 
     }
     
     [HttpGet("{encounterId}/initiative")]
     public async Task<ActionResult<List<InitiativeQueueItemDto>>> InitiativeQueue(int encounterId)
     {
-        return await _encounterService.GetInitiativeQueueAsync(encounterId);
+        var result = await _encounterService.GetInitiativeQueueAsync(encounterId);
+        return result; 
     }
     
     [HttpPatch("{encounterId}/initiative")]
     public async Task<ActionResult> ModifyInitiativeQueue(int encounterId, List<ModifyInitiativeQueueOrderItem> newQueue)
     {
-        return await _encounterService.ModifyInitiativeQueueAsync(encounterId, newQueue);
+        var result = await _encounterService.ModifyInitiativeQueueAsync(encounterId, newQueue);
+        await _sessionService.RequeryInitiative(encounterId, User.GetUserId());
+        return result; 
     }
     
     [HttpPatch("{encounterId}/initiative/{characterId}/up")]
@@ -100,6 +108,7 @@ public class EncounterController : BaseApiController
     {
         try{
             await _encounterService.MoveUpQueue(encounterId, characterId, User.GetUserId());
+            await _sessionService.RequeryInitiative(encounterId, User.GetUserId());
         }
         catch(SessionBadRequestException ex){
             return BadRequest(ex.Message);
@@ -112,6 +121,7 @@ public class EncounterController : BaseApiController
     {
         try{
             await _encounterService.MoveDownQueue(encounterId, characterId, User.GetUserId());
+            await _sessionService.RequeryInitiative(encounterId, User.GetUserId());
         }
         catch(SessionBadRequestException ex){
             return BadRequest(ex.Message);
@@ -141,6 +151,7 @@ public class EncounterController : BaseApiController
             return Unauthorized("You are not the Game Master");
         }
         await _encounterService.SetActiveTurn(encounterId, characterId);
+        await _sessionService.RequeryInitiative(encounterId, User.GetUserId());
         return Ok();
     }
     
@@ -148,6 +159,7 @@ public class EncounterController : BaseApiController
     public async Task<ActionResult<List<InitiativeQueueItemDto>>> NextTurn(int encounterId, int characterId)
     {
         await _encounterService.NextTurn(encounterId);
+        await _sessionService.RequeryInitiative(encounterId, User.GetUserId());
         return Ok();
     }
     
@@ -176,6 +188,7 @@ public class EncounterController : BaseApiController
     public async Task<ActionResult> RemoveParticipanceData(int encounterId, int characterId){
         try{
             await _encounterService.DeleteParticipanceData(encounterId, characterId, User.GetUserId());
+            await _sessionService.RequeryInitiative(encounterId, User.GetUserId());
         }
         catch(SessionBadRequestException ex){
             return BadRequest(ex.Message);

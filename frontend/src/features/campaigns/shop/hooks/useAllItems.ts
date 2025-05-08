@@ -1,14 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-import { getItems } from "../../../services/apiItems";
+import { getAllItems } from "../../../../services/apiShops";
 
-export function useItems(blueprintOrInstance: "blueprint" | "instance" | null) {
+export function useAllItems() {
   const {
     isLoading,
     data: items,
     error,
   } = useQuery({
     queryKey: ["itemList"],
-    queryFn: () => getItems(blueprintOrInstance),
+    queryFn: () => getAllItems(),
   });
 
   return { isLoading, items, error };

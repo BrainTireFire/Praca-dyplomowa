@@ -1,7 +1,6 @@
 import Heading from "../../../ui/text/Heading";
 import Spinner from "../../../ui/interactive/Spinner";
 import { useShop } from "../../../features/campaigns/shop/hooks/useShop";
-import { useItems } from "../../items/hooks/useItems";
 import styled from "styled-components";
 import React, { useState } from "react";
 import Button from "../../../ui/interactive/Button";
@@ -11,6 +10,8 @@ import {
   CoinPurse,
   coinPursePrint,
 } from "../../../features/items/models/coinPurse";
+import { useShopItems } from "../../../features/campaigns/shop/hooks/useShopItems";
+import { useAllItems } from "../../../features/campaigns/shop/hooks/useAllItems";
 
 const Container = styled.div`
   display: grid;
@@ -99,8 +100,9 @@ const Input = styled.input`
 
 function CustomizeShop() {
   const { shop, isPending } = useShop();
-  const { isLoading, items = [] } = useItems();
-  const [shopItems, setShopItems] = useState<ShopItem[]>([]);
+  const { isLoading, items = [], error } = useAllItems();
+  const { isLoading: isFetching, shopItems, error: exception } = useShopItems();
+
   const [selectedItem, setSelectedItem] = useState<ShopItem | undefined>(
     undefined
   );
@@ -110,18 +112,19 @@ function CustomizeShop() {
     silverPieces: 0,
     copperPieces: 0,
   });
+
   const [quantity, setQuantity] = useState(1);
 
-  if (isPending || isLoading) {
+  if (isPending || isLoading || isFetching) {
     return <Spinner />;
   }
 
-  if (!shop) {
-    return <div>shop not found</div>;
+  if (!shop || error || exception) {
+    return <div>Error when fetching data</div>;
   }
 
   const handleClick = (item: ShopItem) => {
-    setSelectedItem((prev) => (prev?.id === item.id ? undefined : item));
+    setSelectedItem((prev) => (prev === item ? undefined : item));
   };
 
   const changePrice = (type: keyof CoinPurse, value: number) => {
@@ -131,13 +134,17 @@ function CustomizeShop() {
     }));
   };
 
-  const addToShop = (item: ShopItem) => {
-    const existingItem = shopItems.find((i: ShopItem) => i.id === item.id);
+  const addToShop = () => {
+    const existingItem = shopItems.find(
+      (i: ShopItem) => i.id === selectedItem?.id
+    );
 
     if (existingItem) {
       setShopItems(
         shopItems.map((i: ShopItem) =>
-          i.id === item.id ? { ...i, qty: i.qty + quantity, price: price } : i
+          i.id === existingItem.id
+            ? { ...i, qty: i.qty + quantity, price: price }
+            : i
         )
       );
     } else {
@@ -145,9 +152,11 @@ function CustomizeShop() {
     }
   };
 
-  const removeFromShop = (item: ShopItem) => {
+  const removeFromShop = (quantity) => {
     setShopItems(shopItems.filter((i: ShopItem) => i.id !== item.id));
   };
+
+  const updateShopItems = () => {};
 
   return (
     <Container>
@@ -170,7 +179,7 @@ function CustomizeShop() {
                     onClick={() => handleClick(item)}
                     style={{
                       backgroundColor:
-                        item.id === selectedItem?.id
+                        item === selectedItem
                           ? "rgba(136, 213, 136, 0.59)"
                           : undefined,
                     }}
@@ -220,7 +229,7 @@ function CustomizeShop() {
             onChange={(e) => setQuantity(parseInt(e.target.value))}
             disabled={!selectedItem}
           />
-          <Button onClick={() => removeFromShop(shopItems[0])}> ← </Button>
+          <Button onClick={() => updateShopItems()}> ← </Button>
         </MiddleContainer>
         <TableContainer>
           <Heading as="h1">Shop Inventory</Heading>
@@ -232,7 +241,7 @@ function CustomizeShop() {
                 <Th>Qty</Th>
               </thead>
               <tbody>
-                {shopItems.map((item: ShopItem) => (
+                {shopItems?.map((item: ShopItem) => (
                   <Tr
                     key={item.id}
                     onClick={() => handleClick(item)}

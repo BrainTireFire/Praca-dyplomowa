@@ -13,7 +13,6 @@ import {
   INITIAL_WIDTH,
   getColorForUser,
   drawGrid,
-  highlightBox,
   drawFieldCross,
   drawCustomCursor,
   drawSelectedBox,
@@ -21,7 +20,6 @@ import {
   drawTextName,
   drawAvatar,
   drawWeaponAttackRange as drawAttackRange,
-  getSizeMultiplier,
   checkIfTargetInWeaponAttackRange as checkIfTargetInAttackRange,
   getOccupiedCoordinatesForSize,
   drawSelectedTargetMarker,
@@ -29,10 +27,12 @@ import {
   highlightArea,
   getAngleFromCharacterToCursor,
   getConeAreaCellsDeg,
-  getConeAreaCells2,
   getCubeAreaCells,
   getLineAreaCells,
   getCylinderAreaCells,
+  highlightPowerRange,
+  drawSelectedPowerTargetsMarkers,
+  arraysEqual,
 } from "./CanvasUtils";
 import { VirtualBoardProps } from "./../../../models/session/VirtualBoardProps";
 import { Coordinate } from "../../../models/session/Coordinate";
@@ -96,6 +96,9 @@ export default function VirtualBoard({
   });
   const [selectedBox, setSelectedBox] = useState<Coordinate | null>(null);
   const [translatePos, setTranslatePos] = useState<Coordinate>({ x: 0, y: 0 });
+  const [charactersIdsInPowerRange, setCharactersIdsInPowerRange] = useState<
+    number[]
+  >([]);
   const [controlledCharacterId] = useContext(ControlledCharacterContext);
   const { isLoading: isLoadingParticipanceData, participance } =
     useParticipanceData(encounter.id, controlledCharacterId);
@@ -203,25 +206,24 @@ export default function VirtualBoard({
       );
     }
     if (mode === "PowerCast") {
+      let newPowerArea: Coordinate[] = [];
+
       if (power.targetType === "Caster" || power.targetType == "Character") {
-        let range = power.range ? power.range : 0;
+        let range = power.range ? Math.floor(power.range / 5) : 0;
+        let areaSize = power.areaSize ? Math.floor(power.areaSize / 5) : 0;
 
-        // const connectionId = connection!.connectionId as string;
-        // const userCursor = userCursors[connectionId];
-
-        console.log("controlledCharacter", controlledCharacter);
-
-        let origin: Coordinate = {
+        let casterPosition: Coordinate = {
           x: occupiedField!.positionX,
           y: occupiedField!.positionY,
         };
-        let selected: { x: number; y: number }[] = [];
 
         switch (power.areaShape) {
           case AreaShapeLabels.Sphere:
-            selected = getCircleAreaCells(
+            newPowerArea = getCircleAreaCells(
               localCursorPosition,
-              power.areaSize ?? 0
+              casterPosition,
+              areaSize,
+              range
             );
             break;
 
@@ -229,8 +231,8 @@ export default function VirtualBoard({
             let cursorAngle = 0;
             if (localCursorPosition) {
               cursorAngle = getAngleFromCharacterToCursor(
-                origin.x,
-                origin.y,
+                casterPosition.x,
+                casterPosition.y,
                 localCursorPosition.x,
                 localCursorPosition.y,
                 encounter.board.sizeX,
@@ -238,18 +240,22 @@ export default function VirtualBoard({
               );
             }
 
-            selected = getConeAreaCellsDeg(
-              origin,
-              power.areaSize ?? 0,
+            newPowerArea = getConeAreaCellsDeg(
+              localCursorPosition,
+              casterPosition,
+              areaSize,
+              range,
               cursorAngle,
               90
             );
             break;
 
           case AreaShapeLabels.Cube:
-            selected = getCubeAreaCells(
+            newPowerArea = getCubeAreaCells(
               localCursorPosition,
-              power.areaSize ?? 0
+              casterPosition,
+              areaSize,
+              range
             );
             break;
 
@@ -257,8 +263,8 @@ export default function VirtualBoard({
             let cursonLineAngle = 0;
             if (localCursorPosition) {
               cursonLineAngle = getAngleFromCharacterToCursor(
-                origin.x,
-                origin.y,
+                casterPosition.x,
+                casterPosition.y,
                 localCursorPosition.x,
                 localCursorPosition.y,
                 encounter.board.sizeX,
@@ -266,17 +272,21 @@ export default function VirtualBoard({
               );
             }
 
-            selected = getLineAreaCells(
-              origin,
+            newPowerArea = getLineAreaCells(
+              localCursorPosition,
+              casterPosition,
               cursonLineAngle,
-              power.areaSize ?? 0
+              areaSize,
+              range
             );
             break;
 
           case AreaShapeLabels.Cylinder:
-            selected = getCylinderAreaCells(
+            newPowerArea = getCylinderAreaCells(
               localCursorPosition,
-              power.areaSize ?? 0
+              casterPosition,
+              areaSize,
+              range
             );
             break;
 
@@ -284,28 +294,78 @@ export default function VirtualBoard({
             break;
         }
 
-        setSelectedAreaPower(selected);
+        setSelectedAreaPower(newPowerArea);
         highlightArea(
           ctx,
-          selected,
+          newPowerArea,
+          encounter.board.sizeX,
+          encounter.board.sizeY
+        );
+
+        highlightPowerRange(
+          ctx,
+          casterPosition,
+          range,
           encounter.board.sizeX,
           encounter.board.sizeY
         );
       }
 
-      encounter.participances.forEach((element) => {
-        if (selectedTargets.find((x) => x === element.character.id)) {
-          let occupiedField = element.occupiedField;
-          let targetedCharacter = element.character;
+      let newIdsInPowerRange: number[] = [];
+
+      encounter.participances.forEach((participance) => {
+        const occupiedField = participance.occupiedField;
+        const targetedCharacter = participance.character;
+
+        if (!occupiedField) return;
+
+        let targetOccupiedCoordinates = getOccupiedCoordinatesForSize(
+          occupiedField.positionX,
+          occupiedField.positionY,
+          targetedCharacter.size.name
+        );
+
+        const isInSelectedArea = targetOccupiedCoordinates.some((coord) =>
+          newPowerArea.some((cell) => cell.x === coord.x && cell.y === coord.y)
+        );
+
+        if (isInSelectedArea) {
+          drawSelectedPowerTargetsMarkers(
+            ctx,
+            { x: occupiedField.positionX, y: occupiedField.positionY },
+            0,
+            targetedCharacter.size.name,
+            encounter.board.sizeX,
+            encounter.board.sizeY
+          );
+
+          if (!newIdsInPowerRange.includes(targetedCharacter.id)) {
+            newIdsInPowerRange.push(targetedCharacter.id);
+          }
+        }
+
+        if (selectedTargets.find((x) => x === participance.character.id)) {
           drawSelectedTargetMarker(
             ctx,
-            { x: occupiedField!.positionX, y: occupiedField!.positionY },
+            { x: occupiedField.positionX, y: occupiedField.positionY },
             0,
             targetedCharacter.size.name,
             encounter.board.sizeX,
             encounter.board.sizeY
           );
         }
+      });
+
+      setCharactersIdsInPowerRange((prev) => {
+        // optional: only dispatch if changed to avoid unnecessary re-renders
+        if (!arraysEqual(prev, newIdsInPowerRange)) {
+          dispatch({
+            type: "TOGGLE_POWER_TARGET_ARRAY",
+            payload: newIdsInPowerRange,
+          });
+        }
+
+        return newIdsInPowerRange;
       });
     }
 
@@ -473,7 +533,7 @@ export default function VirtualBoard({
           let targetOccupiedCoordinates = getOccupiedCoordinatesForSize(
             targetX,
             targetY,
-            participance!.character.size.name,
+            participance!.character.size.name
           );
           for (var targetOccupiedCoordinate of targetOccupiedCoordinates) {
             if (

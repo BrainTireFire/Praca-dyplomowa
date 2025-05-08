@@ -120,6 +120,7 @@ const SET_POWER = "SET_POWER";
 const SET_POWER_ID = "SET_POWER_ID";
 const SET_SELECTED_POWER_DATA = "SET_SELECTED_POWER_DATA";
 const TOGGLE_POWER_TARGET = "TOGGLE_POWER_TARGET";
+const TOGGLE_POWER_TARGET_ARRAY = "TOGGLE_POWER_TARGET_ARRAY";
 const WEAPON_ATTACK_OVERLAY_DATA = "WEAPON_ATTACK_OVERLAY_DATA";
 const POWER_CAST_OVERLAY_DATA = "POWER_CAST_OVERLAY_DATA";
 
@@ -176,6 +177,10 @@ export interface TogglePowerTarget {
   type: typeof TOGGLE_POWER_TARGET;
   payload: number; // characterId
 }
+export interface TogglePowerTargetArray {
+  type: typeof TOGGLE_POWER_TARGET_ARRAY;
+  payload: number[]; // characterId
+}
 export interface PowerCastOverlay {
   type: typeof POWER_CAST_OVERLAY_DATA;
   payload: PowerCastOverlayData;
@@ -201,6 +206,7 @@ export type ControlStateActions =
   | SetPower
   | WeaponAttackOverlay
   | TogglePowerTarget
+  | TogglePowerTargetArray
   | PowerCastOverlay
   | SetPowerId
   | SetSelectedPowerData;
@@ -289,9 +295,21 @@ const controlStateReducer = (
         },
         mode: "PowerCast",
       };
+    case TOGGLE_POWER_TARGET_ARRAY: {
+      const idsToToggle = action.payload as number[];
+      const maxTargets = state.powerSelected?.maxTargets ?? 1;
+
+      const limitedIds =
+        state.powerSelected?.areaShape !== "None"
+          ? idsToToggle
+          : idsToToggle.slice(0, maxTargets);
+
+      return {
+        ...state,
+        powerTargets: limitedIds,
+      };
+    }
     case TOGGLE_POWER_TARGET:
-      console.log(action.payload);
-      console.log(state.powerTargets);
       const foundIndex = state.powerTargets.findIndex(
         (x) => x === action.payload
       );
@@ -306,8 +324,6 @@ const controlStateReducer = (
         ) {
           return state;
         }
-        console.log(state.powerTargets);
-        console.log(newPowerTargets);
         return {
           ...state,
           powerTargets: newPowerTargets,
@@ -537,6 +553,10 @@ export default function SessionLayout({ encounter }: any) {
     powerTargetIds: number[],
     power: Power
   ) => {
+    console.info("sourceId", sourceId);
+    console.info("campaignId", campaignId);
+    console.info("powerTargetIds", powerTargetIds);
+    console.info("power", power);
     if (connection) {
       try {
         const powerCastOverlayRequest = {

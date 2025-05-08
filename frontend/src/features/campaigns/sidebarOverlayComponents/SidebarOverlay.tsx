@@ -48,11 +48,11 @@ const Overlay = styled.div<OverlayProps>`
   /* Sliding animation */
   animation: ${({ isClosing }) => (isClosing ? slideOut : slideIn)} 0.3s
     forwards;
+  overflow-y: auto;
 `;
 
 const OverlayContent = styled.div`
   background: rgba(var(--color-secondary-background-rgb), 0.05);
-  max-height: 95%;
   height: auto;
   border-radius: 8px;
   padding: 10px;
@@ -73,9 +73,9 @@ export function SidebarOverlay({
   // }
   return (
     <Overlay isClosing={isClosing}>
-      <Button onClick={handleClose}>
+      {/* <Button onClick={handleClose}>
         <HiBackward />
-      </Button>
+      </Button> */}
       {!isLoading && (
         <>
           <OverlayContent>

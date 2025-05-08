@@ -89,18 +89,18 @@ const JoinCampaignToast: React.FC<JoinCampaignToastProps> = ({
   if (!isVisible) return null;
 
   return (
-    <Link to={link}>
-      <ToastWrapper>
-        <CloseButton onClick={handleClose} aria-label="Close">
-          <ImCross />
-        </CloseButton>
-        <ToastContent>
-          <ToastHeader>New person join campaign</ToastHeader>
-          <Message>{message}</Message>
+    <ToastWrapper>
+      <CloseButton onClick={handleClose} aria-label="Close">
+        <ImCross />
+      </CloseButton>
+      <ToastContent>
+        <ToastHeader>New person join campaign</ToastHeader>
+        <Message>{message}</Message>
+        <Link to={link}>
           <ToastAction>Click here to view the campaign</ToastAction>
-        </ToastContent>
-      </ToastWrapper>
-    </Link>
+        </Link>
+      </ToastContent>
+    </ToastWrapper>
   );
 };
 

@@ -596,10 +596,13 @@ export default function SessionLayout({ encounter }: any) {
         console.log("Requery initiative signal detected");
         queryClient.invalidateQueries({
           queryKey: ["initiativeQueue", encounter.id],
-          
         });
         queryClient.invalidateQueries({
           queryKey: ["participance", encounter.id],
+          exact: false,
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["character"],
           exact: false,
         });
         queryClient.invalidateQueries({

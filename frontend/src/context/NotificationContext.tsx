@@ -50,7 +50,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const {isAuthorized} = useAuth();
+  const {payloadContainer} = useAuth();
 
   useEffect(() => {
     hubConnection.current = new signalR.HubConnectionBuilder()
@@ -330,7 +330,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     return () => {
       hubConnection.current?.stop();
     };
-  }, [isAuthorized]);
+  }, [payloadContainer]);
 
   return (
     <NotificationContext.Provider value={{ notifications }}>

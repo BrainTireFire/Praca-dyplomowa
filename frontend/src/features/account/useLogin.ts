@@ -12,7 +12,7 @@ type LoginData = {
 export function useLogin() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const {setIsAuthorized} = useAuth();
+  const {setPayloadContainer} = useAuth();
 
   const { mutate: login, isLoading } = useMutation({
     mutationFn: ({ username, password }: LoginData) =>
@@ -20,7 +20,7 @@ export function useLogin() {
     onSuccess: (data) => {
       console.log("data ", data);
       queryClient.setQueryData(["user"], data);
-      setIsAuthorized({payload: true});
+      setPayloadContainer({payload: true});
       navigate("/main", { replace: true });
     },
     onError: (error) => {

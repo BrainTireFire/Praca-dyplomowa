@@ -434,6 +434,7 @@ public class EncounterService : IEncounterService
     public async Task<Models.DTOs.Session.ParticipanceDataDto> GetParticipanceData(int encounterId, int characterId){
         var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipance(encounterId, characterId);
         var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(characterId);
+       
         var result = encounter.R_Participances.Where(x => x.R_CharacterId == characterId).Select(x => new Models.DTOs.Session.ParticipanceDataDto(){
             CharacterName = x.R_Character.Name,
             ActionsTaken = x.NumberOfActionsTaken,
@@ -450,7 +451,7 @@ public class EncounterService : IEncounterService
             SucceededDeathSaves = character.SucceededDeathSavingThrows,
             FailedDeathSaves = character.FailedDeathSavingThrows,
             Size = character.Size
-        }).First();
+        }).FirstOrDefault(new Models.DTOs.Session.ParticipanceDataDto());
         return result;
     }
     public async Task UpdateParticipanceData(int encounterId, int characterId, Models.DTOs.Session.ParticipanceDataDto participanceDataDto){

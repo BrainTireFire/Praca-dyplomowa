@@ -6,6 +6,7 @@ using pracadyplomowa.Models.DTOs.Session;
 using pracadyplomowa.Models.Entities.Campaign;
 using pracadyplomowa.Repository.AuctionLog;
 using pracadyplomowa.Repository.UnitOfWork;
+using pracadyplomowa.Services.Websockets;
 using pracadyplomowa.Services.Websockets.Notification;
 
 namespace pracadyplomowa.Hubs;
@@ -15,6 +16,7 @@ public class SessionHub  : Hub
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly INotificationService _notificationService;
+    private readonly ISessionService _sessionService;
     
     //TODO the same users is connecting!
     //
@@ -23,10 +25,11 @@ public class SessionHub  : Hub
     private static readonly ConcurrentDictionary<string, ConcurrentDictionary<string, Coordinate>> UserCursors = new();
     private static readonly ConcurrentDictionary<string, List<int>> SelectedPath = new();
    
-    public SessionHub(IUnitOfWork unitOfWork, INotificationService notificationService)
+    public SessionHub(IUnitOfWork unitOfWork, INotificationService notificationService, ISessionService sessionService)
     {
         _unitOfWork = unitOfWork;
         _notificationService = notificationService;
+        _sessionService = sessionService;
     }
     
     public override async Task OnConnectedAsync()
@@ -285,13 +288,10 @@ public class SessionHub  : Hub
         var groupName = GetGroupName();
         if (groupName != null)
         {
-            await NotifyAllRequeryInitiative(groupName);
+            await _sessionService.RequeryInitiative(int.Parse(groupName), Context.User!.GetUserId());
         }
     }
-    private async Task NotifyAllRequeryInitiative(string groupName)
-    {
-        await Clients.GroupExcept(groupName, Context.ConnectionId).SendAsync("RequeryInitiative");
-    }
+
     
     public async Task TriggerWeaponAttackOverlay(WeaponAttackOverlayDto weaponAttackOverlayDto)
     {

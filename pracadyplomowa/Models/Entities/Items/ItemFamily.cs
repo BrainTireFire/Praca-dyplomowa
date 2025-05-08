@@ -18,7 +18,7 @@ namespace pracadyplomowa.Models.Entities.Items
         public virtual ICollection<Item> R_ItemFamilyInItems { get; set; } = [];
 
         public virtual ICollection<ProficiencyEffectBlueprint> R_ProficiencyGrantedByEffectBlueprint { get; set; } = [];
-        public virtual ICollection<EffectInstance> R_ProficiencyGrantedByEffectInstance { get; set; } = [];
+        public virtual ICollection<ProficiencyEffectInstance> R_ProficiencyGrantedByEffectInstance { get; set; } = [];
 
         public virtual ICollection<ItemCostRequirement> R_RequiredAmountsForPowers { get; set; } = [];
 

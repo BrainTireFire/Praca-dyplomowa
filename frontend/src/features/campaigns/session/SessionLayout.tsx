@@ -561,6 +561,9 @@ export default function SessionLayout({ encounter }: any) {
           return;
         }
 
+        dispatch({ type: "SET_PATH", payload: [] });
+        setOtherPath([]);
+
         queryClient.invalidateQueries({
           queryKey: ["encounter", encounter.id],
         });

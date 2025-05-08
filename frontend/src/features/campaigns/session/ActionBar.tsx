@@ -178,7 +178,7 @@ export default function ActionBar({
   ) {
     return <Spinner></Spinner>;
   }
-  console.log(concentrationData);
+
   return (
     <>
       {!controlledCharacterId && (

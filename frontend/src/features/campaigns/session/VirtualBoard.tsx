@@ -32,6 +32,7 @@ import {
   getCylinderAreaCells,
   highlightPowerRange,
   drawSelectedPowerTargetsMarkers,
+  arraysEqual,
 } from "./CanvasUtils";
 import { VirtualBoardProps } from "./../../../models/session/VirtualBoardProps";
 import { Coordinate } from "../../../models/session/Coordinate";
@@ -95,7 +96,9 @@ export default function VirtualBoard({
   });
   const [selectedBox, setSelectedBox] = useState<Coordinate | null>(null);
   const [translatePos, setTranslatePos] = useState<Coordinate>({ x: 0, y: 0 });
-  const charactersIdsInPowerRangeRef = useRef<number[]>([]);
+  const [charactersIdsInPowerRange, setCharactersIdsInPowerRange] = useState<
+    number[]
+  >([]);
   const [controlledCharacterId] = useContext(ControlledCharacterContext);
   const { isLoading: isLoadingParticipanceData, participance } =
     useParticipanceData(encounter.id, controlledCharacterId);
@@ -308,7 +311,7 @@ export default function VirtualBoard({
         );
       }
 
-      const newIdsInPowerRange: number[] = [];
+      let newIdsInPowerRange: number[] = [];
 
       encounter.participances.forEach((participance) => {
         const occupiedField = participance.occupiedField;
@@ -336,16 +339,9 @@ export default function VirtualBoard({
             encounter.board.sizeY
           );
 
-          if (
-            !charactersIdsInPowerRangeRef.current.includes(
-              targetedCharacter.id
-            ) &&
-            !newIdsInPowerRange.includes(targetedCharacter.id)
-          ) {
+          if (!newIdsInPowerRange.includes(targetedCharacter.id)) {
             newIdsInPowerRange.push(targetedCharacter.id);
           }
-        } else {
-          charactersIdsInPowerRangeRef.current = [];
         }
 
         if (selectedTargets.find((x) => x === participance.character.id)) {
@@ -360,12 +356,17 @@ export default function VirtualBoard({
         }
       });
 
-      if (newIdsInPowerRange.length > 0) {
-        charactersIdsInPowerRangeRef.current = [
-          ...charactersIdsInPowerRangeRef.current,
-          ...newIdsInPowerRange,
-        ];
-      }
+      setCharactersIdsInPowerRange((prev) => {
+        // optional: only dispatch if changed to avoid unnecessary re-renders
+        if (!arraysEqual(prev, newIdsInPowerRange)) {
+          dispatch({
+            type: "TOGGLE_POWER_TARGET_ARRAY",
+            payload: newIdsInPowerRange,
+          });
+        }
+
+        return newIdsInPowerRange;
+      });
     }
 
     Object.keys(selectedBoxes).forEach((connectionId) => {
@@ -564,23 +565,6 @@ export default function VirtualBoard({
           } else {
             console.log("Not in range");
           }
-        }
-
-        console.log(
-          "Power range characters",
-          charactersIdsInPowerRangeRef.current
-        );
-
-        if (charactersIdsInPowerRangeRef.current.length > 0) {
-          dispatch({
-            type: "TOGGLE_POWER_TARGET_ARRAY",
-            payload: charactersIdsInPowerRangeRef.current,
-          });
-        } else {
-          dispatch({
-            type: "TOGGLE_POWER_TARGET_ARRAY",
-            payload: [],
-          });
         }
       } else {
         await connection.invoke(

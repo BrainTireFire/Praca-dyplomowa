@@ -22,6 +22,13 @@ function normalizeAngle(angle: number): number {
   return angle;
 }
 
+export function arraysEqual(a: number[], b: number[]) {
+  if (a.length !== b.length) return false;
+  const sortedA = [...a].sort((x, y) => x - y);
+  const sortedB = [...b].sort((x, y) => x - y);
+  return sortedA.every((val, index) => val === sortedB[index]);
+}
+
 export const GRID_SIZE = 70;
 export const INITIAL_WIDTH = 1280;
 export const INITIAL_HEIGHT = 720;

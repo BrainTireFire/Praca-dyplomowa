@@ -20,7 +20,7 @@ export function useLogin() {
     onSuccess: (data) => {
       console.log("data ", data);
       queryClient.setQueryData(["user"], data);
-      setIsAuthorized(true);
+      setIsAuthorized({payload: true});
       navigate("/main", { replace: true });
     },
     onError: (error) => {

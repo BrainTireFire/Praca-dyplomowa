@@ -89,18 +89,18 @@ const SessionStartedToast: React.FC<SessionStartedToastProps> = ({
   if (!isVisible) return null;
 
   return (
-    <Link to={link}>
-      <ToastWrapper>
-        <CloseButton onClick={handleClose} aria-label="Close">
-          <ImCross />
-        </CloseButton>
-        <ToastContent>
-          <ToastHeader>Session started!</ToastHeader>
-          <Message>{message}</Message>
-          <ToastAction>Click here to join to session</ToastAction>
-        </ToastContent>
-      </ToastWrapper>
-    </Link>
+    <ToastWrapper>
+      <CloseButton onClick={handleClose} aria-label="Close">
+        <ImCross />
+      </CloseButton>
+      <ToastContent>
+        <ToastHeader>Session started!</ToastHeader>
+        <Message>{message}</Message>
+        <Link to={link}>
+          <ToastAction>Click here to join the session</ToastAction>
+        </Link>
+      </ToastContent>
+    </ToastWrapper>
   );
 };
 

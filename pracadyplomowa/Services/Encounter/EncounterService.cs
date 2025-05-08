@@ -519,6 +519,13 @@ public class EncounterService : IEncounterService
             participance.DistanceTraveled += movementCost * 5;
             await CommitAndReport(encounter, messages);
         }
+        
+        await _hubContext.Clients
+            .Group($"{encounterId}")
+            .SendAsync("CharacterMoved", new {
+                EncounterId = encounterId
+            });
+        
         return traversableIds;
     }
 

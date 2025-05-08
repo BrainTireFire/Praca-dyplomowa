@@ -364,6 +364,7 @@ const initialState: ControlState = {
 
 export default function SessionLayout({ encounter }: any) {
   const { groupName } = useParams();
+  const queryClient = useQueryClient();
 
   //TODO REACT QUERY OR STATE MANAGEMENT
   const [connection, setConnection] = useState<HubConnection | null>(null);
@@ -373,10 +374,6 @@ export default function SessionLayout({ encounter }: any) {
   >([]);
 
   const [messageInput, setMessageInput] = useState<string>("");
-
-  const [selectedCharacterId, setSelectedCharacterId] = useState<number | null>(
-    null
-  );
 
   const [controlState, dispatch] = useReducer(
     controlStateReducer,
@@ -577,14 +574,23 @@ export default function SessionLayout({ encounter }: any) {
     }
   };
 
-  const queryClient = useQueryClient();
   useEffect(() => {
     if (connection) {
       connection.on("UpdatePath", (incomingPath: number[]) => {
-        console.log("update");
-        console.log(incomingPath);
         setOtherPath(incomingPath);
         dispatch({ type: "SET_PATH", payload: [] });
+      });
+      connection.on("CharacterMoved", (request) => {
+        if (encounter.id !== request.encounterId) {
+          return;
+        }
+
+        dispatch({ type: "SET_PATH", payload: [] });
+        setOtherPath([]);
+
+        queryClient.invalidateQueries({
+          queryKey: ["encounter", encounter.id],
+        });
       });
       connection.on("RequeryInitiative", () => {
         console.log("Requery initiative signal detected");

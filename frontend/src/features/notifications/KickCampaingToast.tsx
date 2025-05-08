@@ -89,18 +89,18 @@ const KickCampaingToast: React.FC<KickCampaingToastProps> = ({
   if (!isVisible) return null;
 
   return (
-    <Link to={link}>
-      <ToastWrapper>
-        <CloseButton onClick={handleClose} aria-label="Close">
-          <ImCross />
-        </CloseButton>
-        <ToastContent>
-          <ToastHeader>The person was kick from the campaign</ToastHeader>
-          <Message>{message}</Message>
+    <ToastWrapper>
+      <CloseButton onClick={handleClose} aria-label="Close">
+        <ImCross />
+      </CloseButton>
+      <ToastContent>
+        <ToastHeader>The person was kick from the campaign</ToastHeader>
+        <Message>{message}</Message>
+        <Link to={link}>
           <ToastAction>Click here to view the campaign</ToastAction>
-        </ToastContent>
-      </ToastWrapper>
-    </Link>
+        </Link>
+      </ToastContent>
+    </ToastWrapper>
   );
 };
 

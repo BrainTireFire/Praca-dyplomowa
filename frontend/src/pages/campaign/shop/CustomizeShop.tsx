@@ -101,7 +101,11 @@ const Input = styled.input`
 function CustomizeShop() {
   const { shop, isPending } = useShop();
   const { isLoading, items = [], error } = useAllItems();
-  const { isLoading: isFetching, shopItems, error: exception } = useShopItems();
+  const {
+    isLoading: isFetching,
+    shopItems = [],
+    error: exception,
+  } = useShopItems();
 
   const [selectedItem, setSelectedItem] = useState<ShopItem | undefined>(
     undefined
@@ -247,7 +251,7 @@ function CustomizeShop() {
                     onClick={() => handleClick(item)}
                     style={{
                       backgroundColor:
-                        item.id === selectedItem?.id
+                        item === selectedItem
                           ? "rgba(136, 213, 136, 0.59)"
                           : undefined,
                     }}

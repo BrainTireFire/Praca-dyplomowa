@@ -85,7 +85,7 @@ namespace pracadyplomowa.Controllers
                 e.R_ShopHasItem.Name,
                 e.R_ShopHasItem.Weight,
                 e.R_ShopHasItem.Description,
-                new CoinPurseDto(e.R_ShopHasItem.Price),
+                new CoinPurseDto(e.Price),
                 e.Quantity
             ));
 

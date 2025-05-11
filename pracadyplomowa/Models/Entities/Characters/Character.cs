@@ -573,8 +573,12 @@ namespace pracadyplomowa.Models.Entities.Characters
                                 .OfType<MovementEffectInstance>()
                                 .Where(m => m.EffectType.MovementEffect == MovementEffect.Bonus)
                                 .Sum(m => m.DiceSet.flat);
-
-                return speed * multiplier + bonus;
+                bool strengthRequirementNotMet = this.R_EquippedItems
+                                                    .Select(ed => ed.R_Item)
+                                                    .OfType<Apparel>()
+                                                    .Where(a => a.StrengthRequirement > this.Strength)
+                                                    .Any();
+                return (speed * multiplier + bonus) / (strengthRequirementNotMet ? 2 : 1);
             }
         }
 
@@ -1043,6 +1047,12 @@ namespace pracadyplomowa.Models.Entities.Characters
                                                                         .ToList();
             bool advantageEffectPresent = advantageEffectList.Count != 0;
 
+            //check for disadvantage if skill is Stealth
+            bool disadvantageOnStealth = false;
+            if(skill == Skill.Stealth){
+                disadvantageOnStealth = this.R_EquippedItems.Select(ed => ed.R_Item).OfType<Apparel>().Where(a => a.StealthDisadvantage).Any();
+            }
+
             //check for proficiency
             List<SkillEffectInstance> proficiencyEffectList = this.AffectedByApprovedEffects
                                                                         .OfType<SkillEffectInstance>()
@@ -1050,7 +1060,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                                                                         .ToList();
             bool proficiencyEffectPresent = advantageEffectList.Count != 0;
 
-            DiceSet.Dice baseRollResult = new DiceSet() { d20 = 1 }.RollPrototype(advantageEffectPresent, false, rerollLowerThan).First();
+            DiceSet.Dice baseRollResult = new DiceSet() { d20 = 1 }.RollPrototype(advantageEffectPresent, disadvantageOnStealth, rerollLowerThan).First();
 
             return bonusRollResults.Concat([baseRollResult]).Aggregate(0, (sum, current) => sum + current.result) + (proficiencyEffectPresent ? ProficiencyBonus : 0);
         }
@@ -1201,6 +1211,10 @@ namespace pracadyplomowa.Models.Entities.Characters
 
             //check for disadvantage
             bool disadvantage = DisadvantageOnAttackRoll(encounter, target, attacksRange);
+            bool isWeaponHeavyAndWielderSmall = (this.Size == Size.Small || this.Size == Size.Tiny) && weapon.WeaponWeight == WeaponWeight.Heavy;
+            if(isWeaponHeavyAndWielderSmall){
+                disadvantage = true;
+            }
 
             //roll the dice
             List<DiceSet.Dice> bonusRollResults = weapon.GetTotalAttackBonus().RollPrototype(false, false, null);
@@ -1752,17 +1766,17 @@ namespace pracadyplomowa.Models.Entities.Characters
         //     }
         // }
 
-        [NotMapped]
-        public int TotalMovementPerTurn{
-            get {
-                var effectsBonus = AffectedByApprovedEffects.OfType<MovementEffectInstance>().Where(x => x.EffectType.MovementEffect == MovementEffect.Bonus).Select(x => x.DiceSet.flat);
-                var bonus = effectsBonus.Any() ? effectsBonus.Sum() : 0;
-                var multiplierEffects = AffectedByApprovedEffects.OfType<MovementEffectInstance>().Where(x => x.EffectType.MovementEffect == MovementEffect.Multiplier);
-                var multiplier = multiplierEffects.Any() ? multiplierEffects.Select(x => x.DiceSet.flat).Sum() : 0;
-                var numberOfMultipliers = multiplierEffects.Count();
-                return R_CharacterBelongsToRace.Speed * (multiplier - (numberOfMultipliers - 1)) + bonus;
-            }
-        }
+        // [NotMapped]
+        // public int TotalMovementPerTurn{
+        //     get {
+        //         var effectsBonus = AffectedByApprovedEffects.OfType<MovementEffectInstance>().Where(x => x.EffectType.MovementEffect == MovementEffect.Bonus).Select(x => x.DiceSet.flat);
+        //         var bonus = effectsBonus.Any() ? effectsBonus.Sum() : 0;
+        //         var multiplierEffects = AffectedByApprovedEffects.OfType<MovementEffectInstance>().Where(x => x.EffectType.MovementEffect == MovementEffect.Multiplier);
+        //         var multiplier = multiplierEffects.Any() ? multiplierEffects.Select(x => x.DiceSet.flat).Sum() : 0;
+        //         var numberOfMultipliers = multiplierEffects.Count();
+        //         return R_CharacterBelongsToRace.Speed * (multiplier - (numberOfMultipliers - 1)) + bonus;
+        //     }
+        // }
 
         [NotMapped]
         public int TotalAttacksPerTurn{

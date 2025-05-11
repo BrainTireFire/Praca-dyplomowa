@@ -444,7 +444,7 @@ public class EncounterService : IEncounterService
             TotalActions = x.R_Character.TotalActionsPerTurn,
             TotalAttacksPerAction = x.R_Character.TotalAttacksPerTurn,
             TotalBonusActions = x.R_Character.TotalBonusActionsPerTurn,
-            TotalMovement = x.R_Character.TotalMovementPerTurn,
+            TotalMovement = x.R_Character.Speed,
             Hitpoints = character.Hitpoints,
             MaxHitpoints = character.MaxHealth,
             TemporaryHitpoints = character.TemporaryHitpoints,

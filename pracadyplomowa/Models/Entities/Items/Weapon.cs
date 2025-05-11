@@ -73,12 +73,23 @@ namespace pracadyplomowa.Models.Entities.Items
             return damageDiceSet.getPersonalizedSet(null);
         }
         
+        protected virtual bool ShouldAddAbilityBonus(){
+            bool isInMainHand = R_EquipData != null && R_EquipData.R_Slots.Select(s => s.Type).Contains(Enums.SlotType.MainHand);
+            bool mainHandDoesntHoldNonLightWeapon = Wielder == null || !Wielder.R_EquippedItems
+                                                    .Where(ed => ed.R_Slots.Where(s => s.Type == SlotType.MainHand).Any())
+                                                    .Select(ed => ed.R_Item)
+                                                    .OfType<Weapon>()
+                                                    .Where(w => w.WeaponWeight != WeaponWeight.Light)
+                                                    .Any();
+            return isInMainHand || (this.WeaponWeight == WeaponWeight.Light && mainHandDoesntHoldNonLightWeapon);
+        }
+
         public virtual DiceSet GetBaseEquippedDamageDiceSet(){ // returns weapon base damage
             DiceSet damageDiceSet = GetBaseUnequippedDamageDiceSet();
             DiceSet wieldersExtraWeaponDamage = 0;
             Wielder?.GetExtraWeaponDamage(out wieldersExtraWeaponDamage);
             damageDiceSet += wieldersExtraWeaponDamage + (Wielder != null && IsWielderProficient() ? Wielder.ProficiencyBonus : 0);
-            return damageDiceSet.getPersonalizedSet(Wielder) + GetAbilityBonus();
+            return damageDiceSet.getPersonalizedSet(Wielder) + (ShouldAddAbilityBonus() ? GetAbilityBonus() : 0);
         }
 
         public virtual Dictionary<DamageType, DiceSet> GetEffectsUnequippedDamageDiceSet(){

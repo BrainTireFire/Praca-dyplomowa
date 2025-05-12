@@ -1,17 +1,14 @@
 import Heading from "../../../ui/text/Heading";
 import Spinner from "../../../ui/interactive/Spinner";
-import { useShop } from "../../../features/campaigns/shop/hooks/useShop";
+import { useShop } from "./hooks/useShop";
 import styled from "styled-components";
 import React, { useState } from "react";
 import Button from "../../../ui/interactive/Button";
 import Line from "../../../ui/separators/Line";
 import { Shop, ShopItem } from "../../../models/shop";
-import {
-  CoinPurse,
-  coinPursePrint,
-} from "../../../features/items/models/coinPurse";
-import { useShopItems } from "../../../features/campaigns/shop/hooks/useShopItems";
-import { useAllItems } from "../../../features/campaigns/shop/hooks/useAllItems";
+import { CoinPurse, coinPursePrint } from "../../items/models/coinPurse";
+import { useShopItems } from "./hooks/useShopItems";
+import { useAllItems } from "./hooks/useAllItems";
 
 const Container = styled.div`
   display: grid;

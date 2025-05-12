@@ -108,6 +108,10 @@ function CustomizeShop() {
     undefined
   );
 
+  const [selectedShopItem, setSelectedShopItem] = useState<
+    ShopItem | undefined
+  >(undefined);
+
   const [price, setPrice] = useState<CoinPurse>({
     goldPieces: 0,
     silverPieces: 0,
@@ -126,6 +130,10 @@ function CustomizeShop() {
 
   const handleClick = (item: ShopItem) => {
     setSelectedItem((prev) => (prev === item ? undefined : item));
+  };
+
+  const handleShopClick = (item: ShopItem) => {
+    setSelectedShopItem((prev) => (prev === item ? undefined : item));
   };
 
   const changePrice = (type: keyof CoinPurse, value: number) => {
@@ -222,13 +230,13 @@ function CustomizeShop() {
             }
             disabled={!selectedItem}
           />
-          <Button onClick={() => addToShop()}> → </Button>
+          <Button onClick={() => updateShopItems()}> → </Button>
           <p>Quantity</p>
           <Input
             type="number"
             value={quantity}
             onChange={(e) => setQuantity(parseInt(e.target.value))}
-            disabled={!selectedItem}
+            disabled={!selectedItem && !selectedShopItem}
           />
           <Button onClick={() => updateShopItems()}> ← </Button>
         </MiddleContainer>
@@ -245,10 +253,10 @@ function CustomizeShop() {
                 {shopItems?.map((item: ShopItem) => (
                   <Tr
                     key={item.id}
-                    onClick={() => handleClick(item)}
+                    onClick={() => handleShopClick(item)}
                     style={{
                       backgroundColor:
-                        item === selectedItem
+                        item === selectedShopItem
                           ? "rgba(136, 213, 136, 0.59)"
                           : undefined,
                     }}

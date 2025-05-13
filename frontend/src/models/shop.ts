@@ -22,5 +22,5 @@ export type ShopItem = {
   weight: number;
   description: string;
   price: CoinPurse;
-  qty: number;
+  quantity: number;
 };

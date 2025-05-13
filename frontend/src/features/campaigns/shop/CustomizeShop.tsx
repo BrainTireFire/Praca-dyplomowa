@@ -100,9 +100,10 @@ function CustomizeShop() {
   const { isLoading, items = [], error } = useAllItems();
   const {
     isLoading: isFetching,
-    shopItems = [],
+    shopItems: data = [],
     error: exception,
   } = useShopItems();
+  const [shopItems, setShopItems] = useState(data);
 
   const [selectedItem, setSelectedItem] = useState<ShopItem | undefined>(
     undefined
@@ -143,7 +144,25 @@ function CustomizeShop() {
     }));
   };
 
-  const addToShop = () => {
+  const removeShopItem = () => {
+    const existingItem = shopItems.find(
+      (e: ShopItem) => e === selectedShopItem
+    );
+    if (!existingItem) return;
+
+    const diff = existingItem.quantity - quantity;
+    if (diff <= 0) {
+      setShopItems(shopItems.filter((e: ShopItem) => e !== selectedShopItem));
+    } else {
+      setShopItems(
+        shopItems.map((e: ShopItem) =>
+          e === selectedShopItem ? { ...e, quantity: diff } : e
+        )
+      );
+    }
+  };
+
+  const updateShopItem = () => {
     const existingItem = shopItems.find(
       (i: ShopItem) => i.id === selectedItem?.id
     );
@@ -152,7 +171,7 @@ function CustomizeShop() {
       setShopItems(
         shopItems.map((i: ShopItem) =>
           i.id === existingItem.id
-            ? { ...i, qty: i.qty + quantity, price: price }
+            ? { ...i, quantity: i.quantity + quantity, price: price }
             : i
         )
       );
@@ -160,12 +179,6 @@ function CustomizeShop() {
       setShopItems([...shopItems, { ...item, qty: quantity, price: price }]);
     }
   };
-
-  const removeFromShop = (quantity) => {
-    setShopItems(shopItems.filter((i: ShopItem) => i.id !== item.id));
-  };
-
-  const updateShopItems = () => {};
 
   return (
     <Container>
@@ -206,7 +219,7 @@ function CustomizeShop() {
           <p>Gold</p>
           <Input
             type="number"
-            value={price?.goldPieces || 0}
+            value={price?.goldPieces}
             onChange={(e) =>
               changePrice("goldPieces", parseInt(e.target.value))
             }
@@ -215,7 +228,7 @@ function CustomizeShop() {
           <p>Silver</p>
           <Input
             type="number"
-            value={price?.silverPieces || 0}
+            value={price?.silverPieces}
             onChange={(e) =>
               changePrice("silverPieces", parseInt(e.target.value))
             }
@@ -224,13 +237,13 @@ function CustomizeShop() {
           <p>Copper</p>
           <Input
             type="number"
-            value={price?.copperPieces || 0}
+            value={price?.copperPieces}
             onChange={(e) =>
               changePrice("copperPieces", parseInt(e.target.value))
             }
             disabled={!selectedItem}
           />
-          <Button onClick={() => updateShopItems()}> → </Button>
+          <Button onClick={() => updateShopItem()}> → </Button>
           <p>Quantity</p>
           <Input
             type="number"
@@ -238,7 +251,7 @@ function CustomizeShop() {
             onChange={(e) => setQuantity(parseInt(e.target.value))}
             disabled={!selectedItem && !selectedShopItem}
           />
-          <Button onClick={() => updateShopItems()}> ← </Button>
+          <Button onClick={() => removeShopItem()}> ← </Button>
         </MiddleContainer>
         <TableContainer>
           <Heading as="h1">Shop Inventory</Heading>
@@ -263,7 +276,7 @@ function CustomizeShop() {
                   >
                     <Td>{item.name}</Td>
                     <Td>{coinPursePrint(item.price)}</Td>
-                    <Td>{item.qty}</Td>
+                    <Td>{item.quantity}</Td>
                   </Tr>
                 ))}
               </tbody>

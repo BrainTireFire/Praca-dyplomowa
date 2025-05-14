@@ -163,20 +163,23 @@ function CustomizeShop() {
   };
 
   const updateShopItem = () => {
-    const existingItem = shopItems.find(
-      (i: ShopItem) => i.id === selectedItem?.id
-    );
+    if (selectedItem === undefined) return;
+
+    const existingItem = shopItems.find((e: ShopItem) => e === selectedItem);
 
     if (existingItem) {
       setShopItems(
-        shopItems.map((i: ShopItem) =>
-          i.id === existingItem.id
-            ? { ...i, quantity: i.quantity + quantity, price: price }
-            : i
+        shopItems.map((e: ShopItem) =>
+          e === existingItem
+            ? { ...e, quantity: e.quantity + quantity, price: price }
+            : e
         )
       );
     } else {
-      setShopItems([...shopItems, { ...item, qty: quantity, price: price }]);
+      setShopItems([
+        ...shopItems,
+        { ...selectedItem, quantity: quantity, price: price },
+      ]);
     }
   };
 

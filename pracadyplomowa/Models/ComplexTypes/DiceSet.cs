@@ -39,6 +39,18 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
         public virtual ValueEffectBlueprint? R_ValueEffectBlueprint { get; set; }
         public int? R_ValueEffectBlueprintId { get; set; }
+        public virtual ValueEffectInstance? R_ValueEffectInstance { get; set; }
+        public int? R_ValueEffectInstanceId { get; set; }
+        public virtual Weapon? R_Weapon_Damage { get; set; }
+        public int? R_Weapon_DamageId { get; set; }
+        public virtual MeleeWeapon? R_MeleeWeapon_VersatileDamage { get; set; }
+        public int? R_MeleeWeapon_VersatileDamageId { get; set; }
+        public virtual Class? R_Class_SpellFormula { get; set; }
+        public int? R_Class_SpellFormulaId { get; set; }
+        public virtual Character? R_Character_UsedHitDice { get; set; }
+        public int? R_Character_UsedHitDiceId { get; set; }
+        public virtual ClassLevel? R_ClassLevel_HitDice { get; set; }
+        public int? R_ClassLevel_HitDiceId { get; set; }
         public int d20 { get; set; }
         public int d12 { get; set; }
         public int d10 { get; set; }
@@ -121,6 +133,8 @@ namespace pracadyplomowa.Models.Entities.Characters
             public int? R_LevelsInClassId { get; set; }
             public Ability? Ability {get; set;}
             public Skill? Skill {get; set;}
+            public DiceSet DiceSet {get; set;}
+            public int DiceSetId {get; set;}
 
             public int ReturnValue(Character roller)
             {

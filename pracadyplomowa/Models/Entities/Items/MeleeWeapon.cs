@@ -41,7 +41,7 @@ namespace pracadyplomowa.Models.Entities.Items
         public bool Thrown { get; set;}
         public bool Versatile { get; set;}
         public virtual DiceSet VersatileDamageValue { get; set; } = new DiceSet();
-        public int VersatileDamageValueId { get; set; }
+        // public int VersatileDamageValueId { get; set; }
         protected override int GetAbilityBonus(){
             return R_EquipData != null ? (Finesse ? (Wielder.StrengthModifier > Wielder.DexterityModifier ? Wielder.StrengthModifier : Wielder.DexterityModifier) : Wielder.StrengthModifier) : 0;
         }

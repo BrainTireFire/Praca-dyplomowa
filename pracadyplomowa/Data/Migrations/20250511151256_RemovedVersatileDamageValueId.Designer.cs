@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using pracadyplomowa;
@@ -11,9 +12,11 @@ using pracadyplomowa;
 namespace pracadyplomowa.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250511151256_RemovedVersatileDamageValueId")]
+    partial class RemovedVersatileDamageValueId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -720,7 +723,7 @@ namespace pracadyplomowa.Data.Migrations
                     b.Property<int?>("Ability")
                         .HasColumnType("integer");
 
-                    b.Property<int>("DiceSetId")
+                    b.Property<int?>("DiceSetId")
                         .HasColumnType("integer");
 
                     b.Property<int?>("R_LevelsInClassId")
@@ -2272,7 +2275,14 @@ namespace pracadyplomowa.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("pracadyplomowa.Models.Entities.Campaign.ParticipanceData", "R_OccupiedBy")
+                        .WithOne("R_OccupiedField")
+                        .HasForeignKey("pracadyplomowa.Models.Entities.Campaign.Field", "R_OccupiedById")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("R_Board");
+
+                    b.Navigation("R_OccupiedBy");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Campaign.ParticipanceData", b =>
@@ -2289,7 +2299,7 @@ namespace pracadyplomowa.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                                        b.Navigation("R_Character");
+                    b.Navigation("R_Character");
 
                     b.Navigation("R_Encounter");
                 });
@@ -2448,17 +2458,13 @@ namespace pracadyplomowa.Data.Migrations
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.DiceSet+AdditionalValue", b =>
                 {
-                    b.HasOne("pracadyplomowa.Models.Entities.Characters.DiceSet", "DiceSet")
+                    b.HasOne("pracadyplomowa.Models.Entities.Characters.DiceSet", null)
                         .WithMany("additionalValues")
-                        .HasForeignKey("DiceSetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DiceSetId");
 
                     b.HasOne("pracadyplomowa.Models.Entities.Characters.Class", "R_LevelsInClass")
                         .WithMany()
                         .HasForeignKey("R_LevelsInClassId");
-
-                    b.Navigation("DiceSet");
 
                     b.Navigation("R_LevelsInClass");
                 });

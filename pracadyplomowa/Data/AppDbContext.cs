@@ -275,9 +275,15 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .WithOne(ds => ds.R_ValueEffectBlueprint)
                         .HasForeignKey<DiceSet>(ds => ds.R_ValueEffectBlueprintId)
                         .OnDelete(DeleteBehavior.Cascade);
+                builder.Entity<ValueEffectInstance>()
+                        .HasOne(vei => vei.DiceSet)
+                        .WithOne(ds => ds.R_ValueEffectInstance)
+                        .HasForeignKey<DiceSet>(ds => ds.R_ValueEffectInstanceId)
+                        .OnDelete(DeleteBehavior.Cascade);
                         
                 builder.Entity<ValueEffectInstance>().Navigation(e=>e.DiceSet).AutoInclude();
                 builder.Entity<ValueEffectBlueprint>().Navigation(e=>e.DiceSet).AutoInclude();
+                builder.Entity<DiceSet>().HasMany(ds => ds.additionalValues).WithOne(av => av.DiceSet).HasForeignKey(av => av.DiceSetId).OnDelete(DeleteBehavior.Cascade);
                 builder.Entity<DiceSet>().Navigation(e=>e.additionalValues).AutoInclude();
                 builder.Entity<DiceSet.AdditionalValue>().Navigation(e=>e.R_LevelsInClass).AutoInclude();
                 builder.Entity<LanguageEffectBlueprint>().Navigation(e=>e.R_Language).AutoInclude();
@@ -300,7 +306,33 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                 builder.Entity<ChoiceGroupUsage>().HasMany(cg => cg.R_ResourcesGranted).WithOne(r => r.R_ChoiceGroupUsage).OnDelete(DeleteBehavior.Cascade);
                 builder.Entity<ChoiceGroupUsage>().HasMany(cg => cg.R_EffectsGranted).WithOne(ei => ei.R_GrantedThrough).HasForeignKey(ei => ei.R_GrantedThroughId).OnDelete(DeleteBehavior.Cascade);
                 builder.Entity<ImmaterialResourceInstance>().Navigation(i => i.R_Blueprint).AutoInclude();
+                builder.Entity<Weapon>()
+                        .HasOne(w => w.DamageValue)
+                        .WithOne(ds => ds.R_Weapon_Damage)
+                        .HasForeignKey<DiceSet>(ds => ds.R_Weapon_DamageId)
+                        .OnDelete(DeleteBehavior.Cascade);
                 builder.Entity<Weapon>().Navigation(i => i.DamageValue).AutoInclude();
+                builder.Entity<MeleeWeapon>()
+                        .HasOne(w => w.VersatileDamageValue)
+                        .WithOne(ds => ds.R_MeleeWeapon_VersatileDamage)
+                        .HasForeignKey<DiceSet>(ds => ds.R_MeleeWeapon_VersatileDamageId)
+                        .OnDelete(DeleteBehavior.Cascade);
+                
+                builder.Entity<Class>()
+                        .HasOne(w => w.MaximumPreparedSpellsFormula)
+                        .WithOne(ds => ds.R_Class_SpellFormula)
+                        .HasForeignKey<DiceSet>(ds => ds.R_Class_SpellFormulaId)
+                        .OnDelete(DeleteBehavior.Cascade);
+                builder.Entity<Character>()
+                        .HasOne(w => w.UsedHitDice)
+                        .WithOne(ds => ds.R_Character_UsedHitDice)
+                        .HasForeignKey<DiceSet>(ds => ds.R_Character_UsedHitDiceId)
+                        .OnDelete(DeleteBehavior.Cascade);
+                builder.Entity<ClassLevel>()
+                        .HasOne(w => w.HitDie)
+                        .WithOne(ds => ds.R_ClassLevel_HitDice)
+                        .HasForeignKey<DiceSet>(ds => ds.R_ClassLevel_HitDiceId)
+                        .OnDelete(DeleteBehavior.Cascade);
                 builder.Entity<MeleeWeapon>().Navigation(i => i.VersatileDamageValue).AutoInclude();
                 builder.Entity<EquipData>().Navigation(i => i.R_Slots).AutoInclude();
                 builder.Entity<Character>().HasMany(c => c.R_CharactersParticipatesInEncounters).WithOne(p => p.R_Character).HasForeignKey(p => p.R_CharacterId).OnDelete(DeleteBehavior.Cascade);

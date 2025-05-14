@@ -195,6 +195,16 @@ namespace pracadyplomowa.Models.DTOs
                                     Name = itemFamily.Name,
                                 })
                                 .Distinct()
+                                .Union(character.R_AffectedBy
+                                    .OfType<ProficiencyEffectInstance>()
+                                    .Where(ei => ei.ProficiencyEffectType.ItemType == itemType)
+                                    .Select(ei => new ItemFamilyDto
+                                        {
+                                            Id = ei.Id,
+                                            Name = Enum.GetName(itemType),
+                                        }
+                                    )
+                                )
                                 .ToList();
             return itemProficiencies;
         }
@@ -344,6 +354,7 @@ namespace pracadyplomowa.Models.DTOs
             public int DamageType { get; set; }
             public int? Reach { get; set; }
             public int? Range { get; set; }
+            public string WeaponName {get; set;} = "";
 
         }
 
@@ -387,6 +398,7 @@ namespace pracadyplomowa.Models.DTOs
                 DamageType = (int)w.DamageType,
                 Range = w is RangedWeapon || (w is MeleeWeapon meleeWeapon && meleeWeapon.Thrown) ? w.Range : null,
                 Reach = w is MeleeWeapon meleeWeapon2 ? (meleeWeapon2.Reach ? ConstVariables.MELEE_RANGE_REACH : ConstVariables.MELEE_RANGE_DEFAULT) : null,
+                WeaponName = w.Name
             }).ToList();
         }
         // public static List<WeaponAttack> GetAttacks(Character character){

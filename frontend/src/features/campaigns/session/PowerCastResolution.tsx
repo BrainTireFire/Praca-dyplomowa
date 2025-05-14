@@ -84,7 +84,7 @@ export function PowerCastResolution({
 
   return (
     <Container>
-      <Heading as="h1">Select element of the attack</Heading>
+      <Heading as="h1">Select target</Heading>
       <StyledTabListContainer>
         <TabList activeTabIndex={0}>
           {[

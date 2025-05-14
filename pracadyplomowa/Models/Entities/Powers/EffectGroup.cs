@@ -61,7 +61,7 @@ namespace pracadyplomowa.Models.Entities.Powers
                 if(DurationLeft != null){
                     DurationLeft -= 1;
                 }
-                if(DurationLeft == null || DurationLeft <= 0){
+                if(DurationLeft == null || DurationLeft < 0){
                     R_OwnedEffects.ToList().ForEach(e => {
                         e.Unlink();
                     });

@@ -36,7 +36,7 @@ namespace pracadyplomowa.Models.Entities.Items
         public WeaponWeight WeaponWeight { get; set; }
         public DamageType DamageType { get; set; }
         public virtual DiceSet DamageValue { get; set; } = new DiceSet();
-        public int DamageValueId { get; set; }
+        // public int DamageValueId { get; set; }
         public int Range { get; set; } // for ranged or thrown weapons
         
         //Relationship
@@ -89,7 +89,8 @@ namespace pracadyplomowa.Models.Entities.Items
             DiceSet wieldersExtraWeaponDamage = 0;
             Wielder?.GetExtraWeaponDamage(out wieldersExtraWeaponDamage);
             damageDiceSet += wieldersExtraWeaponDamage + (Wielder != null && IsWielderProficient() ? Wielder.ProficiencyBonus : 0);
-            return damageDiceSet.getPersonalizedSet(Wielder) + (ShouldAddAbilityBonus() ? GetAbilityBonus() : 0);
+            var abilityBonus = GetAbilityBonus();
+            return damageDiceSet.getPersonalizedSet(Wielder) + (ShouldAddAbilityBonus() || abilityBonus < 0 ? GetAbilityBonus() : 0);
         }
 
         public virtual Dictionary<DamageType, DiceSet> GetEffectsUnequippedDamageDiceSet(){

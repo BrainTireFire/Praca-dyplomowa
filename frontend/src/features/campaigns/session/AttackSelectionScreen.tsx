@@ -57,9 +57,10 @@ export default function SessionWeaponAttackTable({
 }) {
   return (
     <Menus>
-      <Table header="Weapon attack" columns="1fr 1fr 1fr 1fr 1fr 2fr 2fr">
+      <Table header="Weapon attack" columns="1fr 1fr 1fr 1fr 1fr 1fr 2fr 2fr">
         <Table.Header>
-          <div>Main</div>
+        <div>Main</div>
+        <div>Weapon</div>
           <div>Damage</div>
           <div>Attack bonus</div>
           <div>D. type</div>
@@ -68,7 +69,7 @@ export default function SessionWeaponAttackTable({
           <div>Ranged attack</div>
         </Table.Header>
         <Table.Body
-          columnCount={7}
+          columnCount={8}
           data={weaponAttacks}
           render={(weaponAttack) => (
             <WeaponAttackRow
@@ -109,6 +110,7 @@ function WeaponAttackRow({
     <Table.Row>
       <RadioButton checked={weaponAttack.main} readOnly={true} />
 
+      <Cell>{weaponAttack.weaponName}</Cell>
       <Cell>{DiceSetString(weaponAttack.damage)}</Cell>
       <Cell>{DiceSetString(weaponAttack.attackBonus)}</Cell>
       <Cell>{DamageType(weaponAttack.damageType)}</Cell>

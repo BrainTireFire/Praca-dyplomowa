@@ -119,30 +119,32 @@ export default function ItemFamilyForm({
           ></Dropdown>
         </FormRowVertical>
       </Container>
-      {itemFamilyId === null && (
-        <Button
-          onClick={() => createItemFamily(state)}
-          disabled={isSavingChangesDisallowed() || disableChanges}
-        >
-          Save
-        </Button>
-      )}
-      {itemFamilyId !== null && (
-        <Button
-          onClick={() => updateItemFamily(state)}
-          disabled={isSavingChangesDisallowed() || disableChanges}
-        >
-          {disableChanges ? "You cannot edit this object" : "Update"}
-        </Button>
-      )}
-      {itemFamilyId !== null && (
-        <Button
-          onClick={() => deleteItemFamily(itemFamilyId)}
-          disabled={isSavingChangesDisallowed() || disableChanges}
-        >
-          {disableChanges ? "You cannot delete this object" : "Delete"}
-        </Button>
-      )}
+      <UDButtonContainer>
+        {itemFamilyId === null && (
+          <Button
+            onClick={() => createItemFamily(state)}
+            disabled={isSavingChangesDisallowed() || disableChanges}
+          >
+            Save
+          </Button>
+        )}
+        {itemFamilyId !== null && (
+          <Button
+            onClick={() => updateItemFamily(state)}
+            disabled={isSavingChangesDisallowed() || disableChanges}
+          >
+            {disableChanges ? "You cannot edit this object" : "Update"}
+          </Button>
+        )}
+        {itemFamilyId !== null && (
+          <Button
+            onClick={() => deleteItemFamily(itemFamilyId)}
+            disabled={isSavingChangesDisallowed() || disableChanges}
+          >
+            {disableChanges ? "You cannot delete this object" : "Delete"}
+          </Button>
+        )}
+      </UDButtonContainer>
     </>
   );
 }
@@ -155,4 +157,12 @@ const Container = styled(Box)`
   flex: 1;
   overflow-y: hidden;
   padding: 0rem 1rem 0rem 1rem;
+`;
+
+const UDButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  justify-content: center;
+  margin: 10px;
 `;

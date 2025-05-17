@@ -3,6 +3,7 @@ import {
   apparelBodyInitialValue,
   itemInitialValue,
   meleeWeaponBodyInitialValue,
+  mundaneItemBodyInitialValue,
   rangedWeaponBodyInitialValue,
 } from "../../features/items/models/item";
 import Button from "../../ui/interactive/Button";
@@ -23,6 +24,7 @@ export default function CreateNewItemForm() {
             Ranged weapon
           </Button>
           <Button onClick={() => setItemType("Apparel")}>Apparel</Button>
+          <Button onClick={() => setItemType("MundaneItem")}>Mundane item</Button>
         </>
       )}
       {itemType === "MeleeWeapon" && (
@@ -49,6 +51,15 @@ export default function CreateNewItemForm() {
             ...itemInitialValue,
             itemType: "Apparel",
             itemTypeBody: apparelBodyInitialValue,
+          }}
+        ></ItemForm>
+      )}
+      {itemType === "MundaneItem" && (
+        <ItemForm
+          initialFormValues={{
+            ...itemInitialValue,
+            itemType: "MundaneItem",
+            itemTypeBody: mundaneItemBodyInitialValue,
           }}
         ></ItemForm>
       )}

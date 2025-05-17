@@ -1578,17 +1578,13 @@ namespace pracadyplomowa.Models.Entities.Characters
                             || (power.UpcastBy == UpcastBy.ClassLevel && maximumApplicableEffectLevel == effectBlueprint.Level)
                             )
                             {
-                                if (power.PowerType == PowerType.Attack && outcome == HitType.Hit || outcome == HitType.CriticalHit)
-                                {
-                                    shouldAdd = true;
-                                }
-                                else if (power.PowerType == PowerType.Saveable)
+                                if (power.PowerType == PowerType.Saveable || power.PowerType == PowerType.Attack)
                                 {
                                     if ((outcome == HitType.Hit || outcome == HitType.CriticalHit) && !effectBlueprint.Saved)
                                     {
                                         shouldAdd = true;
                                     }
-                                    else if ((outcome == HitType.Miss || outcome == HitType.CriticalMiss) && effectBlueprint.Saved && power.SavingThrowBehaviour == SavingThrowBehaviour.Modifies)
+                                    else if (!(outcome == HitType.Miss || outcome == HitType.CriticalMiss) && effectBlueprint.Saved)
                                     {
                                         shouldAdd = true;
                                     }

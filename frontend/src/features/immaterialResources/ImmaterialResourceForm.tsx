@@ -127,40 +127,42 @@ export default function ImmaterialResourceForm({
           ></Dropdown>
         </FormRowVertical>
       </Container>
-      {immaterialResourceId === null && (
-        <Button
-          onClick={() =>
-            createImmaterialResourceBlueprint(
-              state as ImmaterialResourceBlueprint
-            )
-          }
-          disabled={isSavingChangesDisallowed() || disableChanges}
-        >
-          Save
-        </Button>
-      )}
-      {immaterialResourceId !== null && (
-        <Button
-          onClick={() =>
-            updateImmaterialResourceBlueprint(
-              state as ImmaterialResourceBlueprint
-            )
-          }
-          disabled={isSavingChangesDisallowed() || disableChanges}
-        >
-          {disableChanges ? "You cannot edit this object" : "Update"}
-        </Button>
-      )}
-      {immaterialResourceId !== null && (
-        <Button
-          onClick={() =>
-            deleteImmaterialResourceBlueprint(immaterialResourceId)
-          }
-          disabled={isSavingChangesDisallowed() || disableChanges}
-        >
-          {disableChanges ? "You cannot delete this object" : "Delete"}
-        </Button>
-      )}
+      <UDButtonContainer>
+        {immaterialResourceId === null && (
+          <Button
+            onClick={() =>
+              createImmaterialResourceBlueprint(
+                state as ImmaterialResourceBlueprint
+              )
+            }
+            disabled={isSavingChangesDisallowed() || disableChanges}
+          >
+            Save
+          </Button>
+        )}
+        {immaterialResourceId !== null && (
+          <Button
+            onClick={() =>
+              updateImmaterialResourceBlueprint(
+                state as ImmaterialResourceBlueprint
+              )
+            }
+            disabled={isSavingChangesDisallowed() || disableChanges}
+          >
+            {disableChanges ? "You cannot edit this object" : "Update"}
+          </Button>
+        )}
+        {immaterialResourceId !== null && (
+          <Button
+            onClick={() =>
+              deleteImmaterialResourceBlueprint(immaterialResourceId)
+            }
+            disabled={isSavingChangesDisallowed() || disableChanges}
+          >
+            {disableChanges ? "You cannot delete this object" : "Delete"}
+          </Button>
+        )}
+      </UDButtonContainer>
     </>
   );
 }
@@ -173,4 +175,13 @@ const Container = styled(Box)`
   flex: 1;
   overflow-y: hidden;
   padding: 0rem 1rem 0rem 1rem;
+`;
+
+
+const UDButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  justify-content: center;
+  margin: 10px;
 `;

@@ -117,20 +117,20 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         public DbSet<ChoiceGroupUsage> ChoiceGroupUsages {get; set;}
         public DbSet<Language> Languages {get; set;}
         public DbSet<PowerSelection> PowerSelections { get; set; }
-        
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
                 foreach (var entityType in builder.Model.GetEntityTypes())
                 {
                         foreach (var property in entityType.GetProperties())
                         {
-                        if (property.ClrType == typeof(DateTime))
-                        {
-                                property.SetValueConverter(new ValueConverter<DateTime, DateTime>(
-                                v => v.ToUniversalTime(),
-                                v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
-                                ));
-                        }
+                                if (property.ClrType == typeof(DateTime))
+                                {
+                                        property.SetValueConverter(new ValueConverter<DateTime, DateTime>(
+                                        v => v.ToUniversalTime(),
+                                        v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
+                                        ));
+                                }
                         }
                 }
                 base.OnModelCreating(builder);
@@ -212,7 +212,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .HasForeignKey(c => c.R_OwnedByGroupId)
                         .IsRequired(false)
                         .OnDelete(DeleteBehavior.Cascade);
-                
+
                 builder.Entity<Field>() //Should probably be reversed so that when board is deleted then participance data is removed
                         .HasOne(c => c.R_OccupiedBy)
                         .WithOne(c => c.R_OccupiedField)
@@ -255,11 +255,11 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                 //         .HasForeignKey(ei => ei.R_CreatedByEquippingId)
                 //         .IsRequired(false);
 
-                
+
                 builder.Entity<Class>()
                         .HasMany(c => c.R_AccessiblePowers)
                         .WithMany(p => p.R_ClassesWithAccess);
-                
+
                 builder.Entity<Class>()
                         .HasMany(c => c.R_UsedForUpcastingOfPowers)
                         .WithOne(p => p.R_ClassForUpcasting)
@@ -280,24 +280,24 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .WithOne(ds => ds.R_ValueEffectInstance)
                         .HasForeignKey<DiceSet>(ds => ds.R_ValueEffectInstanceId)
                         .OnDelete(DeleteBehavior.Cascade);
-                        
-                builder.Entity<ValueEffectInstance>().Navigation(e=>e.DiceSet).AutoInclude();
-                builder.Entity<ValueEffectBlueprint>().Navigation(e=>e.DiceSet).AutoInclude();
+
+                builder.Entity<ValueEffectInstance>().Navigation(e => e.DiceSet).AutoInclude();
+                builder.Entity<ValueEffectBlueprint>().Navigation(e => e.DiceSet).AutoInclude();
                 builder.Entity<DiceSet>().HasMany(ds => ds.additionalValues).WithOne(av => av.DiceSet).HasForeignKey(av => av.DiceSetId).OnDelete(DeleteBehavior.Cascade);
-                builder.Entity<DiceSet>().Navigation(e=>e.additionalValues).AutoInclude();
-                builder.Entity<DiceSet.AdditionalValue>().Navigation(e=>e.R_LevelsInClass).AutoInclude();
-                builder.Entity<LanguageEffectBlueprint>().Navigation(e=>e.R_Language).AutoInclude();
+                builder.Entity<DiceSet>().Navigation(e => e.additionalValues).AutoInclude();
+                builder.Entity<DiceSet.AdditionalValue>().Navigation(e => e.R_LevelsInClass).AutoInclude();
+                builder.Entity<LanguageEffectBlueprint>().Navigation(e => e.R_Language).AutoInclude();
                 builder.Entity<LanguageEffectBlueprint>()
                         .HasOne(lei => lei.R_Language)
                         .WithMany(l => l.R_EffectBlueprints)
                         .HasForeignKey(lei => lei.R_LanguageId);
-                builder.Entity<LanguageEffectInstance>().Navigation(e=>e.R_Language).AutoInclude();
+                builder.Entity<LanguageEffectInstance>().Navigation(e => e.R_Language).AutoInclude();
                 builder.Entity<LanguageEffectInstance>()
                         .HasOne(lei => lei.R_Language)
                         .WithMany(l => l.R_EffectInstances)
                         .HasForeignKey(lei => lei.R_LanguageId);
-                builder.Entity<ProficiencyEffectBlueprint>().Navigation(e=>e.R_GrantsProficiencyInItemFamily).AutoInclude();
-                builder.Entity<ProficiencyEffectInstance>().Navigation(e=>e.R_GrantsProficiencyInItemFamily).AutoInclude();
+                builder.Entity<ProficiencyEffectBlueprint>().Navigation(e => e.R_GrantsProficiencyInItemFamily).AutoInclude();
+                builder.Entity<ProficiencyEffectInstance>().Navigation(e => e.R_GrantsProficiencyInItemFamily).AutoInclude();
 
                 builder.Entity<ChoiceGroup>().HasMany(cg => cg.R_PowersAlwaysAvailable).WithMany(p => p.R_AlwaysAvailableThroughChoiceGroup);
                 builder.Entity<ChoiceGroup>().HasMany(cg => cg.R_PowersToPrepare).WithMany(p => p.R_ToPrepareThroughChoiceGroups);
@@ -317,7 +317,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .WithOne(ds => ds.R_MeleeWeapon_VersatileDamage)
                         .HasForeignKey<DiceSet>(ds => ds.R_MeleeWeapon_VersatileDamageId)
                         .OnDelete(DeleteBehavior.Cascade);
-                
+
                 builder.Entity<Class>()
                         .HasOne(w => w.MaximumPreparedSpellsFormula)
                         .WithOne(ds => ds.R_Class_SpellFormula)
@@ -336,6 +336,26 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                 builder.Entity<MeleeWeapon>().Navigation(i => i.VersatileDamageValue).AutoInclude();
                 builder.Entity<EquipData>().Navigation(i => i.R_Slots).AutoInclude();
                 builder.Entity<Character>().HasMany(c => c.R_CharactersParticipatesInEncounters).WithOne(p => p.R_Character).HasForeignKey(p => p.R_CharacterId).OnDelete(DeleteBehavior.Cascade);
+                builder.Entity<ImmaterialResourceBlueprint>()
+                        .HasMany(blueprint => blueprint.R_PowersRequiringThis)
+                        .WithOne(p => p.R_UsesImmaterialResource)
+                        .HasForeignKey(p => p.R_UsesImmaterialResourceId)
+                        .OnDelete(DeleteBehavior.Cascade);
+                builder.Entity<ImmaterialResourceBlueprint>()
+                        .HasMany(blueprint => blueprint.R_Instances)
+                        .WithOne(i => i.R_Blueprint)
+                        .HasForeignKey(i => i.R_BlueprintId)
+                        .OnDelete(DeleteBehavior.Cascade);
+                builder.Entity<ImmaterialResourceBlueprint>()
+                        .HasMany(blueprint => blueprint.R_Amounts)
+                        .WithOne(i => i.R_Blueprint)
+                        .HasForeignKey(i => i.R_BlueprintId)
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                foreach (var entityType in builder.Model.GetEntityTypes())
+                {
+                        Console.WriteLine($"[EFCore] Entity: {entityType.Name}");
+                }
         }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

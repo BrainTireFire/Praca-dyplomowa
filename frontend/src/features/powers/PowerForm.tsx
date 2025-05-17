@@ -41,6 +41,10 @@ import MaterialResourceTable from "./tables/MaterialResourceTable";
 import { useCreatePower } from "./hooks/useCreatePower";
 import Heading from "../../ui/text/Heading";
 import { useClasses } from "../characters/hooks/useClass";
+import Modal from "../../ui/containers/Modal";
+import ConfirmDelete from "../../ui/containers/ConfirmDelete";
+import { useDeletePower } from "./hooks/useDeletePower";
+import { useNavigate } from "react-router-dom";
 
 // Action types
 export enum PowerActionTypes {
@@ -344,7 +348,7 @@ const powerReducer = (state: Power, action: PowerAction): Power => {
       }
       return { ...state, targetType: action.payload, isRanged: isRanged2 };
     case PowerActionTypes.UPDATE_IS_RANGED:
-      return { ...state, isRanged: action.payload };
+      return { ...state, isRanged: action.payload, range: action.payload ? state.range : 5 };
     case PowerActionTypes.UPDATE_RANGE:
       return { ...state, range: action.payload };
     case PowerActionTypes.UPDATE_MAX_TARGETS:
@@ -457,6 +461,8 @@ export default function PowerForm({
   onCreate: (id: number) => void;
   onUpdate: (id: number) => void;
 }) {
+  
+  const navigate = useNavigate();
   const [actualPowerId, setActualPowerId] = useState(powerId);
   const {
     isLoading: isLoadingPower,
@@ -476,6 +482,7 @@ export default function PowerForm({
   const { updatePower, isPending } = useUpdatePower(() => {
     onUpdate(actualPowerId!);
   });
+  const { deletePower, isPending: isPendingDelete } = useDeletePower(() => {navigate(`/powers`)});
   const { createPower, isPending: isPendingCreate } = useCreatePower(
     (id: number) => {
       setActualPowerId(id);
@@ -883,7 +890,7 @@ export default function PowerForm({
                   chosenValue={state.areaShape}
                 ></Dropdown>
               </FormRowVertical>
-              <FormRowVertical
+              {/* <FormRowVertical
                 label="Aura size"
                 customStyles={css`
                   grid-column: 2;
@@ -901,7 +908,7 @@ export default function PowerForm({
                     })
                   }
                 ></Input>
-              </FormRowVertical>
+              </FormRowVertical> */}
               <SettingGroupContainer
                 customStyles={css`
                   grid-column: 3;
@@ -967,7 +974,7 @@ export default function PowerForm({
                 </FormRowVertical>
               </SettingGroupContainer>
 
-              <RadioGroup
+              {/* <RadioGroup
                 disabled={
                   state.powerType !== "Saveable" &&
                   state.powerType !== "AuraCreator"
@@ -986,7 +993,7 @@ export default function PowerForm({
                   grid-column: 4;
                   grid-row: 1;
                 `}
-              ></RadioGroup>
+              ></RadioGroup> */}
               <RadioGroup
                 disabled={state.powerType !== "Saveable"}
                 values={savingThrowRollOptions}
@@ -1045,16 +1052,41 @@ export default function PowerForm({
           </Column2>
         </Row2>
       </Grid>
+      <UDButtonContainer>
       {actualPowerId && (
-        <Button onClick={() => updatePower(state)} disabled={lockSaveButton}>
-          Update
-        </Button>
+        // <Button onClick={() => updatePower(state)} disabled={lockSaveButton}>
+        //   Update
+        // </Button>
+        <>
+          <Button
+            onClick={() => updatePower(state)}
+            disabled={lockSaveButton}
+            >
+            {lockSaveButton ? "You cannot edit this object" : "Update"}
+          </Button>
+          <Modal>
+            <Modal.Open opens="ConfirmDelete">
+              <Button variation="secondary"
+                disabled={lockSaveButton}
+                >
+                {lockSaveButton ? "You cannot delete this object" : "Delete"}
+              </Button>
+            </Modal.Open>
+            <Modal.Window name="ConfirmDelete">
+              <ConfirmDelete
+                resourceName={"power"}
+                onConfirm={() =>  deletePower(state.id!)}
+                />
+            </Modal.Window>
+          </Modal>
+        </>
       )}
       {!actualPowerId && (
         <Button onClick={() => createPower(state)} disabled={lockSaveButton}>
           Save to unlock more configuration options
         </Button>
       )}
+      </UDButtonContainer>
     </>
   );
 }
@@ -1105,6 +1137,14 @@ const Row2InColumn2 = styled.div`
   row-gap: 10px;
   grid-template-columns: auto auto auto auto;
   grid-template-rows: auto auto auto;
+`;
+
+const UDButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  justify-content: center;
+  margin: 10px;
 `;
 
 PowerForm.defaultProps = {

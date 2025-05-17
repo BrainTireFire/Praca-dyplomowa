@@ -81,6 +81,7 @@ namespace pracadyplomowa.Controllers
         public async Task<ActionResult> UpdatePower(PowerFormDto powerDto)
         {
             var power = _mapper.Map<Power>(powerDto);
+            power.Range = power.IsRanged ? power.Range : 5;
             _unitOfWork.PowerRepository.Update(power);
             try{
                 await _unitOfWork.SaveChangesAsync();
@@ -89,6 +90,18 @@ namespace pracadyplomowa.Controllers
                 return BadRequest(valEx.Message);
             }
             return Ok(_mapper.Map<PowerFormDto>(power));
+        }
+        [HttpDelete("{powerId}")]
+        public async Task<ActionResult> DeletePower(int powerId)
+        {
+            _unitOfWork.PowerRepository.Delete(powerId);
+            try{
+                await _unitOfWork.SaveChangesAsync();
+            }
+            catch(ValidationException valEx){
+                return BadRequest(valEx.Message);
+            }
+            return Ok();
         }
 
         

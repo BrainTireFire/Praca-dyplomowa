@@ -64,6 +64,16 @@ export async function updatePower(powerDto: Power): Promise<void> {
   await customFetch(`${BASE_URL}/api/power`, options);
   return;
 }
+export async function deletePower(powerId: number): Promise<void> {
+  const options: RequestInit = {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  await customFetch(`${BASE_URL}/api/power/${powerId}`, options);
+  return;
+}
 
 export async function addEffectBlueprint(
   effectBlueprintDto: EffectBlueprint,

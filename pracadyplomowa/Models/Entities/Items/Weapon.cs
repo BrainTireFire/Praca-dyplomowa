@@ -206,20 +206,19 @@ namespace pracadyplomowa.Models.Entities.Items
                     {
                         bool shouldAdd = false;
 
-                        if (power.PowerType == PowerType.Attack && outcome == HitType.Hit || outcome == HitType.CriticalHit)
-                        {
-                            shouldAdd = true;
-                        }
-                        else if (power.PowerType == PowerType.Saveable)
+                        if (power.PowerType == PowerType.Saveable || power.PowerType == PowerType.Attack)
                         {
                             if ((outcome == HitType.Hit || outcome == HitType.CriticalHit) && !effectBlueprint.Saved)
                             {
                                 shouldAdd = true;
                             }
-                            else if (!(outcome == HitType.Hit || outcome == HitType.CriticalHit) && effectBlueprint.Saved && power.SavingThrowBehaviour == SavingThrowBehaviour.Modifies)
+                            else if (!(outcome == HitType.Hit || outcome == HitType.CriticalHit) && effectBlueprint.Saved)
                             {
                                 shouldAdd = true;
                             }
+                        }
+                        else if(power.PowerType == PowerType.PassiveEffect){
+                            shouldAdd = true;
                         }
 
                         if (shouldAdd)

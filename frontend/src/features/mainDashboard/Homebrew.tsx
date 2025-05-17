@@ -78,14 +78,6 @@ export default function Homebrew() {
             New map
           </Button>
         </StyledElementBox>
-        <StyledElementBox>
-          <Button size="large" variation="primary">
-            My custom encounters
-          </Button>
-          <Button size="large" variation="secondary">
-            New encounter
-          </Button>
-        </StyledElementBox>
       </StyledElementBoxWithSpace>
     </>
   );

@@ -5,11 +5,15 @@
 namespace pracadyplomowa.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class SpecifiedRelationshipOfDiceSet : Migration
+    public partial class VariousFixes : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_AdditionalValue_DiceSet_DiceSetId",
+                table: "AdditionalValue");
+
             migrationBuilder.DropForeignKey(
                 name: "FK_Characters_DiceSet_UsedHitDiceId",
                 table: "Characters");
@@ -23,8 +27,24 @@ namespace pracadyplomowa.Data.Migrations
                 table: "ClassLevels");
 
             migrationBuilder.DropForeignKey(
+                name: "FK_EffectBlueprints_Items_R_CreatedByEquippingId",
+                table: "EffectBlueprints");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_EffectInstances_ChoiceGroupUsages_R_GrantedThroughId",
+                table: "EffectInstances");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_EffectInstances_DiceSet_DiceSetId",
+                table: "EffectInstances");
+
+            migrationBuilder.DropForeignKey(
                 name: "FK_MeleeWeapons_DiceSet_VersatileDamageValueId",
                 table: "MeleeWeapons");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Powers_ImmaterialResourceBlueprints_R_UsesImmaterialResourc~",
+                table: "Powers");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_Weapons_DiceSet_DamageValueId",
@@ -37,6 +57,14 @@ namespace pracadyplomowa.Data.Migrations
             migrationBuilder.DropIndex(
                 name: "IX_MeleeWeapons_VersatileDamageValueId",
                 table: "MeleeWeapons");
+
+            migrationBuilder.DropIndex(
+                name: "IX_EffectInstances_DiceSetId",
+                table: "EffectInstances");
+
+            migrationBuilder.DropIndex(
+                name: "IX_EffectBlueprints_R_CreatedByEquippingId",
+                table: "EffectBlueprints");
 
             migrationBuilder.DropIndex(
                 name: "IX_ClassLevels_HitDieId",
@@ -53,6 +81,34 @@ namespace pracadyplomowa.Data.Migrations
             migrationBuilder.DropColumn(
                 name: "DamageValueId",
                 table: "Weapons");
+
+            migrationBuilder.DropColumn(
+                name: "VersatileDamageValueId",
+                table: "MeleeWeapons");
+
+            migrationBuilder.DropColumn(
+                name: "DiceSetId",
+                table: "EffectInstances");
+
+            migrationBuilder.DropColumn(
+                name: "EffectType_SavingThrowEffect_Condition",
+                table: "EffectInstances");
+
+            migrationBuilder.DropColumn(
+                name: "EffectType_SavingThrowEffect_Nature",
+                table: "EffectInstances");
+
+            migrationBuilder.DropColumn(
+                name: "DiceSetId",
+                table: "EffectBlueprints");
+
+            migrationBuilder.DropColumn(
+                name: "SavingThrowEffectType_SavingThrowEffect_Condition",
+                table: "EffectBlueprints");
+
+            migrationBuilder.DropColumn(
+                name: "SavingThrowEffectType_SavingThrowEffect_Nature",
+                table: "EffectBlueprints");
 
             migrationBuilder.DropColumn(
                 name: "HitDieId",
@@ -91,10 +147,26 @@ namespace pracadyplomowa.Data.Migrations
                 nullable: true);
 
             migrationBuilder.AddColumn<int>(
+                name: "R_ValueEffectInstanceId",
+                table: "DiceSet",
+                type: "integer",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
                 name: "R_Weapon_DamageId",
                 table: "DiceSet",
                 type: "integer",
                 nullable: true);
+
+            migrationBuilder.AlterColumn<int>(
+                name: "DiceSetId",
+                table: "AdditionalValue",
+                type: "integer",
+                nullable: false,
+                defaultValue: 0,
+                oldClrType: typeof(int),
+                oldType: "integer",
+                oldNullable: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_DiceSet_R_Character_UsedHitDiceId",
@@ -121,10 +193,24 @@ namespace pracadyplomowa.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_DiceSet_R_ValueEffectInstanceId",
+                table: "DiceSet",
+                column: "R_ValueEffectInstanceId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DiceSet_R_Weapon_DamageId",
                 table: "DiceSet",
                 column: "R_Weapon_DamageId",
                 unique: true);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AdditionalValue_DiceSet_DiceSetId",
+                table: "AdditionalValue",
+                column: "DiceSetId",
+                principalTable: "DiceSet",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_DiceSet_Characters_R_Character_UsedHitDiceId",
@@ -151,6 +237,14 @@ namespace pracadyplomowa.Data.Migrations
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
+                name: "FK_DiceSet_EffectInstances_R_ValueEffectInstanceId",
+                table: "DiceSet",
+                column: "R_ValueEffectInstanceId",
+                principalTable: "EffectInstances",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_DiceSet_MeleeWeapons_R_MeleeWeapon_VersatileDamageId",
                 table: "DiceSet",
                 column: "R_MeleeWeapon_VersatileDamageId",
@@ -165,11 +259,31 @@ namespace pracadyplomowa.Data.Migrations
                 principalTable: "Weapons",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_EffectInstances_ChoiceGroupUsages_R_GrantedThroughId",
+                table: "EffectInstances",
+                column: "R_GrantedThroughId",
+                principalTable: "ChoiceGroupUsages",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Powers_ImmaterialResourceBlueprints_R_UsesImmaterialResourc~",
+                table: "Powers",
+                column: "R_UsesImmaterialResourceId",
+                principalTable: "ImmaterialResourceBlueprints",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_AdditionalValue_DiceSet_DiceSetId",
+                table: "AdditionalValue");
+
             migrationBuilder.DropForeignKey(
                 name: "FK_DiceSet_Characters_R_Character_UsedHitDiceId",
                 table: "DiceSet");
@@ -183,12 +297,24 @@ namespace pracadyplomowa.Data.Migrations
                 table: "DiceSet");
 
             migrationBuilder.DropForeignKey(
+                name: "FK_DiceSet_EffectInstances_R_ValueEffectInstanceId",
+                table: "DiceSet");
+
+            migrationBuilder.DropForeignKey(
                 name: "FK_DiceSet_MeleeWeapons_R_MeleeWeapon_VersatileDamageId",
                 table: "DiceSet");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_DiceSet_Weapons_R_Weapon_DamageId",
                 table: "DiceSet");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_EffectInstances_ChoiceGroupUsages_R_GrantedThroughId",
+                table: "EffectInstances");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Powers_ImmaterialResourceBlueprints_R_UsesImmaterialResourc~",
+                table: "Powers");
 
             migrationBuilder.DropIndex(
                 name: "IX_DiceSet_R_Character_UsedHitDiceId",
@@ -204,6 +330,10 @@ namespace pracadyplomowa.Data.Migrations
 
             migrationBuilder.DropIndex(
                 name: "IX_DiceSet_R_MeleeWeapon_VersatileDamageId",
+                table: "DiceSet");
+
+            migrationBuilder.DropIndex(
+                name: "IX_DiceSet_R_ValueEffectInstanceId",
                 table: "DiceSet");
 
             migrationBuilder.DropIndex(
@@ -227,6 +357,10 @@ namespace pracadyplomowa.Data.Migrations
                 table: "DiceSet");
 
             migrationBuilder.DropColumn(
+                name: "R_ValueEffectInstanceId",
+                table: "DiceSet");
+
+            migrationBuilder.DropColumn(
                 name: "R_Weapon_DamageId",
                 table: "DiceSet");
 
@@ -236,6 +370,49 @@ namespace pracadyplomowa.Data.Migrations
                 type: "integer",
                 nullable: false,
                 defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "VersatileDamageValueId",
+                table: "MeleeWeapons",
+                type: "integer",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<int>(
+                name: "DiceSetId",
+                table: "EffectInstances",
+                type: "integer",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "EffectType_SavingThrowEffect_Condition",
+                table: "EffectInstances",
+                type: "integer",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "EffectType_SavingThrowEffect_Nature",
+                table: "EffectInstances",
+                type: "integer",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "DiceSetId",
+                table: "EffectBlueprints",
+                type: "integer",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "SavingThrowEffectType_SavingThrowEffect_Condition",
+                table: "EffectBlueprints",
+                type: "integer",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "SavingThrowEffectType_SavingThrowEffect_Nature",
+                table: "EffectBlueprints",
+                type: "integer",
+                nullable: true);
 
             migrationBuilder.AddColumn<int>(
                 name: "HitDieId",
@@ -258,6 +435,14 @@ namespace pracadyplomowa.Data.Migrations
                 nullable: false,
                 defaultValue: 0);
 
+            migrationBuilder.AlterColumn<int>(
+                name: "DiceSetId",
+                table: "AdditionalValue",
+                type: "integer",
+                nullable: true,
+                oldClrType: typeof(int),
+                oldType: "integer");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Weapons_DamageValueId",
                 table: "Weapons",
@@ -267,6 +452,16 @@ namespace pracadyplomowa.Data.Migrations
                 name: "IX_MeleeWeapons_VersatileDamageValueId",
                 table: "MeleeWeapons",
                 column: "VersatileDamageValueId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EffectInstances_DiceSetId",
+                table: "EffectInstances",
+                column: "DiceSetId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EffectBlueprints_R_CreatedByEquippingId",
+                table: "EffectBlueprints",
+                column: "R_CreatedByEquippingId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ClassLevels_HitDieId",
@@ -282,6 +477,13 @@ namespace pracadyplomowa.Data.Migrations
                 name: "IX_Characters_UsedHitDiceId",
                 table: "Characters",
                 column: "UsedHitDiceId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AdditionalValue_DiceSet_DiceSetId",
+                table: "AdditionalValue",
+                column: "DiceSetId",
+                principalTable: "DiceSet",
+                principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Characters_DiceSet_UsedHitDiceId",
@@ -308,12 +510,41 @@ namespace pracadyplomowa.Data.Migrations
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
+                name: "FK_EffectBlueprints_Items_R_CreatedByEquippingId",
+                table: "EffectBlueprints",
+                column: "R_CreatedByEquippingId",
+                principalTable: "Items",
+                principalColumn: "Id");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_EffectInstances_ChoiceGroupUsages_R_GrantedThroughId",
+                table: "EffectInstances",
+                column: "R_GrantedThroughId",
+                principalTable: "ChoiceGroupUsages",
+                principalColumn: "Id");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_EffectInstances_DiceSet_DiceSetId",
+                table: "EffectInstances",
+                column: "DiceSetId",
+                principalTable: "DiceSet",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_MeleeWeapons_DiceSet_VersatileDamageValueId",
                 table: "MeleeWeapons",
                 column: "VersatileDamageValueId",
                 principalTable: "DiceSet",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Powers_ImmaterialResourceBlueprints_R_UsesImmaterialResourc~",
+                table: "Powers",
+                column: "R_UsesImmaterialResourceId",
+                principalTable: "ImmaterialResourceBlueprints",
+                principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Weapons_DiceSet_DamageValueId",

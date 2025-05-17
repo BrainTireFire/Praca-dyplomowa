@@ -14,6 +14,8 @@ import Button from "../../ui/interactive/Button";
 import { useDeleteItemFamily } from "./hooks/useDeleteItemFamily";
 import Box from "../../ui/containers/Box";
 import styled from "styled-components";
+import Modal from "../../ui/containers/Modal";
+import ConfirmDelete from "../../ui/containers/ConfirmDelete";
 
 export type ItemFamilyAction =
   | { type: "SET_ITEM"; payload: ItemFamily }
@@ -137,12 +139,21 @@ export default function ItemFamilyForm({
           </Button>
         )}
         {itemFamilyId !== null && (
-          <Button
-            onClick={() => deleteItemFamily(itemFamilyId)}
-            disabled={isSavingChangesDisallowed() || disableChanges}
-          >
-            {disableChanges ? "You cannot delete this object" : "Delete"}
-          </Button>
+          <Modal>
+            <Modal.Open opens="ConfirmDelete">
+              <Button
+                disabled={isSavingChangesDisallowed() || disableChanges}
+              >
+                {disableChanges ? "You cannot delete this object" : "Delete"}
+              </Button>
+            </Modal.Open>
+            <Modal.Window name="ConfirmDelete">
+              <ConfirmDelete
+                resourceName={"Item Family"}
+                onConfirm={() =>  deleteItemFamily(itemFamilyId)}
+                />
+            </Modal.Window>
+          </Modal>
         )}
       </UDButtonContainer>
     </>

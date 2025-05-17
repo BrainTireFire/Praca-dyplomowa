@@ -17,6 +17,8 @@ import { useCreateImmaterialResource } from "./hooks/useCreateImmaterialResource
 import { useUpdateImmaterialResource } from "./hooks/useUpdateImmaterialResource";
 import { useDeleteImmaterialResource } from "./hooks/useDeleteImmaterialResource";
 import Dropdown from "../../ui/forms/Dropdown";
+import Modal from "../../ui/containers/Modal";
+import ConfirmDelete from "../../ui/containers/ConfirmDelete";
 
 export type ResourceAction =
   | { type: "SET_ITEM"; payload: ImmaterialResourceBlueprintWithOwner }
@@ -153,14 +155,21 @@ export default function ImmaterialResourceForm({
           </Button>
         )}
         {immaterialResourceId !== null && (
-          <Button
-            onClick={() =>
-              deleteImmaterialResourceBlueprint(immaterialResourceId)
-            }
-            disabled={isSavingChangesDisallowed() || disableChanges}
-          >
-            {disableChanges ? "You cannot delete this object" : "Delete"}
-          </Button>
+          <Modal>
+            <Modal.Open opens="ConfirmDelete">
+              <Button
+                disabled={isSavingChangesDisallowed() || disableChanges}
+              >
+                {disableChanges ? "You cannot delete this object" : "Delete"}
+              </Button>
+            </Modal.Open>
+            <Modal.Window name="ConfirmDelete">
+              <ConfirmDelete
+                resourceName={"Immaterial Resource"}
+                onConfirm={() =>  deleteImmaterialResourceBlueprint(immaterialResourceId)}
+                />
+            </Modal.Window>
+          </Modal>
         )}
       </UDButtonContainer>
     </>

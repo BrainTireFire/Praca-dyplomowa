@@ -12,8 +12,8 @@ using pracadyplomowa;
 namespace pracadyplomowa.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250511142551_SpecifiedRelationshipBetweenValueEffectInstanceAndDiceSet")]
-    partial class SpecifiedRelationshipBetweenValueEffectInstanceAndDiceSet
+    [Migration("20250517173245_VariousFixes")]
+    partial class VariousFixes
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -597,9 +597,6 @@ namespace pracadyplomowa.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("MaximumPreparedSpellsFormulaId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -608,8 +605,6 @@ namespace pracadyplomowa.Data.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("MaximumPreparedSpellsFormulaId");
 
                     b.ToTable("Classes");
                 });
@@ -622,9 +617,6 @@ namespace pracadyplomowa.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("HitDieId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("HitPoints")
                         .HasColumnType("integer");
 
@@ -635,8 +627,6 @@ namespace pracadyplomowa.Data.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("HitDieId");
 
                     b.HasIndex("R_ClassId");
 
@@ -651,10 +641,25 @@ namespace pracadyplomowa.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("R_Character_UsedHitDiceId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("R_ClassLevel_HitDiceId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("R_Class_SpellFormulaId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("R_MeleeWeapon_VersatileDamageId")
+                        .HasColumnType("integer");
+
                     b.Property<int?>("R_ValueEffectBlueprintId")
                         .HasColumnType("integer");
 
                     b.Property<int?>("R_ValueEffectInstanceId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("R_Weapon_DamageId")
                         .HasColumnType("integer");
 
                     b.Property<int>("d10")
@@ -683,10 +688,25 @@ namespace pracadyplomowa.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("R_Character_UsedHitDiceId")
+                        .IsUnique();
+
+                    b.HasIndex("R_ClassLevel_HitDiceId")
+                        .IsUnique();
+
+                    b.HasIndex("R_Class_SpellFormulaId")
+                        .IsUnique();
+
+                    b.HasIndex("R_MeleeWeapon_VersatileDamageId")
+                        .IsUnique();
+
                     b.HasIndex("R_ValueEffectBlueprintId")
                         .IsUnique();
 
                     b.HasIndex("R_ValueEffectInstanceId")
+                        .IsUnique();
+
+                    b.HasIndex("R_Weapon_DamageId")
                         .IsUnique();
 
                     b.ToTable("DiceSet");
@@ -703,7 +723,7 @@ namespace pracadyplomowa.Data.Migrations
                     b.Property<int?>("Ability")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("DiceSetId")
+                    b.Property<int>("DiceSetId")
                         .HasColumnType("integer");
 
                     b.Property<int?>("R_LevelsInClassId")
@@ -1377,9 +1397,6 @@ namespace pracadyplomowa.Data.Migrations
                     b.Property<int>("TemporaryHitpoints")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UsedHitDiceId")
-                        .HasColumnType("integer");
-
                     b.Property<int?>("UserId")
                         .HasColumnType("integer");
 
@@ -1391,8 +1408,6 @@ namespace pracadyplomowa.Data.Migrations
                         .IsUnique();
 
                     b.HasIndex("R_SpawnedByPowerId");
-
-                    b.HasIndex("UsedHitDiceId");
 
                     b.HasIndex("UserId");
 
@@ -1739,16 +1754,11 @@ namespace pracadyplomowa.Data.Migrations
                     b.Property<int>("DamageType")
                         .HasColumnType("integer");
 
-                    b.Property<int>("DamageValueId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("Range")
                         .HasColumnType("integer");
 
                     b.Property<int>("WeaponWeight")
                         .HasColumnType("integer");
-
-                    b.HasIndex("DamageValueId");
 
                     b.ToTable("Weapons");
                 });
@@ -1953,11 +1963,6 @@ namespace pracadyplomowa.Data.Migrations
 
                     b.Property<bool>("Versatile")
                         .HasColumnType("boolean");
-
-                    b.Property<int>("VersatileDamageValueId")
-                        .HasColumnType("integer");
-
-                    b.HasIndex("VersatileDamageValueId");
 
                     b.ToTable("MeleeWeapons");
                 });
@@ -2388,38 +2393,39 @@ namespace pracadyplomowa.Data.Migrations
                     b.Navigation("R_ChoiceGroup");
                 });
 
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.Class", b =>
-                {
-                    b.HasOne("pracadyplomowa.Models.Entities.Characters.DiceSet", "MaximumPreparedSpellsFormula")
-                        .WithMany()
-                        .HasForeignKey("MaximumPreparedSpellsFormulaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("MaximumPreparedSpellsFormula");
-                });
-
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.ClassLevel", b =>
                 {
-                    b.HasOne("pracadyplomowa.Models.Entities.Characters.DiceSet", "HitDie")
-                        .WithMany()
-                        .HasForeignKey("HitDieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("pracadyplomowa.Models.Entities.Characters.Class", "R_Class")
                         .WithMany("R_ClassLevels")
                         .HasForeignKey("R_ClassId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("HitDie");
-
                     b.Navigation("R_Class");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.DiceSet", b =>
                 {
+                    b.HasOne("pracadyplomowa.Models.Entities.Characters.Character", "R_Character_UsedHitDice")
+                        .WithOne("UsedHitDice")
+                        .HasForeignKey("pracadyplomowa.Models.Entities.Characters.DiceSet", "R_Character_UsedHitDiceId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("pracadyplomowa.Models.Entities.Characters.ClassLevel", "R_ClassLevel_HitDice")
+                        .WithOne("HitDie")
+                        .HasForeignKey("pracadyplomowa.Models.Entities.Characters.DiceSet", "R_ClassLevel_HitDiceId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("pracadyplomowa.Models.Entities.Characters.Class", "R_Class_SpellFormula")
+                        .WithOne("MaximumPreparedSpellsFormula")
+                        .HasForeignKey("pracadyplomowa.Models.Entities.Characters.DiceSet", "R_Class_SpellFormulaId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("pracadyplomowa.Models.Entities.Items.MeleeWeapon", "R_MeleeWeapon_VersatileDamage")
+                        .WithOne("VersatileDamageValue")
+                        .HasForeignKey("pracadyplomowa.Models.Entities.Characters.DiceSet", "R_MeleeWeapon_VersatileDamageId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("pracadyplomowa.Models.Entities.Powers.EffectBlueprints.ValueEffectBlueprint", "R_ValueEffectBlueprint")
                         .WithOne("DiceSet")
                         .HasForeignKey("pracadyplomowa.Models.Entities.Characters.DiceSet", "R_ValueEffectBlueprintId")
@@ -2430,20 +2436,39 @@ namespace pracadyplomowa.Data.Migrations
                         .HasForeignKey("pracadyplomowa.Models.Entities.Characters.DiceSet", "R_ValueEffectInstanceId")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.HasOne("pracadyplomowa.Models.Entities.Items.Weapon", "R_Weapon_Damage")
+                        .WithOne("DamageValue")
+                        .HasForeignKey("pracadyplomowa.Models.Entities.Characters.DiceSet", "R_Weapon_DamageId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("R_Character_UsedHitDice");
+
+                    b.Navigation("R_ClassLevel_HitDice");
+
+                    b.Navigation("R_Class_SpellFormula");
+
+                    b.Navigation("R_MeleeWeapon_VersatileDamage");
+
                     b.Navigation("R_ValueEffectBlueprint");
 
                     b.Navigation("R_ValueEffectInstance");
+
+                    b.Navigation("R_Weapon_Damage");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.DiceSet+AdditionalValue", b =>
                 {
-                    b.HasOne("pracadyplomowa.Models.Entities.Characters.DiceSet", null)
+                    b.HasOne("pracadyplomowa.Models.Entities.Characters.DiceSet", "DiceSet")
                         .WithMany("additionalValues")
-                        .HasForeignKey("DiceSetId");
+                        .HasForeignKey("DiceSetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("pracadyplomowa.Models.Entities.Characters.Class", "R_LevelsInClass")
                         .WithMany()
                         .HasForeignKey("R_LevelsInClassId");
+
+                    b.Navigation("DiceSet");
 
                     b.Navigation("R_LevelsInClass");
                 });
@@ -2773,12 +2798,6 @@ namespace pracadyplomowa.Data.Migrations
                         .WithMany("R_SpawnedCharacters")
                         .HasForeignKey("R_SpawnedByPowerId");
 
-                    b.HasOne("pracadyplomowa.Models.Entities.Characters.DiceSet", "UsedHitDice")
-                        .WithMany()
-                        .HasForeignKey("UsedHitDiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("pracadyplomowa.User", null)
                         .WithMany("R_UserHasCharacters")
                         .HasForeignKey("UserId");
@@ -2790,8 +2809,6 @@ namespace pracadyplomowa.Data.Migrations
                     b.Navigation("R_CharacterHasBackpack");
 
                     b.Navigation("R_SpawnedByPower");
-
-                    b.Navigation("UsedHitDice");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.Language", b =>
@@ -2883,7 +2900,8 @@ namespace pracadyplomowa.Data.Migrations
 
                     b.HasOne("pracadyplomowa.Models.Entities.Powers.ImmaterialResourceBlueprint", "R_UsesImmaterialResource")
                         .WithMany("R_PowersRequiringThis")
-                        .HasForeignKey("R_UsesImmaterialResourceId");
+                        .HasForeignKey("R_UsesImmaterialResourceId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("R_ClassForUpcasting");
 
@@ -3173,19 +3191,11 @@ namespace pracadyplomowa.Data.Migrations
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.Weapon", b =>
                 {
-                    b.HasOne("pracadyplomowa.Models.Entities.Characters.DiceSet", "DamageValue")
-                        .WithMany()
-                        .HasForeignKey("DamageValueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("pracadyplomowa.Models.Entities.Items.Item", null)
                         .WithOne()
                         .HasForeignKey("pracadyplomowa.Models.Entities.Items.Weapon", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("DamageValue");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.EffectBlueprints.AbilityEffectBlueprint", b =>
@@ -3677,14 +3687,6 @@ namespace pracadyplomowa.Data.Migrations
                         .HasForeignKey("pracadyplomowa.Models.Entities.Items.MeleeWeapon", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("pracadyplomowa.Models.Entities.Characters.DiceSet", "VersatileDamageValue")
-                        .WithMany()
-                        .HasForeignKey("VersatileDamageValueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("VersatileDamageValue");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.RangedWeapon", b =>
@@ -3698,8 +3700,7 @@ namespace pracadyplomowa.Data.Migrations
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Campaign.ParticipanceData", b =>
                 {
-                    b.Navigation("R_OccupiedField")
-                        .IsRequired();
+                    b.Navigation("R_OccupiedField");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Campaign.Shop", b =>
@@ -3723,6 +3724,9 @@ namespace pracadyplomowa.Data.Migrations
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.Class", b =>
                 {
+                    b.Navigation("MaximumPreparedSpellsFormula")
+                        .IsRequired();
+
                     b.Navigation("R_ClassLevels");
 
                     b.Navigation("R_PowerSelections");
@@ -3732,6 +3736,9 @@ namespace pracadyplomowa.Data.Migrations
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.ClassLevel", b =>
                 {
+                    b.Navigation("HitDie")
+                        .IsRequired();
+
                     b.Navigation("R_ChoiceGroups");
                 });
 
@@ -3829,6 +3836,9 @@ namespace pracadyplomowa.Data.Migrations
                     b.Navigation("R_PowersPrepared");
 
                     b.Navigation("R_UsedChoiceGroups");
+
+                    b.Navigation("UsedHitDice")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Characters.Language", b =>
@@ -3889,6 +3899,18 @@ namespace pracadyplomowa.Data.Migrations
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.ValueEffectInstance", b =>
                 {
                     b.Navigation("DiceSet")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.Weapon", b =>
+                {
+                    b.Navigation("DamageValue")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.MeleeWeapon", b =>
+                {
+                    b.Navigation("VersatileDamageValue")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

@@ -2272,7 +2272,14 @@ namespace pracadyplomowa.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("pracadyplomowa.Models.Entities.Campaign.ParticipanceData", "R_OccupiedBy")
+                        .WithOne("R_OccupiedField")
+                        .HasForeignKey("pracadyplomowa.Models.Entities.Campaign.Field", "R_OccupiedById")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("R_Board");
+
+                    b.Navigation("R_OccupiedBy");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Campaign.ParticipanceData", b =>
@@ -2289,7 +2296,7 @@ namespace pracadyplomowa.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                                        b.Navigation("R_Character");
+                    b.Navigation("R_Character");
 
                     b.Navigation("R_Encounter");
                 });
@@ -2890,7 +2897,8 @@ namespace pracadyplomowa.Data.Migrations
 
                     b.HasOne("pracadyplomowa.Models.Entities.Powers.ImmaterialResourceBlueprint", "R_UsesImmaterialResource")
                         .WithMany("R_PowersRequiringThis")
-                        .HasForeignKey("R_UsesImmaterialResourceId");
+                        .HasForeignKey("R_UsesImmaterialResourceId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("R_ClassForUpcasting");
 
@@ -3689,8 +3697,7 @@ namespace pracadyplomowa.Data.Migrations
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Campaign.ParticipanceData", b =>
                 {
-                    b.Navigation("R_OccupiedField")
-                        .IsRequired();
+                    b.Navigation("R_OccupiedField");
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Campaign.Shop", b =>

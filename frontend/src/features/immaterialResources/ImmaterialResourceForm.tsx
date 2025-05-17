@@ -19,6 +19,7 @@ import { useDeleteImmaterialResource } from "./hooks/useDeleteImmaterialResource
 import Dropdown from "../../ui/forms/Dropdown";
 import Modal from "../../ui/containers/Modal";
 import ConfirmDelete from "../../ui/containers/ConfirmDelete";
+import { useNavigate } from "react-router-dom";
 
 export type ResourceAction =
   | { type: "SET_ITEM"; payload: ImmaterialResourceBlueprintWithOwner }
@@ -67,8 +68,10 @@ export default function ImmaterialResourceForm({
     useCreateImmaterialResource(() => {});
   const { isPending: isPendingUpdate, updateImmaterialResourceBlueprint } =
     useUpdateImmaterialResource(() => {});
+    
+  const navigate = useNavigate();
   const { isPending: isPendingDelete, deleteImmaterialResourceBlueprint } =
-    useDeleteImmaterialResource(() => {});
+    useDeleteImmaterialResource(() => {navigate(`/immaterialResources`)});
 
   const [state, dispatch] = useReducer(
     immaterialResourceReducer,

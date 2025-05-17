@@ -8,19 +8,26 @@ import Button from "../../ui/interactive/Button";
 import ItemFamilyForm from "../../features/itemFamilies/ItemFamilyForm";
 import { useImmaterialResources } from "./hooks/useImmaterialResources";
 import ImmaterialResourceForm from "../../features/immaterialResources/ImmaterialResourceForm";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function ImmaterialResources() {
   const editMode = useContext(EditModeContext);
   const { isLoading, immaterialResources, error } = useImmaterialResources();
 
-  const [selectedItemId, setSelectedItemId] = useState<null | number>(null);
+
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const selectedItemId = searchParams.get("id");
+
+  // const [selectedItemId, setSelectedItemId] = useState<null | number>(null);
   // const { createItem, isPending: isPendingCreation } = useCreateItem(() => {});
   const handleSelect = (row: any) => {
     let selectedItem = immaterialResources?.find(
       (_value, index) => index === row.id
     );
-
-    setSelectedItemId(selectedItem ? selectedItem.id : null);
+    if(!!selectedItem){
+      navigate(`/immaterialResources?id=${selectedItem.id}`)
+    }
   };
 
   if (isLoading) {
@@ -72,7 +79,7 @@ export default function ImmaterialResources() {
       <Column2>
         {selectedItemId && (
           <ImmaterialResourceForm
-            immaterialResourceId={selectedItemId}
+            immaterialResourceId={Number(selectedItemId)}
             key={selectedItemId}
           ></ImmaterialResourceForm>
         )}

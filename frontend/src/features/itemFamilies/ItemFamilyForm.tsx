@@ -16,6 +16,7 @@ import Box from "../../ui/containers/Box";
 import styled from "styled-components";
 import Modal from "../../ui/containers/Modal";
 import ConfirmDelete from "../../ui/containers/ConfirmDelete";
+import { useNavigate } from "react-router-dom";
 
 export type ItemFamilyAction =
   | { type: "SET_ITEM"; payload: ItemFamily }
@@ -58,8 +59,9 @@ export default function ItemFamilyForm({
   const { isPending: isPendingUpdate, updateItemFamily } = useUpdateItemFamily(
     () => {}
   );
+  const navigate = useNavigate();
   const { isPending: isPendingDelete, deleteItemFamily } = useDeleteItemFamily(
-    () => {}
+    () => {navigate(`/itemFamilies`)}
   );
 
   const [state, dispatch] = useReducer(

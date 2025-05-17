@@ -7,17 +7,24 @@ import styled, { css } from "styled-components";
 import Button from "../../ui/interactive/Button";
 import ItemFamilyForm from "../../features/itemFamilies/ItemFamilyForm";
 import { useItemFamilies } from "./hooks/useItemFamilies";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function ItemFamilies() {
   const editMode = useContext(EditModeContext);
   const { isLoading, itemFamilies, error } = useItemFamilies();
 
-  const [selectedItemId, setSelectedItemId] = useState<null | number>(null);
+  
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const selectedItemId = searchParams.get("id");
+
+  // const [selectedItemId, setSelectedItemId] = useState<null | number>(null);
   // const { createItem, isPending: isPendingCreation } = useCreateItem(() => {});
   const handleSelect = (row: any) => {
     let selectedItem = itemFamilies?.find((_value, index) => index === row.id);
-
-    setSelectedItemId(selectedItem ? selectedItem.id : null);
+    if(!!selectedItem){
+      navigate(`/itemFamilies?id=${selectedItem.id}`)
+    }
   };
 
   if (isLoading) {
@@ -69,7 +76,7 @@ export default function ItemFamilies() {
       <Column2>
         {selectedItemId && (
           <ItemFamilyForm
-            itemFamilyId={selectedItemId}
+            itemFamilyId={Number(selectedItemId)}
             key={selectedItemId}
           ></ItemFamilyForm>
         )}

@@ -8,6 +8,7 @@ export function useDeleteImmaterialResource(onSuccess: () => void) {
     mutationFn: (immaterialResourceBlueprintId: number) =>
       deleteImmaterialResourceBlueprintApi(immaterialResourceBlueprintId),
     onSuccess: () => {
+      console.log('success');
       queryClient.invalidateQueries({
         queryKey: ["immaterialResourceBlueprints"],
       });

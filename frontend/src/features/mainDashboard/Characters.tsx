@@ -26,9 +26,6 @@ export default function Characters() {
         >
           My playable characters
         </Button>
-        <Button size="large" variation="secondary">
-          New PC
-        </Button>
       </StyledElementBox>
       <StyledElementBox>
         <Button
@@ -37,9 +34,6 @@ export default function Characters() {
           onClick={() => navigate(`/npc`)}
         >
           My non-playable characters
-        </Button>
-        <Button size="large" variation="secondary">
-          New NPC
         </Button>
       </StyledElementBox>
     </>

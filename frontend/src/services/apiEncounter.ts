@@ -443,6 +443,8 @@ export async function getWeaponAttackData(
 }
 
 export interface WeaponAttackData {
+  attackerName: string,
+  targetName: string,
   weaponDamageAndPowers: WeaponDamageAndPowersDto;
   conditionalEffects: ConditionalEffectsDto;
 }

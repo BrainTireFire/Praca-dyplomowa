@@ -13,7 +13,7 @@ export default function WeaponAndArmorProficiencyTable({
 }) {
   return (
     <Menus>
-      <Table header="Weapon proficiency" columns="1fr 1fr 1fr">
+      <Table header="Weapon and armor proficiency" columns="1fr 1fr 1fr">
         <Table.Body
           data={weaponAndArmorProficiencies}
           render={(item) => <ProficiencyRow key={item.id} item={item} />}

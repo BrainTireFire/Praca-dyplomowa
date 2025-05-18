@@ -12,7 +12,7 @@ public class DamageEffectInstance : ValueEffectInstance
     protected DamageEffectInstance() : base("EF", 0){}
     public DamageEffectInstance(string name) : base(name, 0){}
     public DamageEffectInstance(DamageEffectBlueprint damageEffectBlueprint, Character? roller, Character target) : base(damageEffectBlueprint, roller, target){
-        EffectType = damageEffectBlueprint.DamageEffectType;
+        EffectType = damageEffectBlueprint.DamageEffectType.Clone();
     }
     public DamageEffectInstance(DamageEffectInstance effectInstance) : base(effectInstance){
         EffectType  = effectInstance.EffectType.Clone();

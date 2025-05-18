@@ -5,6 +5,7 @@ using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.DTOs.Encounter;
 using pracadyplomowa.Models.DTOs.Session;
 using pracadyplomowa.Models.Enums;
+using pracadyplomowa.Repository.UnitOfWork;
 using pracadyplomowa.Services.Encounter;
 using pracadyplomowa.Services.Websockets;
 using static pracadyplomowa.Services.Encounter.EncounterService;
@@ -16,11 +17,13 @@ public class EncounterController : BaseApiController
 {
     private readonly IEncounterService _encounterService;
     private readonly ISessionService _sessionService;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public EncounterController(IEncounterService encounterService, ISessionService sessionService)
+    public EncounterController(IEncounterService encounterService, ISessionService sessionService, IUnitOfWork unitOfWork)
     {
         _encounterService = encounterService;
         _sessionService = sessionService;
+        _unitOfWork = unitOfWork;
     }
     
     [HttpGet("myEncounters/{campaignId}")]
@@ -301,10 +304,14 @@ public class EncounterController : BaseApiController
     public async Task<ActionResult<WeaponAttackDataDto>> GetWeaponDamageAndPowersOnHitAndConditionalEffects(int encounterId, [FromQuery] int characterId, [FromQuery] int weaponId, [FromQuery] int targetId){
         
         try{
+            var attacker = _unitOfWork.CharacterRepository.GetById(characterId);
+            var target = _unitOfWork.CharacterRepository.GetById(targetId);
             var weaponData = await _encounterService.GetWeaponData(encounterId, characterId, weaponId);
             var conditionalEffects = await _encounterService.GetConditionalEffects(encounterId, characterId, targetId);
             var result = new WeaponAttackDataDto
             {
+                AttackerName = attacker!.Name,
+                TargetName = target!.Name,
                 WeaponDamageAndPowers = weaponData,
                 ConditionalEffects = conditionalEffects
             };

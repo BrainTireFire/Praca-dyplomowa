@@ -14,6 +14,9 @@ import Button from "../../ui/interactive/Button";
 import { useDeleteItemFamily } from "./hooks/useDeleteItemFamily";
 import Box from "../../ui/containers/Box";
 import styled from "styled-components";
+import Modal from "../../ui/containers/Modal";
+import ConfirmDelete from "../../ui/containers/ConfirmDelete";
+import { useNavigate } from "react-router-dom";
 
 export type ItemFamilyAction =
   | { type: "SET_ITEM"; payload: ItemFamily }
@@ -56,8 +59,9 @@ export default function ItemFamilyForm({
   const { isPending: isPendingUpdate, updateItemFamily } = useUpdateItemFamily(
     () => {}
   );
+  const navigate = useNavigate();
   const { isPending: isPendingDelete, deleteItemFamily } = useDeleteItemFamily(
-    () => {}
+    () => {navigate(`/itemFamilies`)}
   );
 
   const [state, dispatch] = useReducer(
@@ -119,30 +123,41 @@ export default function ItemFamilyForm({
           ></Dropdown>
         </FormRowVertical>
       </Container>
-      {itemFamilyId === null && (
-        <Button
-          onClick={() => createItemFamily(state)}
-          disabled={isSavingChangesDisallowed() || disableChanges}
-        >
-          Save
-        </Button>
-      )}
-      {itemFamilyId !== null && (
-        <Button
-          onClick={() => updateItemFamily(state)}
-          disabled={isSavingChangesDisallowed() || disableChanges}
-        >
-          {disableChanges ? "You cannot edit this object" : "Update"}
-        </Button>
-      )}
-      {itemFamilyId !== null && (
-        <Button
-          onClick={() => deleteItemFamily(itemFamilyId)}
-          disabled={isSavingChangesDisallowed() || disableChanges}
-        >
-          {disableChanges ? "You cannot delete this object" : "Delete"}
-        </Button>
-      )}
+      <UDButtonContainer>
+        {itemFamilyId === null && (
+          <Button
+            onClick={() => createItemFamily(state)}
+            disabled={isSavingChangesDisallowed() || disableChanges}
+          >
+            Save
+          </Button>
+        )}
+        {itemFamilyId !== null && (
+          <Button
+            onClick={() => updateItemFamily(state)}
+            disabled={isSavingChangesDisallowed() || disableChanges}
+          >
+            {disableChanges ? "You cannot edit this object" : "Update"}
+          </Button>
+        )}
+        {itemFamilyId !== null && (
+          <Modal>
+            <Modal.Open opens="ConfirmDelete">
+              <Button
+                disabled={isSavingChangesDisallowed() || disableChanges}
+              >
+                {disableChanges ? "You cannot delete this object" : "Delete"}
+              </Button>
+            </Modal.Open>
+            <Modal.Window name="ConfirmDelete">
+              <ConfirmDelete
+                resourceName={"Item Family"}
+                onConfirm={() =>  deleteItemFamily(itemFamilyId)}
+                />
+            </Modal.Window>
+          </Modal>
+        )}
+      </UDButtonContainer>
     </>
   );
 }
@@ -155,4 +170,12 @@ const Container = styled(Box)`
   flex: 1;
   overflow-y: hidden;
   padding: 0rem 1rem 0rem 1rem;
+`;
+
+const UDButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  justify-content: center;
+  margin: 10px;
 `;

@@ -210,7 +210,7 @@ export default function CharactersSheet() {
                 languages={character.languages}
               ></KnownLanguagesTable>
             </div>
-            <div
+            {/* <div
               style={{
                 gridColumnStart: 2,
                 gridColumnEnd: -1,
@@ -221,12 +221,12 @@ export default function CharactersSheet() {
               <ToolProficiencyTable
                 toolFamilies={character.toolProficiencies}
               ></ToolProficiencyTable>
-            </div>
+            </div> */}
             <div
               style={{
                 gridColumnStart: 2,
                 gridColumnEnd: -1,
-                gridRowStart: 6,
+                gridRowStart: 5,
                 gridRowEnd: 7,
               }}
             >

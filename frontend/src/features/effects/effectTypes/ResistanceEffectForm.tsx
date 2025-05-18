@@ -77,8 +77,8 @@ export default function ResistanceEffectForm({
           { label: "Resistance", value: "Resistance" },
           { label: "Immunity", value: "Immunity" },
           { label: "Vulnerability", value: "Vulnerability" },
-          { label: "Advantage", value: "Advantage" },
-          { label: "Disadvantage", value: "Disadvantage" },
+          // { label: "Advantage", value: "Advantage" },
+          // { label: "Disadvantage", value: "Disadvantage" },
         ]}
         label="Resistance effect"
         name="resistanceEffect"

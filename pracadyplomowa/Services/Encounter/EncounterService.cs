@@ -444,7 +444,7 @@ public class EncounterService : IEncounterService
             TotalActions = x.R_Character.TotalActionsPerTurn,
             TotalAttacksPerAction = x.R_Character.TotalAttacksPerTurn,
             TotalBonusActions = x.R_Character.TotalBonusActionsPerTurn,
-            TotalMovement = x.R_Character.TotalMovementPerTurn,
+            TotalMovement = x.R_Character.Speed,
             Hitpoints = character.Hitpoints,
             MaxHitpoints = character.MaxHealth,
             TemporaryHitpoints = character.TemporaryHitpoints,
@@ -759,7 +759,7 @@ public class EncounterService : IEncounterService
         damageTypeOnHit.Add(new WeaponDamageAndPowersDto.DamageValueDto(){
             DamageType = weapon.DamageType,
             DamageValue = new DiceSetDto(damageDiceSet),
-            DamageSource = weapon.Name
+            DamageSource = weapon.Name + " (base damage)"
         });
         foreach(var effect in weapon.R_AffectedBy.OfType<DamageEffectInstance>().Where(x => x.EffectType.DamageEffect == Models.Enums.EffectOptions.DamageEffect.ExtraWeaponDamage)){
             damageDiceSet = effect.DiceSet.getPersonalizedSet(character);
@@ -774,7 +774,7 @@ public class EncounterService : IEncounterService
             damageTypeOnHit.Add(new WeaponDamageAndPowersDto.DamageValueDto(){
                 DamageType = weapon.DamageType,
                 DamageValue = new DiceSetDto(damageDiceSet),
-                DamageSource = effect.Name
+                DamageSource = effect.Name + " (" + weapon.Name  + " - " + effect.Source + ")"
             });
         }
         foreach(var effect in weapon.R_AffectedBy.OfType<DamageEffectInstance>().Where(x => x.EffectType.DamageEffect == Models.Enums.EffectOptions.DamageEffect.DamageDealt)){
@@ -782,7 +782,7 @@ public class EncounterService : IEncounterService
             damageTypeOnHit.Add(new WeaponDamageAndPowersDto.DamageValueDto(){
                 DamageType = (DamageType)effect.EffectType.DamageEffect_DamageType!,
                 DamageValue = new DiceSetDto(damageDiceSet),
-                DamageSource = effect.Name
+                DamageSource = effect.Name + " (" + weapon.Name  + " - " + effect.Source + ")"
             });
         }
         foreach(var effect in character.R_AffectedBy.OfType<DamageEffectInstance>().Where(x => x.EffectType.DamageEffect == Models.Enums.EffectOptions.DamageEffect.ExtraWeaponDamage)){
@@ -790,7 +790,7 @@ public class EncounterService : IEncounterService
             damageTypeOnHit.Add(new WeaponDamageAndPowersDto.DamageValueDto(){
                 DamageType = weapon.DamageType,
                 DamageValue = new DiceSetDto(damageDiceSet),
-                DamageSource = character.Name
+                DamageSource = effect.Name + " (" + character.Name  + " - " + effect.Source + ")"
             });
         }
         foreach(var effect in character.R_AffectedBy.OfType<DamageEffectInstance>().Where(x => x.EffectType.DamageEffect == Models.Enums.EffectOptions.DamageEffect.DamageDealt)){
@@ -798,7 +798,7 @@ public class EncounterService : IEncounterService
             damageTypeOnHit.Add(new WeaponDamageAndPowersDto.DamageValueDto(){
                 DamageType = (DamageType)effect.EffectType.DamageEffect_DamageType!,
                 DamageValue = new DiceSetDto(damageDiceSet),
-                DamageSource = character.Name
+                DamageSource = effect.Name + " (" + character.Name  + " - " + effect.Source + ")"
             });
         }
 

@@ -41,9 +41,9 @@ namespace pracadyplomowa.Models.Entities.Items
         public bool Thrown { get; set;}
         public bool Versatile { get; set;}
         public virtual DiceSet VersatileDamageValue { get; set; } = new DiceSet();
-        public int VersatileDamageValueId { get; set; }
+        // public int VersatileDamageValueId { get; set; }
         protected override int GetAbilityBonus(){
-            return R_EquipData != null && R_EquipData.R_Slots.Select(s => s.Type).Contains(Enums.SlotType.MainHand) ? (Finesse ? (Wielder.StrengthModifier > Wielder.DexterityModifier ? Wielder.StrengthModifier : Wielder.DexterityModifier) : Wielder.StrengthModifier) : 0;
+            return R_EquipData != null ? (Finesse ? (Wielder.StrengthModifier > Wielder.DexterityModifier ? Wielder.StrengthModifier : Wielder.DexterityModifier) : Wielder.StrengthModifier) : 0;
         }
 
         public override DiceSet GetBaseEquippedDamageDiceSet(){ //TODO change this method so it returns different values if equipped in two hands for versatile weapons

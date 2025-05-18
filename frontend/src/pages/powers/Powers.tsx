@@ -7,12 +7,22 @@ import { useState } from "react";
 import { PowerListItem } from "../../models/power";
 import Button from "../../ui/interactive/Button";
 import { useCreatePower } from "./hooks/useCreatePower";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function Powers() {
+    
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const selectedPowerId = searchParams.get("id");
+
+  const handleChangePower = (chosenPowerId: number) => {
+    console.log(chosenPowerId);
+    navigate(`/powers?id=${chosenPowerId}`)
+  };
   const { isLoading, powers, error } = usePowers({ pageSize: 99999999 });
   const [openNewPowerForm, setOpenNewPowerForm] = useState(false);
 
-  const [selectedPowerId, setSelectedPowerId] = useState<null | number>(null);
+  // const [selectedPowerId, setSelectedPowerId] = useState<null | number>(null);
   const { createPower, isPending: isPendingCreation } = useCreatePower(
     () => {}
   );
@@ -22,7 +32,7 @@ export default function Powers() {
     let selectedPower = powers?.find((_value, index) => index === row.id);
     console.log(selectedPower);
 
-    setSelectedPowerId(selectedPower ? selectedPower.id : null);
+    handleChangePower(selectedPower!.id);
     setOpenNewPowerForm(false);
     console.log(selectedPowerId);
   };
@@ -60,7 +70,8 @@ export default function Powers() {
         <Button
           onClick={() => {
             setOpenNewPowerForm(true);
-            setSelectedPowerId(null);
+            // setSelectedPowerId(null);
+            navigate('/powers');
           }}
           customStyles={css`
             height: 5%;
@@ -72,7 +83,7 @@ export default function Powers() {
       <Column2>
         {selectedPowerId && (
           <PowerForm
-            powerId={selectedPowerId}
+            powerId={Number(selectedPowerId)}
             key={selectedPowerId}
           ></PowerForm>
         )}
@@ -82,7 +93,7 @@ export default function Powers() {
             key={"x"}
             onCreate={(id) => {
               setOpenNewPowerForm(false);
-              setSelectedPowerId(id);
+              navigate(`/powers?id=${id}`);
             }}
           ></PowerForm>
         )}

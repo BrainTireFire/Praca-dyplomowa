@@ -97,7 +97,7 @@ export function WeaponAttackResolution({
               <TabsContainer1>
                 <TableContainer>
                   <ReusableTable
-                    mainHeader={`Conditional effects for attacker`}
+                    mainHeader={`Conditional effects for ${weaponAttackData?.attackerName}`}
                     tableRowsColomns={{
                       Name: "name",
                       Description: "description",
@@ -134,7 +134,7 @@ export function WeaponAttackResolution({
                 </TableContainer>
                 <TableContainer>
                   <ReusableTable
-                    mainHeader={`Conditional effects for target`}
+                    mainHeader={`Conditional effects for  ${weaponAttackData?.targetName}`}
                     tableRowsColomns={{
                       Name: "name",
                       Description: "description",
@@ -310,7 +310,7 @@ export function WeaponAttackResolution({
                         Description: "description",
                       }}
                       data={
-                        x.powerEffects[0].map((effect, index: number) => {
+                        x.powerEffects[0]?.map((effect, index: number) => {
                           return {
                             id: index,
                             name: effect.powerEffectName,
@@ -333,7 +333,7 @@ export function WeaponAttackResolution({
                         Description: "description",
                       }}
                       data={
-                        x.powerEffects[1].map((effect, index: number) => {
+                        x.powerEffects[1]?.map((effect, index: number) => {
                           return {
                             id: index,
                             name: effect.powerEffectName,

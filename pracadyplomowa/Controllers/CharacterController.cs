@@ -299,7 +299,7 @@ namespace pracadyplomowa.Controllers
                 Name = cl.R_Class.Name,
                 Level = cl.Level,
                 ChoiceGroups = cl.R_ChoiceGroups.Select(cg => new ChoiceGroupDto(cg, character)),
-                HitDice = cl.HitDie,
+                HitDice = new DiceSetDto(cl.HitDie),
                 HitPoints = cl.HitPoints,
             }).ToList();
             return Ok(result);
@@ -648,10 +648,10 @@ namespace pracadyplomowa.Controllers
                 return errorResult;
             }
             character = await _unitOfWork.CharacterRepository.GetByIdWithAll(characterId);
-            var powers = await _unitOfWork.PowerRepository.GetAllByIdsWithEffectBlueprintsAndMaterialResources(character.AllPowers.Select(x => x.Id).ToList());
+            var powers = await _unitOfWork.PowerRepository.GetAllByIdsWithEffectBlueprintsAndMaterialResources([.. character.AllPowers.Where(p => p.CastableBy == CastableBy.Character).Select(x => x.Id)]);
 
             var result = new List<PowerForEncounterDto>();
-            foreach(var power in character.AllPowers){
+            foreach(var power in powers){
                 var materialComponentsRequired = power.R_ItemsCostRequirement.Select(x => new PowerForEncounterDto.MaterialComponentDto(){
                     Id = x.R_ItemFamilyId,
                     Name = x.R_ItemFamily.Name,

@@ -22,10 +22,10 @@ export default function MaterialComponentForm({
     materialComponent.worth.goldPieces
   );
   const [silverPieces, setSilverPieces] = useState(
-    materialComponent.worth.goldPieces
+    materialComponent.worth.silverPieces
   );
   const [copperPieces, setCopperPieces] = useState(
-    materialComponent.worth.goldPieces
+    materialComponent.worth.copperPieces
   );
 
   const [selectedItemFamilyId, setSelectedItemFamilyId] = useState<

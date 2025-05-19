@@ -11,5 +11,13 @@ namespace pracadyplomowa.Repository.Item
         public ItemCostRequirementRepository(AppDbContext context) : base(context)
         {
         }
+
+
+        public override void Update(Models.Entities.Items.ItemCostRequirement entity)
+        {
+            _context.Entry(entity).State = EntityState.Modified;
+            
+            _context.Entry(entity).Reference(e => e.Worth).TargetEntry!.State = EntityState.Modified;
+        }
     }
 }

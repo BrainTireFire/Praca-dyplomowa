@@ -169,7 +169,7 @@ namespace pracadyplomowa.Controllers
                 return actionResult;
             }
 
-            var itemLoaded = (Apparel)await _unitOfWork.ItemRepository.GetByIdWithSlotsPowersEffectsResources((int)itemDto.Id);
+            var itemLoaded = (Item)await _unitOfWork.ItemRepository.GetByIdWithSlotsPowersEffectsResources((int)itemDto.Id);
             var item = _mapper.Map(itemDto, itemLoaded);
             _unitOfWork.ItemRepository.Update(item);
             await _unitOfWork.SaveChangesAsync();

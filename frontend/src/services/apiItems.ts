@@ -72,6 +72,8 @@ export async function updateItem(itemDto: Item): Promise<void> {
     endpointName = "rangedWeapon";
   } else if (itemDto.itemType === "Apparel") {
     endpointName = "apparel";
+  } else if (itemDto.itemType === "MundaneItem") {
+    endpointName = "mundaneItem";
   } else throw new Error("Unknown item type");
   await customFetch(`${BASE_URL}/api/item/${endpointName}`, options);
   return;

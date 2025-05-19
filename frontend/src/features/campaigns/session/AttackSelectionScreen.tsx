@@ -1,7 +1,7 @@
 import { DamageType } from "../../../models/damageType";
 import { DiceSetString } from "../../../models/diceset";
 import { WeaponAttack } from "../../../models/weaponattack";
-import { ParticipanceData } from "../../../services/apiEncounter";
+import { ParticipanceData, WeaponAttackDto } from "../../../services/apiEncounter";
 import { Cell } from "../../../ui/containers/Cell";
 import Menus from "../../../ui/containers/Menus";
 import RadioButton from "../../../ui/containers/RadioButton";
@@ -9,21 +9,22 @@ import Table from "../../../ui/containers/Table";
 import Button from "../../../ui/interactive/Button";
 import Spinner from "../../../ui/interactive/Spinner";
 import { useCharacter } from "../../characters/hooks/useCharacter";
+import { useGetWeaponAttacks } from "../hooks/useGetWeaponAttacks";
 import { ChangeModeAction, SetWeaponAttack } from "./SessionLayout";
 
 export function AttackSelectionScreen({
   characterId,
-  participanceData,
+  encounterId,
   dispatch,
   onCloseModal,
 }: {
   characterId: number;
-  participanceData: ParticipanceData;
+  encounterId: number;
   dispatch: React.Dispatch<SetWeaponAttack>;
   onCloseModal: () => {};
 }) {
   console.log(characterId);
-  const { isLoading, character, isError, error } = useCharacter(characterId);
+  const { isLoading, weaponAttacks, isError, error } = useGetWeaponAttacks(characterId, encounterId);
   if (isLoading) {
     return <Spinner></Spinner>;
   }
@@ -32,8 +33,7 @@ export function AttackSelectionScreen({
   }
   return (
     <SessionWeaponAttackTable
-      weaponAttacks={character!.weaponAttacks}
-      participanceData={participanceData}
+      weaponAttacks={weaponAttacks!}
       dispatch={dispatch}
       onCloseModal={onCloseModal}
     />
@@ -46,12 +46,10 @@ AttackSelectionScreen.defaultProps = {
 
 export default function SessionWeaponAttackTable({
   weaponAttacks,
-  participanceData,
   dispatch,
   onCloseModal,
 }: {
-  weaponAttacks: WeaponAttack[];
-  participanceData: ParticipanceData;
+  weaponAttacks: WeaponAttackDto[];
   dispatch: React.Dispatch<SetWeaponAttack>;
   onCloseModal: () => {};
 }) {
@@ -75,7 +73,6 @@ export default function SessionWeaponAttackTable({
             <WeaponAttackRow
               key={weaponAttack.id}
               weaponAttack={weaponAttack}
-              participanceData={participanceData}
               dispatch={dispatch}
               onCloseModal={onCloseModal}
             />
@@ -88,24 +85,16 @@ export default function SessionWeaponAttackTable({
 
 function WeaponAttackRow({
   weaponAttack,
-  participanceData,
   dispatch,
   onCloseModal,
 }: {
-  weaponAttack: WeaponAttack;
-  participanceData: ParticipanceData;
+  weaponAttack: WeaponAttackDto;
   dispatch: React.Dispatch<SetWeaponAttack>;
   onCloseModal: () => {};
 }) {
-  const mainAttackAllowed =
-    participanceData.totalActions - participanceData.actionsTaken > 0 ||
-    participanceData.totalAttacksPerAction - participanceData.attacksMade > 0;
-  const offhandAttackAllowed =
-    participanceData.totalBonusActions - participanceData.bonusActionsTaken > 0;
-  const mainAttackLabel = mainAttackAllowed ? "Select" : "No attacks left";
-  const offhandAttackLabel = offhandAttackAllowed
-    ? "Select"
-    : "No bonus actions left";
+  
+  const mainAttackLabel = weaponAttack.requiredWeaponAttackAvailable ? "Select" : "No attacks left";
+  const offhandAttackLabel = weaponAttack.requiredWeaponAttackAvailable ? "Select" : "No bonus actions left";
   return (
     <Table.Row>
       <RadioButton checked={weaponAttack.main} readOnly={true} />
@@ -132,7 +121,7 @@ function WeaponAttackRow({
           }}
           size="small"
           disabled={
-            weaponAttack.main ? !mainAttackAllowed : !offhandAttackAllowed
+            !weaponAttack.requiredWeaponAttackAvailable
           }
         >
           {weaponAttack.main ? mainAttackLabel : offhandAttackLabel}
@@ -155,7 +144,7 @@ function WeaponAttackRow({
           }}
           size="small"
           disabled={
-            weaponAttack.main ? !mainAttackAllowed : !offhandAttackAllowed
+            !weaponAttack.requiredWeaponAttackAvailable
           }
         >
           {weaponAttack.main ? mainAttackLabel : offhandAttackLabel}

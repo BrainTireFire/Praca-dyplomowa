@@ -17,6 +17,9 @@ namespace pracadyplomowa.Models.DTOs
         public ActionType? ActionTypeRequired { get; set; }
         public bool RequiredResourceAvailable { get; set;}
         public List<MaterialComponentDto> MaterialComponents { get; set; } = null!;
+        public bool RequiredActionAvailable { get; set; }
+        public bool RequiredBonusActionAvailable { get; set; }
+        public bool RequiredWeaponAttackAvailable { get; set; }
         public bool RequiredMaterialComponentsAvailable { get; set; }
         public bool SomaticComponentRequirementSatisfied { get; set; }
         public bool VocalComponentRequirementSatisfied { get; set; }

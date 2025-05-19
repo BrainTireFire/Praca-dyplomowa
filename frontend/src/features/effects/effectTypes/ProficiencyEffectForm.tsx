@@ -132,7 +132,7 @@ export default function ProficiencyEffectForm({
         }
         values={[
           { label: "Item", value: "Item" },
-          { label: "Tool", value: "Tool" },
+          // { label: "Tool", value: "Tool" },
           { label: "Clothing", value: "Clothing" },
           { label: "Light armor", value: "LightArmor" },
           { label: "Medium armor", value: "MediumArmor" },

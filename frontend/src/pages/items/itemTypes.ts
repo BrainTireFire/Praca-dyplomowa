@@ -1,6 +1,6 @@
 export const itemTypes = [
   "Item",
-  "Tool",
+  // "Tool",
   "Clothing",
   "LightArmor",
   "MediumArmor",
@@ -23,7 +23,7 @@ export const itemTypeOptions = itemTypes.map((type) => ({
 
 export const itemIdentity = [
   "MundaneItem",
-  "Tool",
+  // "Tool",
   "Apparel",
   "MeleeWeapon",
   "RangedWeapon",
@@ -40,7 +40,7 @@ type IdentityToTypeMapping = ObjectWithKeysAndValues<ItemIdentity, ItemType>;
 export const identityToTypeMapping: IdentityToTypeMapping = {
   MundaneItem: ["Item"],
   Apparel: ["Clothing", "LightArmor", "MediumArmor", "HeavyArmor", "Shield"],
-  Tool: ["Tool"],
+  // Tool: ["Tool"],
   MeleeWeapon: ["SimpleWeapon", "MartialWeapon"],
   RangedWeapon: ["SimpleWeapon", "MartialWeapon"],
 };

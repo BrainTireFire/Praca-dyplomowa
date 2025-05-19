@@ -1,13 +1,6 @@
 import { ability } from "../features/effects/abilities";
 import { EffectBlueprint } from "../features/effects/EffectBlueprintForm";
 import { skill } from "../features/effects/skills";
-import { CoinPurse } from "../features/items/models/coinPurse";
-import {
-  AreaShape,
-  CastableBy,
-  PowerType,
-  TargetType,
-} from "../features/powers/models/power";
 import {
   CharacterItem,
   Character,
@@ -393,50 +386,6 @@ export async function addToEquipment(
   );
 }
 
-export async function getPowers(
-  characterId: number
-): Promise<PowerForEncounterDto[]> {
-  const response = await customFetch(
-    `${BASE_URL}/api/character/${characterId}/allPowersForEncounter`
-  );
-
-  console.log(response);
-
-  return response;
-}
-
-export type PowerForEncounterDto = {
-  id: number;
-  name: string;
-  description: string;
-  resourceName: string | null;
-  availableLevels: ImmaterialResourceSelection[];
-  actionTypeRequired: string | null;
-  requiredResourceAvailable: boolean;
-  materialComponents: MaterialComponentDto[];
-  requiredMaterialComponentsAvailable: boolean;
-  somaticComponentRequirementSatisfied: boolean;
-  vocalComponentRequirementSatisfied: boolean;
-  range: number | null;
-  maxTargets: number | null;
-  areaShape: AreaShape | null;
-  areaSize: number | null;
-  castableBy: CastableBy;
-  powerType: PowerType;
-  targetType: TargetType;
-  castableLevels: number[];
-};
-
-export type MaterialComponentDto = {
-  id: number;
-  name: string;
-  cost: CoinPurse;
-};
-
-export type ImmaterialResourceSelection = {
-  powerLevel: number;
-  resourceLevel: number;
-};
 
 export type ChoiceGroup = {
   id: number;

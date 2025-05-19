@@ -9,10 +9,13 @@ import {
   stateType,
 } from "../features/campaigns/session/WeaponAttackConditionalEffectsReducer";
 import { size } from "../features/effects/sizes";
+import { CoinPurse } from "../features/items/models/coinPurse";
+import { AreaShape, CastableBy, PowerType, TargetType } from "../features/powers/models/power";
 import { DiceSet } from "../models/diceset";
 import { Encounter } from "../models/encounter/Encounter";
 import { EncounterCreateDto } from "../models/encounter/EncounterCreateDto";
 import { EncounterUpdateDto } from "../models/encounter/EncounterUpdateDto";
+import { WeaponAttack } from "../models/weaponattack";
 import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
 
@@ -709,3 +712,69 @@ export type CastPowerResultDto = {
 };
 
 export type HitType = "CriticalHit" | "Hit" | "Miss" | "CriticalMiss";
+
+
+export async function getPowers(
+  characterId: number,
+  encounterId: number,
+): Promise<PowerForEncounterDto[]> {
+  const response = await customFetch(
+    `${BASE_URL}/api/encounter/${encounterId}/allPowersForEncounter/${characterId}`
+  );
+
+  console.log(response);
+
+  return response;
+}
+
+export type PowerForEncounterDto = {
+  id: number;
+  name: string;
+  description: string;
+  resourceName: string | null;
+  availableLevels: ImmaterialResourceSelection[];
+  actionTypeRequired: string | null;
+  requiredResourceAvailable: boolean;
+  materialComponents: MaterialComponentDto[];
+  requiredActionAvailable: boolean;
+  requiredBonusActionAvailable: boolean;
+  requiredWeaponAttackAvailable: boolean;
+  requiredMaterialComponentsAvailable: boolean;
+  somaticComponentRequirementSatisfied: boolean;
+  vocalComponentRequirementSatisfied: boolean;
+  range: number | null;
+  maxTargets: number | null;
+  areaShape: AreaShape | null;
+  areaSize: number | null;
+  castableBy: CastableBy;
+  powerType: PowerType;
+  targetType: TargetType;
+  castableLevels: number[];
+};
+
+export type MaterialComponentDto = {
+  id: number;
+  name: string;
+  cost: CoinPurse;
+};
+
+export type ImmaterialResourceSelection = {
+  powerLevel: number;
+  resourceLevel: number;
+};
+
+
+export async function getAttacks(
+  characterId: number,
+  encounterId: number,
+): Promise<WeaponAttackDto[]> {
+  const response = await customFetch(
+    `${BASE_URL}/api/encounter/${encounterId}/allAttacksForEncounter/${characterId}`
+  );
+
+  console.log(response);
+
+  return response;
+}
+
+export type WeaponAttackDto = WeaponAttack & {requiredWeaponAttackAvailable: boolean}

@@ -5,7 +5,7 @@ import {
   Mode,
 } from "../../features/campaigns/session/SessionLayout";
 import { AreaShape, TargetType } from "../../features/powers/models/power";
-import { ImmaterialResourceSelection } from "../../services/apiCharacters";
+import { ImmaterialResourceSelection } from "../../services/apiEncounter";
 
 export type VirtualBoardProps = {
   connection: HubConnection | null;

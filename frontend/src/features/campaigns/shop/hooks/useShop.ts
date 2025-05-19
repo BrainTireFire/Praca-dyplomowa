@@ -6,7 +6,7 @@ export function useShop() {
   const { shopId } = useParams<{ shopId: string }>();
 
   const {
-    isPending,
+    isLoading,
     data: shop,
     error,
   } = useQuery({
@@ -14,5 +14,5 @@ export function useShop() {
     queryFn: () => getShop(Number(shopId)),
   });
 
-  return { isPending, shop, error };
+  return { isLoading, shop, error };
 }

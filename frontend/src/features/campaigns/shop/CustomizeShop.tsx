@@ -2,7 +2,7 @@ import Heading from "../../../ui/text/Heading";
 import Spinner from "../../../ui/interactive/Spinner";
 import { useShop } from "./hooks/useShop";
 import styled from "styled-components";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../../../ui/interactive/Button";
 import Line from "../../../ui/separators/Line";
 import { Shop, ShopItem } from "../../../models/shop";
@@ -96,14 +96,20 @@ const Input = styled.input`
 `;
 
 function CustomizeShop() {
-  const { shop, isPending } = useShop();
-  const { isLoading, items = [], error } = useAllItems();
+  const { shop, isLoading } = useShop();
+  const { isLoading: isLoadingItems, items, error } = useAllItems();
   const {
-    isLoading: isFetching,
-    shopItems: data = [],
-    error: exception,
+    isLoading: isLoadingShopItems,
+    shopItems: data,
+    error: shopItemsError,
   } = useShopItems();
   const [shopItems, setShopItems] = useState(data);
+
+  useEffect(() => {
+    if (data) {
+      setShopItems(data);
+    }
+  }, [data]);
 
   const [selectedItem, setSelectedItem] = useState<ShopItem | undefined>(
     undefined
@@ -121,12 +127,16 @@ function CustomizeShop() {
 
   const [quantity, setQuantity] = useState(1);
 
-  if (isPending || isLoading || isFetching) {
+  if (isLoading || isLoadingItems || isLoadingShopItems) {
     return <Spinner />;
   }
 
-  if (!shop || error || exception) {
+  if (error || shopItemsError) {
     return <div>Error when fetching data</div>;
+  }
+
+  if (!shop || !items || !shopItems) {
+    return <div>No data has been recieved</div>;
   }
 
   const handleClick = (item: ShopItem) => {

@@ -14,7 +14,7 @@ type proficiencyEffect = (typeof proficiencyEffects)[number];
 
 const itemTypes = [
   "Item",
-  "Tool",
+  // "Tool", TODO
   "Clothing",
   "LightArmor",
   "MediumArmor",
@@ -132,7 +132,7 @@ export default function ProficiencyEffectForm({
         }
         values={[
           { label: "Item", value: "Item" },
-          { label: "Tool", value: "Tool" },
+          // { label: "Tool", value: "Tool" }, TODO
           { label: "Clothing", value: "Clothing" },
           { label: "Light armor", value: "LightArmor" },
           { label: "Medium armor", value: "MediumArmor" },

@@ -1,8 +1,10 @@
-﻿using System.Transactions;
+﻿using System.Threading.Tasks;
+using System.Transactions;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
+using pracadyplomowa.Const;
 using pracadyplomowa.DTOs.Session;
 using pracadyplomowa.Errors;
 using pracadyplomowa.Hubs;
@@ -444,7 +446,7 @@ public class EncounterService : IEncounterService
             TotalActions = x.R_Character.TotalActionsPerTurn,
             TotalAttacksPerAction = x.R_Character.TotalAttacksPerTurn,
             TotalBonusActions = x.R_Character.TotalBonusActionsPerTurn,
-            TotalMovement = x.R_Character.TotalMovementPerTurn,
+            TotalMovement = x.R_Character.Speed,
             Hitpoints = character.Hitpoints,
             MaxHitpoints = character.MaxHealth,
             TemporaryHitpoints = character.TemporaryHitpoints,
@@ -759,7 +761,7 @@ public class EncounterService : IEncounterService
         damageTypeOnHit.Add(new WeaponDamageAndPowersDto.DamageValueDto(){
             DamageType = weapon.DamageType,
             DamageValue = new DiceSetDto(damageDiceSet),
-            DamageSource = weapon.Name
+            DamageSource = weapon.Name + " (base damage)"
         });
         foreach(var effect in weapon.R_AffectedBy.OfType<DamageEffectInstance>().Where(x => x.EffectType.DamageEffect == Models.Enums.EffectOptions.DamageEffect.ExtraWeaponDamage)){
             damageDiceSet = effect.DiceSet.getPersonalizedSet(character);
@@ -774,7 +776,7 @@ public class EncounterService : IEncounterService
             damageTypeOnHit.Add(new WeaponDamageAndPowersDto.DamageValueDto(){
                 DamageType = weapon.DamageType,
                 DamageValue = new DiceSetDto(damageDiceSet),
-                DamageSource = effect.Name
+                DamageSource = effect.Name + " (" + weapon.Name  + " - " + effect.Source + ")"
             });
         }
         foreach(var effect in weapon.R_AffectedBy.OfType<DamageEffectInstance>().Where(x => x.EffectType.DamageEffect == Models.Enums.EffectOptions.DamageEffect.DamageDealt)){
@@ -782,7 +784,7 @@ public class EncounterService : IEncounterService
             damageTypeOnHit.Add(new WeaponDamageAndPowersDto.DamageValueDto(){
                 DamageType = (DamageType)effect.EffectType.DamageEffect_DamageType!,
                 DamageValue = new DiceSetDto(damageDiceSet),
-                DamageSource = effect.Name
+                DamageSource = effect.Name + " (" + weapon.Name  + " - " + effect.Source + ")"
             });
         }
         foreach(var effect in character.R_AffectedBy.OfType<DamageEffectInstance>().Where(x => x.EffectType.DamageEffect == Models.Enums.EffectOptions.DamageEffect.ExtraWeaponDamage)){
@@ -790,7 +792,7 @@ public class EncounterService : IEncounterService
             damageTypeOnHit.Add(new WeaponDamageAndPowersDto.DamageValueDto(){
                 DamageType = weapon.DamageType,
                 DamageValue = new DiceSetDto(damageDiceSet),
-                DamageSource = character.Name
+                DamageSource = effect.Name + " (" + character.Name  + " - " + effect.Source + ")"
             });
         }
         foreach(var effect in character.R_AffectedBy.OfType<DamageEffectInstance>().Where(x => x.EffectType.DamageEffect == Models.Enums.EffectOptions.DamageEffect.DamageDealt)){
@@ -798,7 +800,7 @@ public class EncounterService : IEncounterService
             damageTypeOnHit.Add(new WeaponDamageAndPowersDto.DamageValueDto(){
                 DamageType = (DamageType)effect.EffectType.DamageEffect_DamageType!,
                 DamageValue = new DiceSetDto(damageDiceSet),
-                DamageSource = character.Name
+                DamageSource = effect.Name + " (" + character.Name  + " - " + effect.Source + ")"
             });
         }
 
@@ -835,28 +837,20 @@ public class EncounterService : IEncounterService
         var target = encounter.R_Participances.First(x => x.R_CharacterId == targetId).R_Character ?? throw new SessionBadRequestException("Target character does not take part in specified encounter");
         int initialTargetHealth = target.Hitpoints + target.TemporaryHitpoints;
         Weapon weapon = (Weapon)((character.R_EquippedItems.FirstOrDefault(x => x.R_ItemId == weaponId)?.R_Item) ?? throw new SessionBadRequestException("Specified weapon is not equipped by attacking character"));
-        
-        if(weapon.R_EquipData!.R_Slots.Where(x => x.Type == SlotType.MainHand).Any())
+
+        if (weapon.R_EquipData!.R_Slots.Where(x => x.Type == SlotType.MainHand).Any())
         {
-            var attacksPerActionLeft = character.TotalAttacksPerTurn - participance.NumberOfAttacksTaken;
-            var actionsLeft = character.TotalActionsPerTurn - participance.NumberOfActionsTaken;
-            if((attacksPerActionLeft == character.TotalAttacksPerTurn || attacksPerActionLeft == 0) && actionsLeft > 0){
-                participance.NumberOfActionsTaken++;
-                participance.NumberOfAttacksTaken = 1;
-            }
-            else if(attacksPerActionLeft > 0){
-                participance.NumberOfAttacksTaken++;
-            }
-            else{
-                throw new SessionBadRequestException("Character cannot make more main-hand attacks");
-            }
+            IsSingleAttackAvailable(character, participance, true);
         }
-        else{
+        else
+        {
             var bonusActionsLeft = character.TotalBonusActionsPerTurn - participance.NumberOfBonusActionsTaken;
-            if(bonusActionsLeft > 0){
+            if (bonusActionsLeft > 0)
+            {
                 participance.NumberOfBonusActionsTaken++;
             }
-            else{
+            else
+            {
                 throw new SessionBadRequestException("Character cannot make more off-hand attacks");
             }
         }
@@ -1010,19 +1004,7 @@ public class EncounterService : IEncounterService
             participance.NumberOfBonusActionsTaken++;
         }
 
-        if(power.RequiredActionType == ActionType.WeaponAttack && character.TotalAttacksPerTurn - participance.NumberOfAttacksTaken <= 0){
-            if(character.TotalActionsPerTurn - participance.NumberOfActionsTaken <= 0){
-                throw new SessionBadRequestException("No actions left");
-            }
-            else if(character.TotalActionsPerTurn - participance.NumberOfActionsTaken > 0){
-                participance.NumberOfActionsTaken++;
-                participance.NumberOfAttacksTaken = 0;
-            }
-        }
-        if(power.RequiredActionType == ActionType.WeaponAttack && character.TotalAttacksPerTurn - participance.NumberOfAttacksTaken > 0){
-            participance.NumberOfAttacksTaken++;
-            throw new SessionBadRequestException("No attacks left");
-        }
+        IsSingleAttackAvailable(character, participance, true);
 
         //set approved effects
         foreach(var effect in character.AllEffects){
@@ -1058,9 +1040,145 @@ public class EncounterService : IEncounterService
         return result;
     }
 
-    public async Task MoveUpQueue(int encounterId, int characterId, int userId){
+    public async Task<List<PowerForEncounterDto>> GetPowersForEncounter(Character character, ParticipanceData participanceData)
+    {
+        var powers = await _unitOfWork.PowerRepository.GetAllByIdsWithEffectBlueprintsAndMaterialResources([.. character.AllPowers.Where(p => p.CastableBy == CastableBy.Character).Select(x => x.Id)]);
+
+        var result = new List<PowerForEncounterDto>();
+        foreach(var power in powers){
+            var materialComponentsRequired = power.R_ItemsCostRequirement.Select(x => new PowerForEncounterDto.MaterialComponentDto(){
+                Id = x.R_ItemFamilyId,
+                Name = x.R_ItemFamily.Name,
+                Cost = x.Worth
+            }).ToList();
+            var materialComponentsSatisfied = character.HasAllMaterialComponentsForPower(power);
+            var mainHandsOccupied = character.R_EquippedItems.SelectMany(x => x.R_Slots)
+                                                                        .Where(x => x.Type == SlotType.MainHand)
+                                                                        .Count();
+            var offHandsOccupied = character.R_EquippedItems.SelectMany(x => x.R_Slots)
+                                                                        .Where(x => x.Type == SlotType.OffHand)
+                                                                        .Count();
+            var mainHandsPossesed = character.R_CharacterBelongsToRace.R_EquipmentSlots.Where(x => x.Type == SlotType.MainHand).Count();
+            var offHandsPossesed = character.R_CharacterBelongsToRace.R_EquipmentSlots.Where(x => x.Type == SlotType.OffHand).Count();
+            var spellcastingFocusHeld = character.R_EquippedItems.Where(x => x.R_Item.IsSpellFocus && x.R_Slots.Where(y => y.Type == SlotType.MainHand || y.Type == SlotType.MainHand).Any()).Any();
+            bool somaticComponentRequirementSatisfied = mainHandsPossesed - mainHandsOccupied > 0 || offHandsOccupied - offHandsPossesed > 0 || spellcastingFocusHeld || !power.SomaticComponent;
+            bool vocalComponentSatisfied = !character.HasAnyCondition([Condition.Muffled, Condition.Petrified]) || !power.VerbalComponent;
+            bool requiredWeaponAttackAvailable;
+            try
+            {
+                requiredWeaponAttackAvailable = IsSingleAttackAvailable(character, participanceData, false);
+            }
+            catch (SessionBadRequestException)
+            {
+                requiredWeaponAttackAvailable = false;
+            }
+            var powerDto = new PowerForEncounterDto(){
+                Id = power.Id,
+                Name = power.Name,
+                Description = power.Description,
+                ResourceName = power.R_UsesImmaterialResource?.Name,
+                AvailableLevels = [],
+                ActionTypeRequired = power.RequiredActionType,
+                RequiredResourceAvailable = true,
+                MaterialComponents = materialComponentsRequired,
+                RequiredActionAvailable = character.TotalActionsPerTurn - participanceData.NumberOfActionsTaken > 0,
+                RequiredBonusActionAvailable = character.TotalBonusActionsPerTurn - participanceData.NumberOfBonusActionsTaken > 0,
+                RequiredWeaponAttackAvailable = requiredWeaponAttackAvailable,
+                RequiredMaterialComponentsAvailable = materialComponentsSatisfied,
+                SomaticComponentRequirementSatisfied = somaticComponentRequirementSatisfied,
+                VocalComponentRequirementSatisfied = vocalComponentSatisfied,
+                Range = power.Range,
+                MaxTargets = power.MaxTargets,
+                AreaShape = power.AreaShape,
+                AreaSize = power.AreaSize,
+                CastableBy = power.CastableBy,
+                PowerType = power.PowerType,
+                TargetType = power.TargetType
+            };
+            var levelsCastable = new List<int>();
+            if(power.UpcastBy == UpcastBy.ResourceLevel){
+                var powerLevels = power.R_EffectBlueprints.Select(x => x.Level).Distinct().Order().ToList();
+                levelsCastable.AddRange(power.R_EffectBlueprints.Select(x => x.Level).Distinct().Where(x => power.RequiredResourceAvailable(character, x)));
+                foreach(var level in powerLevels){
+                    foreach(var resourceLevel in character.AllImmaterialResourceInstances.Where(x => !x.NeedsRefresh && x.Level >= level && x.R_BlueprintId == power.R_UsesImmaterialResource?.Id).Select(x => x.Level).Distinct().Order().ToList()){
+                        powerDto.AvailableLevels.Add(new PowerForEncounterDto.ImmaterialResourceSelection(){
+                            PowerLevel = level,
+                            ResourceLevel = resourceLevel
+                        });
+                    }
+                }
+                powerDto.RequiredResourceAvailable = powerDto.AvailableLevels.Count > 0;
+            }
+            result.Add(powerDto);
+        }
+        return result;
+    }
+    public List<WeaponAttacksForEncounterDto> GetWeaponAttacksForEncounter(Character character, ParticipanceData participanceData)
+    {
+        bool mainHandWeaponAttackAvailable;
+        try
+        {
+            mainHandWeaponAttackAvailable = IsSingleAttackAvailable(character, participanceData, false);
+        }
+        catch (SessionBadRequestException)
+        {
+            mainHandWeaponAttackAvailable = false;
+        }
+        bool offHandWeaponAttackAvailable = character.TotalBonusActionsPerTurn - participanceData.NumberOfBonusActionsTaken > 0;
+        var attacks = character.R_EquippedItems.Where(ei => ei.R_Slots.Select(s => s.Type).Contains(SlotType.MainHand) || ei.R_Slots.Select(s => s.Type).Contains(SlotType.OffHand)).Select(ei => ei.R_Item).OfType<Weapon>().Select(w => new WeaponAttacksForEncounterDto()
+        {
+            Id = w.Id,
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            Main = w.R_EquipData.R_Slots.Select(s => s.Type).Contains(SlotType.MainHand),
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            Damage = new DiceSetDto(w.GetBaseEquippedDamageDiceSet()),
+            AttackBonus = new DiceSetDto(w.GetBaseEquippedAttackBonus()),
+            DamageType = (int)w.DamageType,
+            Range = w is RangedWeapon || (w is MeleeWeapon meleeWeapon && meleeWeapon.Thrown) ? w.Range : null,
+            Reach = w is MeleeWeapon meleeWeapon2 ? (meleeWeapon2.Reach ? ConstVariables.MELEE_RANGE_REACH : ConstVariables.MELEE_RANGE_DEFAULT) : null,
+            WeaponName = w.Name
+        }).ToList();
+        attacks.ForEach(attack => attack.RequiredWeaponAttackAvailable = attack.Main ? mainHandWeaponAttackAvailable : offHandWeaponAttackAvailable);
+        return attacks;
+    }
+
+    public bool IsSingleAttackAvailable(Character character, ParticipanceData participance, bool reduceActions)
+    {
+        int totalAttacksPerTurn = character.TotalAttacksPerTurn;
+        int totalActionsPerTurn = character.TotalActionsPerTurn;
+        int numberOfAttacksTaken = participance.NumberOfAttacksTaken;
+        int numberOfActionsTaken = participance.NumberOfActionsTaken;
+
+        if (totalAttacksPerTurn - numberOfAttacksTaken <= 0)
+        {
+            if (totalActionsPerTurn - numberOfActionsTaken <= 0)
+            {
+                throw new SessionBadRequestException("No actions left");
+            }
+            else if (totalActionsPerTurn - numberOfActionsTaken > 0)
+            {
+                numberOfActionsTaken++;
+                numberOfAttacksTaken = 0;
+            }
+        }
+        if (totalAttacksPerTurn - numberOfAttacksTaken <= 0)
+        {
+            throw new SessionBadRequestException("No attacks left");
+        }
+        numberOfAttacksTaken++;
+        if (reduceActions)
+        {
+            participance.NumberOfActionsTaken = numberOfActionsTaken;
+            participance.NumberOfAttacksTaken = numberOfAttacksTaken;
+        }
+        return true;
+    }
+
+    public async Task MoveUpQueue(int encounterId, int characterId, int userId)
+    {
         var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipancesAndCampaign(encounterId) ?? throw new SessionNotFoundException("Encounter not found");
-        if(encounter.R_OwnerId != userId){
+        if (encounter.R_OwnerId != userId)
+        {
             throw new SessionBadRequestException("You are not Dungeon Master");
         }
         // Find the index of the item with the given id

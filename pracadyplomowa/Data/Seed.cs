@@ -256,12 +256,12 @@ public class Seed
             {
                 Conditional = true
             };
-            SavingThrowEffectBlueprint feyAncestryB = new("Fey Ancestry B", 0, RollMoment.OnCast, SavingThrowEffect.AlwaysSucceed, null)
-            {
-                Conditional = true
-            };
+            // SavingThrowEffectBlueprint feyAncestryB = new("Fey Ancestry B", 0, RollMoment.OnCast, SavingThrowEffect.AlwaysSucceed, null)
+            // {
+            //     Conditional = true
+            // };
             feyAncestry.R_Effects.Add(feyAncestryA);
-            feyAncestry.R_Effects.Add(feyAncestryB);
+            // feyAncestry.R_Effects.Add(feyAncestryB);
 
 
             RaceLevel firstLevel = elf.R_RaceLevels.Where(rl => rl.Level == 1).First();

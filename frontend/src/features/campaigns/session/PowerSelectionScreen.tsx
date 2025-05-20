@@ -1,12 +1,8 @@
 import { useState } from "react";
-import { DamageType } from "../../../models/damageType";
-import { DiceSetString } from "../../../models/diceset";
-import { Power } from "../../../models/session/VirtualBoardProps";
-import { WeaponAttack } from "../../../models/weaponattack";
 import {
   ImmaterialResourceSelection,
   PowerForEncounterDto,
-} from "../../../services/apiCharacters";
+} from "../../../services/apiEncounter";
 import { ParticipanceData } from "../../../services/apiEncounter";
 import { Cell } from "../../../ui/containers/Cell";
 import Menus from "../../../ui/containers/Menus";
@@ -14,23 +10,24 @@ import Table from "../../../ui/containers/Table";
 import Dropdown from "../../../ui/forms/Dropdown";
 import Button from "../../../ui/interactive/Button";
 import Spinner from "../../../ui/interactive/Spinner";
-import { useCharacter } from "../../characters/hooks/useCharacter";
 import { useGetPowers } from "../hooks/useGetPowers";
 import { SetPower } from "./SessionLayout";
 
 export function PowerSelectionScreen({
   characterId,
+  encounterId,
   participanceData,
   dispatch,
   onCloseModal,
 }: {
   characterId: number;
+  encounterId: number;
   participanceData: ParticipanceData;
   dispatch: React.Dispatch<SetPower>;
   onCloseModal: () => {};
 }) {
   console.log(characterId);
-  const { isLoading, powers, isError, error } = useGetPowers(characterId);
+  const { isLoading, powers, isError, error } = useGetPowers(characterId, encounterId);
   if (isLoading) {
     return <Spinner></Spinner>;
   }
@@ -114,28 +111,33 @@ function PowerRow({
 }) {
   const [chosenLevel, setChosenLevel] =
     useState<ImmaterialResourceSelection | null>(null);
-  const actionsLeft =
-    participanceData.totalActions - participanceData.actionsTaken > 0;
-  const bonusActionsLeft =
-    participanceData.totalBonusActions - participanceData.bonusActionsTaken > 0;
-  const actionOrBonusAction = power.actionTypeRequired === "Action";
-  const buttonLabel = actionOrBonusAction
-    ? actionsLeft
-      ? "Select"
-      : "No actions left"
-    : bonusActionsLeft
-    ? "Select"
-    : "No bonus actions left";
-  const disabled =
-    (actionOrBonusAction ? !actionsLeft : !bonusActionsLeft) ||
-    !(
-      power.vocalComponentRequirementSatisfied &&
-      power.somaticComponentRequirementSatisfied &&
-      power.requiredResourceAvailable &&
-      power.requiredMaterialComponentsAvailable
-    ) ||
-    (chosenLevel == null && power.availableLevels.length > 0);
-  console.log(actionOrBonusAction ? !actionsLeft : !bonusActionsLeft);
+
+  const buttonLabelArray = [];
+  if(power.actionTypeRequired === "Action" && !power.requiredActionAvailable){
+    buttonLabelArray.push('No actions left');
+  }
+  if(power.actionTypeRequired === "BonusAction" && !power.requiredBonusActionAvailable){
+    buttonLabelArray.push('No bonus actions left');
+  }
+  if(power.actionTypeRequired === "WeaponAttack" && !power.requiredWeaponAttackAvailable){
+    buttonLabelArray.push('No attacks left');
+  }
+  if(!power.vocalComponentRequirementSatisfied){
+    buttonLabelArray.push('Cannot speak');
+  }
+  if(!power.somaticComponentRequirementSatisfied){
+    buttonLabelArray.push('Cannot make gestures');
+  }
+  if(!power.requiredResourceAvailable){
+    buttonLabelArray.push('Required resource not available');
+  }
+  if(!power.requiredMaterialComponentsAvailable){
+    buttonLabelArray.push('Required components not available');
+  }
+  if(chosenLevel == null && power.availableLevels.length > 0){
+    buttonLabelArray.push('Power level not selected');
+  }
+  const disabled = buttonLabelArray.length > 0;
 
   let valuesList = power.availableLevels.map((x) => {
     return {
@@ -196,7 +198,7 @@ function PowerRow({
           onCloseModal();
         }}
       >
-        {buttonLabel}
+        {buttonLabelArray.length > 0 ? buttonLabelArray.join(', ') : 'Select'}
       </Button>
     </Table.Row>
   );

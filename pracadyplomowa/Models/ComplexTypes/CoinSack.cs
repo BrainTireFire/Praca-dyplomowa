@@ -15,7 +15,7 @@ namespace pracadyplomowa.Models.Entities.Items
         public int CopperPieces { get; set; }
 
         public int GetValueInCopperPieces(){
-            return GoldPieces * 10 + SilverPieces * 10 + CopperPieces;
+            return GoldPieces * 100 + SilverPieces * 10 + CopperPieces;
         }
 
         public static bool operator > (CoinSack x, CoinSack y) => x.GetValueInCopperPieces() > y.GetValueInCopperPieces();

@@ -10,6 +10,7 @@ export function useDeleteItemFamily(onSuccess: () => void) {
       queryClient.invalidateQueries({ queryKey: ["itemFamilies"] });
       // Explicitly refetch the query after invalidation
       queryClient.refetchQueries({ queryKey: ["itemFamilies"] });
+      toast.success("Item family deleted");
       onSuccess();
     },
     onError: (error) => {

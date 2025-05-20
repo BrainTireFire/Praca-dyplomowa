@@ -23,7 +23,6 @@ namespace pracadyplomowa.Data
                 {
                     if (entry.Entity.DeleteOnSave)
                     {
-                        entry.State = EntityState.Deleted;
                         deletedEffectInstances.Add(entry.Entity);
                     }
                 }
@@ -36,13 +35,20 @@ namespace pracadyplomowa.Data
                                             ).Include(e => e.R_OwnedEffects).ToList();
                 //If all of the effects related to the effect group are marked for deletion, then mark entire Effect Group for deletion by setting DeleteOnSave = true
                 foreach(var effectGroup in effectGroups){
-                    if(effectGroup.R_OwnedEffects.Count > 0 && !effectGroup.R_OwnedEffects.Any(x => x.DeleteOnSave == false)){
+                    if(effectGroup.R_OwnedEffects.Count <= 0 || !effectGroup.R_OwnedEffects.Any(x => x.DeleteOnSave == false)){
                         effectGroup.DeleteOnSave = true;
                     }
                 }
                 //If EffectGroup has DeleteOnSave == true, mark entity state as Deleted
-                var entries = context.ChangeTracker.Entries<EffectGroup>();
-                foreach (var entry in entries)
+                var effectGroupEntries = context.ChangeTracker.Entries<EffectGroup>();
+                foreach (var entry in effectGroupEntries)
+                {
+                    if (entry.Entity.DeleteOnSave)
+                    {
+                        entry.State = EntityState.Deleted;
+                    }
+                }
+                foreach (var entry in effectInstanceEntries)
                 {
                     if (entry.Entity.DeleteOnSave)
                     {

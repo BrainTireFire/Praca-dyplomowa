@@ -35,8 +35,10 @@ import useMakeWeaponAttack from "../hooks/useMakeWeaponAttack";
 
 export function WeaponAttackResolution({
   controlState,
+  onCloseModal
 }: {
   controlState: ControlState;
+  onCloseModal: () => any
 }) {
   const { groupName } = useParams<{ groupName: string }>();
   const { isLoading: isLoadingWeaponDamage, weaponAttackData } =
@@ -70,7 +72,7 @@ export function WeaponAttackResolution({
     controlState.weaponAttackRollOverlayData?.targetId!,
     controlState.weaponAttackSelected?.weaponId!,
     controlState.weaponAttackSelected?.isRanged!,
-    () => {}
+    () => {onCloseModal()}
   );
 
   if (isLoadingWeaponDamage || isPendingAttack) {
@@ -97,7 +99,7 @@ export function WeaponAttackResolution({
               <TabsContainer1>
                 <TableContainer>
                   <ReusableTable
-                    mainHeader={`Conditional effects for attacker`}
+                    mainHeader={`Conditional effects for ${weaponAttackData?.attackerName}`}
                     tableRowsColomns={{
                       Name: "name",
                       Description: "description",
@@ -134,7 +136,7 @@ export function WeaponAttackResolution({
                 </TableContainer>
                 <TableContainer>
                   <ReusableTable
-                    mainHeader={`Conditional effects for target`}
+                    mainHeader={`Conditional effects for  ${weaponAttackData?.targetName}`}
                     tableRowsColomns={{
                       Name: "name",
                       Description: "description",
@@ -310,7 +312,7 @@ export function WeaponAttackResolution({
                         Description: "description",
                       }}
                       data={
-                        x.powerEffects[0].map((effect, index: number) => {
+                        x.powerEffects[0]?.map((effect, index: number) => {
                           return {
                             id: index,
                             name: effect.powerEffectName,
@@ -333,7 +335,7 @@ export function WeaponAttackResolution({
                         Description: "description",
                       }}
                       data={
-                        x.powerEffects[1].map((effect, index: number) => {
+                        x.powerEffects[1]?.map((effect, index: number) => {
                           return {
                             id: index,
                             name: effect.powerEffectName,
@@ -361,6 +363,11 @@ export function WeaponAttackResolution({
       </ButtonGroup>
     </Container>
   );
+}
+
+
+WeaponAttackResolution.defaultProps = {
+  onCloseModal: () => {}
 }
 
 const Container = styled.div`

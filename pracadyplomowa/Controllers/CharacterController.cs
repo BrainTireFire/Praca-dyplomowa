@@ -28,6 +28,7 @@ using static pracadyplomowa.Models.Entities.Characters.ChoiceGroup;
 using static pracadyplomowa.Models.Entities.Powers.SkillEffectInstance;
 using pracadyplomowa.Services.Websockets.Notification;
 using pracadyplomowa.Utility;
+using pracadyplomowa.Services.Encounter;
 
 namespace pracadyplomowa.Controllers
 {
@@ -299,7 +300,7 @@ namespace pracadyplomowa.Controllers
                 Name = cl.R_Class.Name,
                 Level = cl.Level,
                 ChoiceGroups = cl.R_ChoiceGroups.Select(cg => new ChoiceGroupDto(cg, character)),
-                HitDice = cl.HitDie,
+                HitDice = new DiceSetDto(cl.HitDie),
                 HitPoints = cl.HitPoints,
             }).ToList();
             return Ok(result);
@@ -641,72 +642,6 @@ namespace pracadyplomowa.Controllers
             return Ok();
         }
 
-        [HttpGet("{characterId}/allPowersForEncounter")]
-        public async Task<ActionResult<List<PowerForEncounterDto>>> GetPowersForEncounter(int characterId){
-            if (!_characterService.CheckExistenceAndReadEditAccess(characterId, User.GetUserId(), [Character.AccessLevels.Read], out var errorResult, out var grantedAccessLevels, out var character))
-            {
-                return errorResult;
-            }
-            character = await _unitOfWork.CharacterRepository.GetByIdWithAll(characterId);
-            var powers = await _unitOfWork.PowerRepository.GetAllByIdsWithEffectBlueprintsAndMaterialResources(character.AllPowers.Select(x => x.Id).ToList());
-
-            var result = new List<PowerForEncounterDto>();
-            foreach(var power in character.AllPowers){
-                var materialComponentsRequired = power.R_ItemsCostRequirement.Select(x => new PowerForEncounterDto.MaterialComponentDto(){
-                    Id = x.R_ItemFamilyId,
-                    Name = x.R_ItemFamily.Name,
-                    Cost = x.Worth
-                }).ToList();
-                var materialComponentsSatisfied = character.HasAllMaterialComponentsForPower(power);
-                var mainHandsOccupied = character.R_EquippedItems.SelectMany(x => x.R_Slots)
-                                                                         .Where(x => x.Type == SlotType.MainHand)
-                                                                         .Count();
-                var offHandsOccupied = character.R_EquippedItems.SelectMany(x => x.R_Slots)
-                                                                         .Where(x => x.Type == SlotType.OffHand)
-                                                                         .Count();
-                var mainHandsPossesed = character.R_CharacterBelongsToRace.R_EquipmentSlots.Where(x => x.Type == SlotType.MainHand).Count();
-                var offHandsPossesed = character.R_CharacterBelongsToRace.R_EquipmentSlots.Where(x => x.Type == SlotType.OffHand).Count();
-                var spellcastingFocusHeld = character.R_EquippedItems.Where(x => x.R_Item.IsSpellFocus && x.R_Slots.Where(y => y.Type == SlotType.MainHand || y.Type == SlotType.MainHand).Any()).Any();
-                bool somaticComponentRequirementSatisfied = mainHandsPossesed - mainHandsOccupied > 0 || offHandsOccupied - offHandsPossesed > 0 || spellcastingFocusHeld || !power.SomaticComponent;
-                bool vocalComponentSatisfied = !character.HasAnyCondition([Condition.Muffled, Condition.Petrified]) || !power.VerbalComponent;
-                var powerDto = new PowerForEncounterDto(){
-                    Id = power.Id,
-                    Name = power.Name,
-                    Description = power.Description,
-                    ResourceName = power.R_UsesImmaterialResource?.Name,
-                    AvailableLevels = [],
-                    ActionTypeRequired = power.RequiredActionType,
-                    RequiredResourceAvailable = true,
-                    MaterialComponents = materialComponentsRequired,
-                    RequiredMaterialComponentsAvailable = materialComponentsSatisfied,
-                    SomaticComponentRequirementSatisfied = somaticComponentRequirementSatisfied,
-                    VocalComponentRequirementSatisfied = vocalComponentSatisfied,
-                    Range = power.Range,
-                    MaxTargets = power.MaxTargets,
-                    AreaShape = power.AreaShape,
-                    AreaSize = power.AreaSize,
-                    CastableBy = power.CastableBy,
-                    PowerType = power.PowerType,
-                    TargetType = power.TargetType
-                };
-                var levelsCastable = new List<int>();
-                if(power.UpcastBy == UpcastBy.ResourceLevel){
-                    var powerLevels = power.R_EffectBlueprints.Select(x => x.Level).Distinct().Order().ToList();
-                    levelsCastable.AddRange(power.R_EffectBlueprints.Select(x => x.Level).Distinct().Where(x => power.RequiredResourceAvailable(character, x)));
-                    foreach(var level in powerLevels){
-                        foreach(var resourceLevel in character.AllImmaterialResourceInstances.Where(x => !x.NeedsRefresh && x.Level >= level && x.R_BlueprintId == power.R_UsesImmaterialResource?.Id).Select(x => x.Level).Distinct().Order().ToList()){
-                            powerDto.AvailableLevels.Add(new PowerForEncounterDto.ImmaterialResourceSelection(){
-                                PowerLevel = level,
-                                ResourceLevel = resourceLevel
-                            });
-                        }
-                    }
-                    powerDto.RequiredResourceAvailable = powerDto.AvailableLevels.Count > 0;
-                }
-                result.Add(powerDto);
-            }
-            return result;
-        }
 
         [HttpGet("{characterId}/concentration")]
         public async Task<ActionResult<ConcentrationDataDto>> GetPowerConcentratedOn([FromRoute] int characterId)

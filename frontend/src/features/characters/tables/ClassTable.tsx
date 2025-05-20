@@ -133,7 +133,6 @@ function ClassLevelSelectionScreen({
 
   //mutation
   const { saveNextClassLevel, isPending } = useSelectNextClassLevel(() => {
-    toast.success("Character developed!");
     onCloseModal();
     return;
   });

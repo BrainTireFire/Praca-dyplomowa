@@ -12,8 +12,10 @@ import { MaterialComponent } from "./models/power";
 
 export default function MaterialComponentForm({
   materialComponent,
+  onCloseModal
 }: {
   materialComponent: MaterialComponent;
+  onCloseModal: any
 }) {
   const { powerId } = useContext(PowerIdContext);
   const { isLoading, itemFamilies, error } = useItemFamilies(powerId);
@@ -22,10 +24,10 @@ export default function MaterialComponentForm({
     materialComponent.worth.goldPieces
   );
   const [silverPieces, setSilverPieces] = useState(
-    materialComponent.worth.goldPieces
+    materialComponent.worth.silverPieces
   );
   const [copperPieces, setCopperPieces] = useState(
-    materialComponent.worth.goldPieces
+    materialComponent.worth.copperPieces
   );
 
   const [selectedItemFamilyId, setSelectedItemFamilyId] = useState<
@@ -33,9 +35,9 @@ export default function MaterialComponentForm({
   >(materialComponent.itemFamilyId);
 
   const { createMaterialComponent, isPending: isPendingCreate } =
-    useCreateMaterialComponent(() => {}, powerId);
+    useCreateMaterialComponent(() => {onCloseModal()}, powerId);
   const { updateMaterialComponent, isPending: isPendingUpdate } =
-    useUpdateMaterialComponent(() => {}, powerId);
+    useUpdateMaterialComponent(() => {onCloseModal()}, powerId);
 
   if (isLoading || isPendingCreate || isPendingUpdate) {
     return <Spinner></Spinner>;
@@ -121,4 +123,8 @@ export default function MaterialComponentForm({
       )}
     </>
   );
+}
+
+MaterialComponentForm.defaultProps = {
+  onCloseModal: () => {}
 }

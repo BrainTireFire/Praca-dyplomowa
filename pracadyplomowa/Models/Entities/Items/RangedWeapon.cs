@@ -27,7 +27,7 @@ namespace pracadyplomowa.Models.Entities.Items
         public bool IsReloaded { get; set; }
 
         protected override int GetAbilityBonus(){
-            return R_EquipData != null && R_EquipData.R_Slots.Select(s => s.Type).Contains(Enums.SlotType.MainHand) ? Wielder.DexterityModifier : 0;
+            return R_EquipData != null ? Wielder.DexterityModifier : 0;
         }
         public override DiceSet GetBaseEquippedAttackBonus(){
             return GetBaseEquippedAttackBonus_Base(Enums.EffectOptions.AttackRollEffect_Range.Ranged);

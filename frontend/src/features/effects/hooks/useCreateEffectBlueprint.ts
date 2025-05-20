@@ -16,6 +16,7 @@ export function useCreateEffectBlueprint(
       queryClient.invalidateQueries({ queryKey: ["power", powerId] });
       // Explicitly refetch the query after invalidation
       queryClient.refetchQueries({ queryKey: ["power", powerId] });
+      toast.success("Effect created succesfully");
       onSuccess(id);
     },
     onError: (error) => {

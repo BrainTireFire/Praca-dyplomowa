@@ -12,7 +12,6 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectBlueprints
         protected ValueEffectBlueprint(): this("EF", 0, 0){}
         public RollMoment RollMoment { get; set; } = rollMoment;
         public DiceSet DiceSet {get; set;} = value;
-        public int DiceSetId {get; set;} = value.Id;
 
         // public abstract EffectInstance Generate(Character? roller, Character target);
         // //     return new ValueEffectInstance(this, roller, target);

@@ -16,6 +16,7 @@ export function useUpdateImmaterialResource(onSuccess: () => void) {
       queryClient.refetchQueries({
         queryKey: ["immaterialResourceBlueprints"],
       });
+      toast.success("Immaterial resource updated");
       onSuccess();
     },
     onError: (error) => {

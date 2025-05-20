@@ -8,4 +8,5 @@ export type WeaponAttack = {
   damageType: number;
   range: number | null;
   reach: number | null;
+  weaponName: string;
 };

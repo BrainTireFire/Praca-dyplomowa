@@ -74,7 +74,7 @@ export type PowerType =
   | "Saveable"
   // | "MinionSpawner_1_of"
   // | "MinionSpawner_multiple"
-  | "AuraCreator"
+  // | "AuraCreator"
   | "PassiveEffect";
 // | "Polymorphism"
 export const PowerTypeLabels: { [key in PowerType]: string } = {
@@ -83,7 +83,7 @@ export const PowerTypeLabels: { [key in PowerType]: string } = {
   // MinionSpawner_1_of: "Minion Spawner (1 of)",
   // MinionSpawner_multiple: "Minion Spawner (Multiple)",
   PassiveEffect: "Passive Effect",
-  AuraCreator: "Aura Creator",
+  // AuraCreator: "Aura Creator",
   // Polymorphism: "Polymorphism",
 };
 

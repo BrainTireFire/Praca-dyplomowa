@@ -10,6 +10,7 @@ export function useDeleteEffectInstance(onSuccess: () => void, itemId: number) {
       queryClient.invalidateQueries({ queryKey: ["item", itemId] });
       // Explicitly refetch the query after invalidation
       queryClient.refetchQueries({ queryKey: ["item", itemId] });
+      toast.success("Effect deleted");
       onSuccess();
     },
     onError: (error) => {

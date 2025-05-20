@@ -84,7 +84,7 @@ namespace pracadyplomowa.Controllers
             };
             _unitOfWork.ItemFamilyRepository.Add(newItemFamily);
             await _unitOfWork.SaveChangesAsync();
-            return Ok();
+            return Ok(newItemFamily.Id);
         }
 
         [HttpPatch]

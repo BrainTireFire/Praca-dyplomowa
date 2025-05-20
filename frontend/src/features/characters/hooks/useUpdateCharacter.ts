@@ -23,6 +23,7 @@ export function useUpdateCharacter(characterId: number, onSuccess: () => void) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["character", characterId] });
       queryClient.invalidateQueries({ queryKey: ["characters"] });
+      toast.success("Character updated");
       onSuccess();
     },
     onError: (error) => {

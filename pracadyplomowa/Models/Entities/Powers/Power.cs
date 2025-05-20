@@ -87,7 +87,7 @@ namespace pracadyplomowa.Models.Entities.Powers
             }
         }
         public bool IsRanged { get; set; } = false;
-        public int? Range { get; set; }
+        public int? Range { get; set; } = 5;
         public int MaxTargets { get; set; } = 1;
         public int MaxTargetsToExclude { get; set; }
         public int? AreaSize { get; set; }
@@ -236,6 +236,12 @@ namespace pracadyplomowa.Models.Entities.Powers
                 yield return new ValidationResult(
                     "Ranged powers must have positive range defined",
                     [nameof(IsRanged), nameof(Range)]
+                );
+            }
+            if(Range % 5 != 0){
+                yield return new ValidationResult(
+                    "Range must be a multiple of 5",
+                    [nameof(Range)]
                 );
             }
             // if(PowerType == PowerType.AuraCreator || AreaShape != Enums.AreaShape.None && MaxTargets != 0){

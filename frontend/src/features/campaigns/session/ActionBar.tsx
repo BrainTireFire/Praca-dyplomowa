@@ -42,6 +42,7 @@ const initialParticipanceData: ParticipanceData = {
   temporaryHitpoints: 0,
   succeededDeathSaves: 0,
   failedDeathSaves: 0,
+  size: "Medium"
 };
 
 export type ParticipanceAction =
@@ -424,7 +425,7 @@ export default function ActionBar({
                       {controlledCharacterId && (
                         <AttackSelectionScreen
                           characterId={controlledCharacterId}
-                          participanceData={participanceState}
+                          encounterId={encounter.id}
                           dispatch={dispatch}
                         />
                       )}
@@ -446,6 +447,7 @@ export default function ActionBar({
                       {controlledCharacterId && (
                         <PowerSelectionScreen
                           characterId={controlledCharacterId}
+                          encounterId={encounter.id}
                           participanceData={participanceState}
                           dispatch={dispatch}
                         />

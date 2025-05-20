@@ -17,6 +17,7 @@ export function useUnequipItem(onSuccess: () => void) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["equipmentAndSlots"] });
       queryClient.invalidateQueries({ queryKey: ["character"] });
+      toast.success("Item unequipped");
       onSuccess();
     },
     onError: (error) => {

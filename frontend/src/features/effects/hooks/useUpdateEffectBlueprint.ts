@@ -18,6 +18,7 @@ export function useUpdateEffectBlueprint(
       });
 
       queryClient.invalidateQueries({ queryKey: ["power", powerId] });
+      toast.success("Effect updated succesfully");
       onSuccess();
     },
     onError: (error) => {

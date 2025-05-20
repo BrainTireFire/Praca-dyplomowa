@@ -27,6 +27,10 @@ import { ItemIdContext } from "./contexts/ItemIdContext";
 import EquippableItemForm from "./subforms/EquippableItemForm";
 import { EditModeContext } from "../../context/EditModeContext";
 import { identityToTypeMapping } from "../../pages/items/itemTypes";
+import { useDeleteItem } from "./hooks/useDeleteItem";
+import { useNavigate } from "react-router-dom";
+import Modal from "../../ui/containers/Modal";
+import ConfirmDelete from "../../ui/containers/ConfirmDelete";
 
 export type ItemAction =
   | { type: "SET_ITEM"; payload: Item }
@@ -110,16 +114,24 @@ export const itemReducer: Reducer<Item, ItemAction> = (state, action) => {
 export default function ItemForm({
   itemId,
   initialFormValues,
+  onCloseModal
 }: {
   itemId: number | null;
   initialFormValues: Item;
+  onCloseModal: any;
 }) {
+  const navigate = useNavigate();
   const { editMode } = useContext(EditModeContext);
-  const { isPending: isPendingPost, createItem } = useCreateItem(() => {});
+  const { isPending: isPendingPost, createItem } = useCreateItem((id: number) => {navigate(`/items?id=${id}`); onCloseModal();});
   const { isPending: isPendingUpdate, updateItem } = useUpdateItem(() => {});
+  const { isPending: isPendingDelete, deleteItem} = useDeleteItem(() => {navigate(`/items`)});
   const { isLoading, item, error } = useItem(itemId);
   const [state, dispatch] = useReducer(itemReducer, item ?? initialFormValues);
   const [resetHappened, setResetHappened] = useState(false);
+  // const handleChangeItem = (chosenItemId: number) => {
+  //   console.log(chosenItemId);
+  //   navigate(`/items?id=${chosenItemId}`)
+  // };
   // Update local state when data is fetched
   useEffect(() => {
     if (item) {
@@ -151,6 +163,7 @@ export default function ItemForm({
   if (
     isPendingPost ||
     isPendingUpdate ||
+    isPendingDelete ||
     (itemId !== null && (isLoading || !resetHappened || isLoadingItemFamilies))
   )
     return <Spinner></Spinner>;
@@ -310,6 +323,7 @@ export default function ItemForm({
               </Row3>
             </Grid>
           </GridContainer>
+          <UDButtonContainer>
           {itemId === null && (
             <Button
               onClick={() => createItem(state)}
@@ -319,13 +333,32 @@ export default function ItemForm({
             </Button>
           )}
           {itemId !== null && (
-            <Button
-              onClick={() => updateItem(state)}
-              disabled={isSavingChangesDisallowed() || disableUpdate}
-            >
-              {disableUpdate ? "You cannot edit this object" : "Update"}
-            </Button>
+            <>
+              <Button
+                onClick={() => updateItem(state)}
+                disabled={isSavingChangesDisallowed() || disableUpdate}
+                >
+                {disableUpdate ? "You cannot edit this object" : "Update"}
+              </Button>
+              <Modal>
+                <Modal.Open opens="ConfirmDelete">
+                  <Button variation="secondary"
+                    disabled={disableUpdate}
+                    >
+                    {disableUpdate ? "You cannot delete this object" : "Delete"}
+                  </Button>
+                </Modal.Open>
+                <Modal.Window name="ConfirmDelete">
+                  <ConfirmDelete
+                    resourceName={"item"}
+                    onConfirm={() =>  deleteItem(itemId)}
+                    />
+                </Modal.Window>
+              </Modal>
+            </>
+              
           )}
+            </UDButtonContainer>
         </ItemIdContext.Provider>
       </EditModeContext.Provider>
     </Container>
@@ -375,8 +408,16 @@ const Row3 = styled.div`
   grid-row: 3/4;
   row-gap: 2px;
 `;
+const UDButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  justify-content: center;
+  margin: 10px;
+`;
 
 ItemForm.defaultProps = {
   itemId: null,
   initialFormValues: itemInitialValue,
+  onCloseModal: () => {}
 };

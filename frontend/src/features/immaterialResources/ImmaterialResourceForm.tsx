@@ -17,6 +17,9 @@ import { useCreateImmaterialResource } from "./hooks/useCreateImmaterialResource
 import { useUpdateImmaterialResource } from "./hooks/useUpdateImmaterialResource";
 import { useDeleteImmaterialResource } from "./hooks/useDeleteImmaterialResource";
 import Dropdown from "../../ui/forms/Dropdown";
+import Modal from "../../ui/containers/Modal";
+import ConfirmDelete from "../../ui/containers/ConfirmDelete";
+import { useNavigate } from "react-router-dom";
 
 export type ResourceAction =
   | { type: "SET_ITEM"; payload: ImmaterialResourceBlueprintWithOwner }
@@ -55,18 +58,22 @@ export const immaterialResourceReducer: Reducer<
 
 export default function ImmaterialResourceForm({
   immaterialResourceId,
+  onCloseModal
 }: {
   immaterialResourceId: number | null;
+  onCloseModal: any
 }) {
+  const navigate = useNavigate();
   const { editMode } = useContext(EditModeContext);
   const { isLoading, immaterialResource, error } =
     useImmaterialResource(immaterialResourceId);
   const { isPending: isPendingPost, createImmaterialResourceBlueprint } =
-    useCreateImmaterialResource(() => {});
+    useCreateImmaterialResource((id: number) => {navigate(`/immaterialResources?id=${id}`); onCloseModal()});
   const { isPending: isPendingUpdate, updateImmaterialResourceBlueprint } =
     useUpdateImmaterialResource(() => {});
+    
   const { isPending: isPendingDelete, deleteImmaterialResourceBlueprint } =
-    useDeleteImmaterialResource(() => {});
+    useDeleteImmaterialResource(() => {navigate(`/immaterialResources`)});
 
   const [state, dispatch] = useReducer(
     immaterialResourceReducer,
@@ -127,40 +134,49 @@ export default function ImmaterialResourceForm({
           ></Dropdown>
         </FormRowVertical>
       </Container>
-      {immaterialResourceId === null && (
-        <Button
-          onClick={() =>
-            createImmaterialResourceBlueprint(
-              state as ImmaterialResourceBlueprint
-            )
-          }
-          disabled={isSavingChangesDisallowed() || disableChanges}
-        >
-          Save
-        </Button>
-      )}
-      {immaterialResourceId !== null && (
-        <Button
-          onClick={() =>
-            updateImmaterialResourceBlueprint(
-              state as ImmaterialResourceBlueprint
-            )
-          }
-          disabled={isSavingChangesDisallowed() || disableChanges}
-        >
-          {disableChanges ? "You cannot edit this object" : "Update"}
-        </Button>
-      )}
-      {immaterialResourceId !== null && (
-        <Button
-          onClick={() =>
-            deleteImmaterialResourceBlueprint(immaterialResourceId)
-          }
-          disabled={isSavingChangesDisallowed() || disableChanges}
-        >
-          {disableChanges ? "You cannot delete this object" : "Delete"}
-        </Button>
-      )}
+      <UDButtonContainer>
+        {immaterialResourceId === null && (
+          <Button
+            onClick={() =>
+              createImmaterialResourceBlueprint(
+                state as ImmaterialResourceBlueprint
+              )
+            }
+            disabled={isSavingChangesDisallowed() || disableChanges}
+          >
+            Save
+          </Button>
+        )}
+        {immaterialResourceId !== null && (
+          <Button
+            onClick={() =>
+              updateImmaterialResourceBlueprint(
+                state as ImmaterialResourceBlueprint
+              )
+            }
+            disabled={isSavingChangesDisallowed() || disableChanges}
+          >
+            {disableChanges ? "You cannot edit this object" : "Update"}
+          </Button>
+        )}
+        {immaterialResourceId !== null && (
+          <Modal>
+            <Modal.Open opens="ConfirmDelete">
+              <Button
+                disabled={isSavingChangesDisallowed() || disableChanges}
+              >
+                {disableChanges ? "You cannot delete this object" : "Delete"}
+              </Button>
+            </Modal.Open>
+            <Modal.Window name="ConfirmDelete">
+              <ConfirmDelete
+                resourceName={"Immaterial Resource"}
+                onConfirm={() =>  deleteImmaterialResourceBlueprint(immaterialResourceId)}
+                />
+            </Modal.Window>
+          </Modal>
+        )}
+      </UDButtonContainer>
     </>
   );
 }
@@ -173,4 +189,13 @@ const Container = styled(Box)`
   flex: 1;
   overflow-y: hidden;
   padding: 0rem 1rem 0rem 1rem;
+`;
+
+
+const UDButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  justify-content: center;
+  margin: 10px;
 `;

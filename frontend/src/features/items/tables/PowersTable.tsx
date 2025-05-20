@@ -2,7 +2,7 @@ import Menus from "../../../ui/containers/Menus";
 import Table from "../../../ui/containers/Table";
 import styled from "styled-components";
 import { PowerListItem } from "../../../models/power";
-import { PowerSelectionForm } from "../../powers/PowerSelectionForm";
+import { PowerSelectionFormItem } from "./PowerSelectionFormItem";
 import { ParentObjectIdContext } from "../../../context/ParentObjectIdContext";
 import { ItemIdContext } from "../contexts/ItemIdContext";
 import { useContext } from "react";
@@ -19,7 +19,7 @@ export default function PowersTable({ powers }: { powers: PowerListItem[] }) {
           <ParentObjectIdContext.Provider
             value={{ objectId: itemId, objectType: "Item" }}
           >
-            <PowerSelectionForm />
+            <PowerSelectionFormItem />
           </ParentObjectIdContext.Provider>
         }
       >

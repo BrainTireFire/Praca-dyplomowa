@@ -7,7 +7,7 @@ export function usePowers(params?: Record<string, string | number | boolean>) {
     data: powers,
     error,
   } = useQuery({
-    queryKey: ["powerList"],
+    queryKey: ["powerList", params],
     queryFn: () => getPowers(params),
   });
 

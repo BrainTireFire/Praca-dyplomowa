@@ -8,7 +8,7 @@ export function useCreatePower(onSuccess: (id: number) => void) {
   const { mutate: createPower, isPending } = useMutation({
     mutationFn: (power: Power) => postPower(power),
     onSuccess: (id: number) => {
-      queryClient.invalidateQueries({ queryKey: ["powerList"] });
+      queryClient.invalidateQueries({ queryKey: ["powerList"], exact: false });
       onSuccess(id);
     },
     onError: (error) => {

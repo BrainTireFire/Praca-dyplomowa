@@ -15,7 +15,7 @@ export async function getItemFamily(itemFamilyId: number): Promise<ItemFamily> {
   return response;
 }
 
-export async function postItemFamily(itemFamily: ItemFamily): Promise<void> {
+export async function postItemFamily(itemFamily: ItemFamily): Promise<number> {
   const options: RequestInit = {
     method: "POST",
     headers: {
@@ -23,8 +23,7 @@ export async function postItemFamily(itemFamily: ItemFamily): Promise<void> {
     },
     body: JSON.stringify(itemFamily),
   };
-  await customFetch(`${BASE_URL}/api/itemFamily`, options);
-  return;
+  return await customFetch(`${BASE_URL}/api/itemFamily`, options);
 }
 
 export async function updateItemFamily(itemFamily: ItemFamily): Promise<void> {

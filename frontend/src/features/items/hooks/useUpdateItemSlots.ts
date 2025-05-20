@@ -11,6 +11,7 @@ export function useUpdateItemSlots(onSuccess: () => void, itemId: number) {
       queryClient.invalidateQueries({ queryKey: ["itemSlotList"] });
       queryClient.invalidateQueries({ queryKey: ["item", itemId] });
       queryClient.refetchQueries({ queryKey: ["itemSlotList"] });
+      toast.success("Occupied slots updated");
       onSuccess();
     },
     onError: (error) => {

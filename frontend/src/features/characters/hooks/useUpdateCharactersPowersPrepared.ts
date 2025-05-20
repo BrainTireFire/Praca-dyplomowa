@@ -21,12 +21,12 @@ export function useUpdateCharactersPowersPrepared(
           queryKey: ["characterPreparedPowerList"],
         });
         queryClient.invalidateQueries({ queryKey: ["character", characterId] });
-
+        toast.success("Prepared powers saved.");
         onSuccess();
       },
       onError: (error) => {
         console.error(error);
-        toast.error("Item update failed");
+        toast.error("Power preparation failed.");
       },
     });
 

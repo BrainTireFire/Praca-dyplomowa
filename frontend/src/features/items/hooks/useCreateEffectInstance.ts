@@ -12,6 +12,7 @@ export function useCreateEffectInstance(onSuccess: () => void, itemId: number) {
       queryClient.invalidateQueries({ queryKey: ["item", itemId] });
       // Explicitly refetch the query after invalidation
       queryClient.refetchQueries({ queryKey: ["item", itemId] });
+      toast.success("Effect added");
       onSuccess();
     },
     onError: (error) => {

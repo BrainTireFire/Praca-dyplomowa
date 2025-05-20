@@ -26,11 +26,12 @@ export function useUpdateObjectResources(
         queryClient.refetchQueries({ queryKey: ["characterResourceList"] });
         queryClient.invalidateQueries({ queryKey: ["character", objectId] });
       }
+      toast.success("Resource selection saved.");
       onSuccess();
     },
     onError: (error) => {
       console.error(error);
-      toast.error("Item update failed");
+      toast.error("Resource selection failed.");
     },
   });
 

@@ -48,18 +48,20 @@ export const itemFamilyReducer: Reducer<ItemFamily, ItemFamilyAction> = (
 
 export default function ItemFamilyForm({
   itemFamilyId,
+  onCloseModal
 }: {
   itemFamilyId: number | null;
+  onCloseModal: any
 }) {
+  const navigate = useNavigate();
   const { editMode } = useContext(EditModeContext);
   const { isLoading, itemFamily, error } = useItemFamily(itemFamilyId);
   const { isPending: isPendingPost, createItemFamily } = useCreateItemFamily(
-    () => {}
+    (id: number) => {navigate(`/itemFamilies?id=${id}`); onCloseModal()}
   );
   const { isPending: isPendingUpdate, updateItemFamily } = useUpdateItemFamily(
     () => {}
   );
-  const navigate = useNavigate();
   const { isPending: isPendingDelete, deleteItemFamily } = useDeleteItemFamily(
     () => {navigate(`/itemFamilies`)}
   );
@@ -164,6 +166,7 @@ export default function ItemFamilyForm({
 
 ItemFamilyForm.defaultProps = {
   itemFamilyId: null,
+  onCloseModal: () => {}
 };
 
 const Container = styled(Box)`

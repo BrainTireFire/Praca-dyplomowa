@@ -35,6 +35,8 @@ export function useCreateEffectInstance(
       queryClient.invalidateQueries({ queryKey: [queryKey, objectId] });
       // Explicitly refetch the query after invalidation
       queryClient.refetchQueries({ queryKey: [queryKey, objectId] });
+      
+      toast.success("Effect created succesfully");
       onSuccess(id);
     },
     onError: (error) => {

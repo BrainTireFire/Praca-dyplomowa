@@ -16,6 +16,7 @@ export function useDeleteImmaterialResource(onSuccess: () => void) {
       queryClient.refetchQueries({
         queryKey: ["immaterialResourceBlueprints"],
       });
+      toast.success("Immaterial resource deleted");
       onSuccess();
     },
     onError: (error) => {

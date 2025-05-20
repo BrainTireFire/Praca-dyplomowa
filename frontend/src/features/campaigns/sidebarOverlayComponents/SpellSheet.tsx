@@ -3,7 +3,7 @@ import { Character } from "../../../models/character";
 import { EditModeContext } from "../../../context/EditModeContext";
 import { useContext } from "react";
 import ReadyPowerTable from "../../characters/tables/ReadyPowersTable";
-import PowersTable from "../../items/tables/PowersTable";
+import PowersTable from "../../characters/tables/PowersTable";
 import ResourceTable from "../../characters/tables/ResourceTable";
 
 const MainGrid = styled.div`

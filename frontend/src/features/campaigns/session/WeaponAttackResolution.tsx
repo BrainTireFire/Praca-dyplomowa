@@ -35,8 +35,10 @@ import useMakeWeaponAttack from "../hooks/useMakeWeaponAttack";
 
 export function WeaponAttackResolution({
   controlState,
+  onCloseModal
 }: {
   controlState: ControlState;
+  onCloseModal: () => any
 }) {
   const { groupName } = useParams<{ groupName: string }>();
   const { isLoading: isLoadingWeaponDamage, weaponAttackData } =
@@ -70,7 +72,7 @@ export function WeaponAttackResolution({
     controlState.weaponAttackRollOverlayData?.targetId!,
     controlState.weaponAttackSelected?.weaponId!,
     controlState.weaponAttackSelected?.isRanged!,
-    () => {}
+    () => {onCloseModal()}
   );
 
   if (isLoadingWeaponDamage || isPendingAttack) {
@@ -361,6 +363,11 @@ export function WeaponAttackResolution({
       </ButtonGroup>
     </Container>
   );
+}
+
+
+WeaponAttackResolution.defaultProps = {
+  onCloseModal: () => {}
 }
 
 const Container = styled.div`

@@ -309,21 +309,21 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         {
                 optionsBuilder.AddInterceptors(new Data.DeletionInterceptor());
                 optionsBuilder.AddInterceptors(new Data.ValidationInterceptor());
-                optionsBuilder.UseLazyLoadingProxies();
-                var lazyLoadEvents = new[]
-                {
-                CoreEventId.NavigationLazyLoading,
-                CoreEventId.DetachedLazyLoadingWarning,
-                CoreEventId.LazyLoadOnDisposedContextWarning,
-        };
-#if DEBUG
-                optionsBuilder.ConfigureWarnings(w => w.Throw(lazyLoadEvents));
-#else
-        if (sp.GetService<IHostEnvironment>()?.IsEnvironment("PRD") ?? false)
-        {   //logs LazyLoad events as error everywhere else
-                optionsBuilder.ConfigureWarnings(w => w.Log(lazyLoadEvents.Select(lle => (lle, LogLevel.Error)).ToArray())); 
-        }
-#endif
+                // optionsBuilder.UseLazyLoadingProxies();
+                // var lazyLoadEvents = new[]
+                // {
+                //         CoreEventId.NavigationLazyLoading,
+                //         CoreEventId.DetachedLazyLoadingWarning,
+                //         CoreEventId.LazyLoadOnDisposedContextWarning,
+                // };
+                // #if DEBUG
+                // optionsBuilder.ConfigureWarnings(w => w.Throw(lazyLoadEvents));
+                // #else
+                // if (sp.GetService<IHostEnvironment>()?.IsEnvironment("PRD") ?? false)
+                // {   //logs LazyLoad events as error everywhere else
+                //         optionsBuilder.ConfigureWarnings(w => w.Log(lazyLoadEvents.Select(lle => (lle, LogLevel.Error)).ToArray())); 
+                // }
+                // #endif
                 base.OnConfiguring(optionsBuilder);
         }
 

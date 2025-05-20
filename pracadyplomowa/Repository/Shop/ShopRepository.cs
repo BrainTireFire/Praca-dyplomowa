@@ -27,5 +27,24 @@ namespace pracadyplomowa.Repository
 
             return items;
         }
+
+        public async Task<ShopItem> GetShopItem(int shopId, int itemId)
+        {
+            var item = await _context.ShopItems
+            .Include(e => e.R_ShopHasItem)
+            .FirstOrDefaultAsync(e => e.R_ShopHasItemId == itemId && e.R_ItemInShopId == shopId);
+
+            return item;
+        }
+
+        public void AddShopItem(ShopItem shopItem)
+        {
+            _context.ShopItems.Add(shopItem);
+        }
+
+        public void RemoveShopItem(ShopItem shopItem)
+        {
+            _context.ShopItems.Remove(shopItem);
+        }
     }
 }

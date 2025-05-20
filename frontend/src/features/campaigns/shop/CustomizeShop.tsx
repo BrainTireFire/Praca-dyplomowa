@@ -9,6 +9,8 @@ import { Shop, ShopItem } from "../../../models/shop";
 import { CoinPurse, coinPursePrint } from "../../items/models/coinPurse";
 import { useShopItems } from "./hooks/useShopItems";
 import { useAllItems } from "./hooks/useAllItems";
+import useUpdateShopItem from "./hooks/useUpdateShopItem";
+import useRemoveShopItem from "./hooks/useRemoveShopItem";
 
 const Container = styled.div`
   display: grid;
@@ -104,6 +106,9 @@ function CustomizeShop() {
     error: shopItemsError,
   } = useShopItems();
   const [shopItems, setShopItems] = useState(data);
+  const [copyPrice, setCopyPrice] = React.useState(true);
+  const { updateShopItem } = useUpdateShopItem();
+  const { removeShopItem } = useRemoveShopItem();
 
   useEffect(() => {
     if (data) {
@@ -154,43 +159,64 @@ function CustomizeShop() {
     }));
   };
 
-  const removeShopItem = () => {
-    const existingItem = shopItems.find(
-      (e: ShopItem) => e === selectedShopItem
-    );
-    if (!existingItem) return;
+  const handleRemoveShopItem = () => {
+    if (!selectedShopItem) return;
 
-    const diff = existingItem.quantity - quantity;
-    if (diff <= 0) {
-      setShopItems(shopItems.filter((e: ShopItem) => e !== selectedShopItem));
-    } else {
-      setShopItems(
-        shopItems.map((e: ShopItem) =>
-          e === selectedShopItem ? { ...e, quantity: diff } : e
-        )
+    setShopItems((prevShopItems) => {
+      if (!prevShopItems) return [];
+
+      const existingItem = prevShopItems.find(
+        (item) => item.id === selectedShopItem.id
       );
-    }
+
+      if (!existingItem) return prevShopItems;
+
+      const diff = existingItem.quantity - quantity;
+
+      if (diff <= 0) {
+        return prevShopItems.filter((item) => item.id !== selectedShopItem.id);
+      } else {
+        return prevShopItems.map((item) =>
+          item.id === selectedShopItem.id ? { ...item, quantity: diff } : item
+        );
+      }
+    });
+
+    removeShopItem({
+      shopId: shop.id,
+      itemId: selectedShopItem.id,
+      quantity: quantity,
+    });
   };
 
-  const updateShopItem = () => {
-    if (selectedItem === undefined) return;
+  const handleUpdateShopItem = () => {
+    if (!selectedItem) return;
 
-    const existingItem = shopItems.find((e: ShopItem) => e === selectedItem);
+    const updatedPrice = copyPrice ? selectedItem.price : price;
+    const existingQuantity =
+      shopItems.find((item) => item.id === selectedItem.id)?.quantity || 0;
 
-    if (existingItem) {
-      setShopItems(
-        shopItems.map((e: ShopItem) =>
-          e === existingItem
-            ? { ...e, quantity: e.quantity + quantity, price: price }
-            : e
-        )
+    const updatedItem: ShopItem = {
+      ...selectedItem,
+      quantity: quantity + existingQuantity,
+      price: updatedPrice,
+    };
+
+    setShopItems((prevShopItems = []) => {
+      const existingItemIndex = prevShopItems.findIndex(
+        (item) => item.id === selectedItem.id
       );
-    } else {
-      setShopItems([
-        ...shopItems,
-        { ...selectedItem, quantity: quantity, price: price },
-      ]);
-    }
+
+      if (existingItemIndex !== -1) {
+        const newItems = [...prevShopItems];
+        newItems[existingItemIndex] = updatedItem;
+        return newItems;
+      }
+
+      return [...prevShopItems, updatedItem];
+    });
+
+    updateShopItem({ shopId: shop.id, shopItem: updatedItem });
   };
 
   return (
@@ -206,6 +232,7 @@ function CustomizeShop() {
                 <Th>Name</Th>
                 <Th>Weight</Th>
                 <Th>Description</Th>
+                <Th>Price</Th>
               </thead>
               <tbody>
                 {items?.map((item) => (
@@ -222,6 +249,7 @@ function CustomizeShop() {
                     <Td>{item.name}</Td>
                     <Td>{item.weight}</Td>
                     <Td>{item.description}</Td>
+                    <Td>{coinPursePrint(item.price) || 0}</Td>
                   </Tr>
                 ))}
               </tbody>
@@ -229,42 +257,61 @@ function CustomizeShop() {
           </TableWrapper>
         </TableContainer>
         <MiddleContainer>
-          <p>Gold</p>
-          <Input
-            type="number"
-            value={price?.goldPieces}
-            onChange={(e) =>
-              changePrice("goldPieces", parseInt(e.target.value))
-            }
-            disabled={!selectedItem}
+          <div style={{ display: "flex", gap: "10px" }}>
+            <div style={{ textAlign: "center" }}>
+              <Input
+                type="number"
+                value={price?.goldPieces}
+                onChange={(e) =>
+                  changePrice("goldPieces", parseInt(e.target.value))
+                }
+                disabled={!selectedItem || copyPrice}
+                style={{ width: "35px" }}
+              />
+              <p>GP</p>
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <Input
+                type="number"
+                value={price?.silverPieces}
+                onChange={(e) =>
+                  changePrice("silverPieces", parseInt(e.target.value))
+                }
+                disabled={!selectedItem || copyPrice}
+                style={{ width: "35px" }}
+              />
+              <p>SP</p>
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <Input
+                type="number"
+                value={price?.copperPieces}
+                onChange={(e) =>
+                  changePrice("copperPieces", parseInt(e.target.value))
+                }
+                disabled={!selectedItem || copyPrice}
+                style={{ width: "35px" }}
+              />
+              <p>CP</p>
+            </div>
+          </div>
+          <p>Copy original price</p>
+          <input
+            type="checkbox"
+            checked={copyPrice}
+            onChange={() => setCopyPrice(!copyPrice)}
           />
-          <p>Silver</p>
-          <Input
-            type="number"
-            value={price?.silverPieces}
-            onChange={(e) =>
-              changePrice("silverPieces", parseInt(e.target.value))
-            }
-            disabled={!selectedItem}
-          />
-          <p>Copper</p>
-          <Input
-            type="number"
-            value={price?.copperPieces}
-            onChange={(e) =>
-              changePrice("copperPieces", parseInt(e.target.value))
-            }
-            disabled={!selectedItem}
-          />
-          <Button onClick={() => updateShopItem()}> → </Button>
-          <p>Quantity</p>
-          <Input
-            type="number"
-            value={quantity}
-            onChange={(e) => setQuantity(parseInt(e.target.value))}
-            disabled={!selectedItem && !selectedShopItem}
-          />
-          <Button onClick={() => removeShopItem()}> ← </Button>
+          <Button onClick={() => handleUpdateShopItem()}> → </Button>
+          <div style={{ textAlign: "center" }}>
+            <Input
+              type="number"
+              value={quantity}
+              onChange={(e) => setQuantity(parseInt(e.target.value))}
+              disabled={!selectedItem && !selectedShopItem}
+            />
+            <p>Quantity</p>
+          </div>
+          <Button onClick={() => handleRemoveShopItem()}> ← </Button>
         </MiddleContainer>
         <TableContainer>
           <Heading as="h1">Shop Inventory</Heading>

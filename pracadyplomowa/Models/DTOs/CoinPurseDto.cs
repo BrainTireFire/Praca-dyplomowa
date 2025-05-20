@@ -11,11 +11,5 @@ namespace pracadyplomowa.Models.DTOs
         public int GoldPieces { get; set; }
         public int SilverPieces { get; set; }
         public int CopperPieces { get; set; }
-        public CoinPurseDto(CoinSack coinSack)
-        {
-            GoldPieces = coinSack.GoldPieces;
-            SilverPieces = coinSack.SilverPieces;
-            CopperPieces = coinSack.CopperPieces;
-        }
     }
 }

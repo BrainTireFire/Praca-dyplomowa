@@ -269,17 +269,19 @@ export default function CharactersSheet() {
               }}
             >
               {editMode && EditLevelingUpPermission && (
-                <Modal>
-                  <Modal.Open opens="DevelopCharacter">
-                    <Button variation="primary">Develop character</Button>
-                  </Modal.Open>
-                  <Modal.Window name="DevelopCharacter">
-                    <SelectFromChoiceGroupScreen
-                      characterId={character.id}
-                      onCloseModal={() => {}}
-                    ></SelectFromChoiceGroupScreen>
-                  </Modal.Window>
-                </Modal>
+                <div style={{display: "flex", justifyContent: "center", alignItems: "center", margin: "5px"}}>
+                  <Modal>
+                    <Modal.Open opens="DevelopCharacter">
+                      <Button variation="primary">Develop character</Button>
+                    </Modal.Open>
+                    <Modal.Window name="DevelopCharacter">
+                      <SelectFromChoiceGroupScreen
+                        characterId={character.id}
+                        onCloseModal={() => {}}
+                        ></SelectFromChoiceGroupScreen>
+                    </Modal.Window>
+                  </Modal>
+                </div>
               )}
             </div>
             <div style={{ gridColumnStart: 3, gridColumnEnd: 5 }}>
@@ -338,14 +340,16 @@ export default function CharactersSheet() {
                 <EquipmentTable equipments={character.equipment} />
               </EditModeContext.Provider>
               {editMode && EditEquipmentInBackpackPermission && (
-                <Modal>
-                  <Modal.Open opens="AddNewItem">
-                    <Button>Add new item</Button>
-                  </Modal.Open>
-                  <Modal.Window name="AddNewItem">
-                    <AddEquipmentScreen></AddEquipmentScreen>
-                  </Modal.Window>
-                </Modal>
+                <div style={{display: "flex", justifyContent: "center", alignItems: "center", margin: "5px"}}>
+                  <Modal>
+                    <Modal.Open opens="AddNewItem">
+                      <Button>Add new item</Button>
+                    </Modal.Open>
+                    <Modal.Window name="AddNewItem">
+                      <AddEquipmentScreen></AddEquipmentScreen>
+                    </Modal.Window>
+                  </Modal>
+                </div>
               )}
             </div>
             <div

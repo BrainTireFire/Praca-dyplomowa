@@ -33,7 +33,7 @@ export async function getItem(itemId: number): Promise<Item> {
   return response;
 }
 
-export async function postItem(itemDto: Item): Promise<void> {
+export async function postItem(itemDto: Item): Promise<number> {
   console.log(itemDto);
   const options: RequestInit = {
     method: "POST",
@@ -52,8 +52,7 @@ export async function postItem(itemDto: Item): Promise<void> {
   } else if (itemDto.itemType === "MundaneItem") {
     endpointName = "mundaneItem";
   } else throw new Error("Unknown item type");
-  await customFetch(`${BASE_URL}/api/item/${endpointName}`, options);
-  return;
+  return await customFetch(`${BASE_URL}/api/item/${endpointName}`, options);
 }
 
 export async function updateItem(itemDto: Item): Promise<void> {

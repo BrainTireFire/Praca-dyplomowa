@@ -10,6 +10,7 @@ export function useUpdatePower(onSuccess: () => void) {
     onSuccess: (result: any) => {
       console.log(result);
       queryClient.invalidateQueries({ queryKey: ["powerList"] });
+      toast.success("Power updated");
       onSuccess();
     },
     onError: (error) => {

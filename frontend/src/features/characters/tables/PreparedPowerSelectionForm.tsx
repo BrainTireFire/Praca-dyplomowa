@@ -147,6 +147,7 @@ export function PreparedPowerSelectionForm({
             </FormRowVertical>
           </>
         )}
+        {isPending && <Spinner/>}
       </Column2>
       <Column3>
         {!isLoadingPowersPrepared && (

@@ -9,6 +9,7 @@ export function useCreatePower(onSuccess: (id: number) => void) {
     mutationFn: (power: Power) => postPower(power),
     onSuccess: (id: number) => {
       queryClient.invalidateQueries({ queryKey: ["powerList"], exact: false });
+      toast.success('Power created');
       onSuccess(id);
     },
     onError: (error) => {

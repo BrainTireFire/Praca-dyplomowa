@@ -114,13 +114,15 @@ export const itemReducer: Reducer<Item, ItemAction> = (state, action) => {
 export default function ItemForm({
   itemId,
   initialFormValues,
+  onCloseModal
 }: {
   itemId: number | null;
   initialFormValues: Item;
+  onCloseModal: any;
 }) {
   const navigate = useNavigate();
   const { editMode } = useContext(EditModeContext);
-  const { isPending: isPendingPost, createItem } = useCreateItem(() => {});
+  const { isPending: isPendingPost, createItem } = useCreateItem((id: number) => {navigate(`/items?id=${id}`); onCloseModal();});
   const { isPending: isPendingUpdate, updateItem } = useUpdateItem(() => {});
   const { isPending: isPendingDelete, deleteItem} = useDeleteItem(() => {navigate(`/items`)});
   const { isLoading, item, error } = useItem(itemId);
@@ -161,6 +163,7 @@ export default function ItemForm({
   if (
     isPendingPost ||
     isPendingUpdate ||
+    isPendingDelete ||
     (itemId !== null && (isLoading || !resetHappened || isLoadingItemFamilies))
   )
     return <Spinner></Spinner>;
@@ -416,4 +419,5 @@ const UDButtonContainer = styled.div`
 ItemForm.defaultProps = {
   itemId: null,
   initialFormValues: itemInitialValue,
+  onCloseModal: () => {}
 };

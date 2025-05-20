@@ -8,6 +8,7 @@ export function useDeletePower(onSuccess: () => void) {
     mutationFn: (powerId: number) => deletePowerApi(powerId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["powerList"] });
+      toast.success('Power deleted');
       onSuccess();
     },
     onError: (error) => {

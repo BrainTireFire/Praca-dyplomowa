@@ -8,6 +8,7 @@ export function useDeleteItem(onSuccess: () => void) {
     mutationFn: (itemId: number) => deleteItemApi(itemId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["itemList"] });
+      toast.success("Item deleted");
       onSuccess();
     },
     onError: (error) => {

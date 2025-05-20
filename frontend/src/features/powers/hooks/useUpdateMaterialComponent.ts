@@ -16,6 +16,7 @@ export function useUpdateMaterialComponent(
       queryClient.invalidateQueries({ queryKey: ["power", powerId] });
       // Explicitly refetch the query after invalidation
       queryClient.refetchQueries({ queryKey: ["power", powerId] });
+      toast.success("Material component updated");
       onSuccess();
     },
     onError: (error) => {

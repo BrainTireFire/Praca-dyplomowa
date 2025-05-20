@@ -117,6 +117,7 @@ export function PowerSelectionForm() {
             </Button>
           </>
         )}
+        {isPending && <Spinner/>}
       </Column2>
       <Column3>
         {!isLoadingItemPowers && (

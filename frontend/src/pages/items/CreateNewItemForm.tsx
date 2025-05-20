@@ -7,28 +7,31 @@ import {
   rangedWeaponBodyInitialValue,
 } from "../../features/items/models/item";
 import Button from "../../ui/interactive/Button";
-import { useCreateItem } from "../../features/items/hooks/useCreateItem";
-import { ItemIdentity, ItemType } from "./itemTypes";
+import { ItemIdentity } from "./itemTypes";
 import ItemForm from "../../features/items/ItemForm";
+import Heading from "../../ui/text/Heading";
 
-export default function CreateNewItemForm() {
+export default function CreateNewItemForm({onCloseModal}: {onCloseModal: any}) {
   const [itemType, setItemType] = useState<ItemIdentity | null>(null);
   return (
     <>
       {itemType === null && (
         <>
-          <Button onClick={() => setItemType("MeleeWeapon")}>
-            Melee weapon
-          </Button>
-          <Button onClick={() => setItemType("RangedWeapon")}>
-            Ranged weapon
-          </Button>
-          <Button onClick={() => setItemType("Apparel")}>Apparel</Button>
-          <Button onClick={() => setItemType("MundaneItem")}>Mundane item</Button>
+          <Heading as="h2">What kind of item do you wish to create?</Heading>
+          <div style={{ display: "flex", gap: "5px" }}>
+            <Button onClick={() => setItemType("MeleeWeapon")}>
+              Melee weapon
+            </Button>
+            <Button onClick={() => setItemType("RangedWeapon")}>
+              Ranged weapon
+            </Button>
+            <Button onClick={() => setItemType("Apparel")}>Apparel</Button>
+            <Button onClick={() => setItemType("MundaneItem")}>Mundane item</Button>
+          </div>
         </>
       )}
       {itemType === "MeleeWeapon" && (
-        <ItemForm
+        <ItemForm onCloseModal={onCloseModal}
           initialFormValues={{
             ...itemInitialValue,
             itemType: "MeleeWeapon",
@@ -37,7 +40,7 @@ export default function CreateNewItemForm() {
         ></ItemForm>
       )}
       {itemType === "RangedWeapon" && (
-        <ItemForm
+        <ItemForm onCloseModal={onCloseModal}
           initialFormValues={{
             ...itemInitialValue,
             itemType: "RangedWeapon",
@@ -46,7 +49,7 @@ export default function CreateNewItemForm() {
         ></ItemForm>
       )}
       {itemType === "Apparel" && (
-        <ItemForm
+        <ItemForm onCloseModal={onCloseModal}
           initialFormValues={{
             ...itemInitialValue,
             itemType: "Apparel",
@@ -55,7 +58,7 @@ export default function CreateNewItemForm() {
         ></ItemForm>
       )}
       {itemType === "MundaneItem" && (
-        <ItemForm
+        <ItemForm onCloseModal={onCloseModal}
           initialFormValues={{
             ...itemInitialValue,
             itemType: "MundaneItem",
@@ -65,4 +68,9 @@ export default function CreateNewItemForm() {
       )}
     </>
   );
+}
+
+
+CreateNewItemForm.defaultProps = {
+  onCloseModal: () => {}
 }

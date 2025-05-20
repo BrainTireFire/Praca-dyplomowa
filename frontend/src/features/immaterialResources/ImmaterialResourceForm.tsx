@@ -58,18 +58,20 @@ export const immaterialResourceReducer: Reducer<
 
 export default function ImmaterialResourceForm({
   immaterialResourceId,
+  onCloseModal
 }: {
   immaterialResourceId: number | null;
+  onCloseModal: any
 }) {
+  const navigate = useNavigate();
   const { editMode } = useContext(EditModeContext);
   const { isLoading, immaterialResource, error } =
     useImmaterialResource(immaterialResourceId);
   const { isPending: isPendingPost, createImmaterialResourceBlueprint } =
-    useCreateImmaterialResource(() => {});
+    useCreateImmaterialResource((id: number) => {navigate(`/immaterialResources?id=${id}`); onCloseModal()});
   const { isPending: isPendingUpdate, updateImmaterialResourceBlueprint } =
     useUpdateImmaterialResource(() => {});
     
-  const navigate = useNavigate();
   const { isPending: isPendingDelete, deleteImmaterialResourceBlueprint } =
     useDeleteImmaterialResource(() => {navigate(`/immaterialResources`)});
 

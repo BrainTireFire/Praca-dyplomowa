@@ -14,6 +14,7 @@ export function useSelectNextClassLevel(onSuccess: () => void) {
     }) => selectNextClassLevel(characterId, classLevelId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["character"] });
+      toast.success("Character leveled up!");
       onSuccess();
     },
     onError: (error) => {

@@ -52,14 +52,14 @@ export default function CharacterItemBox({
           <ButtonGroup justify="center">
             {!isPending && (
               <>
-                <Button
-                  variation="primary"
-                  size="medium"
+                  <Button
+                    variation="primary"
+                    size="medium"
                   onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    deleteCharacter(character.id);
-                  }}
+                      e.preventDefault();
+                      e.stopPropagation();
+                      deleteCharacter(character.id);
+                    }}
                 >
                   Remove
                 </Button>

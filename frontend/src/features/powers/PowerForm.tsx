@@ -343,10 +343,18 @@ const powerReducer = (state: Power, action: PowerAction): Power => {
       };
     case PowerActionTypes.UPDATE_TARGET_TYPE:
       let isRanged2 = state.isRanged;
+      let range2 = state.range;
+      let maxTargets2 = state.maxTargets;
+      let areaShape2 = state.areaShape;
+      let areaSize2 = state.areaSize;
       if (action.payload === "Caster") {
         isRanged2 = false;
+        range2 = 0;
+        maxTargets2 = 1;
+        areaShape2 = "None";
+        areaSize2 = 0;
       }
-      return { ...state, targetType: action.payload, isRanged: isRanged2 };
+      return { ...state, targetType: action.payload, isRanged: isRanged2, range: range2, maxTargets: maxTargets2, areaShape: areaShape2, areaSize: areaSize2 };
     case PowerActionTypes.UPDATE_IS_RANGED:
       return { ...state, isRanged: action.payload, range: action.payload ? state.range : 5 };
     case PowerActionTypes.UPDATE_RANGE:
@@ -812,7 +820,7 @@ export default function PowerForm({
                     state.powerType === "AuraCreator" ||
                     state.areaShape !== "None" ||
                     state.castableBy === "OnWeaponHit" ||
-                    state.castableBy === "Terrain"
+                    state.castableBy === "Terrain" || state.targetType === "Caster"
                   }
                   value={state.maxTargets}
                   type="number"
@@ -878,7 +886,7 @@ export default function PowerForm({
                   disabled={
                     state.powerType === "Attack" ||
                     state.powerType === "AuraCreator" ||
-                    state.castableBy === "OnWeaponHit"
+                    state.castableBy === "OnWeaponHit" || state.targetType === "Caster"
                   }
                   valuesList={[...areaShapeOptions]}
                   setChosenValue={(e) =>

@@ -13,7 +13,6 @@ public class User : IdentityUser<int>
     public virtual ICollection<UserRole> UserRoles { get; set; }
     public virtual ICollection<ObjectWithOwner> R_Objects { get; set; } = [];
 
-    public virtual ICollection<Character> R_UserHasCharacters { get; set; } = [];
     public virtual ICollection<Campaign> R_UserAttendsAsPlayerToCamgains { get; set; } = [];
 
     public void UpdateEmail(string newEmail)

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using pracadyplomowa;
@@ -11,9 +12,11 @@ using pracadyplomowa;
 namespace pracadyplomowa.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250521201143_CascadeBackpackDeleteToItem")]
+    partial class CascadeBackpackDeleteToItem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -860,13 +863,7 @@ namespace pracadyplomowa.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("R_BackpackOfCharacterId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("R_BackpackOfCharacterId")
-                        .IsUnique();
 
                     b.ToTable("Backpacks");
                 });
@@ -1385,6 +1382,9 @@ namespace pracadyplomowa.Data.Migrations
                     b.Property<int>("R_CharacterBelongsToRaceId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("R_CharacterHasBackpackId")
+                        .HasColumnType("integer");
+
                     b.Property<int?>("R_ConcentratesOnId")
                         .HasColumnType("integer");
 
@@ -1397,11 +1397,19 @@ namespace pracadyplomowa.Data.Migrations
                     b.Property<int>("TemporaryHitpoints")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("integer");
+
                     b.HasIndex("R_CampaignId");
 
                     b.HasIndex("R_CharacterBelongsToRaceId");
 
+                    b.HasIndex("R_CharacterHasBackpackId")
+                        .IsUnique();
+
                     b.HasIndex("R_SpawnedByPowerId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Characters");
                 });
@@ -2514,17 +2522,6 @@ namespace pracadyplomowa.Data.Migrations
                     b.Navigation("R_Race");
                 });
 
-            modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.Backpack", b =>
-                {
-                    b.HasOne("pracadyplomowa.Models.Entities.Characters.Character", "R_BackpackOfCharacter")
-                        .WithOne("R_CharacterHasBackpack")
-                        .HasForeignKey("pracadyplomowa.Models.Entities.Items.Backpack", "R_BackpackOfCharacterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("R_BackpackOfCharacter");
-                });
-
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.ItemCostRequirement", b =>
                 {
                     b.HasOne("pracadyplomowa.Models.Entities.Powers.Power", "R_Power")
@@ -2602,8 +2599,7 @@ namespace pracadyplomowa.Data.Migrations
 
                     b.HasOne("pracadyplomowa.Models.Entities.Powers.Power", "R_Power")
                         .WithMany("R_EffectBlueprints")
-                        .HasForeignKey("R_PowerId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("R_PowerId");
 
                     b.Navigation("R_CastedOnCharactersByAura");
 
@@ -2652,8 +2648,7 @@ namespace pracadyplomowa.Data.Migrations
 
                     b.HasOne("pracadyplomowa.Models.Entities.Items.Item", "R_TargetedItem")
                         .WithMany("R_AffectedBy")
-                        .HasForeignKey("R_TargetedItemId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("R_TargetedItemId");
 
                     b.Navigation("R_GrantedByEquippingItem");
 
@@ -2695,8 +2690,7 @@ namespace pracadyplomowa.Data.Migrations
 
                     b.HasOne("pracadyplomowa.Models.Entities.Characters.Character", "R_Character")
                         .WithMany("R_ImmaterialResourceInstances")
-                        .HasForeignKey("R_CharacterId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("R_CharacterId");
 
                     b.HasOne("pracadyplomowa.Models.Entities.Characters.ChoiceGroupUsage", "R_ChoiceGroupUsage")
                         .WithMany("R_ResourcesGranted")
@@ -2705,8 +2699,7 @@ namespace pracadyplomowa.Data.Migrations
 
                     b.HasOne("pracadyplomowa.Models.Entities.Items.Item", "R_Item")
                         .WithMany("R_ItemGrantsResources")
-                        .HasForeignKey("R_ItemId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("R_ItemId");
 
                     b.Navigation("R_Blueprint");
 
@@ -2795,13 +2788,25 @@ namespace pracadyplomowa.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("pracadyplomowa.Models.Entities.Items.Backpack", "R_CharacterHasBackpack")
+                        .WithOne("R_BackpackOfCharacter")
+                        .HasForeignKey("pracadyplomowa.Models.Entities.Characters.Character", "R_CharacterHasBackpackId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("pracadyplomowa.Models.Entities.Powers.Power", "R_SpawnedByPower")
                         .WithMany("R_SpawnedCharacters")
                         .HasForeignKey("R_SpawnedByPowerId");
 
+                    b.HasOne("pracadyplomowa.User", null)
+                        .WithMany("R_UserHasCharacters")
+                        .HasForeignKey("UserId");
+
                     b.Navigation("R_Campaign");
 
                     b.Navigation("R_CharacterBelongsToRace");
+
+                    b.Navigation("R_CharacterHasBackpack");
 
                     b.Navigation("R_SpawnedByPower");
                 });
@@ -3758,6 +3763,9 @@ namespace pracadyplomowa.Data.Migrations
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Items.Backpack", b =>
                 {
                     b.Navigation("R_BackpackHasItems");
+
+                    b.Navigation("R_BackpackOfCharacter")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("pracadyplomowa.Models.Entities.Powers.Aura", b =>
@@ -3783,6 +3791,8 @@ namespace pracadyplomowa.Data.Migrations
             modelBuilder.Entity("pracadyplomowa.User", b =>
                 {
                     b.Navigation("R_Objects");
+
+                    b.Navigation("R_UserHasCharacters");
 
                     b.Navigation("UserRoles");
                 });
@@ -3815,9 +3825,6 @@ namespace pracadyplomowa.Data.Migrations
                     b.Navigation("R_AffectedBy");
 
                     b.Navigation("R_AuraCenteredAtCharacter");
-
-                    b.Navigation("R_CharacterHasBackpack")
-                        .IsRequired();
 
                     b.Navigation("R_CharactersParticipatesInEncounters");
 

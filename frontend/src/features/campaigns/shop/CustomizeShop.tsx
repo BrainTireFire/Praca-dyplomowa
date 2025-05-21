@@ -329,7 +329,7 @@ function CustomizeShop() {
                     onClick={() => handleShopClick(item)}
                     style={{
                       backgroundColor:
-                        item === selectedShopItem
+                        item.id === selectedShopItem?.id
                           ? "rgba(136, 213, 136, 0.59)"
                           : undefined,
                     }}

@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using pracadyplomowa.Errors;
 using pracadyplomowa.Models.DTOs;
@@ -111,6 +112,9 @@ namespace pracadyplomowa.Controllers
             if (shopId <= 0)
                 return BadRequest("Invalid shopId");
 
+            if (await _unitOfWork.ShopRepository.GetOwnerId(shopId) != User.GetUserId())
+                return Forbid();
+
             var existingItem = await _unitOfWork.ShopRepository.GetShopItem(shopId, shopItemDto.Id);
             var shopItems = await _unitOfWork.ShopRepository.GetShopItems(shopId);
 
@@ -150,6 +154,9 @@ namespace pracadyplomowa.Controllers
         [HttpDelete("{shopId}/items")]
         public async Task<ActionResult> RemoveShopItem(int shopId, [FromBody] JsonElement body)
         {
+            if (await _unitOfWork.ShopRepository.GetOwnerId(shopId) != User.GetUserId())
+                return Forbid();
+
             if (!body.TryGetProperty("itemId", out var itemIdElement) || !body.TryGetProperty("quantity", out var quantityElement))
             {
                 return BadRequest(new ApiResponse(400, "Missing itemId or quantity in request body."));

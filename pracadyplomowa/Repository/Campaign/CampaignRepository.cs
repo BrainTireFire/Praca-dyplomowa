@@ -34,7 +34,7 @@ namespace pracadyplomowa.Repository
 
             return campaigns;
         }
-        
+
         public async Task<Campaign> GetCampaign(int userId, int campaignId)
         {
             var campaign = await _context.Campaigns
@@ -49,7 +49,7 @@ namespace pracadyplomowa.Repository
 
             return campaign;
         }
-        
+
         public async Task<Campaign> GetCampaignWithUsersAttends(int campaignId)
         {
             return await _context.Campaigns
@@ -104,7 +104,7 @@ namespace pracadyplomowa.Repository
             {
                 throw new ArgumentNullException("Campaign " + nameof(campaign) + $" id:{campaignId} is null.");
             }
-            
+
             foreach (var encounter in campaign.R_CampaignHasEncounters.ToList())
             {
                 _context.Encounters.Remove(encounter);
@@ -117,7 +117,7 @@ namespace pracadyplomowa.Repository
                 character.R_Campaign = null;
                 character.R_CampaignId = null;
             }
-            
+
             campaign.R_CampaignHasCharacters.Clear();
             campaign.R_CampaignHasEncounters.Clear();
 

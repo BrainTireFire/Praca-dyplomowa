@@ -46,5 +46,16 @@ namespace pracadyplomowa.Repository
         {
             _context.ShopItems.Remove(shopItem);
         }
+        public async Task<int> GetOwnerId(int shopId)
+        {
+            var shop = await _context.Shops
+                .Include(e => e.R_Campaign)
+                .FirstOrDefaultAsync(e => e.Id == shopId);
+
+            if (shop?.R_Campaign?.R_OwnerId == null)
+                return -1;
+
+            return shop.R_Campaign.R_OwnerId.Value;
+        }
     }
 }

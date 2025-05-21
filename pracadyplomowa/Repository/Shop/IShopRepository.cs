@@ -9,5 +9,6 @@ namespace pracadyplomowa.Repository
         public Task<ShopItem> GetShopItem(int shopId, int itemId);
         public void AddShopItem(ShopItem shopItem);
         public void RemoveShopItem(ShopItem shopItem);
+        public Task<int> GetOwnerId(int shopId);
     }
 }

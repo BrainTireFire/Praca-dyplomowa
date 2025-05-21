@@ -433,7 +433,7 @@ export default function EffectInstanceForm({
                 { value: "hitpoints", label: "Hit points" },
                 { value: "attacksPerAction", label: "Attacks per action" },
                 { value: "statusEffect", label: "Status effect" },
-                { value: "movementCost", label: "Movement cost" },
+                // { value: "movementCost", label: "Movement cost" },
               ]}
               onChange={(x) => {
                 console.log(x);

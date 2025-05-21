@@ -36,8 +36,10 @@ import useCastPower from "../hooks/useCastPower";
 
 export function PowerCastResolution({
   controlState,
+  onCloseModal,
 }: {
   controlState: ControlState;
+  onCloseModal: () => any,
 }) {
   const { groupName } = useParams<{ groupName: string }>();
 
@@ -75,7 +77,7 @@ export function PowerCastResolution({
     controlState.powerSelected?.powerId!,
     controlState.powerSelected?.chosenLevel?.powerLevel ?? null,
     spellSlotLevel,
-    () => {}
+    () => {onCloseModal()}
   );
 
   if (isLoadingPowerData || !hasEffectRun || isPendingPowerCast) {
@@ -84,7 +86,7 @@ export function PowerCastResolution({
 
   return (
     <Container>
-      <Heading as="h1">Select element of the attack</Heading>
+      <Heading as="h1">Select conditional effects which apply</Heading>
       <StyledTabListContainer>
         <TabList activeTabIndex={0}>
           {[
@@ -246,6 +248,11 @@ export function PowerCastResolution({
       </ButtonGroup>
     </Container>
   );
+}
+
+
+PowerCastResolution.defaultProps = {
+  onCloseModal: () => {}
 }
 
 const Container = styled.div`

@@ -9,12 +9,23 @@ import CreateNewItemForm from "./CreateNewItemForm";
 import { EditModeContext } from "../../context/EditModeContext";
 import { CharacterIdContext } from "../../features/characters/contexts/CharacterIdContext";
 import { ReusableTable } from "../../ui/containers/ReusableTable2";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function Items() {
   const editMode = useContext(EditModeContext);
+  
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const selectedItemId = searchParams.get("id");
+
+  const handleChangeItem = (chosenItemId: number) => {
+    console.log(chosenItemId);
+    navigate(`/items?id=${chosenItemId}`)
+  };
+
   const { isLoading, items, error } = useItems("blueprint");
 
-  const [selectedItemId, setSelectedItemId] = useState<null | number>(null);
+  // const [selectedItemId, setSelectedItemId] = useState<null | number>(null);
   // const { createItem, isPending: isPendingCreation } = useCreateItem(() => {});
   const handleSelect = (row: any) => {
     console.log(items);
@@ -22,8 +33,8 @@ export default function Items() {
     let selectedItem = items?.find((_value, index) => index === row.id);
     console.log(selectedItem);
 
-    setSelectedItemId(selectedItem ? selectedItem.id : null);
-    console.log(selectedItemId);
+    // setSelectedItemId(selectedItem ? selectedItem.id : null);
+    handleChangeItem(selectedItem!.id);
   };
 
   if (isLoading) {
@@ -73,8 +84,8 @@ export default function Items() {
         )}
       </Column1>
       <Column2>
-        {selectedItemId && (
-          <ItemForm itemId={selectedItemId} key={selectedItemId}></ItemForm>
+        {!!Number(selectedItemId) && (
+          <ItemForm itemId={Number(selectedItemId)} key={selectedItemId}></ItemForm>
         )}
       </Column2>
     </Container>

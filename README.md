@@ -14,12 +14,28 @@ The aim of the project is to assist players in managing the flow of gameplay in 
 FIGMA LINK: https://www.figma.com/file/3K8swnK4xG7Mmle2jC6Mcn/In%C5%BCynierka-prototyp?type=design&node-id=214%3A4786&mode=design&t=DhvcnQP63MMple4K-1
 
 ## How to start
-### Backend:
-- VSC: Please write in the terminal: dotnet run watch
-- Raider: Press the button to start :)
 
-### Frontend:
-- Please write in the terminal: npm run dev
+### Database:
+1: Build and Start Services
+From the root of the project (where the docker-compose.yml file is located), run:
+  docker-compose up -d
+
+### Backend (.NET)
+
+#### Running Locally (without Docker)
+1. Open a terminal in the backend project directory.
+2. Start the backend with hot-reload:
+   ```bash
+   dotnet watch run
+If you're using JetBrains Rider, you can also press the ▶ Run button.
+
+### Frontend (React / Angular / etc.)
+
+#### Running Locally (without Docker)
+1. Open a terminal in the frontend project directory.
+2. Start the development server:
+   ```bash
+   npm run dev
 
 ## Endpoints
 

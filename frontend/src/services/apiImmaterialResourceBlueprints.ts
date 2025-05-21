@@ -33,7 +33,7 @@ export async function getImmaterialResourceBlueprint(
 
 export async function postImmaterialResourceBlueprint(
   immaterialResourceBlueprint: ImmaterialResourceBlueprint
-): Promise<void> {
+): Promise<number> {
   const options: RequestInit = {
     method: "POST",
     headers: {
@@ -41,8 +41,7 @@ export async function postImmaterialResourceBlueprint(
     },
     body: JSON.stringify(immaterialResourceBlueprint),
   };
-  await customFetch(`${BASE_URL}/api/immaterialResourceBlueprint`, options);
-  return;
+  return await customFetch(`${BASE_URL}/api/immaterialResourceBlueprint`, options);
 }
 
 export async function updateImmaterialResourceBlueprint(

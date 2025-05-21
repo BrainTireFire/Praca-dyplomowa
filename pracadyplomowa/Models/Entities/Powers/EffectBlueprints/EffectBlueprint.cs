@@ -23,7 +23,7 @@ namespace pracadyplomowa.Models.Entities.Powers
 
 
         //Relationship
-        public virtual Item? R_CreatedByEquipping { get; set; }
+        // public virtual Item? R_CreatedByEquipping { get; set; } // not used
         public int? R_CreatedByEquippingId { get; set; }
 
         public virtual Power? R_Power { get; set; }

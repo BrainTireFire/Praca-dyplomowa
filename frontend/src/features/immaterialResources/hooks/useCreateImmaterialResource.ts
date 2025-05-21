@@ -3,12 +3,12 @@ import toast from "react-hot-toast";
 import { postImmaterialResourceBlueprint as postImmaterialResourceBlueprintApi } from "../../../services/apiImmaterialResourceBlueprints";
 import { ImmaterialResourceBlueprint } from "../../../models/immaterialResourceBlueprint";
 
-export function useCreateImmaterialResource(onSuccess: () => void) {
+export function useCreateImmaterialResource(onSuccess: (id: number) => void) {
   const queryClient = useQueryClient();
   const { mutate: createImmaterialResourceBlueprint, isPending } = useMutation({
     mutationFn: (immaterialResourceBlueprint: ImmaterialResourceBlueprint) =>
       postImmaterialResourceBlueprintApi(immaterialResourceBlueprint),
-    onSuccess: () => {
+    onSuccess: (id: number) => {
       queryClient.invalidateQueries({
         queryKey: ["immaterialResourceBlueprints"],
       });
@@ -16,7 +16,8 @@ export function useCreateImmaterialResource(onSuccess: () => void) {
       queryClient.refetchQueries({
         queryKey: ["immaterialResourceBlueprints"],
       });
-      onSuccess();
+      toast.success("Immaterial resource created");
+      onSuccess(id);
     },
     onError: (error) => {
       console.error(error);

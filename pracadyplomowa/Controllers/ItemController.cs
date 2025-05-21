@@ -147,6 +147,35 @@ namespace pracadyplomowa.Controllers
             return Ok(item.Id);
         }
 
+        
+
+        [HttpPost("mundaneItem")]
+        public async Task<ActionResult<int>> PostMundaneItem(ItemFormDto itemDto){
+            var item = _mapper.Map<Item>(itemDto);
+            item.R_OwnerId = User.GetUserId();
+            _unitOfWork.ItemRepository.Add(item);
+            await _unitOfWork.SaveChangesAsync();
+            return Ok(item.Id);
+        }
+
+        [HttpPatch("mundaneItem")]
+        public async Task<ActionResult<int>> UpdateMundaneItem(ItemFormDto itemDto){
+            if(itemDto.Id == null){
+                return BadRequest("Id is required for update");
+            }
+
+            var itemId = (int)itemDto.Id;
+            if(!_itemService.CheckExistenceAndEditAccess(itemId, User.GetUserId(), out var actionResult)){
+                return actionResult;
+            }
+
+            var itemLoaded = (Item)await _unitOfWork.ItemRepository.GetByIdWithSlotsPowersEffectsResources((int)itemDto.Id);
+            var item = _mapper.Map(itemDto, itemLoaded);
+            _unitOfWork.ItemRepository.Update(item);
+            await _unitOfWork.SaveChangesAsync();
+            return Ok(item.Id);
+        }
+
         [HttpGet("{itemId}/slots")]
         public async Task<ActionResult<List<SlotDto>>> GetItemSlots(int itemId){
             var item = await _unitOfWork.ItemRepository.GetByIdWithSlots(itemId);

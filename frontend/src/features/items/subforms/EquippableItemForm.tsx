@@ -8,6 +8,8 @@ import SlotsTable from "../tables/SlotsTable";
 import Input from "../../../ui/forms/Input";
 import FormRowLabelRight from "../../../ui/forms/FormRowLabelRight";
 import EffectOnItemTable from "../tables/EffectOnItemTable";
+import { useContext } from "react";
+import { EditModeContext } from "../../../context/EditModeContext";
 
 export default function EquippableItemForm({
   body,
@@ -16,10 +18,13 @@ export default function EquippableItemForm({
   body: EquippableItemBody;
   dispatch: (value: ItemAction) => void;
 }) {
+  
+  const { editMode } = useContext(EditModeContext);
   return (
     <>
       <FormRowLabelRight label="Occupies all slots">
         <Input
+          disabled={!editMode}
           type="checkbox"
           checked={body.occupiesAllSlots}
           onChange={(e) =>
@@ -33,6 +38,7 @@ export default function EquippableItemForm({
       </FormRowLabelRight>
       <FormRowLabelRight label="Spell focus">
         <Input
+          disabled={!editMode}
           type="checkbox"
           checked={body.isSpellFocus}
           onChange={(e) =>

@@ -96,7 +96,11 @@ namespace pracadyplomowa.Controllers
         [HttpDelete("{effectId}")]
         public async Task<ActionResult> DeleteEffectInstance([FromRoute] int effectId)
         {
-            _unitOfWork.EffectInstanceRepository.Delete(effectId);
+            var effect = _unitOfWork.EffectInstanceRepository.GetById(effectId);
+            if(effect == null){
+                return NotFound();
+            }
+            effect.DeleteOnSave = true;
             await _unitOfWork.SaveChangesAsync();
             return Ok("Resource deleted");
         }

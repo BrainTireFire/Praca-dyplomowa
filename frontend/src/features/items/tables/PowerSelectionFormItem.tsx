@@ -1,20 +1,25 @@
 import { useContext, useEffect, useState } from "react";
-import { useUpdateObjectPowers } from "../../hooks/useUpdateObjectPowers";
-import { usePowers } from "../../pages/powers/hooks/usePowers";
-import { useObjectPowers } from "../../hooks/useObjectPowers";
-import { PowerListItem } from "../../models/power";
-import { ReusableTable } from "../../ui/containers/ReusableTable2";
-import Spinner from "../../ui/interactive/Spinner";
-import Button from "../../ui/interactive/Button";
 import styled, { css } from "styled-components";
-import { ParentObjectIdContext } from "../../context/ParentObjectIdContext";
+import { ParentObjectIdContext } from "../../../context/ParentObjectIdContext";
+import { usePowers } from "../../../pages/powers/hooks/usePowers";
+import { useObjectPowers } from "../../../hooks/useObjectPowers";
+import { useUpdateObjectPowers } from "../../../hooks/useUpdateObjectPowers";
+import { PowerListItem } from "../../../models/power";
+import { ReusableTable } from "../../../ui/containers/ReusableTable2";
+import Spinner from "../../../ui/interactive/Spinner";
+import Button from "../../../ui/interactive/Button";
 
-export function PowerSelectionForm() {
+export function PowerSelectionFormItem() {
   const { objectId, objectType } = useContext(ParentObjectIdContext);
 
-  const { isLoading: isLoadingAllPowers, powers: allPowers } = usePowers(
+  const { isLoading: isLoadingAllPowersCastableByCharacter, powers: allPowersCastableByCharacter } = usePowers(
     {
       CastableBy: "Character",
+    }
+  );
+  const { isLoading: isLoadingAllPowersCastableOnWeaponHit, powers: allPowersCastableOnWeaponHit } = usePowers(
+    {
+      CastableBy: "OnWeaponHit",
     }
   );
   const { isLoading: isLoadingItemPowers, powers: itemPowers } =
@@ -36,6 +41,7 @@ export function PowerSelectionForm() {
     number | null
   >(null);
 
+  const allPowers = [...(allPowersCastableByCharacter ?? []), ...(allPowersCastableOnWeaponHit ?? [])]
   const allPowersWithoutLocal = allPowers
     ? allPowers.filter(
         (power) =>
@@ -61,7 +67,7 @@ export function PowerSelectionForm() {
   return (
     <Grid>
       <Column1>
-        {!isLoadingAllPowers && (
+        {!isLoadingAllPowersCastableByCharacter && !isLoadingAllPowersCastableOnWeaponHit && (
           <ReusableTable
             mainHeader="All available powers"
             tableRowsColomns={{ Name: "name" }}
@@ -78,7 +84,7 @@ export function PowerSelectionForm() {
             `}
           ></ReusableTable>
         )}
-        {isLoadingAllPowers && <Spinner />}
+        {isLoadingAllPowersCastableByCharacter || isLoadingAllPowersCastableOnWeaponHit && <Spinner />}
       </Column1>
       <Column2>
         {!isPending && (

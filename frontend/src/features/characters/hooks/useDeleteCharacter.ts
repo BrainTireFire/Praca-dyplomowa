@@ -9,6 +9,7 @@ export function useDeleteCharacter(onSuccess: () => void) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["characters"] });
       queryClient.invalidateQueries({ queryKey: ["npcCharacters"] });
+      toast.success("Character deleted");
       onSuccess();
     },
     onError: (error) => {

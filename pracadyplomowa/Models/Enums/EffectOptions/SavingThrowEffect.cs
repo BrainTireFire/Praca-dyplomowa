@@ -6,6 +6,6 @@ namespace pracadyplomowa.Models.Enums.EffectOptions
         Advantage,
         Proficiency,
         RerollLowerThan,
-        AlwaysSucceed
+        // AlwaysSucceed // do wywalenia
     }
 }

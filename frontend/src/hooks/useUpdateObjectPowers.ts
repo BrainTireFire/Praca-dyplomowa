@@ -30,11 +30,12 @@ export function useUpdateObjectPowers(
         queryClient.invalidateQueries({ queryKey: ["character", objectId] });
       }
 
+      toast.success("Power selection saved succesfully");
       onSuccess();
     },
     onError: (error) => {
       console.error(error);
-      toast.error("Item update failed");
+      toast.error("Power selection failed");
     },
   });
 

@@ -86,7 +86,7 @@ namespace pracadyplomowa.Controllers
             };
             _unitOfWork.ImmaterialResourceBlueprintRepository.Add(resource);
             await _unitOfWork.SaveChangesAsync();
-            return Ok();
+            return Ok(resource.Id);
         }
 
         [HttpPatch]

@@ -2,6 +2,7 @@
 using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.DTOs.Encounter;
 using pracadyplomowa.Models.DTOs.Session;
+using pracadyplomowa.Models.Entities.Campaign;
 using pracadyplomowa.Models.Entities.Characters;
 using pracadyplomowa.Models.Enums;
 
@@ -38,4 +39,7 @@ public interface IEncounterService
     Task MoveUpQueue(int encounterId, int characterId, int userId);
     Task MoveDownQueue(int encounterId, int characterId, int userId);
     Task<ActionResult> RemoveEncounterAsync(int ownerId, int encounterId);
+    bool IsSingleAttackAvailable(Character character, ParticipanceData participance, bool reduceActions);
+    Task<List<PowerForEncounterDto>> GetPowersForEncounter(Character character, ParticipanceData participanceData);
+    List<WeaponAttacksForEncounterDto> GetWeaponAttacksForEncounter(Character character, ParticipanceData participanceData);
 }

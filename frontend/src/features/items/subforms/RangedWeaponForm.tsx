@@ -68,7 +68,7 @@ export default function RangedWeaponForm({
           }
         ></Input>
       </FormRowVertical>
-      <FormRowLabelRight label="Requires reloading">
+      {/* <FormRowLabelRight label="Requires reloading">
         <Input
           disabled={!editMode}
           type="checkbox"
@@ -81,7 +81,7 @@ export default function RangedWeaponForm({
             })
           }
         ></Input>
-      </FormRowLabelRight>
+      </FormRowLabelRight> */}
     </Row>
   );
 }

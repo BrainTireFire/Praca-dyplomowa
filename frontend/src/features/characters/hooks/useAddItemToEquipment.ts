@@ -12,6 +12,7 @@ export function useAddItemToEquipment(
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["equipmentAndSlots"] });
       queryClient.invalidateQueries({ queryKey: ["character"] });
+      toast.success("Item added to character's possessions");
       onSuccess();
     },
     onError: (error) => {

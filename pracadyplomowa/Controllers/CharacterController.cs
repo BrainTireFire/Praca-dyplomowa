@@ -67,7 +67,7 @@ namespace pracadyplomowa.Controllers
         [HttpDelete("{characterId}")]
         public async Task<ActionResult> DeleteCharacter(int characterId)
         {
-            if (!_characterService.CheckExistenceAndReadEditAccess(characterId, User.GetUserId(), [Character.AccessLevels.Read], out var errorResult, out var grantedAccessLevels))
+            if (!_characterService.CheckExistenceAndReadEditAccess(characterId, User.GetUserId(), [Character.AccessLevels.Delete], out var errorResult, out var grantedAccessLevels))
             {
                 return errorResult;
             }

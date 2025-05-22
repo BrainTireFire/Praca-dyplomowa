@@ -23,8 +23,6 @@ export async function getItems(
     response = await customFetch(`${BASE_URL}/api/item?IsBlueprint=false`);
   }
 
-  console.log(response);
-
   return response;
 }
 

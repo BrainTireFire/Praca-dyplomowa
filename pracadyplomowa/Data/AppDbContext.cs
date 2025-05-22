@@ -70,7 +70,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         public DbSet<ImmaterialResourceInstance> ImmaterialResourceInstances { get; set; }
         public DbSet<Power> Powers { get; set; }
 
-        
+
         public DbSet<AbilityEffectBlueprint> AbilityEffectBlueprints { get; set; }
         public DbSet<ActionEffectBlueprint> ActionEffectBlueprints { get; set; }
         public DbSet<ArmorClassEffectBlueprint> ArmorClassEffectBlueprints { get; set; }
@@ -93,7 +93,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         public DbSet<DummyEffectBlueprint> DummyEffectBlueprints { get; set; }
         public DbSet<OffHandAttackEffectBlueprint> OffHandEffectBlueprints { get; set; }
         public DbSet<LanguageEffectBlueprint> LanguageEffectBlueprints { get; set; }
-        
+
         public DbSet<AbilityEffectInstance> AbilityEffectInstances { get; set; }
         public DbSet<ActionEffectInstance> ActionEffectInstances { get; set; }
         public DbSet<ArmorClassEffectInstance> ArmorClassEffectInstances { get; set; }
@@ -114,8 +114,8 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         public DbSet<DummyEffectInstance> DummyEffectInstances { get; set; }
         public DbSet<OffHandAttackEffectInstance> OffHandEffectInstances { get; set; }
         public DbSet<LanguageEffectInstance> LanguageEffectInstances { get; set; }
-        public DbSet<ChoiceGroupUsage> ChoiceGroupUsages {get; set;}
-        public DbSet<Language> Languages {get; set;}
+        public DbSet<ChoiceGroupUsage> ChoiceGroupUsages { get; set; }
+        public DbSet<Language> Languages { get; set; }
         public DbSet<PowerSelection> PowerSelections { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -275,6 +275,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .WithOne(ds => ds.R_ValueEffectBlueprint)
                         .HasForeignKey<DiceSet>(ds => ds.R_ValueEffectBlueprintId)
                         .OnDelete(DeleteBehavior.Cascade);
+
                 builder.Entity<ValueEffectInstance>()
                         .HasOne(vei => vei.DiceSet)
                         .WithOne(ds => ds.R_ValueEffectInstance)
@@ -284,6 +285,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                 builder.Entity<ValueEffectInstance>().Navigation(e => e.DiceSet).AutoInclude();
                 builder.Entity<ValueEffectBlueprint>().Navigation(e => e.DiceSet).AutoInclude();
                 builder.Entity<DiceSet>().HasMany(ds => ds.additionalValues).WithOne(av => av.DiceSet).HasForeignKey(av => av.DiceSetId).OnDelete(DeleteBehavior.Cascade);
+
                 builder.Entity<DiceSet>().Navigation(e => e.additionalValues).AutoInclude();
                 builder.Entity<DiceSet.AdditionalValue>().Navigation(e => e.R_LevelsInClass).AutoInclude();
                 builder.Entity<LanguageEffectBlueprint>().Navigation(e => e.R_Language).AutoInclude();
@@ -358,27 +360,27 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                 }
         }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.AddInterceptors(new Data.DeletionInterceptor());
-        optionsBuilder.AddInterceptors(new Data.ValidationInterceptor());
-        // optionsBuilder.UseLazyLoadingProxies();
-        // var lazyLoadEvents = new[]
-        // {
-        //         CoreEventId.NavigationLazyLoading,
-        //         CoreEventId.DetachedLazyLoadingWarning,
-        //         CoreEventId.LazyLoadOnDisposedContextWarning,
-        // };
-        // #if DEBUG
-        // optionsBuilder.ConfigureWarnings(w => w.Throw(lazyLoadEvents));
-        // #else
-        // if (sp.GetService<IHostEnvironment>()?.IsEnvironment("PRD") ?? false)
-        // {   //logs LazyLoad events as error everywhere else
-        //         optionsBuilder.ConfigureWarnings(w => w.Log(lazyLoadEvents.Select(lle => (lle, LogLevel.Error)).ToArray())); 
-        // }
-        // #endif
-        base.OnConfiguring(optionsBuilder);
-    }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+                optionsBuilder.AddInterceptors(new Data.DeletionInterceptor());
+                optionsBuilder.AddInterceptors(new Data.ValidationInterceptor());
+                // optionsBuilder.UseLazyLoadingProxies();
+                // var lazyLoadEvents = new[]
+                // {
+                //         CoreEventId.NavigationLazyLoading,
+                //         CoreEventId.DetachedLazyLoadingWarning,
+                //         CoreEventId.LazyLoadOnDisposedContextWarning,
+                // };
+                // #if DEBUG
+                // optionsBuilder.ConfigureWarnings(w => w.Throw(lazyLoadEvents));
+                // #else
+                // if (sp.GetService<IHostEnvironment>()?.IsEnvironment("PRD") ?? false)
+                // {   //logs LazyLoad events as error everywhere else
+                //         optionsBuilder.ConfigureWarnings(w => w.Log(lazyLoadEvents.Select(lle => (lle, LogLevel.Error)).ToArray())); 
+                // }
+                // #endif
+                base.OnConfiguring(optionsBuilder);
+        }
 
-        
+
 }

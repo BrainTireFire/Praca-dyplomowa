@@ -15,7 +15,7 @@ import NotFound from "./pages/errors/NotFound";
 import ForgotPassword from "./pages/account/ForgotPassword";
 import PasswordChanged from "./pages/account/PasswordChanged";
 import HomebrewCreatePower from "./pages/homebrew/HomebrewCreatePower";
-import CustomizeShop from "./pages/campaign/shop/CustomizeShop";
+import CustomizeShop from "./features/campaigns/shop/CustomizeShop";
 import ProtectedRoute from "./features/account/ProtectedRoute";
 import Forbidden from "./pages/errors/Forbidden";
 import ServiceDown from "./pages/errors/ServiceDown";

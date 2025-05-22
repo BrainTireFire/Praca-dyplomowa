@@ -10,6 +10,7 @@ import ConfirmDelete from "../../../ui/containers/ConfirmDelete";
 import { CharacterIdContext } from "../contexts/CharacterIdContext";
 import { useDeleteConstantEffectInstance } from "../hooks/useDeleteConstantEffectInstance";
 import EffectInstanceForm from "../../effects/EffectInstanceForm";
+import { EditModeContext } from "../../../context/EditModeContext";
 
 export default function EffectTable({ effects }: { effects: Effect[] }) {
   const { characterId } = useContext(CharacterIdContext);
@@ -54,6 +55,7 @@ function EffectRow({ effect }: { effect: Effect }) {
     () => {},
     characterId as number
   );
+  const { editMode } = useContext(EditModeContext);
   return (
     <Table.Row>
       <Cell>{effect.name}</Cell>
@@ -72,11 +74,13 @@ function EffectRow({ effect }: { effect: Effect }) {
                 Open
               </Menus.Button>
             </Modal.Open>
-            <Modal.Open opens="delete">
-              <Menus.Button icon={<HiTrash />} onClick={() => {}}>
-                Delete
-              </Menus.Button>
-            </Modal.Open>
+            { editMode &&
+              <Modal.Open opens="delete">
+                <Menus.Button icon={<HiTrash />} onClick={() => {}}>
+                  Delete
+                </Menus.Button>
+              </Modal.Open>
+            }
           </Menus.List>
         </Menus.Menu>
         <Modal.Window name="delete">

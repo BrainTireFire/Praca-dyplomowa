@@ -18,6 +18,7 @@ import MaterialComponentForm from "../MaterialComponentForm";
 import { PowerIdContext } from "../contexts/PowerIdContext";
 import { useDeleteMaterialComponent } from "../hooks/useDeleteMaterialComponent";
 import ConfirmDelete from "../../../ui/containers/ConfirmDelete";
+import { EditModeContext } from "../../../context/EditModeContext";
 
 export default function MatierialResourceTable({
   materialComponents,
@@ -79,6 +80,7 @@ function MaterialComponentRow({
 }: {
   materialComponent: MaterialComponent;
 }) {
+  const { editMode } = useContext(EditModeContext);
   const { powerId } = useContext(PowerIdContext);
   const { isPending, deleteMaterialComponent } = useDeleteMaterialComponent(
     () => {},
@@ -98,11 +100,13 @@ function MaterialComponentRow({
                 Open
               </Menus.Button>
             </Modal.Open>
-            <Modal.Open opens="delete">
-              <Menus.Button icon={<HiTrash />} onClick={() => {}}>
-                Delete
-              </Menus.Button>
-            </Modal.Open>
+            {editMode &&
+              <Modal.Open opens="delete">
+                <Menus.Button icon={<HiTrash />} onClick={() => {}}>
+                  Delete
+                </Menus.Button>
+              </Modal.Open>
+            }
           </Menus.List>
         </Menus.Menu>
         <Modal.Window name="open">

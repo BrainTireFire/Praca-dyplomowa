@@ -39,7 +39,7 @@ namespace pracadyplomowa.Repository
             return _context.Powers.Where(i => Ids.Contains(i.Id)).ToListAsync();
         }
 
-        public async Task<PagedList<Power>> GetAllPowersWithParams(PowerParams powerParams)
+        public async Task<PagedList<Power>> GetAllPowersWithParams(PowerParams powerParams, int? ownerId)
         {
             var query = _context.Powers.AsQueryable();
 
@@ -56,8 +56,14 @@ namespace pracadyplomowa.Repository
                 "nameDesc" => query.OrderByDescending(c => c.Name),
                 _ => query.OrderBy(c => c.Name)
             };
-            
-            return await PagedList<Power>.CreateAsync(query, powerParams.PageNumber, powerParams.PageSize);
+
+            return await PagedList<Power>.CreateAsync(query.Where(p => p.R_OwnerId == null || p.R_OwnerId == ownerId), powerParams.PageNumber, powerParams.PageSize);
+        }
+        
+        public Dictionary<int, Power> GetPowersForEditabilityAnalysis(List<int> ids){
+            return _context.Powers
+            .Where(i => ids.Contains(i.Id))
+            .ToDictionary(i => i.Id, i => i);
         }
     }
 }

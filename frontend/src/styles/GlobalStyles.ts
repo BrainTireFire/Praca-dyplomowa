@@ -9,6 +9,7 @@ const GlobalStyles = createGlobalStyle`
   --color-secondary-background: #DCE1DE;
   --color-secondary-background-rgb: 220, 225, 222; //#DCE1DE
   --color-border: #49A078;
+  --color-border2:rgb(45, 102, 76);
 
   --color-button-primary: #D14836;
   --color-button-primary-disabled:rgb(206, 138, 129);

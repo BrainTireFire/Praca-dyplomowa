@@ -37,7 +37,7 @@ export default function MatierialResourceTable({
         <Table
           header="Material components"
           button="Add new"
-          columns="1fr 1fr 0.01rem"
+          columns="auto auto 0.01rem"
           modal={
             <MaterialComponentForm
               materialComponent={{

@@ -18,7 +18,7 @@ export default function ResourceTable({
       <Table
         header="Resources"
         button="Select"
-        columns="1fr 1fr 1fr 1fr"
+        columns="auto auto auto auto"
         modal={
           <ParentObjectIdContext.Provider
             value={{ objectId: characterId, objectType: "Character" }}
@@ -35,7 +35,7 @@ export default function ResourceTable({
         </Table.Header>
         <Table.Body
           data={resources}
-          columnCount={6}
+          columnCount={4}
           render={(resource) => (
             <ResourceRow key={resource.id} resource={resource} />
           )}

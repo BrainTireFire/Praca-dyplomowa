@@ -23,7 +23,7 @@ export default function ConstantEffectTable({
       <Table
         header="Constant effects"
         button="Add new"
-        columns="1fr 1fr 1fr 0.01rem"
+        columns="auto auto auto 0.01rem"
         // buttonOnClick={() => createConstantEffectInstance(initialState)}
         modal={
           <EffectParentObjectIdContext.Provider
@@ -41,7 +41,7 @@ export default function ConstantEffectTable({
         </Table.Header>
         <Table.Body
           data={effects}
-          columnCount={3}
+          columnCount={4}
           render={(effect) => (
             <ConstantEffectRow key={effect.id} effect={effect} />
           )}

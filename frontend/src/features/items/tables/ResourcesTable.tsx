@@ -18,7 +18,7 @@ export default function ResourcesTable({
       <Table
         header="Resources available when equipped"
         button="Select"
-        columns="1fr 1fr 1fr"
+        columns="auto auto auto"
         modal={
           <ParentObjectIdContext.Provider
             value={{ objectId: itemId, objectType: "Item" }}

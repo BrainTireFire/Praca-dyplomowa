@@ -19,7 +19,7 @@ export default function EffectTable({ effects }: { effects: Effect[] }) {
       <Table
         header="Temporary effects"
         button="Add new"
-        columns="1fr 1fr 1fr 1fr 0.01rem"
+        columns="auto auto auto auto 0.01rem"
         modal={
           <EffectParentObjectIdContext.Provider
             value={{ objectId: characterId, objectType: "CharacterConstant" }}

@@ -84,15 +84,28 @@ function Menus({ children }) {
   );
 }
 
-function Toggle({ id }) {
+function Toggle({ id, itemCount }) {
   const { openId, open, close, setPostion } = useContext(MenuContext);
 
   function handleClick(e) {
     e.stopPropagation();
     const rect = e.target.closest("button").getBoundingClientRect();
+
+    const spaceBelow = window.innerHeight - (rect.y + rect.height);
+    const spaceAbove = rect.y;
+
+    const menuHeight = itemCount * 50;
+    const offset = 8;
+
+    // Decide whether to open above or below based on space
+    const yPosition =
+      spaceBelow < menuHeight && spaceAbove > menuHeight
+        ? rect.y - menuHeight - offset // open above
+        : rect.y + rect.height + offset; // open below
+
     setPostion({
       x: window.innerWidth - rect.width - rect.x,
-      y: rect.y + rect.height + 8,
+      y: yPosition,
     });
 
     openId === "" || openId !== id ? open(id) : close();
@@ -143,5 +156,9 @@ Menus.Menu = Menu;
 Menus.Toggle = Toggle;
 Menus.List = List;
 Menus.Button = Button;
+
+Toggle.defaultProps = {
+  itemCount: 1
+}
 
 export default Menus;

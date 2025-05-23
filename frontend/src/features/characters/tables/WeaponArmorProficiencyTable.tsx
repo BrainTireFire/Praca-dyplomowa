@@ -11,10 +11,12 @@ export default function WeaponAndArmorProficiencyTable({
 }: {
   weaponAndArmorProficiencies: ItemFamily[];
 }) {
+  console.log(weaponAndArmorProficiencies);
   return (
     <Menus>
-      <Table header="Weapon and armor proficiency" columns="1fr 1fr 1fr">
+      <Table header="Item proficiency" columns="1fr">
         <Table.Body
+          columnCount={1}
           data={weaponAndArmorProficiencies}
           render={(item) => <ProficiencyRow key={item.id} item={item} />}
         />

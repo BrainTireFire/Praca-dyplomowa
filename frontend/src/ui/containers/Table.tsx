@@ -5,7 +5,7 @@ import Modal from "./Modal";
 import { EditModeContext } from "../../context/EditModeContext";
 
 const StyledTableContainer = styled.div`
-  border: 1px solid var(--color-border);
+  border: 2px solid var(--color-border);
 
   font-size: 1rem;
   background-color: var(--color-main-background);
@@ -214,12 +214,35 @@ function Body({
     return <Empty width={columnCount}>No data to show at the moment</Empty>;
   }
 
-  return <StyledBody>{data.map(render)}</StyledBody>;
+  const rowsWithSeparators: React.ReactNode[] = [];
+
+  data.forEach((item, index) => {
+    if (index == 0) {
+      rowsWithSeparators.push(<SeparatorRow key={`sepA-${index}`} columnCount={columnCount} />);
+    }
+    rowsWithSeparators.push(render(item));
+    if (index < data.length - 1) {
+      rowsWithSeparators.push(<SeparatorRow key={`sepB-${index}`} columnCount={columnCount} />);
+    }
+  });
+
+  return <StyledBody>{rowsWithSeparators}</StyledBody>;
 }
+
+const SeparatorRow = ({ columnCount }: { columnCount: number }) => (
+  <div
+    style={{
+      gridColumn: `1 / ${columnCount + 1}`, // spans the whole grid
+      borderBottom: '1px solid var(--color-border2)',
+      height: '1px', // or some spacing if needed
+    }}
+  />
+);
 
 Table.Header = Header;
 Table.Row = Row;
 Table.Body = Body;
 Table.Footer = Footer;
+Table.SeparatorRow = SeparatorRow;
 
 export default Table;

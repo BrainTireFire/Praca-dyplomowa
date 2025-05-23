@@ -51,8 +51,17 @@ public class Seed
     }
 
     public static async Task SeedLanguages(AppDbContext context){
-        context.Languages.AddRange(new List<Language>(){ new() { Name = "Common"},new() { Name = "Elvish"},new() { Name = "Dwarvish"}});
+        List<Language> languages  = new List<Language>();
+        CheckIfLanguageExistsAlready(context, languages, new Language(){Name = "Common"});
+        CheckIfLanguageExistsAlready(context, languages, new Language(){Name = "Elvish"});
+        CheckIfLanguageExistsAlready(context, languages, new Language(){Name = "Dwarvish"});
+        context.Languages.AddRange(languages);
         await context.SaveChangesAsync();
+    }
+    private static void CheckIfLanguageExistsAlready(AppDbContext context, List<Language> languages, Language newLanguage){
+        if(!context.Languages.Where(language => language.Name == newLanguage.Name).Any()){
+            languages.Add(newLanguage);
+        }
     }
 
     public static async Task SeedEquipmentSlots(AppDbContext context){
@@ -431,7 +440,7 @@ public class Seed
             //                     must be wielding a shield."
             // };
             // fightingStyle.R_PowersAlwaysAvailable.Add(protection);
-            fightingStyle.R_Effects.Add(new OffHandAttackEffectBlueprint("Two-Weapon Fighting"));
+            // fightingStyle.R_Effects.Add(new OffHandAttackEffectBlueprint("Two-Weapon Fighting"));
             fightingStyle.NumberToChoose = 1;
 
 
@@ -518,37 +527,37 @@ public class Seed
             wizardWeaponProficiency.R_Effects.Add(CreateProficiencyEffectBlueprint(context, "Light crossbow"));
 
             ChoiceGroup wizardFeatures = new("Wizard features");
-            ImmaterialResourceBlueprint arcaneRecoveryCharge = new()
-            {
-                Name = "Arcane recovery charge",
-                RefreshesOn = RefreshType.LongRest
-            };
-            ImmaterialResourceAmount arcaneRecoveryChargeAmount = new()
-            {
-                Count = 1,
-                Level = 0,
-                R_Blueprint = arcaneRecoveryCharge
-            };
-            // wizardClass.R_ClassLevels.Where(cl => cl.Level == 1).First().R_ImmaterialResourceAmounts.Add(arcaneRecoveryChargeAmount);
-            wizardFeatures.R_Resources.Add(arcaneRecoveryChargeAmount);
-            Power arcaneRecoveryLevel1 = PrepareArcaneRecoveryPower(1, arcaneRecoveryCharge);
-            Power arcaneRecoveryLevel2 = PrepareArcaneRecoveryPower(2, arcaneRecoveryCharge);
-            Power arcaneRecoveryLevel3 = PrepareArcaneRecoveryPower(3, arcaneRecoveryCharge);
-            Power arcaneRecoveryLevel4 = PrepareArcaneRecoveryPower(4, arcaneRecoveryCharge);
-            Power arcaneRecoveryLevel5 = PrepareArcaneRecoveryPower(5, arcaneRecoveryCharge);
-            Power arcaneRecoveryLevel6 = PrepareArcaneRecoveryPower(6, arcaneRecoveryCharge);
-            wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel1);
-            wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel2);
-            wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel3);
-            wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel4);
-            wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel5);
-            wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel6);
-            wizardFeatures.R_PowersToPrepare.Add(arcaneRecoveryLevel1);
-            wizardFeatures.R_PowersToPrepare.Add(arcaneRecoveryLevel2);
-            wizardFeatures.R_PowersToPrepare.Add(arcaneRecoveryLevel3);
-            wizardFeatures.R_PowersToPrepare.Add(arcaneRecoveryLevel4);
-            wizardFeatures.R_PowersToPrepare.Add(arcaneRecoveryLevel5);
-            wizardFeatures.R_PowersToPrepare.Add(arcaneRecoveryLevel6);
+            // ImmaterialResourceBlueprint arcaneRecoveryCharge = new()
+            // {
+            //     Name = "Arcane recovery charge",
+            //     RefreshesOn = RefreshType.LongRest
+            // };
+            // ImmaterialResourceAmount arcaneRecoveryChargeAmount = new()
+            // {
+            //     Count = 1,
+            //     Level = 0,
+            //     R_Blueprint = arcaneRecoveryCharge
+            // };
+            // // wizardClass.R_ClassLevels.Where(cl => cl.Level == 1).First().R_ImmaterialResourceAmounts.Add(arcaneRecoveryChargeAmount);
+            // wizardFeatures.R_Resources.Add(arcaneRecoveryChargeAmount);
+            // Power arcaneRecoveryLevel1 = PrepareArcaneRecoveryPower(1, arcaneRecoveryCharge);
+            // Power arcaneRecoveryLevel2 = PrepareArcaneRecoveryPower(2, arcaneRecoveryCharge);
+            // Power arcaneRecoveryLevel3 = PrepareArcaneRecoveryPower(3, arcaneRecoveryCharge);
+            // Power arcaneRecoveryLevel4 = PrepareArcaneRecoveryPower(4, arcaneRecoveryCharge);
+            // Power arcaneRecoveryLevel5 = PrepareArcaneRecoveryPower(5, arcaneRecoveryCharge);
+            // Power arcaneRecoveryLevel6 = PrepareArcaneRecoveryPower(6, arcaneRecoveryCharge);
+            // wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel1);
+            // wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel2);
+            // wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel3);
+            // wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel4);
+            // wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel5);
+            // wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel6);
+            // wizardFeatures.R_PowersToPrepare.Add(arcaneRecoveryLevel1);
+            // wizardFeatures.R_PowersToPrepare.Add(arcaneRecoveryLevel2);
+            // wizardFeatures.R_PowersToPrepare.Add(arcaneRecoveryLevel3);
+            // wizardFeatures.R_PowersToPrepare.Add(arcaneRecoveryLevel4);
+            // wizardFeatures.R_PowersToPrepare.Add(arcaneRecoveryLevel5);
+            // wizardFeatures.R_PowersToPrepare.Add(arcaneRecoveryLevel6);
 
             ImmaterialResourceBlueprint spellSlot = new()
             {
@@ -677,14 +686,14 @@ public class Seed
                     sneakAttackDamage10,
                 }
             );
-            DummyEffectBlueprint cunningAction = new("Cunning action"){IsImplemented = false};
-            DummyEffectBlueprint uncannyDodge = new("Uncanny dodge"){IsImplemented = false};
-            DummyEffectBlueprint evasion = new("Evasion"){IsImplemented = false};
-            DummyEffectBlueprint reliableTalent = new("Reliable talent"){IsImplemented = false};
-            DummyEffectBlueprint blindsense = new("Blindsense"){IsImplemented = false};
+            // DummyEffectBlueprint cunningAction = new("Cunning action"){IsImplemented = false};
+            // DummyEffectBlueprint uncannyDodge = new("Uncanny dodge"){IsImplemented = false};
+            // DummyEffectBlueprint evasion = new("Evasion"){IsImplemented = false};
+            // DummyEffectBlueprint reliableTalent = new("Reliable talent"){IsImplemented = false};
+            // DummyEffectBlueprint blindsense = new("Blindsense"){IsImplemented = false};
             SavingThrowEffectBlueprint slipperyMind = new("Slippery mind", 0, RollMoment.OnCast, SavingThrowEffect.Proficiency, Ability.WISDOM);
-            DummyEffectBlueprint elusive = new("Slippery mind"){IsImplemented = false};
-            DummyEffectBlueprint strokeOfLuck = new("Stroke of luck"){IsImplemented = false};
+            // DummyEffectBlueprint elusive = new("Slippery mind"){IsImplemented = false};
+            // DummyEffectBlueprint strokeOfLuck = new("Stroke of luck"){IsImplemented = false};
             ImmaterialResourceBlueprint strokeOfLuckCharge = new()
             {
                 Name = "Stroke of luck charge",
@@ -696,7 +705,9 @@ public class Seed
             strokeOfLuckAmount.Count = 1;
 
             rogueFeatures.R_Effects.AddRange([
-                cunningAction, uncannyDodge, evasion, blindsense, slipperyMind, elusive, strokeOfLuck
+                // cunningAction, uncannyDodge, evasion, blindsense,
+                slipperyMind,
+                // elusive, strokeOfLuck
             ]);
             rogueFeatures.R_Resources.AddRange([
                 strokeOfLuckAmount
@@ -715,18 +726,18 @@ public class Seed
         return new(context.ItemFamilies.Where(itemFam => itemFam.Name == name).First());
     }
 
-    private static Power PrepareArcaneRecoveryPower(int level, ImmaterialResourceBlueprint arcaneRecoveryCharge){
-        Power arcaneRecoveryLevel = new("Arcane Recovery " + level, ActionType.Action, CastableBy.Character, PowerType.PassiveEffect, TargetType.Caster)
-        {
-            IsImplemented = false,
-            R_UsesImmaterialResource = arcaneRecoveryCharge,
-        };
-        DummyEffectBlueprint arcaneRecoveryEffect = new("Arcane Recovery " + level)
-        {
-            Level = 0,
-            ResourceAmount = level
-        };
-        arcaneRecoveryLevel.R_EffectBlueprints.Add(arcaneRecoveryEffect);
-        return arcaneRecoveryLevel;
-    }
+    // private static Power PrepareArcaneRecoveryPower(int level, ImmaterialResourceBlueprint arcaneRecoveryCharge){
+    //     Power arcaneRecoveryLevel = new("Arcane Recovery " + level, ActionType.Action, CastableBy.Character, PowerType.PassiveEffect, TargetType.Caster)
+    //     {
+    //         IsImplemented = false,
+    //         R_UsesImmaterialResource = arcaneRecoveryCharge,
+    //     };
+    //     DummyEffectBlueprint arcaneRecoveryEffect = new("Arcane Recovery " + level)
+    //     {
+    //         Level = 0,
+    //         ResourceAmount = level
+    //     };
+    //     arcaneRecoveryLevel.R_EffectBlueprints.Add(arcaneRecoveryEffect);
+    //     return arcaneRecoveryLevel;
+    // }
 }

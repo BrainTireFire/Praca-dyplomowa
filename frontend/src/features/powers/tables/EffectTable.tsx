@@ -14,6 +14,7 @@ import { useDeleteEffectBlueprint } from "../hooks/useDeleteEffectBlueprint";
 import ConfirmDelete from "../../../ui/containers/ConfirmDelete";
 import { useContext } from "react";
 import { PowerIdContext } from "../contexts/PowerIdContext";
+import { EditModeContext } from "../../../context/EditModeContext";
 
 export default function EffectTable({
   effects,
@@ -63,6 +64,7 @@ export default function EffectTable({
 
 function EffectRow({ effect }: { effect: EffectBlueprintListItem }) {
   const { powerId } = useContext(PowerIdContext);
+  const { editMode } = useContext(EditModeContext);
   const { deleteEffectBlueprint, isPending } = useDeleteEffectBlueprint(
     () => {},
     powerId
@@ -82,11 +84,13 @@ function EffectRow({ effect }: { effect: EffectBlueprintListItem }) {
                 Open
               </Menus.Button>
             </Modal.Open>
-            <Modal.Open opens="delete">
-              <Menus.Button icon={<HiTrash />} onClick={() => {}}>
-                Delete
-              </Menus.Button>
-            </Modal.Open>
+            { editMode && 
+              <Modal.Open opens="delete">
+                <Menus.Button icon={<HiTrash />} onClick={() => {}}>
+                  Delete
+                </Menus.Button>
+              </Modal.Open>
+            }
           </Menus.List>
         </Menus.Menu>
         <Modal.Window name="delete">

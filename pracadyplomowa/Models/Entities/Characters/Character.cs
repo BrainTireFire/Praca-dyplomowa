@@ -57,7 +57,6 @@ namespace pracadyplomowa.Models.Entities.Characters
         public int? R_ConcentratesOnId { get; set; }
         public virtual List<ParticipanceData> R_CharactersParticipatesInEncounters { get; set; } = [];
         public virtual Backpack R_CharacterHasBackpack { get; set; } = new Backpack();
-        public int R_CharacterHasBackpackId { get; set; }
 
         public virtual List<EquipData> R_EquippedItems { get; set; } = [];
         public virtual Campaign.Campaign? R_Campaign { get; set; }

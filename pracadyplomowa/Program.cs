@@ -52,6 +52,7 @@ builder.Services.AddSignalR();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IBoardService, BoardService>();
 builder.Services.AddScoped<IEncounterService, EncounterService>();
+builder.Services.AddScoped<IPowerService, PowerService>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<IItemFamilyService, ItemFamilyService>();
 builder.Services.AddScoped<IImmaterialResourceBlueprintService, ImmaterialResourceBlueprintService>();

@@ -241,7 +241,8 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .HasMany(c => c.R_AffectedBy)
                         .WithOne(ei => ei.R_TargetedItem)
                         .HasForeignKey(ei => ei.R_TargetedItemId)
-                        .IsRequired(false);
+                        .IsRequired(false)
+                        .OnDelete(DeleteBehavior.Cascade);
                 builder.Entity<Item>()
                         .HasMany(c => c.R_EffectsOnEquip)
                         .WithOne(ei => ei.R_GrantedByEquippingItem)
@@ -352,6 +353,30 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
                         .HasMany(blueprint => blueprint.R_Amounts)
                         .WithOne(i => i.R_Blueprint)
                         .HasForeignKey(i => i.R_BlueprintId)
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                builder.Entity<Backpack>()
+                        .HasMany(b => b.R_BackpackHasItems)
+                        .WithOne(i => i.R_BackpackHasItem)
+                        .HasForeignKey(i => i.R_BackpackHasItemId)
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                builder.Entity<Character>()
+                        .HasMany(c => c.R_ImmaterialResourceInstances)
+                        .WithOne(r => r.R_Character)
+                        .HasForeignKey(r => r.R_CharacterId)
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                builder.Entity<Item>()
+                        .HasMany(i => i.R_ItemGrantsResources)
+                        .WithOne(r => r.R_Item)
+                        .HasForeignKey(r => r.R_ItemId)
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                builder.Entity<Power>()
+                        .HasMany(p => p.R_EffectBlueprints)
+                        .WithOne(eb => eb.R_Power)
+                        .HasForeignKey(eb => eb.R_PowerId)
                         .OnDelete(DeleteBehavior.Cascade);
 
                 foreach (var entityType in builder.Model.GetEntityTypes())

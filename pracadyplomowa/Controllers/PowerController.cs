@@ -1,17 +1,21 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 using pracadyplomowa.Models.DTOs;
 using pracadyplomowa.Models.Entities.Items;
 using pracadyplomowa.Models.Entities.Powers;
 using pracadyplomowa.Repository;
 using pracadyplomowa.Repository.Item;
 using pracadyplomowa.Repository.UnitOfWork;
+using pracadyplomowa.Services;
+using pracadyplomowa.Services.ItemFamily;
 
 namespace pracadyplomowa.Controllers
 {
@@ -20,11 +24,13 @@ namespace pracadyplomowa.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IPowerService _powerService;
 
-        public PowerController(IUnitOfWork unitOfWork, IMapper mapper)
+        public PowerController(IUnitOfWork unitOfWork, IMapper mapper, IPowerService powerService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _powerService = powerService;
         }
 
         [HttpGet("immaterialResourceBlueprints")]
@@ -42,7 +48,7 @@ namespace pracadyplomowa.Controllers
         [HttpGet]
         public async Task<ActionResult<List<PowerCompactDto>>> GetPowers([FromQuery] PowerParams powerParams)
         {
-            var powers = await _unitOfWork.PowerRepository.GetAllPowersWithParams(powerParams);
+            var powers = await _unitOfWork.PowerRepository.GetAllPowersWithParams(powerParams, User.GetUserId());
             List<PowerCompactDto> powerDtos = _mapper.Map<List<PowerCompactDto>>(powers);
             Response.AddPaginationHeader(powers);
             return Ok(powerDtos);
@@ -51,10 +57,16 @@ namespace pracadyplomowa.Controllers
         [HttpGet("{powerId}")]
         public async Task<ActionResult<PowerFormDto>> GetPower(int powerId)
         {
+            bool editable = _powerService.CheckExistenceAndEditAccess(powerId, User.GetUserId(), out var actionResult);
+            if (actionResult is NotFoundObjectResult)
+            {
+                return actionResult;
+            }
             var power = await _unitOfWork.PowerRepository.GetByIdWithEffectBlueprintsAndMaterialResources(powerId);
 
 
             var powerDto = _mapper.Map<PowerFormDto>(power);
+            powerDto.Editable = editable;
 
 
             return Ok(powerDto);
@@ -80,6 +92,10 @@ namespace pracadyplomowa.Controllers
         [HttpPatch]
         public async Task<ActionResult> UpdatePower(PowerFormDto powerDto)
         {
+            if (!_powerService.CheckExistenceAndEditAccess((int)powerDto.Id!, User.GetUserId(), out var actionResult))
+            {
+                return actionResult;
+            }
             var power = _mapper.Map<Power>(powerDto);
             power.Range = power.IsRanged ? power.Range : 5;
             _unitOfWork.PowerRepository.Update(power);
@@ -94,6 +110,10 @@ namespace pracadyplomowa.Controllers
         [HttpDelete("{powerId}")]
         public async Task<ActionResult> DeletePower(int powerId)
         {
+            if (!_powerService.CheckExistenceAndEditAccess(powerId, User.GetUserId(), out var actionResult))
+            {
+                return actionResult;
+            }
             _unitOfWork.PowerRepository.Delete(powerId);
             try{
                 await _unitOfWork.SaveChangesAsync();
@@ -108,6 +128,10 @@ namespace pracadyplomowa.Controllers
         [HttpPost("{powerId}/effects")]
         public async Task<ActionResult> AddNewEffectBlueprint([FromBody] EffectBlueprintFormDto effectDto, [FromRoute] int powerId)
         {
+            if (!_powerService.CheckExistenceAndEditAccess(powerId, User.GetUserId(), out var actionResult))
+            {
+                return actionResult;
+            }
             var effectBlueprint = _mapper.Map<EffectBlueprint>(effectDto);
             effectBlueprint.R_PowerId = powerId;
 
@@ -120,6 +144,10 @@ namespace pracadyplomowa.Controllers
         [HttpPost("{powerId}/materialComponents")]
         public async Task<ActionResult> AddMaterialComponent([FromBody] ItemCostRequirementDto materialComponentDto, [FromRoute] int powerId)
         {
+            if (!_powerService.CheckExistenceAndEditAccess(powerId, User.GetUserId(), out var actionResult))
+            {
+                return actionResult;
+            }
             var materialComponent = new ItemCostRequirement
             {
                 R_ItemFamilyId = materialComponentDto.ItemFamilyId,
@@ -138,6 +166,10 @@ namespace pracadyplomowa.Controllers
         [HttpPatch("{powerId}/materialComponents")]
         public async Task<ActionResult> UpdateMaterialComponent([FromBody] ItemCostRequirementDto materialComponentDto, [FromRoute] int powerId)
         {
+            if (!_powerService.CheckExistenceAndEditAccess(powerId, User.GetUserId(), out var actionResult))
+            {
+                return actionResult;
+            }
             var materialComponent = new ItemCostRequirement
             {
                 Id = materialComponentDto.Id,

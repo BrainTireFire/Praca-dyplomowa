@@ -67,7 +67,7 @@ namespace pracadyplomowa.Controllers
         [HttpDelete("{characterId}")]
         public async Task<ActionResult> DeleteCharacter(int characterId)
         {
-            if (!_characterService.CheckExistenceAndReadEditAccess(characterId, User.GetUserId(), [Character.AccessLevels.Read], out var errorResult, out var grantedAccessLevels))
+            if (!_characterService.CheckExistenceAndReadEditAccess(characterId, User.GetUserId(), [Character.AccessLevels.Delete], out var errorResult, out var grantedAccessLevels))
             {
                 return errorResult;
             }
@@ -116,34 +116,6 @@ namespace pracadyplomowa.Controllers
                 ownerId,
                 0 // 0 xp on start
             );
-
-            var item = (await _unitOfWork.ItemRepository.GetByNameWithEquipmentSlots("Iron longsword")).CloneInstance();
-            item.R_OwnerId = User.GetUserId();
-            var item2 = item.CloneInstance();
-            item2.R_OwnerId = User.GetUserId();
-
-            character.R_CharacterHasBackpack = new Backpack()
-            {
-                R_BackpackOfCharacter = character,
-                R_BackpackHasItems = [item, item2]
-            };
-
-            var rightPalmSlot = item.R_ItemIsEquippableInSlots.FirstOrDefault(x => x.Name == "Right palm");
-            if (rightPalmSlot != null)
-            {
-                character.EquipItem(item, rightPalmSlot);
-            }
-
-            var leftPalmSlot = item2.R_ItemIsEquippableInSlots.FirstOrDefault(x => x.Name == "Left palm");
-            if (leftPalmSlot != null)
-            {
-                character.EquipItem(item2, leftPalmSlot);
-            }
-
-            if (item2 is MeleeWeapon weapon && weapon.Versatile)
-            {
-                weapon.EquipVersatile();
-            }
 
             _unitOfWork.CharacterRepository.Add(character);
             await _unitOfWork.SaveChangesAsync();

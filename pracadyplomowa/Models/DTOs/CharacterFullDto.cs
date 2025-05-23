@@ -186,7 +186,7 @@ namespace pracadyplomowa.Models.DTOs
         {
             var itemProficiencies = character.R_AffectedBy
                                 .OfType<ProficiencyEffectInstance>()
-                                // .Where(ei => ei.ProficiencyEffectType.ProficiencyEffect == proficiency)
+                                .Where(ei => ei.ProficiencyEffectType.ProficiencyEffect == ProficiencyEffect.SpecificItemFamily)
                                 .Select(ei => ei.R_GrantsProficiencyInItemFamily)
                                 .Where(it => it.ItemType == itemType)
                                 .Select(itemFamily => new ItemFamilyDto
@@ -197,6 +197,7 @@ namespace pracadyplomowa.Models.DTOs
                                 .Distinct()
                                 .Union(character.R_AffectedBy
                                     .OfType<ProficiencyEffectInstance>()
+                                    .Where(ei => ei.ProficiencyEffectType.ProficiencyEffect == ProficiencyEffect.ItemType)
                                     .Where(ei => ei.ProficiencyEffectType.ItemType == itemType)
                                     .Select(ei => new ItemFamilyDto
                                         {

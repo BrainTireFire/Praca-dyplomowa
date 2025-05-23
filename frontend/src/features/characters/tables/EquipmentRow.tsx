@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import Table from "../../../ui/containers/Table";
 import Modal from "../../../ui/containers/Modal";
 import Menus from "../../../ui/containers/Menus";
@@ -15,6 +15,7 @@ import { Cell } from "../../../ui/containers/Cell";
 import ConfirmDelete from "../../../ui/containers/ConfirmDelete";
 import { useDeleteItem } from "../hooks/useDeleteItem";
 import ItemForm from "../../items/ItemForm";
+import { EditModeContext } from "../../../context/EditModeContext";
 
 const Stacked = styled.div`
   display: flex;
@@ -41,6 +42,7 @@ const Container = styled.div`
 
 export default function EquipmentRow({ equipment }: { equipment: Item }) {
   const { isPending, deleteItem } = useDeleteItem(() => {});
+  const { editMode } = useContext(EditModeContext);
   return (
     <Table.Row>
       <Cell>{equipment.name}</Cell>
@@ -68,11 +70,13 @@ export default function EquipmentRow({ equipment }: { equipment: Item }) {
                 Open
               </Menus.Button>
             </Modal.Open>
-            <Modal.Open opens="delete">
-              <Menus.Button icon={<HiTrash />} onClick={() => {}}>
-                Delete
-              </Menus.Button>
-            </Modal.Open>
+            { editMode &&
+              <Modal.Open opens="delete">
+                <Menus.Button icon={<HiTrash />} onClick={() => {}}>
+                  Delete
+                </Menus.Button>
+              </Modal.Open>
+            }
           </Menus.List>
         </Menus.Menu>
         <Modal.Window name="delete">

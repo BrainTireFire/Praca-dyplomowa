@@ -157,7 +157,7 @@ export default function ProficiencyEffectForm({
             state.effectType.proficiencyEffect !== "SpecificItemFamily" ||
             disableUpdate
           }
-          chosenValue={state.grantsProficiencyInItemFamilyId?.toString() ?? ""}
+          chosenValue={state.grantsProficiencyInItemFamilyId?.toString() ?? null}
           setChosenValue={(e) =>
             dispatch({ type: "setItemFamily", payload: Number(e) })
           }

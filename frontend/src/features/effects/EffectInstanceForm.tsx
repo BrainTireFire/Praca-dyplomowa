@@ -292,6 +292,7 @@ export default function EffectInstanceForm({
 
   const bodyValueEffect = state.effectTypeBody as ValueEffect;
   const bodyDamageEffect = state.effectTypeBody as DamageEffect;
+  const bodyProficiencyEffect = state.effectTypeBody as ProficiencyEffect;
   const bodyValueEffectDisable_Level =
     bodyValueEffect.value?.additionalValues?.some(
       (value) =>
@@ -313,13 +314,17 @@ export default function EffectInstanceForm({
   const bodyDamageEffectDisable_DamageType =
     bodyDamageEffect.effectType?.damageEffect !== "ExtraWeaponDamage" &&
     bodyDamageEffect.effectType?.damageEffect_DamageType === null;
+  const bodyProficiencyEffectDisable_ItemFamily =
+    bodyProficiencyEffect.effectType?.proficiencyEffect === "SpecificItemFamily" && 
+    bodyProficiencyEffect.grantsProficiencyInItemFamilyId === null;
 
   const disableUpdateButton = () => {
     return (
       bodyValueEffectDisable_Level ||
       bodyValueEffectDisable_Skill ||
       bodyValueEffectDisable_Ability ||
-      bodyDamageEffectDisable_DamageType
+      bodyDamageEffectDisable_DamageType ||
+      bodyProficiencyEffectDisable_ItemFamily
     );
   };
   const disableReason = [];

@@ -33,6 +33,7 @@ export type Power = {
   immaterialResourceUsed: ImmaterialResource | null;
   materialResourcesUsed: MaterialComponent[];
   effectBlueprints: EffectBlueprintListItem[];
+  editable: boolean;
 };
 
 export type ActionType =

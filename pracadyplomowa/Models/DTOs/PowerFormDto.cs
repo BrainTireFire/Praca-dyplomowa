@@ -38,6 +38,7 @@ public class PowerFormDto
     public ImmaterialResourceBlueprintDto? ImmaterialResourceUsed { get; set; }
     public List<ItemCostRequirementDto> MaterialResourcesUsed { get; set; } = [];
     public List<EffectBlueprintDto> EffectBlueprints { get; set; } = [];
+    public bool Editable { get; set; } = false!;
 
     public class EffectBlueprintDto {
         public int? Id { get; set; }

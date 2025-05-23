@@ -281,5 +281,11 @@ namespace pracadyplomowa.Models.Entities.Powers
                 );
             }
         }
+        
+        
+        public bool HasEditAccess(int userId)
+        {
+            return this.R_OwnerId == userId;
+        }
     }
 }

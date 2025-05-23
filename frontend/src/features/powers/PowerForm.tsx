@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from "react";
+import { useContext, useEffect, useReducer, useState } from "react";
 import FormRowVertical from "../../ui/forms/FormRowVertical";
 import Input from "../../ui/forms/Input";
 import { abilitiesDropdown, ability } from "../effects/abilities";
@@ -45,6 +45,7 @@ import Modal from "../../ui/containers/Modal";
 import ConfirmDelete from "../../ui/containers/ConfirmDelete";
 import { useDeletePower } from "./hooks/useDeletePower";
 import { useNavigate } from "react-router-dom";
+import { EditModeContext } from "../../context/EditModeContext";
 
 // Action types
 export enum PowerActionTypes {
@@ -343,10 +344,18 @@ const powerReducer = (state: Power, action: PowerAction): Power => {
       };
     case PowerActionTypes.UPDATE_TARGET_TYPE:
       let isRanged2 = state.isRanged;
+      let range2 = state.range;
+      let maxTargets2 = state.maxTargets;
+      let areaShape2 = state.areaShape;
+      let areaSize2 = state.areaSize;
       if (action.payload === "Caster") {
         isRanged2 = false;
+        range2 = 0;
+        maxTargets2 = 1;
+        areaShape2 = "None";
+        areaSize2 = 0;
       }
-      return { ...state, targetType: action.payload, isRanged: isRanged2 };
+      return { ...state, targetType: action.payload, isRanged: isRanged2, range: range2, maxTargets: maxTargets2, areaShape: areaShape2, areaSize: areaSize2 };
     case PowerActionTypes.UPDATE_IS_RANGED:
       return { ...state, isRanged: action.payload, range: action.payload ? state.range : 5 };
     case PowerActionTypes.UPDATE_RANGE:
@@ -450,6 +459,7 @@ export const initialState: Power = {
   materialResourcesUsed: [],
   effectBlueprints: [],
   overrideCastersDC: false,
+  editable: true
 };
 
 export default function PowerForm({
@@ -462,6 +472,7 @@ export default function PowerForm({
   onUpdate: (id: number) => void;
 }) {
   
+  const { editMode } = useContext(EditModeContext);
   const navigate = useNavigate();
   const [actualPowerId, setActualPowerId] = useState(powerId);
   const {
@@ -537,556 +548,582 @@ export default function PowerForm({
     state.castableBy === "Character"
       ? "Select value!"
       : undefined;
+
+  console.log(editMode)
+  console.log(state.editable);
+  const disableUpdate = !editMode || !state.editable;
   let lockSaveButton = !!classForUpcastingError || !!resourceForUpcastingError;
   return (
     <>
-      <Grid>
-        <Row1>
-          <FormRowVertical label="Name">
-            <Input
-              value={state.name}
-              onChange={(e) =>
-                dispatch({
-                  type: PowerActionTypes.UPDATE_NAME,
-                  payload: e.target.value,
-                })
-              }
-            ></Input>
-          </FormRowVertical>
-          <FormRowVertical label="Description">
-            <Input
-              value={state.description}
-              onChange={(e) =>
-                dispatch({
-                  type: PowerActionTypes.UPDATE_DESCRIPTION,
-                  payload: e.target.value,
-                })
-              }
-            ></Input>
-          </FormRowVertical>
-          <FormRowVertical label="Action type">
-            <Dropdown
-              disabled={state.castableBy !== "Character"}
-              valuesList={actionTypeOptions}
-              setChosenValue={(e) =>
-                dispatch({
-                  type: PowerActionTypes.UPDATE_ACTION_TYPE,
-                  payload: e as ActionType,
-                })
-              }
-              chosenValue={state.requiredActionType}
-            ></Dropdown>
-          </FormRowVertical>
-          <FormRowVertical
-            label="Immaterial resource used"
-            error={resourceForUpcastingError}
-          >
-            <Dropdown
-              disabled={state.castableBy !== "Character"}
-              valuesList={[
-                ...immaterialResourceBlueprintsDropdown,
-                { value: null, label: "None" },
-              ]}
-              setChosenValue={(e) =>
-                dispatch({
-                  type: PowerActionTypes.UPDATE_IMMATERIAL_RESOURCE_USED,
-                  payload:
-                    localImmaterialResourceBlueprints?.find(
-                      (x) => x.id.toString() === e
-                    ) ?? null,
-                })
-              }
-              chosenValue={state.immaterialResourceUsed?.id.toString() ?? null}
-            ></Dropdown>
-          </FormRowVertical>
-          <FormRowLabelRight label="Verbal component">
-            <Input
-              disabled={state.castableBy !== "Character"}
-              type="checkbox"
-              checked={state.verbalComponent}
-              onChange={(x) =>
-                dispatch({
-                  type: PowerActionTypes.UPDATE_VERBAL_COMPONENT,
-                  payload: x.target.checked,
-                })
-              }
-            ></Input>
-          </FormRowLabelRight>
-          <FormRowLabelRight label="Somatic component">
-            <Input
-              disabled={state.castableBy !== "Character"}
-              type="checkbox"
-              checked={state.somaticComponent}
-              onChange={(x) =>
-                dispatch({
-                  type: PowerActionTypes.UPDATE_SOMATIC_COMPONENT,
-                  payload: x.target.checked,
-                })
-              }
-            ></Input>
-          </FormRowLabelRight>
-        </Row1>
-        <Row2>
-          <Column1>
-            {/* <FormRowLabelRight label="Is implemented">
+      <EditModeContext.Provider value={{ editMode: !disableUpdate }}>
+        <Grid>
+          <Row1>
+            <FormRowVertical label="Name">
               <Input
-                type="checkbox"
-                checked={state.isImplemented}
-                onChange={(x) =>
+                disabled={disableUpdate}
+                value={state.name}
+                onChange={(e) =>
                   dispatch({
-                    type: PowerActionTypes.UPDATE_IS_IMPLEMENTED,
-                    payload: x.target.checked,
+                    type: PowerActionTypes.UPDATE_NAME,
+                    payload: e.target.value,
                   })
                 }
               ></Input>
-            </FormRowLabelRight> */}
-            <FormRowLabelRight label="Is magic">
+            </FormRowVertical>
+            <FormRowVertical label="Description">
               <Input
+                disabled={disableUpdate}
+                value={state.description}
+                onChange={(e) =>
+                  dispatch({
+                    type: PowerActionTypes.UPDATE_DESCRIPTION,
+                    payload: e.target.value,
+                  })
+                }
+              ></Input>
+            </FormRowVertical>
+            <FormRowVertical label="Action type">
+              <Dropdown
+                disabled={state.castableBy !== "Character" || disableUpdate}
+                valuesList={actionTypeOptions}
+                setChosenValue={(e) =>
+                  dispatch({
+                    type: PowerActionTypes.UPDATE_ACTION_TYPE,
+                    payload: e as ActionType,
+                  })
+                }
+                chosenValue={state.requiredActionType}
+              ></Dropdown>
+            </FormRowVertical>
+            <FormRowVertical
+              label="Immaterial resource used"
+              error={resourceForUpcastingError}
+            >
+              <Dropdown
+                disabled={state.castableBy !== "Character" || disableUpdate}
+                valuesList={[
+                  ...immaterialResourceBlueprintsDropdown,
+                  { value: null, label: "None" },
+                ]}
+                setChosenValue={(e) =>
+                  dispatch({
+                    type: PowerActionTypes.UPDATE_IMMATERIAL_RESOURCE_USED,
+                    payload:
+                      localImmaterialResourceBlueprints?.find(
+                        (x) => x.id.toString() === e
+                      ) ?? null,
+                  })
+                }
+                chosenValue={state.immaterialResourceUsed?.id.toString() ?? null}
+              ></Dropdown>
+            </FormRowVertical>
+            <FormRowLabelRight label="Verbal component">
+              <Input
+                disabled={state.castableBy !== "Character" || disableUpdate}
                 type="checkbox"
-                checked={state.isMagic}
+                checked={state.verbalComponent}
                 onChange={(x) =>
                   dispatch({
-                    type: PowerActionTypes.UPDATE_IS_MAGIC,
+                    type: PowerActionTypes.UPDATE_VERBAL_COMPONENT,
                     payload: x.target.checked,
                   })
                 }
               ></Input>
             </FormRowLabelRight>
-            <RadioGroup
-              values={castableByOptions}
-              onChange={(x) => {
-                dispatch({
-                  type: PowerActionTypes.UPDATE_CASTABLE_BY,
-                  payload: x as CastableBy,
-                });
-              }}
-              name="castableBy"
-              label="Castable by"
-              currentValue={state.castableBy}
-            ></RadioGroup>
-            <RadioGroup
-              values={powerTypeOptions.filter(
-                (option) =>
-                  state.castableBy === "Character" ||
-                  option.value !== "AuraCreator"
-              )}
-              onChange={(x) => {
-                dispatch({
-                  type: PowerActionTypes.UPDATE_POWER_TYPE,
-                  payload: x as PowerType,
-                });
-              }}
-              name="powerType"
-              label="Power type"
-              currentValue={state.powerType}
-            ></RadioGroup>
-            <RadioGroup
-              values={targetTypeOptions.filter(
-                (option) =>
-                  state.powerType !== "AuraCreator" || option.value === "Caster"
-              )}
-              onChange={(x) => {
-                dispatch({
-                  type: PowerActionTypes.UPDATE_TARGET_TYPE,
-                  payload: x as TargetType,
-                });
-              }}
-              name="targetType"
-              label="Target type"
-              currentValue={state.targetType}
-              disabled={state.castableBy !== "Character"}
-            ></RadioGroup>
-          </Column1>
-          <Column2>
-            <Row1InColumn2>
-              {/* <EffectTable
-                effects={state.effectBlueprints}
-                powerId={powerId ?? -1}
-              ></EffectTable> */}
-              {power && (
-                <>
-                  {state.castableBy === "Character" && (
-                    <MaterialResourceTable
-                      materialComponents={state.materialResourcesUsed}
-                      powerId={powerId ?? -1}
-                    ></MaterialResourceTable>
-                  )}
-
-                  <EffectTable
-                    effects={state.effectBlueprints}
-                    powerId={powerId ?? -1}
-                  ></EffectTable>
-                </>
-              )}
-              <RadioGroup
-                values={upcastByOptions}
-                onChange={(x) => {
+            <FormRowLabelRight label="Somatic component">
+              <Input
+                disabled={state.castableBy !== "Character" || disableUpdate}
+                type="checkbox"
+                checked={state.somaticComponent}
+                onChange={(x) =>
                   dispatch({
-                    type: PowerActionTypes.UPDATE_UPCAST_BY,
-                    payload: x as UpcastBy,
-                  });
-                }}
-                name="upcastBy"
-                label="Upcasted by"
-                currentValue={state.upcastBy}
-                disabled={state.castableBy !== "Character"}
-              ></RadioGroup>
-              <FormRowVertical
-                label={"Class for upcasting"}
-                error={classForUpcastingError}
-              >
-                <Dropdown
-                  disabled={state.upcastBy !== "ClassLevel"}
-                  valuesList={
-                    classes
-                      ? classes.map((item) => {
-                          return {
-                            value: item.id.toString(),
-                            label: item.name,
-                          };
-                        })
-                      : []
-                  }
-                  setChosenValue={(value) =>
+                    type: PowerActionTypes.UPDATE_SOMATIC_COMPONENT,
+                    payload: x.target.checked,
+                  })
+                }
+              ></Input>
+            </FormRowLabelRight>
+          </Row1>
+          <Row2>
+            <Column1>
+              {/* <FormRowLabelRight label="Is implemented">
+                <Input
+                  type="checkbox"
+                  checked={state.isImplemented}
+                  onChange={(x) =>
                     dispatch({
-                      type: PowerActionTypes.UPDATE_CLASS_FOR_UPCASTING,
-                      payload: Number(value) ?? null,
+                      type: PowerActionTypes.UPDATE_IS_IMPLEMENTED,
+                      payload: x.target.checked,
                     })
                   }
-                  chosenValue={state.classForUpcasting?.toString() ?? null}
-                ></Dropdown>
-              </FormRowVertical>
-            </Row1InColumn2>
-            <Row2InColumn2>
-              <SettingGroupContainer
-                customStyles={css`
-                  grid-column: 1;
-                  grid-row: 1;
-                `}
-              >
-                <Heading as="h3">Range settings</Heading>
-                <FormRowLabelRight label="Is ranged">
-                  <Input
-                    disabled={
-                      state.castableBy !== "Character" ||
-                      state.powerType === "AuraCreator" ||
-                      state.targetType === "Caster"
+                ></Input>
+              </FormRowLabelRight> */}
+              <FormRowLabelRight label="Is magic">
+                <Input
+                  disabled={disableUpdate}
+                  type="checkbox"
+                  checked={state.isMagic}
+                  onChange={(x) =>
+                    dispatch({
+                      type: PowerActionTypes.UPDATE_IS_MAGIC,
+                      payload: x.target.checked,
+                    })
+                  }
+                ></Input>
+              </FormRowLabelRight>
+              <RadioGroup
+                values={castableByOptions}
+                disabled={disableUpdate}
+                onChange={(x) => {
+                  dispatch({
+                    type: PowerActionTypes.UPDATE_CASTABLE_BY,
+                    payload: x as CastableBy,
+                  });
+                }}
+                name="castableBy"
+                label="Castable by"
+                currentValue={state.castableBy}
+              ></RadioGroup>
+              <RadioGroup
+                values={powerTypeOptions.filter(
+                  (option) =>
+                    state.castableBy === "Character" ||
+                    option.value !== "AuraCreator"
+                )}
+                onChange={(x) => {
+                  dispatch({
+                    type: PowerActionTypes.UPDATE_POWER_TYPE,
+                    payload: x as PowerType,
+                  });
+                }}
+                name="powerType"
+                label="Power type"
+                currentValue={state.powerType}
+                disabled={disableUpdate}
+              ></RadioGroup>
+              <RadioGroup
+                values={targetTypeOptions.filter(
+                  (option) =>
+                    state.powerType !== "AuraCreator" || option.value === "Caster"
+                )}
+                onChange={(x) => {
+                  dispatch({
+                    type: PowerActionTypes.UPDATE_TARGET_TYPE,
+                    payload: x as TargetType,
+                  });
+                }}
+                name="targetType"
+                label="Target type"
+                currentValue={state.targetType}
+                disabled={state.castableBy !== "Character" || disableUpdate}
+              ></RadioGroup>
+            </Column1>
+            <Column2>
+              <Row1InColumn2>
+                {/* <EffectTable
+                  effects={state.effectBlueprints}
+                  powerId={powerId ?? -1}
+                ></EffectTable> */}
+                {power && (
+                  <>
+                    {state.castableBy === "Character" && (
+                      <MaterialResourceTable
+                        materialComponents={state.materialResourcesUsed}
+                        powerId={powerId ?? -1}
+                      ></MaterialResourceTable>
+                    )}
+
+                    <EffectTable
+                      effects={state.effectBlueprints}
+                      powerId={powerId ?? -1}
+                    ></EffectTable>
+                  </>
+                )}
+                <RadioGroup
+                  values={upcastByOptions}
+                  onChange={(x) => {
+                    dispatch({
+                      type: PowerActionTypes.UPDATE_UPCAST_BY,
+                      payload: x as UpcastBy,
+                    });
+                  }}
+                  name="upcastBy"
+                  label="Upcasted by"
+                  currentValue={state.upcastBy}
+                  disabled={state.castableBy !== "Character" || disableUpdate}
+                ></RadioGroup>
+                <FormRowVertical
+                  label={"Class for upcasting"}
+                  error={classForUpcastingError}
+                >
+                  <Dropdown
+                    disabled={state.upcastBy !== "ClassLevel" || disableUpdate}
+                    valuesList={
+                      classes
+                        ? classes.map((item) => {
+                            return {
+                              value: item.id.toString(),
+                              label: item.name,
+                            };
+                          })
+                        : []
                     }
-                    type="checkbox"
-                    checked={state.isRanged}
-                    onChange={(x) =>
+                    setChosenValue={(value) =>
                       dispatch({
-                        type: PowerActionTypes.UPDATE_IS_RANGED,
-                        payload: x.target.checked,
+                        type: PowerActionTypes.UPDATE_CLASS_FOR_UPCASTING,
+                        payload: Number(value) ?? null,
                       })
                     }
-                  ></Input>
-                </FormRowLabelRight>
-                <FormRowVertical label="Range">
+                    chosenValue={state.classForUpcasting?.toString() ?? null}
+                  ></Dropdown>
+                </FormRowVertical>
+              </Row1InColumn2>
+              <Row2InColumn2>
+                <SettingGroupContainer
+                  customStyles={css`
+                    grid-column: 1;
+                    grid-row: 1;
+                  `}
+                >
+                  <Heading as="h3">Range settings</Heading>
+                  <FormRowLabelRight label="Is ranged">
+                    <Input
+                      disabled={
+                        state.castableBy !== "Character" ||
+                        state.powerType === "AuraCreator" ||
+                        state.targetType === "Caster" ||
+                        disableUpdate
+                      }
+                      type="checkbox"
+                      checked={state.isRanged}
+                      onChange={(x) =>
+                        dispatch({
+                          type: PowerActionTypes.UPDATE_IS_RANGED,
+                          payload: x.target.checked,
+                        })
+                      }
+                    ></Input>
+                  </FormRowLabelRight>
+                  <FormRowVertical label="Range">
+                    <Input
+                      disabled={
+                        !state.isRanged ||
+                        state.castableBy !== "Character" ||
+                        state.powerType === "AuraCreator" ||
+                        disableUpdate
+                      }
+                      value={state.range}
+                      type="number"
+                      onChange={(e) =>
+                        dispatch({
+                          type: PowerActionTypes.UPDATE_RANGE,
+                          payload: Number(e.target.value),
+                        })
+                      }
+                    ></Input>
+                  </FormRowVertical>
+                </SettingGroupContainer>
+                <FormRowVertical
+                  label="Max targets"
+                  customStyles={css`
+                    grid-column: 1;
+                    grid-row: 2;
+                  `}
+                >
                   <Input
                     disabled={
-                      !state.isRanged ||
-                      state.castableBy !== "Character" ||
-                      state.powerType === "AuraCreator"
+                      state.powerType === "AuraCreator" ||
+                      state.areaShape !== "None" ||
+                      state.castableBy === "OnWeaponHit" ||
+                      state.castableBy === "Terrain" || 
+                      state.targetType === "Caster" ||
+                      disableUpdate
+
                     }
-                    value={state.range}
+                    value={state.maxTargets}
                     type="number"
                     onChange={(e) =>
                       dispatch({
-                        type: PowerActionTypes.UPDATE_RANGE,
+                        type: PowerActionTypes.UPDATE_MAX_TARGETS,
                         payload: Number(e.target.value),
                       })
                     }
                   ></Input>
                 </FormRowVertical>
-              </SettingGroupContainer>
-              <FormRowVertical
-                label="Max targets"
-                customStyles={css`
-                  grid-column: 1;
-                  grid-row: 2;
-                `}
-              >
-                <Input
-                  disabled={
-                    state.powerType === "AuraCreator" ||
-                    state.areaShape !== "None" ||
-                    state.castableBy === "OnWeaponHit" ||
-                    state.castableBy === "Terrain"
-                  }
-                  value={state.maxTargets}
-                  type="number"
-                  onChange={(e) =>
-                    dispatch({
-                      type: PowerActionTypes.UPDATE_MAX_TARGETS,
-                      payload: Number(e.target.value),
-                    })
-                  }
-                ></Input>
-              </FormRowVertical>
-              {/* <FormRowVertical
-                label="Max targets to exclude"
-                customStyles={css`
-                  grid-column: 1;
-                  grid-row: 3;
-                `}
-              >
-                <Input
-                  disabled={state.powerType === "AuraCreator"}
-                  value={state.maxTargetsToExclude}
-                  type="number"
-                  onChange={(e) =>
-                    dispatch({
-                      type: PowerActionTypes.UPDATE_MAX_TARGETS_TO_EXCLUDE,
-                      payload: Number(e.target.value),
-                    })
-                  }
-                ></Input>
-              </FormRowVertical> */}
-              <FormRowVertical
-                label="Area size"
-                customStyles={css`
-                  grid-column: 2;
-                  grid-row: 1;
-                `}
-              >
-                <Input
-                  disabled={
-                    state.powerType === "Attack" ||
-                    state.powerType === "AuraCreator" ||
-                    state.areaShape === "None" ||
-                    state.castableBy === "OnWeaponHit"
-                  }
-                  value={state.areaSize}
-                  type="number"
-                  onChange={(e) =>
-                    dispatch({
-                      type: PowerActionTypes.UPDATE_AREA_SIZE,
-                      payload: Number(e.target.value),
-                    })
-                  }
-                ></Input>
-              </FormRowVertical>
-              <FormRowVertical
-                label="Area shape"
-                customStyles={css`
-                  grid-column: 2;
-                  grid-row: 2;
-                `}
-              >
-                <Dropdown
-                  disabled={
-                    state.powerType === "Attack" ||
-                    state.powerType === "AuraCreator" ||
-                    state.castableBy === "OnWeaponHit"
-                  }
-                  valuesList={[...areaShapeOptions]}
-                  setChosenValue={(e) =>
-                    dispatch({
-                      type: PowerActionTypes.UPDATE_AREA_SHAPE,
-                      payload: e as AreaShape,
-                    })
-                  }
-                  chosenValue={state.areaShape}
-                ></Dropdown>
-              </FormRowVertical>
-              {/* <FormRowVertical
-                label="Aura size"
-                customStyles={css`
-                  grid-column: 2;
-                  grid-row: 3;
-                `}
-              >
-                <Input
-                  disabled={state.powerType !== "AuraCreator"}
-                  value={state.auraSize}
-                  type="number"
-                  onChange={(e) =>
-                    dispatch({
-                      type: PowerActionTypes.UPDATE_AURA_SIZE,
-                      payload: Number(e.target.value),
-                    })
-                  }
-                ></Input>
-              </FormRowVertical> */}
-              <SettingGroupContainer
-                customStyles={css`
-                  grid-column: 3;
-                  grid-row: 1/3;
-                `}
-              >
-                <Heading as="h3">Saving throw settings</Heading>
-                <FormRowLabelRight label="Override casters DC">
+                {/* <FormRowVertical
+                  label="Max targets to exclude"
+                  customStyles={css`
+                    grid-column: 1;
+                    grid-row: 3;
+                  `}
+                >
                   <Input
-                    type="checkbox"
-                    disabled={
-                      (state.powerType !== "Saveable" &&
-                        state.powerType !== "AuraCreator") ||
-                      state.castableBy === "Terrain"
-                    }
-                    checked={state.overrideCastersDC}
-                    onChange={(e) =>
-                      dispatch({
-                        type: PowerActionTypes.UPDATE_OVERRIDE_CHARACTER_DC,
-                        payload: e.target.checked,
-                      })
-                    }
-                  ></Input>
-                </FormRowLabelRight>
-                <FormRowVertical label="Overriding value">
-                  <Input
-                    disabled={
-                      (state.powerType !== "Saveable" &&
-                        state.powerType !== "AuraCreator") ||
-                      !state.overrideCastersDC
-                    }
-                    value={state.difficultyClass}
+                    disabled={state.powerType === "AuraCreator"}
+                    value={state.maxTargetsToExclude}
                     type="number"
                     onChange={(e) =>
                       dispatch({
-                        type: PowerActionTypes.UPDATE_DIFFICULTY_CLASS,
+                        type: PowerActionTypes.UPDATE_MAX_TARGETS_TO_EXCLUDE,
+                        payload: Number(e.target.value),
+                      })
+                    }
+                  ></Input>
+                </FormRowVertical> */}
+                <FormRowVertical
+                  label="Area size"
+                  customStyles={css`
+                    grid-column: 2;
+                    grid-row: 1;
+                  `}
+                >
+                  <Input
+                    disabled={
+                      state.powerType === "Attack" ||
+                      state.powerType === "AuraCreator" ||
+                      state.areaShape === "None" ||
+                      state.castableBy === "OnWeaponHit" || 
+                      disableUpdate
+                    }
+                    value={state.areaSize}
+                    type="number"
+                    onChange={(e) =>
+                      dispatch({
+                        type: PowerActionTypes.UPDATE_AREA_SIZE,
                         payload: Number(e.target.value),
                       })
                     }
                   ></Input>
                 </FormRowVertical>
                 <FormRowVertical
-                  label="Saving throw"
+                  label="Area shape"
                   customStyles={css`
-                    grid-column: 3;
+                    grid-column: 2;
                     grid-row: 2;
                   `}
                 >
                   <Dropdown
                     disabled={
-                      state.powerType !== "Saveable" &&
-                      state.powerType !== "AuraCreator"
+                      state.powerType === "Attack" ||
+                      state.powerType === "AuraCreator" ||
+                      state.castableBy === "OnWeaponHit" || 
+                      state.targetType === "Caster" || 
+                      disableUpdate
                     }
-                    valuesList={[...abilitiesDropdown]}
+                    valuesList={[...areaShapeOptions]}
                     setChosenValue={(e) =>
                       dispatch({
-                        type: PowerActionTypes.UPDATE_SAVING_THROW_ABILITY,
-                        payload: e as ability,
+                        type: PowerActionTypes.UPDATE_AREA_SHAPE,
+                        payload: e as AreaShape,
                       })
                     }
-                    chosenValue={state.savingThrowAbility}
+                    chosenValue={state.areaShape}
                   ></Dropdown>
                 </FormRowVertical>
-              </SettingGroupContainer>
-
-              {/* <RadioGroup
-                disabled={
-                  state.powerType !== "Saveable" &&
-                  state.powerType !== "AuraCreator"
-                }
-                values={savingThrowBehaviourOptions}
-                onChange={(x) => {
-                  dispatch({
-                    type: PowerActionTypes.UPDATE_SAVING_THROW_BEHAVIOUR,
-                    payload: x as SavingThrowBehaviour,
-                  });
-                }}
-                name="savingThrowBehaviour"
-                label="Saving throw behaviour"
-                currentValue={state.savingThrowBehaviour}
-                customStyles={css`
-                  grid-column: 4;
-                  grid-row: 1;
-                `}
-              ></RadioGroup> */}
-              <RadioGroup
-                disabled={state.powerType !== "Saveable"}
-                values={savingThrowRollOptions}
-                onChange={(x) => {
-                  dispatch({
-                    type: PowerActionTypes.UPDATE_SAVING_THROW_ROLL,
-                    payload: x as SavingThrowRoll,
-                  });
-                }}
-                name="savingThrowRollMoment"
-                label="Saving throw roll moment"
-                currentValue={state.savingThrowRoll}
-                customStyles={css`
-                  grid-column: 4;
-                  grid-row: 2;
-                `}
-              ></RadioGroup>
-              <FormRowLabelRight
-                label="Concentration"
-                customStyles={css`
-                  grid-column: 3;
-                  grid-row: 3;
-                `}
-              >
-                <Input
-                  disabled={state.castableBy !== "Character"}
-                  type="checkbox"
-                  checked={state.requiresConcentration}
-                  onChange={(x) =>
-                    dispatch({
-                      type: PowerActionTypes.UPDATE_REQUIRES_CONCENTRATION,
-                      payload: x.target.checked,
-                    })
-                  }
-                ></Input>
-              </FormRowLabelRight>
-              <FormRowVertical
-                label="Effect duration"
-                customStyles={css`
-                  grid-column: 4;
-                  grid-row: 3;
-                `}
-              >
-                <Input
-                  value={state.duration}
-                  type="number"
-                  onChange={(e) =>
-                    dispatch({
-                      type: PowerActionTypes.UPDATE_DURATION,
-                      payload: Number(e.target.value),
-                    })
-                  }
-                ></Input>
-              </FormRowVertical>
-            </Row2InColumn2>
-          </Column2>
-        </Row2>
-      </Grid>
-      <UDButtonContainer>
-      {actualPowerId && (
-        // <Button onClick={() => updatePower(state)} disabled={lockSaveButton}>
-        //   Update
-        // </Button>
-        <>
-          <Button
-            onClick={() => updatePower(state)}
-            disabled={lockSaveButton}
-            >
-            {lockSaveButton ? "You cannot edit this object" : "Update"}
-          </Button>
-          <Modal>
-            <Modal.Open opens="ConfirmDelete">
-              <Button variation="secondary"
-                disabled={lockSaveButton}
+                {/* <FormRowVertical
+                  label="Aura size"
+                  customStyles={css`
+                    grid-column: 2;
+                    grid-row: 3;
+                  `}
                 >
-                {lockSaveButton ? "You cannot delete this object" : "Delete"}
-              </Button>
-            </Modal.Open>
-            <Modal.Window name="ConfirmDelete">
-              <ConfirmDelete
-                resourceName={"power"}
-                onConfirm={() =>  deletePower(state.id!)}
-                />
-            </Modal.Window>
-          </Modal>
-        </>
-      )}
-      {!actualPowerId && (
-        <Button onClick={() => createPower(state)} disabled={lockSaveButton}>
-          Save to unlock more configuration options
-        </Button>
-      )}
-      </UDButtonContainer>
+                  <Input
+                    disabled={state.powerType !== "AuraCreator"}
+                    value={state.auraSize}
+                    type="number"
+                    onChange={(e) =>
+                      dispatch({
+                        type: PowerActionTypes.UPDATE_AURA_SIZE,
+                        payload: Number(e.target.value),
+                      })
+                    }
+                  ></Input>
+                </FormRowVertical> */}
+                <SettingGroupContainer
+                  customStyles={css`
+                    grid-column: 3;
+                    grid-row: 1/3;
+                  `}
+                >
+                  <Heading as="h3">Saving throw settings</Heading>
+                  <FormRowLabelRight label="Override casters DC">
+                    <Input
+                      type="checkbox"
+                      disabled={
+                        (state.powerType !== "Saveable" &&
+                          state.powerType !== "AuraCreator") ||
+                        state.castableBy === "Terrain" || 
+                        disableUpdate
+                      }
+                      checked={state.overrideCastersDC}
+                      onChange={(e) =>
+                        dispatch({
+                          type: PowerActionTypes.UPDATE_OVERRIDE_CHARACTER_DC,
+                          payload: e.target.checked,
+                        })
+                      }
+                    ></Input>
+                  </FormRowLabelRight>
+                  <FormRowVertical label="Overriding value">
+                    <Input
+                      disabled={
+                        (state.powerType !== "Saveable" &&
+                          state.powerType !== "AuraCreator") ||
+                        !state.overrideCastersDC || 
+                        disableUpdate
+                      }
+                      value={state.difficultyClass}
+                      type="number"
+                      onChange={(e) =>
+                        dispatch({
+                          type: PowerActionTypes.UPDATE_DIFFICULTY_CLASS,
+                          payload: Number(e.target.value),
+                        })
+                      }
+                    ></Input>
+                  </FormRowVertical>
+                  <FormRowVertical
+                    label="Saving throw"
+                    customStyles={css`
+                      grid-column: 3;
+                      grid-row: 2;
+                    `}
+                  >
+                    <Dropdown
+                      disabled={(
+                        state.powerType !== "Saveable" &&
+                        state.powerType !== "AuraCreator"
+                      )  || 
+                      disableUpdate
+                      }
+                      valuesList={[...abilitiesDropdown]}
+                      setChosenValue={(e) =>
+                        dispatch({
+                          type: PowerActionTypes.UPDATE_SAVING_THROW_ABILITY,
+                          payload: e as ability,
+                        })
+                      }
+                      chosenValue={state.savingThrowAbility}
+                    ></Dropdown>
+                  </FormRowVertical>
+                </SettingGroupContainer>
+
+                {/* <RadioGroup
+                  disabled={
+                    state.powerType !== "Saveable" &&
+                    state.powerType !== "AuraCreator"
+                  }
+                  values={savingThrowBehaviourOptions}
+                  onChange={(x) => {
+                    dispatch({
+                      type: PowerActionTypes.UPDATE_SAVING_THROW_BEHAVIOUR,
+                      payload: x as SavingThrowBehaviour,
+                    });
+                  }}
+                  name="savingThrowBehaviour"
+                  label="Saving throw behaviour"
+                  currentValue={state.savingThrowBehaviour}
+                  customStyles={css`
+                    grid-column: 4;
+                    grid-row: 1;
+                  `}
+                ></RadioGroup> */}
+                <RadioGroup
+                  disabled={state.powerType !== "Saveable" || 
+                      disableUpdate}
+                  values={savingThrowRollOptions}
+                  onChange={(x) => {
+                    dispatch({
+                      type: PowerActionTypes.UPDATE_SAVING_THROW_ROLL,
+                      payload: x as SavingThrowRoll,
+                    });
+                  }}
+                  name="savingThrowRollMoment"
+                  label="Saving throw roll moment"
+                  currentValue={state.savingThrowRoll}
+                  customStyles={css`
+                    grid-column: 4;
+                    grid-row: 2;
+                  `}
+                ></RadioGroup>
+                <FormRowLabelRight
+                  label="Concentration"
+                  customStyles={css`
+                    grid-column: 3;
+                    grid-row: 3;
+                  `}
+                >
+                  <Input
+                    disabled={state.castableBy !== "Character" || 
+                      disableUpdate}
+                    type="checkbox"
+                    checked={state.requiresConcentration}
+                    onChange={(x) =>
+                      dispatch({
+                        type: PowerActionTypes.UPDATE_REQUIRES_CONCENTRATION,
+                        payload: x.target.checked,
+                      })
+                    }
+                  ></Input>
+                </FormRowLabelRight>
+                <FormRowVertical
+                  label="Effect duration"
+                  customStyles={css`
+                    grid-column: 4;
+                    grid-row: 3;
+                  `}
+                >
+                  <Input
+                    value={state.duration}
+                    type="number"
+                    onChange={(e) =>
+                      dispatch({
+                        type: PowerActionTypes.UPDATE_DURATION,
+                        payload: Number(e.target.value),
+                      })
+                    }
+                    disabled={disableUpdate}
+                  ></Input>
+                </FormRowVertical>
+              </Row2InColumn2>
+            </Column2>
+          </Row2>
+        </Grid>
+        <UDButtonContainer>
+        {actualPowerId && (
+          // <Button onClick={() => updatePower(state)} disabled={lockSaveButton}>
+          //   Update
+          // </Button>
+          <>
+            <Button
+              onClick={() => updatePower(state)}
+              disabled={lockSaveButton || disableUpdate}
+              >
+              {lockSaveButton ? "You cannot edit this object" : "Update"}
+            </Button>
+            <Modal>
+              <Modal.Open opens="ConfirmDelete">
+                <Button variation="secondary"
+                  disabled={lockSaveButton || disableUpdate}
+                  >
+                  {lockSaveButton ? "You cannot delete this object" : "Delete"}
+                </Button>
+              </Modal.Open>
+              <Modal.Window name="ConfirmDelete">
+                <ConfirmDelete
+                  resourceName={"power"}
+                  onConfirm={() =>  deletePower(state.id!)}
+                  />
+              </Modal.Window>
+            </Modal>
+          </>
+        )}
+        {!actualPowerId && (
+          <Button onClick={() => createPower(state)} disabled={lockSaveButton}>
+            Save to unlock more configuration options
+          </Button>
+        )}
+        </UDButtonContainer>
+      </EditModeContext.Provider>
     </>
   );
 }

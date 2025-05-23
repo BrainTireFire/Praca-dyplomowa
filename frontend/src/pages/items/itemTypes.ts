@@ -6,8 +6,10 @@ export const itemTypes = [
   "MediumArmor",
   "HeavyArmor",
   "Shield",
-  "SimpleWeapon",
-  "MartialWeapon",
+  "SimpleRangedWeapon",
+  "SimpleMeleeWeapon",
+  "MartialRangedWeapon",
+  "MartialMeleeWeapon",
 ] as const;
 
 export type ItemType = (typeof itemTypes)[number];
@@ -41,6 +43,6 @@ export const identityToTypeMapping: IdentityToTypeMapping = {
   MundaneItem: ["Item"],
   Apparel: ["Clothing", "LightArmor", "MediumArmor", "HeavyArmor", "Shield"],
   // Tool: ["Tool"], TODO
-  MeleeWeapon: ["SimpleWeapon", "MartialWeapon"],
-  RangedWeapon: ["SimpleWeapon", "MartialWeapon"],
+  MeleeWeapon: ["SimpleMeleeWeapon", "MartialMeleeWeapon"],
+  RangedWeapon: ["SimpleRangedWeapon", "MartialRangedWeapon"],
 };

@@ -34,6 +34,10 @@ namespace pracadyplomowa.Models.Entities.Powers.EffectInstances
             if(R_TargetedCharacter != null){
                 GenerateRollMessage(diceResult, "Healing", messages);
                 healing = diceResult.Aggregate(0, (sum, next) => sum += next.result);
+                if (healing < 0)
+                {
+                    healing = 0;
+                }
                 this.R_TargetedCharacter.Hitpoints += healing;
                 messages.Add($"Healing {this.R_TargetedCharacter.Name} for {healing} points. Health total: {this.R_TargetedCharacter.Hitpoints}");
             }

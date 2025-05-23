@@ -4,6 +4,7 @@ import styled, { css } from "styled-components";
 const StyledFormRow = styled.div<StyledFormRowProps>`
   display: flex;
   flex-direction: row;
+  align-items: center;
   gap: 2.4rem;
 
   padding: 0 0;

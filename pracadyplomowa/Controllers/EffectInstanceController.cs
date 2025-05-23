@@ -39,6 +39,18 @@ namespace pracadyplomowa.Controllers
             return Ok(itemFamiliesDto);
         }
 
+        [HttpGet("languages")]
+        public async Task<ActionResult<List<LanguageDto>>> GetLanguages([FromQuery] int? effectId)
+        {
+            var languages = await _unitOfWork.LanguageRepository.GetAll();
+
+
+            List<LanguageDto> languagesDto = _mapper.Map<List<LanguageDto>>(languages);
+
+
+            return Ok(languagesDto);
+        }
+
         [HttpGet("{effectId}")]
         public async Task<ActionResult<EffectBlueprintFormDto>> GetEffectInstance(int effectId)
         {

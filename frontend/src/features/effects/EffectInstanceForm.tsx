@@ -42,6 +42,10 @@ import ProficiencyEffectForm, {
   Effect as ProficiencyEffect,
   initialState as ProficiencyEffectInitialState,
 } from "./effectTypes/ProficiencyEffectForm";
+import LanguageEffectForm, {
+  Effect as LanguageEffect,
+  initialState as LanguageEffectInitialState,
+} from "./effectTypes/LanguageEffectForm";
 import HealingEffectForm, {
   Effect as HealingEffect,
   initialState as HealingEffectInitialState,
@@ -82,6 +86,10 @@ import MovementCostEffectForm, {
   Effect as MovementCostEffect,
   initialState as MovementCostEffectInitialState,
 } from "./effectTypes/MovementCostEffectForm";
+import DummyEffectForm, {
+  Effect as DummyEffect,
+  initialState as DummyEffectInitialState,
+} from "./effectTypes/DummyEffectForm";
 import styled from "styled-components";
 import Button from "../../ui/interactive/Button";
 import Spinner from "../../ui/interactive/Spinner";
@@ -103,6 +111,7 @@ const effectTypes = [
   "attackBonus",
   "armorClassBonus",
   "proficiency",
+  "language",
   "healing",
   "actions",
   "magicItemStatus",
@@ -113,6 +122,7 @@ const effectTypes = [
   "attacksPerAction",
   "statusEffect",
   "movementCost",
+  "dummy"
 ] as const; // remember to update EffectTypeToInitialStateMap when editing this
 
 type EffectBody =
@@ -124,6 +134,7 @@ type EffectBody =
   | AttackRollEffect
   | ArmorClassEffect
   | ProficiencyEffect
+  | LanguageEffect
   | HealingEffect
   | ActionEffect
   | MagicItemEffect
@@ -133,7 +144,8 @@ type EffectBody =
   | HitpointsEffect
   | AttacksPerActionEffect
   | StatusEffect
-  | MovementCostEffect;
+  | MovementCostEffect
+  | DummyEffect;
 
 const EffectTypeToInitialStateMap = new Map<
   (typeof effectTypes)[number],
@@ -147,6 +159,7 @@ const EffectTypeToInitialStateMap = new Map<
   ["attackBonus", AttackRollEffectInitialState],
   ["armorClassBonus", ArmorClassEffectInitialState],
   ["proficiency", ProficiencyEffectInitialState],
+  ["language", LanguageEffectInitialState],
   ["healing", HealingEffectInitialState],
   ["actions", ActionEffectInitialState],
   ["magicItemStatus", MagicItemEffectInitialState],
@@ -157,6 +170,7 @@ const EffectTypeToInitialStateMap = new Map<
   ["attacksPerAction", AttacksPerActionEffectInitialState],
   ["statusEffect", StatusEffectInitialState],
   ["movementCost", MovementCostEffectInitialState],
+  ["dummy", DummyEffectInitialState],
 ]);
 
 export type EffectBlueprint = {
@@ -293,6 +307,7 @@ export default function EffectInstanceForm({
   const bodyValueEffect = state.effectTypeBody as ValueEffect;
   const bodyDamageEffect = state.effectTypeBody as DamageEffect;
   const bodyProficiencyEffect = state.effectTypeBody as ProficiencyEffect;
+  const bodyLanguageEffect = state.effectTypeBody as LanguageEffect;
   const bodyValueEffectDisable_Level =
     bodyValueEffect.value?.additionalValues?.some(
       (value) =>
@@ -317,6 +332,8 @@ export default function EffectInstanceForm({
   const bodyProficiencyEffectDisable_ItemFamily =
     bodyProficiencyEffect.effectType?.proficiencyEffect === "SpecificItemFamily" && 
     bodyProficiencyEffect.grantsProficiencyInItemFamilyId === null;
+  const bodyLanguageEffectDisable_Language =
+    bodyLanguageEffect.languageId === null;
 
   const disableUpdateButton = () => {
     return (
@@ -324,7 +341,8 @@ export default function EffectInstanceForm({
       bodyValueEffectDisable_Skill ||
       bodyValueEffectDisable_Ability ||
       bodyDamageEffectDisable_DamageType ||
-      bodyProficiencyEffectDisable_ItemFamily
+      bodyProficiencyEffectDisable_ItemFamily ||
+      bodyLanguageEffectDisable_Language
     );
   };
   const disableReason = [];
@@ -429,6 +447,7 @@ export default function EffectInstanceForm({
                 { value: "attackBonus", label: "Attack bonus" },
                 { value: "armorClassBonus", label: "Armor class bonus" },
                 { value: "proficiency", label: "Proficiency" },
+                { value: "language", label: "Language" },
                 { value: "healing", label: "Healing" },
                 { value: "actions", label: "Actions" },
                 { value: "magicItemStatus", label: "Magic item status" },
@@ -439,6 +458,7 @@ export default function EffectInstanceForm({
                 { value: "attacksPerAction", label: "Attacks per action" },
                 { value: "statusEffect", label: "Status effect" },
                 // { value: "movementCost", label: "Movement cost" },
+                { value: "dummy", label: "Dummy effect" },
               ]}
               onChange={(x) => {
                 console.log(x);
@@ -497,6 +517,12 @@ export default function EffectInstanceForm({
                 onChange={handleChildStateUpdate}
                 effect={state.effectTypeBody as ProficiencyEffect}
               ></ProficiencyEffectForm>
+            )}
+            {state.effectType === "language" && (
+              <LanguageEffectForm
+                onChange={handleChildStateUpdate}
+                effect={state.effectTypeBody as LanguageEffect}
+              ></LanguageEffectForm>
             )}
             {state.effectType === "healing" && (
               <HealingEffectForm
@@ -557,6 +583,12 @@ export default function EffectInstanceForm({
                 onChange={handleChildStateUpdate}
                 effect={state.effectTypeBody as MovementCostEffect}
               ></MovementCostEffectForm>
+            )}
+            {state.effectType === "dummy" && (
+              <DummyEffectForm
+                onChange={handleChildStateUpdate}
+                effect={state.effectTypeBody as LanguageEffect}
+              ></DummyEffectForm>
             )}
           </Div3>
         </Container>

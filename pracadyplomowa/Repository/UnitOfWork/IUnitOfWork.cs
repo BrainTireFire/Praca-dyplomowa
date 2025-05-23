@@ -25,6 +25,7 @@ public interface IUnitOfWork
     IItemRepository ItemRepository { get; }
     IItemCostRequirementRepository ItemCostRequirementRepository { get; }
     IItemFamilyRepository ItemFamilyRepository { get; }
+    ILanguageRepository LanguageRepository { get; }
     IPowerRepository PowerRepository { get; }
     IRaceRepository RaceRepository { get; }
     IShopRepository ShopRepository { get; }

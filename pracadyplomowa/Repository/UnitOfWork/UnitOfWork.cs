@@ -38,6 +38,7 @@ public class UnitOfWork : IUnitOfWork
     public IItemRepository ItemRepository => new ItemRepository(_context);
     public IItemCostRequirementRepository ItemCostRequirementRepository => new ItemCostRequirementRepository(_context);
     public IItemFamilyRepository ItemFamilyRepository => new ItemFamilyRepository(_context);
+    public ILanguageRepository LanguageRepository => new LanguageRepository(_context);
     public IPowerRepository PowerRepository => new PowerRepository(_context);
     public IRaceRepository RaceRepository => new RaceRepository(_context);
     public IShopRepository ShopRepository => new ShopRepository(_context);

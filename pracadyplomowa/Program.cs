@@ -30,6 +30,7 @@ using pracadyplomowa.Services.Websockets;
 using pracadyplomowa.Services.Websockets.Connection;
 using pracadyplomowa.Services.Websockets.Notification;
 using pracadyplomowa.Services.ItemFamily;
+using pracadyplomowa.Models.Entities.Characters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,6 +77,7 @@ builder.Services.AddScoped<IEffectBlueprintRepository, EffectBlueprintRepository
 builder.Services.AddScoped<IEffectInstanceRepository, EffectInstanceRepository>();
 builder.Services.AddScoped<IEffectGroupRepository, EffectGroupRepository>();
 builder.Services.AddScoped<IItemFamilyRepository, ItemFamilyRepository>();
+builder.Services.AddScoped<ILanguageRepository, LanguageRepository>();
 builder.Services.AddScoped<IImmaterialResourceBlueprintRepository, ImmaterialResourceBlueprintRepository>();
 builder.Services.AddScoped<IItemCostRequirementRepository, ItemCostRequirementRepository>();
 builder.Services.AddScoped<IEquipmentSlotRepository, EquipmentSlotRepository>();

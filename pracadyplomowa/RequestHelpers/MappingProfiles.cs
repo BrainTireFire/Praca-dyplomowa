@@ -26,6 +26,7 @@ public class MappingProfiles : Profile
         CreateMap<Race, RaceDTO>();
         CreateMap<ItemFamily, ItemFamilyDto>();
         CreateMap<ItemFamilyDto, ItemFamily>();
+        CreateMap<Language, LanguageDto>();
         CreateMap<ImmaterialResourceBlueprint, ImmaterialResourceBlueprintDto>();
         CreateMap<ImmaterialResourceBlueprintDto, ImmaterialResourceBlueprint>();
         CreateMap<PowerCompactDto, Power>();
@@ -211,6 +212,7 @@ public class MappingProfiles : Profile
                 src is AttackRollEffectBlueprint ? "attackBonus" :
                 src is ArmorClassEffectBlueprint ? "armorClassBonus" :
                 src is ProficiencyEffectBlueprint ? "proficiency" :
+                src is LanguageEffectBlueprint ? "language" :
                 src is HealingEffectBlueprint ? "healing" :
                 src is ActionEffectBlueprint ? "actions" :
                 src is MagicEffectBlueprint ? "magicItemStatus" :
@@ -220,7 +222,8 @@ public class MappingProfiles : Profile
                 src is HitpointEffectBlueprint ? "hitpoints" :
                 src is AttackPerAttackActionEffectBlueprint ? "attacksPerAction" :
                 src is StatusEffectBlueprint ? "statusEffect" :
-                src is MovementCostEffectBlueprint ? "movementCost" : "UNREACHABLE")
+                src is MovementCostEffectBlueprint ? "movementCost" :
+                src is DummyEffectBlueprint ? "dummy" : "UNREACHABLE")
             );
 
         CreateMap<DiceSet, ValueEffectBlueprintFormDto.ValueSubeffectBlueprintFormDto.DiceSetFormDto>()
@@ -321,6 +324,16 @@ public class MappingProfiles : Profile
                 })
             );
 
+        CreateMap<LanguageEffectBlueprint, LanguageEffectBlueprintFormDto>()
+            .IncludeBase<EffectBlueprint, EffectBlueprintFormDto>()
+            .ForMember(
+                dest => dest.EffectTypeBody,
+                opt => opt.MapFrom((src, dest, member, context) => new LanguageEffectBlueprintFormDto.LanguageSubeffectBlueprintFormDto(){
+                    LanguageId = src.R_LanguageId,
+                    effectType = src.LanguageEffectType
+                })
+            );
+
         CreateMap<HealingEffectBlueprint, HealingEffectBlueprintFormDto>()
             .IncludeBase<EffectBlueprint, EffectBlueprintFormDto>()
             .ForMember(
@@ -410,6 +423,14 @@ public class MappingProfiles : Profile
                 dest => dest.EffectTypeBody,
                 opt => opt.MapFrom((src, dest, member, context) => new MovementCostEffectBlueprintFormDto.MovementCostSubeffectBlueprintFormDto(){
                     effectType = src.MovementCostEffectType
+                })
+            );
+
+        CreateMap<DummyEffectBlueprint, DummyEffectBlueprintFormDto>()
+            .IncludeBase<EffectBlueprint, EffectBlueprintFormDto>()
+            .ForMember(
+                dest => dest.EffectTypeBody,
+                opt => opt.MapFrom((src, dest, member, context) => new DummyEffectBlueprintFormDto.DummySubeffectBlueprintFormDto(){
                 })
             );
 
@@ -565,6 +586,17 @@ public class MappingProfiles : Profile
                 opt => opt.MapFrom(src => src.EffectTypeBody.effectType)
             );
 
+        CreateMap<LanguageEffectBlueprintFormDto, LanguageEffectBlueprint>()
+            .IncludeBase<EffectBlueprintFormDto, EffectBlueprint>()
+            .ForMember(
+                dest => dest.R_Language,
+                opt => opt.MapFrom(src => src.EffectTypeBody.LanguageId)
+            )
+            .ForMember(
+                dest => dest.LanguageEffectType,
+                opt => opt.MapFrom(src => src.EffectTypeBody.effectType)
+            );
+
         CreateMap<HealingEffectBlueprintFormDto, HealingEffectBlueprint>()
             .IncludeBase<EffectBlueprintFormDto, EffectBlueprint>()
             .ForMember(
@@ -671,6 +703,9 @@ public class MappingProfiles : Profile
                 dest => dest.MovementCostEffectType,
                 opt => opt.MapFrom(src => src.EffectTypeBody.effectType)
             );
+
+        CreateMap<DummyEffectBlueprintFormDto, DummyEffectBlueprint>()
+            .IncludeBase<EffectBlueprintFormDto, EffectBlueprint>();
 
 //--------------ITEMS---------------------------
         CreateMap<Item, ItemFormDto>()
@@ -930,6 +965,7 @@ public class MappingProfiles : Profile
                 src is AttackRollEffectInstance ? "attackBonus" :
                 src is ArmorClassEffectInstance ? "armorClassBonus" :
                 src is ProficiencyEffectInstance ? "proficiency" :
+                src is LanguageEffectInstance ? "language" :
                 src is HealingEffectInstance ? "healing" :
                 src is ActionEffectInstance ? "actions" :
                 src is MagicEffectInstance ? "magicItemStatus" :
@@ -939,7 +975,8 @@ public class MappingProfiles : Profile
                 src is HitpointEffectInstance ? "hitpoints" :
                 src is AttackPerAttackActionEffectInstance ? "attacksPerAction" :
                 src is StatusEffectInstance ? "statusEffect" :
-                src is MovementCostEffectInstance ? "movementCost" : "UNREACHABLE")
+                src is MovementCostEffectInstance ? "movementCost" :
+                src is DummyEffectInstance ? "dummy" : "UNREACHABLE")
             )
             .ForMember(dest => dest.DurationLeft, opt => {opt.PreCondition( src => src.R_OwnedByGroup != null); opt.MapFrom(src => src.R_OwnedByGroup.DurationLeft);});
 
@@ -1034,6 +1071,17 @@ public class MappingProfiles : Profile
                 })
             );
 
+        CreateMap<LanguageEffectInstance, LanguageEffectBlueprintFormDto>()
+            .IncludeBase<EffectInstance, EffectBlueprintFormDto>()
+            .ForMember(
+                dest => dest.EffectTypeBody,
+                opt => opt.MapFrom((src, dest, member, context) => new LanguageEffectBlueprintFormDto.LanguageSubeffectBlueprintFormDto()
+                {
+                    LanguageId = src.R_LanguageId,
+                    effectType = src.EffectType
+                })
+            );
+
         CreateMap<HealingEffectInstance, HealingEffectBlueprintFormDto>()
             .IncludeBase<EffectInstance, EffectBlueprintFormDto>()
             .ForMember(
@@ -1116,6 +1164,15 @@ public class MappingProfiles : Profile
                 dest => dest.EffectTypeBody,
                 opt => opt.MapFrom((src, dest, member, context) => new MovementCostEffectBlueprintFormDto.MovementCostSubeffectBlueprintFormDto(){
                     effectType = src.EffectType
+                })
+            );
+
+        CreateMap<DummyEffectInstance, DummyEffectBlueprintFormDto>()
+            .IncludeBase<EffectInstance, EffectBlueprintFormDto>()
+            .ForMember(
+                dest => dest.EffectTypeBody,
+                opt => opt.MapFrom((src, dest, member, context) => new DummyEffectBlueprintFormDto.DummySubeffectBlueprintFormDto()
+                {
                 })
             );
 
@@ -1224,6 +1281,17 @@ public class MappingProfiles : Profile
                 opt => opt.MapFrom(src => src.EffectTypeBody.effectType)
             );
 
+        CreateMap<LanguageEffectBlueprintFormDto, LanguageEffectInstance>()
+            .IncludeBase<EffectBlueprintFormDto, EffectInstance>()
+            .ForMember(
+                dest => dest.R_LanguageId,
+                opt => opt.MapFrom(src => src.EffectTypeBody.LanguageId)
+            )
+            .ForMember(
+                dest => dest.EffectType,
+                opt => opt.MapFrom(src => src.EffectTypeBody.effectType)
+            );
+
         CreateMap<HealingEffectBlueprintFormDto, HealingEffectInstance>()
             .IncludeBase<EffectBlueprintFormDto, EffectInstance>()
             .ForMember(
@@ -1306,5 +1374,8 @@ public class MappingProfiles : Profile
                 dest => dest.EffectType,
                 opt => opt.MapFrom(src => src.EffectTypeBody.effectType)
             );
+
+        CreateMap<DummyEffectBlueprintFormDto, DummyEffectInstance>()
+            .IncludeBase<EffectBlueprintFormDto, EffectInstance>();
     }
 }

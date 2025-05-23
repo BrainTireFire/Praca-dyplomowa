@@ -70,8 +70,10 @@ namespace pracadyplomowa.Models.DTOs
                 .. GetItemProficiencies(character, ItemType.LightArmor),
                 .. GetItemProficiencies(character, ItemType.Shield),
                 .. GetItemProficiencies(character, ItemType.Clothing),
-                .. GetItemProficiencies(character, ItemType.SimpleWeapon),
-                .. GetItemProficiencies(character, ItemType.MartialWeapon),
+                .. GetItemProficiencies(character, ItemType.SimpleRangedWeapon),
+                .. GetItemProficiencies(character, ItemType.MartialMeleeWeapon),
+                .. GetItemProficiencies(character, ItemType.SimpleRangedWeapon),
+                .. GetItemProficiencies(character, ItemType.MartialMeleeWeapon),
             ];
             Race = GetRace(character);
             Size = GetSize(character);

@@ -87,6 +87,9 @@ public class Seed
     public static async Task SeedItemFamilies(AppDbContext context){
         List<ItemFamily> newFamilies = new();
 
+        //mundane item
+        CreateItemFamily(context, newFamilies, "Mundane item", ItemType.Item);
+
         //armors
         CreateItemFamily(context, newFamilies, "Heavy armor", ItemType.HeavyArmor);
         CreateItemFamily(context, newFamilies, "Medium armor", ItemType.MediumArmor);
@@ -94,44 +97,44 @@ public class Seed
         CreateItemFamily(context, newFamilies, "Shield", ItemType.Shield);
         CreateItemFamily(context, newFamilies, "Clothing", ItemType.Clothing);
         //simple weapons
-        CreateItemFamily(context, newFamilies, "Club", ItemType.SimpleWeapon);
-        CreateItemFamily(context, newFamilies, "Dagger", ItemType.SimpleWeapon);
-        CreateItemFamily(context, newFamilies, "Greatclub", ItemType.SimpleWeapon);
-        CreateItemFamily(context, newFamilies, "Handaxe", ItemType.SimpleWeapon);
-        CreateItemFamily(context, newFamilies, "Javelin", ItemType.SimpleWeapon);
-        CreateItemFamily(context, newFamilies, "Light hammer", ItemType.SimpleWeapon);
-        CreateItemFamily(context, newFamilies, "Mace", ItemType.SimpleWeapon);
-        CreateItemFamily(context, newFamilies, "Quarterstaff", ItemType.SimpleWeapon);
-        CreateItemFamily(context, newFamilies, "Sickle", ItemType.SimpleWeapon);
-        CreateItemFamily(context, newFamilies, "Spear", ItemType.SimpleWeapon);
-        CreateItemFamily(context, newFamilies, "Light crossbow", ItemType.SimpleWeapon);
-        CreateItemFamily(context, newFamilies, "Dart", ItemType.SimpleWeapon);
-        CreateItemFamily(context, newFamilies, "Shortbow", ItemType.SimpleWeapon);
-        CreateItemFamily(context, newFamilies, "Sling", ItemType.SimpleWeapon);
+        CreateItemFamily(context, newFamilies, "Club", ItemType.SimpleMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Dagger", ItemType.SimpleMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Greatclub", ItemType.SimpleMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Handaxe", ItemType.SimpleMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Javelin", ItemType.SimpleMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Light hammer", ItemType.SimpleMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Mace", ItemType.SimpleMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Quarterstaff", ItemType.SimpleMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Sickle", ItemType.SimpleMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Spear", ItemType.SimpleMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Light crossbow", ItemType.SimpleRangedWeapon);
+        CreateItemFamily(context, newFamilies, "Dart", ItemType.SimpleRangedWeapon);
+        CreateItemFamily(context, newFamilies, "Shortbow", ItemType.SimpleRangedWeapon);
+        CreateItemFamily(context, newFamilies, "Sling", ItemType.SimpleRangedWeapon);
         //martial weapons
-        CreateItemFamily(context, newFamilies, "Battleaxe", ItemType.MartialWeapon);
-        CreateItemFamily(context, newFamilies, "Flail", ItemType.MartialWeapon);
-        CreateItemFamily(context, newFamilies, "Glaive", ItemType.MartialWeapon);
-        CreateItemFamily(context, newFamilies, "Greataxe", ItemType.MartialWeapon);
-        CreateItemFamily(context, newFamilies, "Greatsword", ItemType.MartialWeapon);
-        CreateItemFamily(context, newFamilies, "Halberd", ItemType.MartialWeapon);
-        CreateItemFamily(context, newFamilies, "Lance", ItemType.MartialWeapon);
-        CreateItemFamily(context, newFamilies, "Longsword", ItemType.MartialWeapon);
-        CreateItemFamily(context, newFamilies, "Maul", ItemType.MartialWeapon);
-        CreateItemFamily(context, newFamilies, "Morningstar", ItemType.MartialWeapon);
-        CreateItemFamily(context, newFamilies, "Pike", ItemType.MartialWeapon);
-        CreateItemFamily(context, newFamilies, "Rapier", ItemType.MartialWeapon);
-        CreateItemFamily(context, newFamilies, "Scimitar", ItemType.MartialWeapon);
-        CreateItemFamily(context, newFamilies, "Shortsword", ItemType.MartialWeapon);
-        CreateItemFamily(context, newFamilies, "Trident", ItemType.MartialWeapon);
-        CreateItemFamily(context, newFamilies, "War pick", ItemType.MartialWeapon);
-        CreateItemFamily(context, newFamilies, "Warhammer", ItemType.MartialWeapon);
-        CreateItemFamily(context, newFamilies, "Whip", ItemType.MartialWeapon);
-        CreateItemFamily(context, newFamilies, "Blowgun", ItemType.MartialWeapon);
-        CreateItemFamily(context, newFamilies, "Hand crossbow", ItemType.MartialWeapon);
-        CreateItemFamily(context, newFamilies, "Heavy crossbow", ItemType.MartialWeapon);
-        CreateItemFamily(context, newFamilies, "Longbow", ItemType.MartialWeapon);
-        CreateItemFamily(context, newFamilies, "Net", ItemType.MartialWeapon);
+        CreateItemFamily(context, newFamilies, "Battleaxe", ItemType.MartialMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Flail", ItemType.MartialMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Glaive", ItemType.MartialMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Greataxe", ItemType.MartialMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Greatsword", ItemType.MartialMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Halberd", ItemType.MartialMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Lance", ItemType.MartialMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Longsword", ItemType.MartialMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Maul", ItemType.MartialMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Morningstar", ItemType.MartialMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Pike", ItemType.MartialMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Rapier", ItemType.MartialMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Scimitar", ItemType.MartialMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Shortsword", ItemType.MartialMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Trident", ItemType.MartialMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "War pick", ItemType.MartialMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Warhammer", ItemType.MartialMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Whip", ItemType.MartialMeleeWeapon);
+        CreateItemFamily(context, newFamilies, "Blowgun", ItemType.MartialRangedWeapon);
+        CreateItemFamily(context, newFamilies, "Hand crossbow", ItemType.MartialRangedWeapon);
+        CreateItemFamily(context, newFamilies, "Heavy crossbow", ItemType.MartialRangedWeapon);
+        CreateItemFamily(context, newFamilies, "Longbow", ItemType.MartialRangedWeapon);
+        CreateItemFamily(context, newFamilies, "Net", ItemType.MartialRangedWeapon);
 
 
         context.ItemFamilies.AddRange(newFamilies);
@@ -398,8 +401,10 @@ public class Seed
             armorProficiency.R_Effects.Add(lightArmorProficiency);
 
             ChoiceGroup simpleWeaponProficiency = new("Fighter weapon proficiency");
-            simpleWeaponProficiency.R_Effects.Add(new ProficiencyEffectBlueprint(ItemType.SimpleWeapon));
-            simpleWeaponProficiency.R_Effects.Add(new ProficiencyEffectBlueprint(ItemType.MartialWeapon));
+            simpleWeaponProficiency.R_Effects.Add(new ProficiencyEffectBlueprint(ItemType.SimpleMeleeWeapon));
+            simpleWeaponProficiency.R_Effects.Add(new ProficiencyEffectBlueprint(ItemType.SimpleRangedWeapon));
+            simpleWeaponProficiency.R_Effects.Add(new ProficiencyEffectBlueprint(ItemType.MartialMeleeWeapon));
+            simpleWeaponProficiency.R_Effects.Add(new ProficiencyEffectBlueprint(ItemType.MartialRangedWeapon));
 
             ChoiceGroup fighterSkillProficiency = new("Fighter skill proficiency");
             fighterSkillProficiency.R_Effects.Add(new SkillEffectBlueprint("Acrobatics", 0, RollMoment.OnCast, SkillEffect.Proficiency, Skill.Acrobatics));

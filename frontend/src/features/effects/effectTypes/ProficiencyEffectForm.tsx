@@ -20,8 +20,10 @@ const itemTypes = [
   "MediumArmor",
   "HeavyArmor",
   "Shield",
-  "SimpleWeapon",
-  "MartialWeapon",
+  "SimpleRangedWeapon",
+  "SimpleMeleeWeapon",
+  "MartialRangedWeapon",
+  "MartialMeleeWeapon",
 ] as const;
 
 type itemType = (typeof itemTypes)[number];
@@ -138,8 +140,10 @@ export default function ProficiencyEffectForm({
           { label: "Medium armor", value: "MediumArmor" },
           { label: "Heavy armor", value: "HeavyArmor" },
           { label: "Shield", value: "Shield" },
-          { label: "Simple weapons", value: "SimpleWeapon" },
-          { label: "Martial weapons", value: "MartialWeapon" },
+          { label: "Simple ranged weapons", value: "SimpleRangedWeapon" },
+          { label: "Simple melee weapons", value: "SimpleMeleeWeapon" },
+          { label: "Martial ranged weapons", value: "MartialRangedWeapon" },
+          { label: "Martial melee weapons", value: "MartialMeleeWeapon" },
         ]}
         label="Item type"
         name="Item type"

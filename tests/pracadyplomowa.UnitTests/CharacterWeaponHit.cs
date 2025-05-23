@@ -41,7 +41,7 @@ namespace pracadyplomowa.UnitTests.CharacterTests
             race.R_EquipmentSlots.AddRange([slot1, slot2]);
             Character character = new("Test", false, 14, 8, 6, 4, 2, 12, testClass.R_ClassLevels[0], race, -1, 0);
             Character target = new("Test", false, 14, 8, 6, 4, 2, 12, testClass.R_ClassLevels[0], race, -1, 0);
-            EffectInstance proficiencyEffectInstance = new ProficiencyEffectBlueprint(ItemType.MartialWeapon).Generate(null, character);
+            EffectInstance proficiencyEffectInstance = new ProficiencyEffectBlueprint(ItemType.MartialMeleeWeapon).Generate(null, character);
             EffectInstance bonusDamageInstance = new DamageEffectBlueprint("test", 2, RollMoment.OnCast, Models.Enums.EffectOptions.DamageEffect.ExtraWeaponDamage, null).Generate(null, character);
             EffectInstance thunderDamageInstance = new DamageEffectBlueprint("test", 2, RollMoment.OnCast, Models.Enums.EffectOptions.DamageEffect.DamageDealt, DamageType.thunder).Generate(null, character);
             EffectInstance attackRollEffectInstance = new AttackRollEffectBlueprint(
@@ -69,7 +69,7 @@ namespace pracadyplomowa.UnitTests.CharacterTests
             ItemFamily itemFamily = new()
             {
                 Id = 1,
-                ItemType = ItemType.MartialWeapon
+                ItemType = ItemType.MartialMeleeWeapon
             };
             MeleeWeapon sword = new MeleeWeapon("Sword", "sword", itemFamily, 20, DamageType.slashing, 6, 10){IsBlueprint = false};
             sword.R_ItemIsEquippableInSlots.Add(slot1);

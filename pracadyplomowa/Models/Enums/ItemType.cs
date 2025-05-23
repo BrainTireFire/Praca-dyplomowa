@@ -9,7 +9,9 @@ namespace pracadyplomowa.Models.Enums
         MediumArmor,
         HeavyArmor,
         Shield,
-        SimpleWeapon,
-        MartialWeapon
+        SimpleRangedWeapon,
+        SimpleMeleeWeapon,
+        MartialRangedWeapon,
+        MartialMeleeWeapon,
     }
 }

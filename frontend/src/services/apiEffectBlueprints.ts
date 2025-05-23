@@ -1,5 +1,6 @@
 import { EffectBlueprint } from "../features/effects/EffectBlueprintForm";
 import { ItemFamily } from "../models/itemfamily";
+import { Language } from "../models/language";
 import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
 
@@ -8,6 +9,19 @@ export async function getItemFamilies(
 ): Promise<ItemFamily[]> {
   const response = await customFetch(
     `${BASE_URL}/api/effectBlueprint/itemFamilies${
+      !!effectId ? `?effectId=${effectId}` : ""
+    }`
+  );
+
+  console.log(response);
+
+  return response;
+}
+export async function getLanguages(
+  effectId: number | null
+): Promise<Language[]> {
+  const response = await customFetch(
+    `${BASE_URL}/api/effectBlueprint/languages${
       !!effectId ? `?effectId=${effectId}` : ""
     }`
   );

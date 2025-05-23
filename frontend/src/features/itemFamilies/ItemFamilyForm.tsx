@@ -101,6 +101,7 @@ export default function ItemFamilyForm({
       <Container>
         <FormRowVertical label="Name">
           <Input
+            disabled={disableChanges}
             value={state.name}
             onChange={(e) =>
               dispatch({
@@ -113,6 +114,7 @@ export default function ItemFamilyForm({
         </FormRowVertical>
         <FormRowVertical label="Item type">
           <Dropdown
+            disabled={disableChanges}
             valuesList={itemTypeOptions}
             chosenValue={state.itemType}
             setChosenValue={(e) =>

@@ -1453,6 +1453,10 @@ namespace pracadyplomowa.Models.Entities.Characters
                                                                         .ToList();
             bool immunityEffectPresent = immunityEffectInstances.Count != 0;
 
+            if (damage < 0)
+            {
+                damage = 0;
+            }
             if (immunityEffectPresent)
             {
                 damage = 0;
@@ -1466,14 +1470,24 @@ namespace pracadyplomowa.Models.Entities.Characters
                 damage *= 2;
             }
 
-            var damageOvershoot = this.TemporaryHitpoints - damage;
-            if(damageOvershoot > 0){
-                this.TemporaryHitpoints = damageOvershoot;
+            var remainingDamage = damage;
+
+            if (this.TemporaryHitpoints > 0)
+            {
+                if (this.TemporaryHitpoints >= remainingDamage)
+                {
+                    this.TemporaryHitpoints -= remainingDamage;
+                    remainingDamage = 0;
+                }
+                else
+                {
+                    remainingDamage -= this.TemporaryHitpoints;
+                    this.TemporaryHitpoints = 0;
+                }
             }
-            else{
-                this.TemporaryHitpoints = 0;
-                this.Hitpoints += damageOvershoot; // its going to be negative so +
-            }
+
+            this.Hitpoints -= remainingDamage;
+            
             StringBuilder messageBuilder = new();
             if(immunityEffectPresent){
                 messageBuilder.AppendLine($"{this.Name} is immune to {damageType.ToString()} damage.");

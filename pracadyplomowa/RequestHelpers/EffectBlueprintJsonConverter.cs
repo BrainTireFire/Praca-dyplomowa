@@ -188,6 +188,24 @@ namespace pracadyplomowa.RequestHelpers
                                 : null
                         };
                         break;
+                    case "language":
+                        dto = new LanguageEffectBlueprintFormDto(){
+                            Id = id,
+                            Name = Name,
+                            Description = Description,
+                            DurationLeft = DurationLeft,
+                            ResourceLevel = ResourceLevel,
+                            ResourceAmount = ResourceAmount,
+                            SavingThrowSuccess = SavingThrowSuccess,
+                            Conditional = Conditional,
+                            IsImplemented = IsImplemented,
+                            HasNoEffectInCombat = HasNoEffectInCombat,
+                            EffectType = EffectType,
+                            EffectTypeBody = EffectTypeBody
+                                ? JsonSerializer.Deserialize<LanguageEffectBlueprintFormDto.LanguageSubeffectBlueprintFormDto>(effectTypeBodyProp.GetRawText(), options)
+                                : null
+                        };
+                        break;
                     case "healing":
                         dto = new HealingEffectBlueprintFormDto(){
                             Id = id,
@@ -365,6 +383,24 @@ namespace pracadyplomowa.RequestHelpers
                             EffectType = EffectType,
                             EffectTypeBody = EffectTypeBody
                                 ? JsonSerializer.Deserialize<MovementCostEffectBlueprintFormDto.MovementCostSubeffectBlueprintFormDto>(effectTypeBodyProp.GetRawText(), options)
+                                : null
+                        };
+                        break;
+                    case "dummy":
+                        dto = new DummyEffectBlueprintFormDto(){
+                            Id = id,
+                            Name = Name,
+                            Description = Description,
+                            DurationLeft = DurationLeft,
+                            ResourceLevel = ResourceLevel,
+                            ResourceAmount = ResourceAmount,
+                            SavingThrowSuccess = SavingThrowSuccess,
+                            Conditional = Conditional,
+                            IsImplemented = IsImplemented,
+                            HasNoEffectInCombat = HasNoEffectInCombat,
+                            EffectType = EffectType,
+                            EffectTypeBody = EffectTypeBody
+                                ? JsonSerializer.Deserialize<DummyEffectBlueprintFormDto.DummySubeffectBlueprintFormDto>(effectTypeBodyProp.GetRawText(), options)
                                 : null
                         };
                         break;

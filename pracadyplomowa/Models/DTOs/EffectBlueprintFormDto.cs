@@ -150,6 +150,15 @@ namespace pracadyplomowa.Models.DTOs
             public ProficiencyEffectType effectType { get; set;}
         }
     }
+    
+    public class LanguageEffectBlueprintFormDto : EffectBlueprintFormDto{
+        public LanguageSubeffectBlueprintFormDto EffectTypeBody { get; set; }
+        public class LanguageSubeffectBlueprintFormDto
+        {
+            public int LanguageId { get; set; }
+            public LanguageEffectType effectType { get; set;}
+        }
+    }
 
     public class HealingEffectBlueprintFormDto : ValueEffectBlueprintFormDto {
         public HealingSubeffectBlueprintFormDto EffectTypeBody { get; set; }
@@ -215,6 +224,13 @@ namespace pracadyplomowa.Models.DTOs
         public MovementCostSubeffectBlueprintFormDto EffectTypeBody { get; set; }
         public class MovementCostSubeffectBlueprintFormDto {
             public MovementCostEffectType effectType { get; set;}
+        }
+    }
+    
+    public class DummyEffectBlueprintFormDto : EffectBlueprintFormDto{
+        public DummySubeffectBlueprintFormDto EffectTypeBody { get; set; }
+        public class DummySubeffectBlueprintFormDto
+        {
         }
     }
 

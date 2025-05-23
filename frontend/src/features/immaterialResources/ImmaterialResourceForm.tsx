@@ -110,6 +110,7 @@ export default function ImmaterialResourceForm({
       <Container>
         <FormRowVertical label="Name">
           <Input
+            disabled={disableChanges}
             value={state.name}
             onChange={(e) =>
               dispatch({
@@ -122,6 +123,7 @@ export default function ImmaterialResourceForm({
         </FormRowVertical>
         <FormRowVertical label="Refreshes on">
           <Dropdown
+            disabled={disableChanges}
             valuesList={refreshTypeOptions}
             chosenValue={state.refreshesOn}
             setChosenValue={(e) =>

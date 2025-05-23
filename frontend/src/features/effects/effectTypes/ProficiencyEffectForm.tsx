@@ -101,7 +101,7 @@ export default function ProficiencyEffectForm({
 
   const itemFamiliesDropdown = localItemFamilies
     ? localItemFamilies.map((x) => {
-        return { value: x.id.toString(), label: x.name };
+        return { value: x.id!.toString(), label: x.name };
       })
     : [];
   const { editMode } = useContext(EditModeContext);

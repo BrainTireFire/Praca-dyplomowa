@@ -205,37 +205,38 @@ namespace pracadyplomowa.Models.Entities.Characters
         public class Dice {
             private readonly Random rnd = new();
             public int size;
+            public bool positive;
             public int result;
             public int Roll(){
                 if(size != 0){
                     result = rnd.Next(1, size);
                 }
-                return result;
+                return positive ? result : -result;
             }
         }
 
         public List<Dice> RollPrototype(bool advantage, bool disadvantage, int? rerollLowerThan){ //returns map where keys are dice size
             List<Dice> diceSet = [];
-            for(int i = 0; i < this.d100; i++){
-                diceSet.Add(new Dice(){size = 100});
+            for(int i = 0; i < Math.Abs(this.d100); i++){
+                diceSet.Add(new Dice(){size = 100, positive = this.d100 >= 0});
             }
-            for(int i = 0; i < this.d20; i++){
-                diceSet.Add(new Dice(){size = 20});
+            for(int i = 0; i < Math.Abs(this.d20); i++){
+                diceSet.Add(new Dice(){size = 20, positive = this.d20 >= 0});
             }
-            for(int i = 0; i < this.d12; i++){
-                diceSet.Add(new Dice(){size = 12});
+            for(int i = 0; i < Math.Abs(this.d12); i++){
+                diceSet.Add(new Dice(){size = 12, positive = this.d12 >= 0});
             }
-            for(int i = 0; i < this.d10; i++){
-                diceSet.Add(new Dice(){size = 10});
+            for(int i = 0; i < Math.Abs(this.d10); i++){
+                diceSet.Add(new Dice(){size = 10, positive = this.d10 >= 0});
             }
-            for(int i = 0; i < this.d8; i++){
-                diceSet.Add(new Dice(){size = 8});
+            for(int i = 0; i < Math.Abs(this.d8); i++){
+                diceSet.Add(new Dice(){size = 8, positive = this.d8 >= 0});
             }
-            for(int i = 0; i < this.d6; i++){
-                diceSet.Add(new Dice(){size = 6});
+            for(int i = 0; i < Math.Abs(this.d6); i++){
+                diceSet.Add(new Dice(){size = 6, positive = this.d6 >= 0});
             }
-            for(int i = 0; i < this.d4; i++){
-                diceSet.Add(new Dice(){size = 4});
+            for(int i = 0; i < Math.Abs(this.d4); i++){
+                diceSet.Add(new Dice(){size = 4, positive = this.d4 >= 0});
             }
             diceSet.Add(new Dice(){size = 0, result = this.flat});
             foreach(Dice dice in diceSet){

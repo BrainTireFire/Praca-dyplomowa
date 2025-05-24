@@ -3,7 +3,7 @@ import Menus from "../../../ui/containers/Menus";
 import Table from "../../../ui/containers/Table";
 import styled, { css } from "styled-components";
 import { ItemIdContext } from "../contexts/ItemIdContext";
-import { ReusableTable } from "../../../ui/containers/ReusableTable2";
+import { ReusableTable } from "../../../ui/containers/ReusableTable3";
 import { useSlots } from "../hooks/useSlots";
 import { useItemSlots } from "../hooks/useItemSlots";
 import Button from "../../../ui/interactive/Button";
@@ -90,11 +90,15 @@ function SlotSelectionForm() {
     setSelectedSlotIdFromAll(null);
   };
 
+  const selectedIndexFromAll = allSlotsWithoutLocal.findIndex((power) => power.id === selectedSlotIdFromAll);
+  const selectedIndexFromItem = itemSlotsLocal?.findIndex((power) => power.id === selectedSlotIdFromItem);
+
   return (
     <Grid>
       <Column1>
         {!isLoadingAllSlots && (
           <ReusableTable
+            selected={selectedIndexFromAll}
             mainHeader="All possible slots"
             tableRowsColomns={{ Name: "name" }}
             data={allSlotsWithoutLocal.map((slot, index) => {
@@ -153,6 +157,7 @@ function SlotSelectionForm() {
       <Column3>
         {!isLoadingItemSlots && (
           <ReusableTable
+            selected={selectedIndexFromItem}
             mainHeader="Selected slots"
             tableRowsColomns={{ Name: "name" }}
             data={
@@ -191,6 +196,8 @@ const Column2 = styled.div`
   grid-column: 2/3;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  gap: 5px;
 `;
 const Column3 = styled.div`
   grid-column: 3/4;

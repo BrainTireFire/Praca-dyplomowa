@@ -1143,7 +1143,7 @@ const Row1 = styled.div`
 `;
 const Row2 = styled.div`
   display: grid;
-  grid-template-rows: auto auto;
+  grid-template-columns: auto auto;
   grid-row: 2/3;
   column-gap: 10px;
   row-gap: 10px;

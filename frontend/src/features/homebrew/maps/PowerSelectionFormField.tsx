@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import styled, { css } from "styled-components";
 import { usePowers } from "../../../pages/powers/hooks/usePowers";
-import { ReusableTable } from "../../../ui/containers/ReusableTable2";
+import { ReusableTable } from "../../../ui/containers/ReusableTable3";
 import Spinner from "../../../ui/interactive/Spinner";
 import Button from "../../../ui/interactive/Button";
 import { PowerListItem } from "../../../models/power";
+import Modal from "../../../ui/containers/Modal";
+import { EditModeContext } from "../../../context/EditModeContext";
+import PowerForm from "../../powers/PowerForm";
 
 export function PowerSelectionFormField({
   onSelectPower,
@@ -51,11 +54,15 @@ export function PowerSelectionFormField({
     setSelectedPowerIdFromAll(null);
   };
 
+  const selectedIndexFromAll = allPowersWithoutLocal.findIndex((power) => power.id === selectedPowerIdFromAll);
+  const selectedIndexFromItem = itemPowersLocal?.findIndex((power) => power.id === selectedPowerIdFromItem);
+
   return (
     <Grid>
       <Column1>
         {!isLoadingAllPowers && (
           <ReusableTable
+            selected={selectedIndexFromAll}
             mainHeader="All available powers"
             tableRowsColomns={{ Name: "name" }}
             data={
@@ -76,7 +83,7 @@ export function PowerSelectionFormField({
         {isLoadingAllPowers && <Spinner />}
       </Column1>
       <Column2>
-        <>
+        <div style={{alignContent: "center"}}>
           <Button
             disabled={selectedPowerIdFromAll === null}
             onClick={() => {
@@ -104,10 +111,26 @@ export function PowerSelectionFormField({
           >
             {"<<"}
           </Button>
-        </>
+
+          <div style={{marginTop: '20px'}}>
+            <Modal>
+              <Modal.Open opens="PowerFormSneakPeek">
+                <Button variation="primary" size="large" disabled={selectedPowerIdFromAll == null && selectedPowerIdFromItem == null}>
+                  Sneak peek on selected power
+                </Button>
+              </Modal.Open>
+              <Modal.Window name="PowerFormSneakPeek">
+                <EditModeContext.Provider value={{editMode: false}}>
+                  <PowerForm powerId={selectedPowerIdFromAll || selectedPowerIdFromItem}></PowerForm>
+                </EditModeContext.Provider>
+              </Modal.Window>
+            </Modal>
+          </div>
+        </div>
       </Column2>
       <Column3>
         <ReusableTable
+          selected={selectedIndexFromItem}
           mainHeader="Selected powers"
           tableRowsColomns={{ Name: "name" }}
           data={
@@ -146,6 +169,8 @@ const Column2 = styled.div`
   grid-column: 2/3;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  gap: 5px;
 `;
 const Column3 = styled.div`
   grid-column: 3/4;

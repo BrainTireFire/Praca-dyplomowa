@@ -36,7 +36,8 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: 90vh;
-  width: 80vw;
+  max-height: 90vh;
+  max-width: 80vw;
   overflow-y: hidden;
 `;
 

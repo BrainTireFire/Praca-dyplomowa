@@ -153,6 +153,7 @@ function SlotSelectionForm() {
             </Button>
           </>
         )}
+        {isPending && <Spinner/>}
       </Column2>
       <Column3>
         {!isLoadingItemSlots && (

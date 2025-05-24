@@ -11,6 +11,7 @@ import { EffectBlueprintListItem } from "../models/effectBlueprint";
 import EffectInstanceForm from "../../effects/EffectInstanceForm";
 import { EffectParentObjectIdContext } from "../../../context/EffectParentObjectIdContext";
 import { EditModeContext } from "../../../context/EditModeContext";
+import styled from "styled-components";
 
 export default function EffectOnItemTable({
   effects,
@@ -29,7 +30,9 @@ export default function EffectOnItemTable({
           <EffectParentObjectIdContext.Provider
             value={{ objectId: itemId, objectType: "ItemItself" }}
           >
-            <EffectInstanceForm effectId={null}></EffectInstanceForm>
+            <Container>
+              <EffectInstanceForm effectId={null}></EffectInstanceForm>
+            </Container>
           </EffectParentObjectIdContext.Provider>
         }
       >
@@ -88,10 +91,21 @@ function EffectRow({ effect }: { effect: EffectBlueprintListItem }) {
           <EffectParentObjectIdContext.Provider
             value={{ objectId: itemId, objectType: "ItemWearer" }}
           >
-            <EffectInstanceForm effectId={effect.id}></EffectInstanceForm>
+            <Container>
+              <EffectInstanceForm effectId={effect.id}></EffectInstanceForm>
+            </Container>
           </EffectParentObjectIdContext.Provider>
         </Modal.Window>
       </Modal>
     </Table.Row>
   );
 }
+
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  max-width: 80vw;
+  overflow-y: hidden;
+`;

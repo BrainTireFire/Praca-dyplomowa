@@ -193,6 +193,7 @@ export function ResourceSelectionForm() {
             </Button>
           </>
         )}
+        {isPending && <Spinner/>}
       </Column2>
       <Column3>
         {!isLoadingItemResources && (

@@ -11,6 +11,7 @@ import { CharacterIdContext } from "../contexts/CharacterIdContext";
 import { useDeleteConstantEffectInstance } from "../hooks/useDeleteConstantEffectInstance";
 import EffectInstanceForm from "../../effects/EffectInstanceForm";
 import { EditModeContext } from "../../../context/EditModeContext";
+import styled from "styled-components";
 
 export default function EffectTable({ effects }: { effects: Effect[] }) {
   const { characterId } = useContext(CharacterIdContext);
@@ -24,10 +25,12 @@ export default function EffectTable({ effects }: { effects: Effect[] }) {
           <EffectParentObjectIdContext.Provider
             value={{ objectId: characterId, objectType: "CharacterConstant" }}
           >
-            <EffectInstanceForm
-              effectId={null}
-              isConstant={false}
-            ></EffectInstanceForm>
+            <Container>
+              <EffectInstanceForm
+                effectId={null}
+                isConstant={false}
+              ></EffectInstanceForm>
+            </Container>
           </EffectParentObjectIdContext.Provider>
         }
       >
@@ -96,13 +99,25 @@ function EffectRow({ effect }: { effect: Effect }) {
           <EffectParentObjectIdContext.Provider
             value={{ objectId: characterId, objectType: "CharacterConstant" }}
           >
-            <EffectInstanceForm
-              effectId={effect.id}
-              isConstant={false}
-            ></EffectInstanceForm>
+            <Container>
+              <EffectInstanceForm
+                effectId={effect.id}
+                isConstant={false}
+              ></EffectInstanceForm>
+            </Container>
           </EffectParentObjectIdContext.Provider>
         </Modal.Window>
       </Modal>
     </Table.Row>
   );
 }
+
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  max-height: 90vh;
+  max-width: 80vw;
+  overflow-y: hidden;
+`;

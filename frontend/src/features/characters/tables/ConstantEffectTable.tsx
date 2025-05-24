@@ -11,6 +11,7 @@ import EffectInstanceForm from "../../effects/EffectInstanceForm";
 import { EffectParentObjectIdContext } from "../../../context/EffectParentObjectIdContext";
 import { EditModeContext } from "../../../context/EditModeContext";
 import { useUnlinkConstantEffectInstance } from "../hooks/useUnlinkConstantEffectInstance";
+import styled from "styled-components";
 
 export default function ConstantEffectTable({
   effects,
@@ -29,7 +30,9 @@ export default function ConstantEffectTable({
           <EffectParentObjectIdContext.Provider
             value={{ objectId: characterId, objectType: "CharacterConstant" }}
           >
-            <EffectInstanceForm effectId={null}></EffectInstanceForm>
+            <Container>
+              <EffectInstanceForm effectId={null}></EffectInstanceForm>
+            </Container>
           </EffectParentObjectIdContext.Provider>
         }
       >
@@ -97,10 +100,21 @@ function ConstantEffectRow({ effect }: { effect: Effect }) {
           <EffectParentObjectIdContext.Provider
             value={{ objectId: characterId, objectType: "CharacterConstant" }}
           >
-            <EffectInstanceForm effectId={effect.id}></EffectInstanceForm>
+            <Container>
+              <EffectInstanceForm effectId={effect.id}></EffectInstanceForm>
+            </Container>
           </EffectParentObjectIdContext.Provider>
         </Modal.Window>
       </Modal>
     </Table.Row>
   );
 }
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  max-height: 90vh;
+  max-width: 80vw;
+  overflow-y: hidden;
+`;

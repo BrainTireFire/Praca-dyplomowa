@@ -62,7 +62,7 @@ function EffectRow({ effect }: { effect: EffectBlueprintListItem }) {
 
       <Modal>
         <Menus.Menu>
-          <Menus.Toggle id={effect.id} />
+          <Menus.Toggle id={effect.id} itemCount={2}/>
           <Menus.List id={effect.id}>
             <Modal.Open opens="open">
               <Menus.Button icon={<HiEye />} onClick={() => {}}>

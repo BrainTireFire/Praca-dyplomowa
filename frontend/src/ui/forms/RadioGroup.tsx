@@ -3,6 +3,7 @@ import Box from "../containers/Box";
 import Heading from "../text/Heading";
 import FormRowLabelRight from "./FormRowLabelRight";
 import Input from "./Input";
+import { HiXMark } from "react-icons/hi2";
 
 type ValueSet = {
   label: string;
@@ -38,14 +39,22 @@ export default function RadioGroup({
       <Heading as="h3">{label}</Heading>
       {values.map((value) => (
         <FormRowLabelRight label={value.label} key={value.value}>
-          <Input
+          <>
+          {(!disabled || currentValue !== value.value) && 
+            <Input
             disabled={disabled}
             type="radio"
-            id={value.value}
+            id ={value.value}
             name={name}
             onChange={() => onChange(value.value)}
             checked={currentValue === value.value}
-          ></Input>
+            ></Input>
+            
+          }
+          {disabled && currentValue === value.value &&
+            <HiXMark style={{alignSelf: "center"}}/>
+          }
+          </>
         </FormRowLabelRight>
       ))}
     </RadioGroupContainer>

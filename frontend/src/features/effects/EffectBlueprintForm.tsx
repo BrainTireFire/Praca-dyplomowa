@@ -368,7 +368,7 @@ export default function EffectBlueprintForm({
     <EffectContext.Provider
       value={{ effect: "Blueprint", effectId: actualEffectId }}
     >
-      <ScrollContainer>
+      {/* <ScrollContainer> */}
         <Container>
           <Div1>
             <FormRowVertical label="Name">
@@ -586,7 +586,7 @@ export default function EffectBlueprintForm({
             )}
           </Div3>
         </Container>
-      </ScrollContainer>
+      {/* </ScrollContainer> */}
       <FormRowVertical error={disableReasonJoined}>
         {effectBlueprint && (
           <Button
@@ -609,10 +609,10 @@ export default function EffectBlueprintForm({
   );
 }
 
-const Container = styled.div`
+const Container = styled(Box)`
   display: grid;
   grid-template-columns: auto 1fr;
-  grid-template-rows: auto auto;
+  grid-template-rows: auto 1fr;
   gap: 10px;
   width: 70vw;
   height: 90vh;
@@ -622,10 +622,10 @@ const Container = styled.div`
   padding: 10px;
 `;
 
-const ScrollContainer = styled(Box)`
-  overflow-y: hidden;
-  padding: 0;
-`;
+// const ScrollContainer = styled(Box)`
+//   overflow-y: hidden;
+//   padding: 0;
+// `;
 
 const Div1 = styled.div`
   grid-column: 1 / 3;

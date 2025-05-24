@@ -4,7 +4,7 @@ import { useObjectResources } from "../../hooks/useObjectResources";
 import { useUpdateObjectResources } from "../../hooks/useUpdateObjectResources";
 import { ImmaterialResourceAmount } from "../../models/immaterialResourceAmount";
 import { ImmaterialResourceBlueprintWithOwner } from "../../models/immaterialResourceBlueprint";
-import { ReusableTable } from "../../ui/containers/ReusableTable2";
+import { ReusableTable } from "../../ui/containers/ReusableTable3";
 import Spinner from "../../ui/interactive/Spinner";
 import Button from "../../ui/interactive/Button";
 import FormRowVertical from "../../ui/forms/FormRowVertical";
@@ -66,11 +66,15 @@ export function ResourceSelectionForm() {
     setSelectedResourceIdFromAll(null);
   };
 
+  const selectedIndexFromAll = allResources?.findIndex((power) => power.id === selectedResourceIdFromAll);
+  const selectedIndexFromItem = itemResourcesLocal?.findIndex((power) => power.id === selectedResourceIdFromItem);
+
   return (
     <Grid>
       <Column1>
         {!isLoadingAllResources && (
           <ReusableTable
+            selected={selectedIndexFromAll ?? -1}
             mainHeader="Available resources"
             tableRowsColomns={{ Name: "name" }}
             data={
@@ -189,10 +193,12 @@ export function ResourceSelectionForm() {
             </Button>
           </>
         )}
+        {isPending && <Spinner/>}
       </Column2>
       <Column3>
         {!isLoadingItemResources && (
           <ReusableTable
+            selected={selectedIndexFromItem ?? -1}
             mainHeader="Selected resources"
             tableRowsColomns={{
               Name: "name",
@@ -239,6 +245,8 @@ const Column2 = styled.div`
   grid-column: 2/3;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  gap: 5px;
 `;
 const Column3 = styled.div`
   grid-column: 3/4;

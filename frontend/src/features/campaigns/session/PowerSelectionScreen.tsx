@@ -12,6 +12,11 @@ import Button from "../../../ui/interactive/Button";
 import Spinner from "../../../ui/interactive/Spinner";
 import { useGetPowers } from "../hooks/useGetPowers";
 import { SetPower } from "./SessionLayout";
+import Modal from "../../../ui/containers/Modal";
+import { HiEye } from "react-icons/hi2";
+import PowerForm from "../../powers/PowerForm";
+import { EditModeContext } from "../../../context/EditModeContext";
+import styled from "styled-components";
 
 export function PowerSelectionScreen({
   characterId,
@@ -63,7 +68,7 @@ export default function SessionPowersTable({
     <Menus>
       <Table
         header="Power"
-        columns="1fr 6fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr"
+        columns="auto auto auto auto auto auto auto auto auto auto auto auto auto auto"
       >
         <Table.Header>
           <div>Name</div>
@@ -79,9 +84,10 @@ export default function SessionPowersTable({
           <div>Target Type</div>
           <div>Cast option</div>
           <div></div>
+          <div></div>
         </Table.Header>
         <Table.Body
-          columnCount={13}
+          columnCount={14}
           data={powers}
           render={(power) => (
             <PowerRow
@@ -200,6 +206,34 @@ function PowerRow({
       >
         {buttonLabelArray.length > 0 ? buttonLabelArray.join(', ') : 'Select'}
       </Button>
+      <Modal>
+        <Menus.Menu>
+          <Menus.Toggle id={power.id} />
+          <Menus.List id={power.id}>
+            <Modal.Open opens="open">
+              <Menus.Button icon={<HiEye />} onClick={() => {}}>
+                Open
+              </Menus.Button>
+            </Modal.Open>
+          </Menus.List>
+        </Menus.Menu>
+        <Modal.Window name="open">
+          <EditModeContext.Provider value={{editMode: false}}>
+            <Container>
+              <PowerForm powerId={power.id}></PowerForm>
+            </Container>
+          </EditModeContext.Provider>
+        </Modal.Window>
+      </Modal>
     </Table.Row>
   );
 }
+
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  max-width: 80vw;
+  overflow-y: hidden;
+`;

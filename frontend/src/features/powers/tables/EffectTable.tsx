@@ -15,6 +15,7 @@ import ConfirmDelete from "../../../ui/containers/ConfirmDelete";
 import { useContext } from "react";
 import { PowerIdContext } from "../contexts/PowerIdContext";
 import { EditModeContext } from "../../../context/EditModeContext";
+import styled from "styled-components";
 
 export default function EffectTable({
   effects,
@@ -42,7 +43,11 @@ export default function EffectTable({
           button="Add new"
           columns="auto auto auto 0.01rem"
           // buttonOnClick={() => createEffectBlueprint(initialState)}
-          modal={<EffectBlueprintForm effectId={null}></EffectBlueprintForm>}
+          modal={
+            <Container>
+              <EffectBlueprintForm effectId={null}></EffectBlueprintForm>
+            </Container>
+          }
         >
           <Table.Header>
             <div>Saved</div>
@@ -103,9 +108,19 @@ function EffectRow({ effect }: { effect: EffectBlueprintListItem }) {
           />
         </Modal.Window>
         <Modal.Window name="open">
-          <EffectBlueprintForm effectId={effect.id}></EffectBlueprintForm>
+          <Container>
+            <EffectBlueprintForm effectId={effect.id}></EffectBlueprintForm>
+          </Container>
         </Modal.Window>
       </Modal>
     </Table.Row>
   );
 }
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  max-height: 90vh;
+  max-width: 80vw;
+  overflow-y: hidden;
+`;

@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { CharacterIdContext } from "../contexts/CharacterIdContext";
 import { PowerListItem } from "../../../models/power";
-import { ReusableTable } from "../../../ui/containers/ReusableTable2";
+import { ReusableTable } from "../../../ui/containers/ReusableTable3";
 import Spinner from "../../../ui/interactive/Spinner";
 import Button from "../../../ui/interactive/Button";
 import styled, { css } from "styled-components";
@@ -71,11 +71,15 @@ export function PreparedPowerSelectionForm({
     [powersPreparedLocal?.length, powersToPrepareContainer.numberToChoose]
   );
 
+  const selectedIndexFromAll = powersToPrepareWithoutPrepared.findIndex((power) => power.id === selectedPowerIdFromToPrepare);
+  const selectedIndexFromPrepared = powersPreparedLocal?.findIndex((power) => power.id === selectedPowerIdFromPrepared);
+
   return (
     <Grid>
       <Column1>
         {!isLoadingPowersPrepared && (
           <ReusableTable
+            selected={selectedIndexFromAll}
             mainHeader="All powers to prepare"
             tableRowsColomns={{ Name: "name" }}
             data={powersToPrepareWithoutPrepared.map((power, index) => {
@@ -152,6 +156,7 @@ export function PreparedPowerSelectionForm({
       <Column3>
         {!isLoadingPowersPrepared && (
           <ReusableTable
+            selected={selectedIndexFromPrepared}
             mainHeader="Selected powers"
             tableRowsColomns={{ Name: "name" }}
             data={
@@ -192,6 +197,8 @@ const Column2 = styled.div`
   grid-column: 2/3;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  gap: 5px;
 `;
 const Column3 = styled.div`
   grid-column: 3/4;

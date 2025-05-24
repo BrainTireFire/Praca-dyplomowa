@@ -5,9 +5,12 @@ import { usePowers } from "../../../pages/powers/hooks/usePowers";
 import { useObjectPowers } from "../../../hooks/useObjectPowers";
 import { useUpdateObjectPowers } from "../../../hooks/useUpdateObjectPowers";
 import { PowerListItem } from "../../../models/power";
-import { ReusableTable } from "../../../ui/containers/ReusableTable2";
+import { ReusableTable } from "../../../ui/containers/ReusableTable3";
 import Spinner from "../../../ui/interactive/Spinner";
 import Button from "../../../ui/interactive/Button";
+import Modal from "../../../ui/containers/Modal";
+import PowerForm from "../../powers/PowerForm";
+import { EditModeContext } from "../../../context/EditModeContext";
 
 export function PowerSelectionFormItem() {
   const { objectId, objectType } = useContext(ParentObjectIdContext);
@@ -64,11 +67,15 @@ export function PowerSelectionFormItem() {
     setSelectedPowerIdFromAll(null);
   };
 
+  const selectedIndexFromAll = allPowersWithoutLocal.findIndex((power) => power.id === selectedPowerIdFromAll);
+  const selectedIndexFromItem = itemPowersLocal?.findIndex((power) => power.id === selectedPowerIdFromItem);
+
   return (
     <Grid>
       <Column1>
         {!isLoadingAllPowersCastableByCharacter && !isLoadingAllPowersCastableOnWeaponHit && (
           <ReusableTable
+            selected={selectedIndexFromAll}
             mainHeader="All available powers"
             tableRowsColomns={{ Name: "name" }}
             data={allPowersWithoutLocal.map((power, index) => {
@@ -121,6 +128,21 @@ export function PowerSelectionFormItem() {
             <Button onClick={() => updateItemPowers(itemPowersLocal)}>
               {"Save"}
             </Button>
+
+            <div style={{marginTop: '20px'}}>
+            <Modal>
+              <Modal.Open opens="ConfirmDeleteEncounter">
+                <Button variation="primary" size="large" disabled={selectedPowerIdFromAll == null && selectedPowerIdFromItem == null}>
+                  Sneak peek on selected power
+                </Button>
+              </Modal.Open>
+              <Modal.Window name="ConfirmDeleteEncounter">
+                <EditModeContext.Provider value={{editMode: false}}>
+                  <PowerForm powerId={selectedPowerIdFromAll || selectedPowerIdFromItem}></PowerForm>
+                </EditModeContext.Provider>
+              </Modal.Window>
+            </Modal>
+            </div>
           </>
         )}
         {isPending && <Spinner/>}
@@ -128,6 +150,7 @@ export function PowerSelectionFormItem() {
       <Column3>
         {!isLoadingItemPowers && (
           <ReusableTable
+            selected={selectedIndexFromItem}
             mainHeader="Selected powers"
             tableRowsColomns={{ Name: "name" }}
             data={
@@ -168,6 +191,8 @@ const Column2 = styled.div`
   grid-column: 2/3;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  gap: 5px;
 `;
 const Column3 = styled.div`
   grid-column: 3/4;

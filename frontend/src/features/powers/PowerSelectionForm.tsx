@@ -125,12 +125,12 @@ export function PowerSelectionForm() {
 
             <div style={{marginTop: '20px'}}>
             <Modal>
-              <Modal.Open opens="ConfirmDeleteEncounter">
+              <Modal.Open opens="PowerFormSneakPeak">
                 <Button variation="primary" size="large" disabled={selectedPowerIdFromAll == null && selectedPowerIdFromItem == null}>
                   Sneak peek on selected power
                 </Button>
               </Modal.Open>
-              <Modal.Window name="ConfirmDeleteEncounter">
+              <Modal.Window name="PowerFormSneakPeak">
                 <EditModeContext.Provider value={{editMode: false}}>
                   <PowerForm powerId={selectedPowerIdFromAll || selectedPowerIdFromItem}></PowerForm>
                 </EditModeContext.Provider>

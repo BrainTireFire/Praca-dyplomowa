@@ -170,7 +170,7 @@ export const ReusableTable = ({
       String(item[col]).toLowerCase().includes(filterText.toLowerCase())
     )
   );
-  console.log(filteredData);
+  
   const handleRowClick = (index: number) => {
     if (isSelectable) {
       // setSelected(index);

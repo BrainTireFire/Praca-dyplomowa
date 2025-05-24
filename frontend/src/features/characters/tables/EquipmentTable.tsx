@@ -37,7 +37,7 @@ export default function EquipmentTable({ equipments }: { equipments: Item[] }) {
         header="Equipment"
         button="Open equipping screen"
         modal={<EquipmentSlotScreen onCloseModal={() => {}} />}
-        columns="1fr 1fr 1fr 1fr 3.2rem"
+        columns="auto auto auto auto 3.2rem"
       >
         <Table.Header>
           <div>Name</div>
@@ -47,6 +47,7 @@ export default function EquipmentTable({ equipments }: { equipments: Item[] }) {
           <div></div>
         </Table.Header>
         <Table.Body
+        columnCount={5}
           data={equipments}
           render={(equipment) => (
             <EquipmentRow key={equipment.id} equipment={equipment} />

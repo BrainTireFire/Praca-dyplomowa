@@ -16,7 +16,7 @@ export default function WeaponAttackTable({
 }) {
   return (
     <Menus>
-      <Table header="Weapon attack" columns="1fr 1fr 1fr 1fr 1fr">
+      <Table header="Weapon attack" columns="auto auto auto auto auto">
         <Table.Header>
           <div>Main</div>
           <div>Damage</div>
@@ -25,6 +25,7 @@ export default function WeaponAttackTable({
           <div>Reach/Range</div>
         </Table.Header>
         <Table.Body
+        columnCount={5}
           data={weaponAttacks}
           render={(weaponAttack) => (
             <WeaponAttackRow
@@ -41,12 +42,14 @@ export default function WeaponAttackTable({
 function WeaponAttackRow({ weaponAttack }: { weaponAttack: WeaponAttack }) {
   return (
     <Table.Row>
-      <RadioButton
-        //   label="Option 1"
-        checked={weaponAttack.main}
-        //   checked={selectedOption === "option1"}
-        //   onChange={handleRadioChange}
-      />
+      <Cell>
+        <RadioButton
+          //   label="Option 1"
+          checked={weaponAttack.main}
+          //   checked={selectedOption === "option1"}
+          //   onChange={handleRadioChange}
+        />  
+      </Cell>
 
       <Cell>{DiceSetString(weaponAttack.damage)}</Cell>
       <Cell>{DiceSetString(weaponAttack.attackBonus)}</Cell>

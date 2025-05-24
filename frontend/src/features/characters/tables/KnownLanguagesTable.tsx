@@ -11,8 +11,9 @@ export default function KnownLanguagesTable({
 }) {
   return (
     <Menus>
-      <Table header="Known languages" columns="1fr 3.2rem">
+      <Table header="Known languages" columns="1fr">
         <Table.Body
+        columnCount={1}
           data={languages}
           render={(language) => (
             <ProficiencyRow key={language.id} item={language} />

@@ -6,6 +6,9 @@ import { PowerSelectionForm } from "../../powers/PowerSelectionForm";
 import { ParentObjectIdContext } from "../../../context/ParentObjectIdContext";
 import { CharacterIdContext } from "../contexts/CharacterIdContext";
 import { useContext } from "react";
+import Modal from "../../../ui/containers/Modal";
+import PowerForm from "../../powers/PowerForm";
+import { HiEye } from "react-icons/hi2";
 
 export default function PowersTable({ powers }: { powers: Power[] }) {
   const { characterId } = useContext(CharacterIdContext);
@@ -14,7 +17,7 @@ export default function PowersTable({ powers }: { powers: Power[] }) {
       <Table
         header="Powers known"
         button="Select custom"
-        columns="1fr 1fr"
+        columns="auto auto 0.01rem"
         modal={
           <ParentObjectIdContext.Provider
             value={{ objectId: characterId, objectType: "Character" }}
@@ -26,9 +29,10 @@ export default function PowersTable({ powers }: { powers: Power[] }) {
         <Table.Header>
           <div>Name</div>
           <div>Source</div>
+          <div></div>
         </Table.Header>
         <Table.Body
-          columnCount={2}
+          columnCount={3}
           data={powers}
           render={(power) => <PowersRow key={power.id} power={power} />}
         />
@@ -44,6 +48,21 @@ function PowersRow({ power }: { power: Power }) {
       <Cell>{power.name}</Cell>
 
       <Cell>{power.source.join(", ")}</Cell>
+      <Modal>
+        <Menus.Menu>
+          <Menus.Toggle id={power.id} />
+          <Menus.List id={power.id}>
+            <Modal.Open opens="open">
+              <Menus.Button icon={<HiEye />} onClick={() => {}}>
+                Open
+              </Menus.Button>
+            </Modal.Open>
+          </Menus.List>
+        </Menus.Menu>
+        <Modal.Window name="open">
+          <PowerForm powerId={power.id}></PowerForm>
+        </Modal.Window>
+      </Modal>
     </Table.Row>
   );
 }

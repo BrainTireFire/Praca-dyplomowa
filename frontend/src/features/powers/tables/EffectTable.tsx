@@ -40,7 +40,7 @@ export default function EffectTable({
         <Table
           header="Effects"
           button="Add new"
-          columns="1fr 1fr 1fr 0.01rem"
+          columns="auto auto auto 0.01rem"
           // buttonOnClick={() => createEffectBlueprint(initialState)}
           modal={<EffectBlueprintForm effectId={null}></EffectBlueprintForm>}
         >

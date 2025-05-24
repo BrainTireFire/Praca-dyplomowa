@@ -46,3 +46,21 @@ export const identityToTypeMapping: IdentityToTypeMapping = {
   MeleeWeapon: ["SimpleMeleeWeapon", "MartialMeleeWeapon"],
   RangedWeapon: ["SimpleRangedWeapon", "MartialRangedWeapon"],
 };
+
+export const itemTypeLabels: Record<ItemType, string> = {
+  Item: "Item",
+  // Tool: "Tool", // TODO
+  Clothing: "Clothing",
+  LightArmor: "Light armor",
+  MediumArmor: "Medium armor",
+  HeavyArmor: "Heavy armor",
+  Shield: "Shield",
+  SimpleRangedWeapon: "Simple ranged weapons",
+  SimpleMeleeWeapon: "Simple melee weapons",
+  MartialRangedWeapon: "Martial ranged weapons",
+  MartialMeleeWeapon: "Martial melee weapons",
+};
+
+export function getItemTypeLabel(value: ItemType): string {
+  return itemTypeLabels[value];
+}

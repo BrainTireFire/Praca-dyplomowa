@@ -3,11 +3,13 @@ import Table from "../../../ui/containers/Table";
 import styled from "styled-components";
 import { ItemFamily } from "../../../models/itemfamily";
 import { Language } from "../../../models/language";
+import { getItemTypeLabel, ItemType, itemTypeLabels } from "../../../pages/items/itemTypes";
 
 const Name = styled.div`
   font-size: 1rem;
   font-weight: 600;
   color: var(--color-secondary-text);
+  padding-left: 5px;
 `;
 
 const Stacked = styled.div`
@@ -25,14 +27,20 @@ const Stacked = styled.div`
   }
 `;
 
+function isItemType(value: string): value is ItemType {
+  return value in itemTypeLabels;
+}
+
 export default function ProficiencyRow({
   item,
 }: {
   item: ItemFamily | Language;
 }) {
+  const label =
+    isItemType(item.name) ? getItemTypeLabel(item.name) : item.name;
   return (
     <Table.Row>
-      <Name>{item.name}</Name>
+      <Name>{label}</Name>
 
       {/* <Modal>
         <Menus.Menu>

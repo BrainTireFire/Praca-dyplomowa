@@ -16,7 +16,7 @@ export default function SlotsTable({ slots }: { slots: Slot[] }) {
     <Menus>
       <Table
         header="Occupied slots"
-        button="Add new"
+        button="Select"
         columns="1fr"
         modal={<SlotSelectionForm />}
       >

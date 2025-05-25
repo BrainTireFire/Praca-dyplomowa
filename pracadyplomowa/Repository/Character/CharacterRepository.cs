@@ -150,8 +150,9 @@ namespace pracadyplomowa.Repository
 
         public Task<Character> GetByIdWithChoiceGroups(int Id)
         {
-            var characterLevel = _context.Characters
-            .Where(c => c.Id == Id).Include(c => c.R_CharacterHasLevelsInClass).Count();
+            var characterForLevels = _context.Characters
+            .Where(c => c.Id == Id).Include(c => c.R_CharacterHasLevelsInClass).First();
+            var characterLevel = characterForLevels.R_CharacterHasLevelsInClass.Count();
 
             var character = _context.Characters
             .Where(c => c.Id == Id)
@@ -220,8 +221,9 @@ namespace pracadyplomowa.Repository
         }
 
         public Task<Character> GetByIdForChoice(int Id){
-            var characterLevel = _context.Characters
-            .Where(c => c.Id == Id).Include(c => c.R_CharacterHasLevelsInClass).Count();
+            var characterForLevels = _context.Characters
+            .Where(c => c.Id == Id).Include(c => c.R_CharacterHasLevelsInClass).First();
+            var characterLevel = characterForLevels.R_CharacterHasLevelsInClass.Count();
 
             var character = _context.Characters
             .Where(c => c.Id == Id)

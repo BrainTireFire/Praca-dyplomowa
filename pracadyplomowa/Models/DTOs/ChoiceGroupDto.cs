@@ -54,13 +54,59 @@ namespace pracadyplomowa.Models.DTOs
 
         public static List<ChoiceGroupDto> Get(Character character)
         {
-            return character.R_CharacterBelongsToRace.R_RaceLevels.SelectMany(raceLevel => raceLevel.R_ChoiceGroups)
-                .Union(character.R_CharacterHasLevelsInClass.SelectMany(raceLevel => raceLevel.R_ChoiceGroups))
-                .Where(choiceGroup => !character.R_UsedChoiceGroups
-                    .Select(used => used.R_ChoiceGroupId)
-                    .Contains(choiceGroup.Id)
-                    )
-                    .Select(cg => new ChoiceGroupDto(cg, character)).ToList();
+            // Map of granted power ids per "role" (known or to prepare) and source race/class
+            var usedChoiceGroups = character.R_UsedChoiceGroups
+                .Where(ucg => ucg.R_ChoiceGroup != null)
+                .Select(ucg => new
+                {
+                    SourceRaceId = ucg.R_ChoiceGroup.R_GrantedByRaceLevel?.R_RaceId,
+                    SourceClassId = ucg.R_ChoiceGroup.R_GrantedByClassLevel?.R_ClassId,
+                    PowersAlwaysAvailableIds = ucg.R_PowersAlwaysAvailableGranted.Select(p => p.Id).ToHashSet(),
+                    PowersToPrepareIds = ucg.R_PowersToPrepareGranted.Select(p => p.Id).ToHashSet()
+                }).ToList();
+
+            // Get all unused choice groups
+            var allChoiceGroups = character.R_CharacterBelongsToRace.R_RaceLevels
+                .SelectMany(rl => rl.R_ChoiceGroups)
+                .Concat(character.R_CharacterHasLevelsInClass.SelectMany(cl => cl.R_ChoiceGroups))
+                .Where(cg => !character.R_UsedChoiceGroups.Any(used => used.R_ChoiceGroupId == cg.Id))
+                .ToList();
+
+            var result = new List<ChoiceGroupDto>();
+
+            foreach (var cg in allChoiceGroups)
+            {
+                // Get the race or class the choice group originates from
+                var originRaceId = cg.R_GrantedByRaceLevel?.R_RaceId;
+                var originClassId = cg.R_GrantedByClassLevel?.R_ClassId;
+
+                // Block powers granted before from same class or same race (in the same "role")
+                var alreadyGrantedAsAlwaysAvailable = usedChoiceGroups
+                    .Where(ucg =>
+                        (originRaceId != null && originRaceId == ucg.SourceRaceId) ||
+                        (originClassId != null && originClassId == ucg.SourceClassId))
+                    .SelectMany(ucg => ucg.PowersAlwaysAvailableIds)
+                    .ToHashSet();
+
+                var alreadyGrantedToPrepare = usedChoiceGroups
+                    .Where(ucg =>
+                        (originRaceId != null && originRaceId == ucg.SourceRaceId) ||
+                        (originClassId != null && originClassId == ucg.SourceClassId))
+                    .SelectMany(ucg => ucg.PowersToPrepareIds)
+                    .ToHashSet();
+
+                cg.R_PowersAlwaysAvailable = cg.R_PowersAlwaysAvailable
+                    .Where(p => !alreadyGrantedAsAlwaysAvailable.Contains(p.Id))
+                    .ToList();
+
+                cg.R_PowersToPrepare = cg.R_PowersToPrepare
+                    .Where(p => !alreadyGrantedToPrepare.Contains(p.Id))
+                    .ToList();
+
+                result.Add(new ChoiceGroupDto(cg, character));
+            }
+
+            return result;
         }
 
         public ChoiceGroupDto(ChoiceGroup cg, Character ch){

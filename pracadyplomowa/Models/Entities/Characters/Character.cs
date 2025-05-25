@@ -1113,6 +1113,7 @@ namespace pracadyplomowa.Models.Entities.Characters
 
         public Dictionary<int, HitType> CheckIfPowerHitSuccessfull(Encounter encounter, Power power, List<Character> targets, List<string> messages)
         {
+            StringBuilder messageBuilder = new();
             //retrieve data
             Dictionary<int, HitType> hitMap = [];
 
@@ -1138,6 +1139,22 @@ namespace pracadyplomowa.Models.Entities.Characters
                         targetedCharacter.Id,
                         outcome
                     );
+                    messageBuilder.AppendLine(this.Name + " power (" + power.Name + ") attack roll:");
+                    messageBuilder.AppendLine("Sum: " + roll);
+                    messageBuilder.AppendLine("Against Armor Class: " + targetedCharacter.ArmorClass);
+                    if(outcome == HitType.CriticalHit){
+                        messageBuilder.AppendLine("Critical hit!");
+                    }
+                    else if(outcome == HitType.Hit){
+                        messageBuilder.AppendLine("Hit!");
+                    }
+                    else if(outcome == HitType.Miss){
+                        messageBuilder.AppendLine("Miss...");
+                    }
+                    else if(outcome == HitType.CriticalMiss){
+                        messageBuilder.AppendLine("Critical miss...");
+                    }
+                    messages.Add(messageBuilder.ToString());
                 }
                 else if (power.PowerType == PowerType.Saveable)
                 {

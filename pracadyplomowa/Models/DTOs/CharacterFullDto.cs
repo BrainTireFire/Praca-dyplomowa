@@ -596,6 +596,7 @@ namespace pracadyplomowa.Models.DTOs
             public string Name { get; set; } = "";
             public int Left { get; set; }
             public int Total { get; set; }
+            public int Level { get; set; }
             public string Source { get; set; } = "";
             public string Refresh { get; set; } = "";
         }
@@ -619,7 +620,7 @@ namespace pracadyplomowa.Models.DTOs
 
         public static List<Resource> GetResources(Character character)
         {
-            var resources = character.AllImmaterialResourceInstances.GroupBy(resource => new { resource.R_BlueprintId, resource.R_ChoiceGroupUsageId, resource.R_ItemId })
+            var resources = character.AllImmaterialResourceInstances.GroupBy(resource => new { resource.R_BlueprintId, resource.R_ChoiceGroupUsage.R_ChoiceGroup.Name, resource.R_ItemId, resource.Level })
             .Select(group =>
             {
                 return new Resource()
@@ -628,6 +629,7 @@ namespace pracadyplomowa.Models.DTOs
                     Name = group.Take(1).First().R_Blueprint.Name,
                     Left = group.Where(resource => !resource.NeedsRefresh).Count(),
                     Total = group.Count(),
+                    Level = group.Take(1).First().Level,
                     Source = group.Take(1).First().Source,
                     Refresh = group.Take(1).First().R_Blueprint.RefreshesOn.ToString()
                 };

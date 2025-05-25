@@ -1004,7 +1004,10 @@ public class EncounterService : IEncounterService
             participance.NumberOfBonusActionsTaken++;
         }
 
-        IsSingleAttackAvailable(character, participance, true);
+        if (power.RequiredActionType == ActionType.WeaponAttack)
+        {
+            IsSingleAttackAvailable(character, participance, true);
+        }
 
         //set approved effects
         foreach(var effect in character.AllEffects){
@@ -1060,8 +1063,8 @@ public class EncounterService : IEncounterService
                                                                         .Count();
             var mainHandsPossesed = character.R_CharacterBelongsToRace.R_EquipmentSlots.Where(x => x.Type == SlotType.MainHand).Count();
             var offHandsPossesed = character.R_CharacterBelongsToRace.R_EquipmentSlots.Where(x => x.Type == SlotType.OffHand).Count();
-            var spellcastingFocusHeld = character.R_EquippedItems.Where(x => x.R_Item.IsSpellFocus && x.R_Slots.Where(y => y.Type == SlotType.MainHand || y.Type == SlotType.MainHand).Any()).Any();
-            bool somaticComponentRequirementSatisfied = mainHandsPossesed - mainHandsOccupied > 0 || offHandsOccupied - offHandsPossesed > 0 || spellcastingFocusHeld || !power.SomaticComponent;
+            var spellcastingFocusHeld = character.R_EquippedItems.Where(x => x.R_Item.IsSpellFocus && x.R_Slots.Where(y => y.Type == SlotType.MainHand || y.Type == SlotType.OffHand).Any()).Any();
+            bool somaticComponentRequirementSatisfied = mainHandsPossesed - mainHandsOccupied > 0 || offHandsPossesed - offHandsOccupied > 0 || spellcastingFocusHeld || !power.SomaticComponent;
             bool vocalComponentSatisfied = !character.HasAnyCondition([Condition.Muffled, Condition.Petrified]) || !power.VerbalComponent;
             bool requiredWeaponAttackAvailable;
             try

@@ -239,6 +239,18 @@ function ClassLevelSelectionScreen({
                   ?.choiceGroups?.filter(
                     (cg) => cg.id === selectedChoiceGroupId
                   )[0]
+                  ?.powersToPrepare.map((power) => (
+                    <EffectPowerOption
+                      effectOrPower={power}
+                      setSelectedEffectPowerId={updatePowerId}
+                    ></EffectPowerOption>
+                  ))}
+              {selectedChoiceGroupId &&
+                nextClassLevelsLocal
+                  .filter((x) => x.id === selectedNextClassId)[0]
+                  ?.choiceGroups?.filter(
+                    (cg) => cg.id === selectedChoiceGroupId
+                  )[0]
                   ?.resources.map((resource) => (
                     <EffectPowerOption
                       effectOrPower={resource}
@@ -268,6 +280,21 @@ function ClassLevelSelectionScreen({
                     (cg) => cg.id === selectedChoiceGroupId
                   )[0]
                   ?.powersAlwaysAvailable?.filter(
+                    (power) => power.id === selectedPowerId
+                  )
+                  .map((power) => (
+                    <ElementToChoose
+                      key={power.id}
+                      element={power}
+                    ></ElementToChoose>
+                  ))}
+              {selectedPowerId &&
+                nextClassLevelsLocal
+                  .filter((x) => x.id === selectedNextClassId)[0]
+                  ?.choiceGroups?.filter(
+                    (cg) => cg.id === selectedChoiceGroupId
+                  )[0]
+                  ?.powersToPrepare?.filter(
                     (power) => power.id === selectedPowerId
                   )
                   .map((power) => (

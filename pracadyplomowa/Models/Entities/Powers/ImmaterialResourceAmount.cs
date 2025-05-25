@@ -23,8 +23,10 @@ namespace pracadyplomowa.Models.Entities.Powers
         public List<ImmaterialResourceInstance> Generate(){
             List<ImmaterialResourceInstance> instances = [];
             for(int i = 0; i < Count; i++){
-                instances.Add(new ImmaterialResourceInstance(){
+                instances.Add(new ImmaterialResourceInstance()
+                {
                     R_BlueprintId = R_BlueprintId,
+                    Level = Level,
                 });
             }
             return instances;

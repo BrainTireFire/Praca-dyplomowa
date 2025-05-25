@@ -3,6 +3,7 @@ export type Resource = {
   name: string;
   left: number;
   total: number;
+  level: number;
   source: string;
   refresh: string;
 };

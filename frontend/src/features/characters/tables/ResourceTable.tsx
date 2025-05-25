@@ -18,7 +18,7 @@ export default function ResourceTable({
       <Table
         header="Resources"
         button="Select"
-        columns="auto auto auto auto"
+        columns="auto auto auto auto auto"
         modal={
           <ParentObjectIdContext.Provider
             value={{ objectId: characterId, objectType: "Character" }}
@@ -29,13 +29,14 @@ export default function ResourceTable({
       >
         <Table.Header>
           <Cell>Name</Cell>
+          <Cell>Level</Cell>
           <Cell>Count</Cell>
           <Cell>Source</Cell>
           <Cell>Refresh</Cell>
         </Table.Header>
         <Table.Body
           data={resources}
-          columnCount={4}
+          columnCount={5}
           render={(resource) => (
             <ResourceRow key={resource.id} resource={resource} />
           )}
@@ -50,6 +51,7 @@ function ResourceRow({ resource }: { resource: Resource }) {
   return (
     <Table.Row>
       <Cell>{resource.name}</Cell>
+      <Cell>{resource.level}</Cell>
 
       <Cell>{`${resource.left}/${resource.total}`}</Cell>
 

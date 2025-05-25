@@ -37,7 +37,7 @@ public abstract class ValueEffectInstance : EffectInstance
         StringBuilder messageBuilder = new();
         messageBuilder.Append($"{rollName} roll:");
         foreach(var dice in diceResult){
-            messageBuilder.Append(" + " + dice.result + "(d" + dice.size + ")");
+            messageBuilder.Append(" + " + dice.result + (dice.size > 0 ? "(d" + dice.size + ")" : ""));
         }
         messageBuilder.Replace($"{rollName} roll: + ", $"{rollName} roll: ");
         messages.Add(messageBuilder.ToString());

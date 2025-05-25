@@ -9,6 +9,7 @@ using pracadyplomowa.Models.ComplexTypes.Effects;
 using pracadyplomowa.Models.Enums.EffectOptions;
 using pracadyplomowa.Models.Enums;
 using pracadyplomowa.Models.Entities.Items;
+using pracadyplomowa.Models.DTOs.Session;
 
 namespace pracadyplomowa;
 
@@ -151,6 +152,94 @@ public class Seed
         await context.SaveChangesAsync();
     }
 
+    public static void SeedFireballVersion(AppDbContext context, DamageType damageType, string name, string description, string effectName, List<Power> powers)
+    {
+        var fireball = new Power(name, ActionType.Action, CastableBy.Character, PowerType.Saveable, TargetType.Character);
+        fireball.AreaShape = AreaShape.Sphere;
+        fireball.AreaSize = 15;
+        fireball.Description = description;
+        fireball.SavingThrowAbility = Ability.DEXTERITY;
+        fireball.Duration = 0;
+        fireball.IsMagic = true;
+        fireball.IsImplemented = true;
+        fireball.IsRanged = true;
+        fireball.Range = 50;
+        fireball.SomaticComponent = true;
+        fireball.VerbalComponent = true;
+        fireball.SavingThrowRoll = SavingThrowRoll.TakenOnce;
+        fireball.SavingThrowBehaviour = SavingThrowBehaviour.Breaks;
+        fireball.UpcastBy = UpcastBy.ResourceLevel;
+
+        fireball.R_UsesImmaterialResource = context.ImmaterialResourceBlueprints.Where(x => x.Name == "Spell slot").First();
+
+        EffectBlueprint effect1 = new DamageEffectBlueprint(effectName, new DiceSet() { d6 = 8 }, RollMoment.OnCast){Level = 3, Saved = false, DamageEffectType = new DamageEffectType(){DamageEffect = DamageEffect.DamageTaken, DamageEffect_DamageType = damageType}};
+        EffectBlueprint effect2 = new DamageEffectBlueprint(effectName, new DiceSet() { d6 = 9 }, RollMoment.OnCast){Level = 4, Saved = false, DamageEffectType = new DamageEffectType(){DamageEffect = DamageEffect.DamageTaken, DamageEffect_DamageType = damageType}};
+        EffectBlueprint effect3 = new DamageEffectBlueprint(effectName, new DiceSet() { d6 = 10 }, RollMoment.OnCast){Level = 5, Saved = false, DamageEffectType = new DamageEffectType(){DamageEffect = DamageEffect.DamageTaken, DamageEffect_DamageType = damageType}};
+        EffectBlueprint effect4 = new DamageEffectBlueprint(effectName, new DiceSet() { d6 = 11 }, RollMoment.OnCast){Level = 6, Saved = false, DamageEffectType = new DamageEffectType(){DamageEffect = DamageEffect.DamageTaken, DamageEffect_DamageType = damageType}};
+        EffectBlueprint effect5 = new DamageEffectBlueprint(effectName, new DiceSet() { d6 = 12 }, RollMoment.OnCast){Level = 7, Saved = false, DamageEffectType = new DamageEffectType(){DamageEffect = DamageEffect.DamageTaken, DamageEffect_DamageType = damageType}};
+        EffectBlueprint effect6 = new DamageEffectBlueprint(effectName, new DiceSet() { d6 = 13 }, RollMoment.OnCast){Level = 8, Saved = false, DamageEffectType = new DamageEffectType(){DamageEffect = DamageEffect.DamageTaken, DamageEffect_DamageType = damageType}};
+
+        fireball.R_EffectBlueprints.AddRange([effect1, effect2, effect3, effect4, effect5, effect6]);
+        CheckIfExistsAlready(context, powers, fireball);
+    }
+    public static void SeedFireBoltVersion(AppDbContext context, DamageType damageType, string name, string description, string effectName, List<Power> powers)
+    {
+        var firebolt = new Power(name, ActionType.Action, CastableBy.Character, PowerType.Attack, TargetType.Character);
+        firebolt.MaxTargets = 1;
+        firebolt.Description = description;
+        firebolt.Duration = 0;
+        firebolt.IsMagic = true;
+        firebolt.IsImplemented = true;
+        firebolt.IsRanged = true;
+        firebolt.Range = 50;
+        firebolt.SomaticComponent = true;
+        firebolt.VerbalComponent = true;
+        firebolt.UpcastBy = UpcastBy.CharacterLevel;
+
+        // firebolt.R_UsesImmaterialResource = context.ImmaterialResourceBlueprints.Where(x => x.Name == "Spell slot").First();
+
+        EffectBlueprint firebolteffect1 = new DamageEffectBlueprint(effectName, new DiceSet() { d10 = 1 }, RollMoment.OnCast) { Level = 1, Saved = false, DamageEffectType = new DamageEffectType(){DamageEffect = DamageEffect.DamageTaken, DamageEffect_DamageType = damageType}};
+        EffectBlueprint firebolteffect2 = new DamageEffectBlueprint(effectName, new DiceSet() { d10 = 2 }, RollMoment.OnCast) { Level = 5, Saved = false, DamageEffectType = new DamageEffectType(){DamageEffect = DamageEffect.DamageTaken, DamageEffect_DamageType = damageType}};
+        EffectBlueprint firebolteffect3 = new DamageEffectBlueprint(effectName, new DiceSet() { d10 = 3 }, RollMoment.OnCast) { Level = 11, Saved = false, DamageEffectType = new DamageEffectType(){DamageEffect = DamageEffect.DamageTaken, DamageEffect_DamageType = damageType}};
+        EffectBlueprint firebolteffect4 = new DamageEffectBlueprint(effectName, new DiceSet() { d10 = 4 }, RollMoment.OnCast) { Level = 17, Saved = false, DamageEffectType = new DamageEffectType(){DamageEffect = DamageEffect.DamageTaken, DamageEffect_DamageType = damageType}};
+
+        firebolt.R_EffectBlueprints.AddRange([firebolteffect1, firebolteffect2, firebolteffect3, firebolteffect4]);
+        CheckIfExistsAlready(context, powers, firebolt);
+    }
+
+    public static async Task SeedImmaterialResources(AppDbContext context) {
+        var resources = new List<ImmaterialResourceBlueprint>();
+
+        ImmaterialResourceBlueprint spellSlot = new()
+        {
+            Name = "Spell slot",
+            RefreshesOn = RefreshType.LongRest
+        };
+
+        CheckIfExistsAlready(context, resources, spellSlot);
+
+        context.ImmaterialResourceBlueprints.AddRange(resources);
+
+        await context.SaveChangesAsync();
+    }
+
+    public static async Task SeedPowers(AppDbContext context)
+    {
+        var powers = new List<Power>();
+
+        SeedFireballVersion(context, DamageType.fire, "Fireball", "Explosion dealing 8d6 fire damage in 15 feet radius", "Fire damage", powers);
+        SeedFireballVersion(context, DamageType.cold, "Icy sphere", "Explosion dealing 8d6 cold damage in 15 feet radius", "Cold damage", powers);
+        SeedFireballVersion(context, DamageType.lightning, "Globe lightning", "Explosion dealing 8d6 lightning damage in 15 feet radius", "Lightning damage", powers);
+
+        SeedFireBoltVersion(context, DamageType.fire, "Fire bolt", "A fire projectile dealing 1d10 fire damage", "Fire damage", powers);
+        SeedFireBoltVersion(context, DamageType.cold, "Ice spike", "An ice projectile dealing 1d10 cold damage", "Cold damage", powers);
+        SeedFireBoltVersion(context, DamageType.lightning, "Lightning bolt", "Lightning bolt dealing 1d10 lightning damage", "Lightning damage", powers);
+
+        context.Powers.AddRange(powers);
+
+        await context.SaveChangesAsync();
+    }
+
     private static void CreateItemFamily(AppDbContext context, List<ItemFamily> newFamilies, string name, ItemType itemType){
         if(!context.ItemFamilies.Where(itemFam => itemFam.Name == name).Any()){
             newFamilies.Add(new ItemFamily{Name = name, ItemType = itemType});
@@ -160,6 +249,16 @@ public class Seed
     private static void CheckIfExistsAlready(AppDbContext context, List<Item> newItems, Item newItem){
         if(!context.Items.Where(item => item.Name == newItem.Name).Any()){
             newItems.Add(newItem);
+        }
+    }
+    private static void CheckIfExistsAlready(AppDbContext context, List<Power> newPowers, Power newPower){
+        if(!context.Powers.Where(item => item.Name == newPower.Name).Any()){
+            newPowers.Add(newPower);
+        }
+    }
+    private static void CheckIfExistsAlready(AppDbContext context, List<ImmaterialResourceBlueprint> resources, ImmaterialResourceBlueprint resource){
+        if(!context.ImmaterialResourceBlueprints.Where(resource => resource.Name == resource.Name).Any()){
+            resources.Add(resource);
         }
     }
 
@@ -532,54 +631,64 @@ public class Seed
             wizardWeaponProficiency.R_Effects.Add(CreateProficiencyEffectBlueprint(context, "Light crossbow"));
 
             ChoiceGroup wizardFeatures = new("Wizard features");
-            // ImmaterialResourceBlueprint arcaneRecoveryCharge = new()
-            // {
-            //     Name = "Arcane recovery charge",
-            //     RefreshesOn = RefreshType.LongRest
-            // };
-            // ImmaterialResourceAmount arcaneRecoveryChargeAmount = new()
-            // {
-            //     Count = 1,
-            //     Level = 0,
-            //     R_Blueprint = arcaneRecoveryCharge
-            // };
-            // // wizardClass.R_ClassLevels.Where(cl => cl.Level == 1).First().R_ImmaterialResourceAmounts.Add(arcaneRecoveryChargeAmount);
-            // wizardFeatures.R_Resources.Add(arcaneRecoveryChargeAmount);
-            // Power arcaneRecoveryLevel1 = PrepareArcaneRecoveryPower(1, arcaneRecoveryCharge);
-            // Power arcaneRecoveryLevel2 = PrepareArcaneRecoveryPower(2, arcaneRecoveryCharge);
-            // Power arcaneRecoveryLevel3 = PrepareArcaneRecoveryPower(3, arcaneRecoveryCharge);
-            // Power arcaneRecoveryLevel4 = PrepareArcaneRecoveryPower(4, arcaneRecoveryCharge);
-            // Power arcaneRecoveryLevel5 = PrepareArcaneRecoveryPower(5, arcaneRecoveryCharge);
-            // Power arcaneRecoveryLevel6 = PrepareArcaneRecoveryPower(6, arcaneRecoveryCharge);
-            // wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel1);
-            // wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel2);
-            // wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel3);
-            // wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel4);
-            // wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel5);
-            // wizardFeatures.R_PowersAlwaysAvailable.Add(arcaneRecoveryLevel6);
-            // wizardFeatures.R_PowersToPrepare.Add(arcaneRecoveryLevel1);
-            // wizardFeatures.R_PowersToPrepare.Add(arcaneRecoveryLevel2);
-            // wizardFeatures.R_PowersToPrepare.Add(arcaneRecoveryLevel3);
-            // wizardFeatures.R_PowersToPrepare.Add(arcaneRecoveryLevel4);
-            // wizardFeatures.R_PowersToPrepare.Add(arcaneRecoveryLevel5);
-            // wizardFeatures.R_PowersToPrepare.Add(arcaneRecoveryLevel6);
-
-            ImmaterialResourceBlueprint spellSlot = new()
-            {
-                Name = "Spell slot",
-                RefreshesOn = RefreshType.LongRest
-            };
             ImmaterialResourceAmount spellSlot1Amount = new()
             {
                 Level = 1,
                 Count = 2,
-                R_Blueprint = spellSlot
+                R_Blueprint = context.ImmaterialResourceBlueprints.First(i => i.Name == "Spell slot")
             };
-            // wizardClass.R_ClassLevels.Where(cl => cl.Level == 1).First().R_ImmaterialResourceAmounts.Add(spellSlot1Amount);
             wizardFeatures.R_Resources.Add(spellSlot1Amount);
 
+            ChoiceGroup wizardSpells1 = new("Wizard spell selection");
+            wizardSpells1.R_PowersToPrepare.AddRange(context.Powers.Where(p => p.Name == "Fireball" || p.Name == "Icy sphere" || p.Name == "Globe lightning").ToList());
+            wizardSpells1.R_PowersToPrepare.AddRange(context.Powers.Where(p => p.Name == "Fire bolt" || p.Name == "Ice spike" || p.Name == "Lightning bolt").ToList());
+            wizardSpells1.NumberToChoose = 2;
+
             wizardClass.R_ClassLevels.Where(cl => cl.Level == 1).First().R_ChoiceGroups.AddRange(
-                [wizardSavingThrowProficiency, wizardSkillProficiency, wizardWeaponProficiency, wizardFeatures]
+                [wizardSavingThrowProficiency, wizardSkillProficiency, wizardWeaponProficiency, wizardFeatures, wizardSpells1]
+                );
+
+            ChoiceGroup wizardFeatures2 = new("Wizard features");
+            ImmaterialResourceAmount spellSlot2Amount = new()
+            {
+                Level = 1,
+                Count = 1,
+                R_Blueprint = context.ImmaterialResourceBlueprints.First(i => i.Name == "Spell slot")
+            };
+            wizardFeatures2.R_Resources.Add(spellSlot2Amount);
+
+            ChoiceGroup wizardSpells2 = new("Wizard spell selection");
+            wizardSpells2.R_PowersToPrepare.AddRange(context.Powers.Where(p => p.Name == "Fireball" || p.Name == "Icy sphere" || p.Name == "Globe lightning").ToList());
+            wizardSpells2.R_PowersToPrepare.AddRange(context.Powers.Where(p => p.Name == "Fire bolt" || p.Name == "Ice spike" || p.Name == "Lightning bolt").ToList());
+            wizardSpells2.NumberToChoose = 2;
+
+            wizardClass.R_ClassLevels.Where(cl => cl.Level == 2).First().R_ChoiceGroups.AddRange(
+                [wizardFeatures2, wizardSpells2]
+                );
+
+            ChoiceGroup wizardFeatures3 = new("Wizard features");
+            ImmaterialResourceAmount spellSlot3Amount1 = new()
+            {
+                Level = 1,
+                Count = 1,
+                R_Blueprint = context.ImmaterialResourceBlueprints.First(i => i.Name == "Spell slot")
+            };
+            wizardFeatures3.R_Resources.Add(spellSlot3Amount1);
+            ImmaterialResourceAmount spellSlot3Amount2 = new()
+            {
+                Level = 2,
+                Count = 2,
+                R_Blueprint = context.ImmaterialResourceBlueprints.First(i => i.Name == "Spell slot")
+            };
+            wizardFeatures3.R_Resources.Add(spellSlot3Amount2);
+            
+            ChoiceGroup wizardSpells3 = new("Wizard spell selection");
+            wizardSpells3.R_PowersToPrepare.AddRange(context.Powers.Where(p => p.Name == "Fireball" || p.Name == "Icy sphere" || p.Name == "Globe lightning").ToList());
+            wizardSpells3.R_PowersToPrepare.AddRange(context.Powers.Where(p => p.Name == "Fire bolt" || p.Name == "Ice spike" || p.Name == "Lightning bolt").ToList());
+            wizardSpells3.NumberToChoose = 2;
+
+            wizardClass.R_ClassLevels.Where(cl => cl.Level == 3).First().R_ChoiceGroups.AddRange(
+                [wizardFeatures3, wizardSpells3]
                 );
 
             context.Classes.Add(wizardClass);
@@ -665,7 +774,12 @@ public class Seed
                 Name = "Sneak attack charge",
                 RefreshesOn = RefreshType.TurnStart
             };
-            Power sneakAttack = new("Sneak attack", ActionType.WeaponAttack, CastableBy.OnWeaponHit, PowerType.PassiveEffect, TargetType.Character){UpcastBy = UpcastBy.ClassLevel, R_ClassForUpcasting = rogueClass, R_UsesImmaterialResource = sneakAttackCharge}; // since its castable on weapon attack, we dont need additional attack roll so power type is passive effect aka always hits and assigns its effects
+            Power sneakAttack = new("Sneak attack", ActionType.WeaponAttack, CastableBy.OnWeaponHit, PowerType.Attack, TargetType.Character)
+            {
+                UpcastBy = UpcastBy.ClassLevel,
+                R_ClassForUpcasting = rogueClass,
+                R_UsesImmaterialResource = sneakAttackCharge
+            }; // since its castable on weapon attack, we dont need additional attack roll so power type is passive effect aka always hits and assigns its effects
             // this shouldnt count as an actual weapon attack. Lets do it so if character "casts" a power of OnWeaponHit type then whether it actually gets cast depends on whether automatically performed attack hits. This means we are going to need to go back to explicitly setting damage values on weapons
             DamageEffectBlueprint sneakAttackDamage1 = new("Sneak damage 1", new DiceSet(){d6 = 1}, RollMoment.OnCast){Level = 1};
             DamageEffectBlueprint sneakAttackDamage2 = new("Sneak damage 2", new DiceSet(){d6 = 2}, RollMoment.OnCast){Level = 3};

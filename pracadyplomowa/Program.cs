@@ -167,6 +167,8 @@ try
     await Seed.SeedEquipmentSlots(context);
     await Seed.SeedItemFamilies(dbContext);
     await Seed.SeedItems(dbContext);
+    await Seed.SeedImmaterialResources(dbContext);
+    await Seed.SeedPowers(dbContext);
     await Seed.SeedLanguages(dbContext);
     await Seed.SeedRaces(dbContext);
     await Seed.SeedClasses(dbContext);

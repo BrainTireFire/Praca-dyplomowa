@@ -29,10 +29,10 @@ public interface IEncounterService
     Task<List<int>> MoveCharacter(int encounterId, int characterId, List<int> fieldIds);
     Task<ConditionalEffectsSetDto> GetConditionalEffects(int encounterId, int characterId, int targetId);
     Task<ConditionalEffectsSetForManyTargetsDto> GetConditionalEffects(int encounterId, int characterId, List<int> targetId);
-    Task<HitType> MakeWeaponAttackRoll(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds);
+    // Task<HitType> MakeWeaponAttackRoll(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds);
     Task<WeaponDamageAndPowersDto> GetWeaponData(int encounterId, int characterId, int weaponId);
-    Task<Character.WeaponHitResult> ApplyWeaponHit(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, bool criticalHit, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds);
-    Task<AttackRollAndDamageResultDto> AttackRollAndDamage(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds);
+    // Task<Character.WeaponHitResult> ApplyWeaponHit(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, bool criticalHit, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds);
+    // Task<AttackRollAndDamageResultDto> AttackRollAndDamage(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds);
     Task<WeaponAttackResultDto> MakeWeaponAttack(int encounterId, int characterId, int weaponId, int targetId, bool isRanged, WeaponAttackIncomingDataDto approvedConditionalEffects);
     Task<PowerDataForResolutionDto> GetPowerData(int encounterId, int characterId, int powerId, int? powerLevel, int? resourceLevel);
     Task<CastPowerResultDto> CastPower(int encounterId, int characterId, int powerId, int? powerLevel, int? immaterialResourceLevel, CastPowerIncomingDataDto incomingDataDto);

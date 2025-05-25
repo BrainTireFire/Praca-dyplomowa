@@ -374,55 +374,55 @@ export async function moveCharacter(
   );
 }
 
-export async function makeAttackRoll(
-  encounterId: number,
-  characterId: number,
-  targetId: number,
-  weaponId: number,
-  isRanged: boolean,
-  approvedConditionalEffects: ApprovedConditionalEffectsDto
-): Promise<string> {
-  const options: RequestInit = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(approvedConditionalEffects),
-  };
+// export async function makeAttackRoll(
+//   encounterId: number,
+//   characterId: number,
+//   targetId: number,
+//   weaponId: number,
+//   isRanged: boolean,
+//   approvedConditionalEffects: ApprovedConditionalEffectsDto
+// ): Promise<string> {
+//   const options: RequestInit = {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify(approvedConditionalEffects),
+//   };
 
-  return await customFetch(
-    `${BASE_URL}/api/encounter/${encounterId}/attackRoll?characterId=${characterId}&targetId=${targetId}&weaponId=${weaponId}&isRanged=${isRanged}`,
-    options
-  );
-}
+//   return await customFetch(
+//     `${BASE_URL}/api/encounter/${encounterId}/attackRoll?characterId=${characterId}&targetId=${targetId}&weaponId=${weaponId}&isRanged=${isRanged}`,
+//     options
+//   );
+// }
 
 export interface ApprovedConditionalEffectsDto {
   CasterConditionalEffects: number[];
   TargetConditionalEffects: number[];
 }
 
-export async function applyWeaponHitEffects(
-  encounterId: number,
-  characterId: number,
-  targetId: number,
-  weaponId: number,
-  isRanged: boolean,
-  isCritical: boolean,
-  approvedConditionalEffects: ApprovedConditionalEffectsDto
-): Promise<AppliedDamage> {
-  const options: RequestInit = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(approvedConditionalEffects),
-  };
+// export async function applyWeaponHitEffects(
+//   encounterId: number,
+//   characterId: number,
+//   targetId: number,
+//   weaponId: number,
+//   isRanged: boolean,
+//   isCritical: boolean,
+//   approvedConditionalEffects: ApprovedConditionalEffectsDto
+// ): Promise<AppliedDamage> {
+//   const options: RequestInit = {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify(approvedConditionalEffects),
+//   };
 
-  return await customFetch(
-    `${BASE_URL}/api/encounter/${encounterId}/weaponHit?characterId=${characterId}&targetId=${targetId}&weaponId=${weaponId}&isRanged=${isRanged}&isCritical=${isCritical}`,
-    options
-  );
-}
+//   return await customFetch(
+//     `${BASE_URL}/api/encounter/${encounterId}/weaponHit?characterId=${characterId}&targetId=${targetId}&weaponId=${weaponId}&isRanged=${isRanged}&isCritical=${isCritical}`,
+//     options
+//   );
+// }
 export type AppliedDamage = { [key: string]: number };
 
 export async function getWeaponAttackData(

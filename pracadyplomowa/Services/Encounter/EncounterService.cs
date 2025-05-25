@@ -539,73 +539,73 @@ public class EncounterService : IEncounterService
     public class SessionBadRequestException(string message) : SessionException(message) {
     }
 
-    public async Task<HitType> MakeWeaponAttackRoll(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds){
-        var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId) ?? throw new SessionNotFoundException("Encounter with specified Id does not exist");
-        foreach (var x in encounter.R_Participances.Select(x => x.R_Character)){
-            await _unitOfWork.CharacterRepository.GetByIdWithAll(x.Id);
-        }
-        var character = (encounter.R_Participances.FirstOrDefault(x => x.R_CharacterId == characterId)?.R_Character) ?? throw new SessionBadRequestException("Attacking character does not take part in specified encounter");
-        var target = encounter.R_Participances.First(x => x.R_CharacterId == targetId).R_Character ?? throw new SessionBadRequestException("Target character does not take part in specified encounter");
-        Weapon weapon = (Weapon)((character.R_EquippedItems.FirstOrDefault(x => x.R_ItemId == weaponId)?.R_Item) ?? throw new SessionBadRequestException("Specified weapon is not equipped by attacking character"));
-        if (rangedAttack && ((weapon is MeleeWeapon meleeWeapon && !meleeWeapon.Thrown) || weapon is not RangedWeapon)){
-            throw new SessionBadRequestException("Can't perform a ranged attack with this weapon");
-        }
+    // public async Task<HitType> MakeWeaponAttackRoll(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds){
+    //     var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId) ?? throw new SessionNotFoundException("Encounter with specified Id does not exist");
+    //     foreach (var x in encounter.R_Participances.Select(x => x.R_Character)){
+    //         await _unitOfWork.CharacterRepository.GetByIdWithAll(x.Id);
+    //     }
+    //     var character = (encounter.R_Participances.FirstOrDefault(x => x.R_CharacterId == characterId)?.R_Character) ?? throw new SessionBadRequestException("Attacking character does not take part in specified encounter");
+    //     var target = encounter.R_Participances.First(x => x.R_CharacterId == targetId).R_Character ?? throw new SessionBadRequestException("Target character does not take part in specified encounter");
+    //     Weapon weapon = (Weapon)((character.R_EquippedItems.FirstOrDefault(x => x.R_ItemId == weaponId)?.R_Item) ?? throw new SessionBadRequestException("Specified weapon is not equipped by attacking character"));
+    //     if (rangedAttack && ((weapon is MeleeWeapon meleeWeapon && !meleeWeapon.Thrown) || weapon is not RangedWeapon)){
+    //         throw new SessionBadRequestException("Can't perform a ranged attack with this weapon");
+    //     }
 
-        var attackRollResult = await MakeWeaponAttackRoll(encounter, character, weapon, target, rangedAttack, casterApprovedEffectIds, targetApprovedEffectIds, []);
-        return attackRollResult;
-    }
-    public async Task<Character.WeaponHitResult> ApplyWeaponHit(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, bool criticalHit, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds){
-        var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId) ?? throw new SessionNotFoundException("Encounter with specified Id does not exist");
-        foreach (var x in encounter.R_Participances.Select(x => x.R_Character)){
-            await _unitOfWork.CharacterRepository.GetByIdWithAll(x.Id);
-        }
-        var character = (encounter.R_Participances.FirstOrDefault(x => x.R_CharacterId == characterId)?.R_Character) ?? throw new SessionBadRequestException("Attacking character does not take part in specified encounter");
-        var target = encounter.R_Participances.First(x => x.R_CharacterId == targetId).R_Character ?? throw new SessionBadRequestException("Target character does not take part in specified encounter");
-        Weapon weapon = (Weapon)((character.R_EquippedItems.FirstOrDefault(x => x.R_ItemId == weaponId)?.R_Item) ?? throw new SessionBadRequestException("Specified weapon is not equipped by attacking character"));
-        if (rangedAttack && ((weapon is MeleeWeapon meleeWeapon && !meleeWeapon.Thrown) || weapon is not RangedWeapon)){
-            throw new SessionBadRequestException("Can't perform a ranged attack with this weapon");
-        }
+    //     var attackRollResult = await MakeWeaponAttackRoll(encounter, character, weapon, target, rangedAttack, casterApprovedEffectIds, targetApprovedEffectIds, []);
+    //     return attackRollResult;
+    // }
+    // public async Task<Character.WeaponHitResult> ApplyWeaponHit(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, bool criticalHit, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds){
+    //     var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId) ?? throw new SessionNotFoundException("Encounter with specified Id does not exist");
+    //     foreach (var x in encounter.R_Participances.Select(x => x.R_Character)){
+    //         await _unitOfWork.CharacterRepository.GetByIdWithAll(x.Id);
+    //     }
+    //     var character = (encounter.R_Participances.FirstOrDefault(x => x.R_CharacterId == characterId)?.R_Character) ?? throw new SessionBadRequestException("Attacking character does not take part in specified encounter");
+    //     var target = encounter.R_Participances.First(x => x.R_CharacterId == targetId).R_Character ?? throw new SessionBadRequestException("Target character does not take part in specified encounter");
+    //     Weapon weapon = (Weapon)((character.R_EquippedItems.FirstOrDefault(x => x.R_ItemId == weaponId)?.R_Item) ?? throw new SessionBadRequestException("Specified weapon is not equipped by attacking character"));
+    //     if (rangedAttack && ((weapon is MeleeWeapon meleeWeapon && !meleeWeapon.Thrown) || weapon is not RangedWeapon)){
+    //         throw new SessionBadRequestException("Can't perform a ranged attack with this weapon");
+    //     }
 
-        foreach(var effect in character.AllEffects.Where(x => casterApprovedEffectIds.Contains(x.Id))){
-            effect.ConditionalApproved = true;
-        }
-        foreach(var effect in target.AllEffects.Where(x => targetApprovedEffectIds.Contains(x.Id))){
-            effect.ConditionalApproved = true;
-        }
+    //     foreach(var effect in character.AllEffects.Where(x => casterApprovedEffectIds.Contains(x.Id))){
+    //         effect.ConditionalApproved = true;
+    //     }
+    //     foreach(var effect in target.AllEffects.Where(x => targetApprovedEffectIds.Contains(x.Id))){
+    //         effect.ConditionalApproved = true;
+    //     }
 
-        var result = character.ApplyWeaponHitEffects(encounter, weapon, target, criticalHit, []);
-        await _unitOfWork.SaveChangesAsync();
-        return result;
-    }
+    //     var result = character.ApplyWeaponHitEffects(encounter, weapon, target, criticalHit, []);
+    //     await _unitOfWork.SaveChangesAsync();
+    //     return result;
+    // }
 
-    public async Task<AttackRollAndDamageResultDto> AttackRollAndDamage(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds){
-        var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId) ?? throw new SessionNotFoundException("Encounter with specified Id does not exist");
-        foreach (var x in encounter.R_Participances.Select(x => x.R_Character)){
-            await _unitOfWork.CharacterRepository.GetByIdWithAll(x.Id);
-        }
-        var character = (encounter.R_Participances.FirstOrDefault(x => x.R_CharacterId == characterId)?.R_Character) ?? throw new SessionBadRequestException("Attacking character does not take part in specified encounter");
-        var target = encounter.R_Participances.First(x => x.R_CharacterId == targetId).R_Character ?? throw new SessionBadRequestException("Target character does not take part in specified encounter");
-        Weapon weapon = (Weapon)((character.R_EquippedItems.FirstOrDefault(x => x.R_ItemId == weaponId)?.R_Item) ?? throw new SessionBadRequestException("Specified weapon is not equipped by attacking character"));
-        if (rangedAttack && ((weapon is MeleeWeapon meleeWeapon && !meleeWeapon.Thrown) || weapon is not RangedWeapon)){
-            throw new SessionBadRequestException("Can't perform a ranged attack with this weapon");
-        }
-        foreach(var effect in character.AllEffects.Where(x => casterApprovedEffectIds.Contains(x.Id))){
-            effect.ConditionalApproved = true;
-        }
-        foreach(var effect in target.AllEffects.Where(x => targetApprovedEffectIds.Contains(x.Id))){
-            effect.ConditionalApproved = true;
-        }
-        var attackRollResult = character.CheckIfWeaponHitSuccessfull(encounter, weapon, target, rangedAttack ? Models.Enums.EffectOptions.AttackRollEffect_Range.Ranged : Models.Enums.EffectOptions.AttackRollEffect_Range.Melee, []);
-        AttackRollAndDamageResultDto attackRollAndDamageResult = new()
-        {
-            HitType = attackRollResult
-        };
-        if (attackRollResult == HitType.Hit || attackRollResult == HitType.CriticalHit){
-            attackRollAndDamageResult.WeaponHitResult =  character.ApplyWeaponHitEffects(encounter, weapon, target, attackRollResult == HitType.CriticalHit, []);
-        }
-        await _unitOfWork.SaveChangesAsync();
-        return attackRollAndDamageResult;
-    }
+    // public async Task<AttackRollAndDamageResultDto> AttackRollAndDamage(int encounterId, int characterId, int weaponId, int targetId, bool rangedAttack, List<int> casterApprovedEffectIds, List<int> targetApprovedEffectIds){
+    //     var encounter = await _unitOfWork.EncounterRepository.GetEncounterSummary(encounterId) ?? throw new SessionNotFoundException("Encounter with specified Id does not exist");
+    //     foreach (var x in encounter.R_Participances.Select(x => x.R_Character)){
+    //         await _unitOfWork.CharacterRepository.GetByIdWithAll(x.Id);
+    //     }
+    //     var character = (encounter.R_Participances.FirstOrDefault(x => x.R_CharacterId == characterId)?.R_Character) ?? throw new SessionBadRequestException("Attacking character does not take part in specified encounter");
+    //     var target = encounter.R_Participances.First(x => x.R_CharacterId == targetId).R_Character ?? throw new SessionBadRequestException("Target character does not take part in specified encounter");
+    //     Weapon weapon = (Weapon)((character.R_EquippedItems.FirstOrDefault(x => x.R_ItemId == weaponId)?.R_Item) ?? throw new SessionBadRequestException("Specified weapon is not equipped by attacking character"));
+    //     if (rangedAttack && ((weapon is MeleeWeapon meleeWeapon && !meleeWeapon.Thrown) || weapon is not RangedWeapon)){
+    //         throw new SessionBadRequestException("Can't perform a ranged attack with this weapon");
+    //     }
+    //     foreach(var effect in character.AllEffects.Where(x => casterApprovedEffectIds.Contains(x.Id))){
+    //         effect.ConditionalApproved = true;
+    //     }
+    //     foreach(var effect in target.AllEffects.Where(x => targetApprovedEffectIds.Contains(x.Id))){
+    //         effect.ConditionalApproved = true;
+    //     }
+    //     var attackRollResult = character.CheckIfWeaponHitSuccessfull(encounter, weapon, target, rangedAttack ? Models.Enums.EffectOptions.AttackRollEffect_Range.Ranged : Models.Enums.EffectOptions.AttackRollEffect_Range.Melee, []);
+    //     AttackRollAndDamageResultDto attackRollAndDamageResult = new()
+    //     {
+    //         HitType = attackRollResult
+    //     };
+    //     if (attackRollResult == HitType.Hit || attackRollResult == HitType.CriticalHit){
+    //         attackRollAndDamageResult.WeaponHitResult =  character.ApplyWeaponHitEffects(encounter, weapon, target, attackRollResult == HitType.CriticalHit, []);
+    //     }
+    //     await _unitOfWork.SaveChangesAsync();
+    //     return attackRollAndDamageResult;
+    // }
 
 
     public async Task<ConditionalEffectsSetDto> GetConditionalEffects(int encounterId, int characterId, int targetId){

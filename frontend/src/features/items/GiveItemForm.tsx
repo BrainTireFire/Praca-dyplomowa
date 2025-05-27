@@ -11,6 +11,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   align-content: center;
+  justify-content: center;
   height: 10%;
   max-height: 100%;
 `;
@@ -25,7 +26,8 @@ const CharacterListLayout = styled.div`
 
 export default function GiveItemForm({ itemId }: { itemId: number | null }) {
   const { isLoading, campaign, isInvalidId } = useCampaign();
-  const characters = campaign?.members;
+  const characters =
+    campaign?.members.filter((e) => !e.itemIds.includes(itemId!)) || [];
 
   if (isLoading) return <Spinner />;
 
@@ -44,7 +46,7 @@ export default function GiveItemForm({ itemId }: { itemId: number | null }) {
 
   return (
     <Container>
-      <Box variation="squaredMedium">
+      <Box variation="squaredSmall">
         <Heading as="h2">Give Item</Heading>
         <Heading as="h3" color="textColor">
           Select a character to give the item to

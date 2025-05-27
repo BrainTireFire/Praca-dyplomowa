@@ -11,9 +11,9 @@ namespace pracadyplomowa.Models.DTOs
         [MaxLength(50)]
         public string Name { get; set; }
         public string Description { get; set; } = null!;
-        
+
         public string GameMaster { get; set; } = null!;
-        public bool IsGameMaster {get; set;}
+        public bool IsGameMaster { get; set; }
         public List<CharacterSummaryDto> Members { get; set; } = null!;
 
         public CampaignDto(Campaign campaign)

@@ -29,10 +29,12 @@ const Container = styled.div`
 `;
 
 const CharacterContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  max-width: 70vw;
-  gap: 2%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  & > * {
+    min-width: 180px;
+  }
 `;
 
 const HeaderButtons = styled.div`
@@ -58,7 +60,6 @@ export default function CampaignInstance() {
   );
   const navigate = useNavigate();
   const { t } = useTranslation();
-
 
   if (isLoading || isRemoving || isKicking) {
     return <Spinner />;
@@ -95,7 +96,10 @@ export default function CampaignInstance() {
                   </Button>
                 </Modal.Open>
                 <Modal.Window name="ShortRestModal">
-                  <ShortRestModalGM membersList={members} onCloseModal={() => {}}/>
+                  <ShortRestModalGM
+                    membersList={members}
+                    onCloseModal={() => {}}
+                  />
                 </Modal.Window>
               </Modal>
               <Button size="large" onClick={() => longRest()}>
@@ -122,23 +126,24 @@ export default function CampaignInstance() {
           <Line size="percantage" />
         </>
       )}
-      {!campaign.isGameMaster && 
-      <>
-      <div>
-        <HeaderButtons>
-          <Modal>
-            <Modal.Open opens="ShortRestModal">
-              <Button size="large">
-                {t("campaignInstance.shortRest")}
-              </Button>
-            </Modal.Open>
-            <Modal.Window name="ShortRestModal">
-              <ShortRestModalCharacter onCloseModal={()=>{}}/>
-            </Modal.Window>
-          </Modal>
-        </HeaderButtons>
-      </div>
-      </>}
+      {!campaign.isGameMaster && (
+        <>
+          <div>
+            <HeaderButtons>
+              <Modal>
+                <Modal.Open opens="ShortRestModal">
+                  <Button size="large">
+                    {t("campaignInstance.shortRest")}
+                  </Button>
+                </Modal.Open>
+                <Modal.Window name="ShortRestModal">
+                  <ShortRestModalCharacter onCloseModal={() => {}} />
+                </Modal.Window>
+              </Modal>
+            </HeaderButtons>
+          </div>
+        </>
+      )}
       <Heading as="h2">Description</Heading>
       {description === "" ? (
         <p>No description</p>

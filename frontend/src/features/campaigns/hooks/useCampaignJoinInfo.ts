@@ -12,14 +12,9 @@ const decode = (obfuscated: string): number => {
 export function useCampaignJoinInfo() {
   const { campaignId } = useParams<{ campaignId: string }>();
 
-  let ID: number;
+  if (campaignId === undefined) throw new Error("Campaign ID is undefined");
 
-  if (isNaN(Number(campaignId))) {
-    if (campaignId === undefined) throw new Error("Campaign ID is undefined");
-    ID = decode(campaignId); // Use decode if not a number
-  } else {
-    ID = Number(campaignId);
-  }
+  let ID: number = decode(campaignId);
 
   const {
     isLoading,

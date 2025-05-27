@@ -18,6 +18,7 @@ import useLongRest from "./hooks/useLongRest";
 import { useQueryClient } from "@tanstack/react-query";
 import ShortRestModalGM from "./ShortRestModalGM";
 import ShortRestModalCharacter from "./ShortRestModalCharacter";
+import Box from "../../ui/containers/Box";
 
 const Container = styled.div`
   display: grid;
@@ -50,7 +51,7 @@ const encode = (number: number): string => {
 };
 
 export default function CampaignInstance() {
-  const { isLoading, campaign } = useCampaign();
+  const { isLoading, campaign, isInvalidId } = useCampaign();
   const queryClient = useQueryClient();
   const { removeCampaign, isPending: isRemoving } = useRemoveCampaign();
   const { kickCharacter, isPending: isKicking } = useKickCharacter();
@@ -69,7 +70,18 @@ export default function CampaignInstance() {
     return <div>{t("campaign.error.notFound")}</div>;
   }
 
-  console.log(campaign);
+  if (isInvalidId) {
+    return (
+      <Container>
+        <Box variation="squaredMedium">
+          <Heading as="h2">No active Campaign</Heading>
+          <Heading as="h3" color="textColor">
+            No active campaign was found.
+          </Heading>
+        </Box>
+      </Container>
+    );
+  }
 
   const { id, name, description, members }: Campaign = campaign;
 

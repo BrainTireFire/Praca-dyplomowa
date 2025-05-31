@@ -33,7 +33,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "6000:80"
+      - "8085:80"
     depends_on:
       - pracadyplomowa
     environment:

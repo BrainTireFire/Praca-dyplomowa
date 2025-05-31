@@ -41,9 +41,11 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpGet("{itemId}")]
-        public async Task<ActionResult<ItemFormDto>> GetItem(int itemId){
+        public async Task<ActionResult<ItemFormDto>> GetItem(int itemId)
+        {
             var item = await _unitOfWork.ItemRepository.GetByIdWithSlotsPowersEffectsResources(itemId);
-            if(item == null){
+            if (item == null)
+            {
                 return NotFound(itemId);
             }
             _unitOfWork.ItemRepository.GetItemsForEditabilityAnalysis([itemId]);
@@ -52,13 +54,16 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpDelete("{itemId}")]
-        public async Task<ActionResult> DeleteItem(int itemId){
+        public async Task<ActionResult> DeleteItem(int itemId)
+        {
             var item = _unitOfWork.ItemRepository.GetById(itemId);
-            if(item == null){
+            if (item == null)
+            {
                 return NotFound(itemId);
             }
             _unitOfWork.ItemRepository.GetItemsForEditabilityAnalysis([itemId]);
-            if(!item.HasEditAccess(User.GetUserId())){
+            if (!item.HasEditAccess(User.GetUserId()))
+            {
                 return BadRequest("You cannot delete this item");
             }
             _unitOfWork.ItemRepository.Delete(itemId);
@@ -67,7 +72,8 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpPost("meleeWeapon")]
-        public async Task<ActionResult<int>> PostMeleeWeapon(MeleeWeaponFormDto meleeWeaponDto){
+        public async Task<ActionResult<int>> PostMeleeWeapon(MeleeWeaponFormDto meleeWeaponDto)
+        {
             var item = _mapper.Map<MeleeWeapon>(meleeWeaponDto);
             item.R_OwnerId = User.GetUserId();
             _unitOfWork.ItemRepository.Add(item);
@@ -76,13 +82,16 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpPatch("meleeWeapon")]
-        public async Task<ActionResult<int>> UpdateMeleeWeapon(MeleeWeaponFormDto meleeWeaponDto){
-            if(meleeWeaponDto.Id == null){
+        public async Task<ActionResult<int>> UpdateMeleeWeapon(MeleeWeaponFormDto meleeWeaponDto)
+        {
+            if (meleeWeaponDto.Id == null)
+            {
                 return BadRequest("Id is required for update");
             }
 
             var itemId = (int)meleeWeaponDto.Id;
-            if(!_itemService.CheckExistenceAndEditAccess(itemId, User.GetUserId(), out var actionResult)){
+            if (!_itemService.CheckExistenceAndEditAccess(itemId, User.GetUserId(), out var actionResult))
+            {
                 return actionResult;
             }
 
@@ -94,7 +103,8 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpPost("rangedWeapon")]
-        public async Task<ActionResult<int>> PostRangedWeapon(RangedWeaponFormDto rangedWeaponDto){
+        public async Task<ActionResult<int>> PostRangedWeapon(RangedWeaponFormDto rangedWeaponDto)
+        {
             var item = _mapper.Map<RangedWeapon>(rangedWeaponDto);
             item.R_OwnerId = User.GetUserId();
             _unitOfWork.ItemRepository.Add(item);
@@ -103,13 +113,16 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpPatch("rangedWeapon")]
-        public async Task<ActionResult<int>> UpdateRangedWeapon(RangedWeaponFormDto rangedWeaponDto){
-            if(rangedWeaponDto.Id == null){
+        public async Task<ActionResult<int>> UpdateRangedWeapon(RangedWeaponFormDto rangedWeaponDto)
+        {
+            if (rangedWeaponDto.Id == null)
+            {
                 return BadRequest("Id is required for update");
             }
 
             var itemId = (int)rangedWeaponDto.Id;
-            if(!_itemService.CheckExistenceAndEditAccess(itemId, User.GetUserId(), out var actionResult)){
+            if (!_itemService.CheckExistenceAndEditAccess(itemId, User.GetUserId(), out var actionResult))
+            {
                 return actionResult;
             }
 
@@ -121,7 +134,8 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpPost("apparel")]
-        public async Task<ActionResult<int>> PostApparel(ApparelFormDto apparelDto){
+        public async Task<ActionResult<int>> PostApparel(ApparelFormDto apparelDto)
+        {
             var item = _mapper.Map<Apparel>(apparelDto);
             item.R_OwnerId = User.GetUserId();
             _unitOfWork.ItemRepository.Add(item);
@@ -130,13 +144,16 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpPatch("apparel")]
-        public async Task<ActionResult<int>> UpdateApparel(ApparelFormDto apparelDto){
-            if(apparelDto.Id == null){
+        public async Task<ActionResult<int>> UpdateApparel(ApparelFormDto apparelDto)
+        {
+            if (apparelDto.Id == null)
+            {
                 return BadRequest("Id is required for update");
             }
 
             var itemId = (int)apparelDto.Id;
-            if(!_itemService.CheckExistenceAndEditAccess(itemId, User.GetUserId(), out var actionResult)){
+            if (!_itemService.CheckExistenceAndEditAccess(itemId, User.GetUserId(), out var actionResult))
+            {
                 return actionResult;
             }
 
@@ -147,10 +164,11 @@ namespace pracadyplomowa.Controllers
             return Ok(item.Id);
         }
 
-        
+
 
         [HttpPost("mundaneItem")]
-        public async Task<ActionResult<int>> PostMundaneItem(ItemFormDto itemDto){
+        public async Task<ActionResult<int>> PostMundaneItem(ItemFormDto itemDto)
+        {
             var item = _mapper.Map<Item>(itemDto);
             item.R_OwnerId = User.GetUserId();
             _unitOfWork.ItemRepository.Add(item);
@@ -159,13 +177,16 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpPatch("mundaneItem")]
-        public async Task<ActionResult<int>> UpdateMundaneItem(ItemFormDto itemDto){
-            if(itemDto.Id == null){
+        public async Task<ActionResult<int>> UpdateMundaneItem(ItemFormDto itemDto)
+        {
+            if (itemDto.Id == null)
+            {
                 return BadRequest("Id is required for update");
             }
 
             var itemId = (int)itemDto.Id;
-            if(!_itemService.CheckExistenceAndEditAccess(itemId, User.GetUserId(), out var actionResult)){
+            if (!_itemService.CheckExistenceAndEditAccess(itemId, User.GetUserId(), out var actionResult))
+            {
                 return actionResult;
             }
 
@@ -177,9 +198,11 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpGet("{itemId}/slots")]
-        public async Task<ActionResult<List<SlotDto>>> GetItemSlots(int itemId){
+        public async Task<ActionResult<List<SlotDto>>> GetItemSlots(int itemId)
+        {
             var item = await _unitOfWork.ItemRepository.GetByIdWithSlots(itemId);
-            if(item == null){
+            if (item == null)
+            {
                 return NotFound("Item with this Id does not exist");
             }
             var slots = _mapper.Map<List<SlotDto>>(item.R_ItemIsEquippableInSlots);
@@ -187,9 +210,11 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpPatch("{itemId}/slots")]
-        public async Task<ActionResult<List<SlotDto>>> SetItemSlots(int itemId, [FromBody] List<SlotDto> slotDtos){
+        public async Task<ActionResult<List<SlotDto>>> SetItemSlots(int itemId, [FromBody] List<SlotDto> slotDtos)
+        {
             var item = await _unitOfWork.ItemRepository.GetByIdWithSlots(itemId);
-            if(item == null){
+            if (item == null)
+            {
                 return NotFound("Item with this Id does not exist");
             }
             var slots = _unitOfWork.EquipmentSlotRepository.GetAllWithIds(slotDtos.Select(x => x.Id).ToList());
@@ -200,9 +225,11 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpGet("{itemId}/powers")]
-        public async Task<ActionResult<List<SlotDto>>> GetItemPowers(int itemId){
+        public async Task<ActionResult<List<SlotDto>>> GetItemPowers(int itemId)
+        {
             var item = await _unitOfWork.ItemRepository.GetByIdWithSlotsPowersEffectsResources(itemId);
-            if(item == null){
+            if (item == null)
+            {
                 return NotFound("Item with this Id does not exist");
             }
             var powers = _mapper.Map<List<PowerCompactDto>>(item.R_EquipItemGrantsAccessToPower);
@@ -210,9 +237,11 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpPatch("{itemId}/powers")]
-        public async Task<ActionResult<List<SlotDto>>> SetItemPowers(int itemId, [FromBody] List<PowerCompactDto> powerDtos){
+        public async Task<ActionResult<List<SlotDto>>> SetItemPowers(int itemId, [FromBody] List<PowerCompactDto> powerDtos)
+        {
             var item = await _unitOfWork.ItemRepository.GetByIdWithSlotsPowersEffectsResources(itemId);
-            if(item == null){
+            if (item == null)
+            {
                 return NotFound("Item with this Id does not exist");
             }
             var slots = _unitOfWork.PowerRepository.GetAllByIds(powerDtos.Select(x => x.Id).ToList());
@@ -223,12 +252,15 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpGet("{itemId}/resources")]
-        public async Task<ActionResult<List<SlotDto>>> GetItemResources(int itemId){
+        public async Task<ActionResult<List<SlotDto>>> GetItemResources(int itemId)
+        {
             var item = await _unitOfWork.ItemRepository.GetByIdWithSlotsPowersEffectsResources(itemId);
-            if(item == null){
+            if (item == null)
+            {
                 return NotFound("Item with this Id does not exist");
             }
-            var resources = item.R_ItemGrantsResources.GroupBy(r => new {r.R_BlueprintId, r.R_Blueprint.Name, r.Level}).Select(g => new ImmaterialResourceAmountDto(){
+            var resources = item.R_ItemGrantsResources.GroupBy(r => new { r.R_BlueprintId, r.R_Blueprint.Name, r.Level }).Select(g => new ImmaterialResourceAmountDto()
+            {
                 BlueprintId = g.Key.R_BlueprintId,
                 Name = g.Key.Name,
                 Level = g.Key.Level,
@@ -238,19 +270,21 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpPatch("{itemId}/resources")]
-        public async Task<ActionResult<List<SlotDto>>> SetItemResources(int itemId, [FromBody] List<ImmaterialResourceAmountDto> resourceDtos){
+        public async Task<ActionResult<List<SlotDto>>> SetItemResources(int itemId, [FromBody] List<ImmaterialResourceAmountDto> resourceDtos)
+        {
             var item = await _unitOfWork.ItemRepository.GetByIdWithSlotsPowersEffectsResources(itemId);
-            if(item == null){
+            if (item == null)
+            {
                 return NotFound("Item with this Id does not exist");
             }
             // var resourceBlueprints = await _unitOfWork.ImmaterialResourceBlueprintRepository.GetAllByIds(resourceDtos.Select(x => x.BlueprintId).ToList());
             item.R_ItemGrantsResources.Clear();
             var resourceInstances = resourceDtos
-                .SelectMany(dto => 
-                    Enumerable.Range(0, dto.Count).Select(_ => new ImmaterialResourceInstance 
-                    { 
-                        R_BlueprintId = dto.BlueprintId, 
-                        Level = dto.Level 
+                .SelectMany(dto =>
+                    Enumerable.Range(0, dto.Count).Select(_ => new ImmaterialResourceInstance
+                    {
+                        R_BlueprintId = dto.BlueprintId,
+                        Level = dto.Level
                     })
                 ).ToList();
             item.R_ItemGrantsResources.AddRange(resourceInstances);
@@ -281,7 +315,8 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpGet("itemFamilies")]
-        public async Task<ActionResult> GetItemFamilies([FromQuery] int? itemId, [FromQuery] List<ItemType> itemType){
+        public async Task<ActionResult> GetItemFamilies([FromQuery] int? itemId, [FromQuery] List<ItemType> itemType)
+        {
             var itemFamilies = await _unitOfWork.ItemFamilyRepository.GetOwnedAndDefaultAndCurrent(itemId, User.GetUserId());
 
 
@@ -291,5 +326,31 @@ namespace pracadyplomowa.Controllers
             return Ok(itemFamiliesDto);
         }
 
+        [HttpPatch("give/{itemId}/{characterId}")]
+        public async Task<ActionResult> GiveItemToUser(int itemId, int characterId)
+        {
+            var item = await _unitOfWork.ItemRepository.GetItemWithHolder(itemId);
+
+            if (item == null)
+            {
+                return NotFound("Item not found");
+            }
+
+            item.R_EquipData = null;
+
+            item.R_BackpackHasItem = null;
+
+            var character = await _unitOfWork.CharacterRepository.GetCharacterEquipment(characterId);
+
+            if (character == null)
+            {
+                return NotFound("Character not found");
+            }
+
+            character.R_CharacterHasBackpack.R_BackpackHasItems.Add(item);
+
+            await _unitOfWork.SaveChangesAsync();
+            return Ok();
+        }
     }
 }

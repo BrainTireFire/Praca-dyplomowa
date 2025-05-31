@@ -25,6 +25,7 @@ export type CharacterItem = {
   isNpc: boolean;
   xp: number;
   restData: DiceSet;
+  itemIds: number[];
 };
 
 export type Character = {

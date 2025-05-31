@@ -114,7 +114,7 @@ export const itemReducer: Reducer<Item, ItemAction> = (state, action) => {
 export default function ItemForm({
   itemId,
   initialFormValues,
-  onCloseModal
+  onCloseModal,
 }: {
   itemId: number | null;
   initialFormValues: Item;
@@ -122,9 +122,16 @@ export default function ItemForm({
 }) {
   const navigate = useNavigate();
   const { editMode } = useContext(EditModeContext);
-  const { isPending: isPendingPost, createItem } = useCreateItem((id: number) => {navigate(`/items?id=${id}`); onCloseModal();});
+  const { isPending: isPendingPost, createItem } = useCreateItem(
+    (id: number) => {
+      navigate(`/items?id=${id}`);
+      onCloseModal();
+    }
+  );
   const { isPending: isPendingUpdate, updateItem } = useUpdateItem(() => {});
-  const { isPending: isPendingDelete, deleteItem} = useDeleteItem(() => {navigate(`/items`)});
+  const { isPending: isPendingDelete, deleteItem } = useDeleteItem(() => {
+    navigate(`/items`);
+  });
   const { isLoading, item, error } = useItem(itemId);
   const [state, dispatch] = useReducer(itemReducer, item ?? initialFormValues);
   const [resetHappened, setResetHappened] = useState(false);
@@ -324,41 +331,40 @@ export default function ItemForm({
             </Grid>
           </GridContainer>
           <UDButtonContainer>
-          {itemId === null && (
-            <Button
-              onClick={() => createItem(state)}
-              disabled={isSavingChangesDisallowed() || disableUpdate}
-            >
-              Save to unlock more configuration options
-            </Button>
-          )}
-          {itemId !== null && (
-            <>
+            {itemId === null && (
               <Button
-                onClick={() => updateItem(state)}
+                onClick={() => createItem(state)}
                 disabled={isSavingChangesDisallowed() || disableUpdate}
-                >
-                {disableUpdate ? "You cannot edit this object" : "Update"}
+              >
+                Save to unlock more configuration options
               </Button>
-              <Modal>
-                <Modal.Open opens="ConfirmDelete">
-                  <Button variation="secondary"
-                    disabled={disableUpdate}
-                    >
-                    {disableUpdate ? "You cannot delete this object" : "Delete"}
-                  </Button>
-                </Modal.Open>
-                <Modal.Window name="ConfirmDelete">
-                  <ConfirmDelete
-                    resourceName={"item"}
-                    onConfirm={() =>  deleteItem(itemId)}
+            )}
+            {itemId !== null && (
+              <>
+                <Button
+                  onClick={() => updateItem(state)}
+                  disabled={isSavingChangesDisallowed() || disableUpdate}
+                >
+                  {disableUpdate ? "You cannot edit this object" : "Update"}
+                </Button>
+                <Modal>
+                  <Modal.Open opens="ConfirmDelete">
+                    <Button variation="secondary" disabled={disableUpdate}>
+                      {disableUpdate
+                        ? "You cannot delete this object"
+                        : "Delete"}
+                    </Button>
+                  </Modal.Open>
+                  <Modal.Window name="ConfirmDelete">
+                    <ConfirmDelete
+                      resourceName={"item"}
+                      onConfirm={() => deleteItem(itemId)}
                     />
-                </Modal.Window>
-              </Modal>
-            </>
-              
-          )}
-            </UDButtonContainer>
+                  </Modal.Window>
+                </Modal>
+              </>
+            )}
+          </UDButtonContainer>
         </ItemIdContext.Provider>
       </EditModeContext.Provider>
     </Container>
@@ -368,13 +374,13 @@ export default function ItemForm({
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
-  max-height: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  box-sizing: border-box;
 `;
 
 const GridContainer = styled(Box)`
-  flex: 1;
-  overflow-y: hidden;
   padding: 0rem 0rem 0rem 1rem;
 `;
 
@@ -419,5 +425,5 @@ const UDButtonContainer = styled.div`
 ItemForm.defaultProps = {
   itemId: null,
   initialFormValues: itemInitialValue,
-  onCloseModal: () => {}
+  onCloseModal: () => {},
 };

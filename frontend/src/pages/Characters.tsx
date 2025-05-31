@@ -27,8 +27,7 @@ export default function Characters() {
   const navigate = useNavigate();
 
   const handleChangeCharacter = (chosenCharacterId: number) => {
-    console.log(chosenCharacterId);
-    navigate(`/characters?id=${chosenCharacterId}`)
+    navigate(`/characters?id=${chosenCharacterId}`);
   };
 
   const [searchParams] = useSearchParams();

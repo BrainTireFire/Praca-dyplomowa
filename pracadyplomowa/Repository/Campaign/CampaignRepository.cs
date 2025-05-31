@@ -45,6 +45,8 @@ namespace pracadyplomowa.Repository
             .ThenInclude(ch => ch.R_CharacterHasLevelsInClass).ThenInclude(cl => cl.R_Class)
             .Include(c => c.R_CampaignHasCharacters)
             .ThenInclude(ch => ch.R_CharacterBelongsToRace)
+            .Include(c => c.R_CampaignHasCharacters)
+            .ThenInclude(ch => ch.R_CharacterHasBackpack).ThenInclude(ch => ch.R_BackpackHasItems)
             .FirstOrDefaultAsync();
 
             return campaign;

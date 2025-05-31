@@ -12,11 +12,11 @@ const decode = (obfuscated: string): number => {
 export function useCampaign() {
   const { campaignId } = useParams<{ campaignId: string }>();
 
-  let ID: number;
+  let ID: number | undefined;
+  let isInvalidId = false;
 
-  if (isNaN(Number(campaignId))) {
-    if (campaignId === undefined) throw new Error("Campaign ID is undefined");
-    ID = decode(campaignId); // Use decode if not a number
+  if (campaignId === undefined || isNaN(Number(campaignId))) {
+    isInvalidId = true;
   } else {
     ID = Number(campaignId);
   }
@@ -37,5 +37,5 @@ export function useCampaign() {
     enabled: !!ID, // Only run query if campaignId is defined
   });
 
-  return { isLoading, campaign, error };
+  return { isLoading, campaign, error, isInvalidId };
 }

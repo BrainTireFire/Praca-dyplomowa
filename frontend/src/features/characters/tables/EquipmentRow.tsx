@@ -105,7 +105,7 @@ export default function EquipmentRow({ equipment }: { equipment: Item }) {
         </Modal.Window>
         <Modal.Window name="give">
           <Container>
-            <GiveItemForm itemId={equipment.id} />
+            <GiveItemForm itemId={equipment.id}></GiveItemForm>
           </Container>
         </Modal.Window>
       </Modal>

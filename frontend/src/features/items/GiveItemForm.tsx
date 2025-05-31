@@ -5,6 +5,8 @@ import Spinner from "../../ui/interactive/Spinner";
 import CharacterItemBox from "../characters/CharacterItemBox";
 import { useCharacters } from "../characters/hooks/useCharacters";
 import { useCampaign } from "../campaigns/hooks/useCampaign";
+import useGiveItem from "./hooks/useGiveItem";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -28,10 +30,12 @@ export default function GiveItemForm({ itemId }: { itemId: number | null }) {
   const { isLoading, campaign, isInvalidId } = useCampaign();
   const characters =
     campaign?.members.filter((e) => !e.itemIds.includes(itemId!)) || [];
+  const navigate = useNavigate();
+  const { giveItem, isPending } = useGiveItem();
 
-  if (isLoading) return <Spinner />;
+  if (isLoading || isPending) return <Spinner />;
 
-  if (isInvalidId) {
+  if (isInvalidId || itemId === null) {
     return (
       <Container>
         <Box variation="squaredMedium">
@@ -58,7 +62,10 @@ export default function GiveItemForm({ itemId }: { itemId: number | null }) {
               <CharacterItemBox
                 key={e.id}
                 character={e}
-                onClick={(chosenCharacterId: number) => {}}
+                onClick={async (chosenCharacterId: number) => {
+                  giveItem({ itemId, characterId: chosenCharacterId });
+                  navigate(0);
+                }}
                 showButtons={false}
               />
             ))}

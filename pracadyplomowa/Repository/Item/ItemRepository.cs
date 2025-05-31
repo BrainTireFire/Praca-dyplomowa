@@ -15,7 +15,7 @@ namespace pracadyplomowa.Repository.Item
 
         public async Task<Models.Entities.Items.Item> GetByIdWithSlots(int id)
         {
-            return await  _context.Items
+            return await _context.Items
             .Where(i => i.Id == id)
             .Include(i => i.R_ItemIsEquippableInSlots)
             .FirstAsync();
@@ -23,7 +23,7 @@ namespace pracadyplomowa.Repository.Item
 
         public async Task<Models.Entities.Items.Item> GetByIdWithSlotsPowersEffectsResources(int id)
         {
-            return await  _context.Items
+            return await _context.Items
             .Where(i => i.Id == id)
             .Include(i => i.R_ItemIsEquippableInSlots)
             .Include(i => i.R_EquipItemGrantsAccessToPower)
@@ -34,7 +34,7 @@ namespace pracadyplomowa.Repository.Item
         }
         public async Task<Models.Entities.Items.Item> GetByIdWithSlotsPowersWithEffectsEffectsResources(int id)
         {
-            return await  _context.Items
+            return await _context.Items
             .Where(i => i.Id == id)
             .Include(i => i.R_ItemIsEquippableInSlots)
             .Include(i => i.R_EquipItemGrantsAccessToPower)
@@ -61,20 +61,45 @@ namespace pracadyplomowa.Repository.Item
                     .AsQueryable();
 
             // Filtering
-            if(itemParams.IsBlueprint != null)
-            query = query.ApplyBooleanFilter(itemParams.IsBlueprint, c =>
-                c.IsBlueprint);
+            if (itemParams.IsBlueprint != null)
+                query = query.ApplyBooleanFilter(itemParams.IsBlueprint, c =>
+                    c.IsBlueprint);
 
             return await PagedList<Models.Entities.Items.Item>.CreateAsync(query, 1, 10000000); //TODO do something smarter
         }
 
-        public Dictionary<int, Models.Entities.Items.Item> GetItemsForEditabilityAnalysis(List<int> ids){
+        public Dictionary<int, Models.Entities.Items.Item> GetItemsForEditabilityAnalysis(List<int> ids)
+        {
             return _context.Items
             .Where(i => ids.Contains(i.Id))
             .Include(i => i.R_BackpackHasItem)
             .ThenInclude(b => b.R_BackpackOfCharacter)
             .ThenInclude(c => c.R_Campaign)
             .ToDictionary(i => i.Id, i => i);
+        }
+
+        public int GetItemOwner(int itemId)
+        {
+            var item = _context.Items
+                .Where(i => i.Id == itemId)
+                .Include(i => i.R_Owner)
+                .FirstOrDefault();
+
+            if (item == null)
+            {
+                throw new ArgumentNullException("Item " + nameof(item) + $" id:{itemId} is null.");
+            }
+
+            return item.R_OwnerId ?? 0; // Return 0 if the item has no owner
+        }
+
+        public async Task<Models.Entities.Items.Item> GetItemWithHolder(int itemId)
+        {
+            var item = _context.Items
+            .Include(e => e.R_EquipData).ThenInclude(e => e.R_Character)
+            .Include(e => e.R_BackpackHasItem)
+            .FirstOrDefaultAsync(e => e.Id == itemId);
+            return await item;
         }
     }
 }

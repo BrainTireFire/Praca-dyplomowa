@@ -235,3 +235,16 @@ export async function getItemFamilies(
 
   return response;
 }
+
+export async function giveItemApi(
+  itemId: number,
+  characterId: number
+): Promise<void> {
+  const options: RequestInit = {
+    method: "PATCH",
+  };
+  await customFetch(
+    `${BASE_URL}/api/item/give/${itemId}/${characterId}`,
+    options
+  );
+}

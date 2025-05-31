@@ -197,7 +197,7 @@ export default function CampaignInstance() {
           >
             <Heading as="h2">Link for invite to the campaign</Heading>
             <InputCopyToClipboard
-              valueDefault={`localhost:5173/join/${encode(id)}`}
+              valueDefault={`pracadyplomowa.kcloud.ovh/join/${encode(id)}`}
             />
           </div>
           <Line size="percantage" />

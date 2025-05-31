@@ -89,8 +89,6 @@ export default function CharactersSheet() {
     error: errorUpdate,
   } = useUpdateCharacter(characterId as number, () => {});
 
-  console.log(characterId);
-  console.log(character);
   if (isLoading || isPending) {
     return <Spinner />;
   }
@@ -269,7 +267,14 @@ export default function CharactersSheet() {
               }}
             >
               {editMode && EditLevelingUpPermission && (
-                <div style={{display: "flex", justifyContent: "center", alignItems: "center", margin: "5px"}}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    margin: "5px",
+                  }}
+                >
                   <Modal>
                     <Modal.Open opens="DevelopCharacter">
                       <Button variation="primary">Develop character</Button>
@@ -278,7 +283,7 @@ export default function CharactersSheet() {
                       <SelectFromChoiceGroupScreen
                         characterId={character.id}
                         onCloseModal={() => {}}
-                        ></SelectFromChoiceGroupScreen>
+                      ></SelectFromChoiceGroupScreen>
                     </Modal.Window>
                   </Modal>
                 </div>
@@ -340,7 +345,14 @@ export default function CharactersSheet() {
                 <EquipmentTable equipments={character.equipment} />
               </EditModeContext.Provider>
               {editMode && EditEquipmentInBackpackPermission && (
-                <div style={{display: "flex", justifyContent: "center", alignItems: "center", margin: "5px"}}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    margin: "5px",
+                  }}
+                >
                   <Modal>
                     <Modal.Open opens="AddNewItem">
                       <Button>Add new item</Button>

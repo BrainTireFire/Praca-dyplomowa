@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace pracadyplomowa.Repository.Item
 {
-    public interface IItemRepository: IBaseRepository<Models.Entities.Items.Item>
+    public interface IItemRepository : IBaseRepository<Models.Entities.Items.Item>
     {
         public Task<Models.Entities.Items.Item> GetByName(string name);
         public Task<Models.Entities.Items.Item> GetByNameWithEquipmentSlots(string name);
@@ -14,5 +14,6 @@ namespace pracadyplomowa.Repository.Item
         public Task<Models.Entities.Items.Item> GetByIdWithSlotsPowersWithEffectsEffectsResources(int id);
         public Task<PagedList<Models.Entities.Items.Item>> GetOwnedItems(int OwnerId, ItemParams itemParams);
         public Dictionary<int, Models.Entities.Items.Item> GetItemsForEditabilityAnalysis(List<int> ids);
+        public Task<Models.Entities.Items.Item> GetItemWithHolder(int itemId);
     }
 }

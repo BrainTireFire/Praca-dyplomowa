@@ -18,6 +18,7 @@ import useLongRest from "./hooks/useLongRest";
 import { useQueryClient } from "@tanstack/react-query";
 import ShortRestModalGM from "./ShortRestModalGM";
 import ShortRestModalCharacter from "./ShortRestModalCharacter";
+import Box from "../../ui/containers/Box";
 
 const Container = styled.div`
   display: grid;
@@ -29,10 +30,12 @@ const Container = styled.div`
 `;
 
 const CharacterContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  max-width: 70vw;
-  gap: 2%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  & > * {
+    min-width: 180px;
+  }
 `;
 
 const HeaderButtons = styled.div`
@@ -48,7 +51,7 @@ const encode = (number: number): string => {
 };
 
 export default function CampaignInstance() {
-  const { isLoading, campaign } = useCampaign();
+  const { isLoading, campaign, isInvalidId } = useCampaign();
   const queryClient = useQueryClient();
   const { removeCampaign, isPending: isRemoving } = useRemoveCampaign();
   const { kickCharacter, isPending: isKicking } = useKickCharacter();
@@ -59,7 +62,6 @@ export default function CampaignInstance() {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-
   if (isLoading || isRemoving || isKicking) {
     return <Spinner />;
   }
@@ -68,7 +70,18 @@ export default function CampaignInstance() {
     return <div>{t("campaign.error.notFound")}</div>;
   }
 
-  console.log(campaign);
+  if (isInvalidId) {
+    return (
+      <Container>
+        <Box variation="squaredMedium">
+          <Heading as="h2">No active Campaign</Heading>
+          <Heading as="h3" color="textColor">
+            No active campaign was found.
+          </Heading>
+        </Box>
+      </Container>
+    );
+  }
 
   const { id, name, description, members }: Campaign = campaign;
 
@@ -95,7 +108,10 @@ export default function CampaignInstance() {
                   </Button>
                 </Modal.Open>
                 <Modal.Window name="ShortRestModal">
-                  <ShortRestModalGM membersList={members} onCloseModal={() => {}}/>
+                  <ShortRestModalGM
+                    membersList={members}
+                    onCloseModal={() => {}}
+                  />
                 </Modal.Window>
               </Modal>
               <Button size="large" onClick={() => longRest()}>
@@ -122,23 +138,24 @@ export default function CampaignInstance() {
           <Line size="percantage" />
         </>
       )}
-      {!campaign.isGameMaster && 
-      <>
-      <div>
-        <HeaderButtons>
-          <Modal>
-            <Modal.Open opens="ShortRestModal">
-              <Button size="large">
-                {t("campaignInstance.shortRest")}
-              </Button>
-            </Modal.Open>
-            <Modal.Window name="ShortRestModal">
-              <ShortRestModalCharacter onCloseModal={()=>{}}/>
-            </Modal.Window>
-          </Modal>
-        </HeaderButtons>
-      </div>
-      </>}
+      {!campaign.isGameMaster && (
+        <>
+          <div>
+            <HeaderButtons>
+              <Modal>
+                <Modal.Open opens="ShortRestModal">
+                  <Button size="large">
+                    {t("campaignInstance.shortRest")}
+                  </Button>
+                </Modal.Open>
+                <Modal.Window name="ShortRestModal">
+                  <ShortRestModalCharacter onCloseModal={() => {}} />
+                </Modal.Window>
+              </Modal>
+            </HeaderButtons>
+          </div>
+        </>
+      )}
       <Heading as="h2">Description</Heading>
       {description === "" ? (
         <p>No description</p>

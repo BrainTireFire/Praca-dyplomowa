@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { FaRegClipboard } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 const Container = styled.div`
   display: flex;
@@ -37,16 +38,31 @@ const IconContainer = styled.div`
   pointer-events: none; /* Allows click to pass through to input */
 `;
 
-const InputCopyToClipboard = ({ valueDefault }) => {
-  const [value] = useState(valueDefault);
+const encode = (number: number): string => {
+  let base64 = btoa(number.toString() + "zoNK");
+  base64 = base64.split("").reverse().join("");
+  return base64;
+};
+
+const InputCopyToClipboard = ({ campaignId }) => {
+  const [value, setValue] = useState("");
+
+  React.useEffect(() => {
+    if (campaignId) {
+      const origin = window.location.origin;
+      const encodedId = encode(campaignId);
+      setValue(`${origin}/join/${encodedId}`);
+    }
+  }, [campaignId]);
 
   const copyToClipboard = () => {
     navigator.clipboard
       .writeText(value)
       .then(() => {
-        alert("Copied to clipboard!");
+        toast.success("Copied to clipboard!");
       })
       .catch((err) => {
+        toast.error("Failed to copy!");
         console.error("Failed to copy!", err);
       });
   };
@@ -57,7 +73,6 @@ const InputCopyToClipboard = ({ valueDefault }) => {
       <IconContainer>
         <FaRegClipboard />
       </IconContainer>
-      {/* <Button onClick={copyToClipboard}>📋</Button> */}
     </Container>
   );
 };

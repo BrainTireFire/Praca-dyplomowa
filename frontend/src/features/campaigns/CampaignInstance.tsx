@@ -44,12 +44,6 @@ const HeaderButtons = styled.div`
   /* margin-bottom: 1rem; */
 `;
 
-const encode = (number: number): string => {
-  let base64 = btoa(number.toString() + "zoNK");
-  base64 = base64.split("").reverse().join("");
-  return base64;
-};
-
 export default function CampaignInstance() {
   const { isLoading, campaign, isInvalidId } = useCampaign();
   const queryClient = useQueryClient();
@@ -196,9 +190,7 @@ export default function CampaignInstance() {
             }}
           >
             <Heading as="h2">Link for invite to the campaign</Heading>
-            <InputCopyToClipboard
-              valueDefault={`localhost:5173/join/${encode(id)}`}
-            />
+            <InputCopyToClipboard campaignId={id} />
           </div>
           <Line size="percantage" />
           <Modal>

@@ -54,48 +54,54 @@ const GlobalStyles = createGlobalStyle`
   }
 
   &, &.light-mode {
-  --color-main-background: #fff; /* Pure white background */
-  --color-secondary-background: #969393; /* Very light gray background */
-  --color-secondary-background-rgb: 108, 107, 107; //rgb(108, 107, 107)
-  --color-border: #eaeaea; /* Light gray for borders */
+    /* Base colors */
+    --color-main-background: #ffffff;
+    --color-secondary-background: #f0f2f5;
+    --color-secondary-background-rgb: 240, 242, 245;
+    --color-border: #252525;
 
-  /* Buttons */
-  --color-button-primary: #171717; /* Light gray for primary buttons */
-  --color-button-secondary: #bcbbbb; /* Medium gray for secondary buttons */
-  --color-button-danger: #ec6868; /* Light red for danger buttons */
+    /* Text colors */
+    --color-header-text: #101828;
+    --color-header-text-hover: #344054;
+    --color-button-text: #ffffff;
+    --color-secondary-text: #171717;
+    --color-input-text: #101828;
+    
+    /* Button colors - more vibrant and distinct */
+    --color-button-primary: #0052cc;
+    --color-button-secondary: #5d769d;
+    --color-button-danger: #d92d20;
+    --color-button-green: #039855;
 
-  --color-button-hover-primary: #2a2a2a; /* Slightly darker gray for hover */
-  --color-button-hover-secondary: #cbc9c9; /* Slightly darker medium gray for hover */
-  --color-button-hover-danger: #f34c4c; /* Slightly darker red for hover */
+    --color-button-hover-primary: #0747a6;
+    --color-button-hover-secondary: #1455c5;
+    --color-button-hover-danger: #b42318;
 
-  --color-form-error: #f02a2a; /* Same as button hover danger for error text */
-
-  --color-button-text: #fff; /* Dark gray for text */
-  --color-secondary-text: #555555; /* Dark gray for text */
-  --color-header-text: #171717; /* Black for header text */
-  --color-header-text-hover: #a1a1a1;
-
-  --color-secondary-hover-text: #555555; /* Mid gray for hover text */
-  --color-image-hover: #fff;
-
-  --color-link: #bb6f6f;
-  --color-link-hover: #dd8383; /* Dark gray for hover links */
-
-  --color-input-text: #171717; /* Black for input text */
-  --color-input-focus: #808080; /* Gray for focused inputs */
-  --color-input-disable-background: #E0E0E0; /* Light gray for disabled background */
-
-  --color-navbar: #fff; /* Very light gray for navbar */
-  --color-navbar-border: #eaeaea;
-
-  --color-button-green: #8ccba2; /* Light green for a specific button */
-
-  --backdrop-color: rgba(0, 0, 0, 0.05); /* Very light black for backdrop */
-
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04); /* Small shadow */
-  --shadow-md: 0px 0.6rem 2.4rem rgba(0, 0, 0, 0.06); /* Medium shadow */
-  --shadow-lg: 0 2.4rem 3.2rem rgba(0, 0, 0, 0.12); /* Large shadow */
-}
+    /* Link colors */
+    --color-link: #c11574;
+    --color-link-hover: #9e0861;
+    
+    /* Form colors */
+    --color-form-error: #d92d20;
+    --color-input-focus: #2970ff;
+    --color-input-disable-background: #f2f4f7;
+    
+    /* Navigation */
+    --color-navbar: #ffffff;
+    --color-navbar-border: #252525;
+    
+    /* Interactive states */
+    --color-secondary-hover-text: #344054;
+    --color-image-hover: #ffffff;
+    
+    /* Effects */
+    --backdrop-color: rgba(16, 24, 40, 0.08);
+    
+    /* Enhanced shadows for better depth */
+    --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05), 0 1px 3px rgba(16, 24, 40, 0.1);
+    --shadow-md: 0 4px 8px -2px rgba(16, 24, 40, 0.1), 0 2px 4px -1px rgba(16, 24, 40, 0.06);
+    --shadow-lg: 0 12px 16px -4px rgba(16, 24, 40, 0.08), 0 4px 6px -2px rgba(16, 24, 40, 0.05);
+  }
 
   --border-radius-tiny: 3px;
   --border-radius-sm: 5px;

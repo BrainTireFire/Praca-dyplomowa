@@ -123,7 +123,7 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials()
-            .WithOrigins("http://localhost:5173", "http://localhost:3000", "http://localhost:5001", "http://10.10.0.5:8085");
+            .WithOrigins("http://localhost:5173", "http://localhost:3000", "http://localhost:5001", "http://10.10.0.5:8085", "https://pracadyplomowa.kcloud.ovh");
     });
 });
 

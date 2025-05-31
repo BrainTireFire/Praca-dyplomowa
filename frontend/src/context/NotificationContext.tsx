@@ -50,7 +50,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const {payloadContainer} = useAuth();
+  const { payloadContainer } = useAuth();
 
   useEffect(() => {
     hubConnection.current = new signalR.HubConnectionBuilder()
@@ -104,8 +104,12 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
 
     hubConnection.current.on(
       "AbilityRollRequest",
-      (message: string, characterId: string, characterName: string, ability: ability) => {
-
+      (
+        message: string,
+        characterId: string,
+        characterName: string,
+        ability: ability
+      ) => {
         toast.promise(
           new Promise<{ message: string; characterId: string }>(
             (resolve, reject) => {
@@ -132,8 +136,12 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
 
     hubConnection.current.on(
       "AbilityRollPerformed",
-      (message: string, characterName: string, ability: ability, roll: number) => {
-
+      (
+        message: string,
+        characterName: string,
+        ability: ability,
+        roll: number
+      ) => {
         toast.promise(
           new Promise<{ message: string; characterName: string }>(
             (resolve, reject) => {
@@ -160,8 +168,12 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
 
     hubConnection.current.on(
       "SkillRollRequest",
-      (message: string, characterId: string, characterName: string, skill: skill) => {
-
+      (
+        message: string,
+        characterId: string,
+        characterName: string,
+        skill: skill
+      ) => {
         toast.promise(
           new Promise<{ message: string; characterId: string }>(
             (resolve, reject) => {
@@ -189,7 +201,6 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     hubConnection.current.on(
       "SkillRollPerformed",
       (message: string, characterName: string, skill: skill, roll: number) => {
-
         toast.promise(
           new Promise<{ message: string; characterName: string }>(
             (resolve, reject) => {
@@ -216,8 +227,12 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
 
     hubConnection.current.on(
       "SavingThrowRollRequest",
-      (message: string, characterId: string, characterName: string, ability: ability) => {
-
+      (
+        message: string,
+        characterId: string,
+        characterName: string,
+        ability: ability
+      ) => {
         toast.promise(
           new Promise<{ message: string; characterId: string }>(
             (resolve, reject) => {
@@ -244,8 +259,12 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
 
     hubConnection.current.on(
       "SavingThrowRollPerformed",
-      (message: string, characterName: string, ability: ability, roll: number) => {
-
+      (
+        message: string,
+        characterName: string,
+        ability: ability,
+        roll: number
+      ) => {
         toast.promise(
           new Promise<{ message: string; characterName: string }>(
             (resolve, reject) => {
@@ -316,9 +335,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
           {
             loading: "Loading notification...",
             success: ({ data }) => (
-              <ShortRestResultToast
-                healthpointData={data}
-              />
+              <ShortRestResultToast healthpointData={data} />
             ),
             error: (error) => `Notification failed: ${error}`,
           },

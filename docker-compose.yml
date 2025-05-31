@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   postgres:
     image: postgres
@@ -12,17 +10,39 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: password
-      PGADMIN_LISTEN_PORT: 8001
+  pracadyplomowa:
+    build: ./pracadyplomowa
     ports:
-      - "8001:8001"
+      - "5001:8080"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__IdentityConnection=Host=postgres;Port=5432;Database=identity;Username=root;Password=root
+    restart: always
+
+  frontend-app:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - pracadyplomowa
+    environment:
+      - VITE_BACKEND_URL=http://localhost:5001
+    restart: always
 
 volumes:
   postgres-data:
+
+networks:
+  default:
+    driver: bridge

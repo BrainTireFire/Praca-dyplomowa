@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  frontend-app: # You can name this service as you like
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dnd-frontend
+    ports:
+      - "5173:80" # Map host port 80 to container port 80 (Nginx default)
+      # If you need to run on a different host port, e.g., 8080:
+      # - "8080:80"
+    restart: unless-stopped

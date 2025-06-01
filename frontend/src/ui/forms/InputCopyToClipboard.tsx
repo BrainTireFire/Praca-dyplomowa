@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { FaRegClipboard } from "react-icons/fa";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 
 const Container = styled.div`
   display: flex;

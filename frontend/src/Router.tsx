@@ -1,10 +1,18 @@
-import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import Login from "./pages/account/Login";
 import Register from "./pages/account/Register";
 import Home from "./pages/Home";
 import AppLayout from "./ui/containers/AppLayout";
 import MainDashboard from "./pages/MainDashboard";
-import Concact from "./pages/Concact";
+import Contact from "./pages/Contact";
 import Homebrew from "./pages/homebrew/Homebrew";
 import Characters from "./pages/Characters";
 import Campagins from "./pages/campaign/Campagins";
@@ -16,6 +24,7 @@ import ForgotPassword from "./pages/account/ForgotPassword";
 import PasswordChanged from "./pages/account/PasswordChanged";
 import HomebrewCreatePower from "./pages/homebrew/HomebrewCreatePower";
 import CustomizeShop from "./features/campaigns/shop/CustomizeShop";
+import TradeShop from "./features/campaigns/shop/TradeShop";
 import ProtectedRoute from "./features/account/ProtectedRoute";
 import Forbidden from "./pages/errors/Forbidden";
 import ServiceDown from "./pages/errors/ServiceDown";
@@ -56,7 +65,7 @@ export default function Router() {
               <AppLayout />
             </ProtectedRoute>
           }
-          >
+        >
           <Route index element={<Navigate replace to="main" />} />
           <Route path="main" element={<MainDashboard />} />
           <Route path="join/:campaignId" element={<CampaignJoin />} />
@@ -66,28 +75,32 @@ export default function Router() {
           <Route path="campaigns/:campaignId/shops" element={<Shops />} />
           <Route
             path="campaigns/:campaignId/shops/:shopId"
+            element={<TradeShop />}
+          />
+          <Route
+            path="campaigns/:campaignId/shops/edit/:shopId"
             element={<CustomizeShop />}
-            />
+          />
           <Route
             path="campaigns/:campaignId/createSession"
             element={<MainBoard />}
-            />
+          />
           <Route
             path="campaigns/:campaignId/session/:groupName"
             element={<MainSession />}
-            />
+          />
           <Route
             path="campaigns/:campaignId/createEncounter"
             element={<CreateEncounter />}
-            />
+          />
           <Route
             path="campaigns/:campaignId/encounters/:encounterId/editEncounter"
             element={<EncounterEditForm />}
-            />
+          />
           <Route
             path="campaigns/:campaignId/encounters"
             element={<Encounter />}
-            />
+          />
           <Route path="characters" element={<Characters />} />
           <Route path="npc" element={<NpcCharacter />} />
           <Route path="items" element={<Items />} />
@@ -95,15 +108,18 @@ export default function Router() {
           <Route path="immaterialResources" element={<ImmaterialResources />} />
           <Route path="powers" element={<Powers />} />
           <Route path="homebrew" element={<Homebrew />} />
-          <Route path="homebrew/createPower" element={<HomebrewCreatePower />} />
+          <Route
+            path="homebrew/createPower"
+            element={<HomebrewCreatePower />}
+          />
           <Route path="homebrew/createMap" element={<BoardCreateForm />} />
           <Route
             path="homebrew/updateMap/:boardId"
             element={<MapUpdateBoardForm />}
-            />
+          />
           <Route path="homebrew/map" element={<HomebrewMap />} />
           <Route path="homebrew/map/:boardId" element={<MapInstance />} />
-          <Route path="contact" element={<Concact />} />
+          <Route path="contact" element={<Contact />} />
           <Route path="profile" element={<Profile />} />
         </Route>
         <Route path="login" element={<Login />} />
@@ -115,9 +131,9 @@ export default function Router() {
         <Route path="serviceDown" element={<ServiceDown />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-      
+
       <ModalNoButton
-        open={!!queryParams.get('characterAbilityRoll')}
+        open={!!queryParams.get("characterAbilityRoll")}
         handleClose={() => {
           queryParams.delete("characterAbilityRoll");
           const newSearch = `?${queryParams.toString()}`;
@@ -125,12 +141,16 @@ export default function Router() {
         }}
       >
         <AbilityRollResolution
-          characterId={Number(queryParams.get('characterAbilityRoll')?.split(':')[0])}
-          ability={queryParams.get('characterAbilityRoll')?.split(':')[1] as ability}>
-        </AbilityRollResolution>
+          characterId={Number(
+            queryParams.get("characterAbilityRoll")?.split(":")[0]
+          )}
+          ability={
+            queryParams.get("characterAbilityRoll")?.split(":")[1] as ability
+          }
+        ></AbilityRollResolution>
       </ModalNoButton>
       <ModalNoButton
-        open={!!queryParams.get('characterSkillRoll')}
+        open={!!queryParams.get("characterSkillRoll")}
         handleClose={() => {
           queryParams.delete("characterSkillRoll");
           const newSearch = `?${queryParams.toString()}`;
@@ -138,12 +158,14 @@ export default function Router() {
         }}
       >
         <SkillRollResolution
-          characterId={Number(queryParams.get('characterSkillRoll')?.split(':')[0])}
-          skill={queryParams.get('characterSkillRoll')?.split(':')[1] as skill}>
-        </SkillRollResolution>
+          characterId={Number(
+            queryParams.get("characterSkillRoll")?.split(":")[0]
+          )}
+          skill={queryParams.get("characterSkillRoll")?.split(":")[1] as skill}
+        ></SkillRollResolution>
       </ModalNoButton>
       <ModalNoButton
-        open={!!queryParams.get('characterSavingThrowRoll')}
+        open={!!queryParams.get("characterSavingThrowRoll")}
         handleClose={() => {
           queryParams.delete("characterSavingThrowRoll");
           const newSearch = `?${queryParams.toString()}`;
@@ -151,9 +173,15 @@ export default function Router() {
         }}
       >
         <SavingThrowRollResolution
-          characterId={Number(queryParams.get('characterSavingThrowRoll')?.split(':')[0])}
-          ability={queryParams.get('characterSavingThrowRoll')?.split(':')[1] as ability}>
-        </SavingThrowRollResolution>
+          characterId={Number(
+            queryParams.get("characterSavingThrowRoll")?.split(":")[0]
+          )}
+          ability={
+            queryParams
+              .get("characterSavingThrowRoll")
+              ?.split(":")[1] as ability
+          }
+        ></SavingThrowRollResolution>
       </ModalNoButton>
     </>
   );

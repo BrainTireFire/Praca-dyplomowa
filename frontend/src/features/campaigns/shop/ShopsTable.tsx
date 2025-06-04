@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Button from "../../../ui/interactive/Button";
-import { HiXMark } from "react-icons/hi2";
+import { HiWrench, HiXMark } from "react-icons/hi2";
 import { Shop } from "../../../models/shop";
+import { useLocation } from "react-router-dom";
 
 const Table = styled.table`
   width: 90%;
@@ -37,6 +38,8 @@ export default function ShopsTable({
   shops: Shop[];
   onRemove: Function;
 }) {
+  const location = useLocation();
+  const isGameMaster = location.state?.isGameMaster;
   const navigate = useNavigate();
   return (
     <Table>
@@ -45,7 +48,7 @@ export default function ShopsTable({
         <Th>Type:</Th>
         <Th>Location:</Th>
         <Th>Description:</Th>
-        <Th></Th>
+        {isGameMaster && <Th></Th>}
       </thead>
       <tbody>
         {shops.map((shop: Shop, index: number) => (
@@ -55,16 +58,26 @@ export default function ShopsTable({
             <Td>{shop.location}</Td>
             <Td>{shop.description}</Td>
             {/* <Td>{shop.id}</Td> */}
-            <Td>
-              <Button
-                onClick={(e) => {
-                  onRemove(shop.id);
-                  e.stopPropagation();
-                }}
-              >
-                <HiXMark />
-              </Button>
-            </Td>
+            {isGameMaster && (
+              <Td style={{ display: "flex", gap: "10px" }}>
+                <Button
+                  onClick={(e) => {
+                    navigate(`edit/${shop.id}`);
+                    e.stopPropagation();
+                  }}
+                >
+                  <HiWrench />
+                </Button>
+                <Button
+                  onClick={(e) => {
+                    onRemove(shop.id);
+                    e.stopPropagation();
+                  }}
+                >
+                  <HiXMark />
+                </Button>
+              </Td>
+            )}
           </Tr>
         ))}
       </tbody>

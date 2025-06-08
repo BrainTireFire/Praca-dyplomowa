@@ -28,6 +28,8 @@ import { EditModeContext } from "../../context/EditModeContext";
 import { useUpdateCharacter } from "./hooks/useUpdateCharacter";
 import SavingThrowProficiencyContainer from "../../ui/characters/SavingThrowProficiencyContainer";
 import SkillProficiencyContainer from "../../ui/characters/SkillProficiencyContainer";
+import { CoinPurseForm } from "../items/CoinPurseForm";
+import { useUpdateCharacterCoinSack } from "./hooks/useUpdateCharacterCoinSack";
 
 const MainGrid = styled.div`
   display: grid;
@@ -78,18 +80,31 @@ export default function CharactersSheet() {
   const { isLoading, isError, error, character } = useCharacter(characterId);
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
+  const [goldPieces, setGoldPieces] = useState<number>(1);
+  const [silverPieces, setSilverPieces] = useState<number>(2);
+  const [copperPieces, setCopperPieces] = useState<number>(3);
   useEffect(() => {
+    console.log("use efect");
     setName(character?.name ?? "");
     setDescription(character?.description ?? "");
-  }, [character?.description, character?.name]);
+    setGoldPieces(character?.coinPurse.goldPieces ?? 4);
+    setSilverPieces(character?.coinPurse.silverPieces ?? 5);
+    setCopperPieces(character?.coinPurse.copperPieces ?? 6);
+  }, [character?.description, character?.name, character?.coinPurse.goldPieces, character?.coinPurse.silverPieces, character?.coinPurse.copperPieces]);
   const {
     isPending,
     updateCharacter,
     isError: isErrorUpdate,
     error: errorUpdate,
   } = useUpdateCharacter(characterId as number, () => {});
+  const {
+    isPending: isPendingCoinSackUpdate,
+    updateCoinSack,
+    isError: isErrorUpdateCoinSack,
+    error: errorUpdateCoinSack,
+  } = useUpdateCharacterCoinSack(characterId as number, () => {});
 
-  if (isLoading || isPending) {
+  if (isLoading || isPending || isPendingCoinSackUpdate) {
     return <Spinner />;
   }
   if (isError) {
@@ -97,6 +112,9 @@ export default function CharactersSheet() {
   }
   if (isErrorUpdate) {
     return `${errorUpdate}`;
+  }
+  if (isErrorUpdateCoinSack) {
+    return `${errorUpdateCoinSack}`;
   }
 
   let disableForm = !editMode;
@@ -225,7 +243,7 @@ export default function CharactersSheet() {
                 gridColumnStart: 2,
                 gridColumnEnd: -1,
                 gridRowStart: 5,
-                gridRowEnd: 7,
+                gridRowEnd: 6,
               }}
             >
               <WeaponArmorProficiencyTable
@@ -233,6 +251,24 @@ export default function CharactersSheet() {
                   character.weaponAndArmorProficiencies
                 }
               ></WeaponArmorProficiencyTable>
+            </div>
+            <div
+              style={{ gridColumnStart: 2, gridColumnEnd: -1, gridRowStart: 6 }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  margin: "1px",
+                }}
+              >
+                <CoinPurseForm disabled={!(editMode && EditEquipmentInBackpackPermission)} onGoldChange={(e)=>{setGoldPieces(Number(e.target.value))}} onSilverChange={(e) => {setSilverPieces(Number(e.target.value))}} onCopperChange={(e) => {setCopperPieces(Number(e.target.value))}} value={{goldPieces, silverPieces, copperPieces}}></CoinPurseForm>
+                {editMode && EditEquipmentInBackpackPermission &&
+                  <Button size="small" customStyles={css`margin-top: 5px`} onClick={() => updateCoinSack({coinSack: {goldPieces, silverPieces, copperPieces}})} disabled={!(goldPieces >= 0 && silverPieces >= 0 && copperPieces >= 0)}>Update coins</Button>
+                }
+              </div>
             </div>
           </MainGridColumn1>
           <MainGridColumn2>

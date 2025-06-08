@@ -705,8 +705,16 @@ namespace pracadyplomowa.Models.Entities.Characters
         public List<EffectInstance> EffectsFromItems => this.R_EquippedItems.SelectMany(ed => ed.R_Item.R_EffectsOnEquip).Intersect(AllEffects)
         .ToList();
 
-        public void ResolveAffectingEffects(List<string> messages) {
+        public void ResolveAffectingEffects(List<string> messages)
+        {
+            int initialHealth = this._Hitpoints + this._TemporaryHitpoints;
+            
             AllEffects.ForEach(x => x.Resolve(messages));
+
+            int damageTaken = initialHealth - (this._Hitpoints + this._TemporaryHitpoints);
+            if(damageTaken > 0){
+                this.MakeConcentrationSavingThrow(damageTaken, messages);
+            }
         }
 
         public void StartNextTurn(List<string> messages) {

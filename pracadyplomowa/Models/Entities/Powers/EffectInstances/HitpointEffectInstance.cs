@@ -21,8 +21,8 @@ public class HitpointEffectInstance : ValueEffectInstance
 
     public override void Resolve(List<string> messages)
     {
-        ResolutionMessage(messages);
         if(EffectType.HitpointEffect == Enums.EffectOptions.HitpointEffect.TemporaryHitpoints){
+            ResolutionMessage(messages);
             int tempHitPoints;
             List<DiceSet.Dice> diceResult;
             if(Roller == null){

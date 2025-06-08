@@ -395,13 +395,13 @@ public class EncounterService : IEncounterService
         participanceData.DistanceTraveled = 0;
         var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(participanceData.R_CharacterId);
         List<string> messages = [];
-        character.StartNextTurn(messages);
         if(participanceData == participances.First()){
             List<EffectGroup> effectGroups = await _unitOfWork.EffectGroupRepository.GetAllEffectGroupsPresentInEncounter(encounterId);
             foreach(var effectGroup in effectGroups){
                 effectGroup.TickDuration();
             }
         }
+        character.StartNextTurn(messages);
 
         await CommitAndReport(encounter, messages);
         return;

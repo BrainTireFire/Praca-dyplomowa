@@ -85,7 +85,7 @@ export default function Items() {
       </Column1>
       <Column2>
         {!!Number(selectedItemId) && (
-          <ItemForm itemId={Number(selectedItemId)} key={selectedItemId}></ItemForm>
+          <ItemForm itemId={Number(selectedItemId)} key={selectedItemId} maxHeight="100%"></ItemForm>
         )}
       </Column2>
     </Container>

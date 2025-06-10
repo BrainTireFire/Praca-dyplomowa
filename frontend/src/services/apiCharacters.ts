@@ -1,6 +1,7 @@
 import { ability } from "../features/effects/abilities";
 import { EffectBlueprint } from "../features/effects/EffectBlueprintForm";
 import { skill } from "../features/effects/skills";
+import { CoinPurse } from "../features/items/models/coinPurse";
 import {
   CharacterItem,
   Character,
@@ -77,6 +78,21 @@ export async function updateCharacter(
     }),
   };
   await customFetch(`${BASE_URL}/api/character/${characterId}`, options);
+  return;
+}
+
+export async function updateCoinSack(
+  characterId: number,
+  coinSack: CoinPurse
+): Promise<void> {
+  const options: RequestInit = {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(coinSack),
+  };
+  await customFetch(`${BASE_URL}/api/character/${characterId}/coinSack`, options);
   return;
 }
 

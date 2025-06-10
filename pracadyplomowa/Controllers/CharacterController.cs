@@ -153,6 +153,22 @@ namespace pracadyplomowa.Controllers
             return Ok();
         }
 
+        [HttpPatch("{characterId}/coinSack")]
+        public async Task<ActionResult> UpdateCharacterCoinSack(int characterId, [FromBody] CoinPurseDto coinSack)
+        {
+            if (!_characterService.CheckExistenceAndReadEditAccess(characterId, User.GetUserId(), [Character.AccessLevels.EditEquipmentInBackpack], out var errorResult, out var grantedAccessLevels, out var character))
+            {
+                return errorResult;
+            }
+            character = await _unitOfWork.CharacterRepository.GetCharacterWithCoinSack(characterId);
+
+            character!.R_CharacterHasBackpack.CoinSack.GoldPieces = coinSack.GoldPieces;
+            character.R_CharacterHasBackpack.CoinSack.SilverPieces = coinSack.SilverPieces;
+            character.R_CharacterHasBackpack.CoinSack.CopperPieces = coinSack.CopperPieces;
+            await _unitOfWork.SaveChangesAsync();
+            return Ok();
+        }
+
 
 
         [HttpGet("{characterId}/choiceGroups")]

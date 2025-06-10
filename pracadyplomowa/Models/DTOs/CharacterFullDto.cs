@@ -52,6 +52,7 @@ namespace pracadyplomowa.Models.DTOs
         [JsonPropertyName("xp")]
         public int ExperiencePoints { get; set; }
         public bool CanLevelUp {get; set;}
+        public CoinPurseDto CoinPurse { get; set; }
 
         public CharacterFullDto(Character character)
         {
@@ -95,6 +96,7 @@ namespace pracadyplomowa.Models.DTOs
             ProficiencyBonus = character.ProficiencyBonus;
             ExperiencePoints = character.ExperiencePoints;
             CanLevelUp = character.CanLevelUp;
+            CoinPurse = GetMoney(character);
         }
 
 
@@ -202,10 +204,10 @@ namespace pracadyplomowa.Models.DTOs
                                     .Where(ei => ei.ProficiencyEffectType.ProficiencyEffect == ProficiencyEffect.ItemType)
                                     .Where(ei => ei.ProficiencyEffectType.ItemType == itemType)
                                     .Select(ei => new ItemFamilyDto
-                                        {
-                                            Id = ei.Id,
-                                            Name = Enum.GetName(itemType),
-                                        }
+                                    {
+                                        Id = ei.Id,
+                                        Name = Enum.GetName(itemType),
+                                    }
                                     )
                                 )
                                 .ToList();
@@ -682,6 +684,16 @@ namespace pracadyplomowa.Models.DTOs
                 Order = (int)character.Size,
                 Name = Enum.GetName(typeof(Size), (int)character.Size)
             };
+        }
+
+        public static CoinPurseDto GetMoney(Character character) {
+            var coinPurseDto = new CoinPurseDto()
+            {
+                GoldPieces = character.R_CharacterHasBackpack.CoinSack.GoldPieces,
+                SilverPieces = character.R_CharacterHasBackpack.CoinSack.SilverPieces,
+                CopperPieces = character.R_CharacterHasBackpack.CoinSack.CopperPieces,
+            };
+            return coinPurseDto;
         }
 
     }

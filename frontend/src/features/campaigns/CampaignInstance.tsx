@@ -112,7 +112,7 @@ export default function CampaignInstance() {
             size="large"
             onClick={() => {
               navigate("shops", {
-                state: { isGameMaster: campaign.isGameMaster },
+                state: { isGameMaster: campaign.isGameMaster, campaignId: id },
               });
             }}
           >
@@ -133,7 +133,7 @@ export default function CampaignInstance() {
             size="large"
             onClick={() => {
               navigate("shops", {
-                state: { isGameMaster: campaign.isGameMaster },
+                state: { isGameMaster: campaign.isGameMaster, campaignId: id },
               });
             }}
           >

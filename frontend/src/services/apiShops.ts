@@ -83,3 +83,16 @@ export async function removeShopItem(
   };
   await customFetch(`${BASE_URL}/api/shop/${shopId}/items`, options);
 }
+
+export async function getShopCharacter(characterId: number) {
+  const options: RequestInit = {
+    method: "GET",
+  };
+
+  const data = await customFetch(
+    `${BASE_URL}/api/shop/character/${characterId}`,
+    options
+  );
+
+  return data;
+}

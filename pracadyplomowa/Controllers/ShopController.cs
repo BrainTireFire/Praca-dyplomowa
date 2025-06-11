@@ -84,11 +84,11 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpGet("{shopId}/items")]
-        public async Task<ActionResult<List<ShopItemDto>>> GetShopItems(int shopId)
+        public async Task<ActionResult<List<ItemGetDto>>> GetShopItems(int shopId)
         {
             var items = await _unitOfWork.ShopRepository.GetShopItems(shopId);
 
-            var itemsDto = items.Select(e => new ShopItemDto
+            var itemsDto = items.Select(e => new ItemGetDto
             {
                 Id = e.R_ShopHasItemId,
                 Name = e.R_ShopHasItem.Name,
@@ -107,7 +107,7 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpPatch("{shopId}/items")]
-        public async Task<ActionResult> UpdateShopItems(int shopId, [FromBody] ShopItemDto shopItemDto)
+        public async Task<ActionResult> UpdateShopItems(int shopId, [FromBody] ItemGetDto shopItemDto)
         {
             if (shopId <= 0)
                 return BadRequest("Invalid shopId");
@@ -185,6 +185,33 @@ namespace pracadyplomowa.Controllers
             await _unitOfWork.SaveChangesAsync();
 
             return Ok();
+        }
+        [HttpGet("items/{characterId}")]
+        public async Task<ActionResult<ShopCharacterDto>> GetShopCharacter(int characterId)
+        {
+            if (characterId <= 0)
+                return BadRequest("Invalid characterId");
+
+            var items = await _unitOfWork.ItemRepository.GetCharacterBackpackItems(characterId);
+
+            var itemsList = items.Select(e => new ItemGetDto
+            {
+                Id = e.Id,
+                Name = e.Name,
+                Weight = e.Weight,
+                Description = e.Description,
+                Price = new CoinPurseDto
+                {
+                    GoldPieces = e.Price.GoldPieces,
+                    SilverPieces = e.Price.SilverPieces,
+                    CopperPieces = e.Price.CopperPieces
+                },
+            });
+
+            var weight = itemsList.Sum(i => i.Weight);
+
+
+            return
         }
     }
 }

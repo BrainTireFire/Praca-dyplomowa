@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace pracadyplomowa.Models.DTOs
 {
-    public class ShopItemDto
+    public class ItemGetDto
     {
         [Required]
         public int Id { get; set; }

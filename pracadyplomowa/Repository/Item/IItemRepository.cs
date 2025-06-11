@@ -15,5 +15,6 @@ namespace pracadyplomowa.Repository.Item
         public Task<PagedList<Models.Entities.Items.Item>> GetOwnedItems(int OwnerId, ItemParams itemParams);
         public Dictionary<int, Models.Entities.Items.Item> GetItemsForEditabilityAnalysis(List<int> ids);
         public Task<Models.Entities.Items.Item> GetItemWithHolder(int itemId);
+        public Task<List<Models.Entities.Items.Item>> GetCharacterBackpackItems(int characterId);
     }
 }

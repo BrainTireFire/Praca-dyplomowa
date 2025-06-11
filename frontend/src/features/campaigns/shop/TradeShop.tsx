@@ -2,10 +2,10 @@ import styled from "styled-components";
 import Heading from "../../../ui/text/Heading";
 import Line from "../../../ui/separators/Line";
 import { coinPursePrint } from "../../items/models/coinPurse";
-import Button from "../../../ui/interactive/Button";
 import { useShopItems } from "./hooks/useShopItems";
 import { useEffect, useState } from "react";
 import { ShopItem } from "../../../models/shop";
+import { useLocation } from "react-router-dom";
 
 const Container = styled.div`
   display: grid;
@@ -113,11 +113,19 @@ const WeightDisplay = styled.div`
 `;
 
 export default function TradeShop() {
+  const location = useLocation();
+  const campaignId = location.state?.id;
   const {
     isLoading: isLoadingShopItems,
     shopItems: data,
     error: shopItemsError,
   } = useShopItems();
+
+  const {
+    isLoading: isLoadingCharacter,
+    shopCharacter,
+    error: itemsError,
+  } = useShopCharacter(campaignId);
 
   const [shopItems, setShopItems] = useState(data);
 
@@ -127,14 +135,20 @@ export default function TradeShop() {
     }
   }, [data]);
 
-  const [selectedItem, setSelectedItem] = useState<ShopItem | undefined>(
-    undefined
-  );
   const [selectedShopItem, setSelectedShopItem] = useState<
     ShopItem | undefined
   >(undefined);
 
-  if (!shopItems) {
+  const [selectedItem, setSelectedItem] = useState<ShopItem | undefined>(
+    undefined
+  );
+
+  if (
+    isLoadingCharacter ||
+    isLoadingShopItems ||
+    !shopCharacter ||
+    !shopItems
+  ) {
     return <div>No data has been recieved</div>;
   }
 
@@ -162,7 +176,11 @@ export default function TradeShop() {
                 {shopItems?.map((item: ShopItem) => (
                   <Tr
                     key={item.id}
-                    // onClick={() => handleShopClick(item)}
+                    onClick={() =>
+                      setSelectedShopItem((prev) =>
+                        prev === item ? undefined : item
+                      )
+                    }
                     style={{
                       backgroundColor:
                         item.id === selectedShopItem?.id
@@ -209,8 +227,9 @@ export default function TradeShop() {
             <Table>
               <thead>
                 <Th>Name</Th>
+                <Th>Weight</Th>
                 <Th>Price</Th>
-                <Th>Qty</Th>
+                <Th>Description</Th>
               </thead>
               <tbody>
                 {/* {shopItems?.map((item: ShopItem) => (

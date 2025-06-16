@@ -911,10 +911,11 @@ namespace pracadyplomowa.Models.Entities.Characters
 
         public int DifficultyClass(Power power)
         {
+            if (power.OverrideCastersDC) return PowerCastBonus(power);
             return 8 + PowerCastBonus(power);
         }
 
-        private int PowerCastBonus(Power power)
+        public int PowerCastBonus(Power power)
         { // attack roll bonus or to be used with +8 as difficulty class
             // Power power = this.AllPowers.First(p => p.Id == powerId);
             if (power.OverrideCastersDC && power.DifficultyClass != null)
@@ -939,7 +940,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                     .R_Class
                 )
             ).Distinct().ToList();
-            if (classes.Count != 0)
+            if (classes.Count == 0)
             {
                 classes = this.R_CharacterHasLevelsInClass.Select(x => x.R_Class).Distinct().ToList();
             }
@@ -950,7 +951,10 @@ namespace pracadyplomowa.Models.Entities.Characters
                 {
                     difficultyClass = 0;
                 }
-                difficultyClass = AbilityModifier((int)next.SpellcastingAbility) + ProficiencyBonus;
+                else
+                {
+                    difficultyClass = AbilityModifier(AbilityValue((Ability)next.SpellcastingAbility));
+                }
                 return difficultyClass > max ? difficultyClass : max;
             }) + ProficiencyBonus;
 

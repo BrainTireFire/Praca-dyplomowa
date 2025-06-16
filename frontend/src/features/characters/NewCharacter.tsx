@@ -1,6 +1,5 @@
 import { useCallback, useReducer } from "react";
 import Box from "../../ui/containers/Box";
-import FormRow from "../../ui/forms/FormRow";
 import Input from "../../ui/forms/Input";
 import Button from "../../ui/interactive/Button";
 import Dropdown from "../../ui/forms/Dropdown";
@@ -11,6 +10,9 @@ import { CharacterInsertDto } from "../../models/character";
 import { useCreateCharacter } from "./hooks/useCreateCharacter";
 import toast from "react-hot-toast";
 import FormRowVertical from "../../ui/forms/FormRowVertical";
+import DisplayBox, { DisplayBoxContent } from "./DisplayBox";
+import { FormRow, FormRow2 } from "../../ui/forms/FormRow";
+import { DiceSetString } from "../../models/diceset";
 
 const initialState: CharacterInsertDto = {
   name: "",
@@ -156,7 +158,7 @@ function NewCharacter({ onCloseModal }: { onCloseModal: () => void }) {
   if (isLoadingRaces || isLoadingClasses || isPending) {
     return <Spinner />;
   }
-
+  
   return (
     <>
       <Box>
@@ -187,6 +189,25 @@ function NewCharacter({ onCloseModal }: { onCloseModal: () => void }) {
             valuesList={classList}
           ></Dropdown>
         </FormRow>
+        <FormRow2 label="Chosen class details">
+          <>
+          <DisplayBox label="Main ability">
+            <DisplayBoxContent>
+              {classes.find(x => x.id === state.startingClassId)?.mainAbility ?? '-'}
+            </DisplayBoxContent>
+          </DisplayBox>
+          <DisplayBox label="Initial hitpoints">
+            <DisplayBoxContent>
+              {classes.find(x => x.id === state.startingClassId)?.hitpoints ?? '-'}
+            </DisplayBoxContent>
+          </DisplayBox>
+          <DisplayBox label="Hitdice">
+            <DisplayBoxContent>
+              {DiceSetString(classes.find(x => x.id === state.startingClassId)?.hitDice)}
+            </DisplayBoxContent>
+          </DisplayBox>
+          </>
+        </FormRow2>
         <FormRow label="Race" error={!state.raceId ? "Select race" : undefined}>
           <Dropdown
             chosenValue={state.raceId?.toString() || null}

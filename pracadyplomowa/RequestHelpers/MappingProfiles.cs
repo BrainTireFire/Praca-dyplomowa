@@ -22,7 +22,19 @@ public class MappingProfiles : Profile
     {
         CreateMap<DiceSet, DiceSetDto>().ReverseMap();
         CreateMap<RegisterDto, User>();
-        CreateMap<Class, ClassDTO>();
+        CreateMap<Class, ClassDTO>()
+        .ForMember(
+            dest => dest.Hitpoints,
+            opt => opt.MapFrom(src => src.R_ClassLevels[0].HitPoints)
+        )
+        .ForMember(
+            dest => dest.HitDice,
+            opt => opt.MapFrom(src => src.R_ClassLevels[0].HitDie)
+        )
+        .ForMember(
+            dest => dest.MainAbility,
+            opt => opt.MapFrom(src => src.SpellcastingAbility)
+        );
         CreateMap<Race, RaceDTO>();
         CreateMap<ItemFamily, ItemFamilyDto>();
         CreateMap<ItemFamilyDto, ItemFamily>();

@@ -750,6 +750,8 @@ export type PowerForEncounterDto = {
   powerType: PowerType;
   targetType: TargetType;
   castableLevels: number[];
+  difficultyClass: number | null;
+  attackBonus: DiceSet | null;
 };
 
 export type MaterialComponentDto = {

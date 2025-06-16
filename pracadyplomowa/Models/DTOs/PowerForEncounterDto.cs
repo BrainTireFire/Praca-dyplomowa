@@ -30,6 +30,8 @@ namespace pracadyplomowa.Models.DTOs
         public CastableBy CastableBy { get; set; }
         public PowerType PowerType { get; set; }
         public TargetType TargetType { get; set; }
+        public int? DifficultyClass { get; set; }
+        public DiceSetDto? AttackBonus { get; set; }
 
 
         public class MaterialComponentDto {

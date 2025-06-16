@@ -1091,12 +1091,20 @@ public class EncounterService : IEncounterService
                 SomaticComponentRequirementSatisfied = somaticComponentRequirementSatisfied,
                 VocalComponentRequirementSatisfied = vocalComponentSatisfied,
                 Range = power.Range,
-                MaxTargets = power.MaxTargets,
+                MaxTargets = power.AreaShape == AreaShape.None ? power.MaxTargets : null,
                 AreaShape = power.AreaShape,
                 AreaSize = power.AreaSize,
                 CastableBy = power.CastableBy,
                 PowerType = power.PowerType,
-                TargetType = power.TargetType
+                TargetType = power.TargetType,
+                DifficultyClass = power.PowerType == PowerType.Saveable ? character.DifficultyClass(power) : null,
+                AttackBonus = power.PowerType == PowerType.Attack ?
+                new DiceSetDto(character.AttackBonusDiceSet(
+                    power.IsRanged ?
+                    Models.Enums.EffectOptions.AttackRollEffect_Range.Ranged : Models.Enums.EffectOptions.AttackRollEffect_Range.Melee,
+                    power.IsMagic ?
+                    Models.Enums.EffectOptions.AttackRollEffect_Source.Spell : Models.Enums.EffectOptions.AttackRollEffect_Source.Weapon
+                    ) + character.PowerCastBonus(power)) : null
             };
             var levelsCastable = new List<int>();
             if(power.UpcastBy == UpcastBy.ResourceLevel){

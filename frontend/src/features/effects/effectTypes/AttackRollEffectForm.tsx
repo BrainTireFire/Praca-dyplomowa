@@ -15,9 +15,9 @@ import { EditModeContext } from "../../../context/EditModeContext";
 
 export type Effect = ValueEffect & {
   effectType: {
-    attackRollEffect_Range: "melee" | "ranged";
-    attackRollEffect_Source: "weapon" | "spell";
-    attackRollEffect_Type: "bonus" | "rerollLowerThan";
+    attackRollEffect_Range: "Melee" | "Ranged";
+    attackRollEffect_Source: "Weapon" | "Spell";
+    attackRollEffect_Type: "Bonus" | "RerollLowerThan";
   };
 };
 
@@ -33,9 +33,9 @@ type Action = {
 
 export const initialState: Effect = {
   effectType: {
-    attackRollEffect_Range: "melee",
-    attackRollEffect_Source: "weapon",
-    attackRollEffect_Type: "bonus",
+    attackRollEffect_Range: "Melee",
+    attackRollEffect_Source: "Weapon",
+    attackRollEffect_Type: "Bonus",
   },
   value: DiceSetExtendedDefaultValue,
   rollMoment: "OnCast",
@@ -108,8 +108,8 @@ export default function AttackRollEffectForm({
       <RadioGroup
         disabled={disableUpdate}
         values={[
-          { label: "Melee", value: "melee" },
-          { label: "Ranged", value: "ranged" },
+          { label: "Melee", value: "Melee" },
+          { label: "Ranged", value: "Ranged" },
         ]}
         label="Range"
         name="range"
@@ -119,8 +119,8 @@ export default function AttackRollEffectForm({
       <RadioGroup
         disabled={disableUpdate}
         values={[
-          { label: "Weapon", value: "weapon" },
-          { label: "Spell", value: "spell" },
+          { label: "Weapon", value: "Weapon" },
+          { label: "Spell", value: "Spell" },
         ]}
         label="Source"
         name="source"
@@ -130,8 +130,8 @@ export default function AttackRollEffectForm({
       <RadioGroup
         disabled={disableUpdate}
         values={[
-          { label: "Bonus", value: "bonus" },
-          { label: "Reroll lower than", value: "rerollLowerThan" },
+          { label: "Bonus", value: "Bonus" },
+          { label: "Reroll lower than", value: "RerollLowerThan" },
         ]}
         label="Attack roll effect"
         name="attackRollEffect"

@@ -25,10 +25,10 @@ export type Effect = ValueEffect & {
 };
 
 export type SavingThrowEffect =
-  | "bonus"
-  | "proficiency"
-  | "advantage"
-  | "rerollLowerThan";
+  | "Bonus"
+  | "Proficiency"
+  | "Advantage"
+  | "RerollLowerThan";
 export type SavingThrowEffect_Nature = "Physical" | "Magical";
 
 type Action = {
@@ -38,7 +38,7 @@ type Action = {
 
 export const initialState: Effect = {
   effectType: {
-    savingThrowEffect: "bonus",
+    savingThrowEffect: "Bonus",
     savingThrowEffect_Ability: "STRENGTH",
     savingThrowEffect_Condition: null,
     savingThrowEffect_Nature: null,

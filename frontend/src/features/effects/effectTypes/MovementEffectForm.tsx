@@ -15,7 +15,7 @@ import { EditModeContext } from "../../../context/EditModeContext";
 
 export type Effect = ValueEffect & {
   effectType: {
-    movementEffect: "bonus" | "multiplier";
+    movementEffect: "Bonus" | "Multiplier";
   };
 };
 
@@ -26,7 +26,7 @@ type Action = {
 
 export const initialState: Effect = {
   effectType: {
-    movementEffect: "bonus",
+    movementEffect: "Bonus",
   },
   value: DiceSetExtendedDefaultValue,
   rollMoment: "OnCast",
@@ -80,8 +80,8 @@ export default function MovementEffectForm({
       <RadioGroup
         disabled={disableUpdate}
         values={[
-          { label: "Bonus", value: "bonus" },
-          { label: "Multiplier", value: "multiplier" },
+          { label: "Bonus", value: "Bonus" },
+          { label: "Multiplier", value: "Multiplier" },
         ]}
         label="Movement effect"
         name="movementEffect"

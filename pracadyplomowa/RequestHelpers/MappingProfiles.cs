@@ -957,7 +957,7 @@ public class MappingProfiles : Profile
         CreateMap<EffectInstance, EffectBlueprintFormDto>()
             .ForMember(
                 dest => dest.EffectType,
-                opt => opt.MapFrom(src => src is MovementEffectBlueprint ? "movementEffect" :
+                opt => opt.MapFrom(src => src is MovementEffectInstance ? "movementEffect" :
                 src is SavingThrowEffectInstance ? "savingThrow" :
                 src is AbilityEffectInstance ? "abilityCheck" :
                 src is SkillEffectInstance ? "skillCheck" :

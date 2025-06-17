@@ -301,7 +301,12 @@ function CustomizeShop() {
             checked={copyPrice}
             onChange={() => setCopyPrice(!copyPrice)}
           />
-          <Button onClick={() => handleUpdateShopItem()}> → </Button>
+          <Button
+            onClick={() => handleUpdateShopItem()}
+            disabled={!selectedItem}
+          >
+            →
+          </Button>
           <div style={{ textAlign: "center" }}>
             <Input
               type="number"
@@ -311,7 +316,12 @@ function CustomizeShop() {
             />
             <p>Quantity</p>
           </div>
-          <Button onClick={() => handleRemoveShopItem()}> ← </Button>
+          <Button
+            onClick={() => handleRemoveShopItem()}
+            disabled={!selectedShopItem}
+          >
+            ←
+          </Button>
         </MiddleContainer>
         <TableContainer>
           <Heading as="h1">Shop Inventory</Heading>

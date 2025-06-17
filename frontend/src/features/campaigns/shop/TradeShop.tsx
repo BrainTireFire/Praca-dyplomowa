@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { ShopItem } from "../../../models/shop";
 import { useLocation } from "react-router-dom";
 import { useShopCharacter } from "./hooks/useShopCharacter";
+import Button from "../../../ui/interactive/Button";
 
 const Container = styled.div`
   display: grid;
@@ -187,17 +188,12 @@ export default function TradeShop() {
           </TableWrapper>
         </TableContainer>
         <MiddleContainer>
-          {/* <Button onClick={() => handleUpdateShopItem()}> → </Button>
-          <div style={{ textAlign: "center" }}>
-          <Input
-          type="number"
-          value={quantity}
-          onChange={(e) => setQuantity(parseInt(e.target.value))}
-          disabled={!selectedItem && !selectedShopItem}
-          />
-          <p>Quantity</p>
-          </div>
-          <Button onClick={() => handleRemoveShopItem()}> ← </Button> */}
+          <Button onClick={() => 0} disabled={!selectedShopItem}>
+            Buy
+          </Button>
+          <Button onClick={() => 0} disabled={!selectedItem}>
+            Sell
+          </Button>
         </MiddleContainer>
         <TableContainer>
           <div

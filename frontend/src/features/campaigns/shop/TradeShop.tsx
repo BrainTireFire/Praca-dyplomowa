@@ -225,10 +225,14 @@ export default function TradeShop() {
                 {characterItems?.map((item: ShopItem) => (
                   <Tr
                     key={item.id}
-                    // onClick={() => handleShopClick(item)}
+                    onClick={() =>
+                      setSelectedItem((prev) =>
+                        prev === item ? undefined : item
+                      )
+                    }
                     style={{
                       backgroundColor:
-                        item.id === selectedShopItem?.id
+                        item.id === selectedItem?.id
                           ? "rgba(136, 213, 136, 0.59)"
                           : undefined,
                     }}

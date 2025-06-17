@@ -1,14 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { getShopCharacter } from "../../../../services/apiShops";
+import { useParams } from "react-router-dom";
 
-export function useShopCharacters(characterId: number) {
+export function useShopCharacter() {
+  const { campaignId } = useParams<{ campaignId: string }>();
   const {
     isLoading,
     data: shopCharacter,
     error,
   } = useQuery({
-    queryKey: ["shopCharacter", characterId],
-    queryFn: () => getShopCharacter(characterId),
+    queryKey: ["shopCharacter", campaignId],
+    queryFn: () => getShopCharacter(Number(campaignId)),
   });
 
   return { isLoading, shopCharacter, error };

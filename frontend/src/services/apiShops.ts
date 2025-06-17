@@ -1,4 +1,9 @@
-import { Shop, ShopInsertDto, ShopItem } from "../models/shop";
+import {
+  Shop,
+  ShopCharacterDto,
+  ShopInsertDto,
+  ShopItem,
+} from "../models/shop";
 import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
 
@@ -84,13 +89,15 @@ export async function removeShopItem(
   await customFetch(`${BASE_URL}/api/shop/${shopId}/items`, options);
 }
 
-export async function getShopCharacter(characterId: number) {
+export async function getShopCharacter(
+  campaignId: number
+): Promise<ShopCharacterDto> {
   const options: RequestInit = {
     method: "GET",
   };
 
   const data = await customFetch(
-    `${BASE_URL}/api/shop/character/${characterId}`,
+    `${BASE_URL}/api/shop/character/${campaignId}`,
     options
   );
 

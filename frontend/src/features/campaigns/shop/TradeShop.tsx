@@ -6,6 +6,7 @@ import { useShopItems } from "./hooks/useShopItems";
 import { useEffect, useState } from "react";
 import { ShopItem } from "../../../models/shop";
 import { useLocation } from "react-router-dom";
+import { useShopCharacter } from "./hooks/useShopCharacter";
 
 const Container = styled.div`
   display: grid;
@@ -113,27 +114,19 @@ const WeightDisplay = styled.div`
 `;
 
 export default function TradeShop() {
-  const location = useLocation();
-  const campaignId = location.state?.id;
-  const {
-    isLoading: isLoadingShopItems,
-    shopItems: data,
-    error: shopItemsError,
-  } = useShopItems();
-
-  const {
-    isLoading: isLoadingCharacter,
-    shopCharacter,
-    error: itemsError,
-  } = useShopCharacter(campaignId);
-
+  const { isLoading: isLoadingShopItems, shopItems: data } = useShopItems();
+  const { isLoading: isLoadingCharacter, shopCharacter } = useShopCharacter();
   const [shopItems, setShopItems] = useState(data);
+  const [characterItems, setCharacterItems] = useState<ShopItem[]>(undefined);
 
   useEffect(() => {
     if (data) {
       setShopItems(data);
     }
-  }, [data]);
+    if (shopCharacter?.items) {
+      setCharacterItems(shopCharacter.items);
+    }
+  }, [data, shopCharacter]);
 
   const [selectedShopItem, setSelectedShopItem] = useState<
     ShopItem | undefined
@@ -152,11 +145,6 @@ export default function TradeShop() {
     return <div>No data has been recieved</div>;
   }
 
-  const coinPurse = {
-    goldPieces: 0,
-    silverPieces: 0,
-    copperPieces: 0,
-  };
   return (
     <Container>
       <Heading as="h1">Trading</Heading>
@@ -220,8 +208,10 @@ export default function TradeShop() {
             }}
           >
             <Heading as="h1">Character</Heading>
-            <WeightDisplay>⚖️ 0 / 0</WeightDisplay>
-            <CoinPurseDisplay>💰 {coinPursePrint(coinPurse)}</CoinPurseDisplay>
+            <WeightDisplay>⚖️ {shopCharacter.itemsWeight}</WeightDisplay>
+            <CoinPurseDisplay>
+              💰 {coinPursePrint(shopCharacter.coinPurse)}
+            </CoinPurseDisplay>
           </div>
           <TableWrapper>
             <Table>
@@ -232,10 +222,10 @@ export default function TradeShop() {
                 <Th>Description</Th>
               </thead>
               <tbody>
-                {/* {shopItems?.map((item: ShopItem) => (
+                {characterItems?.map((item: ShopItem) => (
                   <Tr
                     key={item.id}
-                    onClick={() => handleShopClick(item)}
+                    // onClick={() => handleShopClick(item)}
                     style={{
                       backgroundColor:
                         item.id === selectedShopItem?.id
@@ -244,10 +234,11 @@ export default function TradeShop() {
                     }}
                   >
                     <Td>{item.name}</Td>
+                    <Td>{item.weight}</Td>
                     <Td>{coinPursePrint(item.price)}</Td>
-                    <Td>{item.quantity}</Td>
+                    <Td>{item.description}</Td>
                   </Tr>
-                ))} */}
+                ))}
               </tbody>
             </Table>
           </TableWrapper>

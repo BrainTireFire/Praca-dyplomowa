@@ -186,15 +186,28 @@ namespace pracadyplomowa.Controllers
 
             return Ok();
         }
-        [HttpGet("items/{characterId}")]
-        public async Task<ActionResult<ShopCharacterDto>> GetShopCharacter(int characterId)
+        [HttpGet("character/{campaignId}")]
+        public async Task<ActionResult<ShopCharacterDto>> GetShopCharacter(int campaignId)
         {
+            var userId = User.GetUserId();
+            var campaign = await _unitOfWork.CampaignRepository.GetCampaign(userId, campaignId);
+            if (campaign == null)
+            {
+                return BadRequest(new ApiResponse(400, "Campaign with given id - does not exist"));
+            }
+
+            var characterId = campaign.R_CampaignHasCharacters.FirstOrDefault(character => character.R_OwnerId == userId)?.Id;
+            if (characterId == null)
+            {
+                return BadRequest(new ApiResponse(400, "You do not have a player character in this campaign"));
+            }
+
             if (characterId <= 0)
                 return BadRequest("Invalid characterId");
 
-            var items = await _unitOfWork.ItemRepository.GetCharacterBackpackItems(characterId);
+            var character = await _unitOfWork.ItemRepository.GetCharacterWithBackpackItems((int)characterId);
 
-            var itemsList = items.Select(e => new ItemGetDto
+            var items = character.R_CharacterHasBackpack.R_BackpackHasItems.Select(e => new ItemGetDto
             {
                 Id = e.Id,
                 Name = e.Name,
@@ -208,10 +221,24 @@ namespace pracadyplomowa.Controllers
                 },
             });
 
-            var weight = itemsList.Sum(i => i.Weight);
+            var coinSack = character.R_CharacterHasBackpack.CoinSack;
+            var CoinPurseDto = new CoinPurseDto
+            {
+                GoldPieces = coinSack.GoldPieces,
+                SilverPieces = coinSack.SilverPieces,
+                CopperPieces = coinSack.CopperPieces
+            };
 
+            var weight = items.Sum(i => i.Weight);
 
-            return
+            var shopCharacterDto = new ShopCharacterDto
+            {
+                Id = character.Id,
+                Items = items.ToList(),
+                CoinPurse = CoinPurseDto,
+                ItemsWeight = weight
+            };
+            return shopCharacterDto;
         }
     }
 }

@@ -24,3 +24,10 @@ export type ShopItem = {
   price: CoinPurse;
   quantity: number;
 };
+
+export type ShopCharacterDto = {
+  id: number;
+  items: ShopItem[];
+  coinPurse: CoinPurse;
+  itemsWeight: number;
+};

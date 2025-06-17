@@ -103,3 +103,17 @@ export async function getShopCharacter(
 
   return data;
 }
+
+export async function buyItem(
+  shopId: number,
+  characterId: number,
+  itemId: number
+) {
+  const options: RequestInit = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ shopId, characterId, itemId }),
+  };
+
+  return await customFetch(`${BASE_URL}/api/shop/${shopId}/buy`, options);
+}

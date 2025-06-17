@@ -186,6 +186,7 @@ namespace pracadyplomowa.Controllers
 
             return Ok();
         }
+
         [HttpGet("character/{campaignId}")]
         public async Task<ActionResult<ShopCharacterDto>> GetShopCharacter(int campaignId)
         {
@@ -239,6 +240,56 @@ namespace pracadyplomowa.Controllers
                 ItemsWeight = weight
             };
             return shopCharacterDto;
+        }
+
+        [HttpPost("{shopId}/buy")]
+        public async Task<ActionResult> BuyItem(int shopId, [FromBody] BuyItemDto buyItemDto)
+        {
+            if (buyItemDto.ShopId != shopId)
+            {
+                return BadRequest(new ApiResponse(400, "Shop ID in request body does not match the URL."));
+            }
+
+            var shopItems = await _unitOfWork.ShopRepository.GetShopItems(shopId);
+            if (shopItems == null || !shopItems.Any())
+            {
+                return NotFound(new ApiResponse(404, "No items available in this shop."));
+            }
+            var shopItem = shopItems.FirstOrDefault(i => i.R_ShopHasItemId == buyItemDto.ItemId);
+
+            var character = await _unitOfWork.ItemRepository.GetCharacterWithBackpackItems(buyItemDto.CharacterId);
+            if (character == null)
+            {
+                return NotFound(new ApiResponse(404, $"Character not found: {buyItemDto.CharacterId}"));
+            }
+            var coinSack = character.R_CharacterHasBackpack.CoinSack;
+            var backpackItems = character.R_CharacterHasBackpack.R_BackpackHasItems;
+
+            var item = _unitOfWork.ItemRepository.GetById(buyItemDto.ItemId);
+            if (item == null)
+            {
+                return NotFound(new ApiResponse(404, "Item not found or out of stock"));
+            }
+
+            if (coinSack < shopItem.Price)
+            {
+                return BadRequest(new ApiResponse(400, "Not enough coins to buy this item"));
+            }
+
+            coinSack.Subtract(shopItem.Price);
+            backpackItems.Add(item);
+
+            if (shopItem.Quantity > 1)
+            {
+                shopItem.Quantity--;
+            }
+            else
+            {
+                _unitOfWork.ShopRepository.RemoveShopItem(shopItem);
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+            return Ok();
         }
     }
 }

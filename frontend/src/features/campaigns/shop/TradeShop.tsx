@@ -8,6 +8,7 @@ import { ShopItem } from "../../../models/shop";
 import { useLocation } from "react-router-dom";
 import { useShopCharacter } from "./hooks/useShopCharacter";
 import Button from "../../../ui/interactive/Button";
+import { useBuyItem } from "./hooks/useBuyItem";
 
 const Container = styled.div`
   display: grid;
@@ -137,6 +138,8 @@ export default function TradeShop() {
     undefined
   );
 
+  const { mutate: buyItemMutate } = useBuyItem();
+
   if (
     isLoadingCharacter ||
     isLoadingShopItems ||
@@ -188,7 +191,18 @@ export default function TradeShop() {
           </TableWrapper>
         </TableContainer>
         <MiddleContainer>
-          <Button onClick={() => 0} disabled={!selectedShopItem}>
+          <Button
+            onClick={() =>
+              buyItemMutate({
+                characterId: shopCharacter.id,
+                itemId: selectedShopItem.id,
+              })
+            }
+            disabled={
+              !selectedShopItem ||
+              characterItems?.some((item) => item.id === selectedShopItem.id)
+            }
+          >
             Buy
           </Button>
           <Button onClick={() => 0} disabled={!selectedItem}>

@@ -9,7 +9,7 @@ export function useShopCharacter() {
     data: shopCharacter,
     error,
   } = useQuery({
-    queryKey: ["shopCharacter", campaignId],
+    queryKey: ["shopCharacter", Number(campaignId)],
     queryFn: () => getShopCharacter(Number(campaignId)),
   });
 

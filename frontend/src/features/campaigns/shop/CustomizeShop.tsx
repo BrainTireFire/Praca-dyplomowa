@@ -99,12 +99,13 @@ const Input = styled.input`
 
 function CustomizeShop() {
   const { shop, isLoading } = useShop();
-  const { isLoading: isLoadingItems, items, error } = useAllItems();
+  const { isLoading: isLoadingItems, items: allItems, error } = useAllItems();
   const {
     isLoading: isLoadingShopItems,
     shopItems: data,
     error: shopItemsError,
   } = useShopItems();
+  const [items, setItems] = useState<ShopItem[]>([]);
   const [shopItems, setShopItems] = useState(data);
   const [copyPrice, setCopyPrice] = React.useState(true);
   const { updateShopItem } = useUpdateShopItem();
@@ -114,7 +115,10 @@ function CustomizeShop() {
     if (data) {
       setShopItems(data);
     }
-  }, [data]);
+    if (allItems) {
+      setItems(allItems);
+    }
+  }, [data, allItems]);
 
   const [selectedItem, setSelectedItem] = useState<ShopItem | undefined>(
     undefined

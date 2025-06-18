@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 
 export function useShopCharacter() {
   const { campaignId } = useParams<{ campaignId: string }>();
+
   const {
     isLoading,
     data: shopCharacter,

@@ -117,3 +117,17 @@ export async function buyItem(
 
   return await customFetch(`${BASE_URL}/api/shop/${shopId}/buy`, options);
 }
+
+export async function sellItem(
+  shopId: number,
+  characterId: number,
+  itemId: number
+) {
+  const options: RequestInit = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ shopId, characterId, itemId }),
+  };
+
+  return await customFetch(`${BASE_URL}/api/shop/${shopId}/sell`, options);
+}

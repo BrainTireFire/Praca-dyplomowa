@@ -187,6 +187,7 @@ function CustomizeShop() {
       itemId: selectedShopItem.id,
       quantity: quantity,
     });
+    setSelectedShopItem(undefined);
   };
 
   const handleUpdateShopItem = () => {
@@ -217,6 +218,7 @@ function CustomizeShop() {
     });
 
     updateShopItem({ shopId: shop.id, shopItem: updatedItem });
+    setSelectedItem(undefined);
   };
 
   return (

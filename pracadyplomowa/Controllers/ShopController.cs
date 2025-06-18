@@ -144,7 +144,7 @@ namespace pracadyplomowa.Controllers
                 existingItem.Price.GoldPieces = shopItemDto.Price.GoldPieces;
                 existingItem.Price.SilverPieces = shopItemDto.Price.SilverPieces;
                 existingItem.Price.CopperPieces = shopItemDto.Price.CopperPieces;
-                existingItem.Quantity += shopItemDto.Quantity;
+                existingItem.Quantity = shopItemDto.Quantity;
             }
 
             await _unitOfWork.SaveChangesAsync();
@@ -243,7 +243,7 @@ namespace pracadyplomowa.Controllers
         }
 
         [HttpPost("{shopId}/buy")]
-        public async Task<ActionResult> BuyItem(int shopId, [FromBody] BuyItemDto buyItemDto)
+        public async Task<ActionResult> BuyItem(int shopId, [FromBody] BuySellItemDto buyItemDto)
         {
             if (buyItemDto.ShopId != shopId)
             {
@@ -286,6 +286,66 @@ namespace pracadyplomowa.Controllers
             else
             {
                 _unitOfWork.ShopRepository.RemoveShopItem(shopItem);
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpPost("{shopId}/sell")]
+        public async Task<ActionResult> SellItem(int shopId, [FromBody] BuySellItemDto sellItemDto)
+        {
+            if (sellItemDto.ShopId != shopId)
+            {
+                return BadRequest(new ApiResponse(400, "Shop ID in request body does not match the URL."));
+            }
+
+            var shop = _unitOfWork.ShopRepository.GetById(shopId);
+            if (shop == null)
+            {
+                return NotFound(new ApiResponse(404, $"Shop not found: {shopId}"));
+            }
+
+            var character = await _unitOfWork.ItemRepository.GetCharacterWithBackpackItems(sellItemDto.CharacterId);
+            if (character == null)
+            {
+                return NotFound(new ApiResponse(404, $"Character not found: {sellItemDto.CharacterId}"));
+            }
+
+            var backpackItems = character.R_CharacterHasBackpack.R_BackpackHasItems;
+            var coinSack = character.R_CharacterHasBackpack.CoinSack;
+
+            var itemToSell = backpackItems.FirstOrDefault(i => i.Id == sellItemDto.ItemId);
+            if (itemToSell == null)
+            {
+                return BadRequest(new ApiResponse(400, "Item not found in character's inventory"));
+            }
+
+            var itemPrice = itemToSell.Price;
+            coinSack.Add(itemPrice);
+
+            backpackItems.Remove(itemToSell);
+
+            var shopItem = await _unitOfWork.ShopRepository.GetShopItem(shopId, itemToSell.Id);
+            if (shopItem == null)
+            {
+                shopItem = new ShopItem
+                {
+                    R_ShopHasItemId = itemToSell.Id,
+                    R_ItemInShopId = shopId,
+                    Price = new CoinSack
+                    {
+                        GoldPieces = itemPrice.GoldPieces,
+                        SilverPieces = itemPrice.SilverPieces,
+                        CopperPieces = itemPrice.CopperPieces
+                    },
+                    Quantity = 1
+                };
+                _unitOfWork.ShopRepository.AddShopItem(shopItem);
+            }
+            else
+            {
+                shopItem.Quantity++;
             }
 
             await _unitOfWork.SaveChangesAsync();

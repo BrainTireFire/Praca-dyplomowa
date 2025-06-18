@@ -5,10 +5,10 @@ import { coinPursePrint } from "../../items/models/coinPurse";
 import { useShopItems } from "./hooks/useShopItems";
 import { useEffect, useState } from "react";
 import { ShopItem } from "../../../models/shop";
-import { useLocation } from "react-router-dom";
 import { useShopCharacter } from "./hooks/useShopCharacter";
 import Button from "../../../ui/interactive/Button";
 import { useBuyItem } from "./hooks/useBuyItem";
+import { useSellItem } from "./hooks/useSellItem";
 
 const Container = styled.div`
   display: grid;
@@ -139,6 +139,7 @@ export default function TradeShop() {
   );
 
   const { mutate: buyItemMutate } = useBuyItem();
+  const { mutate: sellItemMutate } = useSellItem();
 
   if (
     isLoadingCharacter ||
@@ -192,12 +193,13 @@ export default function TradeShop() {
         </TableContainer>
         <MiddleContainer>
           <Button
-            onClick={() =>
+            onClick={() => {
               buyItemMutate({
                 characterId: shopCharacter.id,
                 itemId: selectedShopItem.id,
-              })
-            }
+              });
+              setSelectedShopItem(undefined);
+            }}
             disabled={
               !selectedShopItem ||
               characterItems?.some((item) => item.id === selectedShopItem.id)
@@ -205,7 +207,16 @@ export default function TradeShop() {
           >
             Buy
           </Button>
-          <Button onClick={() => 0} disabled={!selectedItem}>
+          <Button
+            onClick={() => {
+              sellItemMutate({
+                characterId: shopCharacter.id,
+                itemId: selectedItem.id,
+              });
+              setSelectedItem(undefined);
+            }}
+            disabled={!selectedItem}
+          >
             Sell
           </Button>
         </MiddleContainer>

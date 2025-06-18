@@ -1,9 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { buyItem } from "../../../../services/apiShops";
+import { sellItem } from "../../../../services/apiShops";
 import { useParams } from "react-router-dom";
-import { toast } from "react-hot-toast";
 
-export function useBuyItem() {
+export function useSellItem() {
   const queryClient = useQueryClient();
   const { shopId } = useParams<{ shopId: string }>();
   const { campaignId } = useParams<{ campaignId: string }>();
@@ -14,7 +13,7 @@ export function useBuyItem() {
     }: {
       characterId: number;
       itemId: number;
-    }) => buyItem(Number(shopId), characterId, itemId),
+    }) => sellItem(Number(shopId), characterId, itemId),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["itemShopList", Number(shopId)],
@@ -22,11 +21,6 @@ export function useBuyItem() {
       queryClient.invalidateQueries({
         queryKey: ["shopCharacter", Number(campaignId)],
       });
-    },
-    onError: (error: any) => {
-      toast.error(
-        error?.message || "Something went wrong while buying the item."
-      );
     },
   });
 }

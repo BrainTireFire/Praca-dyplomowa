@@ -290,6 +290,7 @@ namespace pracadyplomowa.Controllers
                 ChoiceGroups = cl.R_ChoiceGroups.Select(cg => new ChoiceGroupDto(cg, character)),
                 HitDice = new DiceSetDto(cl.HitDie),
                 HitPoints = cl.HitPoints,
+                PowercastingAbility = cl.R_Class.SpellcastingAbility
             }).ToList();
             return Ok(result);
         }

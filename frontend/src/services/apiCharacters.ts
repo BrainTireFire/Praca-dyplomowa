@@ -448,6 +448,7 @@ export type NextClassLevel = {
   choiceGroups: ChoiceGroup[];
   hitDice: DiceSet;
   hitPoints: number;
+  powercastingAbility: ability;
 };
 
 export type CharacterEquipmentAndSlotsDto = {

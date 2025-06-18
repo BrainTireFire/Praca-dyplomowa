@@ -22,7 +22,19 @@ public class MappingProfiles : Profile
     {
         CreateMap<DiceSet, DiceSetDto>().ReverseMap();
         CreateMap<RegisterDto, User>();
-        CreateMap<Class, ClassDTO>();
+        CreateMap<Class, ClassDTO>()
+        .ForMember(
+            dest => dest.Hitpoints,
+            opt => opt.MapFrom(src => src.R_ClassLevels[0].HitPoints)
+        )
+        .ForMember(
+            dest => dest.HitDice,
+            opt => opt.MapFrom(src => src.R_ClassLevels[0].HitDie)
+        )
+        .ForMember(
+            dest => dest.MainAbility,
+            opt => opt.MapFrom(src => src.SpellcastingAbility)
+        );
         CreateMap<Race, RaceDTO>();
         CreateMap<ItemFamily, ItemFamilyDto>();
         CreateMap<ItemFamilyDto, ItemFamily>();
@@ -957,7 +969,7 @@ public class MappingProfiles : Profile
         CreateMap<EffectInstance, EffectBlueprintFormDto>()
             .ForMember(
                 dest => dest.EffectType,
-                opt => opt.MapFrom(src => src is MovementEffectBlueprint ? "movementEffect" :
+                opt => opt.MapFrom(src => src is MovementEffectInstance ? "movementEffect" :
                 src is SavingThrowEffectInstance ? "savingThrow" :
                 src is AbilityEffectInstance ? "abilityCheck" :
                 src is SkillEffectInstance ? "skillCheck" :

@@ -115,10 +115,12 @@ export default function ItemForm({
   itemId,
   initialFormValues,
   onCloseModal,
+  maxHeight
 }: {
   itemId: number | null;
   initialFormValues: Item;
   onCloseModal: any;
+  maxHeight: string;
 }) {
   const navigate = useNavigate();
   const { editMode } = useContext(EditModeContext);
@@ -176,7 +178,7 @@ export default function ItemForm({
     return <Spinner></Spinner>;
   if (error || errorItemFamilies) return <>Error</>;
   return (
-    <Container>
+    <Container max-height={maxHeight}>
       <EditModeContext.Provider value={{ editMode: !disableUpdate }}>
         <ItemIdContext.Provider
           value={{
@@ -370,26 +372,42 @@ export default function ItemForm({
     </Container>
   );
 }
+type ContainerProps = {
+  "max-height"?: string;
+};
 
-const Container = styled.div`
+const Container = styled.div<ContainerProps>`
   display: flex;
   flex-direction: column;
-  max-height: 80vh;
-  overflow-y: auto;
+  height: 100%;
+  max-height: ${(props) => props["max-height"]};
+  min-height: 0; // must be explicitly set for shrinking to work correctly
   padding: 1.5rem 1.5rem 1rem 1.5rem;
   box-sizing: border-box;
 `;
 
+Container.defaultProps = {
+  "max-height": "80vh",
+};
+
 const GridContainer = styled(Box)`
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0; // must be explicitly set for shrinking to work correctly
   padding: 0rem 0rem 0rem 1rem;
 `;
 
 const Grid = styled.div`
+  flex: 1 1 auto;
+  min-height: 0; // must be explicitly set for shrinking to work correctly
+  overflow-y: auto;
+
   display: grid;
   grid-template-rows: auto auto auto;
   column-gap: 2px;
-  height: 100%;
-  overflow-y: auto;
+
   scrollbar-color: var(--color-button-primary) var(--color-main-background);
   scrollbar-width: thin;
   scrollbar-gutter: stable;
@@ -426,4 +444,5 @@ ItemForm.defaultProps = {
   itemId: null,
   initialFormValues: itemInitialValue,
   onCloseModal: () => {},
+  maxHeight: "80vh"
 };

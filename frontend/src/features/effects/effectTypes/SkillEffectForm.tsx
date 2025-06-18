@@ -17,7 +17,7 @@ import { EditModeContext } from "../../../context/EditModeContext";
 
 export type Effect = ValueEffect & {
   effectType: {
-    skillEffect: "bonus" | "rerollLowerThan" | "advantage";
+    skillEffect: "Bonus" | "RerollLowerThan" | "Advantage";
     skillEffect_Skill: skill;
   };
 };
@@ -29,7 +29,7 @@ type Action = {
 
 export const initialState: Effect = {
   effectType: {
-    skillEffect: "advantage",
+    skillEffect: "Bonus",
     skillEffect_Skill: "Acrobatics",
   },
   value: DiceSetExtendedDefaultValue,
@@ -90,9 +90,9 @@ export default function SkillEffectForm({
         <RadioGroup
           disabled={disableUpdate}
           values={[
-            { label: "Bonus", value: "bonus" },
-            { label: "Advantage", value: "advantage" },
-            { label: "Reroll lower than", value: "rerollLowerThan" },
+            { label: "Bonus", value: "Bonus" },
+            { label: "Advantage", value: "Advantage" },
+            { label: "Reroll lower than", value: "RerollLowerThan" },
           ]}
           label="Skill effect"
           name="skillEffect"

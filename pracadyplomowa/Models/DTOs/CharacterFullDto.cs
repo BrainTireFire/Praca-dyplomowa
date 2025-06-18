@@ -72,8 +72,8 @@ namespace pracadyplomowa.Models.DTOs
                 .. GetItemProficiencies(character, ItemType.Shield),
                 .. GetItemProficiencies(character, ItemType.Clothing),
                 .. GetItemProficiencies(character, ItemType.SimpleRangedWeapon),
-                .. GetItemProficiencies(character, ItemType.MartialMeleeWeapon),
-                .. GetItemProficiencies(character, ItemType.SimpleRangedWeapon),
+                .. GetItemProficiencies(character, ItemType.MartialRangedWeapon),
+                .. GetItemProficiencies(character, ItemType.SimpleMeleeWeapon),
                 .. GetItemProficiencies(character, ItemType.MartialMeleeWeapon),
             ];
             Race = GetRace(character);
@@ -239,6 +239,9 @@ namespace pracadyplomowa.Models.DTOs
             public int Id { get; set; }
             public string Name { get; set; } = null!;
             public int Level { get; set; }
+            public Ability? MainAbility { get; set; }
+            public int? DifficultyClass { get; set; }
+            public int? AttackBonus { get; set; }
         }
         public static List<ClassWithLevel> GetClasses(Character character)
         {
@@ -248,7 +251,14 @@ namespace pracadyplomowa.Models.DTOs
                             {
                                 Id = g.Key,
                                 Name = g.First().R_Class.Name,
-                                Level = g.Max(o => o.Level)
+                                Level = g.Max(o => o.Level),
+                                MainAbility = g.First().R_Class.SpellcastingAbility,
+                                DifficultyClass = g.First().R_Class.SpellcastingAbility != null
+                                ? Character.AbilityModifier(character.AbilityValue((Ability)g.First().R_Class.SpellcastingAbility!)) + 8 + character.ProficiencyBonus
+                                : null,
+                                AttackBonus = g.First().R_Class.SpellcastingAbility != null
+                                ? Character.AbilityModifier(character.AbilityValue((Ability)g.First().R_Class.SpellcastingAbility!)) + character.ProficiencyBonus
+                                : null
                             })
                             .ToList();
             return classes;
@@ -504,6 +514,8 @@ namespace pracadyplomowa.Models.DTOs
         {
             public int Id { get; set; }
             public string Name { get; set; } = "";
+            public int? DifficultyClass { get; set; }
+            public DiceSetDto? AttackBonus { get; set; }
             public List<string?> Source { get; set; } = [];
         }
         public static List<Power> GetPreparedPowers(Character character)
@@ -512,7 +524,15 @@ namespace pracadyplomowa.Models.DTOs
             {
                 Id = power.Id,
                 Name = power.Name,
-                Source = power.GetSourceNames(character.Id)
+                Source = power.GetSourceNames(character.Id),
+                DifficultyClass = power.PowerType == PowerType.Saveable ? character.DifficultyClass(power) : null,
+                AttackBonus = power.PowerType == PowerType.Attack ?
+                new DiceSetDto(character.AttackBonusDiceSet(
+                    power.IsRanged ?
+                    Models.Enums.EffectOptions.AttackRollEffect_Range.Ranged : Models.Enums.EffectOptions.AttackRollEffect_Range.Melee,
+                    power.IsMagic ?
+                    Models.Enums.EffectOptions.AttackRollEffect_Source.Spell : Models.Enums.EffectOptions.AttackRollEffect_Source.Weapon
+                    ) + character.PowerCastBonus(power)) : null
             }).ToList();
             return powers;
         }
@@ -527,7 +547,15 @@ namespace pracadyplomowa.Models.DTOs
             {
                 Id = power.Id,
                 Name = power.Name,
-                Source = power.GetSourceNames(character.Id)
+                Source = power.GetSourceNames(character.Id),
+                DifficultyClass = power.PowerType == PowerType.Saveable ? character.DifficultyClass(power) : null,
+                AttackBonus = power.PowerType == PowerType.Attack ?
+                new DiceSetDto(character.AttackBonusDiceSet(
+                    power.IsRanged ?
+                    Models.Enums.EffectOptions.AttackRollEffect_Range.Ranged : Models.Enums.EffectOptions.AttackRollEffect_Range.Melee,
+                    power.IsMagic ?
+                    Models.Enums.EffectOptions.AttackRollEffect_Source.Spell : Models.Enums.EffectOptions.AttackRollEffect_Source.Weapon
+                    ) + character.PowerCastBonus(power)) : null
             }).ToList();
             return powers;
         }

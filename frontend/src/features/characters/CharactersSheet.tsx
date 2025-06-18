@@ -30,6 +30,7 @@ import SavingThrowProficiencyContainer from "../../ui/characters/SavingThrowProf
 import SkillProficiencyContainer from "../../ui/characters/SkillProficiencyContainer";
 import { CoinPurseForm } from "../items/CoinPurseForm";
 import { useUpdateCharacterCoinSack } from "./hooks/useUpdateCharacterCoinSack";
+import { DiceSetString } from "../../models/diceset";
 
 const MainGrid = styled.div`
   display: grid;
@@ -53,7 +54,7 @@ const MainGridColumn1 = styled.div`
 `;
 const MainGridColumn2 = styled.div`
   display: grid;
-  grid-template-columns: auto auto auto auto;
+  grid-template-columns: repeat(4, minmax(0, auto));
   grid-template-rows: repeat(7, minmax(0, auto));
   grid-column-start: 2;
   grid-column-end: 3;
@@ -275,9 +276,9 @@ export default function CharactersSheet() {
             <div
               style={{
                 gridColumnStart: 1,
-                gridColumnEnd: 3,
+                gridColumnEnd: 4,
                 gridRowStart: 1,
-                gridRowEnd: 3,
+                gridRowEnd: 2,
               }}
             >
               <EditModeContext.Provider
@@ -297,7 +298,7 @@ export default function CharactersSheet() {
             <div
               style={{
                 gridColumnStart: 1,
-                gridColumnEnd: 3,
+                gridColumnEnd: 2,
                 gridRowStart: 2,
                 gridRowEnd: 3,
               }}
@@ -325,20 +326,33 @@ export default function CharactersSheet() {
                 </div>
               )}
             </div>
-            <div style={{ gridColumnStart: 3, gridColumnEnd: 5 }}>
+            <div style={{ gridColumnStart: 2, gridColumnEnd: 5, gridRow: 2 }}>
+              <DisplayBox label="Hit dice">
+                <DisplayBoxContent>{"Left: " + DiceSetString(character.hitDice.left)}</DisplayBoxContent>
+                <DisplayBoxContent>{"Total: "+DiceSetString(character.hitDice.total)}</DisplayBoxContent>
+              </DisplayBox>
+            </div>
+            <div style={{ gridColumnStart: 1, gridColumnEnd: 2, gridRow: 3 }}>
               <DisplayBox label="Race">
                 <DisplayBoxContent>{character.race.name}</DisplayBoxContent>
               </DisplayBox>
             </div>
             <div
-              style={{ gridColumnStart: 3, gridColumnEnd: 5, gridRowStart: 2 }}
+              style={{ gridColumnStart: 2, gridColumnEnd: 3, gridRowStart: 3 }}
             >
               <DisplayBox label="Size">
                 <DisplayBoxContent>{character.size.name}</DisplayBoxContent>
               </DisplayBox>
             </div>
             <div
-              style={{ gridColumnStart: 1, gridColumnEnd: 2, gridRowStart: 3 }}
+              style={{ gridColumnStart: 3, gridColumnEnd: 4, gridRowStart: 3 }}
+            >
+              <DisplayBox label="Proficiency bonus">
+                <DisplayBoxContent>{character.proficiencyBonus}</DisplayBoxContent>
+              </DisplayBox>
+            </div>
+            <div
+              style={{ gridColumnStart: 1, gridColumnEnd: 2, gridRowStart: 4 }}
             >
               <DisplayBox label="Hit points">
                 <DisplayBoxContent>
@@ -347,33 +361,33 @@ export default function CharactersSheet() {
               </DisplayBox>
             </div>
             <div
-              style={{ gridColumnStart: 2, gridColumnEnd: 3, gridRowStart: 3 }}
+              style={{ gridColumnStart: 2, gridColumnEnd: 3, gridRowStart: 4 }}
             >
               <DisplayBox label="Initiative">
                 <DisplayBoxContent>{character.initiative}</DisplayBoxContent>
               </DisplayBox>
             </div>
             <div
-              style={{ gridColumnStart: 3, gridColumnEnd: 4, gridRowStart: 3 }}
+              style={{ gridColumnStart: 3, gridColumnEnd: 4, gridRowStart: 4 }}
             >
               <DisplayBox label="Speed">
                 <DisplayBoxContent>{character.speed}</DisplayBoxContent>
               </DisplayBox>
             </div>
             <div
-              style={{ gridColumnStart: 4, gridColumnEnd: 5, gridRowStart: 3 }}
+              style={{ gridColumnStart: 4, gridColumnEnd: 5, gridRowStart: 4 }}
             >
               <DisplayBox label="Armor Class">
                 <DisplayBoxContent>{character.armorClass}</DisplayBoxContent>
               </DisplayBox>
             </div>
             <div
-              style={{ gridColumnStart: 1, gridColumnEnd: 5, gridRowStart: 4 }}
+              style={{ gridColumnStart: 1, gridColumnEnd: 5, gridRowStart: 5 }}
             >
               <WeaponAttackTable weaponAttacks={character.weaponAttacks} />
             </div>
             <div
-              style={{ gridColumnStart: 1, gridColumnEnd: 5, gridRowStart: 5 }}
+              style={{ gridColumnStart: 1, gridColumnEnd: 5, gridRowStart: 6 }}
             >
               <EditModeContext.Provider
                 value={{ editMode: editMode && EditEquippingItemsPermission }}
@@ -401,7 +415,7 @@ export default function CharactersSheet() {
               )}
             </div>
             <div
-              style={{ gridColumnStart: 1, gridColumnEnd: 5, gridRowStart: 6 }}
+              style={{ gridColumnStart: 1, gridColumnEnd: 5, gridRowStart: 7 }}
             >
               <EditModeContext.Provider
                 value={{ editMode: editMode && EditSpellbookPermission }}

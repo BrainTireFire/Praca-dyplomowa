@@ -92,12 +92,12 @@ namespace pracadyplomowa.Controllers
         [HttpPatch]
         public async Task<ActionResult> UpdatePower(PowerFormDto powerDto)
         {
-            if (!_powerService.CheckExistenceAndEditAccess((int)powerDto.Id!, User.GetUserId(), out var actionResult))
+            if (!_powerService.CheckExistenceAndEditAccess((int)powerDto.Id!, User.GetUserId(), out var actionResult, out var power))
             {
                 return actionResult;
             }
-            var power = _mapper.Map<Power>(powerDto);
-            power.Range = power.IsRanged ? power.Range : 5;
+            _mapper.Map(powerDto, power);
+            power!.Range = power.IsRanged ? power.Range : 5;
             _unitOfWork.PowerRepository.Update(power);
             try{
                 await _unitOfWork.SaveChangesAsync();

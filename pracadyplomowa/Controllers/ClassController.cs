@@ -28,7 +28,7 @@ namespace pracadyplomowa.Controllers
         [HttpGet]
         public async Task<ActionResult<ClassDTO>> GetClasses()
         {
-            var classes = await _unitOfWork.ClassRepository.GetClassList();
+            var classes = await _unitOfWork.ClassRepository.GetClassesWithClassLevels(false);
 
 
             List<ClassDTO> classDTOs = _mapper.Map<List<ClassDTO>>(classes);

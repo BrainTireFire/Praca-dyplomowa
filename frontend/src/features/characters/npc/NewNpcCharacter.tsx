@@ -1,6 +1,5 @@
 import { useCallback, useReducer } from "react";
 import Box from "../../../ui/containers/Box";
-import FormRow from "../../../ui/forms/FormRow";
 import Input from "../../../ui/forms/Input";
 import Button from "../../../ui/interactive/Button";
 import Dropdown from "../../../ui/forms/Dropdown";
@@ -10,6 +9,7 @@ import { CharacterInsertDto } from "../../../models/character";
 import toast from "react-hot-toast";
 import { useCreateNpcCharacter } from "../hooks/useCreateNpcCharacter";
 import FormRowVertical from "../../../ui/forms/FormRowVertical";
+import { FormRow } from "../../../ui/forms/FormRow";
 
 const initialState: CharacterInsertDto = {
   name: "",

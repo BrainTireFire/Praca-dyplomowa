@@ -1,11 +1,11 @@
 import { ability } from "../features/effects/abilities";
 import { DiceSet } from "./diceset";
 
-export type CharacterClass = {
+export type FirstClass = {
   id: number;
   name: string;
   level: number;
   mainAbility: ability;
-  difficultyClass: number;
-  attackBonus: number;
+  hitpoints: number;
+  hitDice: DiceSet;
 };

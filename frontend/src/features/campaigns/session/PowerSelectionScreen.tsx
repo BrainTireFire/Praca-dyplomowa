@@ -17,6 +17,7 @@ import { HiEye } from "react-icons/hi2";
 import PowerForm from "../../powers/PowerForm";
 import { EditModeContext } from "../../../context/EditModeContext";
 import styled from "styled-components";
+import { DiceSetString } from "../../../models/diceset";
 
 export function PowerSelectionScreen({
   characterId,
@@ -82,12 +83,13 @@ export default function SessionPowersTable({
           <div>Castable By</div>
           <div>Power Type</div>
           <div>Target Type</div>
+          <div>Difficulty class / Attack bonus</div>
           <div>Cast option</div>
           <div></div>
           <div></div>
         </Table.Header>
         <Table.Body
-          columnCount={14}
+          columnCount={15}
           data={powers}
           render={(power) => (
             <PowerRow
@@ -169,6 +171,7 @@ function PowerRow({
       <Cell>{power.castableBy ?? "-"}</Cell>
       <Cell>{power.powerType ?? "-"}</Cell>
       <Cell>{power.targetType ?? "-"}</Cell>
+      <Cell>{power.powerType === "Saveable" ? "DC" + power.difficultyClass : power.powerType === "Attack" ? DiceSetString(power.attackBonus) : "-"}</Cell>
       <Cell>
         <Dropdown
           valuesList={valuesList}

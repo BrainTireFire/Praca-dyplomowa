@@ -55,7 +55,9 @@ namespace pracadyplomowa.Repository.Class
         }
 
         public Task<List<Models.Entities.Characters.Class>> GetClassesWithClassLevels(bool track){
-            var x = _context.Classes.Include(c => c.R_ClassLevels);
+            var x = _context.Classes
+            .Include(c => c.R_ClassLevels)
+            .ThenInclude(cl => cl.HitDie);
 
             if(!track){
                 return x.AsNoTracking().ToListAsync();

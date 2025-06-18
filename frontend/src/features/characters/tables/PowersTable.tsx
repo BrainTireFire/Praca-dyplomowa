@@ -9,6 +9,7 @@ import { useContext } from "react";
 import Modal from "../../../ui/containers/Modal";
 import PowerForm from "../../powers/PowerForm";
 import { HiEye } from "react-icons/hi2";
+import { DiceSetString } from "../../../models/diceset";
 
 export default function PowersTable({ powers }: { powers: Power[] }) {
   const { characterId } = useContext(CharacterIdContext);
@@ -17,7 +18,7 @@ export default function PowersTable({ powers }: { powers: Power[] }) {
       <Table
         header="Powers known"
         button="Select custom"
-        columns="auto auto 0.01rem"
+        columns="auto auto auto 0.01rem"
         modal={
           <ParentObjectIdContext.Provider
             value={{ objectId: characterId, objectType: "Character" }}
@@ -28,11 +29,12 @@ export default function PowersTable({ powers }: { powers: Power[] }) {
       >
         <Table.Header>
           <div>Name</div>
+          <div>Difficulty class / Attack bonus</div>
           <div>Source</div>
           <div></div>
         </Table.Header>
         <Table.Body
-          columnCount={3}
+          columnCount={4}
           data={powers}
           render={(power) => <PowersRow key={power.id} power={power} />}
         />
@@ -46,7 +48,7 @@ function PowersRow({ power }: { power: Power }) {
   return (
     <Table.Row>
       <Cell>{power.name}</Cell>
-
+      <Cell>{!!power.difficultyClass ? "DC" + power.difficultyClass : !!power.attackBonus ? DiceSetString(power.attackBonus) : "-"}</Cell>
       <Cell>{power.source.join(", ")}</Cell>
       <Modal>
         <Menus.Menu>

@@ -46,10 +46,13 @@ export default function ClassTable({
         <Table.Header>
           <div>Name</div>
           <div>Level</div>
+          <div>Powercasting ability</div>
+          <div>Difficulty class</div>
+          <div>Power attack bonus</div>
         </Table.Header>
         <Table.Body
           data={characterClasses}
-          columnCount={2}
+          columnCount={5}
           render={(characterClass) => (
             <ClassRow key={characterClass.id} characterClass={characterClass} />
           )}
@@ -183,6 +186,15 @@ function ClassLevelSelectionScreen({
                         (x) => x.id === selectedNextClassId
                       )[0]?.hitDice
                     )}
+                  </DisplayBoxContent>
+                </DisplayBox>
+                <DisplayBox label="Powercasting ability">
+                  <DisplayBoxContent>
+                    {
+                      nextClassLevelsLocal.filter(
+                        (x) => x.id === selectedNextClassId
+                      )[0]?.powercastingAbility ?? '-'
+                    }
                   </DisplayBoxContent>
                 </DisplayBox>
               </RandomInfo>

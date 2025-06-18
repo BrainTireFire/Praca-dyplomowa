@@ -290,7 +290,7 @@ export default function CharactersSheet() {
                 </div>
               )}
             </div>
-            <div style={{ gridColumnStart: 2, gridColumnEnd: 3, gridRow: 2 }}>
+            <div style={{ gridColumnStart: 2, gridColumnEnd: 5, gridRow: 2 }}>
               <DisplayBox label="Hit dice">
                 <DisplayBoxContent>{"Left: " + DiceSetString(character.hitDice.left)}</DisplayBoxContent>
                 <DisplayBoxContent>{"Total: "+DiceSetString(character.hitDice.total)}</DisplayBoxContent>

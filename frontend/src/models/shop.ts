@@ -22,7 +22,6 @@ export type ShopItem = {
   weight: number;
   description: string;
   price: CoinPurse;
-  quantity: number;
 };
 
 export type ShopCharacterDto = {

@@ -99,8 +99,7 @@ namespace pracadyplomowa.Controllers
                     GoldPieces = e.Price.GoldPieces,
                     SilverPieces = e.Price.SilverPieces,
                     CopperPieces = e.Price.CopperPieces
-                },
-                Quantity = e.Quantity
+                }
             }).ToList();
 
             return Ok(itemsDto);
@@ -115,55 +114,44 @@ namespace pracadyplomowa.Controllers
             if (await _unitOfWork.ShopRepository.GetOwnerId(shopId) != User.GetUserId())
                 return Forbid();
 
-            var existingItem = await _unitOfWork.ShopRepository.GetShopItem(shopId, shopItemDto.Id);
             var shopItems = await _unitOfWork.ShopRepository.GetShopItems(shopId);
-
             if (shopItems == null)
             {
                 shopItems = new List<ShopItem>();
             }
 
-            if (existingItem == null)
+            var itemBlueprint = _unitOfWork.ItemRepository.GetById(shopItemDto.Id);
+            if (itemBlueprint == null)
             {
-                var newItem = new ShopItem
+                return NotFound(new ApiResponse(404, $"Item with id {shopItemDto.Id} does not exist"));
+            }
+
+            var item = itemBlueprint.CloneInstance();
+            _unitOfWork.ItemRepository.Add(item);
+            await _unitOfWork.SaveChangesAsync();
+
+            var newItem = new ShopItem
+            {
+                R_ShopHasItemId = item.Id,
+                R_ItemInShopId = shopId,
+                Price = new CoinSack
                 {
-                    R_ShopHasItemId = shopItemDto.Id,
-                    R_ItemInShopId = shopId,
-                    Price = new CoinSack
-                    {
-                        GoldPieces = shopItemDto.Price.GoldPieces,
-                        SilverPieces = shopItemDto.Price.SilverPieces,
-                        CopperPieces = shopItemDto.Price.CopperPieces
-                    },
-                    Quantity = shopItemDto.Quantity
-                };
-                _unitOfWork.ShopRepository.AddShopItem(newItem);
-            }
-            else
-            {
-                existingItem.Price.GoldPieces = shopItemDto.Price.GoldPieces;
-                existingItem.Price.SilverPieces = shopItemDto.Price.SilverPieces;
-                existingItem.Price.CopperPieces = shopItemDto.Price.CopperPieces;
-                existingItem.Quantity = shopItemDto.Quantity;
-            }
+                    GoldPieces = shopItemDto.Price.GoldPieces,
+                    SilverPieces = shopItemDto.Price.SilverPieces,
+                    CopperPieces = shopItemDto.Price.CopperPieces
+                }
+            };
+            _unitOfWork.ShopRepository.AddShopItem(newItem);
 
             await _unitOfWork.SaveChangesAsync();
             return Ok();
         }
 
         [HttpDelete("{shopId}/items")]
-        public async Task<ActionResult> RemoveShopItem(int shopId, [FromBody] JsonElement body)
+        public async Task<ActionResult> RemoveShopItem(int shopId, [FromBody] int itemId)
         {
             if (await _unitOfWork.ShopRepository.GetOwnerId(shopId) != User.GetUserId())
                 return Forbid();
-
-            if (!body.TryGetProperty("itemId", out var itemIdElement) || !body.TryGetProperty("quantity", out var quantityElement))
-            {
-                return BadRequest(new ApiResponse(400, "Missing itemId or quantity in request body."));
-            }
-
-            int itemId = itemIdElement.GetInt32();
-            int quantity = quantityElement.GetInt32();
 
             var item = await _unitOfWork.ShopRepository.GetShopItem(shopId, itemId);
 
@@ -172,16 +160,8 @@ namespace pracadyplomowa.Controllers
                 return NotFound(new ApiResponse(404, "Shop item not found"));
             }
 
-            var diff = item.Quantity - quantity;
+            _unitOfWork.ShopRepository.RemoveShopItem(item);
 
-            if (diff <= 0)
-            {
-                _unitOfWork.ShopRepository.RemoveShopItem(item);
-            }
-            else
-            {
-                item.Quantity = diff;
-            }
             await _unitOfWork.SaveChangesAsync();
 
             return Ok();
@@ -279,14 +259,7 @@ namespace pracadyplomowa.Controllers
             coinSack.Subtract(shopItem.Price);
             backpackItems.Add(item);
 
-            if (shopItem.Quantity > 1)
-            {
-                shopItem.Quantity--;
-            }
-            else
-            {
-                _unitOfWork.ShopRepository.RemoveShopItem(shopItem);
-            }
+            _unitOfWork.ShopRepository.RemoveShopItem(shopItem);
 
             await _unitOfWork.SaveChangesAsync();
             return Ok();
@@ -324,29 +297,21 @@ namespace pracadyplomowa.Controllers
             var itemPrice = itemToSell.Price;
             coinSack.Add(itemPrice);
 
+            itemToSell.Unequip(character);
             backpackItems.Remove(itemToSell);
 
-            var shopItem = await _unitOfWork.ShopRepository.GetShopItem(shopId, itemToSell.Id);
-            if (shopItem == null)
+            var shopItem = new ShopItem
             {
-                shopItem = new ShopItem
+                R_ShopHasItemId = itemToSell.Id,
+                R_ItemInShopId = shopId,
+                Price = new CoinSack
                 {
-                    R_ShopHasItemId = itemToSell.Id,
-                    R_ItemInShopId = shopId,
-                    Price = new CoinSack
-                    {
-                        GoldPieces = itemPrice.GoldPieces,
-                        SilverPieces = itemPrice.SilverPieces,
-                        CopperPieces = itemPrice.CopperPieces
-                    },
-                    Quantity = 1
-                };
-                _unitOfWork.ShopRepository.AddShopItem(shopItem);
-            }
-            else
-            {
-                shopItem.Quantity++;
-            }
+                    GoldPieces = itemPrice.GoldPieces,
+                    SilverPieces = itemPrice.SilverPieces,
+                    CopperPieces = itemPrice.CopperPieces
+                },
+            };
+            _unitOfWork.ShopRepository.AddShopItem(shopItem);
 
             await _unitOfWork.SaveChangesAsync();
             return Ok();

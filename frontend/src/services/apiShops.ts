@@ -74,17 +74,13 @@ export async function patchShopItem(shopId: number, shopItem: ShopItem) {
   await customFetch(`${BASE_URL}/api/shop/${shopId}/items`, options);
 }
 
-export async function removeShopItem(
-  shopId: number,
-  itemId: number,
-  quantity: number
-) {
+export async function removeShopItem(shopId: number, itemId: number) {
   const options: RequestInit = {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ itemId, quantity }),
+    body: JSON.stringify(itemId),
   };
   await customFetch(`${BASE_URL}/api/shop/${shopId}/items`, options);
 }

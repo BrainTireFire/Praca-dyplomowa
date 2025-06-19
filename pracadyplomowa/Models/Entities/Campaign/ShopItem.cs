@@ -10,7 +10,6 @@ namespace pracadyplomowa.Models.Entities.Campaign
     {
         //Properties
         public CoinSack Price { get; set; } = new();
-        public int Quantity { get; set; }
 
         //Relationship
         public virtual Item R_ShopHasItem { get; set; } = null!;

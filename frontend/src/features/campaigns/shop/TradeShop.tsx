@@ -162,8 +162,8 @@ export default function TradeShop() {
               <thead>
                 <Th>Name</Th>
                 <Th>Weight</Th>
+                <Th>Description</Th>
                 <Th>Price</Th>
-                <Th>Qty</Th>
               </thead>
               <tbody>
                 {shopItems?.map((item: ShopItem) => (
@@ -183,8 +183,8 @@ export default function TradeShop() {
                   >
                     <Td>{item.name}</Td>
                     <Td>{item.weight}</Td>
+                    <Td>{item.description}</Td>
                     <Td>{coinPursePrint(item.price)}</Td>
-                    <Td>{item.quantity}</Td>
                   </Tr>
                 ))}
               </tbody>
@@ -239,8 +239,8 @@ export default function TradeShop() {
               <thead>
                 <Th>Name</Th>
                 <Th>Weight</Th>
-                <Th>Price</Th>
                 <Th>Description</Th>
+                <Th>Price</Th>
               </thead>
               <tbody>
                 {characterItems?.map((item: ShopItem) => (
@@ -260,8 +260,8 @@ export default function TradeShop() {
                   >
                     <Td>{item.name}</Td>
                     <Td>{item.weight}</Td>
-                    <Td>{coinPursePrint(item.price)}</Td>
                     <Td>{item.description}</Td>
+                    <Td>{coinPursePrint(item.price)}</Td>
                   </Tr>
                 ))}
               </tbody>

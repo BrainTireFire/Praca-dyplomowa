@@ -12,7 +12,5 @@ namespace pracadyplomowa.Models.DTOs
         [MaxLength(50)]
         public string Description { get; set; }
         public CoinPurseDto Price { get; set; }
-        [Required]
-        public int Quantity { get; set; }
     }
 }

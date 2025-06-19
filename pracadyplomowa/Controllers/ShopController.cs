@@ -279,7 +279,7 @@ namespace pracadyplomowa.Controllers
                 return NotFound(new ApiResponse(404, $"Shop not found: {shopId}"));
             }
 
-            var character = await _unitOfWork.ItemRepository.GetCharacterWithBackpackItems(sellItemDto.CharacterId);
+            var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(sellItemDto.CharacterId);
             if (character == null)
             {
                 return NotFound(new ApiResponse(404, $"Character not found: {sellItemDto.CharacterId}"));

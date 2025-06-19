@@ -1,4 +1,9 @@
-import { Shop, ShopInsertDto, ShopItem } from "../models/shop";
+import {
+  Shop,
+  ShopCharacterDto,
+  ShopInsertDto,
+  ShopItem,
+} from "../models/shop";
 import { BASE_URL } from "./constAPI";
 import { customFetch } from "./customFetch";
 
@@ -69,17 +74,56 @@ export async function patchShopItem(shopId: number, shopItem: ShopItem) {
   await customFetch(`${BASE_URL}/api/shop/${shopId}/items`, options);
 }
 
-export async function removeShopItem(
-  shopId: number,
-  itemId: number,
-  quantity: number
-) {
+export async function removeShopItem(shopId: number, itemId: number) {
   const options: RequestInit = {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ itemId, quantity }),
+    body: JSON.stringify(itemId),
   };
   await customFetch(`${BASE_URL}/api/shop/${shopId}/items`, options);
+}
+
+export async function getShopCharacter(
+  campaignId: number
+): Promise<ShopCharacterDto> {
+  const options: RequestInit = {
+    method: "GET",
+  };
+
+  const data = await customFetch(
+    `${BASE_URL}/api/shop/character/${campaignId}`,
+    options
+  );
+
+  return data;
+}
+
+export async function buyItem(
+  shopId: number,
+  characterId: number,
+  itemId: number
+) {
+  const options: RequestInit = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ shopId, characterId, itemId }),
+  };
+
+  return await customFetch(`${BASE_URL}/api/shop/${shopId}/buy`, options);
+}
+
+export async function sellItem(
+  shopId: number,
+  characterId: number,
+  itemId: number
+) {
+  const options: RequestInit = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ shopId, characterId, itemId }),
+  };
+
+  return await customFetch(`${BASE_URL}/api/shop/${shopId}/sell`, options);
 }

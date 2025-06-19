@@ -70,6 +70,11 @@ export type Character = {
   accessLevels: CharacterAccessLevels[];
   xp: number;
   canLevelUp: boolean;
+  coinPurse: {
+    goldPieces: number;
+    silverPieces: number;
+    copperPieces: number;
+  }
 };
 
 export type CharacterInsertDto = {

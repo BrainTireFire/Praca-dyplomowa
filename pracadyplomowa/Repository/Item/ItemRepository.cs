@@ -101,5 +101,14 @@ namespace pracadyplomowa.Repository.Item
             .FirstOrDefaultAsync(e => e.Id == itemId);
             return await item;
         }
+        public async Task<Models.Entities.Characters.Character> GetCharacterWithBackpackItems(int characterId)
+        {
+            var character = await _context.Characters
+            .Include(e => e.R_CharacterHasBackpack)
+            .ThenInclude(i => i.R_BackpackHasItems)
+            .FirstOrDefaultAsync(e => e.Id == characterId);
+
+            return character;
+        }
     }
 }

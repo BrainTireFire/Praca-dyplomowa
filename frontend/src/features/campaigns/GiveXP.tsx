@@ -8,6 +8,7 @@ import styled from "styled-components";
 import { CharacterItem } from "../../models/character";
 import { useUpdateXP } from "../characters/hooks/useUpdateCharacter";
 import Spinner from "../../ui/interactive/Spinner";
+import { useParams } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -18,10 +19,11 @@ const Container = styled.div`
 `;
 
 function GiveXP({ membersList }: { membersList: CharacterItem[] }) {
+  const { campaignId } = useParams<{ campaignId: string }>();
   const [members, setMembers] = useState(membersList);
   const [selectedMembers, setSelectedMembers] = useState<number[]>([]);
   const [inputXP, setInputXP] = useState<number>(0);
-  const { isPending, updateXP } = useUpdateXP(membersList[0].campaignId || 0);
+  const { isPending, updateXP } = useUpdateXP(Number(campaignId) || 0);
 
   if (isPending) return <Spinner />;
 
@@ -60,7 +62,7 @@ function GiveXP({ membersList }: { membersList: CharacterItem[] }) {
             member={e}
             key={e.id}
             type="xp"
-            selected={!!(selectedMembers.find(x => x === e.id))}
+            selected={!!selectedMembers.find((x) => x === e.id)}
           ></MemberSelect>
         ))}
       </Box>

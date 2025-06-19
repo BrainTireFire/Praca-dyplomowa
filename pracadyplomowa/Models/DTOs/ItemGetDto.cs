@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace pracadyplomowa.Models.DTOs
 {
-    public class ShopItemDto
+    public class ItemGetDto
     {
         [Required]
         public int Id { get; set; }
@@ -12,7 +12,5 @@ namespace pracadyplomowa.Models.DTOs
         [MaxLength(50)]
         public string Description { get; set; }
         public CoinPurseDto Price { get; set; }
-        [Required]
-        public int Quantity { get; set; }
     }
 }

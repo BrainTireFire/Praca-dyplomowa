@@ -25,7 +25,7 @@ export function useBuyItem() {
     },
     onError: (error: any) => {
       toast.error(
-        error?.message || "Something went wrong while buying the item."
+        error?.message.message || "Something went wrong while buying the item."
       );
     },
   });

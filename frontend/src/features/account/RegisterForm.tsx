@@ -84,13 +84,22 @@ export default function RegisterForm() {
             required: t("account.form.validation.error.required"),
             minLength: {
               value: 8,
-              message: t(
-                "account.form.validation.error.password.characters.long"
-              ),
+              message: t("Password must be at least 6 characters long."),
+            },
+            validate: {
+              hasUpperCase: (value) =>
+                /[A-Z]/.test(value) ||
+                "Password must include at least one uppercase letter",
+              hasLowerCase: (value) =>
+                /[a-z]/.test(value) ||
+                "Password must include at least one lowercase letter",
+              hasNumber: (value) =>
+                /\d/.test(value) || "Password must include at least one digit",
             },
           })}
         />
       </FormRowVertical>
+
       <FormRowVertical
         label={t("account.forms.login.confirm.password.input.label")}
         error={errors?.confirmPassword?.message}

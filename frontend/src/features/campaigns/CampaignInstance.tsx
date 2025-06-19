@@ -83,73 +83,73 @@ export default function CampaignInstance() {
     <Container>
       <Heading as="h1">{name}</Heading>
       <Line size="percantage" bold="large" />
-      {campaign.isGameMaster && (
-        <>
-          <div>
-            <HeaderButtons>
-              <Modal>
-                <Modal.Open opens="GiveXP">
-                  <Button size="large">{t("campaignInstance.giveXP")}</Button>
-                </Modal.Open>
-                <Modal.Window name="GiveXP">
-                  <GiveXP membersList={members} />
-                </Modal.Window>
-              </Modal>
-              <Modal>
-                <Modal.Open opens="ShortRestModal">
-                  <Button size="large">
-                    {t("campaignInstance.shortRest")}
-                  </Button>
-                </Modal.Open>
-                <Modal.Window name="ShortRestModal">
-                  <ShortRestModalGM
-                    membersList={members}
-                    onCloseModal={() => {}}
-                  />
-                </Modal.Window>
-              </Modal>
-              <Button size="large" onClick={() => longRest()}>
-                {t("campaignInstance.longRest")}
-              </Button>
-              <Button
-                size="large"
-                onClick={() => navigate(`/campaigns/${id}/createSession`)}
-              >
-                {t("campaignInstance.session")}
-              </Button>
-              <Button size="large" onClick={() => navigate("shops")}>
-                {t("campaignInstance.shops")}
-              </Button>
-              <Button
-                size="large"
-                onClick={() => navigate(`/campaigns/${id}/encounters`)}
-              >
-                Manage encounters
-              </Button>
-            </HeaderButtons>
-          </div>
-
-          <Line size="percantage" />
-        </>
+      {campaign.isGameMaster ? (
+        <HeaderButtons>
+          <Modal>
+            <Modal.Open opens="GiveXP">
+              <Button size="large">{t("campaignInstance.giveXP")}</Button>
+            </Modal.Open>
+            <Modal.Window name="GiveXP">
+              <GiveXP membersList={members} />
+            </Modal.Window>
+          </Modal>
+          <Button size="large" onClick={() => longRest()}>
+            {t("campaignInstance.longRest")}
+          </Button>
+          <Button
+            size="large"
+            onClick={() => navigate(`/campaigns/${id}/createSession`)}
+          >
+            {t("campaignInstance.session")}
+          </Button>
+          <Button
+            size="large"
+            onClick={() => navigate(`/campaigns/${id}/encounters`)}
+          >
+            Manage encounters
+          </Button>
+          <Button
+            size="large"
+            onClick={() => {
+              navigate("shops", {
+                state: { isGameMaster: campaign.isGameMaster, campaignId: id },
+              });
+            }}
+          >
+            {t("campaignInstance.shops")}
+          </Button>
+          <Modal>
+            <Modal.Open opens="ShortRestModal">
+              <Button size="large">{t("campaignInstance.shortRest")}</Button>
+            </Modal.Open>
+            <Modal.Window name="ShortRestModal">
+              <ShortRestModalGM membersList={members} onCloseModal={() => {}} />
+            </Modal.Window>
+          </Modal>
+        </HeaderButtons>
+      ) : (
+        <HeaderButtons>
+          <Button
+            size="large"
+            onClick={() => {
+              navigate("shops", {
+                state: { isGameMaster: campaign.isGameMaster, campaignId: id },
+              });
+            }}
+          >
+            {t("campaignInstance.shops")}
+          </Button>
+          <Modal>
+            <Modal.Open opens="ShortRestModal">
+              <Button size="large">{t("campaignInstance.shortRest")}</Button>
+            </Modal.Open>
+            <Modal.Window name="ShortRestModal">
+              <ShortRestModalCharacter onCloseModal={() => {}} />
+            </Modal.Window>
+          </Modal>
+        </HeaderButtons>
       )}
-      {!campaign.isGameMaster && (
-        <>
-          <div>
-            <HeaderButtons>
-              <Modal>
-                <Modal.Open opens="ShortRestModal">
-                  <Button size="large">
-                    {t("campaignInstance.shortRest")}
-                  </Button>
-                </Modal.Open>
-                <Modal.Window name="ShortRestModal">
-                  <ShortRestModalCharacter onCloseModal={() => {}} />
-                </Modal.Window>
-              </Modal>
-            </HeaderButtons>
-          </div>
-        </>
-      )}
+      <Line size="percantage" />
       <Heading as="h2">Description</Heading>
       {description === "" ? (
         <p>No description</p>

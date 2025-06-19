@@ -206,7 +206,7 @@ export default function MainNavbar() {
         </DropdownNav>
         <li>
           <StyledNavLink to="/contact">
-            <span>{t("main.navbar.link.concact")}</span>
+            <span>{t("main.navbar.link.contact")}</span>
           </StyledNavLink>
         </li>
 

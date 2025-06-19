@@ -21,7 +21,7 @@ export function CoinPurseForm({
 }) {
   return (
     <FlexBox>
-      <FormRowVertical label="Gold pieces">
+      <FormRowVertical label="Gold pieces" error={value.goldPieces >= 0 ? null : "Invalid"}>
         <Input
           disabled={disabled}
           type="number"
@@ -30,9 +30,10 @@ export function CoinPurseForm({
           customStyles={css`
             width: 6em;
           `}
+          min={0}
         ></Input>
       </FormRowVertical>
-      <FormRowVertical label="Silver pieces">
+      <FormRowVertical label="Silver pieces" error={value.silverPieces >= 0 ? null : "Invalid"}>
         <Input
           disabled={disabled}
           type="number"
@@ -41,9 +42,10 @@ export function CoinPurseForm({
           customStyles={css`
             width: 6em;
           `}
+          min={0}
         ></Input>
       </FormRowVertical>
-      <FormRowVertical label="Copper pieces">
+      <FormRowVertical label="Copper pieces" error={value.copperPieces >= 0 ? null : "Invalid"}>
         <Input
           disabled={disabled}
           type="number"
@@ -52,6 +54,7 @@ export function CoinPurseForm({
           customStyles={css`
             width: 6em;
           `}
+          min={0}
         ></Input>
       </FormRowVertical>
     </FlexBox>

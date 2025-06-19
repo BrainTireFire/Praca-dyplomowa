@@ -336,11 +336,11 @@ namespace pracadyplomowa.Controllers
                 return NotFound("Item not found");
             }
 
-            item.R_EquipData = null;
+            var character = await _unitOfWork.CharacterRepository.GetCharacterEquipment(characterId);
+
+            item.Unequip(character);
 
             item.R_BackpackHasItem = null;
-
-            var character = await _unitOfWork.CharacterRepository.GetCharacterEquipment(characterId);
 
             if (character == null)
             {

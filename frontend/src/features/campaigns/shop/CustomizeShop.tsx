@@ -99,12 +99,13 @@ const Input = styled.input`
 
 function CustomizeShop() {
   const { shop, isLoading } = useShop();
-  const { isLoading: isLoadingItems, items, error } = useAllItems();
+  const { isLoading: isLoadingItems, items: allItems, error } = useAllItems();
   const {
     isLoading: isLoadingShopItems,
     shopItems: data,
     error: shopItemsError,
   } = useShopItems();
+  const [items, setItems] = useState<ShopItem[]>([]);
   const [shopItems, setShopItems] = useState(data);
   const [copyPrice, setCopyPrice] = React.useState(true);
   const { updateShopItem } = useUpdateShopItem();
@@ -114,7 +115,10 @@ function CustomizeShop() {
     if (data) {
       setShopItems(data);
     }
-  }, [data]);
+    if (allItems) {
+      setItems(allItems);
+    }
+  }, [data, allItems]);
 
   const [selectedItem, setSelectedItem] = useState<ShopItem | undefined>(
     undefined
@@ -129,8 +133,6 @@ function CustomizeShop() {
     silverPieces: 0,
     copperPieces: 0,
   });
-
-  const [quantity, setQuantity] = useState(1);
 
   if (isLoading || isLoadingItems || isLoadingShopItems) {
     return <Spinner />;
@@ -162,61 +164,26 @@ function CustomizeShop() {
   const handleRemoveShopItem = () => {
     if (!selectedShopItem) return;
 
-    setShopItems((prevShopItems) => {
-      if (!prevShopItems) return [];
-
-      const existingItem = prevShopItems.find(
-        (item) => item.id === selectedShopItem.id
-      );
-
-      if (!existingItem) return prevShopItems;
-
-      const diff = existingItem.quantity - quantity;
-
-      if (diff <= 0) {
-        return prevShopItems.filter((item) => item.id !== selectedShopItem.id);
-      } else {
-        return prevShopItems.map((item) =>
-          item.id === selectedShopItem.id ? { ...item, quantity: diff } : item
-        );
-      }
-    });
-
     removeShopItem({
       shopId: shop.id,
       itemId: selectedShopItem.id,
-      quantity: quantity,
     });
+
+    setSelectedShopItem(undefined);
   };
 
   const handleUpdateShopItem = () => {
     if (!selectedItem) return;
 
     const updatedPrice = copyPrice ? selectedItem.price : price;
-    const existingQuantity =
-      shopItems.find((item) => item.id === selectedItem.id)?.quantity || 0;
 
     const updatedItem: ShopItem = {
       ...selectedItem,
-      quantity: quantity + existingQuantity,
       price: updatedPrice,
     };
 
-    setShopItems((prevShopItems = []) => {
-      const existingItemIndex = prevShopItems.findIndex(
-        (item) => item.id === selectedItem.id
-      );
-
-      if (existingItemIndex !== -1) {
-        const newItems = [...prevShopItems];
-        newItems[existingItemIndex] = updatedItem;
-        return newItems;
-      }
-
-      return [...prevShopItems, updatedItem];
-    });
-
     updateShopItem({ shopId: shop.id, shopItem: updatedItem });
+    setSelectedItem(undefined);
   };
 
   return (
@@ -301,17 +268,18 @@ function CustomizeShop() {
             checked={copyPrice}
             onChange={() => setCopyPrice(!copyPrice)}
           />
-          <Button onClick={() => handleUpdateShopItem()}> → </Button>
-          <div style={{ textAlign: "center" }}>
-            <Input
-              type="number"
-              value={quantity}
-              onChange={(e) => setQuantity(parseInt(e.target.value))}
-              disabled={!selectedItem && !selectedShopItem}
-            />
-            <p>Quantity</p>
-          </div>
-          <Button onClick={() => handleRemoveShopItem()}> ← </Button>
+          <Button
+            onClick={() => handleUpdateShopItem()}
+            disabled={!selectedItem}
+          >
+            →
+          </Button>
+          <Button
+            onClick={() => handleRemoveShopItem()}
+            disabled={!selectedShopItem}
+          >
+            ←
+          </Button>
         </MiddleContainer>
         <TableContainer>
           <Heading as="h1">Shop Inventory</Heading>
@@ -319,8 +287,8 @@ function CustomizeShop() {
             <Table>
               <thead>
                 <Th>Name</Th>
+                <Th>Description</Th>
                 <Th>Price</Th>
-                <Th>Qty</Th>
               </thead>
               <tbody>
                 {shopItems?.map((item: ShopItem) => (
@@ -335,8 +303,8 @@ function CustomizeShop() {
                     }}
                   >
                     <Td>{item.name}</Td>
+                    <Td>{item.description}</Td>
                     <Td>{coinPursePrint(item.price)}</Td>
-                    <Td>{item.quantity}</Td>
                   </Tr>
                 ))}
               </tbody>

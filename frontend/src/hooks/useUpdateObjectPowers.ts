@@ -34,7 +34,6 @@ export function useUpdateObjectPowers(
       onSuccess();
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Power selection failed");
     },
   });

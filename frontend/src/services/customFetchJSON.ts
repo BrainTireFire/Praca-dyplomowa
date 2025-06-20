@@ -35,10 +35,8 @@ export async function customFetchJSON(
     }
   } catch (error) {
     if (error instanceof TypeError && error.message === "Failed to fetch") {
-      console.error("Fetch error: Network error, server may be down");
       throw new Error("FailedToFetch");
     } else {
-      console.error("Fetch error:", error);
       throw error;
     }
   }

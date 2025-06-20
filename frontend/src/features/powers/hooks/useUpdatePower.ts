@@ -8,13 +8,11 @@ export function useUpdatePower(onSuccess: () => void) {
   const { mutate: updatePower, isPending } = useMutation({
     mutationFn: (power: Power) => updatePowerApi(power),
     onSuccess: (result: any) => {
-      console.log(result);
       queryClient.invalidateQueries({ queryKey: ["powerList"] });
       toast.success("Power updated");
       onSuccess();
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Power update failed: " + error.message);
     },
   });

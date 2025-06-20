@@ -12,7 +12,6 @@ export function useCreateCharacter(onSuccess: () => void) {
       onSuccess();
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Character creation failed");
     },
   });

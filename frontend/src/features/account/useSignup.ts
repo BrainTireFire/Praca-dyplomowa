@@ -15,7 +15,6 @@ export function useSignup() {
       navigate("/main", { replace: true });
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Error signing up. Please try again.");
     },
   });

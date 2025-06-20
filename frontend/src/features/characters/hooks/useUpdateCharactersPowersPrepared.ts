@@ -25,7 +25,6 @@ export function useUpdateCharactersPowersPrepared(
         onSuccess();
       },
       onError: (error) => {
-        console.error(error);
         toast.error("Power preparation failed.");
       },
     });

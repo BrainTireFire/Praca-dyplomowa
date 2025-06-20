@@ -53,6 +53,20 @@ const PersonContainer = styled.div`
   gap: 2rem;
 `;
 
+const LogoContainer = styled.div`
+  width: 300px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+`;
+
 export default function Home() {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -68,7 +82,9 @@ export default function Home() {
         </Button>
       </ButtonContainer>
       <Heading as="h12" align="left" color="textColor">
-        {t("main.title.text")}
+        <LogoContainer>
+          <img src="logo.png" alt="Logo" />
+        </LogoContainer>
       </Heading>
       <HeaderParagraph>PJATK students present</HeaderParagraph>
       <BodyParagraph>

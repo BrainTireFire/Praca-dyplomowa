@@ -17,7 +17,6 @@ export function useDeleteEffectBlueprint(
       onSuccess();
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Effect blueprint deletion failed");
     },
   });

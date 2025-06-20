@@ -15,7 +15,7 @@ export function ClassPowersToPrepareTabs() {
   if (isLoadingPowersToPrepare) {
     return <Spinner></Spinner>;
   }
-  console.log(powersToPrepare);
+
   return (
     <>
       <TabList activeTabIndex={0}>

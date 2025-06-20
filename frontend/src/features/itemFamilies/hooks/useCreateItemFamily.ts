@@ -15,7 +15,6 @@ export function useCreateItemFamily(onSuccess: (id: number) => void) {
       onSuccess(id);
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Item family creation failed");
     },
   });

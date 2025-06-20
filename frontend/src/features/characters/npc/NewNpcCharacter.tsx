@@ -76,7 +76,7 @@ const characterReducer = (
       newState = state;
       break;
   }
-  console.log(newState);
+
   return newState;
 };
 const abilityErrorMessage = "Value must be in range of 1-20";

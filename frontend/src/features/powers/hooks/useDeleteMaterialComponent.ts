@@ -16,7 +16,6 @@ export function useDeleteMaterialComponent(
       onSuccess();
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Material component deletion failed");
     },
   });

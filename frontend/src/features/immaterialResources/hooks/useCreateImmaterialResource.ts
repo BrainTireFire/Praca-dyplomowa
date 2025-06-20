@@ -20,7 +20,6 @@ export function useCreateImmaterialResource(onSuccess: (id: number) => void) {
       onSuccess(id);
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Immaterial resource creation failed");
     },
   });

@@ -32,8 +32,10 @@ export function PowerSelectionScreen({
   dispatch: React.Dispatch<SetPower>;
   onCloseModal: () => {};
 }) {
-  console.log(characterId);
-  const { isLoading, powers, isError, error } = useGetPowers(characterId, encounterId);
+  const { isLoading, powers, isError, error } = useGetPowers(
+    characterId,
+    encounterId
+  );
   if (isLoading) {
     return <Spinner></Spinner>;
   }
@@ -121,29 +123,35 @@ function PowerRow({
     useState<ImmaterialResourceSelection | null>(null);
 
   const buttonLabelArray = [];
-  if(power.actionTypeRequired === "Action" && !power.requiredActionAvailable){
-    buttonLabelArray.push('No actions left');
+  if (power.actionTypeRequired === "Action" && !power.requiredActionAvailable) {
+    buttonLabelArray.push("No actions left");
   }
-  if(power.actionTypeRequired === "BonusAction" && !power.requiredBonusActionAvailable){
-    buttonLabelArray.push('No bonus actions left');
+  if (
+    power.actionTypeRequired === "BonusAction" &&
+    !power.requiredBonusActionAvailable
+  ) {
+    buttonLabelArray.push("No bonus actions left");
   }
-  if(power.actionTypeRequired === "WeaponAttack" && !power.requiredWeaponAttackAvailable){
-    buttonLabelArray.push('No attacks left');
+  if (
+    power.actionTypeRequired === "WeaponAttack" &&
+    !power.requiredWeaponAttackAvailable
+  ) {
+    buttonLabelArray.push("No attacks left");
   }
-  if(!power.vocalComponentRequirementSatisfied){
-    buttonLabelArray.push('Cannot speak');
+  if (!power.vocalComponentRequirementSatisfied) {
+    buttonLabelArray.push("Cannot speak");
   }
-  if(!power.somaticComponentRequirementSatisfied){
-    buttonLabelArray.push('Cannot make gestures');
+  if (!power.somaticComponentRequirementSatisfied) {
+    buttonLabelArray.push("Cannot make gestures");
   }
-  if(!power.requiredResourceAvailable){
-    buttonLabelArray.push('Required resource not available');
+  if (!power.requiredResourceAvailable) {
+    buttonLabelArray.push("Required resource not available");
   }
-  if(!power.requiredMaterialComponentsAvailable){
-    buttonLabelArray.push('Required components not available');
+  if (!power.requiredMaterialComponentsAvailable) {
+    buttonLabelArray.push("Required components not available");
   }
-  if(chosenLevel == null && power.availableLevels.length > 0){
-    buttonLabelArray.push('Power level not selected');
+  if (chosenLevel == null && power.availableLevels.length > 0) {
+    buttonLabelArray.push("Power level not selected");
   }
   const disabled = buttonLabelArray.length > 0;
 
@@ -171,7 +179,13 @@ function PowerRow({
       <Cell>{power.castableBy ?? "-"}</Cell>
       <Cell>{power.powerType ?? "-"}</Cell>
       <Cell>{power.targetType ?? "-"}</Cell>
-      <Cell>{power.powerType === "Saveable" ? "DC" + power.difficultyClass : power.powerType === "Attack" ? DiceSetString(power.attackBonus) : "-"}</Cell>
+      <Cell>
+        {power.powerType === "Saveable"
+          ? "DC" + power.difficultyClass
+          : power.powerType === "Attack"
+          ? DiceSetString(power.attackBonus)
+          : "-"}
+      </Cell>
       <Cell>
         <Dropdown
           valuesList={valuesList}
@@ -207,7 +221,7 @@ function PowerRow({
           onCloseModal();
         }}
       >
-        {buttonLabelArray.length > 0 ? buttonLabelArray.join(', ') : 'Select'}
+        {buttonLabelArray.length > 0 ? buttonLabelArray.join(", ") : "Select"}
       </Button>
       <Modal>
         <Menus.Menu>
@@ -221,7 +235,7 @@ function PowerRow({
           </Menus.List>
         </Menus.Menu>
         <Modal.Window name="open">
-          <EditModeContext.Provider value={{editMode: false}}>
+          <EditModeContext.Provider value={{ editMode: false }}>
             <Container>
               <PowerForm powerId={power.id}></PowerForm>
             </Container>
@@ -231,7 +245,6 @@ function PowerRow({
     </Table.Row>
   );
 }
-
 
 const Container = styled.div`
   display: flex;

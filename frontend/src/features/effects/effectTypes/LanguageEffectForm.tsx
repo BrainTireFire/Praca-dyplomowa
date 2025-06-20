@@ -9,11 +9,8 @@ import { EditModeContext } from "../../../context/EditModeContext";
 import { EffectContext } from "../contexts/BlueprintOrInstanceContext";
 import { useLanguages } from "../hooks/useLanguages";
 
-
-
 export type Effect = {
-  effectType: {
-  };
+  effectType: {};
   languageId: number | null;
 };
 
@@ -23,8 +20,7 @@ type Action = {
 };
 
 export const initialState: Effect = {
-  effectType: {
-  },
+  effectType: {},
   languageId: null,
 };
 
@@ -36,8 +32,7 @@ export default function LanguageEffectForm({
   effect: Effect;
 }) {
   const effectContext = useContext(EffectContext);
-  const { isLoading, languages, error } =
-    useLanguages(effectContext);
+  const { isLoading, languages, error } = useLanguages(effectContext);
   const localLanguages = languages?.map((x) => {
     return { id: x.id, name: x.name };
   });
@@ -54,7 +49,7 @@ export default function LanguageEffectForm({
         newState = state;
         break;
     }
-    console.log(newState);
+
     return newState;
   };
   const [state, dispatch] = useReducer(effectReducer, effect);
@@ -75,9 +70,7 @@ export default function LanguageEffectForm({
     <Box>
       <FormRowVertical label="Language">
         <Dropdown
-          disabled={
-            disableUpdate
-          }
+          disabled={disableUpdate}
           chosenValue={state.languageId?.toString() ?? null}
           setChosenValue={(e) =>
             dispatch({ type: "setLanguage", payload: Number(e) })

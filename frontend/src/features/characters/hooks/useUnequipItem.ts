@@ -21,7 +21,6 @@ export function useUnequipItem(onSuccess: () => void) {
       onSuccess();
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Item unequipment failed!");
     },
   });

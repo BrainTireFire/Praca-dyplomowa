@@ -22,7 +22,6 @@ export function useUpdateEffectBlueprint(
       onSuccess();
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Effect Blueprint update failed");
     },
   });

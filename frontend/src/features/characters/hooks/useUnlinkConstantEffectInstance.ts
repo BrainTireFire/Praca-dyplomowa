@@ -16,7 +16,6 @@ export function useUnlinkConstantEffectInstance(
       onSuccess();
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Effect instance unlinking from character failed");
     },
   });

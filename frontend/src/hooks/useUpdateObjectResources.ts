@@ -30,7 +30,6 @@ export function useUpdateObjectResources(
       onSuccess();
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Resource selection failed.");
     },
   });

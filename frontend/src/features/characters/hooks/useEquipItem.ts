@@ -21,7 +21,6 @@ export function useEquipItem(onSuccess: () => void) {
       onSuccess();
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Item equipment failed!");
     },
   });

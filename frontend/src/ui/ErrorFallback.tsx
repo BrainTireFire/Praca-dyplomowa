@@ -52,8 +52,8 @@ type FallbackProps = {
 function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   useEffect(() => {
     // Log the error details for developers
-    console.error("Error:", error.message);
-    console.error("Stack trace:", error.stack);
+    // console.error("Error:", error.message);
+    // console.error("Stack trace:", error.stack);
   }, [error]);
 
   return (

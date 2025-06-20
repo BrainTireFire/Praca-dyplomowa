@@ -12,14 +12,12 @@ export function useCreateConstantEffectInstance(
     mutationFn: (effectInstance: EffectBlueprint) =>
       addConstantEffectInstance(effectInstance, characterId),
     onSuccess: () => {
-      console.log("Create: " + characterId);
       queryClient.invalidateQueries({ queryKey: ["character", characterId] });
       // Explicitly refetch the query after invalidation
       queryClient.refetchQueries({ queryKey: ["character", characterId] });
       onSuccess();
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Effect instance creation failed");
     },
   });

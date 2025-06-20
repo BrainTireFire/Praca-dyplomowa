@@ -46,7 +46,6 @@ const effectReducer = (state: Effect, action: Action): Effect => {
       };
       break;
     case "setValue":
-      console.log("updated value in skill effect form");
       newState = { ...state, value: action.payload };
       break;
     case "setRollMoment":
@@ -62,7 +61,7 @@ const effectReducer = (state: Effect, action: Action): Effect => {
       newState = state;
       break;
   }
-  console.log(newState);
+
   return newState;
 };
 

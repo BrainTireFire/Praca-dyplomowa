@@ -15,7 +15,6 @@ export function useUpdateItemSlots(onSuccess: () => void, itemId: number) {
       onSuccess();
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Item update failed");
     },
   });

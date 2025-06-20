@@ -12,19 +12,17 @@ type LoginData = {
 export function useLogin() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const {setPayloadContainer} = useAuth();
+  const { setPayloadContainer } = useAuth();
 
   const { mutate: login, isLoading } = useMutation({
     mutationFn: ({ username, password }: LoginData) =>
       loginApi({ username, password }),
     onSuccess: (data) => {
-      console.log("data ", data);
       queryClient.setQueryData(["user"], data);
-      setPayloadContainer({payload: true});
+      setPayloadContainer({ payload: true });
       navigate("/main", { replace: true });
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Provided credentials are incorrect");
     },
   });

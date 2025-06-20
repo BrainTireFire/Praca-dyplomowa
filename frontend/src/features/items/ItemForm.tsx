@@ -115,7 +115,7 @@ export default function ItemForm({
   itemId,
   initialFormValues,
   onCloseModal,
-  maxHeight
+  maxHeight,
 }: {
   itemId: number | null;
   initialFormValues: Item;
@@ -138,7 +138,6 @@ export default function ItemForm({
   const [state, dispatch] = useReducer(itemReducer, item ?? initialFormValues);
   const [resetHappened, setResetHappened] = useState(false);
   // const handleChangeItem = (chosenItemId: number) => {
-  //   console.log(chosenItemId);
   //   navigate(`/items?id=${chosenItemId}`)
   // };
   // Update local state when data is fetched
@@ -444,5 +443,5 @@ ItemForm.defaultProps = {
   itemId: null,
   initialFormValues: itemInitialValue,
   onCloseModal: () => {},
-  maxHeight: "80vh"
+  maxHeight: "80vh",
 };

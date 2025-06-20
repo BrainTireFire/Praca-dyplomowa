@@ -101,7 +101,7 @@ const effectReducer = (state: Effect, action: Action): Effect => {
       newState = state;
       break;
   }
-  console.log(newState);
+
   return newState;
 };
 

@@ -29,7 +29,6 @@ type characterInitiative = {
 
 export function InitiativeQueue() {
   const { groupName } = useParams<{ groupName: string }>();
-  console.log("group name: " + groupName);
   const { isLoading, initiativeQueue } = useInitiativeQueue(Number(groupName));
   const { isLoading: isLoadingIsGM, isGM } = useIsGm(Number(groupName));
   const { isPending, setActiveTurn } = useSetActiveTurn(

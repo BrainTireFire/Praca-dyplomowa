@@ -39,7 +39,7 @@ export function PowerCastResolution({
   onCloseModal,
 }: {
   controlState: ControlState;
-  onCloseModal: () => any,
+  onCloseModal: () => any;
 }) {
   const { groupName } = useParams<{ groupName: string }>();
 
@@ -77,7 +77,9 @@ export function PowerCastResolution({
     controlState.powerSelected?.powerId!,
     controlState.powerSelected?.chosenLevel?.powerLevel ?? null,
     spellSlotLevel,
-    () => {onCloseModal()}
+    () => {
+      onCloseModal();
+    }
   );
 
   if (isLoadingPowerData || !hasEffectRun || isPendingPowerCast) {
@@ -120,7 +122,6 @@ export function PowerCastResolution({
                         isSelectable={false}
                         isMultiSelect={true}
                         handleMultiSelectionChange={(id: number | string) => {
-                          console.log(id);
                           dispatch({
                             type: "TOGGLE_CASTER_CONDITIONAL_EFFECT",
                             payload: { effectId: Number(id) },
@@ -186,8 +187,6 @@ export function PowerCastResolution({
                           Description: "description",
                         }}
                         data={(() => {
-                          console.log(powerCastData);
-                          console.log(spellSlotLevel);
                           return (
                             powerCastData?.powerData.powerEffects[0]?.map(
                               (effect: PowerEffectDto, index: number) => {
@@ -215,8 +214,6 @@ export function PowerCastResolution({
                           Description: "description",
                         }}
                         data={(() => {
-                          console.log(powerCastData);
-                          console.log(spellSlotLevel);
                           return (
                             powerCastData?.powerData.powerEffects[1]?.map(
                               (effect: PowerEffectDto, index: number) => {
@@ -250,10 +247,9 @@ export function PowerCastResolution({
   );
 }
 
-
 PowerCastResolution.defaultProps = {
-  onCloseModal: () => {}
-}
+  onCloseModal: () => {},
+};
 
 const Container = styled.div`
   display: flex;

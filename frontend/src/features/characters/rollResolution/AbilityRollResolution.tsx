@@ -8,21 +8,20 @@ import { ReusableTable } from "../../../ui/containers/ReusableTable2";
 import ButtonGroup from "../../../ui/interactive/ButtonGroup";
 import Button from "../../../ui/interactive/Button";
 import styled from "styled-components";
-import { initialState, RollConditionalEffectsReducer } from "./RollConditionalEffectsReducer";
+import {
+  initialState,
+  RollConditionalEffectsReducer,
+} from "./RollConditionalEffectsReducer";
 
 export function AbilityRollResolution({
   characterId,
-  ability
+  ability,
 }: {
-  characterId: number
-  ability: ability
+  characterId: number;
+  ability: ability;
 }) {
-
-
-  const { isLoading: isLoadingEffects, conditionalEffects } = useGetCharactersAbilityConditionalEffects(
-    characterId,
-    ability
-  );
+  const { isLoading: isLoadingEffects, conditionalEffects } =
+    useGetCharactersAbilityConditionalEffects(characterId, ability);
 
   const [state, dispatch] = useReducer(
     RollConditionalEffectsReducer,
@@ -40,11 +39,12 @@ export function AbilityRollResolution({
     }
   }, [conditionalEffects]);
 
-  const { isPending: isPendingRoll, selectAbilityRollConditionalEffects } = useSelectCharactersAbilityConditionalEffects(
-    () => {},
-    characterId,
-    ability
-  );
+  const { isPending: isPendingRoll, selectAbilityRollConditionalEffects } =
+    useSelectCharactersAbilityConditionalEffects(
+      () => {},
+      characterId,
+      ability
+    );
 
   if (isLoadingEffects || !hasEffectRun || isPendingRoll) {
     return <Spinner></Spinner>;
@@ -54,49 +54,47 @@ export function AbilityRollResolution({
     <Container>
       <Heading as="h1">Select effects affecting this {ability} roll</Heading>
 
-                <ContainerEffects>
-                  <TabsContainer1>
-                    <TableContainer>
-                      <ReusableTable
-                        mainHeader={`Conditional effects`}
-                        tableRowsColomns={{
-                          Name: "name",
-                          Description: "description",
-                        }}
-                        data={state.conditionalEffects.map(
-                          (effect, index: number) => {
-                            return {
-                              id: index,
-                              name: conditionalEffects?.find(
-                                (x) => x.effectId === effect.effectId
-                              )?.effectName,
-                              description:
-                                conditionalEffects?.find(
-                                  (x) => x.effectId === effect.effectId
-                                )?.effectDescription,
-                              selected: effect.selected,
-                              itemId: effect.effectId,
-                            };
-                          }
-                        )}
-                        isSelectable={false}
-                        isMultiSelect={true}
-                        handleMultiSelectionChange={(id: number | string) => {
-                          console.log(id);
-                          dispatch({
-                            type: "TOGGLE_CASTER_CONDITIONAL_EFFECT",
-                            payload: { effectId: Number(id) },
-                          });
-                        }}
-                        // customTableContainer={css`
-                        //   height: 100%;
-                        // `}
-                      ></ReusableTable>
-                    </TableContainer>
-                  </TabsContainer1>
-                </ContainerEffects>
+      <ContainerEffects>
+        <TabsContainer1>
+          <TableContainer>
+            <ReusableTable
+              mainHeader={`Conditional effects`}
+              tableRowsColomns={{
+                Name: "name",
+                Description: "description",
+              }}
+              data={state.conditionalEffects.map((effect, index: number) => {
+                return {
+                  id: index,
+                  name: conditionalEffects?.find(
+                    (x) => x.effectId === effect.effectId
+                  )?.effectName,
+                  description: conditionalEffects?.find(
+                    (x) => x.effectId === effect.effectId
+                  )?.effectDescription,
+                  selected: effect.selected,
+                  itemId: effect.effectId,
+                };
+              })}
+              isSelectable={false}
+              isMultiSelect={true}
+              handleMultiSelectionChange={(id: number | string) => {
+                dispatch({
+                  type: "TOGGLE_CASTER_CONDITIONAL_EFFECT",
+                  payload: { effectId: Number(id) },
+                });
+              }}
+              // customTableContainer={css`
+              //   height: 100%;
+              // `}
+            ></ReusableTable>
+          </TableContainer>
+        </TabsContainer1>
+      </ContainerEffects>
       <ButtonGroup>
-        <Button onClick={() => selectAbilityRollConditionalEffects(state)}>Resolve</Button>
+        <Button onClick={() => selectAbilityRollConditionalEffects(state)}>
+          Resolve
+        </Button>
       </ButtonGroup>
     </Container>
   );
@@ -125,7 +123,6 @@ const TabsContainer1 = styled.div`
   height: 100%;
   overflow-y: hidden;
 `;
-
 
 const TableContainer = styled.div`
   overflow-y: hidden;

@@ -15,7 +15,6 @@ export function useUpdateItemFamily(onSuccess: () => void) {
       onSuccess();
     },
     onError: (error) => {
-      console.error(error);
       toast.error(error.message);
     },
   });

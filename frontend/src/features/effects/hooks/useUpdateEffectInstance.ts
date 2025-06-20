@@ -22,14 +22,11 @@ export function useUpdateEffectInstance(
       queryClient.invalidateQueries({
         queryKey: ["effectInstance", effectId],
       });
-      console.log(queryKey);
-      console.log(objectId);
       queryClient.invalidateQueries({ queryKey: [queryKey, objectId] });
       toast.success("Effect updated succesfully");
       onSuccess();
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Effect Instance update failed");
     },
   });

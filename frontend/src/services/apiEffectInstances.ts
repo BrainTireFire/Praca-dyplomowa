@@ -13,8 +13,6 @@ export async function getItemFamilies(
     }`
   );
 
-  console.log(response);
-
   return response;
 }
 export async function getLanguages(
@@ -26,8 +24,6 @@ export async function getLanguages(
     }`
   );
 
-  console.log(response);
-
   return response;
 }
 export async function getEffectInstance(
@@ -37,15 +33,12 @@ export async function getEffectInstance(
     `${BASE_URL}/api/effectInstance/${effectId}`
   );
 
-  console.log(response);
-
   return response;
 }
 
 export async function updateEffectInstance(
   effectBlueprintDto: EffectBlueprint
 ): Promise<void> {
-  console.log(effectBlueprintDto);
   const options: RequestInit = {
     method: "PATCH",
     headers: {
@@ -58,7 +51,6 @@ export async function updateEffectInstance(
 }
 
 export async function deleteEffectInstance(id: number): Promise<void> {
-  console.log(id);
   const options: RequestInit = {
     method: "DELETE",
     headers: {

@@ -18,6 +18,7 @@ import ModalNoButton from "../../../ui/containers/ModalNoButton";
 import { WeaponAttackResolution } from "./WeaponAttackResolution";
 import { PowerCastResolution } from "./PowerCastResolution";
 import { WeaponAttackOverlayDto } from "../../../models/encounter/WeaponAttackOverlayDto";
+import toast from "react-hot-toast";
 
 const GridContainer = styled.div`
   grid-row: 1 / 2;
@@ -394,14 +395,12 @@ export default function SessionLayout({ encounter }: any) {
       hubConnection
         .start()
         .then(() => {
-          console.log("SignalR Connected.");
-
           hubConnection
             .invoke("GetUsersInGroup", groupName)
             .then((userList: string[]) => {
               setUsersConnected(userList);
             })
-            .catch((err) => console.error("Error fetching user list:", err));
+            .catch((err) => toast.error("Error fetching users in group"));
 
           hubConnection.on("UserJoined", (userName: string) => {
             setUsersConnected((prevUsers) => [...prevUsers, userName]);
@@ -429,8 +428,6 @@ export default function SessionLayout({ encounter }: any) {
               isRanged,
               range,
             }: WeaponAttackOverlayDto) => {
-              console.log("WeaponAttackOverlay triggered");
-
               dispatch({
                 type: "SET_WEAPON_ATTACK",
                 payload: {
@@ -456,14 +453,6 @@ export default function SessionLayout({ encounter }: any) {
               powerLevelSelected,
               resourceLevelSelected,
             }: any) => {
-              console.log("PowerCastOverlay triggered");
-              console.log({
-                sourceId,
-                powerId,
-                powerTargetIds,
-                powerLevelSelected,
-                resourceLevelSelected,
-              });
               dispatch({
                 type: "SET_SELECTED_POWER_DATA",
                 payload: { powerId, powerLevelSelected, resourceLevelSelected },
@@ -483,15 +472,15 @@ export default function SessionLayout({ encounter }: any) {
 
           setConnection(hubConnection);
         })
-        .catch((error) => console.error("SignalR Connection Error: ", error));
+        .catch((error) => toast.error("Error connecting to session hub"));
 
       return () => {
         if (hubConnection) {
-          hubConnection.stop().then(() => console.log("Connection stopped"));
+          hubConnection.stop().then(() => {});
         }
       };
     } else {
-      console.error("Group name is not defined.");
+      toast.error("Group name is not defined");
     }
   }, [groupName, encounter.campaign.id]);
 
@@ -508,10 +497,10 @@ export default function SessionLayout({ encounter }: any) {
       try {
         await connection
           .invoke("SendMessageToGroup", request)
-          .catch((err) => console.error("Error while sending message", err));
+          .catch((err) => toast.error("Error while sending message"));
         setMessageInput("");
       } catch (error) {
-        console.error("Error sending message:", error);
+        toast.error("Error sending message");
       }
     }
   };
@@ -537,9 +526,9 @@ export default function SessionLayout({ encounter }: any) {
 
         await connection
           .invoke("TriggerWeaponAttackOverlay", weaponAttackOverlayRequest)
-          .catch((err) => console.error("Error while sending message", err));
+          .catch((err) => toast.error("Error while sending message"));
       } catch (error) {
-        console.error("Error sending message:", error);
+        toast.error("Error sending message");
       }
     }
   };
@@ -567,9 +556,9 @@ export default function SessionLayout({ encounter }: any) {
 
         await connection
           .invoke("TriggerPowerCastOverlay", powerCastOverlayRequest)
-          .catch((err) => console.error("Error while sending message", err));
+          .catch((err) => toast.error("Error while sending message"));
       } catch (error) {
-        console.error("Error sending message:", error);
+        toast.error("Error sending message");
       }
     }
   };
@@ -593,7 +582,6 @@ export default function SessionLayout({ encounter }: any) {
         });
       });
       connection.on("RequeryInitiative", () => {
-        console.log("Requery initiative signal detected");
         queryClient.invalidateQueries({
           queryKey: ["initiativeQueue", encounter.id],
         });

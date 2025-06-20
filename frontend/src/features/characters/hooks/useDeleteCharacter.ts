@@ -13,7 +13,6 @@ export function useDeleteCharacter(onSuccess: () => void) {
       onSuccess();
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Character deletion failed");
     },
   });

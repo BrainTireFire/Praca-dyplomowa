@@ -266,7 +266,6 @@ type PowerAction =
   | UpdateIsRanged;
 
 const powerReducer = (state: Power, action: PowerAction): Power => {
-  console.log(action);
   switch (action.type) {
     case PowerActionTypes.UPDATE_NAME:
       return { ...state, name: action.payload };
@@ -500,7 +499,6 @@ export default function PowerForm({
       onCreate(id);
     }
   );
-  console.log(state);
 
   const {
     isLoading: isLoadingImmaterialResources,
@@ -549,8 +547,6 @@ export default function PowerForm({
       ? "Select value!"
       : undefined;
 
-  console.log(editMode)
-  console.log(state.editable);
   const disableUpdate = !editMode || !state.editable;
   let lockSaveButton = !!classForUpcastingError || !!resourceForUpcastingError;
   return (

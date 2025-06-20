@@ -93,7 +93,7 @@ export default function ProficiencyEffectForm({
         newState = state;
         break;
     }
-    console.log(newState);
+
     return newState;
   };
   const [state, dispatch] = useReducer(effectReducer, effect);
@@ -161,7 +161,9 @@ export default function ProficiencyEffectForm({
             state.effectType.proficiencyEffect !== "SpecificItemFamily" ||
             disableUpdate
           }
-          chosenValue={state.grantsProficiencyInItemFamilyId?.toString() ?? null}
+          chosenValue={
+            state.grantsProficiencyInItemFamilyId?.toString() ?? null
+          }
           setChosenValue={(e) =>
             dispatch({ type: "setItemFamily", payload: Number(e) })
           }

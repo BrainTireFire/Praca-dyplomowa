@@ -11,11 +11,10 @@ export function useUpdateItem(onSuccess: () => void) {
       queryClient.invalidateQueries({ queryKey: ["itemList"] });
       // Explicitly refetch the query after invalidation
       queryClient.refetchQueries({ queryKey: ["itemList"] });
-      toast.success('Item updated');
+      toast.success("Item updated");
       onSuccess();
     },
     onError: (error) => {
-      console.error(error);
       toast.error(error.message);
     },
   });

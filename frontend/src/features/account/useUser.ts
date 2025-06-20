@@ -16,7 +16,6 @@ export function useUser() {
       try {
         return await getCurrentUser();
       } catch (error: any) {
-        console.log("error " + error);
         toast.error(error.message || "An error occurred");
         throw error;
       }

@@ -29,7 +29,6 @@ export async function getNpcCharacters(): Promise<CharacterItem[]> {
 }
 
 export async function getCharacter(characterId: number): Promise<Character> {
-  console.log(`getCharacter api. Id: ${characterId}`);
   const response = await customFetch(
     `${BASE_URL}/api/character/${characterId}`
   );
@@ -92,7 +91,10 @@ export async function updateCoinSack(
     },
     body: JSON.stringify(coinSack),
   };
-  await customFetch(`${BASE_URL}/api/character/${characterId}/coinSack`, options);
+  await customFetch(
+    `${BASE_URL}/api/character/${characterId}/coinSack`,
+    options
+  );
   return;
 }
 
@@ -240,8 +242,6 @@ export async function getCharacterResources(
     `${BASE_URL}/api/character/${characterId}/resources`
   );
 
-  console.log(response);
-
   return response;
 }
 
@@ -251,8 +251,6 @@ export async function getCharacterPowers(
   const response = await customFetch(
     `${BASE_URL}/api/character/${characterId}/powers`
   );
-
-  console.log(response);
 
   return response;
 }
@@ -265,8 +263,6 @@ export async function getCharacterPowersPreparedForClass(
     `${BASE_URL}/api/character/${characterId}/powersPrepared/class/${classId}`
   );
 
-  console.log(response);
-
   return response;
 }
 
@@ -277,8 +273,6 @@ export async function getCharacterPowersPrepared(
     `${BASE_URL}/api/character/${characterId}/powersPrepared`
   );
 
-  console.log(response);
-
   return response;
 }
 
@@ -288,8 +282,6 @@ export async function getCharacterPowersToPrepare(
   const response = await customFetch(
     `${BASE_URL}/api/character/${characterId}/powersToPrepare`
   );
-
-  console.log(response);
 
   return response;
 }
@@ -307,8 +299,6 @@ export async function getCharacterMaxPowersToPrepare(
   const response = await customFetch(
     `${BASE_URL}/api/character/${characterId}/maxPowersToPrepare`
   );
-
-  console.log(response);
 
   return response;
 }
@@ -351,7 +341,6 @@ export async function addConstantEffectInstance(
   effectBlueprintDto: EffectBlueprint,
   characterId: number
 ): Promise<number> {
-  console.log(effectBlueprintDto);
   const options: RequestInit = {
     method: "POST",
     headers: {
@@ -370,7 +359,6 @@ export async function addTemporaryEffectInstance(
   effectBlueprintDto: EffectBlueprint,
   characterId: number
 ): Promise<number> {
-  console.log(effectBlueprintDto);
   const options: RequestInit = {
     method: "POST",
     headers: {
@@ -401,7 +389,6 @@ export async function addToEquipment(
     options
   );
 }
-
 
 export type ChoiceGroup = {
   id: number;
@@ -471,8 +458,6 @@ export async function getPowerConcentratedOn(
     `${BASE_URL}/api/character/${characterId}/concentration`
   );
 
-  console.log(response);
-
   return response;
 }
 
@@ -496,7 +481,10 @@ export async function dropConcentration(characterId: number): Promise<void> {
   );
 }
 
-export async function rollAbilityDice(characterId: number, ability: ability): Promise<RollDto> {
+export async function rollAbilityDice(
+  characterId: number,
+  ability: ability
+): Promise<RollDto> {
   const options: RequestInit = {
     method: "GET",
     headers: {
@@ -509,7 +497,10 @@ export async function rollAbilityDice(characterId: number, ability: ability): Pr
     options
   );
 }
-export async function rollSavingThrowDice(characterId: number, ability: ability): Promise<RollDto> {
+export async function rollSavingThrowDice(
+  characterId: number,
+  ability: ability
+): Promise<RollDto> {
   const options: RequestInit = {
     method: "GET",
     headers: {
@@ -522,7 +513,10 @@ export async function rollSavingThrowDice(characterId: number, ability: ability)
     options
   );
 }
-export async function rollSkillDice(characterId: number, skill: skill): Promise<RollDto> {
+export async function rollSkillDice(
+  characterId: number,
+  skill: skill
+): Promise<RollDto> {
   const options: RequestInit = {
     method: "GET",
     headers: {
@@ -542,7 +536,10 @@ export interface RollDto {
   executed: boolean;
 }
 
-export async function getAbilityRollConditionalEffects(characterId: number, ability: ability): Promise<ConditionalEffectDto[]> {
+export async function getAbilityRollConditionalEffects(
+  characterId: number,
+  ability: ability
+): Promise<ConditionalEffectDto[]> {
   const options: RequestInit = {
     method: "GET",
     headers: {
@@ -555,7 +552,10 @@ export async function getAbilityRollConditionalEffects(characterId: number, abil
     options
   );
 }
-export async function getSkillRollConditionalEffects(characterId: number, skill: skill): Promise<ConditionalEffectDto[]> {
+export async function getSkillRollConditionalEffects(
+  characterId: number,
+  skill: skill
+): Promise<ConditionalEffectDto[]> {
   const options: RequestInit = {
     method: "GET",
     headers: {
@@ -568,7 +568,10 @@ export async function getSkillRollConditionalEffects(characterId: number, skill:
     options
   );
 }
-export async function getSavingThrowRollConditionalEffects(characterId: number, savingThrow: ability): Promise<ConditionalEffectDto[]> {
+export async function getSavingThrowRollConditionalEffects(
+  characterId: number,
+  savingThrow: ability
+): Promise<ConditionalEffectDto[]> {
   const options: RequestInit = {
     method: "GET",
     headers: {
@@ -582,13 +585,17 @@ export async function getSavingThrowRollConditionalEffects(characterId: number, 
   );
 }
 
-export async function selectAbilityRollConditionalEffects(characterId: number, ability: ability, conditionalEffects: number[]): Promise<void> {
+export async function selectAbilityRollConditionalEffects(
+  characterId: number,
+  ability: ability,
+  conditionalEffects: number[]
+): Promise<void> {
   const options: RequestInit = {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(conditionalEffects)
+    body: JSON.stringify(conditionalEffects),
   };
   await customFetch(
     `${BASE_URL}/api/character/${characterId}/abilityRoll/${ability}/conditionalEffects`,
@@ -597,13 +604,17 @@ export async function selectAbilityRollConditionalEffects(characterId: number, a
   return;
 }
 
-export async function selectSkillRollConditionalEffects(characterId: number, skill: skill, conditionalEffects: number[]): Promise<void> {
+export async function selectSkillRollConditionalEffects(
+  characterId: number,
+  skill: skill,
+  conditionalEffects: number[]
+): Promise<void> {
   const options: RequestInit = {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(conditionalEffects)
+    body: JSON.stringify(conditionalEffects),
   };
   await customFetch(
     `${BASE_URL}/api/character/${characterId}/skillRoll/${skill}/conditionalEffects`,
@@ -612,13 +623,17 @@ export async function selectSkillRollConditionalEffects(characterId: number, ski
   return;
 }
 
-export async function selectSavingThrowRollConditionalEffects(characterId: number, savingThrow: ability, conditionalEffects: number[]): Promise<void> {
+export async function selectSavingThrowRollConditionalEffects(
+  characterId: number,
+  savingThrow: ability,
+  conditionalEffects: number[]
+): Promise<void> {
   const options: RequestInit = {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(conditionalEffects)
+    body: JSON.stringify(conditionalEffects),
   };
   await customFetch(
     `${BASE_URL}/api/character/${characterId}/savingThrowRoll/${savingThrow}/conditionalEffects`,

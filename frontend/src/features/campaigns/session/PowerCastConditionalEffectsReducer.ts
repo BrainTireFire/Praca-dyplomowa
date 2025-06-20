@@ -124,8 +124,6 @@ export const PowerCastConditionalEffectsReducer: Reducer<StateType, Action> = (
           acc[Number(item.targetId)] = item.effects;
           return acc;
         }, {});
-      console.log("sync");
-      console.log(targetEffects);
 
       return {
         ...state,

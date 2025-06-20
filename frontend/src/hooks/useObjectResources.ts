@@ -15,7 +15,6 @@ export function useObjectResources(
       objectType === "Item" ? ["itemResourceList"] : ["characterResourceList"],
     queryFn: () => {
       if (objectId) {
-        console.log("Load: " + objectId);
         return objectType === "Item"
           ? getItemResources(objectId)
           : getCharacterResources(objectId);

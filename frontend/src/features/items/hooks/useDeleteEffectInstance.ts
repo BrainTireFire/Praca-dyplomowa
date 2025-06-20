@@ -14,7 +14,6 @@ export function useDeleteEffectInstance(onSuccess: () => void, itemId: number) {
       onSuccess();
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Effect blueprint deletion failed");
     },
   });

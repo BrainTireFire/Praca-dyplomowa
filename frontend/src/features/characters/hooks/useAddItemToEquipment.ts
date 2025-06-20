@@ -16,7 +16,6 @@ export function useAddItemToEquipment(
       onSuccess();
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Adding item failed!");
     },
   });

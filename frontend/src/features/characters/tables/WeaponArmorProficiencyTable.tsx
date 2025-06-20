@@ -11,7 +11,6 @@ export default function WeaponAndArmorProficiencyTable({
 }: {
   weaponAndArmorProficiencies: ItemFamily[];
 }) {
-  console.log(weaponAndArmorProficiencies);
   return (
     <Menus>
       <Table header="Item proficiency" columns="1fr">

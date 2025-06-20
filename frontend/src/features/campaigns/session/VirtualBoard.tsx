@@ -509,7 +509,7 @@ export default function VirtualBoard({
             weaponAttack.range
           );
           if (inRange) {
-            console.log("In range");
+            // console.log("In range");
             // setTargetId(clickedCharacter.character.id);
             onWeaponAttackOverlay(
               clickedCharacter.character.id,
@@ -520,7 +520,7 @@ export default function VirtualBoard({
               weaponAttack.range
             );
           } else {
-            console.log("Not in range");
+            // console.log("Not in range");
           }
         }
       } else if (mode === "PowerCast") {
@@ -556,14 +556,14 @@ export default function VirtualBoard({
             power.range ? power.range : 0
           );
           if (inRange) {
-            console.log("In range");
+            // console.log("In range");
             // setTargetId(clickedCharacter.character.id);
             dispatch({
               type: "TOGGLE_POWER_TARGET",
               payload: clickedCharacter.character.id,
             });
           } else {
-            console.log("Not in range");
+            // console.log("Not in range");
           }
         }
       } else {

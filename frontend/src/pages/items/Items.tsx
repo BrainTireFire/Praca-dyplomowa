@@ -13,14 +13,13 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function Items() {
   const editMode = useContext(EditModeContext);
-  
+
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const selectedItemId = searchParams.get("id");
 
   const handleChangeItem = (chosenItemId: number) => {
-    console.log(chosenItemId);
-    navigate(`/items?id=${chosenItemId}`)
+    navigate(`/items?id=${chosenItemId}`);
   };
 
   const { isLoading, items, error } = useItems("blueprint");
@@ -28,10 +27,7 @@ export default function Items() {
   // const [selectedItemId, setSelectedItemId] = useState<null | number>(null);
   // const { createItem, isPending: isPendingCreation } = useCreateItem(() => {});
   const handleSelect = (row: any) => {
-    console.log(items);
-    console.log(row);
     let selectedItem = items?.find((_value, index) => index === row.id);
-    console.log(selectedItem);
 
     // setSelectedItemId(selectedItem ? selectedItem.id : null);
     handleChangeItem(selectedItem!.id);
@@ -85,7 +81,11 @@ export default function Items() {
       </Column1>
       <Column2>
         {!!Number(selectedItemId) && (
-          <ItemForm itemId={Number(selectedItemId)} key={selectedItemId} maxHeight="100%"></ItemForm>
+          <ItemForm
+            itemId={Number(selectedItemId)}
+            key={selectedItemId}
+            maxHeight="100%"
+          ></ItemForm>
         )}
       </Column2>
     </Container>

@@ -4,7 +4,6 @@ import { toast } from "react-hot-toast";
 const queryClient = new QueryClient({
   // queryCache: new QueryCache({
   //   onError: (error, query) => {
-  //     console.log("TESTTSATSA ", error);
   //     if (error.message === "Unauthorized") {
   //       window.location.replace("/login");
   //     } else if (error.message === "Forbidden") {

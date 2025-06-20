@@ -10,7 +10,6 @@ export function useItem(itemId: number | null) {
     queryKey: ["item", itemId],
     queryFn: () => {
       if (itemId) {
-        console.log("Load: " + itemId);
         return getItem(itemId);
       }
       return Promise.reject(new Error("Power ID is undefined"));

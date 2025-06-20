@@ -142,8 +142,10 @@ export async function getHitDice(campaignId: number): Promise<DiceSet> {
   );
 }
 
-export async function performShortRest(campaignId: number, hitDiceMap: Record<number, DiceSet>) : Promise<Response> {
-  console.log(hitDiceMap);
+export async function performShortRest(
+  campaignId: number,
+  hitDiceMap: Record<number, DiceSet>
+): Promise<Response> {
   const options: RequestInit = {
     method: "PATCH",
     headers: {

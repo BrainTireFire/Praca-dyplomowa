@@ -10,7 +10,9 @@ import { useTranslation } from "react-i18next";
 const NavList = styled.ul`
   display: flex;
   flex-direction: row;
-  gap: 0.8rem;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
   z-index: 999;
 
   /* @media (max-width: 768px) {
@@ -120,10 +122,31 @@ const MainNavbarStyled = styled.nav`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0 2rem;
+  box-sizing: border-box;
 `;
 
 const StyledConteinerLeftPadding = styled.div`
   padding-left: 20px;
+`;
+
+const LogoContainer = styled.div`
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  :hover {
+    transform: scale(1.05);
+    transition: transform 0.2s ease;
+  }
 `;
 
 export default function MainNavbar() {
@@ -145,7 +168,9 @@ export default function MainNavbar() {
       <NavList>
         <li>
           <StyledNavLink to="/main">
-            <img src="https://via.placeholder.com/25" alt="logo" />
+            <LogoContainer>
+              <img src="logo.png" alt="Logo" />
+            </LogoContainer>
           </StyledNavLink>
         </li>
         <DropdownNav>

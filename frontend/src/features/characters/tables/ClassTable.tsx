@@ -77,8 +77,6 @@ function ClassLevelSelectionScreen({
     error: errorNextLevels,
   } = useCharacterNextClassLevels(characterId);
 
-  console.log(nextLevels);
-
   const [selectedNextClassId, setSelectedNextClassId] = useState<number | null>(
     null
   );
@@ -129,7 +127,6 @@ function ClassLevelSelectionScreen({
   useEffect(() => {
     if (nextLevels) {
       const transformedData = mapNextLevelsToLocal(nextLevels);
-      console.log(transformedData);
       setNextClassLevelsLocal(transformedData);
     }
   }, [nextLevels]);
@@ -146,7 +143,6 @@ function ClassLevelSelectionScreen({
   if (isLoadingNextLevels || isPending) {
     return <Spinner />;
   }
-  console.log(nextClassLevelsLocal);
 
   return (
     <>
@@ -190,11 +186,9 @@ function ClassLevelSelectionScreen({
                 </DisplayBox>
                 <DisplayBox label="Powercasting ability">
                   <DisplayBoxContent>
-                    {
-                      nextClassLevelsLocal.filter(
-                        (x) => x.id === selectedNextClassId
-                      )[0]?.powercastingAbility ?? '-'
-                    }
+                    {nextClassLevelsLocal.filter(
+                      (x) => x.id === selectedNextClassId
+                    )[0]?.powercastingAbility ?? "-"}
                   </DisplayBoxContent>
                 </DisplayBox>
               </RandomInfo>

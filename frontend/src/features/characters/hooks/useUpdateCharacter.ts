@@ -27,7 +27,6 @@ export function useUpdateCharacter(characterId: number, onSuccess: () => void) {
       onSuccess();
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Character update failed");
     },
   });

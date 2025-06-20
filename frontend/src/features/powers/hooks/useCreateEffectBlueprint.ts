@@ -12,14 +12,12 @@ export function useCreateEffectBlueprint(
     mutationFn: (effectBlueprint: EffectBlueprint) =>
       addEffectBlueprint(effectBlueprint, powerId),
     onSuccess: () => {
-      console.log("Create: " + powerId);
       queryClient.invalidateQueries({ queryKey: ["power", powerId] });
       // Explicitly refetch the query after invalidation
       queryClient.refetchQueries({ queryKey: ["power", powerId] });
       onSuccess();
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Effect blueprint creation failed");
     },
   });

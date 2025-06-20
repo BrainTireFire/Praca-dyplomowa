@@ -12,7 +12,6 @@ export function useUpdateMaterialComponent(
     mutationFn: (materialComponent: MaterialComponent) =>
       updateMaterialComponentApi(materialComponent, powerId),
     onSuccess: () => {
-      console.log("Create: " + powerId);
       queryClient.invalidateQueries({ queryKey: ["power", powerId] });
       // Explicitly refetch the query after invalidation
       queryClient.refetchQueries({ queryKey: ["power", powerId] });
@@ -20,7 +19,6 @@ export function useUpdateMaterialComponent(
       onSuccess();
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Material component creation failed");
     },
   });

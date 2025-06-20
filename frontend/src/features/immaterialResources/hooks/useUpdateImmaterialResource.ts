@@ -20,7 +20,6 @@ export function useUpdateImmaterialResource(onSuccess: () => void) {
       onSuccess();
     },
     onError: (error) => {
-      console.error(error);
       toast.error(error.message);
     },
   });

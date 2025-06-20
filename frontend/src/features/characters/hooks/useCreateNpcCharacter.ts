@@ -13,7 +13,6 @@ export function useCreateNpcCharacter(onSuccess: () => void) {
       onSuccess();
     },
     onError: (error) => {
-      console.error(error);
       toast.error("NpcCharacter creation failed");
     },
   });

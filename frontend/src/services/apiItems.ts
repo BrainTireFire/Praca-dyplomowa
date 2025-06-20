@@ -32,7 +32,6 @@ export async function getItem(itemId: number): Promise<Item> {
 }
 
 export async function postItem(itemDto: Item): Promise<number> {
-  console.log(itemDto);
   const options: RequestInit = {
     method: "POST",
     headers: {
@@ -54,7 +53,6 @@ export async function postItem(itemDto: Item): Promise<number> {
 }
 
 export async function updateItem(itemDto: Item): Promise<void> {
-  console.log(itemDto);
   const options: RequestInit = {
     method: "PATCH",
     headers: {
@@ -116,8 +114,6 @@ export async function removeSlot(
 export async function getItemSlots(itemId: number): Promise<Slot[]> {
   const response = await customFetch(`${BASE_URL}/api/item/${itemId}/slots`);
 
-  console.log(response);
-
   return response;
 }
 
@@ -138,8 +134,6 @@ export async function updateItemSlots(
 
 export async function getItemPowers(itemId: number): Promise<PowerListItem[]> {
   const response = await customFetch(`${BASE_URL}/api/item/${itemId}/powers`);
-
-  console.log(response);
 
   return response;
 }
@@ -166,8 +160,6 @@ export async function getItemResources(
     `${BASE_URL}/api/item/${itemId}/resources`
   );
 
-  console.log(response);
-
   return response;
 }
 
@@ -190,7 +182,6 @@ export async function addEffectInstanceOnWearer(
   effectBlueprintDto: EffectBlueprint,
   itemId: number
 ): Promise<number> {
-  console.log(effectBlueprintDto);
   const options: RequestInit = {
     method: "POST",
     headers: {
@@ -207,7 +198,6 @@ export async function addEffectInstanceOnItem(
   effectBlueprintDto: EffectBlueprint,
   itemId: number
 ): Promise<number> {
-  console.log(effectBlueprintDto);
   const options: RequestInit = {
     method: "POST",
     headers: {

@@ -125,8 +125,6 @@ function SelectFromChoiceGroupScreen({
     error: errorChoiceGroups,
   } = useChoiceGroups(characterId);
 
-  console.log(choiceGroups);
-
   const [selectedChoiceGroupId, setSelectedChoiceGroupId] = useState<
     number | null
   >(null);
@@ -260,7 +258,6 @@ function SelectFromChoiceGroupScreen({
           cg.resources.filter((e) => e.selected).length ===
           0
     ).length !== choiceGroupsLocal.length;
-  console.log(disableButton);
 
   const generatePayload = () => {
     return choiceGroupsLocal.map((cg) => {

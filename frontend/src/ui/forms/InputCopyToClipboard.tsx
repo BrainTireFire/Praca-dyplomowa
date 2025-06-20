@@ -63,7 +63,6 @@ const InputCopyToClipboard = ({ campaignId }) => {
       })
       .catch((err) => {
         toast.error("Failed to copy!");
-        console.error("Failed to copy!", err);
       });
   };
 

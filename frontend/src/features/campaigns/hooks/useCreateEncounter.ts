@@ -22,7 +22,6 @@ export function useCreateEncounter(campaignId: number | undefined) {
       }
     },
     onError: (error) => {
-      //console.error(error);
       toast.error("Encounter creation failed");
     },
   });

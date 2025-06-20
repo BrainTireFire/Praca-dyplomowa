@@ -177,7 +177,7 @@ export function DiceSetForm({
         newState = state;
         break;
     }
-    console.log(newState);
+
     return newState;
   };
   const [state, dispatch] = useReducer(effectReducer, diceSet);

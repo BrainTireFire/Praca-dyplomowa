@@ -16,7 +16,6 @@ export function useCreateEffectInstance(onSuccess: () => void, itemId: number) {
       onSuccess();
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Effect blueprint creation failed");
     },
   });

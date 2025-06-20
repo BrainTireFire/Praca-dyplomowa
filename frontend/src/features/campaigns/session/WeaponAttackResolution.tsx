@@ -35,10 +35,10 @@ import useMakeWeaponAttack from "../hooks/useMakeWeaponAttack";
 
 export function WeaponAttackResolution({
   controlState,
-  onCloseModal
+  onCloseModal,
 }: {
   controlState: ControlState;
-  onCloseModal: () => any
+  onCloseModal: () => any;
 }) {
   const { groupName } = useParams<{ groupName: string }>();
   const { isLoading: isLoadingWeaponDamage, weaponAttackData } =
@@ -49,8 +49,6 @@ export function WeaponAttackResolution({
       controlState.weaponAttackSelected?.weaponId!,
       controlState.weaponAttackSelected?.isRanged!
     );
-
-  console.log("controlState ", controlState);
 
   const [state, dispatch] = useReducer(
     WeaponAttackConditionalEffectsReducer,
@@ -72,13 +70,14 @@ export function WeaponAttackResolution({
     controlState.weaponAttackRollOverlayData?.targetId!,
     controlState.weaponAttackSelected?.weaponId!,
     controlState.weaponAttackSelected?.isRanged!,
-    () => {onCloseModal()}
+    () => {
+      onCloseModal();
+    }
   );
 
   if (isLoadingWeaponDamage || isPendingAttack) {
     return <Spinner></Spinner>;
   }
-  console.log("controlState", controlState);
 
   // const resultPayload: ApprovedConditionalEffectsDto = {
   //   CasterConditionalEffects: conditionalEffects.casterConditionalEffects
@@ -123,7 +122,6 @@ export function WeaponAttackResolution({
                     isSelectable={false}
                     isMultiSelect={true}
                     handleMultiSelectionChange={(id: number | string) => {
-                      console.log(id);
                       dispatch({
                         type: "TOGGLE_WEAPON_ATTACK_CONDITIONAL_EFFECT",
                         payload: { effectId: Number(id), isCaster: true },
@@ -239,7 +237,6 @@ export function WeaponAttackResolution({
                       isSelectable={false}
                       isMultiSelect={true}
                       handleMultiSelectionChange={(id: number | string) => {
-                        console.log(id);
                         dispatch({
                           type: "TOGGLE_POWER_CONDITIONAL_EFFECT",
                           payload: {
@@ -287,7 +284,6 @@ export function WeaponAttackResolution({
                       isSelectable={false}
                       isMultiSelect={true}
                       handleMultiSelectionChange={(id: number | string) => {
-                        console.log(id);
                         dispatch({
                           type: "TOGGLE_POWER_CONDITIONAL_EFFECT",
                           payload: {
@@ -365,10 +361,9 @@ export function WeaponAttackResolution({
   );
 }
 
-
 WeaponAttackResolution.defaultProps = {
-  onCloseModal: () => {}
-}
+  onCloseModal: () => {},
+};
 
 const Container = styled.div`
   display: flex;

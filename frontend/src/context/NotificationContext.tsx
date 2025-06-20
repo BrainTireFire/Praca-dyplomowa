@@ -61,8 +61,10 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
 
     hubConnection.current
       .start()
-      .then(() => console.log("Connected to NotificationHub"))
-      .catch((err) => console.error("SignalR Connection Error:", err));
+      .then(() => {})
+      .catch((err) => {
+        toast.error(`Error connecting to notifications hub!`);
+      });
 
     hubConnection.current.on(
       "ReceiveNotification",
@@ -324,7 +326,6 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     hubConnection.current.on(
       "ShortRestPerformed",
       (data: ShortRestHealthpointsRegained[]) => {
-        console.log(data);
         toast.promise(
           new Promise<{ data: ShortRestHealthpointsRegained[] }>(
             (resolve, reject) => {

@@ -16,13 +16,8 @@ export default function AddEquipmentScreen() {
   const [selectedItemId, setSelectedItemId] = useState<null | number>(null);
   // const { createItem, isPending: isPendingCreation } = useCreateItem(() => {});
   const handleSelect = (row: any) => {
-    console.log(items);
-    console.log(row);
     let selectedItem = items?.find((_value, index) => index === row.id);
-    console.log(selectedItem);
-
     setSelectedItemId(selectedItem ? selectedItem.id : null);
-    console.log(selectedItemId);
   };
 
   const { addToEquipment, isPending: isPendingAdd } = useAddItemToEquipment(

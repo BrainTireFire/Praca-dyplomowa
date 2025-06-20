@@ -10,7 +10,12 @@ import {
 } from "../features/campaigns/session/WeaponAttackConditionalEffectsReducer";
 import { size } from "../features/effects/sizes";
 import { CoinPurse } from "../features/items/models/coinPurse";
-import { AreaShape, CastableBy, PowerType, TargetType } from "../features/powers/models/power";
+import {
+  AreaShape,
+  CastableBy,
+  PowerType,
+  TargetType,
+} from "../features/powers/models/power";
 import { DiceSet } from "../models/diceset";
 import { Encounter } from "../models/encounter/Encounter";
 import { EncounterCreateDto } from "../models/encounter/EncounterCreateDto";
@@ -446,8 +451,8 @@ export async function getWeaponAttackData(
 }
 
 export interface WeaponAttackData {
-  attackerName: string,
-  targetName: string,
+  attackerName: string;
+  targetName: string;
   weaponDamageAndPowers: WeaponDamageAndPowersDto;
   conditionalEffects: ConditionalEffectsDto;
 }
@@ -713,16 +718,13 @@ export type CastPowerResultDto = {
 
 export type HitType = "CriticalHit" | "Hit" | "Miss" | "CriticalMiss";
 
-
 export async function getPowers(
   characterId: number,
-  encounterId: number,
+  encounterId: number
 ): Promise<PowerForEncounterDto[]> {
   const response = await customFetch(
     `${BASE_URL}/api/encounter/${encounterId}/allPowersForEncounter/${characterId}`
   );
-
-  console.log(response);
 
   return response;
 }
@@ -765,18 +767,17 @@ export type ImmaterialResourceSelection = {
   resourceLevel: number;
 };
 
-
 export async function getAttacks(
   characterId: number,
-  encounterId: number,
+  encounterId: number
 ): Promise<WeaponAttackDto[]> {
   const response = await customFetch(
     `${BASE_URL}/api/encounter/${encounterId}/allAttacksForEncounter/${characterId}`
   );
 
-  console.log(response);
-
   return response;
 }
 
-export type WeaponAttackDto = WeaponAttack & {requiredWeaponAttackAvailable: boolean}
+export type WeaponAttackDto = WeaponAttack & {
+  requiredWeaponAttackAvailable: boolean;
+};

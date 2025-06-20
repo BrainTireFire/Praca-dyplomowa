@@ -16,7 +16,6 @@ export default function Powers() {
   const selectedPowerId = searchParams.get("id");
 
   const handleChangePower = (chosenPowerId: number) => {
-    console.log(chosenPowerId);
     navigate(`/powers?id=${chosenPowerId}`)
   };
   const { isLoading, powers, error } = usePowers({ pageSize: 99999999 });
@@ -27,20 +26,16 @@ export default function Powers() {
     () => {}
   );
   const handleSelect = (row: any) => {
-    console.log(powers);
-    console.log(row);
     let selectedPower = powers?.find((_value, index) => index === row.id);
-    console.log(selectedPower);
 
     handleChangePower(selectedPower!.id);
     setOpenNewPowerForm(false);
-    console.log(selectedPowerId);
   };
 
   if (isLoading || isPendingCreation) {
     return <Spinner></Spinner>;
   }
-  // console.log(power);
+  
   return (
     <Container>
       <Column1>

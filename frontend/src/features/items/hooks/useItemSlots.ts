@@ -10,7 +10,6 @@ export function useItemSlots(itemId: number | null) {
     queryKey: ["itemSlotList"],
     queryFn: () => {
       if (itemId) {
-        console.log("Load: " + itemId);
         return getItemSlots(itemId);
       }
       return Promise.reject(new Error("Item ID is undefined"));

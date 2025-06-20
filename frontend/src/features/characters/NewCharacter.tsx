@@ -84,7 +84,7 @@ const characterReducer = (
       newState = state;
       break;
   }
-  console.log(newState);
+
   return newState;
 };
 const abilityErrorMessage = "Value must be in range of 1-20";
@@ -158,7 +158,7 @@ function NewCharacter({ onCloseModal }: { onCloseModal: () => void }) {
   if (isLoadingRaces || isLoadingClasses || isPending) {
     return <Spinner />;
   }
-  
+
   return (
     <>
       <Box>
@@ -191,21 +191,25 @@ function NewCharacter({ onCloseModal }: { onCloseModal: () => void }) {
         </FormRow>
         <FormRow2 label="Chosen class details">
           <>
-          <DisplayBox label="Main ability">
-            <DisplayBoxContent>
-              {classes.find(x => x.id === state.startingClassId)?.mainAbility ?? '-'}
-            </DisplayBoxContent>
-          </DisplayBox>
-          <DisplayBox label="Initial hitpoints">
-            <DisplayBoxContent>
-              {classes.find(x => x.id === state.startingClassId)?.hitpoints ?? '-'}
-            </DisplayBoxContent>
-          </DisplayBox>
-          <DisplayBox label="Hitdice">
-            <DisplayBoxContent>
-              {DiceSetString(classes.find(x => x.id === state.startingClassId)?.hitDice)}
-            </DisplayBoxContent>
-          </DisplayBox>
+            <DisplayBox label="Main ability">
+              <DisplayBoxContent>
+                {classes.find((x) => x.id === state.startingClassId)
+                  ?.mainAbility ?? "-"}
+              </DisplayBoxContent>
+            </DisplayBox>
+            <DisplayBox label="Initial hitpoints">
+              <DisplayBoxContent>
+                {classes.find((x) => x.id === state.startingClassId)
+                  ?.hitpoints ?? "-"}
+              </DisplayBoxContent>
+            </DisplayBox>
+            <DisplayBox label="Hitdice">
+              <DisplayBoxContent>
+                {DiceSetString(
+                  classes.find((x) => x.id === state.startingClassId)?.hitDice
+                )}
+              </DisplayBoxContent>
+            </DisplayBox>
           </>
         </FormRow2>
         <FormRow label="Race" error={!state.raceId ? "Select race" : undefined}>

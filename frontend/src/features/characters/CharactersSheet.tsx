@@ -85,13 +85,18 @@ export default function CharactersSheet() {
   const [silverPieces, setSilverPieces] = useState<number>(2);
   const [copperPieces, setCopperPieces] = useState<number>(3);
   useEffect(() => {
-    console.log("use efect");
     setName(character?.name ?? "");
     setDescription(character?.description ?? "");
     setGoldPieces(character?.coinPurse.goldPieces ?? 4);
     setSilverPieces(character?.coinPurse.silverPieces ?? 5);
     setCopperPieces(character?.coinPurse.copperPieces ?? 6);
-  }, [character?.description, character?.name, character?.coinPurse.goldPieces, character?.coinPurse.silverPieces, character?.coinPurse.copperPieces]);
+  }, [
+    character?.description,
+    character?.name,
+    character?.coinPurse.goldPieces,
+    character?.coinPurse.silverPieces,
+    character?.coinPurse.copperPieces,
+  ]);
   const {
     isPending,
     updateCharacter,
@@ -265,10 +270,41 @@ export default function CharactersSheet() {
                   margin: "1px",
                 }}
               >
-                <CoinPurseForm disabled={!(editMode && EditEquipmentInBackpackPermission)} onGoldChange={(e)=>{setGoldPieces(Number(e.target.value))}} onSilverChange={(e) => {setSilverPieces(Number(e.target.value))}} onCopperChange={(e) => {setCopperPieces(Number(e.target.value))}} value={{goldPieces, silverPieces, copperPieces}}></CoinPurseForm>
-                {editMode && EditEquipmentInBackpackPermission &&
-                  <Button size="small" customStyles={css`margin-top: 5px`} onClick={() => updateCoinSack({coinSack: {goldPieces, silverPieces, copperPieces}})} disabled={!(goldPieces >= 0 && silverPieces >= 0 && copperPieces >= 0)}>Update coins</Button>
-                }
+                <CoinPurseForm
+                  disabled={!(editMode && EditEquipmentInBackpackPermission)}
+                  onGoldChange={(e) => {
+                    setGoldPieces(Number(e.target.value));
+                  }}
+                  onSilverChange={(e) => {
+                    setSilverPieces(Number(e.target.value));
+                  }}
+                  onCopperChange={(e) => {
+                    setCopperPieces(Number(e.target.value));
+                  }}
+                  value={{ goldPieces, silverPieces, copperPieces }}
+                ></CoinPurseForm>
+                {editMode && EditEquipmentInBackpackPermission && (
+                  <Button
+                    size="small"
+                    customStyles={css`
+                      margin-top: 5px;
+                    `}
+                    onClick={() =>
+                      updateCoinSack({
+                        coinSack: { goldPieces, silverPieces, copperPieces },
+                      })
+                    }
+                    disabled={
+                      !(
+                        goldPieces >= 0 &&
+                        silverPieces >= 0 &&
+                        copperPieces >= 0
+                      )
+                    }
+                  >
+                    Update coins
+                  </Button>
+                )}
               </div>
             </div>
           </MainGridColumn1>
@@ -328,8 +364,12 @@ export default function CharactersSheet() {
             </div>
             <div style={{ gridColumnStart: 2, gridColumnEnd: 5, gridRow: 2 }}>
               <DisplayBox label="Hit dice">
-                <DisplayBoxContent>{"Left: " + DiceSetString(character.hitDice.left)}</DisplayBoxContent>
-                <DisplayBoxContent>{"Total: "+DiceSetString(character.hitDice.total)}</DisplayBoxContent>
+                <DisplayBoxContent>
+                  {"Left: " + DiceSetString(character.hitDice.left)}
+                </DisplayBoxContent>
+                <DisplayBoxContent>
+                  {"Total: " + DiceSetString(character.hitDice.total)}
+                </DisplayBoxContent>
               </DisplayBox>
             </div>
             <div style={{ gridColumnStart: 1, gridColumnEnd: 2, gridRow: 3 }}>
@@ -348,7 +388,9 @@ export default function CharactersSheet() {
               style={{ gridColumnStart: 3, gridColumnEnd: 4, gridRowStart: 3 }}
             >
               <DisplayBox label="Proficiency bonus">
-                <DisplayBoxContent>{character.proficiencyBonus}</DisplayBoxContent>
+                <DisplayBoxContent>
+                  {character.proficiencyBonus}
+                </DisplayBoxContent>
               </DisplayBox>
             </div>
             <div

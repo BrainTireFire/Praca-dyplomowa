@@ -6,23 +6,22 @@ import { ReusableTable } from "../../../ui/containers/ReusableTable2";
 import ButtonGroup from "../../../ui/interactive/ButtonGroup";
 import Button from "../../../ui/interactive/Button";
 import styled from "styled-components";
-import { initialState, RollConditionalEffectsReducer } from "./RollConditionalEffectsReducer";
+import {
+  initialState,
+  RollConditionalEffectsReducer,
+} from "./RollConditionalEffectsReducer";
 import { useGetCharactersSavingThrowConditionalEffects } from "../hooks/useGetCharactersSavingThrowConditionalEffects";
 import { useSelectCharactersSavingThrowConditionalEffects } from "../hooks/useSelectCharactersSavingThrowConditionalEffects";
 
 export function SavingThrowRollResolution({
   characterId,
-  ability
+  ability,
 }: {
-  characterId: number
-  ability: ability
+  characterId: number;
+  ability: ability;
 }) {
-
-
-  const { isLoading: isLoadingEffects, conditionalEffects } = useGetCharactersSavingThrowConditionalEffects(
-    characterId,
-    ability
-  );
+  const { isLoading: isLoadingEffects, conditionalEffects } =
+    useGetCharactersSavingThrowConditionalEffects(characterId, ability);
 
   const [state, dispatch] = useReducer(
     RollConditionalEffectsReducer,
@@ -40,11 +39,12 @@ export function SavingThrowRollResolution({
     }
   }, [conditionalEffects]);
 
-  const { isPending: isPendingRoll, selectSavingThrowRollConditionalEffects } = useSelectCharactersSavingThrowConditionalEffects(
-    () => {},
-    characterId,
-    ability
-  );
+  const { isPending: isPendingRoll, selectSavingThrowRollConditionalEffects } =
+    useSelectCharactersSavingThrowConditionalEffects(
+      () => {},
+      characterId,
+      ability
+    );
 
   if (isLoadingEffects || !hasEffectRun || isPendingRoll) {
     return <Spinner></Spinner>;
@@ -52,51 +52,51 @@ export function SavingThrowRollResolution({
 
   return (
     <Container>
-      <Heading as="h1">Select effects affecting this {ability} Saving Throw roll</Heading>
+      <Heading as="h1">
+        Select effects affecting this {ability} Saving Throw roll
+      </Heading>
 
-                <ContainerEffects>
-                  <TabsContainer1>
-                    <TableContainer>
-                      <ReusableTable
-                        mainHeader={`Conditional effects`}
-                        tableRowsColomns={{
-                          Name: "name",
-                          Description: "description",
-                        }}
-                        data={state.conditionalEffects.map(
-                          (effect, index: number) => {
-                            return {
-                              id: index,
-                              name: conditionalEffects?.find(
-                                (x) => x.effectId === effect.effectId
-                              )?.effectName,
-                              description:
-                                conditionalEffects?.find(
-                                  (x) => x.effectId === effect.effectId
-                                )?.effectDescription,
-                              selected: effect.selected,
-                              itemId: effect.effectId,
-                            };
-                          }
-                        )}
-                        isSelectable={false}
-                        isMultiSelect={true}
-                        handleMultiSelectionChange={(id: number | string) => {
-                          console.log(id);
-                          dispatch({
-                            type: "TOGGLE_CASTER_CONDITIONAL_EFFECT",
-                            payload: { effectId: Number(id) },
-                          });
-                        }}
-                        // customTableContainer={css`
-                        //   height: 100%;
-                        // `}
-                      ></ReusableTable>
-                    </TableContainer>
-                  </TabsContainer1>
-                </ContainerEffects>
+      <ContainerEffects>
+        <TabsContainer1>
+          <TableContainer>
+            <ReusableTable
+              mainHeader={`Conditional effects`}
+              tableRowsColomns={{
+                Name: "name",
+                Description: "description",
+              }}
+              data={state.conditionalEffects.map((effect, index: number) => {
+                return {
+                  id: index,
+                  name: conditionalEffects?.find(
+                    (x) => x.effectId === effect.effectId
+                  )?.effectName,
+                  description: conditionalEffects?.find(
+                    (x) => x.effectId === effect.effectId
+                  )?.effectDescription,
+                  selected: effect.selected,
+                  itemId: effect.effectId,
+                };
+              })}
+              isSelectable={false}
+              isMultiSelect={true}
+              handleMultiSelectionChange={(id: number | string) => {
+                dispatch({
+                  type: "TOGGLE_CASTER_CONDITIONAL_EFFECT",
+                  payload: { effectId: Number(id) },
+                });
+              }}
+              // customTableContainer={css`
+              //   height: 100%;
+              // `}
+            ></ReusableTable>
+          </TableContainer>
+        </TabsContainer1>
+      </ContainerEffects>
       <ButtonGroup>
-        <Button onClick={() => selectSavingThrowRollConditionalEffects(state)}>Resolve</Button>
+        <Button onClick={() => selectSavingThrowRollConditionalEffects(state)}>
+          Resolve
+        </Button>
       </ButtonGroup>
     </Container>
   );
@@ -125,7 +125,6 @@ const TabsContainer1 = styled.div`
   height: 100%;
   overflow-y: hidden;
 `;
-
 
 const TableContainer = styled.div`
   overflow-y: hidden;

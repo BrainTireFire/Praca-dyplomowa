@@ -16,8 +16,6 @@ export async function getImmaterialResourceBlueprints(
     }`
   );
 
-  console.log(response);
-
   return response;
 }
 
@@ -39,7 +37,6 @@ export async function getPower(powerId: number): Promise<Power> {
 }
 
 export async function postPower(powerDto: Power): Promise<number> {
-  console.log(powerDto);
   const options: RequestInit = {
     method: "POST",
     headers: {
@@ -52,7 +49,6 @@ export async function postPower(powerDto: Power): Promise<number> {
 }
 
 export async function updatePower(powerDto: Power): Promise<void> {
-  console.log(powerDto);
   const options: RequestInit = {
     method: "PATCH",
     headers: {
@@ -60,7 +56,6 @@ export async function updatePower(powerDto: Power): Promise<void> {
     },
     body: JSON.stringify(powerDto),
   };
-  console.log(powerDto);
   await customFetch(`${BASE_URL}/api/power`, options);
   return;
 }
@@ -79,7 +74,6 @@ export async function addEffectBlueprint(
   effectBlueprintDto: EffectBlueprint,
   powerId: number
 ): Promise<number> {
-  console.log(effectBlueprintDto);
   const options: RequestInit = {
     method: "POST",
     headers: {
@@ -98,8 +92,6 @@ export async function getMaterialComponents(
     `${BASE_URL}/api/power/${powerId}/materialComponents`
   );
 
-  console.log(response);
-
   return response;
 }
 
@@ -110,15 +102,12 @@ export async function getMaterialComponent(
     `${BASE_URL}/api/power/materialComponent/${componentId}`
   );
 
-  console.log(response);
-
   return response;
 }
 export async function addMaterialComponent(
   materialResourceDto: MaterialComponent,
   powerId: number
 ): Promise<void> {
-  console.log(materialResourceDto);
   const options: RequestInit = {
     method: "POST",
     headers: {
@@ -152,7 +141,6 @@ export async function updateMaterialComponent(
   materialResourceDto: MaterialComponent,
   powerId: number
 ): Promise<void> {
-  console.log(materialResourceDto);
   const options: RequestInit = {
     method: "PATCH",
     headers: {
@@ -174,8 +162,6 @@ export async function getItemFamilies(
       !!powerId ? `?effectId=${powerId}` : ""
     }`
   );
-
-  console.log(response);
 
   return response;
 }

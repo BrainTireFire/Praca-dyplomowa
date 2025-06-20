@@ -18,7 +18,6 @@ export function useSelectNextClassLevel(onSuccess: () => void) {
       onSuccess();
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Class selection failed!");
     },
   });

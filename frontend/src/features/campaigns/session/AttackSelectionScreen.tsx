@@ -2,7 +2,10 @@ import { HiEye } from "react-icons/hi2";
 import { DamageType } from "../../../models/damageType";
 import { DiceSetString } from "../../../models/diceset";
 import { WeaponAttack } from "../../../models/weaponattack";
-import { ParticipanceData, WeaponAttackDto } from "../../../services/apiEncounter";
+import {
+  ParticipanceData,
+  WeaponAttackDto,
+} from "../../../services/apiEncounter";
 import { Cell } from "../../../ui/containers/Cell";
 import Menus from "../../../ui/containers/Menus";
 import Modal from "../../../ui/containers/Modal";
@@ -28,8 +31,10 @@ export function AttackSelectionScreen({
   dispatch: React.Dispatch<SetWeaponAttack>;
   onCloseModal: () => {};
 }) {
-  console.log(characterId);
-  const { isLoading, weaponAttacks, isError, error } = useGetWeaponAttacks(characterId, encounterId);
+  const { isLoading, weaponAttacks, isError, error } = useGetWeaponAttacks(
+    characterId,
+    encounterId
+  );
   if (isLoading) {
     return <Spinner></Spinner>;
   }
@@ -60,10 +65,13 @@ export default function SessionWeaponAttackTable({
 }) {
   return (
     <Menus>
-      <Table header="Weapon attack" columns="auto auto auto auto auto auto auto auto auto">
+      <Table
+        header="Weapon attack"
+        columns="auto auto auto auto auto auto auto auto auto"
+      >
         <Table.Header>
-        <div>Main</div>
-        <div>Weapon</div>
+          <div>Main</div>
+          <div>Weapon</div>
           <div>Damage</div>
           <div>Attack bonus</div>
           <div>D. type</div>
@@ -98,9 +106,12 @@ function WeaponAttackRow({
   dispatch: React.Dispatch<SetWeaponAttack>;
   onCloseModal: () => {};
 }) {
-  
-  const mainAttackLabel = weaponAttack.requiredWeaponAttackAvailable ? "Select" : "No attacks left";
-  const offhandAttackLabel = weaponAttack.requiredWeaponAttackAvailable ? "Select" : "No bonus actions left";
+  const mainAttackLabel = weaponAttack.requiredWeaponAttackAvailable
+    ? "Select"
+    : "No attacks left";
+  const offhandAttackLabel = weaponAttack.requiredWeaponAttackAvailable
+    ? "Select"
+    : "No bonus actions left";
   return (
     <Table.Row>
       <Cell>
@@ -128,9 +139,7 @@ function WeaponAttackRow({
             onCloseModal();
           }}
           size="small"
-          disabled={
-            !weaponAttack.requiredWeaponAttackAvailable
-          }
+          disabled={!weaponAttack.requiredWeaponAttackAvailable}
         >
           {weaponAttack.main ? mainAttackLabel : offhandAttackLabel}
         </Button>
@@ -151,9 +160,7 @@ function WeaponAttackRow({
             onCloseModal();
           }}
           size="small"
-          disabled={
-            !weaponAttack.requiredWeaponAttackAvailable
-          }
+          disabled={!weaponAttack.requiredWeaponAttackAvailable}
         >
           {weaponAttack.main ? mainAttackLabel : offhandAttackLabel}
         </Button>
@@ -172,7 +179,7 @@ function WeaponAttackRow({
           </Menus.List>
         </Menus.Menu>
         <Modal.Window name="open">
-          <EditModeContext.Provider value={{editMode: false}}>
+          <EditModeContext.Provider value={{ editMode: false }}>
             <Container>
               <ItemForm itemId={weaponAttack.id}></ItemForm>
             </Container>
@@ -182,7 +189,6 @@ function WeaponAttackRow({
     </Table.Row>
   );
 }
-
 
 const Container = styled.div`
   display: flex;

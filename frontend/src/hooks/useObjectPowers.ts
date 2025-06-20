@@ -22,7 +22,6 @@ export function useObjectPowers(
         : ["characterPreparedPowerList"],
     queryFn: () => {
       if (objectId) {
-        console.log("Load: " + objectId);
         if (objectType === "Item") return getItemPowers(objectId);
         if (objectType === "Character") return getCharacterPowers(objectId);
         if (objectType === "CharacterPrepared")

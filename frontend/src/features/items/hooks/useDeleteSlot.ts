@@ -13,7 +13,6 @@ export function useDeleteSlot(onSuccess: () => void, itemId: number) {
       onSuccess();
     },
     onError: (error) => {
-      console.error(error);
       toast.error("Item creation failed");
     },
   });

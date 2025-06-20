@@ -76,7 +76,7 @@ export default function EquipmentSlotScreen({
   if (isError) {
     return <div>{error?.message}</div>;
   }
-  console.log(equipmentAndSlots);
+
   return (
     <>
       <Heading as="h1">Equipment selection</Heading>
@@ -112,7 +112,6 @@ export default function EquipmentSlotScreen({
                           )}
                         >
                           {item.name}
-                          {console.log(snapshot)}
                         </ItemBox>
                       ))}
                     </Draggable>

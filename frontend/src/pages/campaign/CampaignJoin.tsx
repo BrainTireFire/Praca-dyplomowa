@@ -7,6 +7,8 @@ import CharacterItemBox from "../../features/characters/CharacterItemBox";
 import { useCharacters } from "../../features/characters/hooks/useCharacters";
 import useCampaignJoin from "../../features/campaigns/hooks/useCampaignJoin";
 import { useCampaignJoinInfo } from "../../features/campaigns/hooks/useCampaignJoinInfo";
+import { useNavigate } from "react-router-dom";
+import Button from "../../ui/interactive/Button";
 
 const Container = styled.div`
   display: flex;
@@ -36,11 +38,7 @@ function CampaignJoin() {
   const { isLoading, characters, error } = useCharacters();
   const { joinCampaign, isPending } = useCampaignJoin();
   const { t } = useTranslation();
-
-  const filteredCharacters = characters?.filter(
-    // Filter out those Characters that are already assigned to a Campaign
-    (character) => !character.campaignId
-  );
+  const navigate = useNavigate();
 
   if (!campaign) {
     return <Spinner />;
@@ -54,6 +52,16 @@ function CampaignJoin() {
     return <>{`${error}`}</>;
   }
 
+  // Check if any character is already assigned to THIS campaign
+  const alreadyJoinedCharacter = characters?.find(
+    (character) => character.campaignId === campaign.id
+  );
+
+  // Filter out characters not in any campaign
+  const filteredCharacters = characters?.filter(
+    (character) => !character.campaignId
+  );
+
   return (
     <Container>
       <Box variation="squaredLarge">
@@ -62,28 +70,43 @@ function CampaignJoin() {
           <Heading as="h1" color="textColor">
             {campaign?.name}
           </Heading>
-          <Heading as="h2">Pick a character</Heading>
-          <CharacterListLayout>
-            {filteredCharacters && filteredCharacters?.length > 0 ? (
-              filteredCharacters?.map((character) => (
-                <CharacterItemBox
-                  key={character.id}
-                  character={character}
-                  onClick={(chosenCharacterId: number) =>
-                    joinCampaign({
-                      campaignId: campaign.id,
-                      characterId: chosenCharacterId,
-                    })
-                  }
-                  showButtons={false}
-                />
-              ))
-            ) : (
-              <Heading as="h1" color="textColor">
-                No characters eligible for joining.
+
+          {alreadyJoinedCharacter ? (
+            <>
+              <Heading as="h2" color="textColor">
+                You already have a character in this campaign. Please remove
+                them first before joining with a new character.
               </Heading>
-            )}
-          </CharacterListLayout>
+              <Button onClick={() => navigate(`/campaigns/${campaign.id}`)}>
+                Go to Campaign
+              </Button>
+            </>
+          ) : (
+            <>
+              <Heading as="h2">Pick a character</Heading>
+              <CharacterListLayout>
+                {filteredCharacters && filteredCharacters.length > 0 ? (
+                  filteredCharacters.map((character) => (
+                    <CharacterItemBox
+                      key={character.id}
+                      character={character}
+                      onClick={(chosenCharacterId: number) =>
+                        joinCampaign({
+                          campaignId: campaign.id,
+                          characterId: chosenCharacterId,
+                        })
+                      }
+                      showButtons={false}
+                    />
+                  ))
+                ) : (
+                  <Heading as="h1" color="textColor">
+                    No characters eligible for joining.
+                  </Heading>
+                )}
+              </CharacterListLayout>
+            </>
+          )}
         </BoxContent>
       </Box>
     </Container>

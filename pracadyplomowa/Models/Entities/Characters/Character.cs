@@ -215,10 +215,11 @@ namespace pracadyplomowa.Models.Entities.Characters
             get
             {
                 int healthBase = this.R_CharacterHasLevelsInClass.Sum(cl => cl.HitPoints);
+                int healthConstitution = this.R_CharacterHasLevelsInClass.Count * (this.ConstitutionModifier > 0 ? this.ConstitutionModifier : 0);
                 int optional = this.AffectedByApprovedEffects.OfType<HitpointEffectInstance>().Where(hei =>
                     hei.EffectType.HitpointEffect == HitpointEffect.HitpointMaximumBonus
                 ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet);
-                return healthBase + optional;
+                return healthBase + healthConstitution + optional;
             }
         }
 

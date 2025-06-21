@@ -102,6 +102,8 @@ public class AppDbContext : IdentityDbContext<User, Role, int,
         public DbSet<DamageEffectInstance> DamageEffectInstances { get; set; }
         public DbSet<HealingEffectInstance> HealingEffectInstances { get; set; }
         public DbSet<HitpointEffectInstance> HitpointEffectInstances { get; set; }
+        public DbSet<InitiativeEffectInstance> InitiativeEffectInstance { get; set; }
+        public DbSet<MagicEffectInstance> MagicEffectInstance { get; set; }
         public DbSet<MovementCostEffectInstance> MovementCostEffectInstances { get; set; }
         public DbSet<MovementEffectInstance> MovementEffectInstances { get; set; }
         public DbSet<ProficiencyEffectInstance> ProficiencyEffectInstances { get; set; }

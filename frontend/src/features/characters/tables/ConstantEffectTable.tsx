@@ -12,6 +12,7 @@ import { EffectParentObjectIdContext } from "../../../context/EffectParentObject
 import { EditModeContext } from "../../../context/EditModeContext";
 import { useUnlinkConstantEffectInstance } from "../hooks/useUnlinkConstantEffectInstance";
 import styled from "styled-components";
+import { ItemContext } from "../../../context/ItemContext";
 
 export default function ConstantEffectTable({
   effects,
@@ -98,11 +99,13 @@ function ConstantEffectRow({ effect }: { effect: Effect }) {
         </Modal.Window>
         <Modal.Window name="open">
           <EffectParentObjectIdContext.Provider
-            value={{ objectId: characterId, objectType: "CharacterConstant" }}
+            value={{ objectId: characterId, objectType: effect.affectsCharacter ? "CharacterConstant" : "ItemItself" }}
           >
-            <Container>
-              <EffectInstanceForm effectId={effect.id}></EffectInstanceForm>
-            </Container>
+            <ItemContext.Provider value={{objectType: effect.affectsCharacter ? "notapplies" : "Weapon"}}>
+              <Container>
+                <EffectInstanceForm effectId={effect.id}></EffectInstanceForm>
+              </Container>
+            </ItemContext.Provider>
           </EffectParentObjectIdContext.Provider>
         </Modal.Window>
       </Modal>

@@ -12,6 +12,7 @@ import { useDeleteConstantEffectInstance } from "../hooks/useDeleteConstantEffec
 import EffectInstanceForm from "../../effects/EffectInstanceForm";
 import { EditModeContext } from "../../../context/EditModeContext";
 import styled from "styled-components";
+import { ItemContext } from "../../../context/ItemContext";
 
 export default function EffectTable({ effects }: { effects: Effect[] }) {
   const { characterId } = useContext(CharacterIdContext);
@@ -23,7 +24,7 @@ export default function EffectTable({ effects }: { effects: Effect[] }) {
         columns="auto auto auto auto 0.01rem"
         modal={
           <EffectParentObjectIdContext.Provider
-            value={{ objectId: characterId, objectType: "CharacterConstant" }}
+            value={{ objectId: characterId, objectType: "CharacterTemporary" }}
           >
             <Container>
               <EffectInstanceForm
@@ -97,14 +98,14 @@ function EffectRow({ effect }: { effect: Effect }) {
         </Modal.Window>
         <Modal.Window name="open">
           <EffectParentObjectIdContext.Provider
-            value={{ objectId: characterId, objectType: "CharacterConstant" }}
+            value={{ objectId: characterId, objectType: effect.affectsCharacter ? "CharacterTemporary" : "ItemItself" }}
           >
-            <Container>
+            <ItemContext.Provider value={{objectType: effect.affectsCharacter ? "notapplies" : "Weapon"}}>
               <EffectInstanceForm
                 effectId={effect.id}
                 isConstant={false}
               ></EffectInstanceForm>
-            </Container>
+            </ItemContext.Provider>
           </EffectParentObjectIdContext.Provider>
         </Modal.Window>
       </Modal>

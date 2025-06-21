@@ -91,7 +91,7 @@ export default function EquipmentRow({ equipment }: { equipment: Item }) {
         </Menus.Menu>
         <Modal.Window name="delete">
           <ConfirmDelete
-            resourceName="effect instance"
+            resourceName="item"
             disabled={isPending}
             onConfirm={() => {
               deleteItem(equipment.id);

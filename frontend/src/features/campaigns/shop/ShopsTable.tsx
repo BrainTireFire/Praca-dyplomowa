@@ -8,18 +8,22 @@ import { useLocation } from "react-router-dom";
 const Table = styled.table`
   width: 90%;
   border-radius: var(--border-radius-md);
+  border-spacing: 0;
+  table-layout: fixed;
   border: 1px solid var(--color-border);
   background-color: rgba(var(--color-secondary-background-rgb), 0.05);
-  border-spacing: 0;
+  overflow: clip;
 `;
 
 const Th = styled.th`
   padding: 10px;
+  text-align: center;
 `;
 
 const Tr = styled.tr`
   transition: background-color 100ms ease;
   cursor: pointer;
+
   &:hover {
     background-color: rgba(116, 177, 116, 0.5);
   }
@@ -27,8 +31,19 @@ const Tr = styled.tr`
 
 const Td = styled.td`
   padding: 8px;
-  border-top: 1px solid var(--color-border);
   text-align: center;
+  border-top: 1px solid var(--color-border);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+`;
+
+const ActionTd = styled.td`
+  padding: 8px 16px;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 `;
 
 export default function ShopsTable({
@@ -44,11 +59,13 @@ export default function ShopsTable({
   return (
     <Table>
       <thead>
-        <Th>Name:</Th>
-        <Th>Type:</Th>
-        <Th>Location:</Th>
-        <Th>Description:</Th>
-        {isGameMaster && <Th></Th>}
+        <tr>
+          <Th style={{ width: "20%" }}>Name</Th>
+          <Th style={{ width: "20%" }}>Type</Th>
+          <Th style={{ width: "20%" }}>Location</Th>
+          <Th style={{ width: "30%" }}>Description</Th>
+          {isGameMaster && <Th style={{ width: "10%" }}></Th>}
+        </tr>
       </thead>
       <tbody>
         {shops.map((shop: Shop, index: number) => (
@@ -57,26 +74,15 @@ export default function ShopsTable({
             <Td>{shop.type}</Td>
             <Td>{shop.location}</Td>
             <Td>{shop.description}</Td>
-            {/* <Td>{shop.id}</Td> */}
             {isGameMaster && (
-              <Td style={{ display: "flex", gap: "10px" }}>
-                <Button
-                  onClick={(e) => {
-                    navigate(`edit/${shop.id}`);
-                    e.stopPropagation();
-                  }}
-                >
+              <ActionTd onClick={(e) => e.stopPropagation()}>
+                <Button onClick={() => navigate(`edit/${shop.id}`)}>
                   <HiWrench />
                 </Button>
-                <Button
-                  onClick={(e) => {
-                    onRemove(shop.id);
-                    e.stopPropagation();
-                  }}
-                >
+                <Button onClick={() => onRemove(shop.id)}>
                   <HiXMark />
                 </Button>
-              </Td>
+              </ActionTd>
             )}
           </Tr>
         ))}

@@ -144,7 +144,7 @@ export default function Home() {
                 style={{ display: "flex", alignItems: "center", gap: "1rem" }}
               >
                 <IoMail style={{ fontSize: "3em" }} />
-                <p>s20202@pjwstk.edu.pl</p>
+                <p>s22107@pjwstk.edu.pl</p>
               </div>
             </Box>
           </PersonContainer>
@@ -216,7 +216,7 @@ export default function Home() {
                 style={{ display: "flex", alignItems: "center", gap: "1rem" }}
               >
                 <IoMail style={{ fontSize: "3em" }} />
-                <p>s20202@pjwstk.edu.pl</p>
+                <p>s23950@pjwstk.edu.pl</p>
               </div>
             </Box>
           </PersonContainer>

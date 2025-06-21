@@ -10,6 +10,7 @@ import FormRowLabelRight from "../../../ui/forms/FormRowLabelRight";
 import EffectOnItemTable from "../tables/EffectOnItemTable";
 import { useContext } from "react";
 import { EditModeContext } from "../../../context/EditModeContext";
+import { ItemContext } from "../../../context/ItemContext";
 
 export default function EquippableItemForm({
   body,
@@ -20,6 +21,8 @@ export default function EquippableItemForm({
 }) {
   
   const { editMode } = useContext(EditModeContext);
+  
+  const { objectType: itemObjectType } = useContext(ItemContext);
   return (
     <>
       <FormRowLabelRight label="Occupies all slots">
@@ -55,7 +58,7 @@ export default function EquippableItemForm({
         <PowersTable powers={body.powers}></PowersTable>
         <ResourcesTable resources={body.resourcesOnEquip}></ResourcesTable>
         <EffectTable effects={body.effectsOnWearer}></EffectTable>
-        <EffectOnItemTable effects={body.effectsOnItem}></EffectOnItemTable>
+        {itemObjectType === "Weapon" && <EffectOnItemTable effects={body.effectsOnItem}></EffectOnItemTable>}
       </Grid>
     </>
   );

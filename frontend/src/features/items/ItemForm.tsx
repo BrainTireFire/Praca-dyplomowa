@@ -31,6 +31,7 @@ import { useDeleteItem } from "./hooks/useDeleteItem";
 import { useNavigate } from "react-router-dom";
 import Modal from "../../ui/containers/Modal";
 import ConfirmDelete from "../../ui/containers/ConfirmDelete";
+import { ItemContext } from "../../context/ItemContext";
 
 export type ItemAction =
   | { type: "SET_ITEM"; payload: Item }
@@ -321,10 +322,15 @@ export default function ItemForm({
                     {(state.itemType === "RangedWeapon" ||
                       state.itemType === "MeleeWeapon" ||
                       state.itemType === "Apparel") && (
-                      <EquippableItemForm
-                        body={state.itemTypeBody as EquippableItemBody}
-                        dispatch={dispatch}
-                      ></EquippableItemForm>
+                        
+                      <ItemContext.Provider
+                        value={{ objectType: state.itemType === "Apparel" ? "Apparel" : "Weapon" }}
+                      >
+                        <EquippableItemForm
+                          body={state.itemTypeBody as EquippableItemBody}
+                          dispatch={dispatch}
+                        ></EquippableItemForm>
+                      </ItemContext.Provider>
                     )}
                   </>
                 )}

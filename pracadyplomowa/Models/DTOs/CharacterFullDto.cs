@@ -650,7 +650,7 @@ namespace pracadyplomowa.Models.DTOs
 
         public static List<Resource> GetResources(Character character)
         {
-            var resources = character.AllImmaterialResourceInstances.GroupBy(resource => new { resource.R_BlueprintId, resource.R_ChoiceGroupUsage.R_ChoiceGroup.Name, resource.R_ItemId, resource.Level })
+            var resources = character.AllImmaterialResourceInstances.GroupBy(resource => new { resource.R_BlueprintId, resource.R_ChoiceGroupUsage?.R_ChoiceGroup.Name, resource.R_ItemId, resource.Level })
             .Select(group =>
             {
                 return new Resource()

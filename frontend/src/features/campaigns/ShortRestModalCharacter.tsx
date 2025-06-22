@@ -70,7 +70,9 @@ export default function ShortRestModalCharacter({
       .then(() => {
         setConnection(hubConnection);
       })
-      .catch((error) => toast.error("Error connecting to short rest hub: "));
+      .catch((error) => {
+        // toast.error("Error connecting to short rest hub: ");
+      });
 
     return () => {
       if (hubConnection) {
@@ -85,7 +87,9 @@ export default function ShortRestModalCharacter({
       try {
         await connection
           .invoke("ShortRestDiceSelected", Number(campaignId), hitDiceLocal)
-          .catch((err) => toast.error("Error sending hit dice: "));
+          .catch((err) => {
+            toast.error("Error sending hit dice: ");
+          });
         toast.success("Hit dice sent to DM");
         onCloseModal();
       } catch (error) {

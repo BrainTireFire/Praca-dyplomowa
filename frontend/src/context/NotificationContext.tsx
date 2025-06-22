@@ -63,7 +63,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
       .start()
       .then(() => {})
       .catch((err) => {
-        toast.error(`Error connecting to notifications hub!`);
+        // toast.error(`Error connecting to notifications hub!`);
       });
 
     hubConnection.current.on(

@@ -6,7 +6,7 @@ import { cloneElement, createContext, useState, useContext } from "react";
 import { useOutsideClick } from "../../hooks/useOutsideClick";
 
 const StyledModal = styled.div.attrs(() => ({
-  className: "styled-modal",
+  className: "click-outside-disable",
 }))`
   position: fixed;
   top: 50%;

@@ -31,9 +31,11 @@ const StyledToggle = styled.button`
   }
 `;
 
-const StyledList = styled.ul`
+const StyledList = styled.ul.attrs(() => ({
+  className: "click-outside-disable",
+}))`
   position: fixed;
-  z-index: 1001; // set higher than in Modal component
+  z-index: 1001;
   background-color: var(--color-button-primary);
   box-shadow: var(--shadow-md);
   border-radius: var(--border-radius-md);
@@ -41,7 +43,6 @@ const StyledList = styled.ul`
   right: ${(props) => props.position.x}px;
   top: ${(props) => props.position.y}px;
 `;
-
 const StyledButton = styled.button`
   width: 100%;
   text-align: left;
@@ -158,7 +159,7 @@ Menus.List = List;
 Menus.Button = Button;
 
 Toggle.defaultProps = {
-  itemCount: 1
-}
+  itemCount: 1,
+};
 
 export default Menus;

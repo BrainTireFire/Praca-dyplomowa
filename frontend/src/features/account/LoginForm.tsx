@@ -78,11 +78,11 @@ export default function LoginForm() {
           })}
         />
       </FormRowVertical>
-      <LinkContainer>
-        <Link to="/forgotPassword">
-          {t("account.forms.login.forgot.password")}
-        </Link>
-      </LinkContainer>
+     // <LinkContainer>
+     //   <Link to="/forgotPassword">
+     //     {t("account.forms.login.forgot.password")}
+     //   </Link>
+     // </LinkContainer>
       <FormRowVertical>
         <Button size="large" variation="primary" disabled={isLoading}>
           {!isLoading ? t("account.forms.login.button") : <SpinnerMini />}

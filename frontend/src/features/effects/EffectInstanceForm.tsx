@@ -430,20 +430,20 @@ export default function EffectInstanceForm({
               </FormRowVertical>
             )}
             {
-              objectType == "ItemWearer" &&
+              objectType !== "ItemItself" &&
               <FormRowLabelRight label="Is conditional">
-              <Input
-                disabled={disableForm}
-                type="checkbox"
-                checked={state.conditional}
-                onChange={(x) =>
-                  dispatch({
-                    type: "setConditional",
-                    payload: x.target.checked,
-                  })
-                }
+                <Input
+                  disabled={disableForm}
+                  type="checkbox"
+                  checked={state.conditional}
+                  onChange={(x) =>
+                    dispatch({
+                      type: "setConditional",
+                      payload: x.target.checked,
+                    })
+                  }
                 ></Input>
-            </FormRowLabelRight>
+              </FormRowLabelRight>
             }
           </Div1>
           <Div2>

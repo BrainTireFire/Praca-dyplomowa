@@ -26,4 +26,13 @@ public class SessionService : ISessionService
             await _hubContext.Clients.Group(encounterId.ToString()).SendAsync("RequeryInitiative");
         }
     }
+    
+    public async Task UpdateParticipanceData(int encounterId)
+    {
+        await _hubContext.Clients
+            .Group($"{encounterId}")
+            .SendAsync("RequeryParticipanceData", new {
+                EncounterId = encounterId
+            });
+    }
 }

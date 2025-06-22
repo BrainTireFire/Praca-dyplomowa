@@ -22,6 +22,7 @@ using pracadyplomowa.Repository;
 using pracadyplomowa.Repository.Board;
 using pracadyplomowa.Repository.Encounter;
 using pracadyplomowa.Repository.UnitOfWork;
+using pracadyplomowa.Services.Websockets;
 using pracadyplomowa.Services.Websockets.Notification;
 
 namespace pracadyplomowa.Services.Encounter;
@@ -34,13 +35,15 @@ public class EncounterService : IEncounterService
     private readonly IMapper _mapper;
     private readonly IHubContext<SessionHub> _hubContext;
     private readonly INotificationService _notificationService;
+    private readonly ISessionService _sessionService;
     
     public EncounterService(
         IUnitOfWork unitOfWork,
         IAccountRepository accountRepository,
         IMapper mapper,
         IHubContext<SessionHub> hubContext,
-        INotificationService notificationService
+        INotificationService notificationService,
+        ISessionService sessionService
    )
     {
         _unitOfWork = unitOfWork;
@@ -48,6 +51,7 @@ public class EncounterService : IEncounterService
         _mapper = mapper;
         _hubContext = hubContext;
         _notificationService = notificationService;
+        _sessionService = sessionService;
     }
     
     public async Task<PagedList<EncounterShortDto>> GetEncountersAsync(int ownedId, int campaignId, EncounterParams encounterParams)
@@ -468,7 +472,7 @@ public class EncounterService : IEncounterService
         character.TemporaryHitpoints = participanceDataDto.TemporaryHitpoints;
         character.SucceededDeathSavingThrows = participanceDataDto.SucceededDeathSaves;
         character.FailedDeathSavingThrows = participanceDataDto.FailedDeathSaves;
-        await _unitOfWork.SaveChangesAsync();
+        await CommitAndReport(encounter, [$"Modified data of {character.Name}"]);
     }
 
     public async Task DeleteParticipanceData(int encounterId, int characterId, int userId){
@@ -1242,5 +1246,7 @@ public class EncounterService : IEncounterService
                 Message = finalMessage,
             });
         }
+
+        await _sessionService.UpdateParticipanceData(encounter.Id);
     }
 }

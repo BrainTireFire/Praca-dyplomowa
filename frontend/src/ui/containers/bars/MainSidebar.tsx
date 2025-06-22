@@ -1,8 +1,11 @@
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { PiSwordDuotone, PiClock } from "react-icons/pi";
 import { AiOutlineThunderbolt } from "react-icons/ai";
 import { FaDice, FaRegAddressBook } from "react-icons/fa";
+import { GiMountainRoad } from "react-icons/gi";
+import { GiHorizonRoad } from "react-icons/gi";
+
 import { IoMdSettings } from "react-icons/io";
 import { MdBackpack } from "react-icons/md";
 import Modal from "../Modal";
@@ -65,6 +68,7 @@ function MainSidebar({
 }) {
   const { campaignId } = useParams<{ campaignId: string }>();
   const { groupName } = useParams<{ groupName: string }>();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -72,6 +76,13 @@ function MainSidebar({
         <NavList>
           {campaignId && (
             <>
+              <li>
+                <IconContainer
+                  onClick={() => navigate(`/campaigns/${campaignId}`)}
+                >
+                  <GiHorizonRoad title="Back to campaign"/>
+                </IconContainer>
+              </li>
               <li>
                 <IconContainer
                   onClick={() => {
@@ -82,7 +93,7 @@ function MainSidebar({
                     setActiveComponent("Component1");
                   }}
                 >
-                  <FaRegAddressBook />
+                  <FaRegAddressBook title="Compact character sheet"/>
                 </IconContainer>
               </li>
               <li>
@@ -95,7 +106,7 @@ function MainSidebar({
                     setActiveComponent("Component2");
                   }}
                 >
-                  <PiSwordDuotone />
+                  <PiSwordDuotone title="Equipment and attacks"/>
                 </IconContainer>
               </li>
               <li>
@@ -108,7 +119,7 @@ function MainSidebar({
                     setActiveComponent("Component3");
                   }}
                 >
-                  <AiOutlineThunderbolt />
+                  <AiOutlineThunderbolt title="Powers and resources"/>
                 </IconContainer>
               </li>
             </>
@@ -125,7 +136,7 @@ function MainSidebar({
                     setActiveComponent("Component4");
                   }}
                 >
-                  <PiClock />
+                  <PiClock title="Initiative queue"/>
                 </IconContainer>
               </li>
             </>
@@ -139,7 +150,7 @@ function MainSidebar({
             <Modal>
               <Modal.Open opens="BatchRollModal">
                 <IconContainer>
-                  <FaDice />
+                  <FaDice title="Dice rolling"/>
                 </IconContainer>
               </Modal.Open>
               <Modal.Window name="BatchRollModal">

@@ -146,13 +146,13 @@ namespace pracadyplomowa.Models.Entities.Characters
                 {
                     return roller.R_CharacterHasLevelsInClass.Count;
                 }
-                else if(additionalValueType == AdditionalValueType.AbilityScoreModifier)
+                else if(additionalValueType == AdditionalValueType.AbilityScoreModifier && Ability != null)
                 {
-                    return Character.AbilityModifier(roller.AbilityValue((Ability)Ability));
+                    return Character.AbilityModifier(roller.AbilityValueNoPersonalizedSet((Ability)Ability));
                 }
-                else if(additionalValueType == AdditionalValueType.SkillBonus)
+                else if(additionalValueType == AdditionalValueType.SkillBonus && Skill != null)
                 {
-                    return roller.SkillValue((Skill)Skill);
+                    return roller.SkillValueNoPersonalizedSet((Skill)Skill);
                 }
                 else if(additionalValueType == AdditionalValueType.ProficiencyBonus)
                 {

@@ -79,7 +79,9 @@ export default function ShortRestModalGM({
 
         setConnection(hubConnection);
       })
-      .catch((error) => toast.error("Error connecting to short rest hub: "));
+      .catch((error) => {
+        // toast.error("Error connecting to short rest hub: ");
+      });
 
     return () => {
       if (hubConnection) {

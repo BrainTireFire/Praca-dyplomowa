@@ -400,7 +400,9 @@ export default function SessionLayout({ encounter }: any) {
             .then((userList: string[]) => {
               setUsersConnected(userList);
             })
-            .catch((err) => toast.error("Error fetching users in group"));
+            .catch((err) => {
+              // toast.error("Error fetching users in group");
+            });
 
           hubConnection.on("UserJoined", (userName: string) => {
             setUsersConnected((prevUsers) => [...prevUsers, userName]);
@@ -472,7 +474,9 @@ export default function SessionLayout({ encounter }: any) {
 
           setConnection(hubConnection);
         })
-        .catch((error) => toast.error("Error connecting to session hub"));
+        .catch((error) => {
+          // toast.error("Error connecting to session hub: " + error);
+        });
 
       return () => {
         if (hubConnection) {
@@ -480,7 +484,7 @@ export default function SessionLayout({ encounter }: any) {
         }
       };
     } else {
-      toast.error("Group name is not defined");
+      // toast.error("Group name is not defined");
     }
   }, [groupName, encounter.campaign.id]);
 
@@ -495,12 +499,12 @@ export default function SessionLayout({ encounter }: any) {
       };
 
       try {
-        await connection
-          .invoke("SendMessageToGroup", request)
-          .catch((err) => toast.error("Error while sending message"));
+        await connection.invoke("SendMessageToGroup", request).catch((err) => {
+          // toast.error("Error while sending message");
+        });
         setMessageInput("");
       } catch (error) {
-        toast.error("Error sending message");
+        // toast.error("Error sending message");
       }
     }
   };
@@ -526,9 +530,11 @@ export default function SessionLayout({ encounter }: any) {
 
         await connection
           .invoke("TriggerWeaponAttackOverlay", weaponAttackOverlayRequest)
-          .catch((err) => toast.error("Error while sending message"));
+          .catch((err) => {
+            // toast.error("Error while sending message");
+          });
       } catch (error) {
-        toast.error("Error sending message");
+        // toast.error("Error sending message");
       }
     }
   };
@@ -556,9 +562,11 @@ export default function SessionLayout({ encounter }: any) {
 
         await connection
           .invoke("TriggerPowerCastOverlay", powerCastOverlayRequest)
-          .catch((err) => toast.error("Error while sending message"));
+          .catch((err) => {
+            // toast.error("Error while sending message");
+          });
       } catch (error) {
-        toast.error("Error sending message");
+        // toast.error("Error sending message");
       }
     }
   };

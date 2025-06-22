@@ -732,7 +732,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                     messages.Add($"{this.Name} failed a {eg!.SavingThrow} saving throw against {eg!.Name}.");
                 }
             });
-            ResolveAffectingEffects(messages);
+            // ResolveAffectingEffects(messages);
             var resources = AllImmaterialResourceInstances.Where(x => x.NeedsRefresh && x.R_Blueprint.RefreshesOn == RefreshType.TurnStart).ToList();
             foreach(var resource in resources){
                 resource.NeedsRefresh = false;
@@ -1671,9 +1671,9 @@ namespace pracadyplomowa.Models.Entities.Characters
                     target.MakeConcentrationSavingThrow(damageTaken, messages);
                 }
             }
-            // foreach(var group in generatedEffects.Where(x => x.R_OwnedByGroup != null).Select(x => x.R_OwnedByGroup).Distinct()){
-            //     group?.TickDuration();
-            // }
+            foreach(var group in generatedEffects.Where(x => x.R_OwnedByGroup != null).Select(x => x.R_OwnedByGroup).Distinct()){
+                group?.TickDuration();
+            }
             return Outcome.Success;
         }
 

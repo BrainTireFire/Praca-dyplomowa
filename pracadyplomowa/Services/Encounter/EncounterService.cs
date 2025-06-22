@@ -384,6 +384,8 @@ public class EncounterService : IEncounterService
         var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipances(encounterId);
         var participances = encounter.R_Participances.OrderBy(x => x.InitiativeOrder);
         var x = participances.SkipWhile(x => !x.ActiveTurn);
+        var previouslyActiveCharacter = await _unitOfWork.CharacterRepository.GetByIdWithAll(x.First().R_CharacterId);
+
         ParticipanceData participanceData;
         if(x.Count() > 1){
             participanceData = x.Skip(1).First();
@@ -399,7 +401,8 @@ public class EncounterService : IEncounterService
         participanceData.DistanceTraveled = 0;
         var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(participanceData.R_CharacterId);
         List<string> messages = [];
-        if(participanceData == participances.First()){
+        previouslyActiveCharacter.ResolveAffectingEffects(messages);
+        if(participanceData == participances.First()){ // if its beginning of new turn, tick duration
             List<EffectGroup> effectGroups = await _unitOfWork.EffectGroupRepository.GetAllEffectGroupsPresentInEncounter(encounterId);
             foreach(var effectGroup in effectGroups){
                 effectGroup.TickDuration();
@@ -964,9 +967,9 @@ public class EncounterService : IEncounterService
         foreach(var effect in generatedEffects){
             effect.Resolve(messages);
         }
-        // foreach(var group in generatedEffects.Where(x => x.R_OwnedByGroup != null).Select(x => x.R_OwnedByGroup).Distinct()){
-        //     group?.TickDuration();
-        // }
+        foreach(var group in generatedEffects.Where(x => x.R_OwnedByGroup != null).Select(x => x.R_OwnedByGroup).Distinct()){
+            group?.TickDuration();
+        }
         return;
     }
 

@@ -401,7 +401,7 @@ export default function SessionLayout({ encounter }: any) {
               setUsersConnected(userList);
             })
             .catch((err) => {
-              // toast.error("Error fetching users in group");
+              toast.error("Error fetching users in group");
             });
 
           hubConnection.on("UserJoined", (userName: string) => {
@@ -500,11 +500,11 @@ export default function SessionLayout({ encounter }: any) {
 
       try {
         await connection.invoke("SendMessageToGroup", request).catch((err) => {
-          // toast.error("Error while sending message");
+          toast.error("Error while sending message");
         });
         setMessageInput("");
       } catch (error) {
-        // toast.error("Error sending message");
+        toast.error("Error sending message");
       }
     }
   };
@@ -531,10 +531,10 @@ export default function SessionLayout({ encounter }: any) {
         await connection
           .invoke("TriggerWeaponAttackOverlay", weaponAttackOverlayRequest)
           .catch((err) => {
-            // toast.error("Error while sending message");
+            toast.error("Error while sending message");
           });
       } catch (error) {
-        // toast.error("Error sending message");
+        toast.error("Error sending message");
       }
     }
   };
@@ -563,10 +563,10 @@ export default function SessionLayout({ encounter }: any) {
         await connection
           .invoke("TriggerPowerCastOverlay", powerCastOverlayRequest)
           .catch((err) => {
-            // toast.error("Error while sending message");
+            toast.error("Error while sending message");
           });
       } catch (error) {
-        // toast.error("Error sending message");
+        toast.error("Error sending message");
       }
     }
   };

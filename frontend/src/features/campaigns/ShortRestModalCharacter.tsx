@@ -88,12 +88,12 @@ export default function ShortRestModalCharacter({
         await connection
           .invoke("ShortRestDiceSelected", Number(campaignId), hitDiceLocal)
           .catch((err) => {
-            // toast.error("Error sending hit dice: ");
+            toast.error("Error sending hit dice: ");
           });
         toast.success("Hit dice sent to DM");
         onCloseModal();
       } catch (error) {
-        // toast.error("Error sending hit dice");
+        toast.error("Error sending hit dice");
       }
     }
   };

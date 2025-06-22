@@ -9,7 +9,7 @@ const useClickOutside = (ref, handler) => {
     const listener = (event) => {
       const target = event.target as HTMLElement;
 
-      if (target.closest(".styled-modal")) return;
+      if (target.closest(".click-outside-disable")) return;
 
       // Do nothing if `mousedown` or `touchstart` started inside ref element
       if (startedInside || !startedWhenMounted) return;

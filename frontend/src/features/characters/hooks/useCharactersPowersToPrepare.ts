@@ -4,6 +4,7 @@ import { getCharacterPowersToPrepare } from "../../../services/apiCharacters";
 export function useCharactersPowersToPrepare(characterId: number | null) {
   const {
     isLoading,
+    isFetching,
     data: powerSelection,
     error,
   } = useQuery({
@@ -16,5 +17,5 @@ export function useCharactersPowersToPrepare(characterId: number | null) {
     },
   });
 
-  return { isLoading, powerSelection, error };
+  return { isLoading: isLoading || isFetching, powerSelection, error };
 }

@@ -17,7 +17,7 @@ import { EditModeContext } from "../../../context/EditModeContext";
 
 export type Effect = ValueEffect & {
   effectType: {
-    skillEffect: "Bonus" | "RerollLowerThan" | "Advantage";
+    skillEffect: "Bonus" | "RerollLowerThan" | "Advantage" | "Proficiency";
     skillEffect_Skill: skill;
   };
 };
@@ -92,6 +92,7 @@ export default function SkillEffectForm({
             { label: "Bonus", value: "Bonus" },
             { label: "Advantage", value: "Advantage" },
             { label: "Reroll lower than", value: "RerollLowerThan" },
+            { label: "Proficiency", value: "Proficiency"}
           ]}
           label="Skill effect"
           name="skillEffect"

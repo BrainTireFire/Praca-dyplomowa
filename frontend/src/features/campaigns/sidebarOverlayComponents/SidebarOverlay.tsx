@@ -1,6 +1,6 @@
-import styled, { keyframes } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import Button from "../../../ui/interactive/Button";
-import { HiBackward, HiXMark } from "react-icons/hi2";
+import { RiArrowGoBackLine } from "react-icons/ri";
 import { useParams } from "react-router-dom";
 import { useMyCharacter } from "../hooks/useMyCharacter";
 import Spinner from "../../../ui/interactive/Spinner";
@@ -38,7 +38,7 @@ const Overlay = styled.div<OverlayProps>`
   position: absolute;
   top: 0;
   left: calc(7rem); /* Adjust based on sidebar width */
-  width: 35%; /* Adjust based on main area width */
+  width: auto; /* Adjust based on main area width */
   max-height: 100%;
   height: 100%;
   background: #1f2421;
@@ -49,6 +49,9 @@ const Overlay = styled.div<OverlayProps>`
   animation: ${({ isClosing }) => (isClosing ? slideOut : slideIn)} 0.3s
     forwards;
   overflow-y: auto;
+  scrollbar-color: var(--color-button-primary) var(--color-main-background);
+  scrollbar-width: thin;
+  scrollbar-gutter: stable;
 `;
 
 const OverlayContent = styled.div`
@@ -73,9 +76,12 @@ export function SidebarOverlay({
   // }
   return (
     <Overlay isClosing={isClosing}>
-      {/* <Button onClick={handleClose}>
-        <HiBackward />
-      </Button> */}
+      <Button onClick={handleClose} size="medium" customStyles={css`margin: 5px`}>
+        <div style={{display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: "1rem"}}>
+          Close
+          <RiArrowGoBackLine title="Close overlay"/>
+        </div>
+      </Button>
       {!isLoading && (
         <>
           <OverlayContent>

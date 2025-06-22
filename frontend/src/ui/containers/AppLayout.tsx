@@ -19,6 +19,8 @@ const Main = styled.main`
   padding-top: 0rem;
   /* padding: 4rem 4.8rem 6.4rem; */
   overflow: auto;
+  scrollbar-color: var(--color-button-primary) var(--color-main-background);
+  scrollbar-width: thin;
 
   /* Hide scrollbar for WebKit browsers (Chrome, Safari) */
   /* &::-webkit-scrollbar {

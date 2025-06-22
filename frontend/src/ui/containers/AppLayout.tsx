@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Outlet } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import Navbar from "./bars/Navbar";
@@ -7,6 +7,7 @@ import Button from "../interactive/Button";
 import { HiXMark } from "react-icons/hi2";
 import { SidebarOverlay } from "../../features/campaigns/sidebarOverlayComponents/SidebarOverlay";
 import { ControlledCharacterContext } from "../../features/campaigns/session/context/ControlledCharacterContext";
+import useClickOutside from "../../hooks/useClickOutside";
 
 const StyledAppLayout = styled.div`
   display: grid;
@@ -41,9 +42,11 @@ const Container = styled.div`
 `;
 
 export default function AppLayout() {
+  const sidebarOverlayRef = useRef(null);
   const [activeComponent, setActiveComponent] = useState<string | null>(null);
   const [isClosing, setIsClosing] = useState(false);
   const [controlledCharacterId, setControlledCharacterId] = useState(null);
+
   const handleOpen = (component: string | null) => {
     setIsClosing(false);
     setActiveComponent(component);
@@ -53,6 +56,8 @@ export default function AppLayout() {
     setIsClosing(true);
     setTimeout(() => setActiveComponent(null), 300); // Matches the animation duration
   };
+
+  useClickOutside(sidebarOverlayRef, handleClose);
 
   return (
     <StyledAppLayout>
@@ -73,6 +78,7 @@ export default function AppLayout() {
         {/* Overlay Component */}
         {activeComponent && (
           <SidebarOverlay
+            ref={sidebarOverlayRef}
             isClosing={isClosing}
             handleClose={handleClose}
             activeComponent={activeComponent}

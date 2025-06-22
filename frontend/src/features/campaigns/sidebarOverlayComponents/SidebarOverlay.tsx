@@ -1,3 +1,4 @@
+import React, { forwardRef } from "react";
 import styled, { css, keyframes } from "styled-components";
 import Button from "../../../ui/interactive/Button";
 import { RiArrowGoBackLine } from "react-icons/ri";
@@ -61,25 +62,41 @@ const OverlayContent = styled.div`
   padding: 10px;
 `;
 
-export function SidebarOverlay({
-  isClosing,
-  handleClose,
-  activeComponent,
-}: {
-  isClosing: boolean;
-  handleClose: () => void;
-  activeComponent: string;
-}) {
+export const SidebarOverlay = forwardRef<
+  HTMLDivElement,
+  {
+    isClosing: boolean;
+    handleClose: () => void;
+    activeComponent: string;
+  }
+>(({ isClosing, handleClose, activeComponent }, ref) => {
   const { isLoading, character, isError, error } = useMyCharacter();
+  const equipmentSheetRef =
+    ref as React.MutableRefObject<HTMLDivElement | null>;
   // if (!isLoading && !character) {
   //   handleClose();
   // }
+
   return (
-    <Overlay isClosing={isClosing}>
-      <Button onClick={handleClose} size="medium" customStyles={css`margin: 5px`}>
-        <div style={{display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: "1rem"}}>
+    <Overlay isClosing={isClosing} ref={ref}>
+      <Button
+        onClick={handleClose}
+        size="medium"
+        customStyles={css`
+          margin: 5px;
+        `}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "1rem",
+          }}
+        >
           Close
-          <RiArrowGoBackLine title="Close overlay"/>
+          <RiArrowGoBackLine title="Close overlay" />
         </div>
       </Button>
       {!isLoading && (
@@ -120,4 +137,4 @@ export function SidebarOverlay({
       {isLoading && <Spinner></Spinner>}
     </Overlay>
   );
-}
+});

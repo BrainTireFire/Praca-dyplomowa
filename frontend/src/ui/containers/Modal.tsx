@@ -5,7 +5,9 @@ import { cloneElement, createContext, useState, useContext } from "react";
 
 import { useOutsideClick } from "../../hooks/useOutsideClick";
 
-const StyledModal = styled.div`
+const StyledModal = styled.div.attrs(() => ({
+  className: "styled-modal",
+}))`
   position: fixed;
   top: 50%;
   left: 50%;

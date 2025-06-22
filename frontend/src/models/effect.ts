@@ -4,4 +4,5 @@ export type Effect = {
   source: string;
   target: string;
   turnsLeft: number;
+  affectsCharacter: boolean;
 };

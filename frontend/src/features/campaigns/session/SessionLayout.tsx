@@ -606,11 +606,18 @@ export default function SessionLayout({ encounter }: any) {
           exact: false,
         });
       });
+      connection.on("RequeryParticipanceData", () => {
+        queryClient.invalidateQueries({
+          queryKey: ["participance", encounter.id],
+          exact: false,
+        });
+      });
     }
     return () => {
       if (connection) {
         connection.off("UpdatePath");
         connection.off("RequeryInitiative");
+        connection.off("RequeryParticipanceData");
       }
     };
   }, [connection, encounter.id, queryClient]);

@@ -19,6 +19,7 @@ import { WeaponAttackResolution } from "./WeaponAttackResolution";
 import { PowerCastResolution } from "./PowerCastResolution";
 import { WeaponAttackOverlayDto } from "../../../models/encounter/WeaponAttackOverlayDto";
 import toast from "react-hot-toast";
+import { useActionLogs } from "../hooks/useActionLogs";
 
 const GridContainer = styled.div`
   grid-row: 1 / 2;
@@ -374,6 +375,9 @@ export default function SessionLayout({ encounter }: any) {
   //TODO REACT QUERY OR STATE MANAGEMENT
   const [connection, setConnection] = useState<HubConnection | null>(null);
   const [usersConnected, setUsersConnected] = useState<string[]>([]);
+
+  const { isLoading, actionLogs } = useActionLogs(encounter.id);
+
   const [messages, setMessages] = useState<
     { message: string; username: string }[]
   >([]);
@@ -386,13 +390,23 @@ export default function SessionLayout({ encounter }: any) {
   );
   const [otherPath, setOtherPath] = useState<number[]>([]);
 
+  useEffect(() => {
+    if (actionLogs && actionLogs.length > 0 && !isLoading) {
+      const formattedLogs = actionLogs.map((log: any) => ({
+        message: log.content,
+        username: log.source,
+      }));
+      setMessages(formattedLogs);
+    }
+  }, [actionLogs, isLoading]);
+
   const chatRef = useRef(null);
   useEffect(() => {
     // Scroll to the bottom when messages change
     if (chatRef.current) {
       chatRef.current.scrollTop = chatRef.current.scrollHeight;
     }
-  }, [messages])
+  }, [messages]);
 
   useEffect(() => {
     if (groupName) {

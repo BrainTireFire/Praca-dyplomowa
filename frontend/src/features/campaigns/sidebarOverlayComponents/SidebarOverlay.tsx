@@ -1,4 +1,4 @@
-import styled, { keyframes } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import Button from "../../../ui/interactive/Button";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { useParams } from "react-router-dom";
@@ -76,8 +76,11 @@ export function SidebarOverlay({
   // }
   return (
     <Overlay isClosing={isClosing}>
-      <Button onClick={handleClose}>
-        <RiArrowGoBackLine />
+      <Button onClick={handleClose} size="medium" customStyles={css`margin: 5px`}>
+        <div style={{display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: "1rem"}}>
+          Close
+          <RiArrowGoBackLine title="Close overlay"/>
+        </div>
       </Button>
       {!isLoading && (
         <>

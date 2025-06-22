@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useReducer, useRef, useState } from "react";
 import styled from "styled-components";
 import VirtualBoard from "./VirtualBoard";
 import {
@@ -36,7 +36,8 @@ const RightPanel = styled.div`
   justify-content: space-between;
   background-color: var(--color-navbar);
   border: 1px solid var(--color-border);
-  height: 80%;
+  height: 100%;
+  overflow-y: hidden;
 `;
 
 const BottomPanel = styled.div`
@@ -64,6 +65,9 @@ const UsersList = styled.div`
 const ChatContentMessage = styled.div`
   flex-grow: 1;
   overflow-y: auto;
+  scrollbar-color: var(--color-button-primary) var(--color-main-background);
+  scrollbar-width: thin;
+  scrollbar-gutter: stable;
 `;
 
 const ChatMessageBox = styled.div`
@@ -382,6 +386,14 @@ export default function SessionLayout({ encounter }: any) {
   );
   const [otherPath, setOtherPath] = useState<number[]>([]);
 
+  const chatRef = useRef(null);
+  useEffect(() => {
+    // Scroll to the bottom when messages change
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    }
+  }, [messages])
+
   useEffect(() => {
     if (groupName) {
       const hubConnection = new HubConnectionBuilder()
@@ -649,7 +661,7 @@ export default function SessionLayout({ encounter }: any) {
         />
       </GridContainer>
       <RightPanel>
-        <ChatContentMessage>
+        <ChatContentMessage ref={chatRef}>
           {messages.map((message, index) => (
             <ChatMessageBox key={index}>
               <Heading as="h3" align="left">

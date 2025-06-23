@@ -20,11 +20,6 @@ public class ActionLogController : BaseApiController
     {
         var actionLogs = await _unitOfWork.ActionLogRepository.GetByEncounterId(encounterId);
 
-        if (actionLogs == null || actionLogs.Length == 0)
-        {
-            return NotFound($"No action logs found for encounter ID {encounterId}");
-        }
-
         return Ok(actionLogs);
     }
 

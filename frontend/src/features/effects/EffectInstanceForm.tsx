@@ -318,8 +318,7 @@ export default function EffectInstanceForm({
     bodyValueEffect.value?.additionalValues?.some(
       (value) =>
         value.levelsInClassId === null &&
-        (value.additionalValueType === "LevelsInClass" ||
-          value.additionalValueType === "TotalLevel")
+        (value.additionalValueType === "LevelsInClass")
     ) || false;
   const bodyValueEffectDisable_Skill =
     bodyValueEffect.value?.additionalValues?.some(

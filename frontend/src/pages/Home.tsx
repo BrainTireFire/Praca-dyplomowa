@@ -88,10 +88,10 @@ export default function Home() {
       </Heading>
       <HeaderParagraph>PJATK students present</HeaderParagraph>
       <BodyParagraph>
-        A breakthrough of a tool for a Dungeons & Dragons game
+        A breakthrough of a tool for a TTRPG game
       </BodyParagraph>
       <p>
-        A tool designed from scratch for D&D players - by D&D players.
+        A tool designed from scratch for TTRPG players - by TTRPG players.
         Playability is key!
       </p>
       <ButtonContainerPlayNow>

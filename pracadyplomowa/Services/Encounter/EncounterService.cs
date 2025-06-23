@@ -22,6 +22,7 @@ using pracadyplomowa.Repository;
 using pracadyplomowa.Repository.Board;
 using pracadyplomowa.Repository.Encounter;
 using pracadyplomowa.Repository.UnitOfWork;
+using pracadyplomowa.Services.Websockets;
 using pracadyplomowa.Services.Websockets.Notification;
 
 namespace pracadyplomowa.Services.Encounter;
@@ -34,13 +35,15 @@ public class EncounterService : IEncounterService
     private readonly IMapper _mapper;
     private readonly IHubContext<SessionHub> _hubContext;
     private readonly INotificationService _notificationService;
+    private readonly ISessionService _sessionService;
     
     public EncounterService(
         IUnitOfWork unitOfWork,
         IAccountRepository accountRepository,
         IMapper mapper,
         IHubContext<SessionHub> hubContext,
-        INotificationService notificationService
+        INotificationService notificationService,
+        ISessionService sessionService
    )
     {
         _unitOfWork = unitOfWork;
@@ -48,6 +51,7 @@ public class EncounterService : IEncounterService
         _mapper = mapper;
         _hubContext = hubContext;
         _notificationService = notificationService;
+        _sessionService = sessionService;
     }
     
     public async Task<PagedList<EncounterShortDto>> GetEncountersAsync(int ownedId, int campaignId, EncounterParams encounterParams)
@@ -380,6 +384,8 @@ public class EncounterService : IEncounterService
         var encounter = await _unitOfWork.EncounterRepository.GetEncounterWithParticipances(encounterId);
         var participances = encounter.R_Participances.OrderBy(x => x.InitiativeOrder);
         var x = participances.SkipWhile(x => !x.ActiveTurn);
+        var previouslyActiveCharacter = await _unitOfWork.CharacterRepository.GetByIdWithAll(x.First().R_CharacterId);
+
         ParticipanceData participanceData;
         if(x.Count() > 1){
             participanceData = x.Skip(1).First();
@@ -395,7 +401,8 @@ public class EncounterService : IEncounterService
         participanceData.DistanceTraveled = 0;
         var character = await _unitOfWork.CharacterRepository.GetByIdWithAll(participanceData.R_CharacterId);
         List<string> messages = [];
-        if(participanceData == participances.First()){
+        previouslyActiveCharacter.ResolveAffectingEffects(messages);
+        if(participanceData == participances.First()){ // if its beginning of new turn, tick duration
             List<EffectGroup> effectGroups = await _unitOfWork.EffectGroupRepository.GetAllEffectGroupsPresentInEncounter(encounterId);
             foreach(var effectGroup in effectGroups){
                 effectGroup.TickDuration();
@@ -444,7 +451,7 @@ public class EncounterService : IEncounterService
             AttacksMade = x.NumberOfAttacksTaken,
             MovementUsed = x.DistanceTraveled,
             TotalActions = x.R_Character.TotalActionsPerTurn,
-            TotalAttacksPerAction = x.R_Character.TotalAttacksPerTurn,
+            TotalAttacksPerAction = x.R_Character.TotalAttacksPerAttackAction,
             TotalBonusActions = x.R_Character.TotalBonusActionsPerTurn,
             TotalMovement = x.R_Character.Speed,
             Hitpoints = character.Hitpoints,
@@ -468,7 +475,7 @@ public class EncounterService : IEncounterService
         character.TemporaryHitpoints = participanceDataDto.TemporaryHitpoints;
         character.SucceededDeathSavingThrows = participanceDataDto.SucceededDeathSaves;
         character.FailedDeathSavingThrows = participanceDataDto.FailedDeathSaves;
-        await _unitOfWork.SaveChangesAsync();
+        await CommitAndReport(encounter, [$"Modified data of {character.Name}"]);
     }
 
     public async Task DeleteParticipanceData(int encounterId, int characterId, int userId){
@@ -756,21 +763,21 @@ public class EncounterService : IEncounterService
         result.WeaponId = weaponId;
         result.WeaponName = weapon.Name;
 
-        DiceSet damageDiceSet = weapon.DamageValue.getPersonalizedSet(character);
+        DiceSet damageDiceSet = weapon.GetBaseEquippedDamageDiceSet().getPersonalizedSet(character);
         List<WeaponDamageAndPowersDto.DamageValueDto> damageTypeOnHit = [];
         damageTypeOnHit.Add(new WeaponDamageAndPowersDto.DamageValueDto(){
             DamageType = weapon.DamageType,
             DamageValue = new DiceSetDto(damageDiceSet),
             DamageSource = weapon.Name + " (base damage)"
         });
-        foreach(var effect in weapon.R_AffectedBy.OfType<DamageEffectInstance>().Where(x => x.EffectType.DamageEffect == Models.Enums.EffectOptions.DamageEffect.ExtraWeaponDamage)){
-            damageDiceSet = effect.DiceSet.getPersonalizedSet(character);
-            damageTypeOnHit.Add(new WeaponDamageAndPowersDto.DamageValueDto(){
-                DamageType = weapon.DamageType,
-                DamageValue = new DiceSetDto(damageDiceSet),
-                DamageSource = effect.Name
-            });
-        }
+        // foreach(var effect in weapon.R_AffectedBy.OfType<DamageEffectInstance>().Where(x => x.EffectType.DamageEffect == Models.Enums.EffectOptions.DamageEffect.ExtraWeaponDamage)){
+        //     damageDiceSet = effect.DiceSet.getPersonalizedSet(character);
+        //     damageTypeOnHit.Add(new WeaponDamageAndPowersDto.DamageValueDto(){
+        //         DamageType = weapon.DamageType,
+        //         DamageValue = new DiceSetDto(damageDiceSet),
+        //         DamageSource = effect.Name
+        //     });
+        // }
         foreach(var effect in weapon.R_AffectedBy.OfType<MagicEffectInstance>()){
             damageDiceSet = effect.DiceSet.getPersonalizedSet(character);
             damageTypeOnHit.Add(new WeaponDamageAndPowersDto.DamageValueDto(){
@@ -960,9 +967,9 @@ public class EncounterService : IEncounterService
         foreach(var effect in generatedEffects){
             effect.Resolve(messages);
         }
-        // foreach(var group in generatedEffects.Where(x => x.R_OwnedByGroup != null).Select(x => x.R_OwnedByGroup).Distinct()){
-        //     group?.TickDuration();
-        // }
+        foreach(var group in generatedEffects.Where(x => x.R_OwnedByGroup != null).Select(x => x.R_OwnedByGroup).Distinct()){
+            group?.TickDuration();
+        }
         return;
     }
 
@@ -986,7 +993,7 @@ public class EncounterService : IEncounterService
         power = await _unitOfWork.PowerRepository.GetByIdWithEffectBlueprintsAndMaterialResources(powerId);
         var bonusActionsAvailable = character.TotalBonusActionsPerTurn - participance.NumberOfBonusActionsTaken;
         var actionsAvailable = character.TotalActionsPerTurn - participance.NumberOfActionsTaken;
-        var attacksAvailable = character.TotalAttacksPerTurn - participance.NumberOfAttacksTaken;
+        var attacksAvailable = character.TotalAttacksPerAttackAction - participance.NumberOfAttacksTaken;
 
         //Action analysis
         if(power.RequiredActionType == ActionType.Action && character.TotalActionsPerTurn - participance.NumberOfActionsTaken <= 0){
@@ -1155,28 +1162,24 @@ public class EncounterService : IEncounterService
 
     public bool IsSingleAttackAvailable(Character character, ParticipanceData participance, bool reduceActions)
     {
-        int totalAttacksPerTurn = character.TotalAttacksPerTurn;
+        int totalAttacksPerAttackAction = character.TotalAttacksPerAttackAction;
         int totalActionsPerTurn = character.TotalActionsPerTurn;
         int numberOfAttacksTaken = participance.NumberOfAttacksTaken;
         int numberOfActionsTaken = participance.NumberOfActionsTaken;
 
-        if (totalAttacksPerTurn - numberOfAttacksTaken <= 0)
-        {
-            if (totalActionsPerTurn - numberOfActionsTaken <= 0)
-            {
-                throw new SessionBadRequestException("No actions left");
-            }
-            else if (totalActionsPerTurn - numberOfActionsTaken > 0)
-            {
-                numberOfActionsTaken++;
-                numberOfAttacksTaken = 0;
-            }
-        }
-        if (totalAttacksPerTurn - numberOfAttacksTaken <= 0)
-        {
-            throw new SessionBadRequestException("No attacks left");
+        if(numberOfAttacksTaken == 0){
+            numberOfActionsTaken++;
         }
         numberOfAttacksTaken++;
+        if(numberOfAttacksTaken > totalAttacksPerAttackAction){
+            numberOfAttacksTaken = 1;
+            numberOfActionsTaken++;
+        }
+
+        if (totalActionsPerTurn - numberOfActionsTaken < 0)
+        {
+            throw new SessionBadRequestException("No actions left");
+        }
         if (reduceActions)
         {
             participance.NumberOfActionsTaken = numberOfActionsTaken;
@@ -1242,5 +1245,7 @@ public class EncounterService : IEncounterService
                 Message = finalMessage,
             });
         }
+
+        await _sessionService.UpdateParticipanceData(encounter.Id);
     }
 }

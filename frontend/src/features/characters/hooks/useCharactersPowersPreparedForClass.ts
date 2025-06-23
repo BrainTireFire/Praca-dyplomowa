@@ -7,6 +7,7 @@ export function useCharactersPowersPreparedForClass(
 ) {
   const {
     isLoading,
+    isFetching,
     data: powers,
     error,
   } = useQuery({
@@ -22,5 +23,5 @@ export function useCharactersPowersPreparedForClass(
     },
   });
 
-  return { isLoading, powers, error };
+  return { isLoading: isLoading || isFetching, powers, error };
 }

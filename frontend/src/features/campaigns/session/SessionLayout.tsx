@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useReducer, useRef, useState } from "react";
 import styled from "styled-components";
 import VirtualBoard from "./VirtualBoard";
 import {
@@ -19,6 +19,7 @@ import { WeaponAttackResolution } from "./WeaponAttackResolution";
 import { PowerCastResolution } from "./PowerCastResolution";
 import { WeaponAttackOverlayDto } from "../../../models/encounter/WeaponAttackOverlayDto";
 import toast from "react-hot-toast";
+import { useActionLogs } from "../hooks/useActionLogs";
 
 const GridContainer = styled.div`
   grid-row: 1 / 2;
@@ -36,7 +37,8 @@ const RightPanel = styled.div`
   justify-content: space-between;
   background-color: var(--color-navbar);
   border: 1px solid var(--color-border);
-  height: 80%;
+  height: 100%;
+  overflow-y: hidden;
 `;
 
 const BottomPanel = styled.div`
@@ -64,6 +66,9 @@ const UsersList = styled.div`
 const ChatContentMessage = styled.div`
   flex-grow: 1;
   overflow-y: auto;
+  scrollbar-color: var(--color-button-primary) var(--color-main-background);
+  scrollbar-width: thin;
+  scrollbar-gutter: stable;
 `;
 
 const ChatMessageBox = styled.div`
@@ -370,6 +375,9 @@ export default function SessionLayout({ encounter }: any) {
   //TODO REACT QUERY OR STATE MANAGEMENT
   const [connection, setConnection] = useState<HubConnection | null>(null);
   const [usersConnected, setUsersConnected] = useState<string[]>([]);
+
+  const { isLoading, actionLogs } = useActionLogs(encounter.id);
+
   const [messages, setMessages] = useState<
     { message: string; username: string }[]
   >([]);
@@ -381,6 +389,24 @@ export default function SessionLayout({ encounter }: any) {
     initialState
   );
   const [otherPath, setOtherPath] = useState<number[]>([]);
+
+  useEffect(() => {
+    if (actionLogs && actionLogs.length > 0 && !isLoading) {
+      const formattedLogs = actionLogs.map((log: any) => ({
+        message: log.content,
+        username: log.source,
+      }));
+      setMessages(formattedLogs);
+    }
+  }, [actionLogs, isLoading]);
+
+  const chatRef = useRef(null);
+  useEffect(() => {
+    // Scroll to the bottom when messages change
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   useEffect(() => {
     if (groupName) {
@@ -606,11 +632,18 @@ export default function SessionLayout({ encounter }: any) {
           exact: false,
         });
       });
+      connection.on("RequeryParticipanceData", () => {
+        queryClient.invalidateQueries({
+          queryKey: ["participance", encounter.id],
+          exact: false,
+        });
+      });
     }
     return () => {
       if (connection) {
         connection.off("UpdatePath");
         connection.off("RequeryInitiative");
+        connection.off("RequeryParticipanceData");
       }
     };
   }, [connection, encounter.id, queryClient]);
@@ -642,7 +675,7 @@ export default function SessionLayout({ encounter }: any) {
         />
       </GridContainer>
       <RightPanel>
-        <ChatContentMessage>
+        <ChatContentMessage ref={chatRef}>
           {messages.map((message, index) => (
             <ChatMessageBox key={index}>
               <Heading as="h3" align="left">

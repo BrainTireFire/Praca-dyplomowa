@@ -70,7 +70,7 @@ namespace pracadyplomowa.Models.Entities.Items
                                                                         .OrderBy(x => x.DiceSet.flat)
                                                                         .LastOrDefault();
             damageDiceSet += extraWeaponDamage + (magicEffect?.DiceSet.flat ?? 0);
-            return damageDiceSet.getPersonalizedSet(null);
+            return damageDiceSet;
         }
         
         protected virtual bool ShouldAddAbilityBonus(){
@@ -100,7 +100,7 @@ namespace pracadyplomowa.Models.Entities.Items
                                                                     .Where(x => x.EffectType.DamageEffect == DamageEffect.DamageDealt)
                                                                     .GroupBy(effectInstance => (DamageType)effectInstance.EffectType.DamageEffect_DamageType)
                                                                     .ToDictionary(g => g.Key, g => g.ToList());
-            var result = extraDamageEffectMap.ToDictionary(element => element.Key, element => element.Value.Aggregate(new DiceSet(), (sum, current) => sum + current.DiceSet.getPersonalizedSet(null)));
+            var result = extraDamageEffectMap.ToDictionary(element => element.Key, element => element.Value.Aggregate(new DiceSet(), (sum, current) => sum + current.DiceSet));
 
             return result;
         }
@@ -110,7 +110,15 @@ namespace pracadyplomowa.Models.Entities.Items
             if(Wielder != null){
                 Wielder.GetAdditionalDamageOnWeaponStrike(out Dictionary<DamageType, DiceSet> damageTypeToDiceSetMap);
                 foreach(var pair in damageTypeToDiceSetMap){
-                    result.Add(pair.Key, result.GetValueOrDefault(pair.Key) ?? 0 + pair.Value);
+                    if(!result.ContainsKey(pair.Key)){
+                        result[pair.Key] = pair.Value;
+                    }
+                    else{
+                        result[pair.Key] += pair.Value;
+                    }
+                }
+                foreach(var pair in result){
+                    result[pair.Key] = pair.Value.getPersonalizedSet(Wielder);
                 }
             }
 
@@ -125,7 +133,12 @@ namespace pracadyplomowa.Models.Entities.Items
                 { DamageType, baseDamage }
             };
             foreach(var pair in effectDamageDictionary){
-                result.Add(pair.Key, result.GetValueOrDefault(pair.Key) ?? 0 + pair.Value);
+                if(!result.ContainsKey(pair.Key)){
+                    result[pair.Key] = pair.Value;
+                }
+                else{
+                    result[pair.Key] += pair.Value;
+                }
             }
             return result;
         }

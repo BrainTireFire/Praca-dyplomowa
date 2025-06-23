@@ -89,7 +89,7 @@ function EffectRow({ effect }: { effect: EffectBlueprintListItem }) {
         </Modal.Window>
         <Modal.Window name="open">
           <EffectParentObjectIdContext.Provider
-            value={{ objectId: itemId, objectType: "ItemWearer" }}
+            value={{ objectId: itemId, objectType: "ItemItself" }}
           >
             <Container>
               <EffectInstanceForm effectId={effect.id}></EffectInstanceForm>

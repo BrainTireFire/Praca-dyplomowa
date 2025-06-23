@@ -52,7 +52,7 @@ export function PowerCastResolution({
     controlState.powerSelected?.powerId!,
     controlState.powerSelected?.chosenLevel?.powerLevel ?? null,
     spellSlotLevel,
-    controlState.powerTargets
+    controlState.powerCastOverlayData!.targetIds
   );
 
   const [state, dispatch] = useReducer(

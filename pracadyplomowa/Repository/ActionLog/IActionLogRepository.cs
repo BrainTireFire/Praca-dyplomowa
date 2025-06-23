@@ -1,6 +1,8 @@
-﻿namespace pracadyplomowa.Repository.AuctionLog;
+﻿using pracadyplomowa.Models.DTOs;
+
+namespace pracadyplomowa.Repository.AuctionLog;
 
 public interface IActionLogRepository : IBaseRepository<Models.Entities.Campaign.ActionLog>
 {
-    Models.Entities.Campaign.ActionLog GetByEncounterId(int encounterId);
+    Task<ActionLogDto[]> GetByEncounterId(int encounterId);
 }

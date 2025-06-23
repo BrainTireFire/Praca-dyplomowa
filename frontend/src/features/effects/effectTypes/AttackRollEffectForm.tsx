@@ -12,6 +12,7 @@ import Dropdown from "../../../ui/forms/Dropdown";
 import { rollMoment, rollMomentDropdown } from "../rollMoment";
 import { EffectContext } from "../contexts/BlueprintOrInstanceContext";
 import { EditModeContext } from "../../../context/EditModeContext";
+import { EffectParentObjectIdContext } from "../../../context/EffectParentObjectIdContext";
 
 export type Effect = ValueEffect & {
   effectType: {
@@ -93,6 +94,7 @@ export default function AttackRollEffectForm({
   effect: Effect;
 }) {
   const effectContext = useContext(EffectContext);
+  const { objectId, objectType } = useContext(EffectParentObjectIdContext);
   const [state, dispatch] = useReducer(effectReducer, effect);
   useEffect(() => {
     onChange(state);
@@ -116,28 +118,34 @@ export default function AttackRollEffectForm({
         onChange={(x) => dispatch({ type: "setRange", payload: x })}
         currentValue={state.effectType.attackRollEffect_Range}
       ></RadioGroup>
-      <RadioGroup
-        disabled={disableUpdate}
-        values={[
-          { label: "Weapon", value: "Weapon" },
-          { label: "Spell", value: "Spell" },
-        ]}
-        label="Source"
-        name="source"
-        onChange={(x) => dispatch({ type: "setSource", payload: x })}
-        currentValue={state.effectType.attackRollEffect_Source}
-      ></RadioGroup>
-      <RadioGroup
-        disabled={disableUpdate}
-        values={[
-          { label: "Bonus", value: "Bonus" },
-          { label: "Reroll lower than", value: "RerollLowerThan" },
-        ]}
-        label="Attack roll effect"
-        name="attackRollEffect"
-        onChange={(x) => dispatch({ type: "setEffectType", payload: x })}
-        currentValue={state.effectType.attackRollEffect_Type}
-      ></RadioGroup>
+      {
+        objectType !== "ItemItself" &&
+        <RadioGroup
+          disabled={disableUpdate}
+          values={[
+            { label: "Weapon", value: "Weapon" },
+            { label: "Spell", value: "Spell" },
+          ]}
+          label="Source"
+          name="source"
+          onChange={(x) => dispatch({ type: "setSource", payload: x })}
+          currentValue={state.effectType.attackRollEffect_Source}
+        ></RadioGroup>
+      }
+      {
+        objectType !== "ItemItself" &&
+        <RadioGroup
+          disabled={disableUpdate}
+          values={[
+            { label: "Bonus", value: "Bonus" },
+            { label: "Reroll lower than", value: "RerollLowerThan" },
+          ]}
+          label="Attack roll effect"
+          name="attackRollEffect"
+          onChange={(x) => dispatch({ type: "setEffectType", payload: x })}
+          currentValue={state.effectType.attackRollEffect_Type}
+        ></RadioGroup>
+      }
       {effectContext.effect === "Blueprint" && (
         <FormRowVertical label="Dice roll moment">
           <Dropdown

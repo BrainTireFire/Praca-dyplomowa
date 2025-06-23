@@ -14,12 +14,16 @@ export default function Powers() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const selectedPowerId = searchParams.get("id");
+  const openNewPowerForm = searchParams.get("new");
 
   const handleChangePower = (chosenPowerId: number) => {
     navigate(`/powers?id=${chosenPowerId}`)
   };
+
+  const handleOpenNewPowerForm = () => {
+    navigate(`/powers?new=true`)
+  };
   const { isLoading, powers, error } = usePowers({ pageSize: 99999999 });
-  const [openNewPowerForm, setOpenNewPowerForm] = useState(false);
 
   // const [selectedPowerId, setSelectedPowerId] = useState<null | number>(null);
   const { createPower, isPending: isPendingCreation } = useCreatePower(
@@ -29,7 +33,6 @@ export default function Powers() {
     let selectedPower = powers?.find((_value, index) => index === row.id);
 
     handleChangePower(selectedPower!.id);
-    setOpenNewPowerForm(false);
   };
 
   if (isLoading || isPendingCreation) {
@@ -64,9 +67,7 @@ export default function Powers() {
         ></ReusableTable>
         <Button
           onClick={() => {
-            setOpenNewPowerForm(true);
-            // setSelectedPowerId(null);
-            navigate('/powers');
+            handleOpenNewPowerForm();
           }}
           customStyles={css`
             height: 5%;
@@ -87,7 +88,6 @@ export default function Powers() {
             powerId={null}
             key={"x"}
             onCreate={(id) => {
-              setOpenNewPowerForm(false);
               navigate(`/powers?id=${id}`);
             }}
           ></PowerForm>

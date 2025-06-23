@@ -12,6 +12,7 @@ import { ValueEffect } from "../valueEffect";
 import { rollMoment, rollMomentDropdown } from "../rollMoment";
 import { EffectContext } from "../contexts/BlueprintOrInstanceContext";
 import { EditModeContext } from "../../../context/EditModeContext";
+import { EffectParentObjectIdContext } from "../../../context/EffectParentObjectIdContext";
 
 const damageTypes = [
   "acid",
@@ -51,8 +52,13 @@ const effectTypes = [
   "DamageTaken",
   "ExtraWeaponDamage",
 ] as const;
+const effectTypesWeaponItself = [
+  "DamageDealt",
+  "ExtraWeaponDamage",
+] as const;
 
 type effectType = (typeof effectTypes)[number];
+type effectTypeWeaponItself = (typeof effectTypesWeaponItself)[number];
 type damageType = (typeof damageTypes)[number];
 
 export type Effect = ValueEffect & {
@@ -113,6 +119,7 @@ export default function DamageEffectForm({
   effect: Effect;
 }) {
   const effectContext = useContext(EffectContext);
+  const { objectId, objectType } = useContext(EffectParentObjectIdContext);
   const [state, dispatch] = useReducer(effectReducer, effect);
   useEffect(() => {
     onChange(state);
@@ -132,7 +139,7 @@ export default function DamageEffectForm({
           { label: "Reroll lower than", value: "RerollLowerThan" },
           { label: "Damage taken", value: "DamageTaken" },
           { label: "Extra weapon damage", value: "ExtraWeaponDamage" },
-        ]}
+        ].filter(x => objectType !== "ItemItself" ? effectTypes.includes(x.value as effectType) : effectTypesWeaponItself.includes(x.value as effectTypeWeaponItself))}
         label="Damage effect"
         name="damageEffect"
         onChange={(x) =>

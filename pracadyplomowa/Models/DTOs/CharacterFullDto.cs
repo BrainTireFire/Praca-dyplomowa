@@ -192,13 +192,13 @@ namespace pracadyplomowa.Models.DTOs
                                 .OfType<ProficiencyEffectInstance>()
                                 .Where(ei => ei.ProficiencyEffectType.ProficiencyEffect == ProficiencyEffect.SpecificItemFamily)
                                 .Select(ei => ei.R_GrantsProficiencyInItemFamily)
-                                .Where(it => it.ItemType == itemType)
+                                .Where(it => it?.ItemType == itemType)
+                                .Distinct()
                                 .Select(itemFamily => new ItemFamilyDto
                                 {
                                     Id = itemFamily.Id,
                                     Name = itemFamily.Name,
                                 })
-                                .Distinct()
                                 .Union(character.R_AffectedBy
                                     .OfType<ProficiencyEffectInstance>()
                                     .Where(ei => ei.ProficiencyEffectType.ProficiencyEffect == ProficiencyEffect.ItemType)
@@ -567,6 +567,7 @@ namespace pracadyplomowa.Models.DTOs
             public string Source { get; set; } = "";
             public string Target { get; set; } = "";
             public int? TurnsLeft { get; set; }
+            public bool AffectsCharacter { get; set; } = true;
         }
         public static List<Effect> GetConstantEffects(Character character)
         {
@@ -588,7 +589,8 @@ namespace pracadyplomowa.Models.DTOs
                 Name = effect.Name,
                 Source = effect.Source,
                 Target = effect.TargetName,
-                TurnsLeft = effect.R_OwnedByGroup?.DurationLeft ?? null
+                TurnsLeft = effect.R_OwnedByGroup?.DurationLeft ?? null,
+                AffectsCharacter = false
             }).ToList();
 
             return effectsOnCharacter.Union(effectsOnItems).ToList();
@@ -614,7 +616,8 @@ namespace pracadyplomowa.Models.DTOs
                 Name = effect.Name,
                 Source = effect.Source,
                 Target = effect.TargetName,
-                TurnsLeft = effect.R_OwnedByGroup?.DurationLeft
+                TurnsLeft = effect.R_OwnedByGroup?.DurationLeft,
+                AffectsCharacter = false
             }).ToList();
 
             return effectsOnCharacter.Union(effectsOnItems).ToList();

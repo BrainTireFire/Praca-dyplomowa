@@ -1,4 +1,6 @@
-﻿using pracadyplomowa.Models.Entities.Campaign;
+﻿using Microsoft.EntityFrameworkCore;
+using pracadyplomowa.Models.DTOs;
+using pracadyplomowa.Models.Entities.Campaign;
 
 namespace pracadyplomowa.Repository.AuctionLog;
 
@@ -9,8 +11,16 @@ public class ActionLogRepository  : BaseRepository<Models.Entities.Campaign.Acti
     }
 
 
-    public ActionLog GetByEncounterId(int encounterId)
+    public async Task<ActionLogDto[]> GetByEncounterId(int encounterId)
     {
-        return _context.ActionLogs.FirstOrDefault(al => al.EncounterId == encounterId);
+        return await _context.ActionLogs
+            .Where(al => al.EncounterId == encounterId)
+            .Select(al => new ActionLogDto
+            {
+                Content = al.Content,
+                Source = al.Source
+            })
+            .ToArrayAsync();
     }
+
 }

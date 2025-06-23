@@ -218,7 +218,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                 int healthConstitution = this.R_CharacterHasLevelsInClass.Count * (this.ConstitutionModifier > 0 ? this.ConstitutionModifier : 0);
                 int optional = this.AffectedByApprovedEffects.OfType<HitpointEffectInstance>().Where(hei =>
                     hei.EffectType.HitpointEffect == HitpointEffect.HitpointMaximumBonus
-                ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet);
+                ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet.getPersonalizedSet(this));
                 return healthBase + healthConstitution + optional;
             }
         }
@@ -254,6 +254,14 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
 
         public int AbilityValue(Ability ability)
+        {
+            return this.AffectedByApprovedEffects.OfType<AbilityEffectInstance>().Where(aei =>
+            aei.EffectType.AbilityEffect == AbilityEffect.Bonus &&
+            aei.EffectType.AbilityEffect_Ability == ability
+            ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet.getPersonalizedSet(this));
+        }
+
+        public int AbilityValueNoPersonalizedSet(Ability ability)
         {
             return this.AffectedByApprovedEffects.OfType<AbilityEffectInstance>().Where(aei =>
             aei.EffectType.AbilityEffect == AbilityEffect.Bonus &&
@@ -333,7 +341,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             int returnValue = this.AffectedByApprovedEffects.OfType<SavingThrowEffectInstance>().Where(aei =>
             aei.EffectType.SavingThrowEffect == SavingThrowEffect.Bonus &&
             aei.EffectType.SavingThrowEffect_Ability == ability
-            ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet)
+            ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet.getPersonalizedSet(this))
             + AbilityModifier(AbilityValue(ability));
 
             return returnValue + (SavingThrowProficiency(ability) ? ProficiencyBonus : 0);
@@ -410,6 +418,22 @@ namespace pracadyplomowa.Models.Entities.Characters
         }
 
         public int SkillValue(Skill skill)
+        {
+            int value = this.AffectedByApprovedEffects.OfType<SkillEffectInstance>().Where(aei =>
+            aei.EffectType.SkillEffect == SkillEffect.Bonus &&
+            aei.EffectType.SkillEffect_Skill == skill
+            ).Aggregate(0, (acc, valueEffectInstance) => acc + valueEffectInstance.DiceSet.getPersonalizedSet(this));
+
+            value += AbilityModifier(AbilityValue(Utils.SkillToAbility(skill)));
+
+            var proficiencyBonus = this.ProficiencyBonus;
+            if (SkillExpertise(skill)) proficiencyBonus *= 2;
+
+            value += SkillProficiency(skill) ? proficiencyBonus : 0;
+
+            return value;
+        }
+        public int SkillValueNoPersonalizedSet(Skill skill)
         {
             int value = this.AffectedByApprovedEffects.OfType<SkillEffectInstance>().Where(aei =>
             aei.EffectType.SkillEffect == SkillEffect.Bonus &&
@@ -549,7 +573,7 @@ namespace pracadyplomowa.Models.Entities.Characters
         public int Initiative
         {
             get => this.DexterityModifier + this.AffectedByApprovedEffects.OfType<InitiativeEffectInstance>()
-            .Sum(valueEffectInstance => valueEffectInstance.DiceSet);
+            .Sum(valueEffectInstance => valueEffectInstance.DiceSet.getPersonalizedSet(this));
         }
 
         [NotMapped]
@@ -566,13 +590,13 @@ namespace pracadyplomowa.Models.Entities.Characters
                 if (hasMultiplier)
                 {
                     multiplier = multiplierData
-                                .Sum(m => m.DiceSet.flat);
+                                .Sum(m => m.DiceSet.getPersonalizedSet(this).flat);
                 }
 
                 int bonus = this.AffectedByApprovedEffects
                                 .OfType<MovementEffectInstance>()
                                 .Where(m => m.EffectType.MovementEffect == MovementEffect.Bonus)
-                                .Sum(m => m.DiceSet.flat);
+                                .Sum(m => m.DiceSet.getPersonalizedSet(this).flat);
                 bool strengthRequirementNotMet = this.R_EquippedItems
                                                     .Select(ed => ed.R_Item)
                                                     .OfType<Apparel>()
@@ -613,7 +637,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                 }
                 int armorClassFromEffects = this.AffectedByApprovedEffects
                                 .OfType<ArmorClassEffectInstance>()
-                                .Sum(m => m.DiceSet);
+                                .Sum(m => m.DiceSet.getPersonalizedSet(this));
 
                 return Math.Max(armor, baseArmorClass) + dexterityModifier + armorClassFromEffects;
             }
@@ -659,7 +683,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                 var sizeChanges = this.AffectedByApprovedEffects
                                     .OfType<SizeEffectInstance>()
                                     .Where(ei => ei.EffectType.SizeEffect == SizeEffect.Bonus)
-                                    .Select(ei => ei.DiceSet.flat)
+                                    .Select(ei => ei.DiceSet.getPersonalizedSet(this).flat)
                                     .Sum();
                 var result = ((int)size) + sizeChanges;
                 if (Enum.IsDefined(typeof(Size), result))
@@ -732,7 +756,7 @@ namespace pracadyplomowa.Models.Entities.Characters
                     messages.Add($"{this.Name} failed a {eg!.SavingThrow} saving throw against {eg!.Name}.");
                 }
             });
-            ResolveAffectingEffects(messages);
+            // ResolveAffectingEffects(messages);
             var resources = AllImmaterialResourceInstances.Where(x => x.NeedsRefresh && x.R_Blueprint.RefreshesOn == RefreshType.TurnStart).ToList();
             foreach(var resource in resources){
                 resource.NeedsRefresh = false;
@@ -973,7 +997,7 @@ namespace pracadyplomowa.Models.Entities.Characters
         {
             var range = power.IsRanged ? AttackRollEffect_Range.Ranged : AttackRollEffect_Range.Melee;
             var source = power.IsMagic ? AttackRollEffect_Source.Spell : AttackRollEffect_Source.Weapon;
-            List<DiceSet.Dice> bonusRollResults = AttackBonusDiceSet(range, source).RollPrototype(false, false, null);
+            List<DiceSet.Dice> bonusRollResults = AttackBonusDiceSet(range, source).RollPrototype(this, false, false, null);
 
             //check for rerolls
             bool rerollEffectPresent = RerollOnAttackRoll(source, range, out int rerollLowerThan);
@@ -982,7 +1006,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             //check for disadvantage
             bool disadvantage = DisadvantageOnAttackRoll(encounter, target, range);
 
-            DiceSet.Dice baseRollResult = new DiceSet() { d20 = 1 }.RollPrototype(advantage, disadvantage, rerollLowerThan).First();
+            DiceSet.Dice baseRollResult = new DiceSet() { d20 = 1 }.RollPrototype(this, advantage, disadvantage, rerollLowerThan).First();
 
             return bonusRollResults.Concat([baseRollResult]).Aggregate(0, (sum, current) => sum + current.result) + PowerCastBonus(power);
         }
@@ -998,7 +1022,7 @@ namespace pracadyplomowa.Models.Entities.Characters
 
             DiceSet baseDiceSet = new DiceSet() { d20 = 1 };
 
-            List<DiceSet.Dice> bonusRollResults = bonusDiceSet.RollPrototype(false, false, null);
+            List<DiceSet.Dice> bonusRollResults = bonusDiceSet.RollPrototype(this, false, false, null);
 
             //check for rerolls
             List<AbilityEffectInstance> rerollEffectList = this.AffectedByApprovedEffects
@@ -1018,28 +1042,29 @@ namespace pracadyplomowa.Models.Entities.Characters
                                                                         .ToList();
             bool advantageEffectPresent = advantageEffectList.Count != 0;
 
-            DiceSet.Dice baseRollResult = new DiceSet() { d20 = 1 }.RollPrototype(advantageEffectPresent, false, rerollLowerThan).First();
+            DiceSet.Dice baseRollResult = new DiceSet() { d20 = 1 }.RollPrototype(this, advantageEffectPresent, false, rerollLowerThan).First();
 
-            return bonusRollResults.Concat([baseRollResult]).Aggregate(0, (sum, current) => sum + current.result);
+            return AbilityModifier(bonusRollResults.Aggregate(0, (sum, current) => sum + current.result)) + baseRollResult.result;
         }
 
         public int SkillRoll(Skill skill)
         {
-            DiceSet bonusDiceSet = this.AffectedByApprovedEffects.OfType<SkillEffectInstance>()
+            DiceSet skillBonusDiceSet = this.AffectedByApprovedEffects.OfType<SkillEffectInstance>()
              .Where(effect =>
                 effect.EffectType.SkillEffect_Skill == skill && effect.EffectType.SkillEffect == SkillEffect.Bonus
              ).Select(effect => effect.DiceSet)
-             .Union(
-                    this.AffectedByApprovedEffects.OfType<AbilityEffectInstance>()
-                    .Where(effect =>
-                        effect.EffectType.AbilityEffect_Ability == Utils.SkillToAbility(skill) && effect.EffectType.AbilityEffect == AbilityEffect.Bonus
-                    ).Select(effect => effect.DiceSet)
-             )
+            .Aggregate(new DiceSet(), (sum, next) => sum += next).getPersonalizedSet(this);
+
+            DiceSet abilityBonusDiceSet = this.AffectedByApprovedEffects.OfType<AbilityEffectInstance>()
+            .Where(effect =>
+                effect.EffectType.AbilityEffect_Ability == Utils.SkillToAbility(skill) && effect.EffectType.AbilityEffect == AbilityEffect.Bonus
+            ).Select(effect => effect.DiceSet)
             .Aggregate(new DiceSet(), (sum, next) => sum += next).getPersonalizedSet(this);
 
             DiceSet baseDiceSet = new DiceSet() { d20 = 1 };
 
-            List<DiceSet.Dice> bonusRollResults = bonusDiceSet.RollPrototype(false, false, null);
+            List<DiceSet.Dice> skillBonusRollResults = skillBonusDiceSet.RollPrototype(this, false, false, null);
+            List<DiceSet.Dice> abilityBonusRollResults = abilityBonusDiceSet.RollPrototype(this, false, false, null);
 
             //check for rerolls
             List<SkillEffectInstance> rerollEffectList = this.AffectedByApprovedEffects
@@ -1072,28 +1097,32 @@ namespace pracadyplomowa.Models.Entities.Characters
                                                                         .ToList();
             bool proficiencyEffectPresent = advantageEffectList.Count != 0;
 
-            DiceSet.Dice baseRollResult = new DiceSet() { d20 = 1 }.RollPrototype(advantageEffectPresent, disadvantageOnStealth, rerollLowerThan).First();
+            DiceSet.Dice baseRollResult = new DiceSet() { d20 = 1 }.RollPrototype(this, advantageEffectPresent, disadvantageOnStealth, rerollLowerThan).First();
 
-            return bonusRollResults.Concat([baseRollResult]).Aggregate(0, (sum, current) => sum + current.result) + (proficiencyEffectPresent ? ProficiencyBonus : 0);
+            return baseRollResult.result
+            + skillBonusRollResults.Aggregate(0, (sum, current) => sum + current.result)
+            + AbilityModifier(abilityBonusRollResults.Aggregate(0, (sum, current) => sum + current.result))
+            + (proficiencyEffectPresent ? ProficiencyBonus : 0);
         }
 
         public int SavingThrowRoll(Ability ability)
         {
-            DiceSet bonusDiceSet = this.AffectedByApprovedEffects.OfType<SavingThrowEffectInstance>()
+            DiceSet savingThrowBonusDiceSet = this.AffectedByApprovedEffects.OfType<SavingThrowEffectInstance>()
              .Where(effect =>
                 effect.EffectType.SavingThrowEffect_Ability == ability && effect.EffectType.SavingThrowEffect == SavingThrowEffect.Bonus
              ).Select(effect => effect.DiceSet)
-             .Union(
-                    this.AffectedByApprovedEffects.OfType<AbilityEffectInstance>()
-                    .Where(effect =>
-                        effect.EffectType.AbilityEffect_Ability == ability && effect.EffectType.AbilityEffect == AbilityEffect.Bonus
-                    ).Select(effect => effect.DiceSet)
-             )
+            .Aggregate(new DiceSet(), (sum, next) => sum += next).getPersonalizedSet(this);
+
+            DiceSet abilityBonusDiceSet = this.AffectedByApprovedEffects.OfType<AbilityEffectInstance>()
+            .Where(effect =>
+                effect.EffectType.AbilityEffect_Ability == ability && effect.EffectType.AbilityEffect == AbilityEffect.Bonus
+            ).Select(effect => effect.DiceSet)
             .Aggregate(new DiceSet(), (sum, next) => sum += next).getPersonalizedSet(this);
 
             DiceSet baseDiceSet = new DiceSet() { d20 = 1 };
 
-            List<DiceSet.Dice> bonusRollResults = bonusDiceSet.RollPrototype(false, false, null);
+            List<DiceSet.Dice> savingThrowBonusRollResults = savingThrowBonusDiceSet.RollPrototype(this, false, false, null);
+            List<DiceSet.Dice> abilityBonusRollResults = abilityBonusDiceSet.RollPrototype(this, false, false, null);
 
             //check for rerolls
             List<SavingThrowEffectInstance> rerollEffectList = this.AffectedByApprovedEffects
@@ -1119,9 +1148,12 @@ namespace pracadyplomowa.Models.Entities.Characters
                                                                         .ToList();
             bool proficiencyEffectPresent = advantageEffectList.Count != 0;
 
-            DiceSet.Dice baseRollResult = new DiceSet() { d20 = 1 }.RollPrototype(advantageEffectPresent, false, rerollLowerThan).First();
+            DiceSet.Dice baseRollResult = new DiceSet() { d20 = 1 }.RollPrototype(this, advantageEffectPresent, false, rerollLowerThan).First();
 
-            return bonusRollResults.Concat([baseRollResult]).Aggregate(0, (sum, current) => sum + current.result) + (proficiencyEffectPresent ? ProficiencyBonus : 0);
+            return baseRollResult.result
+            + savingThrowBonusRollResults.Aggregate(0, (sum, current) => sum + current.result)
+            + AbilityModifier(abilityBonusRollResults.Aggregate(0, (sum, current) => sum + current.result))
+            + (proficiencyEffectPresent ? ProficiencyBonus : 0);
         }
 
         public Dictionary<int, HitType> CheckIfPowerHitSuccessfull(Encounter encounter, Power power, List<Character> targets, List<string> messages)
@@ -1303,7 +1335,7 @@ namespace pracadyplomowa.Models.Entities.Characters
             rerollLowerThan = 0;
             if (rerollEffectPresent)
             {
-                rerollLowerThan = rerollEffectList.Aggregate(0, (maximum, current) => current.DiceSet.flat > maximum ? current.DiceSet.flat : maximum);
+                rerollLowerThan = rerollEffectList.Aggregate(0, (maximum, current) => current.DiceSet.getPersonalizedSet(this).flat > maximum ? current.DiceSet.getPersonalizedSet(this).flat : maximum);
             }
             return rerollEffectPresent;
         }
@@ -1415,11 +1447,11 @@ namespace pracadyplomowa.Models.Entities.Characters
             int? rerollLowerThan = null;
             if (rerollEffectPresent)
             {
-                rerollLowerThan = rerollEffectList.Aggregate(0, (maximum, current) => current.DiceSet.flat > maximum ? current.DiceSet.flat : maximum);
+                rerollLowerThan = rerollEffectList.Aggregate(0, (maximum, current) => current.DiceSet.getPersonalizedSet(this).flat > maximum ? current.DiceSet.getPersonalizedSet(this).flat : maximum);
             }
             //roll the dice
-            List<DiceSet.Dice> baseWeaponDamageRollResult = weaponBaseDamage.RollPrototype(false, false, rerollLowerThan);
-            Dictionary<DamageType, List<DiceSet.Dice>> weaponEffectDamageRollResults = weaponEffectDamage.ToDictionary(element => element.Key, element => element.Value.RollPrototype(false, false, null));
+            List<DiceSet.Dice> baseWeaponDamageRollResult = weaponBaseDamage.RollPrototype(this, false, false, rerollLowerThan);
+            Dictionary<DamageType, List<DiceSet.Dice>> weaponEffectDamageRollResults = weaponEffectDamage.ToDictionary(element => element.Key, element => element.Value.RollPrototype(this, false, false, null));
             if (criticalHit)
             {
                 baseWeaponDamageRollResult.ForEach(die => die.result = die.result *= 2);
@@ -1438,7 +1470,12 @@ namespace pracadyplomowa.Models.Entities.Characters
             weaponHitResult.DamageTaken.Add(weapon.DamageType, target.TakeDamage(totalWeaponDamage, weapon.DamageType, messages));
             foreach (var pair in totalEffectDamage)
             {
-                weaponHitResult.DamageTaken.Add(pair.Key, target.TakeDamage(pair.Value, pair.Key, messages));
+                if(!weaponHitResult.DamageTaken.ContainsKey(pair.Key)){
+                    weaponHitResult.DamageTaken[pair.Key] = target.TakeDamage(pair.Value, pair.Key, messages);
+                }
+                else{
+                    weaponHitResult.DamageTaken[pair.Key] += target.TakeDamage(pair.Value, pair.Key, messages);
+                }
             }
             int damageTaken = initialHealth - (target._Hitpoints + target._TemporaryHitpoints);
             if(damageTaken > 0){
@@ -1671,9 +1708,9 @@ namespace pracadyplomowa.Models.Entities.Characters
                     target.MakeConcentrationSavingThrow(damageTaken, messages);
                 }
             }
-            // foreach(var group in generatedEffects.Where(x => x.R_OwnedByGroup != null).Select(x => x.R_OwnedByGroup).Distinct()){
-            //     group?.TickDuration();
-            // }
+            foreach(var group in generatedEffects.Where(x => x.R_OwnedByGroup != null).Select(x => x.R_OwnedByGroup).Distinct()){
+                group?.TickDuration();
+            }
             return Outcome.Success;
         }
 
@@ -1787,14 +1824,14 @@ namespace pracadyplomowa.Models.Entities.Characters
         [NotMapped]
         public int TotalActionsPerTurn{
             get {
-                return AffectedByApprovedEffects.OfType<ActionEffectInstance>().Where(x => x.EffectType.ActionEffect == ActionEffect.Action).Count() + 1;
+                return AffectedByApprovedEffects.OfType<ActionEffectInstance>().Where(x => x.EffectType.ActionEffect == ActionEffect.Action).Select(x => x.DiceSet.getPersonalizedSet(this).flat).Sum() + 1;
             }
         }
 
         [NotMapped]
         public int TotalBonusActionsPerTurn{
             get {
-                return AffectedByApprovedEffects.OfType<ActionEffectInstance>().Where(x => x.EffectType.ActionEffect == ActionEffect.BonusAction).Count() + 1;
+                return AffectedByApprovedEffects.OfType<ActionEffectInstance>().Where(x => x.EffectType.ActionEffect == ActionEffect.BonusAction).Select(x => x.DiceSet.getPersonalizedSet(this).flat).Sum() + 1;
             }
         }
 
@@ -1818,12 +1855,12 @@ namespace pracadyplomowa.Models.Entities.Characters
         // }
 
         [NotMapped]
-        public int TotalAttacksPerTurn{
+        public int TotalAttacksPerAttackAction{
             get {
                 int baseNumber = 1;
-                var effectsMax = AffectedByApprovedEffects.OfType<AttackPerAttackActionEffectInstance>().Where(x => x.EffectType.AttackPerActionEffect == AttackPerActionEffect.AttacksTotal).Select(x => x.DiceSet.flat);
+                var effectsMax = AffectedByApprovedEffects.OfType<AttackPerAttackActionEffectInstance>().Where(x => x.EffectType.AttackPerActionEffect == AttackPerActionEffect.AttacksTotal).Select(x => x.DiceSet.getPersonalizedSet(this).flat);
                 int maxFromEffects = effectsMax.Any() ? effectsMax.Max() : 0;
-                var effectsAdditinal = AffectedByApprovedEffects.OfType<AttackPerAttackActionEffectInstance>().Where(x => x.EffectType.AttackPerActionEffect == AttackPerActionEffect.AdditionalAttacks).Select(x => x.DiceSet.flat);
+                var effectsAdditinal = AffectedByApprovedEffects.OfType<AttackPerAttackActionEffectInstance>().Where(x => x.EffectType.AttackPerActionEffect == AttackPerActionEffect.AdditionalAttacks).Select(x => x.DiceSet.getPersonalizedSet(this).flat);
                 int additional = effectsAdditinal.Any() ? effectsAdditinal.Max() : 0;
                 return Math.Max(baseNumber, maxFromEffects) + additional;
             }

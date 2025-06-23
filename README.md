@@ -1,10 +1,10 @@
-# Praca dyplomowa system d&d
+# Praca dyplomowa system TTRPG
 
 ## Description
-System fo assist players in managing the flow of gameplay in D&D.
+System fo assist players in managing the flow of gameplay in a TTRPG game.
 
 ## Goal
-The aim of the project is to assist players in managing the flow of gameplay in D&D 5e by developing an IT system consisting of a web application and a database. The system is intended to support players of TTRPG games and is designed with the fifth edition of Dungeons & Dragons in mind.
+The aim of the project is to assist players in managing the flow of gameplay by developing an IT system consisting of a web application and a database. The system is intended to support players of TTRPG games.
 
 ### Technologies
 - **Frontend**: React, Typescript

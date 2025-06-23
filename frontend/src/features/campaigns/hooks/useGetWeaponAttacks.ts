@@ -4,6 +4,7 @@ import { getAttacks } from "../../../services/apiEncounter";
 export function useGetWeaponAttacks(characterId: number, encounterId: number) {
   const {
     isLoading,
+    isFetching,
     data: weaponAttacks,
     error,
     isError,
@@ -12,5 +13,5 @@ export function useGetWeaponAttacks(characterId: number, encounterId: number) {
     queryFn: () => getAttacks(characterId, encounterId),
   });
 
-  return { isLoading, weaponAttacks, error, isError };
+  return { isLoading: isLoading || isFetching, weaponAttacks, error, isError };
 }

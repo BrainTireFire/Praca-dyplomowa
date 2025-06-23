@@ -4,6 +4,7 @@ import { getPowers } from "../../../services/apiEncounter";
 export function useGetPowers(characterId: number, encounterId: number) {
   const {
     isLoading,
+    isFetching,
     data: powers,
     error,
     isError,
@@ -12,5 +13,5 @@ export function useGetPowers(characterId: number, encounterId: number) {
     queryFn: () => getPowers(characterId, encounterId),
   });
 
-  return { isLoading, powers, error, isError };
+  return { isLoading: isLoading || isFetching, powers, error, isError };
 }

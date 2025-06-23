@@ -1162,28 +1162,24 @@ public class EncounterService : IEncounterService
 
     public bool IsSingleAttackAvailable(Character character, ParticipanceData participance, bool reduceActions)
     {
-        int totalAttacksPerTurn = character.TotalAttacksPerTurn;
+        int totalAttacksPerAttackAction = character.TotalAttacksPerAttackAction;
         int totalActionsPerTurn = character.TotalActionsPerTurn;
         int numberOfAttacksTaken = participance.NumberOfAttacksTaken;
         int numberOfActionsTaken = participance.NumberOfActionsTaken;
 
-        if (totalAttacksPerTurn - numberOfAttacksTaken <= 0)
-        {
-            if (totalActionsPerTurn - numberOfActionsTaken <= 0)
-            {
-                throw new SessionBadRequestException("No actions left");
-            }
-            else if (totalActionsPerTurn - numberOfActionsTaken > 0)
-            {
-                numberOfActionsTaken++;
-                numberOfAttacksTaken = 0;
-            }
-        }
-        if (totalAttacksPerTurn - numberOfAttacksTaken <= 0)
-        {
-            throw new SessionBadRequestException("No attacks left");
+        if(numberOfAttacksTaken == 0){
+            numberOfActionsTaken++;
         }
         numberOfAttacksTaken++;
+        if(numberOfAttacksTaken > totalAttacksPerAttackAction){
+            numberOfAttacksTaken = 1;
+            numberOfActionsTaken++;
+        }
+
+        if (totalActionsPerTurn - numberOfActionsTaken < 0)
+        {
+            throw new SessionBadRequestException("No actions left");
+        }
         if (reduceActions)
         {
             participance.NumberOfActionsTaken = numberOfActionsTaken;

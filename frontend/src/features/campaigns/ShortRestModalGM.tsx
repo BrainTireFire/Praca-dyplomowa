@@ -52,6 +52,11 @@ export default function ShortRestModalGM({
   );
 
   useEffect(() => {
+    setMembers((previous) =>
+      previous.map((member) => {
+        return { ...member, restData: { ...DiceSetDefaultValue } };
+      })
+    );
     const hubConnection = new HubConnectionBuilder()
       .withUrl(`${BASE_URL}/shortRest?campaignId=${campaignId}`)
       .configureLogging(LogLevel.Information)

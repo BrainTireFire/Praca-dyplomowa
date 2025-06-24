@@ -295,17 +295,17 @@ export default function VirtualBoard({
         }
 
         setSelectedAreaPower(newPowerArea);
-        highlightArea(
+        drawAttackRange(
           ctx,
-          newPowerArea,
+          { x: occupiedField!.positionX, y: occupiedField!.positionY },
+          range * 5,
+          controlledCharacter?.character.size.name!,
           encounter.board.sizeX,
           encounter.board.sizeY
         );
-
-        highlightPowerRange(
+        highlightArea(
           ctx,
-          casterPosition,
-          range,
+          newPowerArea,
           encounter.board.sizeX,
           encounter.board.sizeY
         );
@@ -578,37 +578,40 @@ export default function VirtualBoard({
   );
 
   const checkIfCanAddFieldToPath = (gridX: number, gridY: number) => {
-    let selectedField = encounter.board.fields.find(
+    const selectedField = encounter.board.fields.find(
       (field) => field.positionX === gridX && field.positionY === gridY
     );
-    let lastField = encounter.board.fields.find(
-      (field) => field.id === path[path.length - 1]
-    );
+
+    const lastField = path.length > 0
+      ? encounter.board.fields.find((field) => field.id === path[path.length - 1])
+      : null;
+
     let occupiedField = encounter.participances.find(
       (x) => x.character.id === controlledCharacterId
     )?.occupiedField;
-    let distanceX =
-      (lastField?.positionX ?? -1) - (selectedField?.positionX ?? 1);
-    let distanceY =
-      (lastField?.positionY ?? -1) - (selectedField?.positionY ?? 1);
-    let distanceFromStartX =
-      (occupiedField?.positionX ?? -1) - (selectedField?.positionX ?? 1);
-    let distanceFromStartY =
-      (occupiedField?.positionY ?? -1) - (selectedField?.positionY ?? 1);
-    let distanceFromLastInPathOk =
-      Math.abs(distanceX) <= 1 && Math.abs(distanceY) <= 1;
-    let distanceFromCurrentPositionOk =
-      Math.abs(distanceFromStartX) === 1 || Math.abs(distanceFromStartY) === 1;
-    let fieldAlreadyInPath = !!path.find((x) => x === selectedField?.id);
-    return (
+
+    const isAdjacent = (a: typeof selectedField, b: typeof selectedField | null) => {
+      if (!a || !b) return false;
+      const dx = Math.abs(a.positionX - b.positionX);
+      const dy = Math.abs(a.positionY - b.positionY);
+      return dx <= 1 && dy <= 1 && !(dx === 0 && dy === 0);
+    };
+
+    const fieldAlreadyInPath = !!path.find((x) => x === selectedField?.id);
+
+    const canAdd =
       !!selectedField &&
       !!participance &&
-      ((((path.length === 0 && distanceFromCurrentPositionOk) ||
-        distanceFromLastInPathOk) &&
-        path.length * 5 <
-          participance.totalMovement - participance.movementUsed) ||
-        fieldAlreadyInPath)
-    );
+      (
+        (
+          path.length === 0
+            ? isAdjacent(selectedField, occupiedField)
+            : isAdjacent(selectedField, lastField)
+        ) &&
+        path.length * 5 < (participance.totalMovement - participance.movementUsed)
+      );
+
+    return canAdd || fieldAlreadyInPath;
   };
 
   const handleCanvasRightClick = (

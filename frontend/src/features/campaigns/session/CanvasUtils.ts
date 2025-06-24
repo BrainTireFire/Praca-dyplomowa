@@ -798,7 +798,6 @@ export const drawTextName = (
   const numericCharacterSize = getSizeMultiplier(characterSize);
   const squareSize = getSquareSize(columns, rows);
 
-  ctx.fillStyle = getCssVariable("--color-text-name-canvas");
   ctx.font = `${squareSize * 0.3}px Poppins`;
 
   const textWidth = ctx.measureText(field.memberName).width;
@@ -812,6 +811,13 @@ export const drawTextName = (
     (squareSize / 2) * numericCharacterSize +
     (squareSize * 0.6) / 1.5;
 
+  // Draw white stroke
+  ctx.lineWidth = 2; // adjust stroke thickness
+  ctx.strokeStyle = "white";
+  ctx.strokeText(field.memberName, textX, textY);
+
+  // Draw black fill
+  ctx.fillStyle = getCssVariable("--color-text-name-canvas");
   ctx.fillText(field.memberName, textX, textY);
 
   ctx.restore();

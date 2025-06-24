@@ -295,17 +295,17 @@ export default function VirtualBoard({
         }
 
         setSelectedAreaPower(newPowerArea);
-        highlightArea(
+        drawAttackRange(
           ctx,
-          newPowerArea,
+          { x: occupiedField!.positionX, y: occupiedField!.positionY },
+          range * 5,
+          controlledCharacter?.character.size.name!,
           encounter.board.sizeX,
           encounter.board.sizeY
         );
-
-        highlightPowerRange(
+        highlightArea(
           ctx,
-          casterPosition,
-          range,
+          newPowerArea,
           encounter.board.sizeX,
           encounter.board.sizeY
         );

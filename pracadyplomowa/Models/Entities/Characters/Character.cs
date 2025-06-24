@@ -1594,7 +1594,10 @@ namespace pracadyplomowa.Models.Entities.Characters
                 if(immaterialResourceLevel != null && powerLevel != null && immaterialResourceLevel < powerLevel){
                     return Outcome.ResourceLevelLowerThanPowerLevelSelected;
                 }
-                var immaterialResourceInstance = this.AllImmaterialResourceInstances.FirstOrDefault(x => x.R_Blueprint == power.R_UsesImmaterialResource && !x.NeedsRefresh && x.Level == immaterialResourceLevel);
+                var immaterialResourceInstance = this.AllImmaterialResourceInstances.OrderBy(x => x.Level).FirstOrDefault(
+                    x => x.R_Blueprint == power.R_UsesImmaterialResource 
+                    && !x.NeedsRefresh 
+                    && (x.Level == immaterialResourceLevel || power.UpcastBy == UpcastBy.NotUpcasted));
                 if (immaterialResourceInstance == null)
                 {
                     return Outcome.ImmaterialResourceUnavailable;

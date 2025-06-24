@@ -423,7 +423,7 @@ export const drawWeaponAttackRange = (
     characterSize,
     columns,
     rows,
-    "#2212AC",
+    "--color-input-text",
     2
   );
 };

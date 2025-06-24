@@ -64,12 +64,12 @@ namespace pracadyplomowa.Models.Entities.Items
                                                                         .OfType<DamageEffectInstance>()
                                                                         .Where(x => x.EffectType.DamageEffect == DamageEffect.ExtraWeaponDamage)
                                                                         .ToList();
-            DiceSet extraWeaponDamage = extraWeaponDamageEffectList.Aggregate(new DiceSet(), (sum, current) => sum + current.DiceSet);
+            DiceSet extraWeaponDamage = extraWeaponDamageEffectList.Aggregate(new DiceSet(), (sum, current) => sum + current.DiceSet.getPersonalizedSet(Wielder));
             MagicEffectInstance? magicEffect = R_AffectedBy
                                                                         .OfType<MagicEffectInstance>()
-                                                                        .OrderBy(x => x.DiceSet.flat)
+                                                                        .OrderBy(x => x.DiceSet.getPersonalizedSet(Wielder).flat)
                                                                         .LastOrDefault();
-            damageDiceSet += extraWeaponDamage + (magicEffect?.DiceSet.flat ?? 0);
+            damageDiceSet += extraWeaponDamage + (magicEffect?.DiceSet.getPersonalizedSet(Wielder).flat ?? 0);
             return damageDiceSet;
         }
         
@@ -100,7 +100,7 @@ namespace pracadyplomowa.Models.Entities.Items
                                                                     .Where(x => x.EffectType.DamageEffect == DamageEffect.DamageDealt)
                                                                     .GroupBy(effectInstance => (DamageType)effectInstance.EffectType.DamageEffect_DamageType)
                                                                     .ToDictionary(g => g.Key, g => g.ToList());
-            var result = extraDamageEffectMap.ToDictionary(element => element.Key, element => element.Value.Aggregate(new DiceSet(), (sum, current) => sum + current.DiceSet));
+            var result = extraDamageEffectMap.ToDictionary(element => element.Key, element => element.Value.Aggregate(new DiceSet(), (sum, current) => sum + current.DiceSet.getPersonalizedSet(Wielder)));
 
             return result;
         }
@@ -148,9 +148,9 @@ namespace pracadyplomowa.Models.Entities.Items
         public virtual DiceSet GetBaseUnequippedAttackBonus(){
             MagicEffectInstance? magicEffect = R_AffectedBy
                                                                         .OfType<MagicEffectInstance>()
-                                                                        .OrderBy(x => x.DiceSet.flat)
+                                                                        .OrderBy(x => x.DiceSet.getPersonalizedSet(Wielder).flat)
                                                                         .LastOrDefault();
-            return magicEffect?.DiceSet.flat ?? 0;
+            return magicEffect?.DiceSet.getPersonalizedSet(Wielder).flat ?? 0;
         }
 
         public abstract DiceSet GetBaseEquippedAttackBonus();
@@ -168,7 +168,7 @@ namespace pracadyplomowa.Models.Entities.Items
                 .Where(ei => ei.EffectType.AttackRollEffect_Type == Enums.EffectOptions.AttackRollEffect_Type.Bonus 
                 && ei.EffectType.AttackRollEffect_Source == Enums.EffectOptions.AttackRollEffect_Source.Weapon 
                 && ei.EffectType.AttackRollEffect_Range == range)
-                .Select(ei => ei.DiceSet.getPersonalizedSet(null))
+                .Select(ei => ei.DiceSet.getPersonalizedSet(Wielder))
                 .Aggregate(new DiceSet(), (accumulator, value) => accumulator + value);
             return attackRollEffectDiceSet;
         }

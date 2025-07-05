@@ -101,7 +101,7 @@ export const highlightArea = (
   const squareSize = getSquareSize(columns, rows);
 
   ctx.save();
-  ctx.strokeStyle = getCssVariable("--color-button-hover-danger");
+  ctx.strokeStyle = getCssVariable("--color-canvas-power-area");
   ctx.lineWidth = 2;
 
   for (const cell of cells) {

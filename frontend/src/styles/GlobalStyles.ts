@@ -20,6 +20,8 @@ const GlobalStyles = createGlobalStyle`
   --color-button-hover-secondary: #096359;
   --color-button-hover-danger: #730202;
 
+  --color-canvas-power-area: #fce100;
+
   --color-form-error: #ce1313;
 
   --color-button-text: #DCE1DE;

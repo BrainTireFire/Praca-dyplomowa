@@ -120,7 +120,7 @@ namespace pracadyplomowa.Controllers
                 shopItems = new List<ShopItem>();
             }
 
-            var itemBlueprint = _unitOfWork.ItemRepository.GetById(shopItemDto.Id);
+            var itemBlueprint = await _unitOfWork.ItemRepository.GetByIdWithSlotsPowersWithEffectsEffectsResources(shopItemDto.Id);
             if (itemBlueprint == null)
             {
                 return NotFound(new ApiResponse(404, $"Item with id {shopItemDto.Id} does not exist"));
